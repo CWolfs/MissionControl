@@ -25,14 +25,6 @@ namespace SpawnVariation {
             Path = modDirectory;
         }
 
-        public static void LoadAssemblies() {
-            SpawnVariationAssembly = Assembly.LoadFile($"{Main.Path}/bundles/SpawnVariation-Library.dll");
-        }
-
-        public static void LoadAssetBundles() {
-            SpawnVariationBundle = AssetBundle.LoadFromFile($"{Main.Path}/bundles/SpawnVariation-bundle");
-        }
-
         // Entry point into the mod, specified in the `mod.json`
         public static void Init(string modDirectory, string modSettings) {
             try {
@@ -40,9 +32,6 @@ namespace SpawnVariation {
 
                 Logger.Log("Loading SpawnVariation settings");
                 Settings = JsonConvert.DeserializeObject<Settings>(modSettings);
-
-                LoadAssemblies();
-                LoadAssetBundles();
             } catch (Exception e) {
                 Logger.LogError(e);
                 Logger.Log("Error loading mod settings - using defaults.");
