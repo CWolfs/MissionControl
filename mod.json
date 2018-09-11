@@ -2,8 +2,8 @@
     "Name": "SpawnVariation",
     "Enabled": true,
 
-    "Version": "0.2.0",
-    "Description": "SpawnVariation provides various debug tools for modders to obtain more information about BattleTech.",
+    "Version": "0.1.0",
+    "Description": "SpawnVariation varies the spawn locations on contracts and encounters.",
     "Author": "CWolf",
     "Contact": "cwolfs@gmail.com",
 
