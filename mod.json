@@ -1,0 +1,16 @@
+{
+    "Name": "SpawnVariation",
+    "Enabled": true,
+
+    "Version": "0.2.0",
+    "Description": "SpawnVariation provides various debug tools for modders to obtain more information about BattleTech.",
+    "Author": "CWolf",
+    "Contact": "cwolfs@gmail.com",
+
+    "DLL": "SpawnVariation.dll",
+    "DLLEntryPoint": "SpawnVariation.Main.Init",
+    "Settings": {
+        "InspectorDebugMode": false,
+        "FowDisableOverlay": true
+    }
+}

@@ -1,0 +1,11 @@
+{
+  "todohighlight.keywords": [
+      {  
+          "text": "TODO:",
+          "color": "blue",
+          "backgroundColor": "#aec6cf",
+          "overviewRulerColor": "grey" 
+      }
+  ],
+  "git.ignoreLimitWarning": true
+}
