@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 using BattleTech;
 
+using SpawnVariation.Utils;
+
 namespace SpawnVariation.Logic {
   public class SpawnLanceAtEdgeOfBoundary : SpawnLogic {
     public SpawnLanceAtEdgeOfBoundary(GameObject lanceGameObject) : base() {
@@ -13,7 +15,8 @@ namespace SpawnVariation.Logic {
       GameObject chunkBoundaryRect = spawnManager.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary").gameObject;
       GameObject boundary = chunkBoundaryRect.transform.Find("EncounterBoundaryRect").gameObject;
       EncounterBoundaryRectGameLogic boundaryLogic = boundary.GetComponent<EncounterBoundaryRectGameLogic>();
-      Rect boundaryRec = boundaryLogic.GetRect();
+      // Rect boundaryRec = boundaryLogic.GetRect();
+      boundaryLogic.width = 3000;
     }
   }
 }
