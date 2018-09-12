@@ -10,7 +10,7 @@ namespace SpawnVariation.Rules {
     public RescueEncounterRules() : base() { }
 
     public override void UpdateSpawns() {
-      Main.Logger.Log("[RescueEncounterRules] Updating spawns");
+      Main.Logger.LogDebug("[RescueEncounterRules] Updating spawns");
     }
   }
 }

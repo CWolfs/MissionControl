@@ -28,7 +28,7 @@ namespace SpawnVariation {
 
       switch (CurrentContractType) {
         case ContractType.Rescue: {
-          Main.Logger.Log($"[SpawnManager] Setting contract type to 'Rescue'");
+          Main.Logger.LogDebug($"[SpawnManager] Setting contract type to 'Rescue'");
           SetEncounterRules(new RescueEncounterRules());
           break;
         }
