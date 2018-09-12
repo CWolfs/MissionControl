@@ -30,11 +30,11 @@ namespace SpawnVariation {
             try {
                 InitLogger(modDirectory);
 
-                Logger.LogDebug("Loading SpawnVariation settings");
+                Logger.Log("Loading SpawnVariation settings");
                 Settings = JsonConvert.DeserializeObject<Settings>(modSettings);
             } catch (Exception e) {
                 Logger.LogError(e);
-                Logger.LogDebug("Error loading mod settings - using defaults.");
+                Logger.Log("Error loading mod settings - using defaults.");
                 Settings = new Settings();
             }
 

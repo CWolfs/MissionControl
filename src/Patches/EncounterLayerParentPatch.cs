@@ -12,6 +12,7 @@ namespace SpawnVariation {
   [HarmonyPatch(typeof(EncounterLayerParent), "FirstTimeInitialization")]
   public class EncounterLayerParentPatch {
     static void Prefix(EncounterLayerParent __instance) {
+      Main.Logger.Log($"[EncounterLayerParentPatch Prefix] Running prefix");
       SpawnManager spawnManager = SpawnManager.GetInstance();
       spawnManager.SetContractType(ContractType.Rescue);
       spawnManager.UpdateSpawns();
