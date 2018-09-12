@@ -18,12 +18,17 @@ namespace SpawnVariation.Logic {
       EncounterBoundaryChunkGameLogic chunkBoundary = chunkBoundaryRect.GetComponent<EncounterBoundaryChunkGameLogic>();
       EncounterBoundaryRectGameLogic boundaryLogic = boundary.GetComponent<EncounterBoundaryRectGameLogic>();
       Rect boundaryRec = boundaryLogic.GetRect();
-      float width = boundaryRec.width;
-      float x = UnityEngine.Random.Range(-width / 2f, width / 2f) + boundary.transform.position.x;
-      float z = UnityEngine.Random.Range(-width / 2f, width / 2f) + boundary.transform.position.z;
+
+      Vector3 xzEdge = boundaryRec.CalculateRandomXZEdge(boundary.transform.position);
 
       Vector3 lancePosition = lanceGameObject.transform.position;
-      lanceGameObject.transform.position = new Vector3(x, lancePosition.y, z);
+      Vector3 newSpawnPosition = new Vector3(xzEdge.x, lancePosition.y, xzEdge.z);
+      newSpawnPosition.y = UnityGameInstance.BattleTechGame.Combat.MapMetaData.GetLerpedHeightAt(newSpawnPosition);
+      lanceGameObject.transform.position = newSpawnPosition;
+    }
+
+    private void RotateLanceMembersToTarget(GameObject target) {
+
     }
   }
 }
