@@ -8,6 +8,7 @@ using BattleTech.Framework;
 
 using SpawnVariation.Logic;
 using SpawnVariation.Rules;
+using SpawnVariation.Utils;
 
 namespace SpawnVariation {
   public class SpawnManager {
@@ -15,20 +16,27 @@ namespace SpawnVariation {
 
     public ContractType CurrentContractType { get; private set; } = ContractType.INVALID_UNSET;
     public EncounterRules EncounterRules { get; private set; }
+    public GameObject EncounterLayerParentGameObject { get; private set; }
+    public GameObject EncounterLayerGameObject { get; private set; }
+    public HexGrid HexGrid { get; private set; }
 
     public static SpawnManager GetInstance() { 
       if (instance == null) instance = new SpawnManager();
       return instance;
     }
 
-    private SpawnManager() { }
+    private SpawnManager() {
+      if (!EncounterLayerParentGameObject) EncounterLayerParentGameObject = GameObject.Find("EncounterLayerParent");
+      EncounterLayerGameObject = GetActiveEncounterGameObject();
+      if (HexGrid == null) HexGrid = ReflectionHelper.GetPrivateStaticField(typeof(WorldPointGameLogic), "hexGrid") as HexGrid;
+    }
 
     public void SetContractType(ContractType contractType) {
       CurrentContractType = contractType;
 
       switch (CurrentContractType) {
         case ContractType.Rescue: {
-          Main.Logger.LogDebug($"[SpawnManager] Setting contract type to 'Rescue'");
+          Main.Logger.Log($"[SpawnManager] Setting contract type to 'Rescue'");
           SetEncounterRules(new RescueEncounterRules());
           break;
         }
@@ -45,6 +53,19 @@ namespace SpawnVariation {
 
     public void UpdateSpawns() {
       EncounterRules.UpdateSpawns();
+    }
+
+    private GameObject GetActiveEncounterGameObject() {
+      if (EncounterLayerGameObject) return EncounterLayerGameObject;
+
+      foreach (Transform t in EncounterLayerParentGameObject.transform) {
+        GameObject child = t.gameObject;
+        if (child.activeSelf) {
+          EncounterLayerGameObject = t.gameObject;
+          return EncounterLayerGameObject;
+        }
+      }
+      return null;
     }
   }
 }

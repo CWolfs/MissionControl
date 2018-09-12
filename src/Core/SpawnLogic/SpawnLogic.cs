@@ -7,6 +7,6 @@ using BattleTech;
 
 namespace SpawnVariation.Logic {
   public class SpawnLogic {
-    public SpawnLogic() : base() { }
+    public SpawnLogic() { }
   }
 }
