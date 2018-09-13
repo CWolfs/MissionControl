@@ -9,16 +9,10 @@ using SpawnVariation.Logic;
 
 namespace SpawnVariation.Rules {
   public class RescueEncounterRules : EncounterRules {
-    private GameObject EncounterLayerGo { get; set; }
-    private GameObject ChunkPlayerLanceGo { get; set; }
-    private GameObject SpawnerPlayerLanceGo { get; set; }
     private GameObject OccupyRegion1VIPGo { get; set; }
 
     public RescueEncounterRules() : base() {
       Main.Logger.Log("[RescueEncounterRules] Setting up rule object references");
-      EncounterLayerGo = SpawnManager.GetInstance().EncounterLayerGameObject;
-      ChunkPlayerLanceGo = EncounterLayerGo.transform.Find("Chunk_PlayerLance").gameObject;
-      SpawnerPlayerLanceGo = ChunkPlayerLanceGo.transform.Find("Spawner_PlayerLance").gameObject;
       OccupyRegion1VIPGo = EncounterLayerGo.transform.Find("Chunk_OccupyRegion_1_VIP").gameObject;
     }
 

@@ -24,8 +24,10 @@ namespace SpawnVariation.Logic {
       Vector3 lancePosition = lance.transform.position;
       Vector3 newSpawnPosition = new Vector3(xzEdge.x, lancePosition.y, xzEdge.z);
       newSpawnPosition.y = UnityGameInstance.BattleTechGame.Combat.MapMetaData.GetLerpedHeightAt(newSpawnPosition);
-      lance.transform.position = newSpawnPosition;
 
+      PathTester.IsSpawnValid(newSpawnPosition, orientationTarget.transform.position);
+
+      lance.transform.position = newSpawnPosition;
       RotateLanceToTarget(lance, orientationTarget);
     }
 
