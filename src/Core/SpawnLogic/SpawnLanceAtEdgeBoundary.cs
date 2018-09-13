@@ -10,8 +10,8 @@ using SpawnVariation.Utils;
 
 namespace SpawnVariation.Logic {
   public class SpawnLanceAtEdgeOfBoundary : SpawnLogic {
-    public SpawnLanceAtEdgeOfBoundary(GameObject lanceGameObject) : base() {
-      Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] For {lanceGameObject.name}");
+    public SpawnLanceAtEdgeOfBoundary(GameObject lance, GameObject orientationTarget) : base() {
+      Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] For {lance.name}");
       SpawnManager spawnManager = SpawnManager.GetInstance();
       GameObject chunkBoundaryRect = spawnManager.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary").gameObject;
       GameObject boundary = chunkBoundaryRect.transform.Find("EncounterBoundaryRect").gameObject;
@@ -21,14 +21,17 @@ namespace SpawnVariation.Logic {
 
       Vector3 xzEdge = boundaryRec.CalculateRandomXZEdge(boundary.transform.position);
 
-      Vector3 lancePosition = lanceGameObject.transform.position;
+      Vector3 lancePosition = lance.transform.position;
       Vector3 newSpawnPosition = new Vector3(xzEdge.x, lancePosition.y, xzEdge.z);
       newSpawnPosition.y = UnityGameInstance.BattleTechGame.Combat.MapMetaData.GetLerpedHeightAt(newSpawnPosition);
-      lanceGameObject.transform.position = newSpawnPosition;
+      lance.transform.position = newSpawnPosition;
+
+      RotateLanceToTarget(lance, orientationTarget);
     }
 
-    private void RotateLanceMembersToTarget(GameObject target) {
-
+    private void RotateLanceToTarget(GameObject lance, GameObject target) {
+      Vector3 targetPosition = target.transform.position;
+      lance.transform.LookAt(new Vector3(targetPosition.x, lance.transform.position.y, targetPosition.z));
     }
   }
 }

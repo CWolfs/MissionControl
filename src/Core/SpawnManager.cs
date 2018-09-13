@@ -26,12 +26,17 @@ namespace SpawnVariation {
     }
 
     private SpawnManager() {
+      Init();
+    }
+
+    public void Init() {
       if (!EncounterLayerParentGameObject) EncounterLayerParentGameObject = GameObject.Find("EncounterLayerParent");
       EncounterLayerGameObject = GetActiveEncounterGameObject();
       if (HexGrid == null) HexGrid = ReflectionHelper.GetPrivateStaticField(typeof(WorldPointGameLogic), "hexGrid") as HexGrid;
     }
 
     public void SetContractType(ContractType contractType) {
+      if (!EncounterLayerParentGameObject) Init();
       CurrentContractType = contractType;
 
       switch (CurrentContractType) {
