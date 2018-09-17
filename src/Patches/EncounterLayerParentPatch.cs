@@ -13,8 +13,9 @@ namespace SpawnVariation {
   public class EncounterLayerParentPatch {
     static void Prefix(EncounterLayerParent __instance) {
       Main.Logger.Log($"[EncounterLayerParentPatch Prefix] Running prefix");
+      EncounterLayerData encounterLayerData =  __instance.GetSelectedEncounterLayerData();
       SpawnManager spawnManager = SpawnManager.GetInstance();
-      spawnManager.SetContractType(ContractType.Rescue);
+      spawnManager.SetContractType(encounterLayerData.supportedContractType);
       spawnManager.UpdateSpawns();
     }
   }

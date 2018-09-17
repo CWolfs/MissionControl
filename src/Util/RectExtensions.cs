@@ -10,33 +10,34 @@ public static class RectExtensions {
     float z = 0;
     float width = rect.width;
     float buffer = 100f;
+    float halfBoundaryWidth = width / 2f;
   
     // Randomly select an edge
     UnityEngine.Random.InitState(System.DateTime.Now.Millisecond);
     int edge = UnityEngine.Random.Range(0, 4);
     switch (edge) {
       case 0: { // Forward (Max-Z)
-        Main.Logger.LogDebug("[CalculateRandomXZEdge] Selecting Forward");
-        x = UnityEngine.Random.Range(-width / 2f, width / 2f);
-        z = (width / 2f) - buffer;
+        Main.Logger.LogDebug("[CalculateRandomXZEdge] Selecting Forward (Max-Z edge)");
+        x = UnityEngine.Random.Range(-halfBoundaryWidth, halfBoundaryWidth);
+        z = halfBoundaryWidth - buffer;
         break;
       }
       case 1: { // Right (Max-X)
-        Main.Logger.LogDebug("[CalculateRandomXZEdge] Selecting Right");
-        x = (width / 2f) - buffer;
-        z = UnityEngine.Random.Range(-width / 2f, width / 2f);
+        Main.Logger.LogDebug("[CalculateRandomXZEdge] Selecting Right (Max-X edge)");
+        x = halfBoundaryWidth - buffer;
+        z = UnityEngine.Random.Range(-halfBoundaryWidth, halfBoundaryWidth);
         break;
       }
       case 2: {  // Back (Min-Z)
-        Main.Logger.LogDebug("[CalculateRandomXZEdge] Selecting Back");
-        x = UnityEngine.Random.Range(-width / 2f, width / 2f);
-        z = -(width / 2f) + buffer;
+        Main.Logger.LogDebug("[CalculateRandomXZEdge] Selecting Back (Min-Z edge)");
+        x = UnityEngine.Random.Range(-halfBoundaryWidth, halfBoundaryWidth);
+        z = -halfBoundaryWidth + buffer;
         break;
       }
       case 3: { // Left (Min-X)
-        Main.Logger.LogDebug("[CalculateRandomXZEdge] Selecting Left");
-        x = -(width / 2f) + buffer;
-        z = UnityEngine.Random.Range(-width / 2f, width / 2f);
+        Main.Logger.LogDebug("[CalculateRandomXZEdge] Selecting Left (Min-X edge)");
+        x = -halfBoundaryWidth + buffer;
+        z = UnityEngine.Random.Range(-halfBoundaryWidth, halfBoundaryWidth);
         break;
       }
     }
