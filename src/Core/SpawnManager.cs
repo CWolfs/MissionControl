@@ -41,7 +41,7 @@ namespace SpawnVariation {
       if (HexGrid == null) HexGrid = ReflectionHelper.GetPrivateStaticField(typeof(WorldPointGameLogic), "hexGrid") as HexGrid;
     }
 
-    public void SetContractType(ContractType contractType) {
+    public bool SetContractType(ContractType contractType) {
       if (!EncounterLayerParentGameObject) Init();
       CurrentContractType = contractType;
 
@@ -49,11 +49,11 @@ namespace SpawnVariation {
         case ContractType.Rescue: {
           Main.Logger.Log($"[SpawnManager] Setting contract type to 'Rescue'");
           SetEncounterRules(new RescueEncounterRules());
-          break;
+          return true;
         }
         default: {
           Main.Logger.LogError($"[SpawnManager] Unknown contract / encounter type of {contractType}");
-          break;
+          return false;
         }
       }
     }
