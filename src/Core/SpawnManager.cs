@@ -18,6 +18,7 @@ namespace SpawnVariation {
     public EncounterRules EncounterRules { get; private set; }
     public GameObject EncounterLayerParentGameObject { get; private set; }
     public GameObject EncounterLayerGameObject { get; private set; }
+    public EncounterLayerData EncounterLayerData { get; private set; }
     public HexGrid HexGrid { get; private set; }
 
     public static SpawnManager GetInstance() { 
@@ -30,8 +31,13 @@ namespace SpawnVariation {
     }
 
     public void Init() {
+      CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
+
       if (!EncounterLayerParentGameObject) EncounterLayerParentGameObject = GameObject.Find("EncounterLayerParent");
       EncounterLayerGameObject = GetActiveEncounterGameObject();
+      EncounterLayerData = EncounterLayerGameObject.GetComponent<EncounterLayerData>();
+      EncounterLayerData.CalculateEncounterBoundary();
+
       if (HexGrid == null) HexGrid = ReflectionHelper.GetPrivateStaticField(typeof(WorldPointGameLogic), "hexGrid") as HexGrid;
     }
 

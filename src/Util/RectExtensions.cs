@@ -13,7 +13,7 @@ public static class RectExtensions {
   
     // Randomly select an edge
     UnityEngine.Random.InitState(System.DateTime.Now.Millisecond);
-    int edge = UnityEngine.Random.Range(0, 3);
+    int edge = UnityEngine.Random.Range(0, 4);
     switch (edge) {
       case 0: { // Forward (Max-Z)
         Main.Logger.LogDebug("[CalculateRandomXZEdge] Selecting Forward");
