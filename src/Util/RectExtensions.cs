@@ -13,7 +13,6 @@ public static class RectExtensions {
     float halfBoundaryWidth = width / 2f;
   
     // Randomly select an edge
-    UnityEngine.Random.InitState(System.DateTime.Now.Millisecond);
     int edge = UnityEngine.Random.Range(0, 4);
     switch (edge) {
       case 0: { // Forward (Max-Z)

@@ -60,7 +60,6 @@ namespace SpawnVariation {
         pathFinderMech.ResetPathing(false);
       }
 
-      // return !pathFinderMech.Pathing.CurrentGrid.FindBlockerBetween(position, validityPosition);
       List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(validityPosition, 9999f, pathFinderMech, true, new List<AbstractActor>(), pathFinderMech.Pathing.CurrentGrid, 50f);
       if (path != null && path.Count > 3) return true;
       return false;

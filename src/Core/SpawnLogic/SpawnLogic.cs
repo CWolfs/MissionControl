@@ -27,9 +27,8 @@ namespace SpawnVariation.Logic {
 
     protected Vector3 GetRandomPositionFromTarget(GameObject target, float minDistance, float maxDistance) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-      // UnityEngine.Random.InitState((int)System.DateTime.Now.Ticks);
       Vector3 targetPosition = target.transform.position;
-    
+
       float xSignSelection = (UnityEngine.Random.value < 0.5f) ? -1f : 1f;
       float zSignSelection = (UnityEngine.Random.value < 0.5f) ? -1f : 1f;
       float xValue = UnityEngine.Random.Range(minDistance / 1.5f, maxDistance / 1.5f) * xSignSelection;
