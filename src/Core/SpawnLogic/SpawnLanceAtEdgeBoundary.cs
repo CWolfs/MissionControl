@@ -9,7 +9,7 @@ using BattleTech.Designed;
 using SpawnVariation.Utils;
 
 namespace SpawnVariation.Logic {
-  public class SpawnLanceAtEdgeOfBoundary : SpawnLogic {
+  public class SpawnLanceAtEdgeOfBoundary : SpawnLanceLogic {
     public SpawnLanceAtEdgeOfBoundary(GameObject lance, GameObject orientationTarget) : base() {
       Spawn(lance, orientationTarget);
     }
@@ -31,39 +31,13 @@ namespace SpawnVariation.Logic {
       newSpawnPosition.y = combatState.MapMetaData.GetLerpedHeightAt(newSpawnPosition);
 
       lance.transform.position = newSpawnPosition;
-      RotateLanceToTarget(lance, orientationTarget);
+      RotateToTarget(lance, orientationTarget);
 
       if (!AreLanceMemberSpawnsValid(lance, orientationTarget)) {
         Spawn(lance, orientationTarget);
       } else {
         Main.Logger.Log("[SpawnLanceAtEdgeOfBoundary] Lance spawn complete");
       }
-    }
-
-    private bool AreLanceMemberSpawnsValid(GameObject lance, GameObject orientationTarget) {
-      CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-      List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
-
-      foreach (GameObject spawnPoint in spawnPoints) {
-        Vector3 spawnPointPosition = combatState.HexGrid.GetClosestPointOnGrid(spawnPoint.transform.position);
-        spawnPointPosition.y = combatState.MapMetaData.GetLerpedHeightAt(spawnPointPosition);
-
-        Vector3 checkTarget = combatState.HexGrid.GetClosestPointOnGrid(orientationTarget.transform.position);
-        checkTarget.y = combatState.MapMetaData.GetLerpedHeightAt(checkTarget);
-        
-        if (!PathFinderManager.GetInstance().IsSpawnValid(spawnPointPosition, checkTarget)) {
-          Main.Logger.LogWarning("[AreLanceMemberSpawnsValid] Lance member spawn path to first objective is blocked. Select a new lance spawn point");
-          return false;
-        }
-      }
-
-      PathFinderManager.GetInstance().Reset();
-      return true;
-    }
-
-    private void RotateLanceToTarget(GameObject lance, GameObject target) {
-      Vector3 targetPosition = target.transform.position;
-      lance.transform.LookAt(new Vector3(targetPosition.x, lance.transform.position.y, targetPosition.z));
     }
   }
 }

@@ -51,6 +51,11 @@ namespace SpawnVariation {
           SetEncounterRules(new RescueEncounterRules());
           return true;
         }
+        case ContractType.DefendBase: {
+          Main.Logger.Log($"[SpawnManager] Setting contract type to 'DefendBase'");
+          SetEncounterRules(new DefendBaseEncounterRules());
+          return true;
+        }
         default: {
           Main.Logger.LogError($"[SpawnManager] Unknown contract / encounter type of {contractType}");
           return false;
