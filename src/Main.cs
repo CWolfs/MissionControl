@@ -29,7 +29,6 @@ namespace SpawnVariation {
         public static void Init(string modDirectory, string modSettings) {
             try {
                 InitLogger(modDirectory);
-
                 Logger.Log("Loading SpawnVariation settings");
                 Settings = JsonConvert.DeserializeObject<Settings>(modSettings);
             } catch (Exception e) {
