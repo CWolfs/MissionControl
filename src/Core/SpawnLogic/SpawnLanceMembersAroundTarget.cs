@@ -10,31 +10,33 @@ using SpawnVariation.Utils;
 
 namespace SpawnVariation.Logic {
   public class SpawnLanceMembersAroundTarget : SpawnLanceLogic {
-    private float minDistanceFromTarget = 100f;
-    private float maxDistanceFromTarget = 150f;
+    private float minDistanceFromTarget = 10f;
+    private float maxDistanceFromTarget = 10f;
     private float minDistanceToSpawnFromInvalidSpawn = 30f;
     private List<Vector3> invalidSpawnLocations = new List<Vector3>();
 
-    public SpawnLanceMembersAroundTarget(GameObject lance, GameObject orientationTarget, LookDirection lookDirection) : base() {
-      Spawn(lance, orientationTarget, lookDirection);
-    }
+    public SpawnLanceMembersAroundTarget(GameObject lance, GameObject orientationTarget, LookDirection lookDirection) :
+      this(lance, orientationTarget, lookDirection, 10, 10) { } // TODO: Replace the hard coded values with a setting.json setting
 
-    public SpawnLanceMembersAroundTarget(GameObject lance, GameObject orientationTarget, LookDirection lookDirection, float minDistance, float maxDistance) : base() {
+    public SpawnLanceMembersAroundTarget(GameObject lance, GameObject orientationTarget, LookDirection lookDirection, float minDistance, float maxDistance) :
+      this(lance, orientationTarget, orientationTarget, lookDirection, minDistance, maxDistance) { }
+
+    public SpawnLanceMembersAroundTarget(GameObject lance, GameObject orientationTarget, GameObject lookTarget, LookDirection lookDirection, float minDistance, float maxDistance) : base() {
       minDistanceFromTarget = minDistance;
       maxDistanceFromTarget = maxDistance;
-      Spawn(lance, orientationTarget, lookDirection);
+      Spawn(lance, orientationTarget, lookTarget, lookDirection);
     }
 
-    public void Spawn(GameObject lance, GameObject orientationTarget, LookDirection lookDirection) {
+    public void Spawn(GameObject lance, GameObject orientationTarget, GameObject lookTarget, LookDirection lookDirection) {
       Main.Logger.Log($"[SpawnLanceMembersAroundTarget] For {lance.name}");
       List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
       foreach (GameObject spawnPoint in spawnPoints) {
-        SpawnLanceMember(spawnPoint, orientationTarget, lookDirection);
+        SpawnLanceMember(spawnPoint, orientationTarget, lookTarget, lookDirection);
       }
       invalidSpawnLocations.Clear();
     }
 
-    public void SpawnLanceMember(GameObject spawnPoint, GameObject orientationTarget, LookDirection lookDirection) {
+    public void SpawnLanceMember(GameObject spawnPoint, GameObject orientationTarget, GameObject lookTarget, LookDirection lookDirection) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       Vector3 spawnPointPosition = combatState.HexGrid.GetClosestPointOnGrid(spawnPoint.transform.position);
       Vector3 newSpawnPosition = GetRandomPositionFromTarget(orientationTarget, minDistanceFromTarget, maxDistanceFromTarget);
@@ -45,19 +47,19 @@ namespace SpawnVariation.Logic {
         invalidSpawnLocations.Add(newSpawnPosition);
 
         if (lookDirection == LookDirection.TOWARDS_TARGET) {
-          RotateToTarget(spawnPoint, orientationTarget);
+          RotateToTarget(spawnPoint, lookTarget);
         } else {
-          RotateAwayFromTarget(spawnPoint, orientationTarget);
+          RotateAwayFromTarget(spawnPoint, lookTarget);
         }
 
         if (!IsSpawnValid(spawnPoint, orientationTarget)) {
-          SpawnLanceMember(spawnPoint, orientationTarget, lookDirection);
+          SpawnLanceMember(spawnPoint, orientationTarget, lookTarget, lookDirection);
         } else {
           Main.Logger.Log("[SpawnLanceMembersAroundTarget] Lance member spawn complete");
         }
       } else {
         Main.Logger.LogWarning("[SpawnLanceMembersAroundTarget] Cannot spawn a lance member on an invalid spawn. Finding new spawn point.");
-        SpawnLanceMember(spawnPoint, orientationTarget, lookDirection);
+        SpawnLanceMember(spawnPoint, orientationTarget, lookTarget, lookDirection);
       }
     }
 
