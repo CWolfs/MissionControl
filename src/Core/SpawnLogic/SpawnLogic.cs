@@ -32,8 +32,8 @@ namespace SpawnVariation.Logic {
     
       float xSignSelection = (UnityEngine.Random.value < 0.5f) ? -1f : 1f;
       float zSignSelection = (UnityEngine.Random.value < 0.5f) ? -1f : 1f;
-      float xValue = UnityEngine.Random.Range(minDistance / 2, maxDistance / 2) * xSignSelection;
-      float zValue = UnityEngine.Random.Range(minDistance  / 2, maxDistance / 2) * zSignSelection;
+      float xValue = UnityEngine.Random.Range(minDistance / 1.5f, maxDistance / 1.5f) * xSignSelection;
+      float zValue = UnityEngine.Random.Range(minDistance  / 1.5f, maxDistance / 1.5f) * zSignSelection;
 
       Vector3 randomPositionFromTarget = new Vector3(targetPosition.x + xValue, 0, targetPosition.z + zValue);
       float yValue = combatState.MapMetaData.GetLerpedHeightAt(randomPositionFromTarget);
