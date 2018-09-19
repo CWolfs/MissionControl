@@ -22,7 +22,7 @@ namespace SpawnVariation.Logic {
       GameObject boundary = chunkBoundaryRect.transform.Find("EncounterBoundaryRect").gameObject;
       EncounterBoundaryChunkGameLogic chunkBoundary = chunkBoundaryRect.GetComponent<EncounterBoundaryChunkGameLogic>();
       EncounterBoundaryRectGameLogic boundaryLogic = boundary.GetComponent<EncounterBoundaryRectGameLogic>();
-      Rect boundaryRec = boundaryLogic.GetRect();
+      Rect boundaryRec = chunkBoundary.GetEncounterBoundaryRectBounds();
 
       Vector3 xzEdge = boundaryRec.CalculateRandomXZEdge(boundary.transform.position);
 

@@ -16,7 +16,7 @@ namespace SpawnVariation.Rules {
 
     public DestroyBaseEncounterRules() : base() {
       Main.Logger.Log("[DestroyBaseEncounterRules] Setting up rule object references");
-      // PlotBase = GameObject.Find("Central Basin Base");
+      PlotBase = GameObject.Find("Ravine Position");
     }
 
     public override void UpdateSpawns() {
@@ -25,15 +25,9 @@ namespace SpawnVariation.Rules {
     }
 
     private void UpdatePlayerLanceSpawn() {
-      /*
-      SpawnLogic logic = new SpawnLanceMembersAroundTarget(SpawnerPlayerLanceGo, PlotBase, SpawnLogic.LookDirection.AWAY_FROM_TARGET, 100f, 200f);
-      new SpawnLanceAroundTarget(LanceEnemyWave1, PlotBase, SpawnLogic.LookDirection.TOWARDS_TARGET, 300f, 500f);
-      new SpawnLanceAtEdgeOfBoundary(LanceEnemyWave2, PlotBase);
-      new SpawnLanceAtEdgeOfBoundary(LanceEnemyWave3, PlotBase);
-      new SpawnLanceMembersAroundTarget(LanceEnemyWave1, LanceEnemyWave1, PlotBase, SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 200f);
-      new SpawnLanceMembersAroundTarget(LanceEnemyWave2, LanceEnemyWave2, SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 200f);
-      new SpawnLanceMembersAroundTarget(LanceEnemyWave3, LanceEnemyWave3, SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 200f);
-      */
+      int numberOfAdditionalEnemyLances = Main.Settings.numberOfAdditionalEnemyLances;
+      Main.Logger.Log($"[DestroyBaseEncounterRules] Add {numberOfAdditionalEnemyLances} extra enemy lances");
+      new SpawnLanceAtEdgeOfBoundary(SpawnerPlayerLanceGo, PlotBase);
     }
   }
 }
