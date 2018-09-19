@@ -22,7 +22,7 @@ namespace SpawnVariation.Rules {
     }
 
     private void UpdatePlayerLanceSpawn() {
-      SpawnLogic logic = new SpawnLanceAtEdgeOfBoundary(SpawnerPlayerLanceGo, OccupyRegion1VIPGo);
+      new SpawnLanceAtEdgeOfBoundary(SpawnerPlayerLanceGo, OccupyRegion1VIPGo);
     }
   }
 }

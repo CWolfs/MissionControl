@@ -8,7 +8,7 @@ using Harmony;
 using BattleTech;
 using BattleTech.Framework;
 
-namespace SpawnVariation {
+namespace SpawnVariation.Patches {
   [HarmonyPatch(typeof(Contract), "BeginRequestResources")]
   public class ContractPatch {
     static void Postfix(Contract __instance, bool generateUnits) {

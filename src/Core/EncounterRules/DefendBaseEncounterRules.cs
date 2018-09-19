@@ -28,7 +28,7 @@ namespace SpawnVariation.Rules {
     }
 
     private void UpdatePlayerLanceSpawn() {
-      SpawnLogic logic = new SpawnLanceMembersAroundTarget(SpawnerPlayerLanceGo, PlotBase, SpawnLogic.LookDirection.AWAY_FROM_TARGET, 100f, 200f);
+      new SpawnLanceMembersAroundTarget(SpawnerPlayerLanceGo, PlotBase, SpawnLogic.LookDirection.AWAY_FROM_TARGET, 100f, 200f);
       new SpawnLanceAroundTarget(LanceEnemyWave1, PlotBase, SpawnLogic.LookDirection.TOWARDS_TARGET, 300f, 500f);
       new SpawnLanceAtEdgeOfBoundary(LanceEnemyWave2, PlotBase);
       new SpawnLanceAtEdgeOfBoundary(LanceEnemyWave3, PlotBase);

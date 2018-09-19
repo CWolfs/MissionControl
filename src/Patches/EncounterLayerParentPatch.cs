@@ -8,7 +8,7 @@ using Harmony;
 using BattleTech;
 using BattleTech.Framework;
 
-namespace SpawnVariation {
+namespace SpawnVariation.Patches {
   [HarmonyPatch(typeof(EncounterLayerParent), "FirstTimeInitialization")]
   public class EncounterLayerParentPatch {
     static void Prefix(EncounterLayerParent __instance) {
