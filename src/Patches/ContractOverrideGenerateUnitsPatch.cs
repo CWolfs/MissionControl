@@ -12,7 +12,7 @@ using SpawnVariation;
 
 namespace SpawnVariation.Patches {
   [HarmonyPatch(typeof(ContractOverride), "GenerateUnits")]
-  public class ContractOverridePatch {
+  public class ContractOverrideGenerateUnitsPatch {
     static void Prefix(ContractOverride __instance, TeamOverride ___targetTeam) {
       Main.Logger.Log($"[ContractOveridePatch Prefix] Patching GenerateUnits");
       EncounterManager.GetInstance().AddLanceOverrideToTeamOverride(___targetTeam);

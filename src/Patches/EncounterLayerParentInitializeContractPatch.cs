@@ -12,6 +12,7 @@ namespace SpawnVariation.Patches {
   [HarmonyPatch(typeof(EncounterLayerParent), "InitializeContract")]
   public class EncounterLayerParentInitializeContractPatch {
     static void Prefix(EncounterLayerParent __instance) {
+      Main.Logger.Log($"[EncounterLayerParentInitializeContractPatch Prefix] Patching InitializeContract");
       SetupEncounterPreReqLogic(__instance);
 
       EncounterManager encounterManager = EncounterManager.GetInstance();
@@ -19,7 +20,6 @@ namespace SpawnVariation.Patches {
     }
 
     static void SetupEncounterPreReqLogic(EncounterLayerParent encounterLayerParent) {
-      Main.Logger.Log($"[EncounterLayerParentInitializeContractPatch Prefix] Patching InitializeContract");
       Contract activeContract = UnityGameInstance.BattleTechGame.Combat.ActiveContract;
 			string encounterObjectGuid = activeContract.encounterObjectGuid;
 
