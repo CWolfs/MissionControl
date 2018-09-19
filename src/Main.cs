@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using HBS.Logging;
 using Harmony;
@@ -29,8 +30,7 @@ namespace SpawnVariation {
         public static void Init(string modDirectory, string modSettings) {
             try {
                 InitLogger(modDirectory);
-                Logger.Log("Loading SpawnVariation settings");
-                Settings = JsonConvert.DeserializeObject<Settings>(modSettings);
+                LoadSettings(modDirectory);
             } catch (Exception e) {
                 Logger.LogError(e);
                 Logger.Log("Error loading mod settings - using defaults.");
@@ -39,6 +39,12 @@ namespace SpawnVariation {
 
             HarmonyInstance harmony = HarmonyInstance.Create("co.uk.cwolf.SpawnVariation");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+        }
+
+        private static void LoadSettings(string modDirectory) {
+            Logger.Log("Loading SpawnVariation settings");
+            string settingsJsonString = File.ReadAllText($"{modDirectory}/settings.json");
+            Settings = JsonConvert.DeserializeObject<Settings>(settingsJsonString);
         }
     }
 }

@@ -8,9 +8,5 @@
     "Contact": "cwolfs@gmail.com",
 
     "DLL": "SpawnVariation.dll",
-    "DLLEntryPoint": "SpawnVariation.Main.Init",
-    "Settings": {
-        "InspectorDebugMode": false,
-        "FowDisableOverlay": true
-    }
+    "DLLEntryPoint": "SpawnVariation.Main.Init"
 }
