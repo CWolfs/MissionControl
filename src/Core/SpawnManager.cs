@@ -23,6 +23,7 @@ namespace SpawnVariation {
 
     public static SpawnManager GetInstance() { 
       if (instance == null) instance = new SpawnManager();
+      if (!instance.EncounterLayerParentGameObject) instance.Init();
       return instance;
     }
 
@@ -42,7 +43,6 @@ namespace SpawnVariation {
     }
 
     public bool SetContractType(ContractType contractType) {
-      if (!EncounterLayerParentGameObject) Init();
       CurrentContractType = contractType;
 
       switch (CurrentContractType) {
