@@ -48,10 +48,22 @@ namespace SpawnVariation {
         LanceOverride lanceOverride = lanceOverrideList[0].Copy();
 
         lanceOverride.name = "Lance_Enemy_OpposingForce_CWolf";
-        lanceOverride.unitSpawnPointOverrideList[0].unitSpawnPoint.EncounterObjectGuid = UNIT_1_SPAWNPOINT_GUID;
-        lanceOverride.unitSpawnPointOverrideList[1].unitSpawnPoint.EncounterObjectGuid = UNIT_2_SPAWNPOINT_GUID;
-        lanceOverride.unitSpawnPointOverrideList[2].unitSpawnPoint.EncounterObjectGuid = UNIT_3_SPAWNPOINT_GUID;
-        lanceOverride.unitSpawnPointOverrideList[3].unitSpawnPoint.EncounterObjectGuid = UNIT_4_SPAWNPOINT_GUID;
+
+        UnitSpawnPointRef unit1SpawnRef = new UnitSpawnPointRef();
+        unit1SpawnRef.EncounterObjectGuid = UNIT_1_SPAWNPOINT_GUID;
+        lanceOverride.unitSpawnPointOverrideList[0].unitSpawnPoint = unit1SpawnRef;
+
+        UnitSpawnPointRef unit2SpawnRef = new UnitSpawnPointRef();
+        unit2SpawnRef.EncounterObjectGuid = UNIT_2_SPAWNPOINT_GUID;
+        lanceOverride.unitSpawnPointOverrideList[1].unitSpawnPoint = unit2SpawnRef;
+        
+        UnitSpawnPointRef unit3SpawnRef = new UnitSpawnPointRef();
+        unit3SpawnRef.EncounterObjectGuid = UNIT_3_SPAWNPOINT_GUID;
+        lanceOverride.unitSpawnPointOverrideList[2].unitSpawnPoint = unit3SpawnRef;
+        
+        UnitSpawnPointRef unit4SpawnRef = new UnitSpawnPointRef();
+        unit4SpawnRef.EncounterObjectGuid = UNIT_4_SPAWNPOINT_GUID;
+        lanceOverride.unitSpawnPointOverrideList[3].unitSpawnPoint = unit4SpawnRef;
         
         LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
         lanceSpawnerRef.EncounterObjectGuid = LanceGuid;
