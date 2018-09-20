@@ -21,14 +21,14 @@ namespace SpawnVariation.Patches {
 
     static void SetupEncounterPreReqLogic(EncounterLayerParent encounterLayerParent) {
       Contract activeContract = UnityGameInstance.BattleTechGame.Combat.ActiveContract;
-			string encounterObjectGuid = activeContract.encounterObjectGuid;
+      string encounterObjectGuid = activeContract.encounterObjectGuid;
 
-			for (int i = 0; i < encounterLayerParent.EncounterLayerList.Length; i++) {
-				encounterLayerParent.EncounterLayerList[i].gameObject.SetActive(false);
-			}
+      for (int i = 0; i < encounterLayerParent.EncounterLayerList.Length; i++) {
+        encounterLayerParent.EncounterLayerList[i].gameObject.SetActive(false);
+      }
 
-			EncounterLayerData selectedEncounterLayerData = encounterLayerParent.GetLayerByGuid(encounterObjectGuid);
-			selectedEncounterLayerData.gameObject.SetActive(true);
+      EncounterLayerData selectedEncounterLayerData = encounterLayerParent.GetLayerByGuid(encounterObjectGuid);
+      selectedEncounterLayerData.gameObject.SetActive(true);
     }
   }
 }

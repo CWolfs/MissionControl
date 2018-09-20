@@ -22,7 +22,7 @@ namespace SpawnVariation {
     public const string UNIT_3_SPAWNPOINT_GUID = "cf579a54-eab9-4100-a411-969c9fd57289";
     public const string UNIT_4_SPAWNPOINT_GUID = "cc992e8b-cde5-48a7-bcbf-bffbf1b0ff31";
   
-    public string Guid { get; set; }
+    public string LanceGuid  { get; set; }
     public List<string> UnitGuids { get; private set; } = new List<string>();
 
     public static EncounterManager GetInstance() { 
@@ -35,7 +35,7 @@ namespace SpawnVariation {
     }
 
     public void Init() {
-      Guid = System.Guid.NewGuid().ToString();  // TODO: Temporary. Replace this with a lookup
+      LanceGuid = System.Guid.NewGuid().ToString();  // TODO: Temporary. Replace this with a lookup
       UnitGuids.Add(UNIT_1_SPAWNPOINT_GUID);
       UnitGuids.Add(UNIT_2_SPAWNPOINT_GUID);
       UnitGuids.Add(UNIT_3_SPAWNPOINT_GUID);
@@ -54,7 +54,7 @@ namespace SpawnVariation {
         lanceOverride.unitSpawnPointOverrideList[3].unitSpawnPoint.EncounterObjectGuid = UNIT_4_SPAWNPOINT_GUID;
         
         LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
-        lanceSpawnerRef.EncounterObjectGuid = Guid;
+        lanceSpawnerRef.EncounterObjectGuid = LanceGuid;
         lanceOverride.lanceSpawner = lanceSpawnerRef;
 
         teamOverride.lanceOverrideList.Add(lanceOverride);
@@ -72,7 +72,7 @@ namespace SpawnVariation {
       LanceSpawnerGameLogic lanceSpawner = LanceSpawnerFactory.CreateLanceSpawner(
         destroyWholeChunk.gameObject,
         "Lance_Enemy_OpposingForce_CWolf",
-        Guid,
+        LanceGuid,
         TARGET_TEAM_GUID,
         spawnOnActivation,
         SpawnUnitMethodType.InstantlyAtSpawnPoint
