@@ -6,7 +6,7 @@ using BattleTech.Designed;
 
 namespace SpawnVariation.EncounterFramework {
   public class LanceSpawnerFactory {
-    public static LanceSpawnerGameLogic CreateLanceSpawner(GameObject parent, string name, string teamDefinitionGuid, bool spawnUnitsOnActivation,
+    public static LanceSpawnerGameLogic CreateLanceSpawner(GameObject parent, string name, string guid, string teamDefinitionGuid, bool spawnUnitsOnActivation,
       SpawnUnitMethodType spawnMethod) {
 
       GameObject lanceSpawnerGo = new GameObject(name);
@@ -14,6 +14,7 @@ namespace SpawnVariation.EncounterFramework {
       lanceSpawnerGo.transform.localPosition = new Vector3(-674, 300, -280);
 
       LanceSpawnerGameLogic lanceSpawnerGameLogic = lanceSpawnerGo.AddComponent<LanceSpawnerGameLogic>();
+      lanceSpawnerGameLogic.encounterObjectGuid = guid;
       lanceSpawnerGameLogic.teamDefinitionGuid = teamDefinitionGuid;
       lanceSpawnerGameLogic.spawnMethod = spawnMethod;
       lanceSpawnerGameLogic.spawnUnitsOnActivation = spawnUnitsOnActivation;
@@ -26,6 +27,8 @@ namespace SpawnVariation.EncounterFramework {
         z += 25;
       }
 
+      lanceSpawnerGo.AddComponent<SnapToTerrain>();
+
       return lanceSpawnerGameLogic;
     }
 
@@ -37,6 +40,9 @@ namespace SpawnVariation.EncounterFramework {
       UnitSpawnPointGameLogic unitSpawnPoint = unitSpawnPointGo.AddComponent<UnitSpawnPointGameLogic>();
       unitSpawnPoint.defaultDetectionRange = 200f;
       unitSpawnPoint.encounterObjectGuid = encounterObjectGuid;
+
+      unitSpawnPointGo.AddComponent<SnapToTerrain>();
+
       return unitSpawnPoint;
     }
   }

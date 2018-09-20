@@ -66,12 +66,13 @@ namespace SpawnVariation {
     public void CreateDestroyWholeLanceObjective() {
       EncounterLayerData encounterLayerData = SpawnManager.GetInstance().EncounterLayerData;
       DestroyWholeLanceChunk destroyWholeChunk = ChunkFactory.CreateDestroyWholeLanceChunk();
-      destroyWholeChunk.encounterObjectGuid = Guid;
+      destroyWholeChunk.encounterObjectGuid = System.Guid.NewGuid().ToString();
 
       bool spawnOnActivation = true;
       LanceSpawnerGameLogic lanceSpawner = LanceSpawnerFactory.CreateLanceSpawner(
         destroyWholeChunk.gameObject,
         "Lance_Enemy_OpposingForce_CWolf",
+        Guid,
         TARGET_TEAM_GUID,
         spawnOnActivation,
         SpawnUnitMethodType.InstantlyAtSpawnPoint
@@ -84,7 +85,7 @@ namespace SpawnVariation {
       DestroyLanceObjective objective = ObjectiveFactory.CreateDestroyLanceObjective(
         destroyWholeChunk.gameObject,
         lanceSpawnerRef,
-        "Destroy Enemy Units",
+        "Destroy CWolf Guard Units",
         showProgress,
         "[percentageComplete]",
         "The primary objective to destroy the enemy lance",
