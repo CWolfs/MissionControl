@@ -22,7 +22,7 @@ namespace SpawnVariation {
     public const string UNIT_3_SPAWNPOINT_GUID = "cf579a54-eab9-4100-a411-969c9fd57289";
     public const string UNIT_4_SPAWNPOINT_GUID = "cc992e8b-cde5-48a7-bcbf-bffbf1b0ff31";
   
-    public string LanceGuid  { get; set; }
+    public string LanceGuid  { get; private set; }
     public List<string> UnitGuids { get; private set; } = new List<string>();
 
     public static EncounterManager GetInstance() { 
@@ -49,21 +49,12 @@ namespace SpawnVariation {
 
         lanceOverride.name = "Lance_Enemy_OpposingForce_CWolf";
 
-        UnitSpawnPointRef unit1SpawnRef = new UnitSpawnPointRef();
-        unit1SpawnRef.EncounterObjectGuid = UNIT_1_SPAWNPOINT_GUID;
-        lanceOverride.unitSpawnPointOverrideList[0].unitSpawnPoint = unit1SpawnRef;
-
-        UnitSpawnPointRef unit2SpawnRef = new UnitSpawnPointRef();
-        unit2SpawnRef.EncounterObjectGuid = UNIT_2_SPAWNPOINT_GUID;
-        lanceOverride.unitSpawnPointOverrideList[1].unitSpawnPoint = unit2SpawnRef;
-        
-        UnitSpawnPointRef unit3SpawnRef = new UnitSpawnPointRef();
-        unit3SpawnRef.EncounterObjectGuid = UNIT_3_SPAWNPOINT_GUID;
-        lanceOverride.unitSpawnPointOverrideList[2].unitSpawnPoint = unit3SpawnRef;
-        
-        UnitSpawnPointRef unit4SpawnRef = new UnitSpawnPointRef();
-        unit4SpawnRef.EncounterObjectGuid = UNIT_4_SPAWNPOINT_GUID;
-        lanceOverride.unitSpawnPointOverrideList[3].unitSpawnPoint = unit4SpawnRef;
+        for (int i = 0; i < UnitGuids.Count; i++) {
+          string unitGuid = UnitGuids[i];
+          UnitSpawnPointRef unitSpawnRef = new UnitSpawnPointRef();
+          unitSpawnRef.EncounterObjectGuid = unitGuid;
+          lanceOverride.unitSpawnPointOverrideList[i].unitSpawnPoint = unitSpawnRef;
+        }
         
         LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
         lanceSpawnerRef.EncounterObjectGuid = LanceGuid;
