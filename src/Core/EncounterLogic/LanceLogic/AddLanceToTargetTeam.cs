@@ -11,11 +11,11 @@ using SpawnVariation.Rules;
 using SpawnVariation.Utils;
 
 namespace SpawnVariation.Logic {
-  public class AddLanceToTargetLance : LanceLogic {
+  public class AddLanceToTargetTeam : LanceLogic {
     private string lanceGuid;
     private List<string> unitGuids;
 
-    public AddLanceToTargetLance(string lanceGuid, List<string> unitGuids) {
+    public AddLanceToTargetTeam(string lanceGuid, List<string> unitGuids) {
       this.lanceGuid = lanceGuid;
       this.unitGuids = unitGuids;
     }
