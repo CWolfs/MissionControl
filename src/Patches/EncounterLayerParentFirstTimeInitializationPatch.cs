@@ -9,7 +9,7 @@ using BattleTech;
 using BattleTech.Framework;
 
 /*
-  This patch sets the active contract type and starts any manipulation on the objectives
+  This patch sets the active contract type and starts any manipulation on the objectives in the game scene.
   This is called after: EncounterLayerParentFirstTimeInitializationPatch
 */
 namespace SpawnVariation.Patches {
@@ -17,10 +17,8 @@ namespace SpawnVariation.Patches {
   public class EncounterLayerParentFirstTimeInitializationPatch {
     static void Prefix(EncounterLayerParent __instance) {
       Main.Logger.Log($"[EncounterLayerParentFirstTimeInitializationPatch Prefix] Patching FirstTimeInitialization");
-      EncounterLayerData encounterLayerData =  __instance.GetSelectedEncounterLayerData();      
       SpawnManager spawnManager = SpawnManager.GetInstance();
-      bool supportedContractType = spawnManager.SetContractType(encounterLayerData.supportedContractType);
-      if (supportedContractType) spawnManager.UpdateSpawns();
+      if (spawnManager.IsContractValid) spawnManager.RunEncounterRules();
     }
   }
 }

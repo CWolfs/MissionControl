@@ -5,9 +5,15 @@ using System.Collections.Generic;
 
 using BattleTech;
 
+using SpawnVariation.Rules;
+
 namespace SpawnVariation.Logic {
-  public class SpawnLanceLogic : SpawnLogic {
-    public SpawnLanceLogic() : base() { }
+  public abstract class SpawnLanceLogic : SpawnLogic {
+    protected EncounterRule EncounterRule { get; set; }
+
+    public SpawnLanceLogic(EncounterRule encounterRule) : base() {
+      EncounterRule = encounterRule;
+    }
 
     protected bool AreLanceMemberSpawnsValid(GameObject lance, GameObject orientationTarget) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;

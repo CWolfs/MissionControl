@@ -6,10 +6,16 @@ using System.Collections.Generic;
 using BattleTech;
 
 namespace SpawnVariation.Logic {
-  public class SpawnLogic {
+  public abstract class SpawnLogic : LogicBlock {
     public enum LookDirection { TOWARDS_TARGET, AWAY_FROM_TARGET };
 
-    public SpawnLogic() { }
+    public SpawnLogic() {
+      this.Type = LogicType.SCENE_MANIPULATION;
+    }
+
+    public abstract void Run();
+
+    protected abstract void GetObjectReferences();
 
     protected void RotateToTarget(GameObject focus, GameObject target) {
       Vector3 targetPosition = target.transform.position;

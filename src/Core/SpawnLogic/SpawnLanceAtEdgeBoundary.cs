@@ -6,18 +6,29 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.Designed;
 
+using SpawnVariation.Rules;
 using SpawnVariation.Utils;
 
 namespace SpawnVariation.Logic {
   public class SpawnLanceAtEdgeOfBoundary : SpawnLanceLogic {
+    private string lanceKey;
+    private string orientationTargetKey;
+
+    private GameObject lance;
+    private GameObject orientationTarget;
+    private RectExtensions.RectEdge edge = RectExtensions.RectEdge.ANY;
+
     private int AttemptCount { get; set; } = 0;
 
-    public SpawnLanceAtEdgeOfBoundary(GameObject lance, GameObject orientationTarget) : base() {
-      Spawn(lance, orientationTarget, RectExtensions.RectEdge.ANY);
+    public SpawnLanceAtEdgeOfBoundary(EncounterRule encounterRule, string lanceKey, string orientationTargetKey) : base(encounterRule) {
+      this.lanceKey = lanceKey;
+      this.orientationTargetKey = orientationTargetKey;
     }
 
-    public void Spawn(GameObject lance, GameObject orientationTarget, RectExtensions.RectEdge edge) {
+    public override void Run() {
+      GetObjectReferences();
       Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] For {lance.name}");
+
       AttemptCount++;
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       SpawnManager spawnManager = SpawnManager.GetInstance();
@@ -26,8 +37,6 @@ namespace SpawnVariation.Logic {
       EncounterBoundaryChunkGameLogic chunkBoundary = chunkBoundaryRect.GetComponent<EncounterBoundaryChunkGameLogic>();
       EncounterBoundaryRectGameLogic boundaryLogic = boundary.GetComponent<EncounterBoundaryRectGameLogic>();
       Rect boundaryRec = chunkBoundary.GetEncounterBoundaryRectBounds();
-
-      // Vector3 xzEdge = boundaryRec.CalculateRandomXZEdge(boundary.transform.position);
       RectEdgePosition xzEdge = boundaryRec.CalculateRandomXZEdge(boundary.transform.position, edge);
 
       Vector3 lancePosition = lance.transform.position;
@@ -39,12 +48,23 @@ namespace SpawnVariation.Logic {
 
       if (!AreLanceMemberSpawnsValid(lance, orientationTarget)) {
         if (AttemptCount > 10) {  // Attempt to spawn on the selected edge. If it's not possible, select another edge
-          Spawn(lance, orientationTarget, RectExtensions.RectEdge.ANY);
+          edge = RectExtensions.RectEdge.ANY;
+          Run();
         } else {
-          Spawn(lance, orientationTarget, xzEdge.Edge);
+          edge = xzEdge.Edge;
+          Run();
         }
       } else {
         Main.Logger.Log("[SpawnLanceAtEdgeOfBoundary] Lance spawn complete");
+      }
+    }
+
+    protected override void GetObjectReferences() {
+      this.EncounterRule.ObjectLookup.TryGetValue(lanceKey, out lance);
+      this.EncounterRule.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
+
+      if (lance == null || orientationTarget == null) {
+        Main.Logger.LogError("[SpawnLanceAroundTarget] Object referneces are null");
       }
     }
   }

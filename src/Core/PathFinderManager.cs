@@ -43,6 +43,7 @@ namespace SpawnVariation {
     }
 
     public void RequestPathFinderMech() {
+      Main.Logger.Log("[PathFinderManager] Requesting path finder mech");
       if (pathFinderMech == null) Init();
       UnityGameInstance.BattleTechGame.DataManager.RequestNewResource(BattleTechResourceType.Prefab, pathFinderMech.MechDef.Chassis.PrefabIdentifier, null);
       UnityGameInstance.BattleTechGame.DataManager.ProcessRequests();
@@ -66,7 +67,8 @@ namespace SpawnVariation {
     }
 
     public void Reset() {
-      GameObject.Destroy(pathFinderMech.GameRep.gameObject);
+      GameObject pathFinderGo = pathFinderMech.GameRep.gameObject;
+      if (pathFinderGo) GameObject.Destroy(pathFinderGo);
     }
   }
 }

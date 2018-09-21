@@ -8,26 +8,31 @@ using BattleTech;
 using SpawnVariation.Logic;
 
 namespace SpawnVariation.Rules {
-  public class DestroyBaseEncounterRules : EncounterRules {
+  public class DestroyBaseEncounterRules : EncounterRule {
     private GameObject PlotBase { get; set; }
-    private GameObject LanceEnemyWave1 { get; set; }
-    private GameObject LanceEnemyWave2 { get; set; }
-    private GameObject LanceEnemyWave3 { get; set; } 
 
     public DestroyBaseEncounterRules() : base() {
+      Build();
+    }
+
+    public void Build() {
       Main.Logger.Log("[DestroyBaseEncounterRules] Setting up rule object references");
-      PlotBase = GameObject.Find("Ravine Position");
+      BuildSpawns();
     }
 
-    public override void UpdateSpawns() {
-      Main.Logger.Log("[DestroyBaseEncounterRules] Updating spawns");
-      UpdatePlayerLanceSpawn();
+    public void BuildSpawns() {
+      Main.Logger.Log("[DestroyBaseEncounterRules] Building spawns rules");
+      BuildPlayerLanceSpawn();
     }
 
-    private void UpdatePlayerLanceSpawn() {
-      int numberOfAdditionalEnemyLances = Main.Settings.numberOfAdditionalEnemyLances;
-      Main.Logger.Log($"[DestroyBaseEncounterRules] Add {numberOfAdditionalEnemyLances} extra enemy lances");
-      new SpawnLanceAtEdgeOfBoundary(SpawnerPlayerLanceGo, PlotBase);
+    private void BuildPlayerLanceSpawn() {
+      // int numberOfAdditionalEnemyLances = Main.Settings.numberOfAdditionalEnemyLances;
+      // Main.Logger.Log($"[DestroyBaseEncounterRules] Add {numberOfAdditionalEnemyLances} extra enemy lances");
+      EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "PlotBase"));
+    }
+
+    public override void LinkObjectReferences() {
+      ObjectLookup.Add("PlotBase", GameObject.Find("Ravine Position"));
     }
   }
 }

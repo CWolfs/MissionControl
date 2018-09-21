@@ -8,33 +8,38 @@ using BattleTech;
 using SpawnVariation.Logic;
 
 namespace SpawnVariation.Rules {
-  public class DefendBaseEncounterRules : EncounterRules {
+  public class DefendBaseEncounterRules : EncounterRule {
     private GameObject PlotBase { get; set; }
-    private GameObject LanceEnemyWave1 { get; set; }
-    private GameObject LanceEnemyWave2 { get; set; }
-    private GameObject LanceEnemyWave3 { get; set; } 
 
     public DefendBaseEncounterRules() : base() {
+      Build();
+    }
+
+    public void Build() {
       Main.Logger.Log("[DefendBaseEncounterRules] Setting up rule object references");
-      PlotBase = GameObject.Find("Central Basin Base");
-      LanceEnemyWave1 = GameObject.Find("Lance_Enemy_Wave1Attackers");
-      LanceEnemyWave2 = GameObject.Find("Lance_Enemy_Wave2Attackers");
-      LanceEnemyWave3 = GameObject.Find("Lance_Enemy_Wave3Attackers");
+      BuildSpawns();
     }
 
-    public override void UpdateSpawns() {
-      Main.Logger.Log("[DefendBaseEncounterRules] Updating spawns");
-      UpdatePlayerLanceSpawn();
+    public void BuildSpawns() {
+      Main.Logger.Log("[DefendBaseEncounterRules] Building spawns rules");
+      BuildPlayerLanceSpawn();
     }
 
-    private void UpdatePlayerLanceSpawn() {
-      new SpawnLanceMembersAroundTarget(SpawnerPlayerLanceGo, PlotBase, SpawnLogic.LookDirection.AWAY_FROM_TARGET, 100f, 200f);
-      new SpawnLanceAroundTarget(LanceEnemyWave1, PlotBase, SpawnLogic.LookDirection.TOWARDS_TARGET, 300f, 500f);
-      new SpawnLanceAtEdgeOfBoundary(LanceEnemyWave2, PlotBase);
-      new SpawnLanceAtEdgeOfBoundary(LanceEnemyWave3, PlotBase);
-      new SpawnLanceMembersAroundTarget(LanceEnemyWave1, LanceEnemyWave1, PlotBase, SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 200f);
-      new SpawnLanceMembersAroundTarget(LanceEnemyWave2, LanceEnemyWave2, SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 200f);
-      new SpawnLanceMembersAroundTarget(LanceEnemyWave3, LanceEnemyWave3, SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 200f);
+    private void BuildPlayerLanceSpawn() {
+      EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, "SpawnerPlayerLance", "PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 100f, 200f));
+      EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerLanceEnemyWave1", "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET, 300f, 500f));
+      EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerLanceEnemyWave2", "PlotBase"));
+      EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerLanceEnemyWave3", "PlotBase"));
+      EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, "SpawnerLanceEnemyWave1", "SpawnerLanceEnemyWave1", "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 200f));
+      EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, "SpawnerLanceEnemyWave2", "SpawnerLanceEnemyWave2", SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 200f));
+      EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, "SpawnerLanceEnemyWave3", "SpawnerLanceEnemyWave3", SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 200f));
+    }
+
+    public override void LinkObjectReferences() {
+      ObjectLookup.Add("PlotBase", GameObject.Find("Central Basin Base"));
+      ObjectLookup.Add("SpawnerLanceEnemyWave1", GameObject.Find("Lance_Enemy_Wave1Attackers"));
+      ObjectLookup.Add("SpawnerLanceEnemyWave2", GameObject.Find("Lance_Enemy_Wave2Attackers"));
+      ObjectLookup.Add("SpawnerLanceEnemyWave3", GameObject.Find("Lance_Enemy_Wave3Attackers"));
     }
   }
 }
