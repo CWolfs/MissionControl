@@ -8,6 +8,8 @@ using Harmony;
 using BattleTech;
 using BattleTech.Framework;
 
+using SpawnVariation.Logic;
+
 /*
   This patch sets the active contract type and starts any manipulation on the objectives in the game scene.
   This is called after: EncounterLayerParentFirstTimeInitializationPatch
@@ -18,7 +20,7 @@ namespace SpawnVariation.Patches {
     static void Prefix(EncounterLayerParent __instance) {
       Main.Logger.Log($"[EncounterLayerParentFirstTimeInitializationPatch Prefix] Patching FirstTimeInitialization");
       SpawnManager spawnManager = SpawnManager.GetInstance();
-      if (spawnManager.IsContractValid) spawnManager.RunEncounterRules();
+      if (spawnManager.IsContractValid) spawnManager.RunEncounterRules(LogicBlock.LogicType.SCENE_MANIPULATION);
     }
   }
 }

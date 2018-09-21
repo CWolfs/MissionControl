@@ -13,8 +13,6 @@ namespace SpawnVariation.Logic {
       this.Type = LogicType.SCENE_MANIPULATION;
     }
 
-    public abstract void Run();
-
     protected abstract void GetObjectReferences();
 
     protected void RotateToTarget(GameObject focus, GameObject target) {

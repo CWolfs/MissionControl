@@ -21,18 +21,21 @@ namespace SpawnVariation.Rules {
 
     public abstract void LinkObjectReferences();
 
-    public virtual void Run(LogicBlock.LogicType type) {
+    public virtual void Run(LogicBlock.LogicType type, RunPayload payload) {
       IEnumerable<LogicBlock> logicBlocks = EncounterLogic.Where(logic => logic.Type == type);
 
       switch(type) {
         case LogicBlock.LogicType.RESOURCE_REQUEST:
-          RunResourceRequestLogic(logicBlocks);
+          RunGeneralLogic(logicBlocks, payload);
+          break;
+        case LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION:
+          RunGeneralLogic(logicBlocks, payload);
           break;
         case LogicBlock.LogicType.ENCOUNTER_MANIPULATION:
-          RunEncounterManipulationLogic(logicBlocks);
+          RunGeneralLogic(logicBlocks, payload);
           break;
         case LogicBlock.LogicType.SCENE_MANIPULATION:
-          RunSceneManipulationLogic(logicBlocks);
+          RunSceneManipulationLogic(logicBlocks, payload);
           break;
         default:
           Main.Logger.LogError($"[EncounterRules] Unknown logic type '{type}'");
@@ -40,15 +43,13 @@ namespace SpawnVariation.Rules {
       }
     }
 
-    private void RunResourceRequestLogic(IEnumerable<LogicBlock> logicBlocks) {
-       Main.Logger.LogError($"[EncounterRules] RunResourceRequest logic processing not yet implemented");
+    private void RunGeneralLogic(IEnumerable<LogicBlock> logicBlocks, RunPayload payload) {
+      foreach (LogicBlock logicBlock in logicBlocks) {
+        logicBlock.Run(payload);
+      }
     }
 
-    private void RunEncounterManipulationLogic(IEnumerable<LogicBlock> logicBlocks) {
-      Main.Logger.LogError($"[EncounterRules] RunEncounterManipulation logic processing not yet implemented");
-    }
-
-    private void RunSceneManipulationLogic(IEnumerable<LogicBlock> logicBlocks) {
+    private void RunSceneManipulationLogic(IEnumerable<LogicBlock> logicBlocks, RunPayload payload) {
       EncounterLayerGo = SpawnManager.GetInstance().EncounterLayerGameObject;
       ChunkPlayerLanceGo = EncounterLayerGo.transform.Find("Chunk_PlayerLance").gameObject;
       SpawnerPlayerLanceGo = ChunkPlayerLanceGo.transform.Find("Spawner_PlayerLance").gameObject;
@@ -58,7 +59,7 @@ namespace SpawnVariation.Rules {
       LinkObjectReferences();
 
       foreach (SpawnLogic spawnLogic in logicBlocks) {
-        spawnLogic.Run();
+        spawnLogic.Run(payload);
       }
     }
   }

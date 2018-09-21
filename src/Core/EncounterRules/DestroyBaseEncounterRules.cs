@@ -17,17 +17,18 @@ namespace SpawnVariation.Rules {
 
     public void Build() {
       Main.Logger.Log("[DestroyBaseEncounterRules] Setting up rule object references");
-      BuildSpawns();
+      BuildAdditionalLances();
+      BuildSpawn();
     }
 
-    public void BuildSpawns() {
-      Main.Logger.Log("[DestroyBaseEncounterRules] Building spawns rules");
-      BuildPlayerLanceSpawn();
+    private void BuildAdditionalLances() {
+      Main.Logger.Log("[DestroyBaseEncounterRules] Building additional lance rules");
+      EncounterLogic.Add(new AddLanceToTargetLance());
+      EncounterLogic.Add(new AddDestroyWholeUnitChunk());
     }
 
-    private void BuildPlayerLanceSpawn() {
-      // int numberOfAdditionalEnemyLances = Main.Settings.numberOfAdditionalEnemyLances;
-      // Main.Logger.Log($"[DestroyBaseEncounterRules] Add {numberOfAdditionalEnemyLances} extra enemy lances");
+    private void BuildSpawn() {
+      Main.Logger.Log("[DestroyBaseEncounterRules] Building player spawn rule");
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "PlotBase"));
     }
 

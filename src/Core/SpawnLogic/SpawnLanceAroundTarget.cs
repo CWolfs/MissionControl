@@ -33,7 +33,7 @@ namespace SpawnVariation.Logic {
       this.lookDirection = lookDirection;
     }
 
-    public override void Run() {
+    public override void Run(RunPayload payload) {
       GetObjectReferences();
       Main.Logger.Log($"[SpawnLanceAroundTarget] For {lance.name}");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
@@ -51,7 +51,7 @@ namespace SpawnVariation.Logic {
       }
 
       if (!AreLanceMemberSpawnsValid(lance, orientationTarget)) {
-        Run();
+        Run(payload);
       } else {
         Main.Logger.Log("[SpawnLanceAroundTarget] Lance spawn complete");
       }

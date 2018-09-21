@@ -9,6 +9,7 @@ using BattleTech;
 using BattleTech.Framework;
 
 using SpawnVariation;
+using SpawnVariation.Logic;
 
 /*
   This patch is used to inject a custom lance into the target team.
@@ -20,6 +21,8 @@ namespace SpawnVariation.Patches {
     static void Prefix(ContractOverride __instance, TeamOverride ___targetTeam) {
       Main.Logger.Log($"[ContractOveridePatch Prefix] Patching GenerateUnits");
       EncounterManager.GetInstance().AddLanceOverrideToTeamOverride(___targetTeam);
+      RunPayload payload = new ContractOverridePayload(__instance);
+      SpawnManager.GetInstance().RunEncounterRules(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
     }
   }
 }

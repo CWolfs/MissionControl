@@ -25,7 +25,7 @@ namespace SpawnVariation.Logic {
       this.orientationTargetKey = orientationTargetKey;
     }
 
-    public override void Run() {
+    public override void Run(RunPayload payload) {
       GetObjectReferences();
       Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] For {lance.name}");
 
@@ -49,10 +49,10 @@ namespace SpawnVariation.Logic {
       if (!AreLanceMemberSpawnsValid(lance, orientationTarget)) {
         if (AttemptCount > 10) {  // Attempt to spawn on the selected edge. If it's not possible, select another edge
           edge = RectExtensions.RectEdge.ANY;
-          Run();
+          Run(payload);
         } else {
           edge = xzEdge.Edge;
-          Run();
+          Run(payload);
         }
       } else {
         Main.Logger.Log("[SpawnLanceAtEdgeOfBoundary] Lance spawn complete");

@@ -39,7 +39,7 @@ namespace SpawnVariation.Logic {
       maxDistanceFromTarget = maxDistance;
     }
 
-    public override void Run() {
+    public override void Run(RunPayload payload) {
       GetObjectReferences();
       Main.Logger.Log($"[SpawnLanceMembersAroundTarget] For {lance.name}");
   

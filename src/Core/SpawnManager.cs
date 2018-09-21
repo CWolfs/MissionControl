@@ -77,8 +77,29 @@ namespace SpawnVariation {
       EncounterRules = encounterRules;
     }
 
-    public void RunEncounterRules() {
-      EncounterRules.Run(LogicBlock.LogicType.SCENE_MANIPULATION);
+    public void RunEncounterRules(LogicBlock.LogicType type, RunPayload payload = null) {
+      switch (type) {
+        case LogicBlock.LogicType.RESOURCE_REQUEST: {
+          EncounterRules.Run(LogicBlock.LogicType.RESOURCE_REQUEST, payload);
+          break;
+        }
+        case LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION: {
+          EncounterRules.Run(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
+          break;
+        }
+        case LogicBlock.LogicType.ENCOUNTER_MANIPULATION: {
+          EncounterRules.Run(LogicBlock.LogicType.ENCOUNTER_MANIPULATION, payload);
+          break; 
+        }
+        case LogicBlock.LogicType.SCENE_MANIPULATION: {
+          EncounterRules.Run(LogicBlock.LogicType.SCENE_MANIPULATION, payload);
+          break;
+        }
+        default: {
+          Main.Logger.LogError($"[RunEncounterRules] Unknown type of '{type.ToString()}'");
+          break;
+        }
+      }
     }
 
     private EncounterLayerData GetActiveEncounter() {
