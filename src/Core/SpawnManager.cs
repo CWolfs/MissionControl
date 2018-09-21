@@ -15,24 +15,23 @@ namespace SpawnVariation {
     private static SpawnManager instance;
 
     public ContractType CurrentContractType { get; private set; } = ContractType.INVALID_UNSET;
-    public EncounterRules EncounterRules { get; private set; }
+    public EncounterRule EncounterRules { get; private set; }
     public GameObject EncounterLayerParentGameObject { get; private set; }
     public EncounterLayerParent EncounterLayerParent { get; private set; }
     public GameObject EncounterLayerGameObject { get; private set; }
     public EncounterLayerData EncounterLayerData { get; private set; }
     public HexGrid HexGrid { get; private set; }
 
+    public bool IsContractValid { get; private set; } = false;
+
     public static SpawnManager GetInstance() { 
       if (instance == null) instance = new SpawnManager();
-      if (!instance.EncounterLayerParentGameObject) instance.Init();
       return instance;
     }
 
-    private SpawnManager() {
-      Init();
-    }
+    private SpawnManager() { }
 
-    public void Init() {
+    public void InitSceneData() {
       CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
 
       if (!EncounterLayerParentGameObject) EncounterLayerParentGameObject = GameObject.Find("EncounterLayerParent");
@@ -52,31 +51,34 @@ namespace SpawnVariation {
         case ContractType.Rescue: {
           Main.Logger.Log($"[SpawnManager] Setting contract type to 'Rescue'");
           SetEncounterRules(new RescueEncounterRules());
-          return true;
+          break;
         }
         case ContractType.DefendBase: {
           Main.Logger.Log($"[SpawnManager] Setting contract type to 'DefendBase'");
           SetEncounterRules(new DefendBaseEncounterRules());
-          return true;
+          break;
         }
         case ContractType.DestroyBase: {
           Main.Logger.Log($"[SpawnManager] Setting contract type to 'DestroyBase'");
           SetEncounterRules(new DestroyBaseEncounterRules());
-          return true;  
+          break;
         }
         default: {
           Main.Logger.LogError($"[SpawnManager] Unknown contract / encounter type of {contractType}");
           return false;
         }
       }
+
+      IsContractValid = true;
+      return true;
     }
 
-    private void SetEncounterRules(EncounterRules encounterRules) {
+    private void SetEncounterRules(EncounterRule encounterRules) {
       EncounterRules = encounterRules;
     }
 
-    public void UpdateSpawns() {
-      EncounterRules.UpdateSpawns();
+    public void RunEncounterRules() {
+      EncounterRules.Run(LogicBlock.LogicType.SCENE_MANIPULATION);
     }
 
     private EncounterLayerData GetActiveEncounter() {

@@ -6,24 +6,35 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.Designed;
 
+using SpawnVariation.Rules;
 using SpawnVariation.Utils;
 
 namespace SpawnVariation.Logic {
   public class SpawnLanceAroundTarget : SpawnLanceLogic {
+    private string lanceKey;
+    private string orientationTargetKey;
+
+    private GameObject lance;
+    private GameObject orientationTarget;
     private float minDistanceFromTarget = 50f;
     private float maxDistanceFromTarget = 150f;
+    private LookDirection lookDirection = LookDirection.TOWARDS_TARGET;
 
-    public SpawnLanceAroundTarget(GameObject lance, GameObject orientationTarget, LookDirection lookDirection) : base() {
-      Spawn(lance, orientationTarget, lookDirection);
+    public SpawnLanceAroundTarget(EncounterRule encounterRule, string lanceKey, string orientationTargetKey, LookDirection lookDirection) : base(encounterRule) {
+      this.lanceKey = lanceKey;
+      this.orientationTargetKey = orientationTargetKey;
+      this.lookDirection = lookDirection;
     }
 
-    public SpawnLanceAroundTarget(GameObject lance, GameObject orientationTarget, LookDirection lookDirection, float minDistance, float maxDistance) : base() {
-      minDistanceFromTarget = minDistance;
-      maxDistanceFromTarget = maxDistance;
-      Spawn(lance, orientationTarget, lookDirection);
+    public SpawnLanceAroundTarget(EncounterRule encounterRule, string lanceKey, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) : base(encounterRule) {
+      this.lanceKey = lanceKey;
+      this.minDistanceFromTarget = minDistance;
+      this.maxDistanceFromTarget = maxDistance;
+      this.lookDirection = lookDirection;
     }
 
-    public void Spawn(GameObject lance, GameObject orientationTarget, LookDirection lookDirection) {
+    public override void Run() {
+      GetObjectReferences();
       Main.Logger.Log($"[SpawnLanceAroundTarget] For {lance.name}");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       SpawnManager spawnManager = SpawnManager.GetInstance();
@@ -40,9 +51,18 @@ namespace SpawnVariation.Logic {
       }
 
       if (!AreLanceMemberSpawnsValid(lance, orientationTarget)) {
-        Spawn(lance, orientationTarget, lookDirection);
+        Run();
       } else {
         Main.Logger.Log("[SpawnLanceAroundTarget] Lance spawn complete");
+      }
+    }
+
+    protected override void GetObjectReferences() {
+      this.EncounterRule.ObjectLookup.TryGetValue(lanceKey, out lance);
+      this.EncounterRule.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
+
+      if (lance == null || orientationTarget == null) {
+        Main.Logger.LogError("[SpawnLanceAroundTarget] Object referneces are null");
       }
     }
   }

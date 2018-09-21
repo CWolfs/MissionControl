@@ -17,6 +17,7 @@ namespace SpawnVariation.Patches {
   public class EncounterLayerParentInitializeContractPatch {
     static void Prefix(EncounterLayerParent __instance) {
       Main.Logger.Log($"[EncounterLayerParentInitializeContractPatch Prefix] Patching InitializeContract");
+      SpawnManager.GetInstance().InitSceneData();
       EncounterManager encounterManager = EncounterManager.GetInstance();
       encounterManager.CreateDestroyWholeLanceObjective();
     }

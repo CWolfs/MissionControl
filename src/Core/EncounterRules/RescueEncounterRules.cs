@@ -8,21 +8,27 @@ using BattleTech;
 using SpawnVariation.Logic;
 
 namespace SpawnVariation.Rules {
-  public class RescueEncounterRules : EncounterRules {
-    private GameObject OccupyRegion1VIPGo { get; set; }
-
+  public class RescueEncounterRules : EncounterRule {
     public RescueEncounterRules() : base() {
+      Build();
+    }
+
+    public void Build() {
       Main.Logger.Log("[RescueEncounterRules] Setting up rule object references");
-      OccupyRegion1VIPGo = EncounterLayerGo.transform.Find("Chunk_OccupyRegion_1_VIP").gameObject;
+      BuildSpawns();
     }
 
-    public override void UpdateSpawns() {
-      Main.Logger.Log("[RescueEncounterRules] Updating spawns");
-      UpdatePlayerLanceSpawn();
+    public void BuildSpawns() {
+      Main.Logger.Log("[RescueEncounterRules] Building spawns rules");
+      BuildPlayerLanceSpawn();
     }
 
-    private void UpdatePlayerLanceSpawn() {
-      new SpawnLanceAtEdgeOfBoundary(SpawnerPlayerLanceGo, OccupyRegion1VIPGo);
+    private void BuildPlayerLanceSpawn() {
+      EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "OccupyRegion1VIPGo"));
+    }
+
+    public override void LinkObjectReferences() {
+      ObjectLookup.Add("OccupyRegion1VIPGo", EncounterLayerGo.transform.Find("Chunk_OccupyRegion_1_VIP").gameObject);
     }
   }
 }
