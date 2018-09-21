@@ -26,7 +26,7 @@ namespace SpawnVariation.Rules {
       int numberOfUnitsInLance = 4;
       string lanceGuid = Guid.NewGuid().ToString();
       List<string> unitGuids = GenerateGuids(numberOfUnitsInLance);
-      string targetTeamGuid = "be77cadd-e245-4240-a93e-b99cc98902a5";
+      string targetTeamGuid = EMPLOYER_TEAM_ID;
 
       EncounterLogic.Add(new AddLanceToTargetLance(lanceGuid, unitGuids));
       EncounterLogic.Add(new AddDestroyWholeUnitChunk(targetTeamGuid, lanceGuid, unitGuids));

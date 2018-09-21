@@ -10,6 +10,11 @@ using SpawnVariation.Logic;
 
 namespace SpawnVariation.Rules {
   public abstract class EncounterRule {
+    public const string PLAYER_TEAM_ID = "bf40fd39-ccf9-47c4-94a6-061809681140";
+    public const string EMPLOYER_TEAM_ID = "ecc8d4f2-74b4-465d-adf6-84445e5dfc230";
+    public const string TARGET_TEAM_ID = "be77cadd-e245-4240-a93e-b99cc98902a5";
+    public const string TARGETS_ALLY_TEAM_ID = "31151ed6-cfc2-467e-98c4-9ae5bea784cf";
+
     protected GameObject EncounterLayerGo { get; set; }
     protected GameObject ChunkPlayerLanceGo { get; set; }
     protected GameObject SpawnerPlayerLanceGo { get; set; }
