@@ -62,7 +62,7 @@ namespace SpawnVariation.Logic {
       this.EncounterRule.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
 
       if (lance == null || orientationTarget == null) {
-        Main.Logger.LogError("[SpawnLanceAroundTarget] Object referneces are null");
+        Main.Logger.LogError("[SpawnLanceAroundTarget] Object references are null");
       }
     }
   }

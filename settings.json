@@ -1,3 +1,4 @@
 {
-  "NumberOfAdditionalEnemyLances": 1,
+  "MinNumberOfAdditionalEnemyLances": 1,
+  "MaxNumberOfAdditionalEnemyLances": 3,
 }

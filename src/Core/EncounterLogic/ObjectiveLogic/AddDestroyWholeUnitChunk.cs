@@ -17,12 +17,14 @@ namespace SpawnVariation.Logic {
     private string teamGuid;
     private string lanceGuid;
     private List<string> unitGuids;
+    private string spawnerName;
     private string objectiveLabel;
 
-    public AddDestroyWholeUnitChunk(string teamGuid, string lanceGuid, List<string> unitGuids, string objectiveLabel) {
+    public AddDestroyWholeUnitChunk(string teamGuid, string lanceGuid, List<string> unitGuids, string spawnerName, string objectiveLabel) {
       this.teamGuid = teamGuid;
       this.lanceGuid = lanceGuid;
       this.unitGuids = unitGuids;
+      this.spawnerName = spawnerName;
       this.objectiveLabel = objectiveLabel;
     }
 
@@ -35,7 +37,7 @@ namespace SpawnVariation.Logic {
       bool spawnOnActivation = true;
       LanceSpawnerGameLogic lanceSpawner = LanceSpawnerFactory.CreateLanceSpawner(
         destroyWholeChunk.gameObject,
-        "Lance_Enemy_OpposingForce",
+        spawnerName,
         lanceGuid,
         teamGuid,
         spawnOnActivation,
@@ -50,6 +52,7 @@ namespace SpawnVariation.Logic {
       DestroyLanceObjective objective = ObjectiveFactory.CreateDestroyLanceObjective(
         destroyWholeChunk.gameObject,
         lanceSpawnerRef,
+        lanceGuid,
         objectiveLabel,
         showProgress,
         ProgressFormat.PERCENTAGE_COMPLETE,
