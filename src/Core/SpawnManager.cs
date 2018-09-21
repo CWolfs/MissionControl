@@ -17,12 +17,14 @@ namespace SpawnVariation {
     public ContractType CurrentContractType { get; private set; } = ContractType.INVALID_UNSET;
     public EncounterRules EncounterRules { get; private set; }
     public GameObject EncounterLayerParentGameObject { get; private set; }
+    public EncounterLayerParent EncounterLayerParent { get; private set; }
     public GameObject EncounterLayerGameObject { get; private set; }
     public EncounterLayerData EncounterLayerData { get; private set; }
     public HexGrid HexGrid { get; private set; }
 
     public static SpawnManager GetInstance() { 
       if (instance == null) instance = new SpawnManager();
+      if (!instance.EncounterLayerParentGameObject) instance.Init();
       return instance;
     }
 
@@ -34,15 +36,16 @@ namespace SpawnVariation {
       CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
 
       if (!EncounterLayerParentGameObject) EncounterLayerParentGameObject = GameObject.Find("EncounterLayerParent");
-      EncounterLayerGameObject = GetActiveEncounterGameObject();
-      EncounterLayerData = EncounterLayerGameObject.GetComponent<EncounterLayerData>();
+      EncounterLayerParent = EncounterLayerParentGameObject.GetComponent<EncounterLayerParent>();
+
+      EncounterLayerData = GetActiveEncounter();
+      EncounterLayerGameObject = EncounterLayerData.gameObject;
       EncounterLayerData.CalculateEncounterBoundary();
 
       if (HexGrid == null) HexGrid = ReflectionHelper.GetPrivateStaticField(typeof(WorldPointGameLogic), "hexGrid") as HexGrid;
     }
 
     public bool SetContractType(ContractType contractType) {
-      if (!EncounterLayerParentGameObject) Init();
       CurrentContractType = contractType;
 
       switch (CurrentContractType) {
@@ -76,17 +79,14 @@ namespace SpawnVariation {
       EncounterRules.UpdateSpawns();
     }
 
-    private GameObject GetActiveEncounterGameObject() {
-      if (EncounterLayerGameObject) return EncounterLayerGameObject;
+    private EncounterLayerData GetActiveEncounter() {
+      if (EncounterLayerData) return EncounterLayerData;
 
-      foreach (Transform t in EncounterLayerParentGameObject.transform) {
-        GameObject child = t.gameObject;
-        if (child.activeSelf) {
-          EncounterLayerGameObject = t.gameObject;
-          return EncounterLayerGameObject;
-        }
-      }
-      return null;
+      Contract activeContract = UnityGameInstance.BattleTechGame.Combat.ActiveContract;
+      string encounterObjectGuid = activeContract.encounterObjectGuid;
+      EncounterLayerData selectedEncounterLayerData = EncounterLayerParent.GetLayerByGuid(encounterObjectGuid);
+      
+      return selectedEncounterLayerData;
     }
   }
 }

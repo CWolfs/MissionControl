@@ -8,6 +8,11 @@ using Harmony;
 using BattleTech;
 using BattleTech.Framework;
 
+/*
+  This patch is at the right point to allow for requesting resources.
+  This allows the system to load the resources ready for using them
+  in the game scene.
+*/
 namespace SpawnVariation.Patches {
   [HarmonyPatch(typeof(Contract), "BeginRequestResources")]
   public class ContractPatch {
