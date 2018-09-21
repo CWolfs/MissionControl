@@ -23,8 +23,13 @@ namespace SpawnVariation.Rules {
 
     private void BuildAdditionalLances() {
       Main.Logger.Log("[DestroyBaseEncounterRules] Building additional lance rules");
-      EncounterLogic.Add(new AddLanceToTargetLance());
-      EncounterLogic.Add(new AddDestroyWholeUnitChunk());
+      int numberOfUnitsInLance = 4;
+      string lanceGuid = Guid.NewGuid().ToString();
+      List<string> unitGuids = GenerateGuids(numberOfUnitsInLance);
+      string targetTeamGuid = "be77cadd-e245-4240-a93e-b99cc98902a5";
+
+      EncounterLogic.Add(new AddLanceToTargetLance(lanceGuid, unitGuids));
+      EncounterLogic.Add(new AddDestroyWholeUnitChunk(targetTeamGuid, lanceGuid, unitGuids));
     }
 
     private void BuildSpawn() {

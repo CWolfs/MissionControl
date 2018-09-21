@@ -62,5 +62,15 @@ namespace SpawnVariation.Rules {
         spawnLogic.Run(payload);
       }
     }
+
+    public List<string> GenerateGuids(int amountRequired) {
+      List<string> guids = new List<string>();
+
+      for (int i = 0; i < amountRequired; i++) {
+        guids.Add(Guid.NewGuid().ToString());
+      }
+
+      return guids;
+    }
   }
 }

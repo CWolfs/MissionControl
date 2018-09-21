@@ -5,7 +5,7 @@ using BattleTech;
 using BattleTech.Designed;
 using BattleTech.Framework;
 
-namespace SpawnVariation.EncounterFramework {
+namespace SpawnVariation.EncounterFactories {
   public class ObjectiveFactory {
     public static DestroyLanceObjective CreateDestroyLanceObjective(GameObject parent, LanceSpawnerRef lanceToDestroy, string title, bool showProgress,
     string progressFormat, string description, int priority, bool displayToUser, ObjectiveMark markUnitsWith) {

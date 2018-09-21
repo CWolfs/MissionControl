@@ -20,7 +20,7 @@ namespace SpawnVariation.Patches {
   public class ContractOverrideGenerateUnitsPatch {
     static void Prefix(ContractOverride __instance, TeamOverride ___targetTeam) {
       Main.Logger.Log($"[ContractOveridePatch Prefix] Patching GenerateUnits");
-      EncounterManager.GetInstance().AddLanceOverrideToTeamOverride(___targetTeam);
+      // EncounterManager.GetInstance().AddLanceOverrideToTeamOverride(___targetTeam);
       RunPayload payload = new ContractOverridePayload(__instance);
       SpawnManager.GetInstance().RunEncounterRules(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
     }

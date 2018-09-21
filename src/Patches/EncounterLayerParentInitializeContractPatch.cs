@@ -21,7 +21,7 @@ namespace SpawnVariation.Patches {
       Main.Logger.Log($"[EncounterLayerParentInitializeContractPatch Prefix] Patching InitializeContract");
       SpawnManager.GetInstance().InitSceneData();
       EncounterManager encounterManager = EncounterManager.GetInstance();
-      encounterManager.CreateDestroyWholeLanceObjective();
+      // encounterManager.CreateDestroyWholeLanceObjective();
       SpawnManager.GetInstance().RunEncounterRules(LogicBlock.LogicType.ENCOUNTER_MANIPULATION);
     }
   }

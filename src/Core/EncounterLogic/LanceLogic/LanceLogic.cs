@@ -11,5 +11,6 @@ namespace SpawnVariation.Logic {
     public LanceLogic() {
       this.Type = LogicType.CONTRACT_OVERRIDE_MANIPULATION;
     }
+
   }
 }

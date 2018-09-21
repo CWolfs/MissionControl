@@ -9,13 +9,13 @@ using BattleTech.Framework;
 
 using SpawnVariation.Logic;
 using SpawnVariation.Rules;
-using SpawnVariation.EncounterFramework;
+using SpawnVariation.EncounterFactories;
 using SpawnVariation.Utils;
 
 namespace SpawnVariation {
   public class EncounterManager {
     private static EncounterManager instance;
-
+    /*
     public const string TARGET_TEAM_GUID = "be77cadd-e245-4240-a93e-b99cc98902a5";
     public const string UNIT_1_SPAWNPOINT_GUID = "5ba11878-d123-469e-8d20-ab60743edf01";
     public const string UNIT_2_SPAWNPOINT_GUID = "2f66ecd0-6e1f-4583-a04d-f16da46c0026";
@@ -24,6 +24,7 @@ namespace SpawnVariation {
   
     public string LanceGuid  { get; private set; }
     public List<string> UnitGuids { get; private set; } = new List<string>();
+    */
 
     public static EncounterManager GetInstance() { 
       if (instance == null) instance = new EncounterManager();
@@ -31,17 +32,20 @@ namespace SpawnVariation {
     }
 
     private EncounterManager() {
-      Init();
+      // Init();
     }
 
     public void Init() {
+      /*
       LanceGuid = System.Guid.NewGuid().ToString();  // TODO: Temporary. Replace this with a lookup
       UnitGuids.Add(UNIT_1_SPAWNPOINT_GUID);
       UnitGuids.Add(UNIT_2_SPAWNPOINT_GUID);
       UnitGuids.Add(UNIT_3_SPAWNPOINT_GUID);
       UnitGuids.Add(UNIT_4_SPAWNPOINT_GUID);
+      */
     }
 
+    /*
     public void AddLanceOverrideToTeamOverride(TeamOverride teamOverride) {
       List<LanceOverride> lanceOverrideList = teamOverride.lanceOverrideList;
       if (lanceOverrideList.Count > 0) {
@@ -104,5 +108,6 @@ namespace SpawnVariation {
       destroyWholeChunk.lanceSpawner = lanceSpawnerRef;
       destroyWholeChunk.destroyObjective = destroyLanceObjectiveRef;
     }
+    */
   }
 }

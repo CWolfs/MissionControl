@@ -1,13 +1,15 @@
 using UnityEngine;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 using BattleTech;
 using BattleTech.Designed;
 
-namespace SpawnVariation.EncounterFramework {
+namespace SpawnVariation.EncounterFactories {
   public class LanceSpawnerFactory {
     public static LanceSpawnerGameLogic CreateLanceSpawner(GameObject parent, string name, string guid, string teamDefinitionGuid, bool spawnUnitsOnActivation,
-      SpawnUnitMethodType spawnMethod) {
+      SpawnUnitMethodType spawnMethod, List<string> unitGuids) {
 
       GameObject lanceSpawnerGo = new GameObject(name);
       lanceSpawnerGo.transform.parent = parent.transform;
@@ -22,7 +24,7 @@ namespace SpawnVariation.EncounterFramework {
       float x = 0;
       float z = 0;
       for (int i = 0; i < 4; i++) {
-        CreateUnitSpawnPoint(lanceSpawnerGo, $"UnitSpawnPoint{i + 1}", new Vector3(x, 0, z), EncounterManager.GetInstance().UnitGuids[i]);
+        CreateUnitSpawnPoint(lanceSpawnerGo, $"UnitSpawnPoint{i + 1}", new Vector3(x, 0, z), unitGuids[i]);
         x += 25;
         z += 25;
       }

@@ -3,7 +3,7 @@ using System;
 
 using BattleTech.Designed;
 
-namespace SpawnVariation.EncounterFramework {
+namespace SpawnVariation.EncounterFactories {
   public class ChunkFactory {
     public static DestroyWholeLanceChunk CreateDestroyWholeLanceChunk() {
       GameObject encounterLayerGameObject = SpawnManager.GetInstance().EncounterLayerGameObject;
