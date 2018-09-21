@@ -10,6 +10,10 @@ using BattleTech.Framework;
 
 using SpawnVariation;
 
+/*
+  This patch is used to inject a custom lance into the target team.
+  This allows BT to then request the resources for the additional lance
+*/
 namespace SpawnVariation.Patches {
   [HarmonyPatch(typeof(ContractOverride), "GenerateUnits")]
   public class ContractOverrideGenerateUnitsPatch {

@@ -8,6 +8,10 @@ using Harmony;
 using BattleTech;
 using BattleTech.Framework;
 
+/*
+  This patch allows you to build custom objectives at the right point in the game logic
+  This is called before: EncounterLayerParentFirstTimeInitializationPatch
+*/
 namespace SpawnVariation.Patches {
   [HarmonyPatch(typeof(EncounterLayerParent), "InitializeContract")]
   public class EncounterLayerParentInitializeContractPatch {

@@ -8,6 +8,10 @@ using Harmony;
 using BattleTech;
 using BattleTech.Framework;
 
+/*
+  This patch sets the active contract type and starts any manipulation on the objectives
+  This is called after: EncounterLayerParentFirstTimeInitializationPatch
+*/
 namespace SpawnVariation.Patches {
   [HarmonyPatch(typeof(EncounterLayerParent), "FirstTimeInitialization")]
   public class EncounterLayerParentFirstTimeInitializationPatch {
