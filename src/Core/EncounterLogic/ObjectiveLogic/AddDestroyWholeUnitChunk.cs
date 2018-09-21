@@ -17,11 +17,13 @@ namespace SpawnVariation.Logic {
     private string teamGuid;
     private string lanceGuid;
     private List<string> unitGuids;
+    private string objectiveLabel;
 
-    public AddDestroyWholeUnitChunk(string teamGuid, string lanceGuid, List<string> unitGuids) {
+    public AddDestroyWholeUnitChunk(string teamGuid, string lanceGuid, List<string> unitGuids, string objectiveLabel) {
       this.teamGuid = teamGuid;
       this.lanceGuid = lanceGuid;
       this.unitGuids = unitGuids;
+      this.objectiveLabel = objectiveLabel;
     }
 
     public override void Run(RunPayload payload) {
@@ -33,7 +35,7 @@ namespace SpawnVariation.Logic {
       bool spawnOnActivation = true;
       LanceSpawnerGameLogic lanceSpawner = LanceSpawnerFactory.CreateLanceSpawner(
         destroyWholeChunk.gameObject,
-        "Lance_Enemy_OpposingForce_CWolf",
+        "Lance_Enemy_OpposingForce",
         lanceGuid,
         teamGuid,
         spawnOnActivation,
@@ -48,16 +50,15 @@ namespace SpawnVariation.Logic {
       DestroyLanceObjective objective = ObjectiveFactory.CreateDestroyLanceObjective(
         destroyWholeChunk.gameObject,
         lanceSpawnerRef,
-        "Destroy CWolf Guard Units",
+        objectiveLabel,
         showProgress,
-        "[percentageComplete]",
+        ProgressFormat.PERCENTAGE_COMPLETE,
         "The primary objective to destroy the enemy lance",
         priority,
         displayToUser,
         ObjectiveMark.AttackTarget
       );
 
-      
       DestroyLanceObjectiveRef destroyLanceObjectiveRef = new DestroyLanceObjectiveRef();
       destroyLanceObjectiveRef.encounterObject = objective;
 

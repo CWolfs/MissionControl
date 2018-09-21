@@ -23,7 +23,7 @@ namespace SpawnVariation.EncounterFactories {
 
       float x = 0;
       float z = 0;
-      for (int i = 0; i < 4; i++) {
+      for (int i = 0; i < unitGuids.Count; i++) {
         CreateUnitSpawnPoint(lanceSpawnerGo, $"UnitSpawnPoint{i + 1}", new Vector3(x, 0, z), unitGuids[i]);
         x += 25;
         z += 25;

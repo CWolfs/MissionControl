@@ -26,11 +26,10 @@ namespace SpawnVariation.Rules {
       int numberOfUnitsInLance = 4;
       string lanceGuid = Guid.NewGuid().ToString();
       List<string> unitGuids = GenerateGuids(numberOfUnitsInLance);
-      string targetTeamGuid = PLAYER_TEAM_ID;
+      string targetTeamGuid = TARGET_TEAM_ID;
 
-      // EncounterLogic.Add(new AddLanceToTargetTeam(lanceGuid, unitGuids));
-      EncounterLogic.Add(new AddLanceToPlayerTeam(lanceGuid, unitGuids));
-      EncounterLogic.Add(new AddDestroyWholeUnitChunk(targetTeamGuid, lanceGuid, unitGuids));
+      EncounterLogic.Add(new AddLanceToTargetTeam(lanceGuid, unitGuids));
+      EncounterLogic.Add(new AddDestroyWholeUnitChunk(targetTeamGuid, lanceGuid, unitGuids, "Destroy Pirate Support Lance"));
     }
 
     private void BuildSpawn() {

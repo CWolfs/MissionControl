@@ -33,6 +33,13 @@ namespace SpawnVariation.Logic {
         lanceOverride.name = "Lance_Player_Reinforcements";
         lanceOverride.lanceTagSet.Add("lance_type_mech");
 
+        if (unitGuids.Count > 4) {
+          for (int i = 4; i < unitGuids.Count; i++) {
+            UnitSpawnPointOverride unitSpawnOverride = lanceOverride.unitSpawnPointOverrideList[0].Copy();
+            lanceOverride.unitSpawnPointOverrideList.Add(unitSpawnOverride);
+          }
+        }
+
         for (int i = 0; i < unitGuids.Count; i++) {
           string unitGuid = unitGuids[i];
           UnitSpawnPointRef unitSpawnRef = new UnitSpawnPointRef();
