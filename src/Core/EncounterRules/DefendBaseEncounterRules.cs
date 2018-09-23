@@ -36,10 +36,20 @@ namespace ContractCommand.Rules {
     }
 
     public override void LinkObjectReferences() {
-      ObjectLookup.Add("PlotBase", GameObject.Find("Central Basin Base"));
+      ObjectLookup.Add("PlotBase", GameObject.Find(GetPlotBaseName()));
       ObjectLookup.Add("SpawnerLanceEnemyWave1", GameObject.Find("Lance_Enemy_Wave1Attackers"));
       ObjectLookup.Add("SpawnerLanceEnemyWave2", GameObject.Find("Lance_Enemy_Wave2Attackers"));
       ObjectLookup.Add("SpawnerLanceEnemyWave3", GameObject.Find("Lance_Enemy_Wave3Attackers"));
+    }
+
+    private string GetPlotBaseName() {
+      string mapName = EncounterManager.GetInstance().ContractMapName;
+      switch (mapName) {
+        case "":
+          return "Central Basin Base";
+        default:
+          return "Central Basin Base";
+      }
     }
   }
 }

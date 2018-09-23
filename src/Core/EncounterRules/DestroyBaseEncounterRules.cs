@@ -47,10 +47,20 @@ namespace ContractCommand.Rules {
     }
 
     public override void LinkObjectReferences() {
-      ObjectLookup.Add("PlotBase", GameObject.Find("Ravine Position"));
+      ObjectLookup.Add("PlotBase", GameObject.Find(GetPlotBaseName()));
 
       foreach (string objectName in ObjectReferenceQueue) {
         ObjectLookup.Add(objectName, GameObject.Find(objectName));    
+      }
+    }
+
+    private string GetPlotBaseName() {
+      string mapName = EncounterManager.GetInstance().ContractMapName;
+      switch (mapName) {
+        case "mapGeneral_theMound_vHigh":
+          return "Ravine Position";
+        default:
+          return "Ravine Position";
       }
     }
   }

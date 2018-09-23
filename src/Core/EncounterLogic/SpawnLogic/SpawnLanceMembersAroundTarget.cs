@@ -42,11 +42,13 @@ namespace ContractCommand.Logic {
     public override void Run(RunPayload payload) {
       GetObjectReferences();
       Main.Logger.Log($"[SpawnLanceMembersAroundTarget] For {lance.name}");
+      lance.transform.position = orientationTarget.transform.position;
   
       List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
       foreach (GameObject spawnPoint in spawnPoints) {
         SpawnLanceMember(spawnPoint, orientationTarget, lookTarget, lookDirection);
       }
+
       invalidSpawnLocations.Clear();
     }
 

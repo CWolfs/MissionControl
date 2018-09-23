@@ -18,7 +18,7 @@ using ContractCommand.Logic;
 namespace ContractCommand.Patches {
   [HarmonyPatch(typeof(ContractOverride), "GenerateUnits")]
   public class ContractOverrideGenerateUnitsPatch {
-    static void Prefix(ContractOverride __instance, TeamOverride ___targetTeam) {
+    static void Prefix(ContractOverride __instance) {
       Main.Logger.Log($"[ContractOveridePatch Prefix] Patching GenerateUnits");
       RunPayload payload = new ContractOverridePayload(__instance);
       EncounterManager.GetInstance().RunEncounterRules(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);

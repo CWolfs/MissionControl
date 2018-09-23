@@ -14,6 +14,8 @@ namespace ContractCommand {
   public class EncounterManager {
     private static EncounterManager instance;
 
+    public Contract CurrentContract { get; private set; }
+    public string ContractMapName { get; private set; }
     public ContractType CurrentContractType { get; private set; } = ContractType.INVALID_UNSET;
     public EncounterRule EncounterRules { get; private set; }
     public GameObject EncounterLayerParentGameObject { get; private set; }
@@ -44,23 +46,31 @@ namespace ContractCommand {
       if (HexGrid == null) HexGrid = ReflectionHelper.GetPrivateStaticField(typeof(WorldPointGameLogic), "hexGrid") as HexGrid;
     }
 
+    public void SetContract(Contract contract) {
+      Main.Logger.Log($"[EncounterManager] Setting contract '{contract.Name}'");
+      CurrentContract = contract;
+      Main.Logger.Log($"[EncounterManager] Contract map is '{contract.mapName}'");
+      ContractMapName = contract.mapName;
+      SetContractType(CurrentContract.ContractType);
+    }
+
     public bool SetContractType(ContractType contractType) {
       CurrentContractType = contractType;
 
       switch (CurrentContractType) {
         case ContractType.Rescue: {
           Main.Logger.Log($"[EncounterManager] Setting contract type to 'Rescue'");
-          SetEncounterRules(new RescueEncounterRules());
+          BuildEncounterRules(new RescueEncounterRules());
           break;
         }
         case ContractType.DefendBase: {
           Main.Logger.Log($"[EncounterManager] Setting contract type to 'DefendBase'");
-          SetEncounterRules(new DefendBaseEncounterRules());
+          BuildEncounterRules(new DefendBaseEncounterRules());
           break;
         }
         case ContractType.DestroyBase: {
           Main.Logger.Log($"[EncounterManager] Setting contract type to 'DestroyBase'");
-          SetEncounterRules(new DestroyBaseEncounterRules());
+          BuildEncounterRules(new DestroyBaseEncounterRules());
           break;
         }
         default: {
@@ -73,7 +83,7 @@ namespace ContractCommand {
       return true;
     }
 
-    private void SetEncounterRules(EncounterRule encounterRules) {
+    private void BuildEncounterRules(EncounterRule encounterRules) {
       EncounterRules = encounterRules;
     }
 

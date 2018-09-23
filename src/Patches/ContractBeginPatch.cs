@@ -23,8 +23,8 @@ namespace ContractCommand.Patches {
     }
 
     public static void Init(Contract contract) {
-      EncounterManager EncounterManager = EncounterManager.GetInstance();
-      bool supportedContractType = EncounterManager.SetContractType(contract.ContractType);
+      EncounterManager encounterManager = EncounterManager.GetInstance();
+      encounterManager.SetContract(contract);
     }
   }
 }
