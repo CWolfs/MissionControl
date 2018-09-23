@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 using BattleTech;
 
-namespace SpawnVariation.Logic {
+namespace EncounterCommand.Logic {
   public abstract class SpawnLogic : LogicBlock {
     public enum LookDirection { TOWARDS_TARGET, AWAY_FROM_TARGET };
 

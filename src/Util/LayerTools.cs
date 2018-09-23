@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace SpawnVariation.Utils {
+namespace EncounterCommand.Utils {
   public class LayerTools {
     public static void SetLayerRecursively(GameObject go, int layerNumber) {
       foreach (Transform trans in go.GetComponentsInChildren<Transform>(true)) {

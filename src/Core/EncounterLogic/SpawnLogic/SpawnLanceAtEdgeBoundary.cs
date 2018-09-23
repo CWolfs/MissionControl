@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.Designed;
 
-using SpawnVariation.Rules;
-using SpawnVariation.Utils;
+using EncounterCommand.Rules;
+using EncounterCommand.Utils;
 
-namespace SpawnVariation.Logic {
+namespace EncounterCommand.Logic {
   public class SpawnLanceAtEdgeOfBoundary : SpawnLanceLogic {
     private string lanceKey;
     private string orientationTargetKey;
@@ -31,8 +31,8 @@ namespace SpawnVariation.Logic {
 
       AttemptCount++;
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-      SpawnManager spawnManager = SpawnManager.GetInstance();
-      GameObject chunkBoundaryRect = spawnManager.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary").gameObject;
+      EncounterManager EncounterManager = EncounterManager.GetInstance();
+      GameObject chunkBoundaryRect = EncounterManager.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary").gameObject;
       GameObject boundary = chunkBoundaryRect.transform.Find("EncounterBoundaryRect").gameObject;
       EncounterBoundaryChunkGameLogic chunkBoundary = chunkBoundaryRect.GetComponent<EncounterBoundaryChunkGameLogic>();
       EncounterBoundaryRectGameLogic boundaryLogic = boundary.GetComponent<EncounterBoundaryRectGameLogic>();

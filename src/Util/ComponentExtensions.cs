@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-using SpawnVariation;
+using EncounterCommand;
 
 public static class ComponentExtensions {
   public static Component CopyComponent(this GameObject destination, Component original) {  

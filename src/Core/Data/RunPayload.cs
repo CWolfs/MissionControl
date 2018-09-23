@@ -1,3 +1,3 @@
-namespace SpawnVariation.Logic {
+namespace EncounterCommand.Logic {
   public abstract class RunPayload { }
 }

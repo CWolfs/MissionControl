@@ -7,10 +7,10 @@ using BattleTech;
 using BattleTech.Designed;
 using BattleTech.Framework;
 
-using SpawnVariation.Rules;
-using SpawnVariation.Utils;
+using EncounterCommand.Rules;
+using EncounterCommand.Utils;
 
-namespace SpawnVariation.Logic {
+namespace EncounterCommand.Logic {
   public class AddLanceToTargetTeam : LanceLogic {
     private string lanceGuid;
     private List<string> unitGuids;

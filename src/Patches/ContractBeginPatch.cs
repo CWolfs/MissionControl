@@ -13,7 +13,7 @@ using BattleTech.Framework;
   It allows for the planning on what should be done for this particular encounter / contract.
   Once all the tasks are queued up they will be executed at the correct patch points
 */
-namespace SpawnVariation.Patches {
+namespace EncounterCommand.Patches {
   [HarmonyPatch(typeof(Contract), "BeginRequestResources")]
   public class ContractBeginPatch {
     public static void Prefix(Contract __instance) {
@@ -23,8 +23,8 @@ namespace SpawnVariation.Patches {
     }
 
     public static void Init(Contract contract) {
-      SpawnManager spawnManager = SpawnManager.GetInstance();
-      bool supportedContractType = spawnManager.SetContractType(contract.ContractType);
+      EncounterManager EncounterManager = EncounterManager.GetInstance();
+      bool supportedContractType = EncounterManager.SetContractType(contract.ContractType);
     }
   }
 }

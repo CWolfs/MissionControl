@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.Designed;
 
-using SpawnVariation.Rules;
-using SpawnVariation.Utils;
+using EncounterCommand.Rules;
+using EncounterCommand.Utils;
 
-namespace SpawnVariation.Logic {
+namespace EncounterCommand.Logic {
   public class SpawnLanceAroundTarget : SpawnLanceLogic {
     private string lanceKey;
     private string orientationTargetKey;
@@ -37,7 +37,7 @@ namespace SpawnVariation.Logic {
       GetObjectReferences();
       Main.Logger.Log($"[SpawnLanceAroundTarget] For {lance.name}");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-      SpawnManager spawnManager = SpawnManager.GetInstance();
+      EncounterManager EncounterManager = EncounterManager.GetInstance();
 
       Vector3 lancePosition = lance.transform.position;
       Vector3 newSpawnPosition = GetRandomPositionFromTarget(lance, minDistanceFromTarget, maxDistanceFromTarget);

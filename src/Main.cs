@@ -7,22 +7,22 @@ using Harmony;
 using Newtonsoft.Json;
 using System.Reflection;
 
-using SpawnVariation.Utils;
+using EncounterCommand.Utils;
 
-namespace SpawnVariation {
+namespace EncounterCommand {
     public class Main {
         public static ILog Logger;
         public static Settings Settings { get; private set; }
-        public static Assembly SpawnVariationAssembly { get; set; } 
-        public static AssetBundle SpawnVariationBundle { get; set; }
+        public static Assembly EncounterCommandAssembly { get; set; } 
+        public static AssetBundle EncounterCommandBundle { get; set; }
         public static string Path { get; private set; }
 
         public static void InitLogger(string modDirectory) {
             Dictionary<string, LogLevel> logLevels = new Dictionary<string, LogLevel> {
-                ["SpawnVariation"] = LogLevel.Debug
+                ["EncounterCommand"] = LogLevel.Debug
             };
             LogManager.Setup(modDirectory + "/output.log", logLevels);
-            Logger = LogManager.GetLogger("SpawnVariation");
+            Logger = LogManager.GetLogger("EncounterCommand");
             Path = modDirectory;
         }
 
@@ -37,12 +37,12 @@ namespace SpawnVariation {
                 Settings = new Settings();
             }
 
-            HarmonyInstance harmony = HarmonyInstance.Create("co.uk.cwolf.SpawnVariation");
+            HarmonyInstance harmony = HarmonyInstance.Create("co.uk.cwolf.EncounterCommand");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
 
         private static void LoadSettings(string modDirectory) {
-            Logger.Log("Loading SpawnVariation settings");
+            Logger.Log("Loading EncounterCommand settings");
             string settingsJsonString = File.ReadAllText($"{modDirectory}/settings.json");
             Settings = JsonConvert.DeserializeObject<Settings>(settingsJsonString);
         }

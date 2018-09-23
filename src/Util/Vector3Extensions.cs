@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-using SpawnVariation;
+using EncounterCommand;
 
 public static class Vector3Extensions {
   public static Vector3 Flattened(this Vector3 vector) {

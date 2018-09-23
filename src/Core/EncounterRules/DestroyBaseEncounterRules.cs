@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 using BattleTech;
 
-using SpawnVariation.Logic;
+using EncounterCommand.Logic;
 
-namespace SpawnVariation.Rules {
+namespace EncounterCommand.Rules {
   public class DestroyBaseEncounterRules : EncounterRule {
     private GameObject PlotBase { get; set; }
     private List<string> ObjectReferenceQueue = new List<string>();

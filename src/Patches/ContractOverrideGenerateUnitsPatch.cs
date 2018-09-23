@@ -8,21 +8,20 @@ using Harmony;
 using BattleTech;
 using BattleTech.Framework;
 
-using SpawnVariation;
-using SpawnVariation.Logic;
+using EncounterCommand;
+using EncounterCommand.Logic;
 
 /*
   This patch is used to inject a custom lance into the target team.
   This allows BT to then request the resources for the additional lance
 */
-namespace SpawnVariation.Patches {
+namespace EncounterCommand.Patches {
   [HarmonyPatch(typeof(ContractOverride), "GenerateUnits")]
   public class ContractOverrideGenerateUnitsPatch {
     static void Prefix(ContractOverride __instance, TeamOverride ___targetTeam) {
       Main.Logger.Log($"[ContractOveridePatch Prefix] Patching GenerateUnits");
-      // EncounterManager.GetInstance().AddLanceOverrideToTeamOverride(___targetTeam);
       RunPayload payload = new ContractOverridePayload(__instance);
-      SpawnManager.GetInstance().RunEncounterRules(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
+      EncounterManager.GetInstance().RunEncounterRules(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
     }
   }
 }

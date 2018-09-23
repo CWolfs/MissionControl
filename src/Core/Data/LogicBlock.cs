@@ -1,4 +1,4 @@
-namespace SpawnVariation.Logic {
+namespace EncounterCommand.Logic {
   public abstract class LogicBlock {
     public enum LogicType { NONE, RESOURCE_REQUEST, CONTRACT_OVERRIDE_MANIPULATION, ENCOUNTER_MANIPULATION, SCENE_MANIPULATION }
 

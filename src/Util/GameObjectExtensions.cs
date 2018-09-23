@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-using SpawnVariation;
+using EncounterCommand;
 
 public static class GameObjextExtensions {
   public static List<GameObject> FindAllContains(this GameObject go, string name) {

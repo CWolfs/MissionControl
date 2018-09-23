@@ -4,110 +4,112 @@ using System.Collections;
 using System.Collections.Generic;
 
 using BattleTech;
-using BattleTech.Designed;
 using BattleTech.Framework;
 
-using SpawnVariation.Logic;
-using SpawnVariation.Rules;
-using SpawnVariation.EncounterFactories;
-using SpawnVariation.Utils;
+using EncounterCommand.Logic;
+using EncounterCommand.Rules;
+using EncounterCommand.Utils;
 
-namespace SpawnVariation {
+namespace EncounterCommand {
   public class EncounterManager {
     private static EncounterManager instance;
-    /*
-    public const string TARGET_TEAM_GUID = "be77cadd-e245-4240-a93e-b99cc98902a5";
-    public const string UNIT_1_SPAWNPOINT_GUID = "5ba11878-d123-469e-8d20-ab60743edf01";
-    public const string UNIT_2_SPAWNPOINT_GUID = "2f66ecd0-6e1f-4583-a04d-f16da46c0026";
-    public const string UNIT_3_SPAWNPOINT_GUID = "cf579a54-eab9-4100-a411-969c9fd57289";
-    public const string UNIT_4_SPAWNPOINT_GUID = "cc992e8b-cde5-48a7-bcbf-bffbf1b0ff31";
-  
-    public string LanceGuid  { get; private set; }
-    public List<string> UnitGuids { get; private set; } = new List<string>();
-    */
+
+    public ContractType CurrentContractType { get; private set; } = ContractType.INVALID_UNSET;
+    public EncounterRule EncounterRules { get; private set; }
+    public GameObject EncounterLayerParentGameObject { get; private set; }
+    public EncounterLayerParent EncounterLayerParent { get; private set; }
+    public GameObject EncounterLayerGameObject { get; private set; }
+    public EncounterLayerData EncounterLayerData { get; private set; }
+    public HexGrid HexGrid { get; private set; }
+
+    public bool IsContractValid { get; private set; } = false;
 
     public static EncounterManager GetInstance() { 
       if (instance == null) instance = new EncounterManager();
       return instance;
     }
 
-    private EncounterManager() {
-      // Init();
+    private EncounterManager() { }
+
+    public void InitSceneData() {
+      CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
+
+      if (!EncounterLayerParentGameObject) EncounterLayerParentGameObject = GameObject.Find("EncounterLayerParent");
+      EncounterLayerParent = EncounterLayerParentGameObject.GetComponent<EncounterLayerParent>();
+
+      EncounterLayerData = GetActiveEncounter();
+      EncounterLayerGameObject = EncounterLayerData.gameObject;
+      EncounterLayerData.CalculateEncounterBoundary();
+
+      if (HexGrid == null) HexGrid = ReflectionHelper.GetPrivateStaticField(typeof(WorldPointGameLogic), "hexGrid") as HexGrid;
     }
 
-    public void Init() {
-      /*
-      LanceGuid = System.Guid.NewGuid().ToString();  // TODO: Temporary. Replace this with a lookup
-      UnitGuids.Add(UNIT_1_SPAWNPOINT_GUID);
-      UnitGuids.Add(UNIT_2_SPAWNPOINT_GUID);
-      UnitGuids.Add(UNIT_3_SPAWNPOINT_GUID);
-      UnitGuids.Add(UNIT_4_SPAWNPOINT_GUID);
-      */
-    }
+    public bool SetContractType(ContractType contractType) {
+      CurrentContractType = contractType;
 
-    /*
-    public void AddLanceOverrideToTeamOverride(TeamOverride teamOverride) {
-      List<LanceOverride> lanceOverrideList = teamOverride.lanceOverrideList;
-      if (lanceOverrideList.Count > 0) {
-        LanceOverride lanceOverride = lanceOverrideList[0].Copy();
-
-        lanceOverride.name = "Lance_Enemy_OpposingForce_CWolf";
-
-        for (int i = 0; i < UnitGuids.Count; i++) {
-          string unitGuid = UnitGuids[i];
-          UnitSpawnPointRef unitSpawnRef = new UnitSpawnPointRef();
-          unitSpawnRef.EncounterObjectGuid = unitGuid;
-          lanceOverride.unitSpawnPointOverrideList[i].unitSpawnPoint = unitSpawnRef;
+      switch (CurrentContractType) {
+        case ContractType.Rescue: {
+          Main.Logger.Log($"[EncounterManager] Setting contract type to 'Rescue'");
+          SetEncounterRules(new RescueEncounterRules());
+          break;
         }
-        
-        LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
-        lanceSpawnerRef.EncounterObjectGuid = LanceGuid;
-        lanceOverride.lanceSpawner = lanceSpawnerRef;
+        case ContractType.DefendBase: {
+          Main.Logger.Log($"[EncounterManager] Setting contract type to 'DefendBase'");
+          SetEncounterRules(new DefendBaseEncounterRules());
+          break;
+        }
+        case ContractType.DestroyBase: {
+          Main.Logger.Log($"[EncounterManager] Setting contract type to 'DestroyBase'");
+          SetEncounterRules(new DestroyBaseEncounterRules());
+          break;
+        }
+        default: {
+          Main.Logger.LogError($"[EncounterManager] Unknown contract / encounter type of {contractType}");
+          return false;
+        }
+      }
 
-        teamOverride.lanceOverrideList.Add(lanceOverride);
-      } else {
-        Main.Logger.LogError("[EncounterManager] Team Override has no lances available to copy. TODO: Generate new lance from stored JSON data");
+      IsContractValid = true;
+      return true;
+    }
+
+    private void SetEncounterRules(EncounterRule encounterRules) {
+      EncounterRules = encounterRules;
+    }
+
+    public void RunEncounterRules(LogicBlock.LogicType type, RunPayload payload = null) {
+      switch (type) {
+        case LogicBlock.LogicType.RESOURCE_REQUEST: {
+          EncounterRules.Run(LogicBlock.LogicType.RESOURCE_REQUEST, payload);
+          break;
+        }
+        case LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION: {
+          EncounterRules.Run(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
+          break;
+        }
+        case LogicBlock.LogicType.ENCOUNTER_MANIPULATION: {
+          EncounterRules.Run(LogicBlock.LogicType.ENCOUNTER_MANIPULATION, payload);
+          break; 
+        }
+        case LogicBlock.LogicType.SCENE_MANIPULATION: {
+          EncounterRules.Run(LogicBlock.LogicType.SCENE_MANIPULATION, payload);
+          break;
+        }
+        default: {
+          Main.Logger.LogError($"[RunEncounterRules] Unknown type of '{type.ToString()}'");
+          break;
+        }
       }
     }
 
-    public void CreateDestroyWholeLanceObjective() {
-      EncounterLayerData encounterLayerData = SpawnManager.GetInstance().EncounterLayerData;
-      DestroyWholeLanceChunk destroyWholeChunk = ChunkFactory.CreateDestroyWholeLanceChunk();
-      destroyWholeChunk.encounterObjectGuid = System.Guid.NewGuid().ToString();
+    private EncounterLayerData GetActiveEncounter() {
+      if (EncounterLayerData) return EncounterLayerData;
 
-      bool spawnOnActivation = true;
-      LanceSpawnerGameLogic lanceSpawner = LanceSpawnerFactory.CreateLanceSpawner(
-        destroyWholeChunk.gameObject,
-        "Lance_Enemy_OpposingForce_CWolf",
-        LanceGuid,
-        TARGET_TEAM_GUID,
-        spawnOnActivation,
-        SpawnUnitMethodType.InstantlyAtSpawnPoint
-      );
-      LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef(lanceSpawner);
-
-      bool showProgress = true;
-      int priority = -10;
-      bool displayToUser = true;
-      DestroyLanceObjective objective = ObjectiveFactory.CreateDestroyLanceObjective(
-        destroyWholeChunk.gameObject,
-        lanceSpawnerRef,
-        "Destroy CWolf Guard Units",
-        showProgress,
-        "[percentageComplete]",
-        "The primary objective to destroy the enemy lance",
-        priority,
-        displayToUser,
-        ObjectiveMark.AttackTarget
-      );
-
+      Contract activeContract = UnityGameInstance.BattleTechGame.Combat.ActiveContract;
+      string encounterObjectGuid = activeContract.encounterObjectGuid;
+      EncounterLayerData selectedEncounterLayerData = EncounterLayerParent.GetLayerByGuid(encounterObjectGuid);
       
-      DestroyLanceObjectiveRef destroyLanceObjectiveRef = new DestroyLanceObjectiveRef();
-      destroyLanceObjectiveRef.encounterObject = objective;
-
-      destroyWholeChunk.lanceSpawner = lanceSpawnerRef;
-      destroyWholeChunk.destroyObjective = destroyLanceObjectiveRef;
+      return selectedEncounterLayerData;
     }
-    */
   }
 }

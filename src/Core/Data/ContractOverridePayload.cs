@@ -1,6 +1,6 @@
 using BattleTech.Framework;
 
-namespace SpawnVariation.Logic {
+namespace EncounterCommand.Logic {
   public class ContractOverridePayload : RunPayload {
     public ContractOverride ContractOverride { get; private set; }
 

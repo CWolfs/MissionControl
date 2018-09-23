@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 using BattleTech;
 
-using SpawnVariation.Rules;
+using EncounterCommand.Rules;
 
-namespace SpawnVariation.Logic {
+namespace EncounterCommand.Logic {
   public abstract class SpawnLanceLogic : SpawnLogic {
     protected EncounterRule EncounterRule { get; set; }
 

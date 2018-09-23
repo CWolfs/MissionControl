@@ -1,4 +1,4 @@
-# Spawn Variations
+# Encounter Command
 
 A HBS BattleTech mod that varies the spawn locations on contracts and encounters.
 

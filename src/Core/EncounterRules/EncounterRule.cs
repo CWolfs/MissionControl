@@ -6,9 +6,9 @@ using System.Collections.Generic;
 
 using BattleTech;
 
-using SpawnVariation.Logic;
+using EncounterCommand.Logic;
 
-namespace SpawnVariation.Rules {
+namespace EncounterCommand.Rules {
   public abstract class EncounterRule {
     public const string PLAYER_TEAM_ID = "bf40fd39-ccf9-47c4-94a6-061809681140";
     public const string EMPLOYER_TEAM_ID = "ecc8d4f2-74b4-465d-adf6-84445e5dfc230";
@@ -55,7 +55,7 @@ namespace SpawnVariation.Rules {
     }
 
     private void RunSceneManipulationLogic(IEnumerable<LogicBlock> logicBlocks, RunPayload payload) {
-      EncounterLayerGo = SpawnManager.GetInstance().EncounterLayerGameObject;
+      EncounterLayerGo = EncounterManager.GetInstance().EncounterLayerGameObject;
       ChunkPlayerLanceGo = EncounterLayerGo.transform.Find("Chunk_PlayerLance").gameObject;
       SpawnerPlayerLanceGo = ChunkPlayerLanceGo.transform.Find("Spawner_PlayerLance").gameObject;
       ObjectLookup.Add("ChunkPlayerLance", ChunkPlayerLanceGo);

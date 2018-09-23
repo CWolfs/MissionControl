@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.Designed;
 
-using SpawnVariation.Rules;
-using SpawnVariation.Utils;
+using EncounterCommand.Rules;
+using EncounterCommand.Utils;
 
-namespace SpawnVariation.Logic {
+namespace EncounterCommand.Logic {
   public class SpawnLanceMembersAroundTarget : SpawnLanceLogic {
     private string lanceKey;
     private string orientationTargetKey;

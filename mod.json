@@ -1,12 +1,12 @@
 {
-    "Name": "SpawnVariation",
+    "Name": "EncounterCommand",
     "Enabled": true,
 
     "Version": "0.1.0",
-    "Description": "SpawnVariation varies the spawn locations on contracts and encounters.",
+    "Description": "A HBS BattleTech mod that varies the encounter specifics such as spawn locations, lance numbers and objectives",
     "Author": "CWolf",
     "Contact": "cwolfs@gmail.com",
 
-    "DLL": "SpawnVariation.dll",
-    "DLLEntryPoint": "SpawnVariation.Main.Init"
+    "DLL": "EncounterCommand.dll",
+    "DLLEntryPoint": "EncounterCommand.Main.Init"
 }

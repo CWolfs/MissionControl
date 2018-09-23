@@ -1,4 +1,4 @@
-namespace SpawnVariation {
+namespace EncounterCommand {
     public class Settings {
         public int MinNumberOfAdditionalEnemyLances { get; set; } = 0;
         public int MaxNumberOfAdditionalEnemyLances { get; set; } = 0;

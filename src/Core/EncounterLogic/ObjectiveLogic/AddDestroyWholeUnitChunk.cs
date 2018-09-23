@@ -7,12 +7,12 @@ using BattleTech;
 using BattleTech.Designed;
 using BattleTech.Framework;
 
-using SpawnVariation.Logic;
-using SpawnVariation.Rules;
-using SpawnVariation.EncounterFactories;
-using SpawnVariation.Utils;
+using EncounterCommand.Logic;
+using EncounterCommand.Rules;
+using EncounterCommand.EncounterFactories;
+using EncounterCommand.Utils;
 
-namespace SpawnVariation.Logic {
+namespace EncounterCommand.Logic {
   public class AddDestroyWholeUnitChunk : ObjectiveLogic {
     private string teamGuid;
     private string lanceGuid;
@@ -30,7 +30,7 @@ namespace SpawnVariation.Logic {
 
     public override void Run(RunPayload payload) {
       Main.Logger.Log($"[AddDestroyWholeUnitChunk] Adding encounter structure");
-      EncounterLayerData encounterLayerData = SpawnManager.GetInstance().EncounterLayerData;
+      EncounterLayerData encounterLayerData = EncounterManager.GetInstance().EncounterLayerData;
       DestroyWholeLanceChunk destroyWholeChunk = ChunkFactory.CreateDestroyWholeLanceChunk();
       destroyWholeChunk.encounterObjectGuid = System.Guid.NewGuid().ToString();
 

@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 using BattleTech;
 
-using SpawnVariation.Logic;
+using EncounterCommand.Logic;
 
-namespace SpawnVariation.Rules {
+namespace EncounterCommand.Rules {
   public class DefendBaseEncounterRules : EncounterRule {
     private GameObject PlotBase { get; set; }
 

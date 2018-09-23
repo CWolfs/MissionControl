@@ -1,8 +1,8 @@
 using UnityEngine;
 using System.Collections;
 
-using SpawnVariation;
-using SpawnVariation.Utils;
+using EncounterCommand;
+using EncounterCommand.Utils;
 
 public static class RectExtensions {
   public enum RectEdge { ANY = -1, MIN_X = 0, MAX_X = 1, MIN_Z = 2, MAX_Z = 3 }
