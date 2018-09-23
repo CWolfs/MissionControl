@@ -1,6 +1,6 @@
 using BattleTech.Framework;
 
-namespace EncounterCommand.Logic {
+namespace ContractCommand.Logic {
   public class ContractOverridePayload : RunPayload {
     public ContractOverride ContractOverride { get; private set; }
 

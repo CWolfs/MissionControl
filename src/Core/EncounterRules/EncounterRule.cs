@@ -6,9 +6,9 @@ using System.Collections.Generic;
 
 using BattleTech;
 
-using EncounterCommand.Logic;
+using ContractCommand.Logic;
 
-namespace EncounterCommand.Rules {
+namespace ContractCommand.Rules {
   public abstract class EncounterRule {
     public const string PLAYER_TEAM_ID = "bf40fd39-ccf9-47c4-94a6-061809681140";
     public const string EMPLOYER_TEAM_ID = "ecc8d4f2-74b4-465d-adf6-84445e5dfc230";

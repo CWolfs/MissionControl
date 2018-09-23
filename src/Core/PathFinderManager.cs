@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using BattleTech;
 using HBS.Collections;
 
-namespace EncounterCommand {
+namespace ContractCommand {
   public class PathFinderManager {
     private static PathFinderManager instance;
 

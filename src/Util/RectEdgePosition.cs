@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace EncounterCommand.Utils {
+namespace ContractCommand.Utils {
   public struct RectEdgePosition {
     public Vector3 Position { get; set; }
     public RectExtensions.RectEdge Edge { get; private set; }

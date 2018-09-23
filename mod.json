@@ -1,5 +1,5 @@
 {
-    "Name": "EncounterCommand",
+    "Name": "Contract Command",
     "Enabled": true,
 
     "Version": "0.1.0",
@@ -7,6 +7,6 @@
     "Author": "CWolf",
     "Contact": "cwolfs@gmail.com",
 
-    "DLL": "EncounterCommand.dll",
-    "DLLEntryPoint": "EncounterCommand.Main.Init"
+    "DLL": "ContractCommand.dll",
+    "DLLEntryPoint": "ContractCommand.Main.Init"
 }

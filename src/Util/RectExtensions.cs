@@ -1,8 +1,8 @@
 using UnityEngine;
 using System.Collections;
 
-using EncounterCommand;
-using EncounterCommand.Utils;
+using ContractCommand;
+using ContractCommand.Utils;
 
 public static class RectExtensions {
   public enum RectEdge { ANY = -1, MIN_X = 0, MAX_X = 1, MIN_Z = 2, MAX_Z = 3 }

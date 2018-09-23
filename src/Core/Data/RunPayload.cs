@@ -1,3 +1,3 @@
-namespace EncounterCommand.Logic {
+namespace ContractCommand.Logic {
   public abstract class RunPayload { }
 }

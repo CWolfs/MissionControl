@@ -8,13 +8,13 @@ using Harmony;
 using BattleTech;
 using BattleTech.Framework;
 
-using EncounterCommand.Logic;
+using ContractCommand.Logic;
 
 /*
   This patch sets the active contract type and starts any manipulation on the objectives in the game scene.
   This is called after: EncounterLayerParentFirstTimeInitializationPatch
 */
-namespace EncounterCommand.Patches {
+namespace ContractCommand.Patches {
   [HarmonyPatch(typeof(EncounterLayerParent), "FirstTimeInitialization")]
   public class EncounterLayerParentFirstTimeInitializationPatch {
     static void Prefix(EncounterLayerParent __instance) {

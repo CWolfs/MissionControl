@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace EncounterCommand {
+namespace ContractCommand {
     public class AdditionalLances {
         [JsonProperty("Min")]
         public int Min { get; set; } = 0;

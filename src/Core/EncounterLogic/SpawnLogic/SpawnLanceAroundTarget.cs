@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.Designed;
 
-using EncounterCommand.Rules;
-using EncounterCommand.Utils;
+using ContractCommand.Rules;
+using ContractCommand.Utils;
 
-namespace EncounterCommand.Logic {
+namespace ContractCommand.Logic {
   public class SpawnLanceAroundTarget : SpawnLanceLogic {
     private string lanceKey;
     private string orientationTargetKey;

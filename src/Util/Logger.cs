@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using HBS.Logging;
 
 /* Thanks to CptMoore for his Logger */
-namespace EncounterCommand.Utils {
+namespace ContractCommand.Utils {
     public static class ILogExtensions {
         public static void SetLevel(this ILog @this, LogLevel level) {
             Logger.SetLoggerLevel(@this.Name, level);

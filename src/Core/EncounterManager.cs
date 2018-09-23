@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.Framework;
 
-using EncounterCommand.Logic;
-using EncounterCommand.Rules;
-using EncounterCommand.Utils;
+using ContractCommand.Logic;
+using ContractCommand.Rules;
+using ContractCommand.Utils;
 
-namespace EncounterCommand {
+namespace ContractCommand {
   public class EncounterManager {
     private static EncounterManager instance;
 

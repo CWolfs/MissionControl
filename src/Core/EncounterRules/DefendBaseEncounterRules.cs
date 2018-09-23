@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 using BattleTech;
 
-using EncounterCommand.Logic;
+using ContractCommand.Logic;
 
-namespace EncounterCommand.Rules {
+namespace ContractCommand.Rules {
   public class DefendBaseEncounterRules : EncounterRule {
     private GameObject PlotBase { get; set; }
 
