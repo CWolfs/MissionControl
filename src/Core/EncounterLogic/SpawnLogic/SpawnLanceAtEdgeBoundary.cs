@@ -18,6 +18,7 @@ namespace EncounterCommand.Logic {
     private GameObject orientationTarget;
     private RectExtensions.RectEdge edge = RectExtensions.RectEdge.ANY;
 
+    private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
 
     public SpawnLanceAtEdgeOfBoundary(EncounterRule encounterRule, string lanceKey, string orientationTargetKey) : base(encounterRule) {
@@ -47,8 +48,9 @@ namespace EncounterCommand.Logic {
       RotateToTarget(lance, orientationTarget);
 
       if (!AreLanceMemberSpawnsValid(lance, orientationTarget)) {
-        if (AttemptCount > 10) {  // Attempt to spawn on the selected edge. If it's not possible, select another edge
+        if (AttemptCount > AttemptCountMax) {  // Attempt to spawn on the selected edge. If it's not possible, select another edge
           edge = RectExtensions.RectEdge.ANY;
+          AttemptCount = 0;
           Run(payload);
         } else {
           edge = xzEdge.Edge;

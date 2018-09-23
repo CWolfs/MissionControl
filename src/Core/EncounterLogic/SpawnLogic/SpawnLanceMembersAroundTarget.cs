@@ -19,8 +19,8 @@ namespace EncounterCommand.Logic {
     private GameObject orientationTarget;
     private GameObject lookTarget;
     private LookDirection lookDirection;
-    private float minDistanceFromTarget = 10f;
-    private float maxDistanceFromTarget = 10f;
+    private float minDistanceFromTarget = 50f;
+    private float maxDistanceFromTarget = 100f;
     private float minDistanceToSpawnFromInvalidSpawn = 30f;
     private List<Vector3> invalidSpawnLocations = new List<Vector3>();
 
