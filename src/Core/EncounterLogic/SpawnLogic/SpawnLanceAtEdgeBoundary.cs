@@ -69,9 +69,12 @@ namespace MissionControl.Logic {
           }
         } else {
           Main.Logger.Log("[SpawnLanceAtEdgeOfBoundary] Lance spawn complete");
+          CorrectLanceMemberSpawns(lance);
         }
       } else {
-         Main.Logger.Log("[SpawnLanceAtEdgeOfBoundary] Spawn is too close to the target. Selecting a new spawn.");
+        Main.Logger.Log("[SpawnLanceAtEdgeOfBoundary] Spawn is too close to the target. Selecting a new spawn.");
+        edge = xzEdge.Edge;
+        Run(payload);
       }
     }
 

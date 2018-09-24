@@ -50,7 +50,6 @@ namespace MissionControl {
     }
 
     public bool IsSpawnValid(Vector3 position, Vector3 validityPosition) {
-      // Init if required
       if (pathFinderMech.GameRep == null) {
         CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
         pathFinderMech.Init(position, 0, pathFinderMech.thisUnitChecksEncounterCells);
@@ -61,8 +60,13 @@ namespace MissionControl {
         pathFinderMech.ResetPathing(false);
       }
 
-      List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(validityPosition, 9999f, pathFinderMech, true, new List<AbstractActor>(), pathFinderMech.Pathing.CurrentGrid, 50f);
-      if (path != null && path.Count > 3) return true;
+      try {
+        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(validityPosition, 9999f, pathFinderMech, true, new List<AbstractActor>(), pathFinderMech.Pathing.CurrentGrid, 50f);
+        if (path != null && path.Count > 3) return true;
+      } catch (Exception) {
+        Main.Logger.LogWarning($"[IsSpawnValid] Array out of bounds detected in the path finding code. Flagging as invalid spawn. Select a new spawn point.");
+      }
+
       return false;
     }
 
