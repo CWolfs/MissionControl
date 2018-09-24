@@ -46,16 +46,15 @@ namespace MissionControl.Rules {
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "PlotBase"));
     }
 
-    public override void LinkObjectReferences() {
-      ObjectLookup.Add("PlotBase", GameObject.Find(GetPlotBaseName()));
+    public override void LinkObjectReferences(string mapName) {
+      ObjectLookup.Add("PlotBase", GameObject.Find(GetPlotBaseName(mapName)));
 
       foreach (string objectName in ObjectReferenceQueue) {
         ObjectLookup.Add(objectName, GameObject.Find(objectName));    
       }
     }
 
-    private string GetPlotBaseName() {
-      string mapName = EncounterManager.GetInstance().ContractMapName;
+    private string GetPlotBaseName(string mapName) {
       switch (mapName) {
         case "mapGeneral_theMound_vHigh":
           return "Ravine Position";

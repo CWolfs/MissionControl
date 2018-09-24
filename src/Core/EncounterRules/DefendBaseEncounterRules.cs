@@ -35,15 +35,14 @@ namespace MissionControl.Rules {
       EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, "SpawnerLanceEnemyWave3", "SpawnerLanceEnemyWave3", SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 200f));
     }
 
-    public override void LinkObjectReferences() {
-      ObjectLookup.Add("PlotBase", GameObject.Find(GetPlotBaseName()));
+    public override void LinkObjectReferences(string mapName) {
+      ObjectLookup.Add("PlotBase", GameObject.Find(GetPlotBaseName(mapName)));
       ObjectLookup.Add("SpawnerLanceEnemyWave1", GameObject.Find("Lance_Enemy_Wave1Attackers"));
       ObjectLookup.Add("SpawnerLanceEnemyWave2", GameObject.Find("Lance_Enemy_Wave2Attackers"));
       ObjectLookup.Add("SpawnerLanceEnemyWave3", GameObject.Find("Lance_Enemy_Wave3Attackers"));
     }
 
-    private string GetPlotBaseName() {
-      string mapName = EncounterManager.GetInstance().ContractMapName;
+    private string GetPlotBaseName(string mapName) {
       switch (mapName) {
         case "":
           return "Central Basin Base";

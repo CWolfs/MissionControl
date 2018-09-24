@@ -24,7 +24,7 @@ namespace MissionControl.Rules {
 
     public EncounterRule() { }
 
-    public abstract void LinkObjectReferences();
+    public abstract void LinkObjectReferences(string mapName);
 
     public virtual void Run(LogicBlock.LogicType type, RunPayload payload) {
       IEnumerable<LogicBlock> logicBlocks = EncounterLogic.Where(logic => logic.Type == type);
@@ -61,7 +61,8 @@ namespace MissionControl.Rules {
       ObjectLookup.Add("ChunkPlayerLance", ChunkPlayerLanceGo);
       ObjectLookup.Add("SpawnerPlayerLance", SpawnerPlayerLanceGo);
 
-      LinkObjectReferences();
+      string mapName = EncounterManager.GetInstance().ContractMapName;
+      LinkObjectReferences(mapName);
 
       foreach (SpawnLogic spawnLogic in logicBlocks) {
         spawnLogic.Run(payload);

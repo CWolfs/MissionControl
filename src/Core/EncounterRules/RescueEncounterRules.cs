@@ -27,7 +27,7 @@ namespace MissionControl.Rules {
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "OccupyRegion1VIPGo"));
     }
 
-    public override void LinkObjectReferences() {
+    public override void LinkObjectReferences(string mapName) {
       ObjectLookup.Add("OccupyRegion1VIPGo", EncounterLayerGo.transform.Find("Chunk_OccupyRegion_1_VIP").gameObject);
     }
   }
