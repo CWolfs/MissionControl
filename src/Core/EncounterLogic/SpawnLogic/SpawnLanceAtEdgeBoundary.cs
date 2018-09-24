@@ -47,7 +47,8 @@ namespace MissionControl.Logic {
       EncounterBoundaryChunkGameLogic chunkBoundary = chunkBoundaryRect.GetComponent<EncounterBoundaryChunkGameLogic>();
       EncounterBoundaryRectGameLogic boundaryLogic = boundary.GetComponent<EncounterBoundaryRectGameLogic>();
       Rect boundaryRec = chunkBoundary.GetEncounterBoundaryRectBounds();
-      RectEdgePosition xzEdge = boundaryRec.CalculateRandomXZEdge(boundary.transform.position, edge);
+      Rect usableBounds = boundaryRec.GenerateUsableBoundary();
+      RectEdgePosition xzEdge = usableBounds.CalculateRandomXZEdge(boundary.transform.position, edge);
 
       Vector3 lancePosition = lance.transform.position;
       Vector3 newSpawnPosition = new Vector3(xzEdge.Position.x, lancePosition.y, xzEdge.Position.z);
