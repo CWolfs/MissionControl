@@ -8,18 +8,18 @@ using BattleTech;
 using MissionControl.Logic;
 
 namespace MissionControl.Rules {
-  public class RescueEncounterRules : EncounterRule {
-    public RescueEncounterRules() : base() {
+  public class BattleEncounterRules : EncounterRule {
+    public BattleEncounterRules() : base() {
       Build();
     }
 
     public void Build() {
-      Main.Logger.Log("[RescueEncounterRules] Setting up rule object references");
+      Main.Logger.Log("[BattleEncounterRules] Setting up rule object references");
       BuildSpawns();
     }
 
     public void BuildSpawns() {
-      Main.Logger.Log("[RescueEncounterRules] Building spawns rules");
+      Main.Logger.Log("[BattleEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "OccupyRegion1VIPGo"));
     }
 
