@@ -78,6 +78,11 @@ namespace MissionControl {
           BuildEncounterRules(new SimpleBattleEncounterRules());
           break;  
         }
+        case ContractType.CaptureBase: {
+          Main.Logger.Log($"[EncounterManager] Setting contract type to 'CaptureBase'");
+          BuildEncounterRules(new CaptureBaseEncounterRules());
+          break;  
+        }
         default: {
           Main.Logger.LogError($"[EncounterManager] Unknown contract / encounter type of {contractType}");
           return false;
