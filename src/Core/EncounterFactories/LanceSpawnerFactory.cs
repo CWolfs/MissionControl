@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.Designed;
 
-namespace ContractCommand.EncounterFactories {
+namespace MissionControl.EncounterFactories {
   public class LanceSpawnerFactory {
     public static LanceSpawnerGameLogic CreateLanceSpawner(GameObject parent, string name, string guid, string teamDefinitionGuid, bool spawnUnitsOnActivation,
       SpawnUnitMethodType spawnMethod, List<string> unitGuids) {

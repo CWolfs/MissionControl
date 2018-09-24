@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 using BattleTech;
 
-using ContractCommand.Rules;
+using MissionControl.Rules;
 
-namespace ContractCommand.Logic {
+namespace MissionControl.Logic {
   public abstract class SpawnLanceLogic : SpawnLogic {
     protected EncounterRule EncounterRule { get; set; }
 

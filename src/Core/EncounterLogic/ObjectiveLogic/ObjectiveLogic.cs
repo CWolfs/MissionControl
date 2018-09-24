@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 using BattleTech;
 
-namespace ContractCommand.Logic {
+namespace MissionControl.Logic {
   public abstract class ObjectiveLogic : LogicBlock {
     public struct ProgressFormat {
       public static string NUMBER_OF_UNITS_TO_DEFEND_REMAINING = "[numberOfUnitsToDefendRemaining]";

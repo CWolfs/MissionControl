@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 using BattleTech;
 
-using ContractCommand.Logic;
+using MissionControl.Logic;
 
-namespace ContractCommand.Rules {
+namespace MissionControl.Rules {
   public class RescueEncounterRules : EncounterRule {
     public RescueEncounterRules() : base() {
       Build();

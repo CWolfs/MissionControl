@@ -5,7 +5,7 @@ using BattleTech;
 using BattleTech.Designed;
 using BattleTech.Framework;
 
-namespace ContractCommand.EncounterFactories {
+namespace MissionControl.EncounterFactories {
   public class ObjectiveFactory {
     public static DestroyLanceObjective CreateDestroyLanceObjective(GameObject parent, LanceSpawnerRef lanceToDestroy, string lanceGuid, string title, bool showProgress,
     string progressFormat, string description, int priority, bool displayToUser, ObjectiveMark markUnitsWith) {

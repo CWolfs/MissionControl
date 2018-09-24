@@ -1,5 +1,5 @@
 {
-    "Name": "Contract Command",
+    "Name": "Mission Control",
     "Enabled": true,
 
     "Version": "0.1.0",
@@ -7,6 +7,6 @@
     "Author": "CWolf",
     "Contact": "cwolfs@gmail.com",
 
-    "DLL": "ContractCommand.dll",
-    "DLLEntryPoint": "ContractCommand.Main.Init"
+    "DLL": "MissionControl.dll",
+    "DLLEntryPoint": "MissionControl.Main.Init"
 }

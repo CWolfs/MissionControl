@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace ContractCommand {
+namespace MissionControl {
     public class Settings {
         [JsonProperty("AdditionalLances")]
         public AdditionalLances AdditionalLances { get; set; } = new AdditionalLances();

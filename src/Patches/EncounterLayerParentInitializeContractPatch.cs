@@ -8,13 +8,13 @@ using Harmony;
 using BattleTech;
 using BattleTech.Framework;
 
-using ContractCommand.Logic;
+using MissionControl.Logic;
 
 /*
   This patch allows you to build custom objectives at the right point in the game logic
   This is called before: EncounterLayerParentFirstTimeInitializationPatch
 */
-namespace ContractCommand.Patches {
+namespace MissionControl.Patches {
   [HarmonyPatch(typeof(EncounterLayerParent), "InitializeContract")]
   public class EncounterLayerParentInitializeContractPatch {
     static void Prefix(EncounterLayerParent __instance) {

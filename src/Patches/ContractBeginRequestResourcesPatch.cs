@@ -13,7 +13,7 @@ using BattleTech.Framework;
   This allows the system to load the resources ready for using them
   in the game scene.
 */
-namespace ContractCommand.Patches {
+namespace MissionControl.Patches {
   [HarmonyPatch(typeof(Contract), "BeginRequestResources")]
   public class ContractBeginRequestResourcesPatch {
     static void Postfix(Contract __instance, bool generateUnits) {

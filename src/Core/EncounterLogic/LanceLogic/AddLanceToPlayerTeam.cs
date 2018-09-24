@@ -7,10 +7,10 @@ using BattleTech;
 using BattleTech.Designed;
 using BattleTech.Framework;
 
-using ContractCommand.Rules;
-using ContractCommand.Utils;
+using MissionControl.Rules;
+using MissionControl.Utils;
 
-namespace ContractCommand.Logic {
+namespace MissionControl.Logic {
   public class AddLanceToPlayerTeam : LanceLogic {
     private string lanceGuid;
     private List<string> unitGuids;

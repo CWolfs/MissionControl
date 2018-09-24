@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "D:/Modding/Battletech/ContractCommand/src/ContractCommand.csproj"
+                "D:/Modding/Battletech/MissionControl/src/MissionControl.csproj"
             ],
             "problemMatcher": "$msCompile"
         }

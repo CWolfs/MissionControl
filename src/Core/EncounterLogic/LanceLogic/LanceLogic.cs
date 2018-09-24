@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 using BattleTech;
 
-namespace ContractCommand.Logic {
+namespace MissionControl.Logic {
   public abstract class LanceLogic : LogicBlock {
     public LanceLogic() {
       this.Type = LogicType.CONTRACT_OVERRIDE_MANIPULATION;

@@ -1,4 +1,4 @@
-# Contract Command
+# Mission Control
 
 A HBS BattleTech mod that varies the encounter specifics such as spawn locations, lance numbers and objectives
 

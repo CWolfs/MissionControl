@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace ContractCommand.Utils {
+namespace MissionControl.Utils {
   public class LayerTools {
     public static void SetLayerRecursively(GameObject go, int layerNumber) {
       foreach (Transform trans in go.GetComponentsInChildren<Transform>(true)) {

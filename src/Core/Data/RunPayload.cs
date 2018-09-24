@@ -1,3 +1,3 @@
-namespace ContractCommand.Logic {
+namespace MissionControl.Logic {
   public abstract class RunPayload { }
 }

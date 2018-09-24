@@ -7,22 +7,22 @@ using Harmony;
 using Newtonsoft.Json;
 using System.Reflection;
 
-using ContractCommand.Utils;
+using MissionControl.Utils;
 
-namespace ContractCommand {
+namespace MissionControl {
     public class Main {
         public static ILog Logger;
         public static Settings Settings { get; private set; }
-        public static Assembly ContractCommandAssembly { get; set; } 
-        public static AssetBundle ContractCommandBundle { get; set; }
+        public static Assembly MissionControlAssembly { get; set; } 
+        public static AssetBundle MissionControlBundle { get; set; }
         public static string Path { get; private set; }
 
         public static void InitLogger(string modDirectory) {
             Dictionary<string, LogLevel> logLevels = new Dictionary<string, LogLevel> {
-                ["ContractCommand"] = LogLevel.Debug
+                ["MissionControl"] = LogLevel.Debug
             };
             LogManager.Setup(modDirectory + "/output.log", logLevels);
-            Logger = LogManager.GetLogger("ContractCommand");
+            Logger = LogManager.GetLogger("MissionControl");
             Path = modDirectory;
         }
 
@@ -37,12 +37,12 @@ namespace ContractCommand {
                 Settings = new Settings();
             }
 
-            HarmonyInstance harmony = HarmonyInstance.Create("co.uk.cwolf.ContractCommand");
+            HarmonyInstance harmony = HarmonyInstance.Create("co.uk.cwolf.MissionControl");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
         }
 
         private static void LoadSettings(string modDirectory) {
-            Logger.Log("Loading ContractCommand settings");
+            Logger.Log("Loading MissionControl settings");
             string settingsJsonString = File.ReadAllText($"{modDirectory}/settings.json");
             Settings = JsonConvert.DeserializeObject<Settings>(settingsJsonString);
         }

@@ -8,14 +8,14 @@ using Harmony;
 using BattleTech;
 using BattleTech.Framework;
 
-using ContractCommand;
-using ContractCommand.Logic;
+using MissionControl;
+using MissionControl.Logic;
 
 /*
   This patch is used to inject a custom lance into the target team.
   This allows BT to then request the resources for the additional lance
 */
-namespace ContractCommand.Patches {
+namespace MissionControl.Patches {
   [HarmonyPatch(typeof(ContractOverride), "GenerateUnits")]
   public class ContractOverrideGenerateUnitsPatch {
     static void Prefix(ContractOverride __instance) {

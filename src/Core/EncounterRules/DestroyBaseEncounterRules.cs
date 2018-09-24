@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 using BattleTech;
 
-using ContractCommand.Logic;
+using MissionControl.Logic;
 
-namespace ContractCommand.Rules {
+namespace MissionControl.Rules {
   public class DestroyBaseEncounterRules : EncounterRule {
     private GameObject PlotBase { get; set; }
     private List<string> ObjectReferenceQueue = new List<string>();

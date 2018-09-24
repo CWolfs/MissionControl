@@ -7,12 +7,12 @@ using BattleTech;
 using BattleTech.Designed;
 using BattleTech.Framework;
 
-using ContractCommand.Logic;
-using ContractCommand.Rules;
-using ContractCommand.EncounterFactories;
-using ContractCommand.Utils;
+using MissionControl.Logic;
+using MissionControl.Rules;
+using MissionControl.EncounterFactories;
+using MissionControl.Utils;
 
-namespace ContractCommand.Logic {
+namespace MissionControl.Logic {
   public class AddDestroyWholeUnitChunk : ObjectiveLogic {
     private string teamGuid;
     private string lanceGuid;

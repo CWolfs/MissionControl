@@ -3,7 +3,7 @@ using System;
 
 using BattleTech.Designed;
 
-namespace ContractCommand.EncounterFactories {
+namespace MissionControl.EncounterFactories {
   public class ChunkFactory {
     public static DestroyWholeLanceChunk CreateDestroyWholeLanceChunk() {
       GameObject encounterLayerGameObject = EncounterManager.GetInstance().EncounterLayerGameObject;

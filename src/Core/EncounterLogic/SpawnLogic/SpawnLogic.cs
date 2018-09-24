@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 using BattleTech;
 
-namespace ContractCommand.Logic {
+namespace MissionControl.Logic {
   public abstract class SpawnLogic : LogicBlock {
     public enum LookDirection { TOWARDS_TARGET, AWAY_FROM_TARGET };
 
