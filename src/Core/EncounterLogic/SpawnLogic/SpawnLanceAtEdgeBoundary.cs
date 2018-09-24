@@ -17,6 +17,8 @@ namespace MissionControl.Logic {
     private GameObject lance;
     private GameObject orientationTarget;
     private RectExtensions.RectEdge edge = RectExtensions.RectEdge.ANY;
+    private bool useMiniumDistance = false;
+    private float minimumDistance = 400f;
 
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
@@ -24,6 +26,13 @@ namespace MissionControl.Logic {
     public SpawnLanceAtEdgeOfBoundary(EncounterRule encounterRule, string lanceKey, string orientationTargetKey) : base(encounterRule) {
       this.lanceKey = lanceKey;
       this.orientationTargetKey = orientationTargetKey;
+    }
+
+    public SpawnLanceAtEdgeOfBoundary(EncounterRule encounterRule, string lanceKey, string orientationTargetKey, float minimumDistance) : base(encounterRule) {
+      this.lanceKey = lanceKey;
+      this.orientationTargetKey = orientationTargetKey;
+      this.useMiniumDistance = true;
+      this.minimumDistance = minimumDistance;
     }
 
     public override void Run(RunPayload payload) {
@@ -38,7 +47,8 @@ namespace MissionControl.Logic {
       EncounterBoundaryChunkGameLogic chunkBoundary = chunkBoundaryRect.GetComponent<EncounterBoundaryChunkGameLogic>();
       EncounterBoundaryRectGameLogic boundaryLogic = boundary.GetComponent<EncounterBoundaryRectGameLogic>();
       Rect boundaryRec = chunkBoundary.GetEncounterBoundaryRectBounds();
-      RectEdgePosition xzEdge = boundaryRec.CalculateRandomXZEdge(boundary.transform.position, edge);
+      Rect usableBounds = boundaryRec.GenerateUsableBoundary();
+      RectEdgePosition xzEdge = usableBounds.CalculateRandomXZEdge(boundary.transform.position, edge);
 
       Vector3 lancePosition = lance.transform.position;
       Vector3 newSpawnPosition = new Vector3(xzEdge.Position.x, lancePosition.y, xzEdge.Position.z);
@@ -47,17 +57,24 @@ namespace MissionControl.Logic {
       lance.transform.position = newSpawnPosition;
       RotateToTarget(lance, orientationTarget);
 
-      if (!AreLanceMemberSpawnsValid(lance, orientationTarget)) {
-        if (AttemptCount > AttemptCountMax) {  // Attempt to spawn on the selected edge. If it's not possible, select another edge
-          edge = RectExtensions.RectEdge.ANY;
-          AttemptCount = 0;
-          Run(payload);
+      if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(lance.transform.position, orientationTarget.transform.position, minimumDistance)) {
+        if (!AreLanceMemberSpawnsValid(lance, orientationTarget)) {
+          if (AttemptCount > AttemptCountMax) {  // Attempt to spawn on the selected edge. If it's not possible, select another edge
+            edge = RectExtensions.RectEdge.ANY;
+            AttemptCount = 0;
+            Run(payload);
+          } else {
+            edge = xzEdge.Edge;
+            Run(payload);
+          }
         } else {
-          edge = xzEdge.Edge;
-          Run(payload);
+          Main.Logger.Log("[SpawnLanceAtEdgeOfBoundary] Lance spawn complete");
+          CorrectLanceMemberSpawns(lance);
         }
       } else {
-        Main.Logger.Log("[SpawnLanceAtEdgeOfBoundary] Lance spawn complete");
+        Main.Logger.Log("[SpawnLanceAtEdgeOfBoundary] Spawn is too close to the target. Selecting a new spawn.");
+        edge = xzEdge.Edge;
+        Run(payload);
       }
     }
 

@@ -73,6 +73,11 @@ namespace MissionControl {
           BuildEncounterRules(new DestroyBaseEncounterRules());
           break;
         }
+        case ContractType.SimpleBattle: {
+          Main.Logger.Log($"[EncounterManager] Setting contract type to 'SimpleBattle'");
+          BuildEncounterRules(new SimpleBattleEncounterRules());
+          break;  
+        }
         default: {
           Main.Logger.LogError($"[EncounterManager] Unknown contract / encounter type of {contractType}");
           return false;

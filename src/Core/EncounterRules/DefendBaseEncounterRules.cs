@@ -22,10 +22,6 @@ namespace MissionControl.Rules {
 
     public void BuildSpawns() {
       Main.Logger.Log("[DefendBaseEncounterRules] Building spawns rules");
-      BuildPlayerLanceSpawn();
-    }
-
-    private void BuildPlayerLanceSpawn() {
       EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, "SpawnerPlayerLance", "PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 100f, 200f));
       EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerLanceEnemyWave1", "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET, 300f, 500f));
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerLanceEnemyWave2", "PlotBase"));

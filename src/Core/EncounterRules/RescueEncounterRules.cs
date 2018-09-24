@@ -20,10 +20,6 @@ namespace MissionControl.Rules {
 
     public void BuildSpawns() {
       Main.Logger.Log("[RescueEncounterRules] Building spawns rules");
-      BuildPlayerLanceSpawn();
-    }
-
-    private void BuildPlayerLanceSpawn() {
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "OccupyRegion1VIPGo"));
     }
 
