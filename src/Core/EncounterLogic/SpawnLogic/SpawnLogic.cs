@@ -49,13 +49,22 @@ namespace MissionControl.Logic {
       }
     }
 
-    private bool IsWithinBoundedDistanceOfTarget(Vector3 origin, Vector3 target, float minDistance, float maxDistance) {
+    public bool IsWithinBoundedDistanceOfTarget(Vector3 origin, Vector3 target, float minDistance, float maxDistance) {
       Vector3 vectorToTarget = target - origin;
       vectorToTarget.y = 0;
       float distance = vectorToTarget.magnitude;
       if ((distance > minDistance) && (distance < maxDistance)) return true;
       Main.Logger.LogWarning($"[IsWithinBoundedDistanceOfTarget] Distance is {distance} and so not within bounds. Getting new random position");
       return false;
+    }
+
+    public bool IsWithinBoundedDistanceOfTarget(Vector3 origin, Vector3 target, float minDistance) {
+      Vector3 vectorToTarget = target - origin;
+      vectorToTarget.y = 0;
+      float distance = vectorToTarget.magnitude;
+      if (distance > minDistance) return true;
+      Main.Logger.LogWarning($"[IsWithinBoundedDistanceOfTarget] Distance is {distance} and so not within bounds. Getting new random position");
+      return false;  
     }
 
     protected bool IsSpawnValid(GameObject spawnPoint, GameObject orientationTarget) {
