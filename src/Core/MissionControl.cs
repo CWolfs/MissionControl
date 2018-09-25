@@ -85,6 +85,7 @@ namespace MissionControl {
         encounters = AvailableEncounters[type];
       } else {
         Main.Logger.LogError($"[MissionControl] Unknown contract / encounter type of '{type}'");
+        EncounterRule = null;
         return false;
       }
 
@@ -103,26 +104,28 @@ namespace MissionControl {
     }
 
     public void RunEncounterRules(LogicBlock.LogicType type, RunPayload payload = null) {
-      switch (type) {
-        case LogicBlock.LogicType.RESOURCE_REQUEST: {
-          EncounterRule.Run(LogicBlock.LogicType.RESOURCE_REQUEST, payload);
-          break;
-        }
-        case LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION: {
-          EncounterRule.Run(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
-          break;
-        }
-        case LogicBlock.LogicType.ENCOUNTER_MANIPULATION: {
-          EncounterRule.Run(LogicBlock.LogicType.ENCOUNTER_MANIPULATION, payload);
-          break; 
-        }
-        case LogicBlock.LogicType.SCENE_MANIPULATION: {
-          EncounterRule.Run(LogicBlock.LogicType.SCENE_MANIPULATION, payload);
-          break;
-        }
-        default: {
-          Main.Logger.LogError($"[RunEncounterRules] Unknown type of '{type.ToString()}'");
-          break;
+      if (EncounterRule != null) {
+        switch (type) {
+          case LogicBlock.LogicType.RESOURCE_REQUEST: {
+            EncounterRule.Run(LogicBlock.LogicType.RESOURCE_REQUEST, payload);
+            break;
+          }
+          case LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION: {
+            EncounterRule.Run(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
+            break;
+          }
+          case LogicBlock.LogicType.ENCOUNTER_MANIPULATION: {
+            EncounterRule.Run(LogicBlock.LogicType.ENCOUNTER_MANIPULATION, payload);
+            break; 
+          }
+          case LogicBlock.LogicType.SCENE_MANIPULATION: {
+            EncounterRule.Run(LogicBlock.LogicType.SCENE_MANIPULATION, payload);
+            break;
+          }
+          default: {
+            Main.Logger.LogError($"[RunEncounterRules] Unknown type of '{type.ToString()}'");
+            break;
+          }
         }
       }
     }

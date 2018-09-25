@@ -56,8 +56,12 @@ namespace MissionControl.Rules {
       switch (mapName) {
         case "mapGeneral_theMound_vHigh":
           return "Ravine Position";
+        case "mapGeneral_frostySlopes_iTnd":
+          return "Roadside Facility";
         default:
-          return "Ravine Position";
+          Main.Logger.LogError($"[{this.GetType().Name}] GetPlotBaseName for map {mapName} is empty");
+          State = EncounterState.FAILED;
+          return "";
       }
     }
   }

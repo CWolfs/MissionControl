@@ -41,7 +41,9 @@ namespace MissionControl.Rules {
         case "":
           return "Central Basin Base";
         default:
-          return "Central Basin Base";
+          Main.Logger.LogError($"[{this.GetType().Name}] GetPlotBaseName for map {mapName} is empty");
+          State = EncounterState.FAILED;
+          return "";
       }
     }
   }
