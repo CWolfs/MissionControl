@@ -35,16 +35,5 @@ namespace MissionControl.Rules {
       ObjectLookup.Add("SpawnerLanceEnemyWave2", GameObject.Find("Lance_Enemy_Wave2Attackers"));
       ObjectLookup.Add("SpawnerLanceEnemyWave3", GameObject.Find("Lance_Enemy_Wave3Attackers"));
     }
-
-    private string GetPlotBaseName(string mapName) {
-      switch (mapName) {
-        case "":
-          return "Central Basin Base";
-        default:
-          Main.Logger.LogError($"[{this.GetType().Name}] GetPlotBaseName for map {mapName} is empty");
-          State = EncounterState.FAILED;
-          return "";
-      }
-    }
   }
 }

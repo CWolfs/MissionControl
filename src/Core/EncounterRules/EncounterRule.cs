@@ -18,6 +18,7 @@ namespace MissionControl.Rules {
     public const string TARGETS_ALLY_TEAM_ID = "31151ed6-cfc2-467e-98c4-9ae5bea784cf";
 
     protected GameObject EncounterLayerGo { get; set; }
+    protected EncounterLayerData EncounterLayerData { get; private set; }
     protected GameObject ChunkPlayerLanceGo { get; set; }
     protected GameObject SpawnerPlayerLanceGo { get; set; }
 
@@ -63,6 +64,7 @@ namespace MissionControl.Rules {
 
     private void RunSceneManipulationLogic(IEnumerable<LogicBlock> logicBlocks, RunPayload payload) {
       EncounterLayerGo = MissionControl.GetInstance().EncounterLayerGameObject;
+      EncounterLayerData = MissionControl.GetInstance().EncounterLayerData;
       ChunkPlayerLanceGo = EncounterLayerGo.transform.Find("Chunk_PlayerLance").gameObject;
       SpawnerPlayerLanceGo = ChunkPlayerLanceGo.transform.Find("Spawner_PlayerLance").gameObject;
       ObjectLookup.Add("ChunkPlayerLance", ChunkPlayerLanceGo);
@@ -96,6 +98,38 @@ namespace MissionControl.Rules {
       }
 
       return guids;
+    }
+
+    protected GameObject GetClosestPlotName(Vector3 origin) {
+      GameObject plotsParentGo = GameObject.Find("PlotParent");
+      GameObject closestPlot = null;
+      float closestDistance = -1;
+
+      foreach (Transform t in plotsParentGo.transform) {
+        Vector3 plotPosition = t.position;
+        if (EncounterLayerData.IsInEncounterBounds(plotPosition)) {
+          float distance = Vector3.Distance(t.position, origin);
+          if (closestDistance == -1 || closestDistance < distance) {
+            closestDistance = distance;
+            closestPlot = t.gameObject;
+          }
+        }
+      }
+
+      return closestPlot;
+    }
+
+    protected string GetPlotBaseName(string mapName) {
+      Vector3 playerLanceSpawnPosition = SpawnerPlayerLanceGo.transform.position;
+      GameObject plot = GetClosestPlotName(playerLanceSpawnPosition);
+      
+      if (plot == null) {
+        Main.Logger.LogError($"[{this.GetType().Name}] GetPlotBaseName for map {mapName} is empty");
+        State = EncounterState.FAILED;
+        return "";
+      }
+
+      return plot.name;
     }
   }
 }

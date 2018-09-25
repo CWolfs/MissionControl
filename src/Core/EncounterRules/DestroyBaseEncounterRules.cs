@@ -51,18 +51,5 @@ namespace MissionControl.Rules {
         ObjectLookup.Add(objectName, GameObject.Find(objectName));    
       }
     }
-
-    private string GetPlotBaseName(string mapName) {
-      switch (mapName) {
-        case "mapGeneral_theMound_vHigh":
-          return "Ravine Position";
-        case "mapGeneral_frostySlopes_iTnd":
-          return "Roadside Facility";
-        default:
-          Main.Logger.LogError($"[{this.GetType().Name}] GetPlotBaseName for map {mapName} is empty");
-          State = EncounterState.FAILED;
-          return "";
-      }
-    }
   }
 }
