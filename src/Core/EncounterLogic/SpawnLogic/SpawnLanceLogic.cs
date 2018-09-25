@@ -9,10 +9,10 @@ using MissionControl.Rules;
 
 namespace MissionControl.Logic {
   public abstract class SpawnLanceLogic : SpawnLogic {
-    protected EncounterRule EncounterRule { get; set; }
+    protected EncounterRules EncounterRules { get; set; }
 
-    public SpawnLanceLogic(EncounterRule encounterRule) : base() {
-      EncounterRule = encounterRule;
+    public SpawnLanceLogic(EncounterRules encounterRule) : base() {
+      EncounterRules = encounterRule;
     }
 
     protected void CorrectLanceMemberSpawns(GameObject lance) {
@@ -42,7 +42,7 @@ namespace MissionControl.Logic {
           return false;
         }
 
-        EncounterLayerData encounterLayerData = EncounterManager.GetInstance().EncounterLayerData;
+        EncounterLayerData encounterLayerData = MissionControl.GetInstance().EncounterLayerData;
         if (!encounterLayerData.IsInEncounterBounds(spawnPointPosition)) {
           Main.Logger.LogWarning("[AreLanceMemberSpawnsValid] Lance member spawn is outside of the boundary. Select a new lance spawn point.");
           return false;  

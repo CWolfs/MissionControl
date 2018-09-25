@@ -8,6 +8,9 @@ using Harmony;
 using BattleTech;
 using BattleTech.Framework;
 
+using MissionControl;
+using MissionControl.Logic;
+
 /*
   This patch is at the right point to allow for requesting resources.
   This allows the system to load the resources ready for using them
@@ -20,6 +23,7 @@ namespace MissionControl.Patches {
       if (generateUnits) {
         Main.Logger.Log($"[ContractBeginRequestResourcesPatch Postfix] Patching BeginRequestResources");
         RequestUnits();
+        MissionControl.GetInstance().RunEncounterRules(SpawnLogic.LogicType.RESOURCE_REQUEST);
       }
     }
 

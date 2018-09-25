@@ -24,13 +24,13 @@ namespace MissionControl.Logic {
     private float minDistanceToSpawnFromInvalidSpawn = 30f;
     private List<Vector3> invalidSpawnLocations = new List<Vector3>();
 
-    public SpawnLanceMembersAroundTarget(EncounterRule encounterRule, string lanceKey, string orientationTargetKey, LookDirection lookDirection) :
+    public SpawnLanceMembersAroundTarget(EncounterRules encounterRule, string lanceKey, string orientationTargetKey, LookDirection lookDirection) :
       this(encounterRule, lanceKey, orientationTargetKey, lookDirection, 10, 10) { } // TODO: Replace the hard coded values with a setting.json setting
 
-    public SpawnLanceMembersAroundTarget(EncounterRule encounterRule, string lanceKey, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) :
+    public SpawnLanceMembersAroundTarget(EncounterRules encounterRule, string lanceKey, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) :
       this(encounterRule, lanceKey, orientationTargetKey, orientationTargetKey, lookDirection, minDistance, maxDistance) { }
 
-    public SpawnLanceMembersAroundTarget(EncounterRule encounterRule, string lanceKey, string orientationTargetKey, string lookTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) : base(encounterRule) {
+    public SpawnLanceMembersAroundTarget(EncounterRules encounterRule, string lanceKey, string orientationTargetKey, string lookTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) : base(encounterRule) {
       this.lanceKey = lanceKey;
       this.orientationTargetKey = orientationTargetKey;
       this.lookTargetKey = lookTargetKey;
@@ -53,9 +53,9 @@ namespace MissionControl.Logic {
     }
 
     protected override void GetObjectReferences() {
-      this.EncounterRule.ObjectLookup.TryGetValue(lanceKey, out lance);
-      this.EncounterRule.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
-      this.EncounterRule.ObjectLookup.TryGetValue(lookTargetKey, out lookTarget);
+      this.EncounterRules.ObjectLookup.TryGetValue(lanceKey, out lance);
+      this.EncounterRules.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
+      this.EncounterRules.ObjectLookup.TryGetValue(lookTargetKey, out lookTarget);
 
       if (lance == null || orientationTarget == null || lookTarget == null) {
         Main.Logger.LogError("[SpawnLanceMembersAroundTarget] Object referneces are null");

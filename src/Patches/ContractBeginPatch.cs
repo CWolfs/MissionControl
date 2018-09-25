@@ -23,7 +23,7 @@ namespace MissionControl.Patches {
     }
 
     public static void Init(Contract contract) {
-      EncounterManager encounterManager = EncounterManager.GetInstance();
+      MissionControl encounterManager = MissionControl.GetInstance();
       encounterManager.SetContract(contract);
     }
   }

@@ -8,12 +8,10 @@ using BattleTech;
 using MissionControl.Logic;
 
 namespace MissionControl.Rules {
-  public class RescueEncounterRules : EncounterRule {
-    public RescueEncounterRules() : base() {
-      Build();
-    }
+  public class RescueEncounterRules : EncounterRules {
+    public RescueEncounterRules() : base() { }
 
-    public void Build() {
+    public override void Build() {
       Main.Logger.Log("[RescueEncounterRules] Setting up rule object references");
       BuildSpawns();
     }

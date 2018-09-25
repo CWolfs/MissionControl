@@ -8,15 +8,13 @@ using BattleTech;
 using MissionControl.Logic;
 
 namespace MissionControl.Rules {
-  public class DestroyBaseEncounterRules : EncounterRule {
+  public class DestroyBaseEncounterRules : EncounterRules {
     private GameObject PlotBase { get; set; }
     private List<string> ObjectReferenceQueue = new List<string>();
 
-    public DestroyBaseEncounterRules() : base() {
-      Build();
-    }
+    public DestroyBaseEncounterRules() : base() { }
 
-    public void Build() {
+    public override void Build() {
       Main.Logger.Log("[DestroyBaseEncounterRules] Setting up rule object references");
       BuildAdditionalLances();
       BuildSpawn();
@@ -51,15 +49,6 @@ namespace MissionControl.Rules {
 
       foreach (string objectName in ObjectReferenceQueue) {
         ObjectLookup.Add(objectName, GameObject.Find(objectName));    
-      }
-    }
-
-    private string GetPlotBaseName(string mapName) {
-      switch (mapName) {
-        case "mapGeneral_theMound_vHigh":
-          return "Ravine Position";
-        default:
-          return "Ravine Position";
       }
     }
   }

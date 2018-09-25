@@ -23,13 +23,13 @@ namespace MissionControl.Logic {
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
 
-    public SpawnLanceAroundTarget(EncounterRule encounterRule, string lanceKey, string orientationTargetKey, LookDirection lookDirection) : base(encounterRule) {
+    public SpawnLanceAroundTarget(EncounterRules encounterRule, string lanceKey, string orientationTargetKey, LookDirection lookDirection) : base(encounterRule) {
       this.lanceKey = lanceKey;
       this.orientationTargetKey = orientationTargetKey;
       this.lookDirection = lookDirection;
     }
 
-    public SpawnLanceAroundTarget(EncounterRule encounterRule, string lanceKey, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) : base(encounterRule) {
+    public SpawnLanceAroundTarget(EncounterRules encounterRule, string lanceKey, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) : base(encounterRule) {
       this.lanceKey = lanceKey;
       this.minDistanceFromTarget = minDistance;
       this.maxDistanceFromTarget = maxDistance;
@@ -40,7 +40,7 @@ namespace MissionControl.Logic {
       GetObjectReferences();
       Main.Logger.Log($"[SpawnLanceAroundTarget] For {lance.name}");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-      EncounterManager encounterManager = EncounterManager.GetInstance();
+      MissionControl encounterManager = MissionControl.GetInstance();
 
       Vector3 lancePosition = lance.transform.position;
       Vector3 newSpawnPosition = GetRandomPositionFromTarget(lance, minDistanceFromTarget, maxDistanceFromTarget);
@@ -81,8 +81,8 @@ namespace MissionControl.Logic {
     }
 
     protected override void GetObjectReferences() {
-      this.EncounterRule.ObjectLookup.TryGetValue(lanceKey, out lance);
-      this.EncounterRule.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
+      this.EncounterRules.ObjectLookup.TryGetValue(lanceKey, out lance);
+      this.EncounterRules.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
 
       if (lance == null || orientationTarget == null) {
         Main.Logger.LogError("[SpawnLanceAroundTarget] Object references are null");

@@ -8,12 +8,10 @@ using BattleTech;
 using MissionControl.Logic;
 
 namespace MissionControl.Rules {
-  public class SimpleBattleEncounterRules : EncounterRule {
-    public SimpleBattleEncounterRules() : base() {
-      Build();
-    }
+  public class SimpleBattleEncounterRules : EncounterRules {
+    public SimpleBattleEncounterRules() : base() { }
 
-    public void Build() {
+    public override void Build() {
       Main.Logger.Log("[SimpleBattleEncounterRules] Setting up rule object references");
       BuildSpawns();
     }

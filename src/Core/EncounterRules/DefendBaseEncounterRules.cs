@@ -8,14 +8,12 @@ using BattleTech;
 using MissionControl.Logic;
 
 namespace MissionControl.Rules {
-  public class DefendBaseEncounterRules : EncounterRule {
+  public class DefendBaseEncounterRules : EncounterRules {
     private GameObject PlotBase { get; set; }
 
-    public DefendBaseEncounterRules() : base() {
-      Build();
-    }
+    public DefendBaseEncounterRules() : base() { }
 
-    public void Build() {
+    public override void Build() {
       Main.Logger.Log("[DefendBaseEncounterRules] Setting up rule object references");
       BuildSpawns();
     }
@@ -36,15 +34,6 @@ namespace MissionControl.Rules {
       ObjectLookup.Add("SpawnerLanceEnemyWave1", GameObject.Find("Lance_Enemy_Wave1Attackers"));
       ObjectLookup.Add("SpawnerLanceEnemyWave2", GameObject.Find("Lance_Enemy_Wave2Attackers"));
       ObjectLookup.Add("SpawnerLanceEnemyWave3", GameObject.Find("Lance_Enemy_Wave3Attackers"));
-    }
-
-    private string GetPlotBaseName(string mapName) {
-      switch (mapName) {
-        case "":
-          return "Central Basin Base";
-        default:
-          return "Central Basin Base";
-      }
     }
   }
 }
