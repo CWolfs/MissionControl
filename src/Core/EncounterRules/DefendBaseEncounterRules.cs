@@ -8,7 +8,7 @@ using BattleTech;
 using MissionControl.Logic;
 
 namespace MissionControl.Rules {
-  public class DefendBaseEncounterRules : EncounterRule {
+  public class DefendBaseEncounterRules : EncounterRules {
     private GameObject PlotBase { get; set; }
 
     public DefendBaseEncounterRules() : base() { }

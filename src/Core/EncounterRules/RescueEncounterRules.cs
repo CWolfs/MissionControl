@@ -8,7 +8,7 @@ using BattleTech;
 using MissionControl.Logic;
 
 namespace MissionControl.Rules {
-  public class RescueEncounterRules : EncounterRule {
+  public class RescueEncounterRules : EncounterRules {
     public RescueEncounterRules() : base() { }
 
     public override void Build() {

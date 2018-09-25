@@ -23,12 +23,12 @@ namespace MissionControl.Logic {
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
 
-    public SpawnLanceAtEdgeOfBoundary(EncounterRule encounterRule, string lanceKey, string orientationTargetKey) : base(encounterRule) {
+    public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRule, string lanceKey, string orientationTargetKey) : base(encounterRule) {
       this.lanceKey = lanceKey;
       this.orientationTargetKey = orientationTargetKey;
     }
 
-    public SpawnLanceAtEdgeOfBoundary(EncounterRule encounterRule, string lanceKey, string orientationTargetKey, float minimumDistance) : base(encounterRule) {
+    public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRule, string lanceKey, string orientationTargetKey, float minimumDistance) : base(encounterRule) {
       this.lanceKey = lanceKey;
       this.orientationTargetKey = orientationTargetKey;
       this.useMiniumDistance = true;
@@ -79,8 +79,8 @@ namespace MissionControl.Logic {
     }
 
     protected override void GetObjectReferences() {
-      this.EncounterRule.ObjectLookup.TryGetValue(lanceKey, out lance);
-      this.EncounterRule.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
+      this.EncounterRules.ObjectLookup.TryGetValue(lanceKey, out lance);
+      this.EncounterRules.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
 
       if (lance == null || orientationTarget == null) {
         Main.Logger.LogError("[SpawnLanceAroundTarget] Object referneces are null");

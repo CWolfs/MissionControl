@@ -9,7 +9,7 @@ using BattleTech;
 using MissionControl.Logic;
 
 namespace MissionControl.Rules {
-  public abstract class EncounterRule {
+  public abstract class EncounterRules {
     public enum EncounterState { NOT_STARTED, RUNNING, FAILED, FINISHED };
 
     public const string PLAYER_TEAM_ID = "bf40fd39-ccf9-47c4-94a6-061809681140";
@@ -27,7 +27,7 @@ namespace MissionControl.Rules {
 
     public EncounterState State { get; protected set; } = EncounterState.NOT_STARTED;
 
-    public EncounterRule() { }
+    public EncounterRules() { }
 
     public abstract void Build();
 

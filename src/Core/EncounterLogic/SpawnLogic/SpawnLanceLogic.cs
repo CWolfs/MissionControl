@@ -9,10 +9,10 @@ using MissionControl.Rules;
 
 namespace MissionControl.Logic {
   public abstract class SpawnLanceLogic : SpawnLogic {
-    protected EncounterRule EncounterRule { get; set; }
+    protected EncounterRules EncounterRules { get; set; }
 
-    public SpawnLanceLogic(EncounterRule encounterRule) : base() {
-      EncounterRule = encounterRule;
+    public SpawnLanceLogic(EncounterRules encounterRule) : base() {
+      EncounterRules = encounterRule;
     }
 
     protected void CorrectLanceMemberSpawns(GameObject lance) {

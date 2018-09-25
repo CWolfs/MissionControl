@@ -18,7 +18,7 @@ namespace MissionControl {
     public Contract CurrentContract { get; private set; }
     public string ContractMapName { get; private set; }
     public ContractType CurrentContractType { get; private set; } = ContractType.INVALID_UNSET;
-    public EncounterRule EncounterRule { get; private set; }
+    public EncounterRules EncounterRules { get; private set; }
     public GameObject EncounterLayerParentGameObject { get; private set; }
     public EncounterLayerParent EncounterLayerParent { get; private set; }
     public GameObject EncounterLayerGameObject { get; private set; }
@@ -85,7 +85,7 @@ namespace MissionControl {
         encounters = AvailableEncounters[type];
       } else {
         Main.Logger.LogError($"[MissionControl] Unknown contract / encounter type of '{type}'");
-        EncounterRule = null;
+        EncounterRules = null;
         return false;
       }
 
@@ -99,27 +99,27 @@ namespace MissionControl {
     }
 
     private void SetEncounterRule(Type encounterRule) {
-      EncounterRule = (EncounterRule)Activator.CreateInstance(encounterRule);
-      EncounterRule.Build();
+      EncounterRules = (EncounterRules)Activator.CreateInstance(encounterRule);
+      EncounterRules.Build();
     }
 
     public void RunEncounterRules(LogicBlock.LogicType type, RunPayload payload = null) {
-      if (EncounterRule != null) {
+      if (EncounterRules != null) {
         switch (type) {
           case LogicBlock.LogicType.RESOURCE_REQUEST: {
-            EncounterRule.Run(LogicBlock.LogicType.RESOURCE_REQUEST, payload);
+            EncounterRules.Run(LogicBlock.LogicType.RESOURCE_REQUEST, payload);
             break;
           }
           case LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION: {
-            EncounterRule.Run(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
+            EncounterRules.Run(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
             break;
           }
           case LogicBlock.LogicType.ENCOUNTER_MANIPULATION: {
-            EncounterRule.Run(LogicBlock.LogicType.ENCOUNTER_MANIPULATION, payload);
+            EncounterRules.Run(LogicBlock.LogicType.ENCOUNTER_MANIPULATION, payload);
             break; 
           }
           case LogicBlock.LogicType.SCENE_MANIPULATION: {
-            EncounterRule.Run(LogicBlock.LogicType.SCENE_MANIPULATION, payload);
+            EncounterRules.Run(LogicBlock.LogicType.SCENE_MANIPULATION, payload);
             break;
           }
           default: {

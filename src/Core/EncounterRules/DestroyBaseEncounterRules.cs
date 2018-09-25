@@ -8,7 +8,7 @@ using BattleTech;
 using MissionControl.Logic;
 
 namespace MissionControl.Rules {
-  public class DestroyBaseEncounterRules : EncounterRule {
+  public class DestroyBaseEncounterRules : EncounterRules {
     private GameObject PlotBase { get; set; }
     private List<string> ObjectReferenceQueue = new List<string>();
 
