@@ -82,9 +82,13 @@ public static class RectExtensions {
   public static Rect GenerateUsableBoundary(this Rect boundaryRec) {
     float mapBorderSize = 50f;
     float mapSize = 2048f;
-    Rect edgeOfMapRec = new Rect(-((mapSize) / 2f), -((mapSize) / 2f), mapSize - mapBorderSize, mapSize - mapBorderSize);
+    float halfMapWithoutBorder = (mapSize / 2f) - mapBorderSize;
+    Rect edgeOfMapRec = new Rect(0, 0, mapSize - (mapBorderSize * 2f), mapSize - (mapBorderSize * 2f));
+    Rect testBounadaryRec = new Rect(boundaryRec.x + halfMapWithoutBorder, boundaryRec.y + halfMapWithoutBorder, boundaryRec.width, boundaryRec.height);
     Rect boundaryIntersect;
-    boundaryRec.Intersects(edgeOfMapRec, out boundaryIntersect);
+    testBounadaryRec.Intersects(edgeOfMapRec, out boundaryIntersect);
+    boundaryIntersect.x -= halfMapWithoutBorder;
+    boundaryIntersect.y -= halfMapWithoutBorder;
     return boundaryIntersect;
   }
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -26,7 +27,7 @@ namespace MissionControl {
 
     public bool IsContractValid { get; private set; } = false;
 
-    private Dictionary<string, List<EncounterRule>> AvailableEncounters = new Dictionary<string, List<EncounterRule>>();
+    private Dictionary<string, List<Type>> AvailableEncounters = new Dictionary<string, List<Type>>();
 
     public static MissionControl GetInstance() { 
       if (instance == null) instance = new MissionControl();
@@ -38,15 +39,15 @@ namespace MissionControl {
     }
 
     private void LoadEncounterRules() {
-      AddEncounter("Rescue", new RescueEncounterRules());
-      AddEncounter("DefendBase", new DestroyBaseEncounterRules());
-      AddEncounter("DestroyBase", new DestroyBaseEncounterRules());
-      AddEncounter("SimpleBattle", new SimpleBattleEncounterRules());
-      AddEncounter("CaptureBase", new CaptureBaseEncounterRules());
+      AddEncounter("Rescue", typeof(RescueEncounterRules));
+      AddEncounter("DefendBase", typeof(DestroyBaseEncounterRules));
+      AddEncounter("DestroyBase", typeof(DestroyBaseEncounterRules));
+      AddEncounter("SimpleBattle", typeof(SimpleBattleEncounterRules));
+      AddEncounter("CaptureBase", typeof(CaptureBaseEncounterRules));
     }
 
-    public void AddEncounter(string contractType, EncounterRule encounter) {
-      if (!AvailableEncounters.ContainsKey(contractType)) AvailableEncounters.Add(contractType, new List<EncounterRule>());
+    public void AddEncounter(string contractType, Type encounter) {
+      if (!AvailableEncounters.ContainsKey(contractType)) AvailableEncounters.Add(contractType, new List<Type>());
       AvailableEncounters[contractType].Add(encounter);  
     }
 
@@ -77,7 +78,7 @@ namespace MissionControl {
     */
     public bool SetContractType(ContractType contractType) {
       CurrentContractType = contractType;
-      List<EncounterRule> encounters = null;
+      List<Type> encounters = null;
 
       string type = Enum.GetName(typeof(ContractType), contractType);
       if (AvailableEncounters.ContainsKey(type)) {
@@ -88,16 +89,16 @@ namespace MissionControl {
       }
 
       int index = UnityEngine.Random.Range(0, encounters.Count - 1);
-      EncounterRule selectedEncounter = encounters[index];
-      Main.Logger.Log($"[MissionControl] Setting contract type to '{type}' and using Encounter Rule of '{selectedEncounter.GetType().Name}'");
+      Type selectedEncounter = encounters[index];
+      Main.Logger.Log($"[MissionControl] Setting contract type to '{type}' and using Encounter Rule of '{selectedEncounter.Name}'");
       SetEncounterRule(selectedEncounter);
 
       IsContractValid = true;
       return true;
     }
 
-    private void SetEncounterRule(EncounterRule encounterRule) {
-      EncounterRule = encounterRule;
+    private void SetEncounterRule(Type encounterRule) {
+      EncounterRule = (EncounterRule)Activator.CreateInstance(encounterRule);
       EncounterRule.Build();
     }
 
