@@ -18,11 +18,13 @@ namespace MissionControl.Rules {
 
     public void BuildSpawns() {
       Main.Logger.Log("[CaptureBaseEncounterRules] Building spawns rules");
-      // EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "LanceEnemyOpposingForce", 400f));
+      EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "PlotBase"));
+      // TODO: Randomly spawn reinforcements X distance away from player unseen. Maybe a requiremnent for a new hook 
+      // On the unit spawner on objective complete or timer complete
     }
 
     public override void LinkObjectReferences(string mapName) {
-      // ObjectLookup.Add("LanceEnemyOpposingForce", EncounterLayerGo.transform.FindRecursive("Lance_Enemy_OpposingForce").gameObject);
+      ObjectLookup.Add("PlotBase", GameObject.Find("Chunk_OccupyRegion_Base"));
     }
   }
 }
