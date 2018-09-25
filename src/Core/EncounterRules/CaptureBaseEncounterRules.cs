@@ -9,11 +9,9 @@ using MissionControl.Logic;
 
 namespace MissionControl.Rules {
   public class CaptureBaseEncounterRules : EncounterRule {
-    public CaptureBaseEncounterRules() : base() {
-      Build();
-    }
+    public CaptureBaseEncounterRules() : base() { }
 
-    public void Build() {
+    public override void Build() {
       Main.Logger.Log("[CaptureBaseEncounterRules] Setting up rule object references");
       BuildSpawns();
     }

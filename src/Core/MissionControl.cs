@@ -11,13 +11,13 @@ using MissionControl.Rules;
 using MissionControl.Utils;
 
 namespace MissionControl {
-  public class EncounterManager {
-    private static EncounterManager instance;
+  public class MissionControl {
+    private static MissionControl instance;
 
     public Contract CurrentContract { get; private set; }
     public string ContractMapName { get; private set; }
     public ContractType CurrentContractType { get; private set; } = ContractType.INVALID_UNSET;
-    public EncounterRule EncounterRules { get; private set; }
+    public EncounterRule EncounterRule { get; private set; }
     public GameObject EncounterLayerParentGameObject { get; private set; }
     public EncounterLayerParent EncounterLayerParent { get; private set; }
     public GameObject EncounterLayerGameObject { get; private set; }
@@ -26,12 +26,29 @@ namespace MissionControl {
 
     public bool IsContractValid { get; private set; } = false;
 
-    public static EncounterManager GetInstance() { 
-      if (instance == null) instance = new EncounterManager();
+    private Dictionary<string, List<EncounterRule>> AvailableEncounters = new Dictionary<string, List<EncounterRule>>();
+
+    public static MissionControl GetInstance() { 
+      if (instance == null) instance = new MissionControl();
       return instance;
     }
 
-    private EncounterManager() { }
+    private MissionControl() {
+      LoadEncounterRules();
+    }
+
+    private void LoadEncounterRules() {
+      AddEncounter("Rescue", new RescueEncounterRules());
+      AddEncounter("DefendBase", new DestroyBaseEncounterRules());
+      AddEncounter("DestroyBase", new DestroyBaseEncounterRules());
+      AddEncounter("SimpleBattle", new SimpleBattleEncounterRules());
+      AddEncounter("CaptureBase", new CaptureBaseEncounterRules());
+    }
+
+    public void AddEncounter(string contractType, EncounterRule encounter) {
+      if (!AvailableEncounters.ContainsKey(contractType)) AvailableEncounters.Add(contractType, new List<EncounterRule>());
+      AvailableEncounters[contractType].Add(encounter);  
+    }
 
     public void InitSceneData() {
       CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
@@ -47,72 +64,59 @@ namespace MissionControl {
     }
 
     public void SetContract(Contract contract) {
-      Main.Logger.Log($"[EncounterManager] Setting contract '{contract.Name}'");
+      Main.Logger.Log($"[MissionControl] Setting contract '{contract.Name}'");
       CurrentContract = contract;
-      Main.Logger.Log($"[EncounterManager] Contract map is '{contract.mapName}'");
+      Main.Logger.Log($"[MissionControl] Contract map is '{contract.mapName}'");
       ContractMapName = contract.mapName;
       SetContractType(CurrentContract.ContractType);
     }
 
+    /*
+      Future proofed method to allow for string custom contract type names
+      instead of relying only on the enum values
+    */
     public bool SetContractType(ContractType contractType) {
       CurrentContractType = contractType;
+      List<EncounterRule> encounters = null;
 
-      switch (CurrentContractType) {
-        case ContractType.Rescue: {
-          Main.Logger.Log($"[EncounterManager] Setting contract type to 'Rescue'");
-          BuildEncounterRules(new RescueEncounterRules());
-          break;
-        }
-        case ContractType.DefendBase: {
-          Main.Logger.Log($"[EncounterManager] Setting contract type to 'DefendBase'");
-          BuildEncounterRules(new DefendBaseEncounterRules());
-          break;
-        }
-        case ContractType.DestroyBase: {
-          Main.Logger.Log($"[EncounterManager] Setting contract type to 'DestroyBase'");
-          BuildEncounterRules(new DestroyBaseEncounterRules());
-          break;
-        }
-        case ContractType.SimpleBattle: {
-          Main.Logger.Log($"[EncounterManager] Setting contract type to 'SimpleBattle'");
-          BuildEncounterRules(new SimpleBattleEncounterRules());
-          break;  
-        }
-        case ContractType.CaptureBase: {
-          Main.Logger.Log($"[EncounterManager] Setting contract type to 'CaptureBase'");
-          BuildEncounterRules(new CaptureBaseEncounterRules());
-          break;  
-        }
-        default: {
-          Main.Logger.LogError($"[EncounterManager] Unknown contract / encounter type of {contractType}");
-          return false;
-        }
+      string type = Enum.GetName(typeof(ContractType), contractType);
+      if (AvailableEncounters.ContainsKey(type)) {
+        encounters = AvailableEncounters[type];
+      } else {
+        Main.Logger.LogError($"[MissionControl] Unknown contract / encounter type of '{type}'");
+        return false;
       }
+
+      int index = UnityEngine.Random.Range(0, encounters.Count - 1);
+      EncounterRule selectedEncounter = encounters[index];
+      Main.Logger.Log($"[MissionControl] Setting contract type to '{type}' and using Encounter Rule of '{selectedEncounter.GetType().Name}'");
+      SetEncounterRule(selectedEncounter);
 
       IsContractValid = true;
       return true;
     }
 
-    private void BuildEncounterRules(EncounterRule encounterRules) {
-      EncounterRules = encounterRules;
+    private void SetEncounterRule(EncounterRule encounterRule) {
+      EncounterRule = encounterRule;
+      EncounterRule.Build();
     }
 
     public void RunEncounterRules(LogicBlock.LogicType type, RunPayload payload = null) {
       switch (type) {
         case LogicBlock.LogicType.RESOURCE_REQUEST: {
-          EncounterRules.Run(LogicBlock.LogicType.RESOURCE_REQUEST, payload);
+          EncounterRule.Run(LogicBlock.LogicType.RESOURCE_REQUEST, payload);
           break;
         }
         case LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION: {
-          EncounterRules.Run(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
+          EncounterRule.Run(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
           break;
         }
         case LogicBlock.LogicType.ENCOUNTER_MANIPULATION: {
-          EncounterRules.Run(LogicBlock.LogicType.ENCOUNTER_MANIPULATION, payload);
+          EncounterRule.Run(LogicBlock.LogicType.ENCOUNTER_MANIPULATION, payload);
           break; 
         }
         case LogicBlock.LogicType.SCENE_MANIPULATION: {
-          EncounterRules.Run(LogicBlock.LogicType.SCENE_MANIPULATION, payload);
+          EncounterRule.Run(LogicBlock.LogicType.SCENE_MANIPULATION, payload);
           break;
         }
         default: {

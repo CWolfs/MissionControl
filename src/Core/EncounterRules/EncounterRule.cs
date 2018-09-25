@@ -24,6 +24,8 @@ namespace MissionControl.Rules {
 
     public EncounterRule() { }
 
+    public abstract void Build();
+
     public abstract void LinkObjectReferences(string mapName);
 
     public virtual void Run(LogicBlock.LogicType type, RunPayload payload) {
@@ -55,13 +57,13 @@ namespace MissionControl.Rules {
     }
 
     private void RunSceneManipulationLogic(IEnumerable<LogicBlock> logicBlocks, RunPayload payload) {
-      EncounterLayerGo = EncounterManager.GetInstance().EncounterLayerGameObject;
+      EncounterLayerGo = MissionControl.GetInstance().EncounterLayerGameObject;
       ChunkPlayerLanceGo = EncounterLayerGo.transform.Find("Chunk_PlayerLance").gameObject;
       SpawnerPlayerLanceGo = ChunkPlayerLanceGo.transform.Find("Spawner_PlayerLance").gameObject;
       ObjectLookup.Add("ChunkPlayerLance", ChunkPlayerLanceGo);
       ObjectLookup.Add("SpawnerPlayerLance", SpawnerPlayerLanceGo);
 
-      string mapName = EncounterManager.GetInstance().ContractMapName;
+      string mapName = MissionControl.GetInstance().ContractMapName;
       LinkObjectReferences(mapName);
 
       foreach (SpawnLogic spawnLogic in logicBlocks) {

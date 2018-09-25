@@ -41,7 +41,7 @@ namespace MissionControl.Logic {
 
       AttemptCount++;
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-      EncounterManager EncounterManager = EncounterManager.GetInstance();
+      MissionControl EncounterManager = MissionControl.GetInstance();
       GameObject chunkBoundaryRect = EncounterManager.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary").gameObject;
       GameObject boundary = chunkBoundaryRect.transform.Find("EncounterBoundaryRect").gameObject;
       EncounterBoundaryChunkGameLogic chunkBoundary = chunkBoundaryRect.GetComponent<EncounterBoundaryChunkGameLogic>();

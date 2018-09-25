@@ -12,11 +12,9 @@ namespace MissionControl.Rules {
     private GameObject PlotBase { get; set; }
     private List<string> ObjectReferenceQueue = new List<string>();
 
-    public DestroyBaseEncounterRules() : base() {
-      Build();
-    }
+    public DestroyBaseEncounterRules() : base() { }
 
-    public void Build() {
+    public override void Build() {
       Main.Logger.Log("[DestroyBaseEncounterRules] Setting up rule object references");
       BuildAdditionalLances();
       BuildSpawn();

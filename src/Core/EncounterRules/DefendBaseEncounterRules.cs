@@ -11,11 +11,9 @@ namespace MissionControl.Rules {
   public class DefendBaseEncounterRules : EncounterRule {
     private GameObject PlotBase { get; set; }
 
-    public DefendBaseEncounterRules() : base() {
-      Build();
-    }
+    public DefendBaseEncounterRules() : base() { }
 
-    public void Build() {
+    public override void Build() {
       Main.Logger.Log("[DefendBaseEncounterRules] Setting up rule object references");
       BuildSpawns();
     }

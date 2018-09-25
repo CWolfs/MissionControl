@@ -40,7 +40,7 @@ namespace MissionControl.Logic {
       GetObjectReferences();
       Main.Logger.Log($"[SpawnLanceAroundTarget] For {lance.name}");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-      EncounterManager encounterManager = EncounterManager.GetInstance();
+      MissionControl encounterManager = MissionControl.GetInstance();
 
       Vector3 lancePosition = lance.transform.position;
       Vector3 newSpawnPosition = GetRandomPositionFromTarget(lance, minDistanceFromTarget, maxDistanceFromTarget);
