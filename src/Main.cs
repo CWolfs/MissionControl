@@ -7,12 +7,13 @@ using Harmony;
 using Newtonsoft.Json;
 using System.Reflection;
 
+using MissionControl.Config;
 using MissionControl.Utils;
 
 namespace MissionControl {
     public class Main {
         public static ILog Logger;
-        public static Settings Settings { get; private set; }
+        public static Config.Settings Settings { get; private set; }
         public static Assembly MissionControlAssembly { get; set; } 
         public static AssetBundle MissionControlBundle { get; set; }
         public static string Path { get; private set; }
@@ -34,7 +35,7 @@ namespace MissionControl {
             } catch (Exception e) {
                 Logger.LogError(e);
                 Logger.Log("Error loading mod settings - using defaults.");
-                Settings = new Settings();
+                Settings = new Config.Settings();
             }
 
             HarmonyInstance harmony = HarmonyInstance.Create("co.uk.cwolf.MissionControl");
@@ -44,7 +45,7 @@ namespace MissionControl {
         private static void LoadSettings(string modDirectory) {
             Logger.Log("Loading MissionControl settings");
             string settingsJsonString = File.ReadAllText($"{modDirectory}/settings.json");
-            Settings = JsonConvert.DeserializeObject<Settings>(settingsJsonString);
+            Settings = JsonConvert.DeserializeObject<Config.Settings>(settingsJsonString);
         }
     }
 }

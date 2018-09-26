@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 using BattleTech;
 
+using MissionControl.Config;
 using MissionControl.Logic;
 
 namespace MissionControl.Rules {
@@ -23,7 +24,7 @@ namespace MissionControl.Rules {
     private void BuildAdditionalLances() {
       Main.Logger.Log("[DestroyBaseEncounterRules] Building additional lance rules");
 
-      int numberOfAdditionalLances = Main.Settings.AdditionalLances.SelectNumberOfAdditionalEnemyLances();
+      int numberOfAdditionalLances = Main.Settings.AdditionalLances.Enemy.SelectNumberOfAdditionalLances();
       for (int i = 0; i < numberOfAdditionalLances; i++) {
         int numberOfUnitsInLance = 4;
         string lanceGuid = Guid.NewGuid().ToString();

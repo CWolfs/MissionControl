@@ -1,17 +1,14 @@
 using Newtonsoft.Json;
 
-namespace MissionControl {
+namespace MissionControl.Config {
     public class AdditionalLances {
-        [JsonProperty("Min")]
-        public int Min { get; set; } = 0;
+        [JsonProperty("Player")]
+        public Lance Player { get; set; } = new Lance();
 
-        [JsonProperty("Max")]
-        public int Max { get; set; } = 0;
+        [JsonProperty("Enemy")]
+        public Lance Enemy { get; set; } = new Lance();
 
-        public int SelectNumberOfAdditionalEnemyLances() {
-            int lanceNumber = UnityEngine.Random.Range(Min, Max);
-            Main.Logger.Log($"[SelectNumberOfAdditionalEnemyLances] {lanceNumber}");
-            return lanceNumber;
-        }
+        [JsonProperty("Allies")]
+        public Lance Allies { get; set; } = new Lance();
     }
 }

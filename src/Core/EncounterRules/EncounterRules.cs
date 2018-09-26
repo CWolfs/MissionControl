@@ -100,7 +100,13 @@ namespace MissionControl.Rules {
       return guids;
     }
 
-    protected GameObject GetClosestPlotName(Vector3 origin) {
+    private bool IsPlotValidForEncounter(Transform plotTransform) {
+      GameObject plotVariant = plotTransform.Find("PlotVariant1").gameObject;
+      if (plotVariant.activeSelf) return true;
+      return false;
+    }
+
+    protected GameObject GetClosestPlot(Vector3 origin) {
       GameObject plotsParentGo = GameObject.Find("PlotParent");
       GameObject closestPlot = null;
       float closestDistance = -1;
@@ -108,10 +114,12 @@ namespace MissionControl.Rules {
       foreach (Transform t in plotsParentGo.transform) {
         Vector3 plotPosition = t.position;
         if (EncounterLayerData.IsInEncounterBounds(plotPosition)) {
-          float distance = Vector3.Distance(t.position, origin);
-          if (closestDistance == -1 || closestDistance < distance) {
-            closestDistance = distance;
-            closestPlot = t.gameObject;
+          if (IsPlotValidForEncounter(t)) {
+            float distance = Vector3.Distance(t.position, origin);
+            if (closestDistance == -1 || closestDistance < distance) {
+              closestDistance = distance;
+              closestPlot = t.gameObject;
+            }
           }
         }
       }
@@ -121,14 +129,15 @@ namespace MissionControl.Rules {
 
     protected string GetPlotBaseName(string mapName) {
       Vector3 playerLanceSpawnPosition = SpawnerPlayerLanceGo.transform.position;
-      GameObject plot = GetClosestPlotName(playerLanceSpawnPosition);
+      GameObject plot = GetClosestPlot(playerLanceSpawnPosition);
       
       if (plot == null) {
-        Main.Logger.LogError($"[{this.GetType().Name}] GetPlotBaseName for map {mapName} is empty");
+        Main.Logger.LogError($"[{this.GetType().Name}] GetPlotBaseName for map '{mapName}' is empty");
         State = EncounterState.FAILED;
         return "";
       }
 
+      Main.Logger.LogError($"[{this.GetType().Name}] Using plot name '{plot.name}'");
       return plot.name;
     }
   }

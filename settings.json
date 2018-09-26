@@ -1,6 +1,16 @@
 {
   "AdditionalLances": {
-    "Min": 1,
-    "Max": 3,
+    "Enemy": {
+      "Min": 1,
+      "Max": 3,
+    },
+    "Allies": {
+      "Min": 0,
+      "Max": 1,
+    },
+    "Player": {
+      "Min": 0,
+      "Max": 0,
+    }
   }
 }
