@@ -29,7 +29,7 @@ namespace MissionControl.Logic {
       if (lanceOverrideList.Count > 0) {
         LanceOverride lanceOverride = lanceOverrideList[0].Copy();
 
-        lanceOverride.name = "Lance_Enemy_OpposingForce_CWolf";
+        lanceOverride.name = $"Lance_Enemy_OpposingForce_{lanceGuid}";
 
         if (unitGuids.Count > 4) {
           for (int i = 4; i < unitGuids.Count; i++) {

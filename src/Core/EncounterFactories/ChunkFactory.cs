@@ -13,5 +13,14 @@ namespace MissionControl.EncounterFactories {
 
       return destroyWholeLanceChunkGo.AddComponent<DestroyWholeLanceChunk>();
     }
+
+    public static EmptyCustomChunkGameLogic CreateEmptyCustomChunk(string name) {
+      GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
+      GameObject emptyCustomChunk = new GameObject(name);
+      emptyCustomChunk.transform.parent = encounterLayerGameObject.transform;
+      emptyCustomChunk.transform.localPosition = Vector3.zero;
+
+      return emptyCustomChunk.AddComponent<EmptyCustomChunkGameLogic>();
+    } 
   }
 }

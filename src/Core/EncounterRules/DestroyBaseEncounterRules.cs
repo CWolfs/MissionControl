@@ -24,8 +24,8 @@ namespace MissionControl.Rules {
     private void BuildAdditionalLances() {
       Main.Logger.Log("[DestroyBaseEncounterRules] Building additional lance rules");
 
-      int numberOfAdditionalLances = Main.Settings.AdditionalLances.Enemy.SelectNumberOfAdditionalLances();
-      for (int i = 0; i < numberOfAdditionalLances; i++) {
+      int numberOfAdditionalEnemyLances = Main.Settings.AdditionalLances.Enemy.SelectNumberOfAdditionalLances();
+      for (int i = 0; i < numberOfAdditionalEnemyLances; i++) {
         int numberOfUnitsInLance = 4;
         string lanceGuid = Guid.NewGuid().ToString();
         List<string> unitGuids = GenerateGuids(numberOfUnitsInLance);
@@ -38,6 +38,21 @@ namespace MissionControl.Rules {
 
         ObjectReferenceQueue.Add(spawnerName);
       }
+
+      int numberOfAdditionalAllyLances = Main.Settings.AdditionalLances.Allies.SelectNumberOfAdditionalLances();
+      for (int i = 0; i < numberOfAdditionalAllyLances; i++) {
+        int numberOfUnitsInLance = 4;
+        string lanceGuid = Guid.NewGuid().ToString();
+        List<string> unitGuids = GenerateGuids(numberOfUnitsInLance);
+        string employerTeamGuid = EMPLOYER_TEAM_ID;
+        string spawnerName = $"Lance_Ally_SupportingForce_{lanceGuid}";
+
+        EncounterLogic.Add(new AddLanceToAllyTeam(lanceGuid, unitGuids));
+        EncounterLogic.Add(new AddLanceSpawnChunk(employerTeamGuid, lanceGuid, unitGuids, spawnerName, "Spawns a non-objective related ally supporting lance"));
+        EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, spawnerName, "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET, 150f, 200f));
+
+        ObjectReferenceQueue.Add(spawnerName);
+      } 
     }
 
     private void BuildSpawn() {

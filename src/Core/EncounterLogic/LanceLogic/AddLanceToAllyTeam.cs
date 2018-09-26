@@ -11,27 +11,26 @@ using MissionControl.Rules;
 using MissionControl.Utils;
 
 namespace MissionControl.Logic {
-  public class AddLanceToPlayerTeam : LanceLogic {
+  public class AddLanceToAllyTeam : LanceLogic {
     private string lanceGuid;
     private List<string> unitGuids;
 
-    public AddLanceToPlayerTeam(string lanceGuid, List<string> unitGuids) {
+    public AddLanceToAllyTeam(string lanceGuid, List<string> unitGuids) {
       this.lanceGuid = lanceGuid;
       this.unitGuids = unitGuids;
     }
 
     public override void Run(RunPayload payload) {
-      Main.Logger.Log($"[AddLanceToPlayerTeam] Adding lance to player lance");
+      Main.Logger.Log($"[AddLanceToAllyTeam] Adding lance to ally lance");
       ContractOverride contractOverride = ((ContractOverridePayload)payload).ContractOverride;
-      TeamOverride teamOverride = contractOverride.player1Team;
+      TeamOverride teamOverride = contractOverride.employerTeam;
       TeamOverride targetTeamOverride = contractOverride.targetTeam;
 
       List<LanceOverride> lanceOverrideList = targetTeamOverride.lanceOverrideList;
       if (lanceOverrideList.Count > 0) {
         LanceOverride lanceOverride = lanceOverrideList[0].Copy();
 
-        lanceOverride.name = "Lance_Player_Reinforcements";
-        lanceOverride.lanceTagSet.Add("lance_type_mech");
+        lanceOverride.name = $"Lance_Ally_Force_{lanceGuid}";
 
         if (unitGuids.Count > 4) {
           for (int i = 4; i < unitGuids.Count; i++) {
@@ -53,7 +52,7 @@ namespace MissionControl.Logic {
 
         teamOverride.lanceOverrideList.Add(lanceOverride);
       } else {
-        Main.Logger.LogError("[AddLanceToPlayerTeam] Team Override has no lances available to copy. TODO: Generate new lance from stored JSON data");
+        Main.Logger.LogError("[AddLanceToAllyTeam] Team Override has no lances available to copy. TODO: Generate new lance from stored JSON data");
       }
     }
   }
