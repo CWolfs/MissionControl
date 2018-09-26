@@ -10,25 +10,28 @@ using MissionControl.Rules;
 using MissionControl.Utils;
 
 namespace MissionControl.Logic {
-  public class SpawnLanceAtEdgeOfBoundary : SpawnLanceLogic {
+  public class SpawnLanceAnywhere : SpawnLanceLogic {
     private string lanceKey = "";
     private string orientationTargetKey = "";
 
     private GameObject lance;
     private GameObject orientationTarget;
-    private RectExtensions.RectEdge edge = RectExtensions.RectEdge.ANY;
     private bool useMiniumDistance = false;
     private float minimumDistance = 400f;
 
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
 
-    public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRule, string lanceKey, string orientationTargetKey) : base(encounterRule) {
+    public SpawnLanceAnywhere(EncounterRules encounterRule, string lanceKey) : base(encounterRule) {
+      this.lanceKey = lanceKey;
+    }
+
+    public SpawnLanceAnywhere(EncounterRules encounterRule, string lanceKey, string orientationTargetKey) : base(encounterRule) {
       this.lanceKey = lanceKey;
       this.orientationTargetKey = orientationTargetKey;
     }
 
-    public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRule, string lanceKey, string orientationTargetKey, float minimumDistance) : base(encounterRule) {
+    public SpawnLanceAnywhere(EncounterRules encounterRule, string lanceKey, string orientationTargetKey, float minimumDistance) : base(encounterRule) {
       this.lanceKey = lanceKey;
       this.orientationTargetKey = orientationTargetKey;
       this.useMiniumDistance = true;
@@ -37,9 +40,8 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       GetObjectReferences();
-      Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] For {lance.name}");
+      Main.Logger.Log($"[SpawnLanceAnywhere] For {lance.name}");
 
-      AttemptCount++;
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       MissionControl EncounterManager = MissionControl.GetInstance();
       GameObject chunkBoundaryRect = EncounterManager.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary").gameObject;
@@ -48,32 +50,25 @@ namespace MissionControl.Logic {
       EncounterBoundaryRectGameLogic boundaryLogic = boundary.GetComponent<EncounterBoundaryRectGameLogic>();
       Rect boundaryRec = chunkBoundary.GetEncounterBoundaryRectBounds();
       Rect usableBounds = boundaryRec.GenerateUsableBoundary();
-      RectEdgePosition xzEdge = usableBounds.CalculateRandomXZEdge(boundary.transform.position, edge);
+      Vector3 newPosition = usableBounds.CalculateRandomPosition(boundaryLogic.Position);
 
       Vector3 lancePosition = lance.transform.position;
-      Vector3 newSpawnPosition = new Vector3(xzEdge.Position.x, lancePosition.y, xzEdge.Position.z);
+      Vector3 newSpawnPosition = new Vector3(newPosition.x, lancePosition.y, newPosition.z);
       newSpawnPosition.y = combatState.MapMetaData.GetLerpedHeightAt(newSpawnPosition);
 
       lance.transform.position = newSpawnPosition;
-      RotateToTarget(lance, orientationTarget);
+
+      if (orientationTarget != null) RotateToTarget(lance, orientationTarget);
 
       if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(lance.transform.position, orientationTarget.transform.position, minimumDistance)) {
         if (!AreLanceMemberSpawnsValid(lance, orientationTarget)) {
-          if (AttemptCount > AttemptCountMax) {  // Attempt to spawn on the selected edge. If it's not possible, select another edge
-            edge = RectExtensions.RectEdge.ANY;
-            AttemptCount = 0;
-            Run(payload);
-          } else {
-            edge = xzEdge.Edge;
-            Run(payload);
-          }
+          Run(payload);
         } else {
-          Main.Logger.Log("[SpawnLanceAtEdgeOfBoundary] Lance spawn complete");
+          Main.Logger.Log("[SpawnLanceAnywhere] Lance spawn complete");
           CorrectLanceMemberSpawns(lance);
         }
       } else {
-        Main.Logger.Log("[SpawnLanceAtEdgeOfBoundary] Spawn is too close to the target. Selecting a new spawn.");
-        edge = xzEdge.Edge;
+        Main.Logger.Log("[SpawnLanceAnywhere] Spawn is too close to the target. Selecting a new spawn.");
         Run(payload);
       }
     }
@@ -82,7 +77,7 @@ namespace MissionControl.Logic {
       this.EncounterRules.ObjectLookup.TryGetValue(lanceKey, out lance);
       this.EncounterRules.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
 
-      if (lance == null || orientationTarget == null) {
+      if (lance == null) {
         Main.Logger.LogError("[SpawnLanceAroundTarget] Object references are null");
       }
     }

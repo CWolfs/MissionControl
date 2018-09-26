@@ -11,9 +11,9 @@ using MissionControl.Utils;
 
 namespace MissionControl.Logic {
   public class SpawnLanceMembersAroundTarget : SpawnLanceLogic {
-    private string lanceKey;
-    private string orientationTargetKey;
-    private string lookTargetKey;
+    private string lanceKey = "";
+    private string orientationTargetKey = "";
+    private string lookTargetKey = "";
 
     private GameObject lance;
     private GameObject orientationTarget;
@@ -58,7 +58,7 @@ namespace MissionControl.Logic {
       this.EncounterRules.ObjectLookup.TryGetValue(lookTargetKey, out lookTarget);
 
       if (lance == null || orientationTarget == null || lookTarget == null) {
-        Main.Logger.LogError("[SpawnLanceMembersAroundTarget] Object referneces are null");
+        Main.Logger.LogError("[SpawnLanceMembersAroundTarget] Object references are null");
       }
     }
 

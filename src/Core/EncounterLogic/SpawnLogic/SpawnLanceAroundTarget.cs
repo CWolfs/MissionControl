@@ -11,8 +11,8 @@ using MissionControl.Utils;
 
 namespace MissionControl.Logic {
   public class SpawnLanceAroundTarget : SpawnLanceLogic {
-    private string lanceKey;
-    private string orientationTargetKey;
+    private string lanceKey = "";
+    private string orientationTargetKey = "";
 
     private GameObject lance;
     private GameObject orientationTarget;

@@ -60,6 +60,19 @@ public static class RectExtensions {
     return edgePosition;
   }
 
+  public static Vector3 CalculateRandomPosition(this Rect rect) {
+    float width = rect.width;
+    float height = rect.height;
+
+    return new Vector3(Random.Range(0f, width), 0f, Random.Range(0f, height));
+  }
+
+  public static Vector3 CalculateRandomPosition(this Rect rect, Vector3 offset) {
+    Vector3 position = rect.CalculateRandomPosition();
+    position = position + offset;
+    return position;
+  }
+
   public static bool Intersects(this Rect r1, Rect r2, out Rect area) {
     area = new Rect();
 
