@@ -26,7 +26,7 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       GetObjectReferences();
-      Main.Logger.Log($"[LookAwayFromTarget] For {focus.name}");
+      Main.Logger.Log($"[LookAwayFromTarget] For {focus.name} to look away from {orientationTarget.name}");
       RotateAwayFromTarget(focus, orientationTarget);
     }
 

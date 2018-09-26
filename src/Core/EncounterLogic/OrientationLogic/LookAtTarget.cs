@@ -26,7 +26,7 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       GetObjectReferences();
-      Main.Logger.Log($"[LookAtTarget] For {focus.name}");
+      Main.Logger.Log($"[LookAtTarget] For {focus.name} to look at {orientationTarget.name}");
       RotateToTarget(focus, orientationTarget);
     }
 
