@@ -63,21 +63,21 @@ namespace MissionControl.Rules {
     }
 
     private void RunSceneManipulationLogic(IEnumerable<LogicBlock> logicBlocks, RunPayload payload) {
-      EncounterLayerGo = MissionControl.GetInstance().EncounterLayerGameObject;
-      EncounterLayerData = MissionControl.GetInstance().EncounterLayerData;
+      EncounterLayerGo = MissionControl.Instance.EncounterLayerGameObject;
+      EncounterLayerData = MissionControl.Instance.EncounterLayerData;
       ChunkPlayerLanceGo = EncounterLayerGo.transform.Find("Chunk_PlayerLance").gameObject;
       SpawnerPlayerLanceGo = ChunkPlayerLanceGo.transform.Find("Spawner_PlayerLance").gameObject;
       ObjectLookup.Add("ChunkPlayerLance", ChunkPlayerLanceGo);
       ObjectLookup.Add("SpawnerPlayerLance", SpawnerPlayerLanceGo);
 
-      string mapName = MissionControl.GetInstance().ContractMapName;
+      string mapName = MissionControl.Instance.ContractMapName;
 
       LinkObjectReferences(mapName);
 
       if (State == EncounterState.RUNNING) {
         try {
-          foreach (SpawnLogic spawnLogic in logicBlocks) {
-            spawnLogic.Run(payload);
+          foreach (SceneManipulationLogic sceneManipulationLogic in logicBlocks) {
+            sceneManipulationLogic.Run(payload);
           }
         } catch (Exception e) {
           Main.Logger.LogError($"[{this.GetType().Name}] Encounter has failed. A LogicBlock failed. Full stack trace - {e}");

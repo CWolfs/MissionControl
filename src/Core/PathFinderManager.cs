@@ -9,13 +9,14 @@ using HBS.Collections;
 namespace MissionControl {
   public class PathFinderManager {
     private static PathFinderManager instance;
+    public static PathFinderManager Instance {
+      get {
+        if (instance == null) instance = new PathFinderManager();
+        return instance;
+      }
+    }
 
     private Mech pathFinderMech;
-
-    public static PathFinderManager GetInstance() { 
-      if (instance == null) instance = new PathFinderManager();
-      return instance;
-    }
 
     private PathFinderManager() {
       Init();

@@ -19,9 +19,9 @@ namespace MissionControl.Patches {
   public class EncounterLayerParentInitializeContractPatch {
     static void Prefix(EncounterLayerParent __instance) {
       Main.Logger.Log($"[EncounterLayerParentInitializeContractPatch Prefix] Patching InitializeContract");
-      MissionControl.GetInstance().InitSceneData();
-      MissionControl encounterManager = MissionControl.GetInstance();
-      MissionControl.GetInstance().RunEncounterRules(LogicBlock.LogicType.ENCOUNTER_MANIPULATION);
+      MissionControl.Instance.InitSceneData();
+      MissionControl encounterManager = MissionControl.Instance;
+      MissionControl.Instance.RunEncounterRules(LogicBlock.LogicType.ENCOUNTER_MANIPULATION);
     }
   }
 }

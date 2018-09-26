@@ -19,7 +19,7 @@ namespace MissionControl.Patches {
   public class EncounterLayerParentFirstTimeInitializationPatch {
     static void Prefix(EncounterLayerParent __instance) {
       Main.Logger.Log($"[EncounterLayerParentFirstTimeInitializationPatch Prefix] Patching FirstTimeInitialization");
-      MissionControl EncounterManager = MissionControl.GetInstance();
+      MissionControl EncounterManager = MissionControl.Instance;
       if (EncounterManager.IsContractValid) EncounterManager.RunEncounterRules(LogicBlock.LogicType.SCENE_MANIPULATION);
     }
   }

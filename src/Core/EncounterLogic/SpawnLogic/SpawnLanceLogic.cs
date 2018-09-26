@@ -9,11 +9,7 @@ using MissionControl.Rules;
 
 namespace MissionControl.Logic {
   public abstract class SpawnLanceLogic : SpawnLogic {
-    protected EncounterRules EncounterRules { get; set; }
-
-    public SpawnLanceLogic(EncounterRules encounterRule) : base() {
-      EncounterRules = encounterRule;
-    }
+    public SpawnLanceLogic(EncounterRules encounterRules) : base(encounterRules) { }
 
     protected void CorrectLanceMemberSpawns(GameObject lance) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
@@ -37,19 +33,19 @@ namespace MissionControl.Logic {
         Vector3 checkTarget = combatState.HexGrid.GetClosestPointOnGrid(orientationTarget.transform.position);
         checkTarget.y = combatState.MapMetaData.GetLerpedHeightAt(checkTarget);
         
-        if (!PathFinderManager.GetInstance().IsSpawnValid(spawnPointPosition, checkTarget)) {
+        if (!PathFinderManager.Instance.IsSpawnValid(spawnPointPosition, checkTarget)) {
           Main.Logger.LogWarning("[AreLanceMemberSpawnsValid] Lance member spawn path to first objective is blocked. Select a new lance spawn point");
           return false;
         }
 
-        EncounterLayerData encounterLayerData = MissionControl.GetInstance().EncounterLayerData;
+        EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
         if (!encounterLayerData.IsInEncounterBounds(spawnPointPosition)) {
           Main.Logger.LogWarning("[AreLanceMemberSpawnsValid] Lance member spawn is outside of the boundary. Select a new lance spawn point.");
           return false;  
         }
       }
 
-      PathFinderManager.GetInstance().Reset();
+      PathFinderManager.Instance.Reset();
       return true;
     }
   }

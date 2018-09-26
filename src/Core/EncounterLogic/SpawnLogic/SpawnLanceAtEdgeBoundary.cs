@@ -15,6 +15,7 @@ namespace MissionControl.Logic {
     private string orientationTargetKey = "";
 
     private GameObject lance;
+    private bool useOrientationTarget = false;
     private GameObject orientationTarget;
     private RectExtensions.RectEdge edge = RectExtensions.RectEdge.ANY;
     private bool useMiniumDistance = false;
@@ -23,13 +24,21 @@ namespace MissionControl.Logic {
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
 
-    public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRule, string lanceKey, string orientationTargetKey) : base(encounterRule) {
+    /* // TODO: Enable this once a 'center of map' position can be obtained and then use this for the path finding check instead of orientationTarget
+    public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRules, string lanceKey) : base(encounterRules) {
       this.lanceKey = lanceKey;
+    }
+    */
+
+    public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRules, string lanceKey, string orientationTargetKey) : base(encounterRules) {
+      this.lanceKey = lanceKey;
+      this.useOrientationTarget = true;
       this.orientationTargetKey = orientationTargetKey;
     }
 
-    public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRule, string lanceKey, string orientationTargetKey, float minimumDistance) : base(encounterRule) {
+    public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, float minimumDistance) : base(encounterRules) {
       this.lanceKey = lanceKey;
+      this.useOrientationTarget = true;
       this.orientationTargetKey = orientationTargetKey;
       this.useMiniumDistance = true;
       this.minimumDistance = minimumDistance;
@@ -41,7 +50,7 @@ namespace MissionControl.Logic {
 
       AttemptCount++;
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-      MissionControl EncounterManager = MissionControl.GetInstance();
+      MissionControl EncounterManager = MissionControl.Instance;
       GameObject chunkBoundaryRect = EncounterManager.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary").gameObject;
       GameObject boundary = chunkBoundaryRect.transform.Find("EncounterBoundaryRect").gameObject;
       EncounterBoundaryChunkGameLogic chunkBoundary = chunkBoundaryRect.GetComponent<EncounterBoundaryChunkGameLogic>();
@@ -55,7 +64,7 @@ namespace MissionControl.Logic {
       newSpawnPosition.y = combatState.MapMetaData.GetLerpedHeightAt(newSpawnPosition);
 
       lance.transform.position = newSpawnPosition;
-      RotateToTarget(lance, orientationTarget);
+      if (useOrientationTarget) RotateToTarget(lance, orientationTarget);
 
       if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(lance.transform.position, orientationTarget.transform.position, minimumDistance)) {
         if (!AreLanceMemberSpawnsValid(lance, orientationTarget)) {
@@ -82,7 +91,7 @@ namespace MissionControl.Logic {
       this.EncounterRules.ObjectLookup.TryGetValue(lanceKey, out lance);
       this.EncounterRules.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
 
-      if (lance == null || orientationTarget == null) {
+      if (lance == null) {
         Main.Logger.LogError("[SpawnLanceAroundTarget] Object references are null");
       }
     }

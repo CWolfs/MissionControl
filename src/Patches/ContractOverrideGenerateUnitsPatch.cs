@@ -21,7 +21,7 @@ namespace MissionControl.Patches {
     static void Prefix(ContractOverride __instance) {
       Main.Logger.Log($"[ContractOveridePatch Prefix] Patching GenerateUnits");
       RunPayload payload = new ContractOverridePayload(__instance);
-      MissionControl.GetInstance().RunEncounterRules(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
+      MissionControl.Instance.RunEncounterRules(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
     }
   }
 }

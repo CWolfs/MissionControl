@@ -30,7 +30,7 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       Main.Logger.Log($"[AddDestroyWholeUnitChunk] Adding encounter structure");
-      EncounterLayerData encounterLayerData = MissionControl.GetInstance().EncounterLayerData;
+      EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
       DestroyWholeLanceChunk destroyWholeChunk = ChunkFactory.CreateDestroyWholeLanceChunk();
       destroyWholeChunk.encounterObjectGuid = System.Guid.NewGuid().ToString();
 

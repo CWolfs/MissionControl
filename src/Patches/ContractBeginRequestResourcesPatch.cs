@@ -23,12 +23,12 @@ namespace MissionControl.Patches {
       if (generateUnits) {
         Main.Logger.Log($"[ContractBeginRequestResourcesPatch Postfix] Patching BeginRequestResources");
         RequestUnits();
-        MissionControl.GetInstance().RunEncounterRules(SpawnLogic.LogicType.RESOURCE_REQUEST);
+        MissionControl.Instance.RunEncounterRules(SpawnLogic.LogicType.RESOURCE_REQUEST);
       }
     }
 
     static void RequestUnits(){
-      PathFinderManager.GetInstance().RequestPathFinderMech();
+      PathFinderManager.Instance.RequestPathFinderMech();
     }
   }
 }

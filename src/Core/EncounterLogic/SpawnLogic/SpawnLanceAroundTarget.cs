@@ -23,13 +23,13 @@ namespace MissionControl.Logic {
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
 
-    public SpawnLanceAroundTarget(EncounterRules encounterRule, string lanceKey, string orientationTargetKey, LookDirection lookDirection) : base(encounterRule) {
+    public SpawnLanceAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, LookDirection lookDirection) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.orientationTargetKey = orientationTargetKey;
       this.lookDirection = lookDirection;
     }
 
-    public SpawnLanceAroundTarget(EncounterRules encounterRule, string lanceKey, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) : base(encounterRule) {
+    public SpawnLanceAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.minDistanceFromTarget = minDistance;
       this.maxDistanceFromTarget = maxDistance;
@@ -40,7 +40,7 @@ namespace MissionControl.Logic {
       GetObjectReferences();
       Main.Logger.Log($"[SpawnLanceAroundTarget] For {lance.name}");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-      MissionControl encounterManager = MissionControl.GetInstance();
+      MissionControl encounterManager = MissionControl.Instance;
 
       Vector3 lancePosition = lance.transform.position;
       Vector3 newSpawnPosition = GetRandomPositionFromTarget(lance, minDistanceFromTarget, maxDistanceFromTarget);

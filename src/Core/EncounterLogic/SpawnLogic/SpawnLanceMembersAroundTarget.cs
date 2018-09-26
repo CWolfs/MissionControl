@@ -24,13 +24,13 @@ namespace MissionControl.Logic {
     private float minDistanceToSpawnFromInvalidSpawn = 30f;
     private List<Vector3> invalidSpawnLocations = new List<Vector3>();
 
-    public SpawnLanceMembersAroundTarget(EncounterRules encounterRule, string lanceKey, string orientationTargetKey, LookDirection lookDirection) :
-      this(encounterRule, lanceKey, orientationTargetKey, lookDirection, 10, 10) { } // TODO: Replace the hard coded values with a setting.json setting
+    public SpawnLanceMembersAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, LookDirection lookDirection) :
+      this(encounterRules, lanceKey, orientationTargetKey, lookDirection, 10, 10) { } // TODO: Replace the hard coded values with a setting.json setting
 
-    public SpawnLanceMembersAroundTarget(EncounterRules encounterRule, string lanceKey, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) :
-      this(encounterRule, lanceKey, orientationTargetKey, orientationTargetKey, lookDirection, minDistance, maxDistance) { }
+    public SpawnLanceMembersAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) :
+      this(encounterRules, lanceKey, orientationTargetKey, orientationTargetKey, lookDirection, minDistance, maxDistance) { }
 
-    public SpawnLanceMembersAroundTarget(EncounterRules encounterRule, string lanceKey, string orientationTargetKey, string lookTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) : base(encounterRule) {
+    public SpawnLanceMembersAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, string lookTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.orientationTargetKey = orientationTargetKey;
       this.lookTargetKey = lookTargetKey;

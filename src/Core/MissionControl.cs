@@ -14,6 +14,12 @@ using MissionControl.Utils;
 namespace MissionControl {
   public class MissionControl {
     private static MissionControl instance;
+    public static MissionControl Instance {
+      get {
+        if (instance == null) instance = new MissionControl();
+        return instance;
+      }
+    }
 
     public Contract CurrentContract { get; private set; }
     public string ContractMapName { get; private set; }
@@ -28,11 +34,6 @@ namespace MissionControl {
     public bool IsContractValid { get; private set; } = false;
 
     private Dictionary<string, List<Type>> AvailableEncounters = new Dictionary<string, List<Type>>();
-
-    public static MissionControl GetInstance() { 
-      if (instance == null) instance = new MissionControl();
-      return instance;
-    }
 
     private MissionControl() {
       LoadEncounterRules();
@@ -100,8 +101,8 @@ namespace MissionControl {
       return true;
     }
 
-    private void SetEncounterRule(Type encounterRule) {
-      EncounterRules = (EncounterRules)Activator.CreateInstance(encounterRule);
+    private void SetEncounterRule(Type encounterRules) {
+      EncounterRules = (EncounterRules)Activator.CreateInstance(encounterRules);
       EncounterRules.Build();
     }
 

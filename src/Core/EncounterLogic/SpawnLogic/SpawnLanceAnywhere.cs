@@ -12,6 +12,7 @@ using MissionControl.Utils;
 namespace MissionControl.Logic {
   public class SpawnLanceAnywhere : SpawnLanceLogic {
     private string lanceKey = "";
+    private bool useOrientationTarget = false;
     private string orientationTargetKey = "";
 
     private GameObject lance;
@@ -22,17 +23,18 @@ namespace MissionControl.Logic {
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
 
-    public SpawnLanceAnywhere(EncounterRules encounterRule, string lanceKey) : base(encounterRule) {
+    public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey) : base(encounterRules) {
       this.lanceKey = lanceKey;
     }
 
-    public SpawnLanceAnywhere(EncounterRules encounterRule, string lanceKey, string orientationTargetKey) : base(encounterRule) {
+    public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.orientationTargetKey = orientationTargetKey;
     }
 
-    public SpawnLanceAnywhere(EncounterRules encounterRule, string lanceKey, string orientationTargetKey, float minimumDistance) : base(encounterRule) {
+    public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, float minimumDistance) : base(encounterRules) {
       this.lanceKey = lanceKey;
+      this.useOrientationTarget = true;
       this.orientationTargetKey = orientationTargetKey;
       this.useMiniumDistance = true;
       this.minimumDistance = minimumDistance;
@@ -43,7 +45,7 @@ namespace MissionControl.Logic {
       Main.Logger.Log($"[SpawnLanceAnywhere] For {lance.name}");
 
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-      MissionControl EncounterManager = MissionControl.GetInstance();
+      MissionControl EncounterManager = MissionControl.Instance;
       GameObject chunkBoundaryRect = EncounterManager.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary").gameObject;
       GameObject boundary = chunkBoundaryRect.transform.Find("EncounterBoundaryRect").gameObject;
       EncounterBoundaryChunkGameLogic chunkBoundary = chunkBoundaryRect.GetComponent<EncounterBoundaryChunkGameLogic>();
@@ -58,7 +60,7 @@ namespace MissionControl.Logic {
 
       lance.transform.position = newSpawnPosition;
 
-      if (orientationTarget != null) RotateToTarget(lance, orientationTarget);
+      if (useOrientationTarget) RotateToTarget(lance, orientationTarget);
 
       if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(lance.transform.position, orientationTarget.transform.position, minimumDistance)) {
         if (!AreLanceMemberSpawnsValid(lance, orientationTarget)) {
