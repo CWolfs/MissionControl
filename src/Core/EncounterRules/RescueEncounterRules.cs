@@ -22,7 +22,7 @@ namespace MissionControl.Rules {
     }
 
     public override void LinkObjectReferences(string mapName) {
-      ObjectLookup.Add("OccupyRegion1VIPGo", EncounterLayerGo.transform.Find("Chunk_OccupyRegion_1_VIP").gameObject);
+      ObjectLookup.Add("OccupyRegion1VIPGo", EncounterLayerData.gameObject.FindRecursive("Chunk_OccupyRegion_1_VIP"));
     }
   }
 }

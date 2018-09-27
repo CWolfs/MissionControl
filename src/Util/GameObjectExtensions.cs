@@ -16,4 +16,15 @@ public static class GameObjextExtensions {
 
     return gameObjects;
   }
+
+  public static GameObject FindRecursive(this GameObject gameObject, string checkName) {
+    foreach (Transform t in gameObject.transform) {
+      if (t.name == checkName) return t.gameObject;
+
+      GameObject possibleGameObject = FindRecursive(t.gameObject, checkName);
+      if (possibleGameObject != null) return possibleGameObject;
+    }
+
+    return null;
+  }
 }

@@ -24,7 +24,7 @@ namespace MissionControl.Rules {
     }
 
     public override void LinkObjectReferences(string mapName) {
-      ObjectLookup.Add("PlotBase", GameObject.Find("Chunk_OccupyRegion_Base"));
+      ObjectLookup.Add("PlotBase", EncounterLayerData.gameObject.FindRecursive("Chunk_OccupyRegion_Base"));
     }
   }
 }

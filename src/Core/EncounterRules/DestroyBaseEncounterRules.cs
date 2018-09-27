@@ -64,7 +64,7 @@ namespace MissionControl.Rules {
       ObjectLookup.Add("PlotBase", GameObject.Find(GetPlotBaseName(mapName)));
 
       foreach (string objectName in ObjectReferenceQueue) {
-        ObjectLookup.Add(objectName, GameObject.Find(objectName));    
+        ObjectLookup.Add(objectName, EncounterLayerData.gameObject.FindRecursive(objectName));    
       }
     }
   }

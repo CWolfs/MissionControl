@@ -40,13 +40,14 @@ namespace MissionControl {
     }
 
     private void LoadEncounterRules() {
-      AddEncounter("Rescue", typeof(RescueEncounterRules));
-      AddEncounter("DefendBase", typeof(DestroyBaseEncounterRules));
-      AddEncounter("DestroyBase", typeof(DestroyBaseEncounterRules));
-      AddEncounter("SimpleBattle", typeof(SimpleBattleEncounterRules));
-      AddEncounter("CaptureBase", typeof(CaptureBaseEncounterRules));
       AddEncounter("AmbushConvoy", typeof(AmbushConvoyEncounterRules));
       AddEncounter("Assassinate", typeof(AssassinateEncounterRules));
+      AddEncounter("CaptureBase", typeof(CaptureBaseEncounterRules));
+      AddEncounter("CaptureEscort", typeof(CaptureEscortEncounterRules));
+      AddEncounter("DefendBase", typeof(DestroyBaseEncounterRules));
+      AddEncounter("DestroyBase", typeof(DestroyBaseEncounterRules));
+      AddEncounter("Rescue", typeof(RescueEncounterRules));
+      AddEncounter("SimpleBattle", typeof(SimpleBattleEncounterRules));
     }
 
     public void AddEncounter(string contractType, Type encounter) {

@@ -22,7 +22,7 @@ namespace MissionControl.Rules {
     }
 
     public override void LinkObjectReferences(string mapName) {
-      ObjectLookup.Add("ConvoyUnit1Spawn", GameObject.Find("UnitSpawnPoint1"));
+      ObjectLookup.Add("ConvoyUnit1Spawn", EncounterLayerData.gameObject.FindRecursive("UnitSpawnPoint1"));
     }
   }
 }

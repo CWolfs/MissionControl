@@ -18,11 +18,11 @@ namespace MissionControl.Rules {
 
     public void BuildSpawns() {
       Main.Logger.Log("[CaptureEscortEncounterRules] Building spawns rules");
-      // EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "ConvoyUnit1Spawn"));
+      EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "EscortRegion"));
     }
 
     public override void LinkObjectReferences(string mapName) {
-      // ObjectLookup.Add("ConvoyUnit1Spawn", GameObject.Find("UnitSpawnPoint1"));
+      ObjectLookup.Add("EscortRegion", EncounterLayerData.gameObject.FindRecursive("Region_Occupy"));
     }
   }
 }
