@@ -19,10 +19,13 @@ namespace MissionControl.Rules {
     public void BuildSpawns() {
       Main.Logger.Log("[CaptureEscortEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "EscortRegion"));
+      EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "HunterLance", "EscortExtractionRegion", 300));
     }
 
     public override void LinkObjectReferences(string mapName) {
       ObjectLookup.Add("EscortRegion", EncounterLayerData.gameObject.FindRecursive("Region_Occupy"));
+      ObjectLookup.Add("HunterLance", EncounterLayerData.gameObject.FindRecursive("Lance_Enemy_Hunter"));
+      ObjectLookup.Add("EscortExtractionRegion", EncounterLayerData.gameObject.FindRecursive("Region_Extraction"));
     }
   }
 }
