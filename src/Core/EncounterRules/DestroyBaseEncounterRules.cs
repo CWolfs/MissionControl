@@ -25,7 +25,7 @@ namespace MissionControl.Rules {
 
       int numberOfAdditionalEnemyLances = Main.Settings.AdditionalLances.Enemy.SelectNumberOfAdditionalLances();
       for (int i = 0; i < numberOfAdditionalEnemyLances; i++) {
-        new AddTargetLanceBatch(this, "PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 50f, 150f, $"Destroy Pirate Support Lance {i + 1}");
+        new AddTargetLanceWithDestroyObjectiveBatch(this, "PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 50f, 150f, $"Destroy Pirate Support Lance {i + 1}");
       }
 
       int numberOfAdditionalAllyLances = Main.Settings.AdditionalLances.Allies.SelectNumberOfAdditionalLances();

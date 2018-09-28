@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using MissionControl.Rules;
 
 namespace MissionControl.Logic {
-  public class AddTargetLanceBatch {
-    public AddTargetLanceBatch(EncounterRules encounterRules, string orientationTargetKey,
+  public class AddTargetLanceWithDestroyObjectiveBatch {
+    public AddTargetLanceWithDestroyObjectiveBatch(EncounterRules encounterRules, string orientationTargetKey,
       SpawnLogic.LookDirection lookDirection, float minDistance, float maxDistance, string objectiveName) {
 
         int numberOfUnitsInLance = 4;
