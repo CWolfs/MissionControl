@@ -13,7 +13,7 @@ using MissionControl.EncounterFactories;
 using MissionControl.Utils;
 
 namespace MissionControl.Logic {
-  public class AddLanceSpawnChunk : ObjectiveLogic {
+  public class AddLanceSpawnChunk : ChunkLogic {
     private string teamGuid;
     private string lanceGuid;
     private List<string> unitGuids;
