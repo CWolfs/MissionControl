@@ -32,6 +32,7 @@ namespace MissionControl {
             try {
                 InitLogger(modDirectory);
                 LoadSettings(modDirectory);
+                LoadData(modDirectory);
             } catch (Exception e) {
                 Logger.LogError(e);
                 Logger.Log("Error loading mod settings - using defaults.");
@@ -46,6 +47,10 @@ namespace MissionControl {
             Logger.Log("Loading MissionControl settings");
             string settingsJsonString = File.ReadAllText($"{modDirectory}/settings.json");
             Settings = JsonConvert.DeserializeObject<Config.Settings>(settingsJsonString);
+        }
+
+        private static void LoadData(string modDirectory) {
+            DataManager.Instance.Init(modDirectory);
         }
     }
 }

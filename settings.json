@@ -1,14 +1,44 @@
 {
+  "DebugMode": true,
   "AdditionalLances": {
-    "IncludeContractsTypes": ["ALL"], // can also be ["Rescue", "DestroyBase"]
+    "IncludeContractTypes": ["ALL"], // can also be ["Rescue", "DestroyBase"]
+    "LancePool": [
+      "GENERIC_BATTLE_LANCE"
+    ],
     "Enemy": {
       "Max": 3,
       "ExcludeContractTypes": ["Rescue"],
       "ChanceToSpawn": 0.3,
+      "LancePool": {
+        "All": [
+          "GENERIC_BATTLE_LANCE"
+        ],
+        "CONTRACT_TYPE:DestroyBase": [
+          "BRAWLER_LANCE", "DEFENDING_LANCE"
+        ],
+        "CONTRACT_TYPE:DefendBase": [
+          "HEAVY_MISSILE_LANCE", "ATTACKING_LANCE"
+        ],
+        "BIOME:DesertParched": [
+          "BBQ_MASTERS"
+        ]
+      },
+
     },
     "Allies": {
       "Max": 1,
       "ChanceToSpawn": 0.3,
+      "LancePool": {
+        "All": [
+          "GENERIC_BATTLE_LANCE"
+        ],
+        "DestroyBase": [
+          "HEAVY_MISSILE_LANCE", "ATTACKING_LANCE"
+        ],
+        "DefendBase": [
+          "BRAWLER_LANCE", "DEFENDING_LANCE"
+        ]
+      }
     }
   }
 }
