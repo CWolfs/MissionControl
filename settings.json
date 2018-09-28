@@ -1,16 +1,14 @@
 {
   "AdditionalLances": {
+    "IncludeContractsTypes": ["ALL"], // can also be ["Rescue", "DestroyBase"]
     "Enemy": {
-      "Min": 1,
       "Max": 3,
+      "ExcludeContractTypes": ["Rescue"],
+      "ChanceToSpawn": 0.3,
     },
     "Allies": {
-      "Min": 0,
       "Max": 1,
-    },
-    "Player": {
-      "Min": 0,
-      "Max": 0,
+      "ChanceToSpawn": 0.3,
     }
   }
 }
