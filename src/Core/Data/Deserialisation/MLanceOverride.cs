@@ -6,7 +6,7 @@ using HBS.Collections;
 
 namespace MissionControl.Data {
   public class MLanceOverride : LanceOverride {
-    public MLanceOverride(MLanceOverideData lanceOverrideData) {
+    public MLanceOverride(MLanceOverrideData lanceOverrideData) {
       this.lanceDefId = lanceOverrideData.LanceDefId;
       this.lanceTagSet = new TagSet(lanceOverrideData.LanceTagSet.TagSetSourceFile);
       this.lanceTagSet.AddRange(lanceOverrideData.LanceTagSet.Items);

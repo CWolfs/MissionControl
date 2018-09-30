@@ -29,7 +29,7 @@ namespace MissionControl {
     private void LoadLanceOverries() {
       foreach (string file in Directory.GetFiles($"{ModDirectory}/lances", "*.json")) {
         string lanceData = File.ReadAllText(file);
-        MLanceOverideData lanceOverrideData = JsonConvert.DeserializeObject<MLanceOverideData>(lanceData);
+        MLanceOverrideData lanceOverrideData = JsonConvert.DeserializeObject<MLanceOverrideData>(lanceData);
         LanceOverrides.Add(lanceOverrideData.LanceKey, new MLanceOverride(lanceOverrideData));
 
         if (Main.Settings.DebugMode) {

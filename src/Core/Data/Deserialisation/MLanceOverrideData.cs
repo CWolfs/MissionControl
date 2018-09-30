@@ -8,7 +8,7 @@ using BattleTech.Framework;
 using HBS.Collections;
 
 namespace MissionControl.Data {
-  public class MLanceOverideData {
+  public class MLanceOverrideData {
     [JsonProperty("lanceKey")]
     public string LanceKey { get; set; }
 
