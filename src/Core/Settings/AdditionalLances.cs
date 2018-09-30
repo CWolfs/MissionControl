@@ -12,7 +12,9 @@ namespace MissionControl.Config {
 		public List<string> ExcludeContractTypes { get; set; } = new List<string>();
 
 		[JsonProperty("LancePool")]
-		public Dictionary<string, List<string>> LancePool { get; set; } = new Dictionary<string, List<string>>();
+		public Dictionary<string, List<string>> LancePool { get; set; } = new Dictionary<string, List<string>>() {
+			{ "ALL", new List<string>{"GENERIC_BATTLE_LANCE"} }
+		};
 
 		[JsonProperty("Player")]
 		public Lance Player { get; set; } = new Lance();

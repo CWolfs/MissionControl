@@ -31,7 +31,7 @@ namespace MissionControl.Rules {
       int numberOfAdditionalAllyLances = Main.Settings.AdditionalLances.Allies.SelectNumberOfAdditionalLances();
       for (int i = 0; i < numberOfAdditionalAllyLances; i++) {
         new AddEmployerLanceBatch(this, "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET, 150f, 200f);
-      } 
+      }
     }
 
     private void BuildSpawn() {

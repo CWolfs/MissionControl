@@ -25,35 +25,28 @@ namespace MissionControl.Logic {
       ContractOverride contractOverride = ((ContractOverridePayload)payload).ContractOverride;
       TeamOverride teamOverride = contractOverride.targetTeam;
 
-      List<LanceOverride> lanceOverrideList = teamOverride.lanceOverrideList;
-      if (lanceOverrideList.Count > 0) {
-        LanceOverride lanceOverride = lanceOverrideList[0].Copy();
-        SelectAppropriateLanceOverride("Enemy");
+      LanceOverride lanceOverride = SelectAppropriateLanceOverride("Enemy").Copy();
+      lanceOverride.name = $"Lance_Enemy_OpposingForce_{lanceGuid}";
 
-        lanceOverride.name = $"Lance_Enemy_OpposingForce_{lanceGuid}";
-
-        if (unitGuids.Count > 4) {
-          for (int i = 4; i < unitGuids.Count; i++) {
-            UnitSpawnPointOverride unitSpawnOverride = lanceOverride.unitSpawnPointOverrideList[0].Copy();
-            lanceOverride.unitSpawnPointOverrideList.Add(unitSpawnOverride);
-          }
+      if (unitGuids.Count > 4) {
+        for (int i = 4; i < unitGuids.Count; i++) {
+          UnitSpawnPointOverride unitSpawnOverride = lanceOverride.unitSpawnPointOverrideList[0].Copy();
+          lanceOverride.unitSpawnPointOverrideList.Add(unitSpawnOverride);
         }
-
-        for (int i = 0; i < unitGuids.Count; i++) {
-          string unitGuid = unitGuids[i];
-          UnitSpawnPointRef unitSpawnRef = new UnitSpawnPointRef();
-          unitSpawnRef.EncounterObjectGuid = unitGuid;
-          lanceOverride.unitSpawnPointOverrideList[i].unitSpawnPoint = unitSpawnRef;
-        }
-        
-        LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
-        lanceSpawnerRef.EncounterObjectGuid = lanceGuid;
-        lanceOverride.lanceSpawner = lanceSpawnerRef;
-
-        teamOverride.lanceOverrideList.Add(lanceOverride);
-      } else {
-        Main.Logger.LogError("[EncounterManager] Team Override has no lances available to copy. TODO: Generate new lance from stored JSON data");
       }
+
+      for (int i = 0; i < unitGuids.Count; i++) {
+        string unitGuid = unitGuids[i];
+        UnitSpawnPointRef unitSpawnRef = new UnitSpawnPointRef();
+        unitSpawnRef.EncounterObjectGuid = unitGuid;
+        lanceOverride.unitSpawnPointOverrideList[i].unitSpawnPoint = unitSpawnRef;
+      }
+      
+      LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
+      lanceSpawnerRef.EncounterObjectGuid = lanceGuid;
+      lanceOverride.lanceSpawner = lanceSpawnerRef;
+
+      teamOverride.lanceOverrideList.Add(lanceOverride);
     }
   }
 }

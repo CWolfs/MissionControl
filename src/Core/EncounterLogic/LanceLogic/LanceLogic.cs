@@ -17,8 +17,21 @@ namespace MissionControl.Logic {
       biome = biome.Capitalise();
       string contractType = MissionControl.Instance.CurrentContractType;
       List<string> lancePoolKeys = Main.Settings.AdditionalLances.GetLancePoolKeys(teamType, biome, contractType);
-      Main.Logger.Log($"[SelectAppropriateLanceOverride] Lance pool keys valid for '{teamType}', '{biome}', '{contractType}' are '{string.Join(", ", lancePoolKeys.ToArray())}'");
-      return null;
+
+      int index = UnityEngine.Random.Range(0, lancePoolKeys.Count - 1);
+      string selectedLanceKey = lancePoolKeys[index];
+
+      if (Main.Settings.DebugMode) {
+        Main.Logger.Log($"[SelectAppropriateLanceOverride] Lance pool keys valid for '{teamType}', '{biome}', '{contractType}' are '{string.Join(", ", lancePoolKeys.ToArray())}'");
+        Main.Logger.Log($"[SelectAppropriateLanceOverride] Selected lance key '{selectedLanceKey}'");
+      }
+
+      if (DataManager.Instance.LanceOverrides.ContainsKey(selectedLanceKey)) {
+        return DataManager.Instance.LanceOverrides[selectedLanceKey];
+      } else {
+        Main.Logger.LogError($"[SelectAppropriateLanceOverride] MLanceOverride of {selectedLanceKey} not found. Defaulting to 'GENERIC_BATTLE_LANCE'");
+        return DataManager.Instance.LanceOverrides["GENERIC_BATTLE_LANCE"];
+      }
     }
   }
 }
