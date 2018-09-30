@@ -2,9 +2,10 @@
   "DebugMode": true,
   "AdditionalLances": {
     "IncludeContractTypes": ["ALL"], // can also be ["Rescue", "DestroyBase"]
-    "LancePool": [
-      "GENERIC_BATTLE_LANCE"
-    ],
+    "ExcludeContractTypes": [],
+    "LancePool": {
+      "All": [ "GENERIC_BATTLE_LANCE"]
+    },
     "Enemy": {
       "Max": 3,
       "ExcludeContractTypes": ["Rescue"],
