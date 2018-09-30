@@ -28,6 +28,7 @@ namespace MissionControl.Logic {
       List<LanceOverride> lanceOverrideList = teamOverride.lanceOverrideList;
       if (lanceOverrideList.Count > 0) {
         LanceOverride lanceOverride = lanceOverrideList[0].Copy();
+        SelectAppropriateLanceOverride("Enemy");
 
         lanceOverride.name = $"Lance_Enemy_OpposingForce_{lanceGuid}";
 

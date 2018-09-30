@@ -23,7 +23,7 @@ namespace MissionControl {
 
     public Contract CurrentContract { get; private set; }
     public string ContractMapName { get; private set; }
-    public ContractType CurrentContractType { get; private set; } = ContractType.INVALID_UNSET;
+    public string CurrentContractType { get; private set; } = "INVALID_UNSET";
     public EncounterRules EncounterRules { get; private set; }
     public GameObject EncounterLayerParentGameObject { get; private set; }
     public EncounterLayerParent EncounterLayerParent { get; private set; }
@@ -81,10 +81,11 @@ namespace MissionControl {
       instead of relying only on the enum values
     */
     public bool SetContractType(ContractType contractType) {
-      CurrentContractType = contractType;
       List<Type> encounters = null;
 
       string type = Enum.GetName(typeof(ContractType), contractType);
+      CurrentContractType = type;
+
       if (AvailableEncounters.ContainsKey(type)) {
         encounters = AvailableEncounters[type];
       } else {
