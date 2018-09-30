@@ -17,8 +17,16 @@ namespace MissionControl.Config {
 		public Dictionary<string, List<string>> LancePool { get; set; } = new Dictionary<string, List<string>>();
 
 		public int SelectNumberOfAdditionalLances() {
-			int lanceNumber = UnityEngine.Random.Range(1, Max);
-			Main.Logger.Log($"[SelectNumberOfAdditionalLances] {lanceNumber}");
+			int lanceNumber = 0;
+			int chanceToSpawn = (int)(ChanceToSpawn * 100f);
+
+			for (int i = 0; i < Max; i++) {
+				int rollChance = UnityEngine.Random.Range(1, 100);
+				if (rollChance > chanceToSpawn) break;
+				lanceNumber++;
+			}
+
+			Main.Logger.Log($"[SelectNumberOfAdditionalLances] {lanceNumber}");	
 			return lanceNumber;
 		}
 	}
