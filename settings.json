@@ -2,7 +2,7 @@
   "DebugMode": true,
   "DebugSkirmishMode": true,
   "AdditionalLances": {
-    "IncludeContractTypes": [], // can also be ["Rescue", "DestroyBase"]
+    "IncludeContractTypes": [],
     "ExcludeContractTypes": [],
     "LancePool": {
       "ALL": [ "GENERIC_BATTLE_LANCE"]
