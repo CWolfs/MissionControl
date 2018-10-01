@@ -50,12 +50,20 @@ namespace MissionControl {
       AddEncounter("SimpleBattle", typeof(SimpleBattleEncounterRules));
     
       // Skirmish
-      AddEncounter("ArenaSkirmish", typeof(ArenaSkirmishEncounterRules));
+      if (Main.Settings.DebugSkirmishMode) AddEncounter("ArenaSkirmish", typeof(DebugArenaSkirmishEncounterRules));
     }
 
     public void AddEncounter(string contractType, Type encounter) {
       if (!AvailableEncounters.ContainsKey(contractType)) AvailableEncounters.Add(contractType, new List<Type>());
       AvailableEncounters[contractType].Add(encounter);  
+    }
+
+    public void ClearEncounters() {
+      AvailableEncounters.Clear();
+    }
+
+    public void ClearEncounters(string contractType) {
+      AvailableEncounters.Remove(contractType);
     }
 
     public List<string> GetAllContractTypes() {

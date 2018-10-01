@@ -6,6 +6,9 @@ namespace MissionControl.Config {
         [JsonProperty("DebugMode")]
         public bool DebugMode { get; set; } = false;
 
+        [JsonProperty("DebugSkirmishMode")]
+        public bool DebugSkirmishMode { get; set; } = false;
+
         [JsonProperty("AdditionalLances")]
         public AdditionalLances AdditionalLances { get; set; } = new AdditionalLances();
     }
