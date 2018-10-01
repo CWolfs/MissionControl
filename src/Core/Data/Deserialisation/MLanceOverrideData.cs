@@ -13,7 +13,7 @@ namespace MissionControl.Data {
     public string LanceKey { get; set; }
 
     [JsonProperty("lanceDefId")]
-    public string LanceDefId { get; set; }
+    public string LanceDefId { get; set; } = "Tagged";
 
     [JsonProperty("lanceTagSet")]
     public MTagSetData LanceTagSet { get; set; } = new MTagSetData();

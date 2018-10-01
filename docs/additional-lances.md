@@ -2,9 +2,12 @@
 
 Additional enemy and ally lances can be spawned in all contract types based on contract type, biome type, percentage chances, maximum limits and lance configs. These are controlled by the `settings.json` section `AdditionalLances`.
 
-## Settings Breakdown
+Lances are defined using a similar configuration to how they are defined in the contract `.json` files. They can be lances with specific mechs, or make use of tags for the game to select an appropriate lance.
 
-Comments next to each setting explain its use.
+* [Settings Breakdown](#settings-breakdown)
+* [Lance Definition Breakdown](#lance-definition-breakdown)
+
+## Settings Breakdown
 
 ```json
   "AdditionalLances": {
@@ -57,8 +60,8 @@ Comments next to each setting explain its use.
 | Path | Required? | Default | Example | Details |
 | ---- | --------- | ------- | ------- | ------- |
 | `IncludeContractTypes` | Optional | All available contract types | `["Rescue", "DestroyBase"]` would limit lances to these two contract types <br><br> `[]` would fallback to default | When set, it overrides `ExcludeContractTypes` for this level |
-| `ExcludeContractTypes` | Optional | No contract types | `["Assasinate", "CaptureBase"]` would remove these two contract types from the entire list of available contract types. <br><br> `[]` would fallback to default | Allows you to explicitly exclude additional lance spawns for all teams for the specified contract types. Not used if `IncludeContractTypes` is set  |
-| `LancePool` | Optional | `ALL` situations will use `GENERIC_BATTLE_LANCE` | See the above code as a full example. <br> Can match to `ALL`, `CONTRACT_TYPE:{key}` and `BIOME:{key}` | All matched conditions will be added to one list of lance pool keys. One key per lance spawn is selected at random for the specific lance |
+| `ExcludeContractTypes` | Optional | No contract types | `["Assasinate", "CaptureBase"]` would remove these two contract types from the entire list of available contract types. <br><br> `[]` would fallback to default | Allows you to explicitly exclude additional lance spawns for all teams for the specified contract types. Not used if `IncludeContractTypes` is set |
+| `LancePool` | Optional | `ALL` situations will use `GENERIC_BATTLE_LANCE` | See the above code as a full example. <br> Can match to `ALL`, `CONTRACT_TYPE:{key}` and `BIOME:{key}` | All matched conditions will be added to one list of lance pool keys. One key per lance spawn is selected at random for the specific lance. These lance keys reference the lances in the `/lances` folder. See [Lance Definition Breakdown](#lance-definition-breakdown) |
 | `Enemy` | Optional | Children defaults | - | Controls enemy/target specific lance details |
 | `Allies` | Optional | Children defaults | - | Controls allies/employer specific lance details |
 
@@ -70,3 +73,69 @@ Comments next to each setting explain its use.
 | `ExcludeContractTypes` | Optional | No contract types | Same as parent `ExcludeContractTypes` | Allows you to specifically exclude additional lances for a team based on contract type |
 | `ChanceToSpawn` | Optional | `0` | `0.3` | Float number from `0` to `1` to represent percentage. `1` being 100% |
 | `LancePool` | Optional | Empty | Same as parent `LancePool` example | Additive process. Adds to the parent `LancePool` |
+
+## Lance Definition Breakdown
+
+Lance definitions are defined in `MissionControl/lances` folder. Each `.json` file should be its own Mission Control lance. You can specify exact lances, or use tagged lances for the game to select an appropriate lance.
+
+Each 
+
+```json
+{
+  "lanceKey": "GENERIC_BATTLE_LANCE",
+  "lanceDefId": "Tagged",
+  "lanceTagSet": {
+    "items": [
+      "lance_type_battle",
+    ],
+  },
+  "lanceExcludedTagSet": {
+    "items": [],
+  },
+  "spawnEffectTags": {
+    "items": [],
+  },
+  "lanceDifficultyAdjustment": 0,
+  "unitSpawnPointOverrideList": [
+    {
+      "unitType": "Mech",
+      "unitDefId": "UseLance",
+      "spawnEffectTags": {
+        "items": [
+          "spawn_poorly_maintained_50"
+        ],
+      }
+    },
+    {
+      "unitType": "Mech"
+    },
+    {
+      "unitType": "Vehicle",
+      "unitTagSet": {
+        "items": [
+          "unit_vehicle_carrier"
+        ]
+      }
+    },
+    {
+      "unitType": "Mech"
+    }
+  ]
+}
+```
+
+| Path | Required? | Default | Example | Details |
+| ---- | --------- | ------- | ------- | ------- |
+| `lanceKey` | Required | N/A | `GENERIC_BATTLE_LANCE` | Key must be unique. It is used by the mod in the `settings.json` LancePools to specify the lance selection |
+| `lanceDefId` | Optional | `Tagged` | `Tagged` or `Manual` | This specifies what type of lance this definition is. `Tagged` uses the lance tags to select an appropriate lance and `Manual` allows you to manually create a specific lance |
+| `lanceTagSet` | Required | N/A | `"items": ["lance_type_battle", "lance_type_notallvehicles"]` | Allows the lance definition to specify what type of lance to select by tags |
+| `lanceExcludedTagSet` | Optional | None | | Allows the lance definition to exclude specific tags when selecting by tag |
+| `spawnEffectTags` | Optional | None | `"items": ["spawn_poorly_maintained_25"]`| Allows the lance definition to specify spawn specific tags that apply to the entire lance |
+| `lanceDifficultyAdjustment` | Optional | `0` | `1` | +/- this amount for the lance difficulty |
+| `unitSpawnPointOverrideList` | Required | N/A | Array of lance members | |
+
+**unitSpawnPointOverrideList**
+
+| Path | Required? | Default | Example | Details |
+| ---- | --------- | ------- | ------- | ------- |
+| `unityType` | Optional | `Mech` | `Mech`, `Vehicle` or `Turret` | Type of lance member |

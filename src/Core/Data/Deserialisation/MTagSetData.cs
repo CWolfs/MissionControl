@@ -11,6 +11,6 @@ namespace MissionControl.Data {
     public string[] Tags { get; set; } = new string[0];
 
     [JsonProperty("tagSetSourceFile")]
-    public string TagSetSourceFile { get; set; }
+    public string TagSetSourceFile { get; set; } = "Tags/LanceTags";
   }
 }
