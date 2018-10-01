@@ -2,6 +2,8 @@
 
 A HBS BattleTech mod that varies the encounter specifics such as spawn locations, lance numbers and objectives
 
+![Additional Lances](./docs/images/additional-lances.png)
+
 ## Features
 
 ### Additional Lances
