@@ -32,8 +32,8 @@ This roadmap contains features that may not make it into the mod. It depends on 
 
 | Feature | Expected Version | Status  |
 | ------- | ---------------- | ------- |
-| Objective - Defend X Units | Unknown | :heavy_minus_sign: |
-| Map Logic - Lance Faction Change | Unknown | :heavy_minus_sign: |
+| Encounter Objective - Defend X Units | Unknown | :heavy_minus_sign: |
+| Encounter Logic - Lance Faction Change | Unknown | :heavy_minus_sign: |
 | Random Spawn - Buildings | Unknown | :heavy_minus_sign: |
 | Random Spawn - Plots | Unknown | :heavy_minus_sign: |
 | Additional Lances - Player Lances | Unknown | :heavy_minus_sign: |
