@@ -28,6 +28,8 @@ For full information on contract type resets, see the [Contract Type Rulesets](.
 
 ## Roadmap
 
+This roadmap contain features that may not make it into the mod. It depends on the technical feasibility of the feature.
+
 | Feature | Expected Version | Status  |
 | ------- | ---------------- | ------- |
 | Objective - Defend X Units | Unknown | :heavy_minus_sign: |
