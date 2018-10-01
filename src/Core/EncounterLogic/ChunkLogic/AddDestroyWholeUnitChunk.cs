@@ -36,6 +36,8 @@ namespace MissionControl.Logic {
       DestroyWholeLanceChunk destroyWholeChunk = ChunkFactory.CreateDestroyWholeLanceChunk();
       destroyWholeChunk.encounterObjectGuid = System.Guid.NewGuid().ToString();
 
+      this.objectiveLabel = MissionControl.Instance.CurrentContract.Interpolate(this.objectiveLabel);
+
       bool spawnOnActivation = true;
       LanceSpawnerGameLogic lanceSpawner = LanceSpawnerFactory.CreateLanceSpawner(
         destroyWholeChunk.gameObject,
