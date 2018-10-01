@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace MissionControl.Config {
 	public class Lance {
 		[JsonProperty("Max")]
-		public int Max { get; set; } = 0;
+		public int Max { get; set; } = 1;
 
 		[JsonProperty("ExcludeContractTypes")]
 		public List<string> ExcludeContractTypes { get; set; } = new List<string>();
