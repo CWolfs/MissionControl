@@ -31,7 +31,7 @@ For full information on contract type resets, see the [Contract Type Rulesets](.
 | Feature | Expected Version | Status  |
 | ------- | ---------------- | ------- |
 | Objective - Defend X Units | Unknown | :heavy_minus_sign: |
-| Map Logic - Add Lance faction change | Unknown | :heavy_minus_sign: |
+| Map Logic - Lance Faction Change | Unknown | :heavy_minus_sign: |
 | Random Spawn - Buildings | Unknown | :heavy_minus_sign: |
 | Random Spawn - Plots | Unknown | :heavy_minus_sign: |
 | Reuse Maps - Story - 1B Retreat | Unknown | :heavy_minus_sign: |
