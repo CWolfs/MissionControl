@@ -18,6 +18,10 @@ Depending on the contract type, the lance spawns will change every playthrough. 
 
 For full information on the random spawns, see the [Random Spawns](./docs/random-spawns.md) page.
 
+### Single Player Skirmish Support
+
+Mission Control works on single player skirmish if a contract type ruleset is created for it. 
+
 ### Contract Type Rulesets
 
 Mission Control allows other modders to add their own contract type rulesets to be used. When added to the mod, the mod will randomly select a ruleset for a contract type from the given choices.

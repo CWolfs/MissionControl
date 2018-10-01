@@ -87,23 +87,33 @@ Each
   "lanceTagSet": {
     "items": [
       "lance_type_battle",
-    ],
+    ]
   },
   "lanceExcludedTagSet": {
-    "items": [],
+    "items": []
   },
   "spawnEffectTags": {
-    "items": [],
+    "items": []
   },
   "lanceDifficultyAdjustment": 0,
   "unitSpawnPointOverrideList": [
     {
       "unitType": "Mech",
       "unitDefId": "UseLance",
+      "unitExcludedTagSet": {
+        "items": []
+      },
       "spawnEffectTags": {
         "items": [
           "spawn_poorly_maintained_50"
         ],
+      },
+      "pilotDefId": "pilotDef_InheritLance",
+      "pilotTagSet": {
+          "items": []
+      },
+      "pilotExcludedTagSet": {
+          "items": []
       }
     },
     {
@@ -138,4 +148,11 @@ Each
 
 | Path | Required? | Default | Example | Details |
 | ---- | --------- | ------- | ------- | ------- |
-| `unityType` | Optional | `Mech` | `Mech`, `Vehicle` or `Turret` | Type of lance member |
+| `unitType` | Optional | `Mech` | `Mech`, `Vehicle` or `Turret` | Type of lance member |
+| `unitDefId` | Optional | `UseLance` | `mechDef_None`, `mechDef_InheritLance`, `vehicleDef_None`, `vehicleDef_InheritLance`, `turretDef_None`, `turretDef_InheritLance`, `Tagged` | Determines how the unit is selected |
+| `unitTagSet` | Optional | None | `"items": ["unit_vehicle_carrier"]` | Tags for selecting the unit if `Tagged` is selected |
+| `unitExcludedTagSet` | Optional | None | | Allows the unit definition to exclude specific tags when selecting by tag |
+| `spawnEffectTags` | Optional | None | `"items": ["spawn_poorly_maintained_25"]`| Allows the unit definition to specify spawn specific tags that apply to the specific lance member |
+| `pilotDefId` | Optional | `pilotDef_InheritLance` | `pilotDef_InheritLance`, `UseLance`, `Tagged`, `pilot_default` or `pilot_commander` | Allows for selection system for pilots |
+| `pilotTagSet` | Optional | None | `"items": ["pilot_npc_outrider"]` | Tags for selecting the unit if `Tagged` is selected |
+| `pilotExcludedTagSet` | Optional | None | | Allows the pilot definition to exclude specific tags when selecting by tag |
