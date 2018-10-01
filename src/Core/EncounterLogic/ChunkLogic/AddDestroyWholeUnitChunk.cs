@@ -19,13 +19,15 @@ namespace MissionControl.Logic {
     private List<string> unitGuids;
     private string spawnerName;
     private string objectiveLabel;
+    private int priority;
 
-    public AddDestroyWholeUnitChunk(string teamGuid, string lanceGuid, List<string> unitGuids, string spawnerName, string objectiveLabel) {
+    public AddDestroyWholeUnitChunk(string teamGuid, string lanceGuid, List<string> unitGuids, string spawnerName, string objectiveLabel, int priority) {
       this.teamGuid = teamGuid;
       this.lanceGuid = lanceGuid;
       this.unitGuids = unitGuids;
       this.spawnerName = spawnerName;
       this.objectiveLabel = objectiveLabel;
+      this.priority = priority;
     }
 
     public override void Run(RunPayload payload) {
@@ -47,7 +49,6 @@ namespace MissionControl.Logic {
       LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef(lanceSpawner);
 
       bool showProgress = true;
-      int priority = -10;
       bool displayToUser = true;
       DestroyLanceObjective objective = ObjectiveFactory.CreateDestroyLanceObjective(
         destroyWholeChunk.gameObject,

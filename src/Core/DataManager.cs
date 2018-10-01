@@ -32,8 +32,9 @@ namespace MissionControl {
         MLanceOverrideData lanceOverrideData = JsonConvert.DeserializeObject<MLanceOverrideData>(lanceData);
         LanceOverrides.Add(lanceOverrideData.LanceKey, new MLanceOverride(lanceOverrideData));
 
+        Main.Logger.Log($"[DataManager] Loaded lance override '{lanceOverrideData.LanceKey}'");
+
         if (Main.Settings.DebugMode) {
-          Main.Logger.Log($"[DataManager] Loaded lance override '{lanceOverrideData.LanceKey}'");
           Main.Logger.Log($"[DataManager] Lance def id '{lanceOverrideData.LanceDefId}'");
           Main.Logger.Log($"[DataManager] Lance Tag Set items '{string.Join(",", lanceOverrideData.LanceTagSet.Items)}' and source file '{lanceOverrideData.LanceTagSet.TagSetSourceFile}'");
           Main.Logger.Log($"[DataManager] Lance Excluded Tag Set items '{string.Join(",", lanceOverrideData.LanceExcludedTagSet.Items)}' and source file '{lanceOverrideData.LanceExcludedTagSet.TagSetSourceFile}'");

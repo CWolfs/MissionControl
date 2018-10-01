@@ -7,7 +7,7 @@ using MissionControl.Rules;
 namespace MissionControl.Logic {
   public class AddTargetLanceWithDestroyObjectiveBatch {
     public AddTargetLanceWithDestroyObjectiveBatch(EncounterRules encounterRules, string orientationTargetKey,
-      SpawnLogic.LookDirection lookDirection, float minDistance, float maxDistance, string objectiveName) {
+      SpawnLogic.LookDirection lookDirection, float minDistance, float maxDistance, string objectiveName, int priority) {
 
         int numberOfUnitsInLance = 4;
         string lanceGuid = Guid.NewGuid().ToString();
@@ -17,7 +17,7 @@ namespace MissionControl.Logic {
 
         encounterRules.EncounterLogic.Add(new AddLanceToTargetTeam(lanceGuid, unitGuids));
         encounterRules.EncounterLogic.Add(new AddDestroyWholeUnitChunk(targetTeamGuid, lanceGuid, unitGuids, 
-          spawnerName, objectiveName));
+          spawnerName, objectiveName, priority));
         encounterRules.EncounterLogic.Add(new SpawnLanceMembersAroundTarget(encounterRules, spawnerName, "PlotBase", 
           SpawnLogic.LookDirection.AWAY_FROM_TARGET, 50f, 150f));
 
