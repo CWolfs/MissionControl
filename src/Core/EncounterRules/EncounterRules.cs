@@ -22,8 +22,9 @@ namespace MissionControl.Rules {
     protected GameObject ChunkPlayerLanceGo { get; set; }
     protected GameObject SpawnerPlayerLanceGo { get; set; }
 
-    protected List<LogicBlock> EncounterLogic = new List<LogicBlock>();
-    public Dictionary<string, GameObject> ObjectLookup = new Dictionary<string, GameObject>();
+    public List<LogicBlock> EncounterLogic { get; private set; } = new List<LogicBlock>();
+    public Dictionary<string, GameObject> ObjectLookup { get; private set; } = new Dictionary<string, GameObject>();
+    public List<string> ObjectReferenceQueue { get; private set; } = new List<string>();
 
     public EncounterState State { get; protected set; } = EncounterState.NOT_STARTED;
 
@@ -73,6 +74,10 @@ namespace MissionControl.Rules {
       string mapName = MissionControl.Instance.ContractMapName;
 
       LinkObjectReferences(mapName);
+
+      foreach (string objectName in ObjectReferenceQueue) {
+        ObjectLookup.Add(objectName, EncounterLayerData.gameObject.FindRecursive(objectName));    
+      }
 
       if (State == EncounterState.RUNNING) {
         try {

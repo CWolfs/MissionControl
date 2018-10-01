@@ -11,7 +11,6 @@ using MissionControl.Logic;
 namespace MissionControl.Rules {
   public class DestroyBaseEncounterRules : EncounterRules {
     private GameObject PlotBase { get; set; }
-    private List<string> ObjectReferenceQueue = new List<string>();
 
     public DestroyBaseEncounterRules() : base() { }
 
@@ -24,35 +23,21 @@ namespace MissionControl.Rules {
     private void BuildAdditionalLances() {
       Main.Logger.Log("[DestroyBaseEncounterRules] Building additional lance rules");
 
-      int numberOfAdditionalEnemyLances = Main.Settings.AdditionalLances.Enemy.SelectNumberOfAdditionalLances();
-      for (int i = 0; i < numberOfAdditionalEnemyLances; i++) {
-        int numberOfUnitsInLance = 4;
-        string lanceGuid = Guid.NewGuid().ToString();
-        List<string> unitGuids = GenerateGuids(numberOfUnitsInLance);
-        string targetTeamGuid = TARGET_TEAM_ID;
-        string spawnerName = $"Lance_Enemy_OpposingForce_{lanceGuid}";
-
-        EncounterLogic.Add(new AddLanceToTargetTeam(lanceGuid, unitGuids));
-        EncounterLogic.Add(new AddDestroyWholeUnitChunk(targetTeamGuid, lanceGuid, unitGuids, spawnerName, $"Destroy Pirate Support Lance {i + 1}"));
-        EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, spawnerName, "PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 50f, 150f));
-
-        ObjectReferenceQueue.Add(spawnerName);
+      if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
+        int numberOfAdditionalEnemyLances = Main.Settings.AdditionalLances.Enemy.SelectNumberOfAdditionalLances();
+        int objectivePriority = -10;
+        for (int i = 0; i < numberOfAdditionalEnemyLances; i++) {
+          new AddTargetLanceWithDestroyObjectiveBatch(this, "PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 50f, 150f,
+            $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i + 1}", objectivePriority--);
+        }
       }
 
-      int numberOfAdditionalAllyLances = Main.Settings.AdditionalLances.Allies.SelectNumberOfAdditionalLances();
-      for (int i = 0; i < numberOfAdditionalAllyLances; i++) {
-        int numberOfUnitsInLance = 4;
-        string lanceGuid = Guid.NewGuid().ToString();
-        List<string> unitGuids = GenerateGuids(numberOfUnitsInLance);
-        string employerTeamGuid = EMPLOYER_TEAM_ID;
-        string spawnerName = $"Lance_Ally_SupportingForce_{lanceGuid}";
-
-        EncounterLogic.Add(new AddLanceToAllyTeam(lanceGuid, unitGuids));
-        EncounterLogic.Add(new AddLanceSpawnChunk(employerTeamGuid, lanceGuid, unitGuids, spawnerName, "Spawns a non-objective related ally supporting lance"));
-        EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, spawnerName, "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET, 150f, 200f));
-
-        ObjectReferenceQueue.Add(spawnerName);
-      } 
+      if (MissionControl.Instance.AreAdditionalLancesAllowed("allies")) {
+        int numberOfAdditionalAllyLances = Main.Settings.AdditionalLances.Allies.SelectNumberOfAdditionalLances();
+        for (int i = 0; i < numberOfAdditionalAllyLances; i++) {
+          new AddEmployerLanceBatch(this, "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET, 150f, 200f);
+        }
+      }
     }
 
     private void BuildSpawn() {
@@ -62,10 +47,6 @@ namespace MissionControl.Rules {
 
     public override void LinkObjectReferences(string mapName) {
       ObjectLookup.Add("PlotBase", GameObject.Find(GetPlotBaseName(mapName)));
-
-      foreach (string objectName in ObjectReferenceQueue) {
-        ObjectLookup.Add(objectName, EncounterLayerData.gameObject.FindRecursive(objectName));    
-      }
     }
   }
 }
