@@ -57,7 +57,7 @@ Comments next to each setting explain its use.
 | Path | Required? | Default | Example | Details |
 | ---- | --------- | ------- | ------- | ------- |
 | `IncludeContractTypes` | Optional | All available contract types | `["Rescue", "DestroyBase"]` would limit lances to these two contract types <br><br> `[]` would fallback to default | When set, it overrides `ExcludeContractTypes` for this level |
-| `ExcludeContractTypes` | Optional | No contract types | `["Assasinate", "CaptureBase"]` would remove these two contract types from the entire list of available contract types. <br><br> `[]` would fallback to default | Allows you to explicitly exclude additional lance spawns for all teams for the specified contract types. Not used if `IncludeContractTypes` is set  |
+| `ExcludeContractTypes` | Optional | No contract types | `["Assasinate", "CaptureBase"]` would remove these two contract types from the entire list of available contract types. <br><br> `[]` would fallback to default | Allows you to explicitly exclude additional lance spawns for all teams for the specified contract types |
 | `LancePool` | Optional | `ALL` situations will use `GENERIC_BATTLE_LANCE` | See the above code as a full example. <br> Can match to `ALL`, `CONTRACT_TYPE:{key}` and `BIOME:{key}` | All matched conditions will be added to one list of lance pool keys. One key per lance spawn is selected at random for the specific lance |
 | `Enemy` | Optional | Children defaults | - | Controls enemy/target specific lance details |
 | `Allies` | Optional | Children defaults | - | Controls allies/employer specific lance details |
