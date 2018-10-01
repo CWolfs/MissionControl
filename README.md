@@ -18,6 +18,26 @@ Depending on the contract type, the lance spawns will change every playthrough. 
 
 For full information on the random spawns, see the [Random Spawns](./docs/random-spawns.md) page.
 
+### Contract Type Rulesets
+
+Mission Control allows other modders to add their own contract type rulesets to be used. When added to the mod, the mod will randomly select a ruleset for a contract type from the given choices.
+
+This is experimental and not yet fully supported. This system will change and it is _not_ recommended you build on this system yet.
+
+For full information on contract type resets, see the [Contract Type Rulesets](./docs/contract-type-rulesets.md) page.
+
+## Roadmap
+
+| Feature | Expected Version | Status  |
+| ------- | ---------------- | ------- |
+| Objective - Defend X Units | Unknown | :heavy_minus_sign: |
+| Map Logic - Add Lance faction change | Unknown | :heavy_minus_sign: |
+| Random Spawn - Buildings | Unknown | :heavy_minus_sign: |
+| Random Spawn - Plots | Unknown | :heavy_minus_sign: |
+| Reuse Maps - Story - 1B Retreat | Unknown | :heavy_minus_sign: |
+
+...many more to be added soon.
+
 ## Feedback
 
 All feedback is welcome in the [issues section](https://github.com/CWolfs/MissionControl/issues).

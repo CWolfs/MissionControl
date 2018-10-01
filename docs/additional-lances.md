@@ -1,3 +1,3 @@
 # Additional Lances
 
-Additioan lances info.
+Additional lances info.
