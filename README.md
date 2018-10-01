@@ -4,16 +4,21 @@ A HBS BattleTech mod that varies the encounter specifics such as spawn locations
 
 ## Features
 
-* Additional Lances - Depending on the situation, and including random chance, extra lances will spawn.
-* Random Spawns - Depending on the contract type, the lance spawns will change every playthrough. The spawning uses contract type specific logic to suitably place the lances.
+### Additional Lances
 
-### Extra Lances
+Additional enemy and ally lances will spawn based on chances, maximum limits and lance configs.
 
-[TODO]
+For full configuration options, see the [Additional Lances Wiki](https://github.com/CWolfs/MissionControl/wiki/Additional-Lances) page.
 
 ### Random Spawns
 
-[TODO]
+Depending on the contract type, the lance spawns will change every playthrough. The spawning uses contract type specific logic to suitably place the lances. There are no configuration options currently available for this as these come from the encounter type profiles that are created.
+
+For full information on the random spawns, see the [Random Spawns Wiki](https://github.com/CWolfs/MissionControl/wiki/Random-Spawns) page.
+
+## Feedback
+
+All feedback is welcome in the [issues section](https://github.com/CWolfs/MissionControl/issues).
 
 ## Author
 
