@@ -61,7 +61,12 @@ Comments next to each setting explain its use.
 | `LancePool` | Optional | `ALL` situations will use `GENERIC_BATTLE_LANCE` | See the above code as a full example. <br> Can match to `ALL`, `CONTRACT_TYPE:{key}` and `BIOME:{key}` | All matched conditions will be added to one list of lance pool keys. One key per lance spawn is selected at random for the specific lance |
 | `Enemy` | Optional | Children defaults | - | Controls enemy/target specific lance details |
 | `Allies` | Optional | Children defaults | - | Controls allies/employer specific lance details |
-| `[E/A]/Max` | Optional | `1` | `3` | Maximum number of lances to attempt to spawn |
-| `[E/A]/ExcludeContractTypes` | Optional | No contract types | Same as parent `ExcludeContractTypes` | Allows you to specifically exclude additional lances for a team based on contract type |
-| `[E/A]/ChanceToSpawn` | Optional | `0` | `0.3` | Float number from `0` to `1` to represent percentage. `1` being 100% |
-| `[E/A]/LancePool` | Optional | Empty | Same as parent `LancePool` example | Additive process. Adds to the parent `LancePool` |
+
+**Enemy or Allies**
+
+| Path | Required? | Default | Example | Details |
+| ---- | --------- | ------- | ------- | ------- |
+| `Max` | Optional | `1` | `3` | Maximum number of lances to attempt to spawn |
+| `ExcludeContractTypes` | Optional | No contract types | Same as parent `ExcludeContractTypes` | Allows you to specifically exclude additional lances for a team based on contract type |
+| `ChanceToSpawn` | Optional | `0` | `0.3` | Float number from `0` to `1` to represent percentage. `1` being 100% |
+| `LancePool` | Optional | Empty | Same as parent `LancePool` example | Additive process. Adds to the parent `LancePool` |
