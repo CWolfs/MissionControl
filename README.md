@@ -4,6 +4,9 @@ A HBS BattleTech mod that varies the encounter specifics such as spawn locations
 
 ## Features
 
+* Additional Lances
+* Random Spawns
+
 ### Extra Lances
 
 Depending on the situation, and including random chance, extra lances will spawn.
