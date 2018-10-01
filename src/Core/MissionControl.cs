@@ -48,6 +48,9 @@ namespace MissionControl {
       AddEncounter("DestroyBase", typeof(DestroyBaseEncounterRules));
       AddEncounter("Rescue", typeof(RescueEncounterRules));
       AddEncounter("SimpleBattle", typeof(SimpleBattleEncounterRules));
+    
+      // Skirmish
+      AddEncounter("ArenaSkirmish", typeof(ArenaSkirmishEncounterRules));
     }
 
     public void AddEncounter(string contractType, Type encounter) {

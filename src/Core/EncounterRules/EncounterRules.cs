@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using BattleTech;
+using BattleTech.Framework;
 
 using MissionControl.Logic;
 
@@ -66,8 +67,8 @@ namespace MissionControl.Rules {
     private void RunSceneManipulationLogic(IEnumerable<LogicBlock> logicBlocks, RunPayload payload) {
       EncounterLayerGo = MissionControl.Instance.EncounterLayerGameObject;
       EncounterLayerData = MissionControl.Instance.EncounterLayerData;
-      ChunkPlayerLanceGo = EncounterLayerGo.transform.Find("Chunk_PlayerLance").gameObject;
-      SpawnerPlayerLanceGo = ChunkPlayerLanceGo.transform.Find("Spawner_PlayerLance").gameObject;
+      ChunkPlayerLanceGo = EncounterLayerGo.transform.Find(GetPlayerLanceChunkName()).gameObject;
+      SpawnerPlayerLanceGo = ChunkPlayerLanceGo.transform.Find(GetPlayerLanceSpawnerName()).gameObject;
       ObjectLookup.Add("ChunkPlayerLance", ChunkPlayerLanceGo);
       ObjectLookup.Add("SpawnerPlayerLance", SpawnerPlayerLanceGo);
 
@@ -144,6 +145,30 @@ namespace MissionControl.Rules {
 
       Main.Logger.LogError($"[{this.GetType().Name}] Using plot name '{plot.name}'");
       return plot.name;
+    }
+
+    public string GetPlayerLanceChunkName() {
+      string type = Enum.GetName(typeof(ContractType), MissionControl.Instance.CurrentContract.ContractType);
+      
+      if (type == "ArenaSkirmish") {
+        return "MultiPlayerSkirmishChunk";
+      } else if (type == "Story_1B_Retreat") {
+        return "Gen_PlayerLance";
+      }
+
+      return "Chunk_PlayerLance";
+    }
+
+    public string GetPlayerLanceSpawnerName() {
+      string type = Enum.GetName(typeof(ContractType), MissionControl.Instance.CurrentContract.ContractType);
+      
+      if (type == "ArenaSkirmish") {
+        return "Player1LanceSpawner";
+      } else if (type == "Story_1B_Retreat") {
+        return "PlayerLanceSpawner";
+      }
+
+      return "Spawner_PlayerLance";
     }
   }
 }
