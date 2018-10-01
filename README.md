@@ -8,7 +8,7 @@ A HBS BattleTech mod that varies the encounter specifics such as spawn locations
 
 ### Additional Lances
 
-Additional enemy and ally lances will spawn based on chances, maximum limits and lance configs.
+Additional enemy and ally lances will spawn based on contact type, biome type, percentage chances, maximum limits and lance configs.
 
 For full configuration options, see the [Additional Lances Wiki](https://github.com/CWolfs/MissionControl/wiki/Additional-Lances) page.
 
