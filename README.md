@@ -36,7 +36,7 @@ This roadmap contains features that may not make it into the mod. It depends on 
 | Map Logic - Lance Faction Change | Unknown | :heavy_minus_sign: |
 | Random Spawn - Buildings | Unknown | :heavy_minus_sign: |
 | Random Spawn - Plots | Unknown | :heavy_minus_sign: |
-| Random Spawn - Player Lances | Unknown | :heavy_minus_sign: |
+| Additional Lances - Player Lances | Unknown | :heavy_minus_sign: |
 | Reuse Maps - Story - 1B Retreat | Unknown | :heavy_minus_sign: |
 
 ...many more to be added soon.
