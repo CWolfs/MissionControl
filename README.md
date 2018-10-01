@@ -4,16 +4,16 @@ A HBS BattleTech mod that varies the encounter specifics such as spawn locations
 
 ## Features
 
-* Additional Lances
-* Random Spawns
+* Additional Lances - Depending on the situation, and including random chance, extra lances will spawn.
+* Random Spawns - Depending on the contract type, the lance spawns will change every playthrough. The spawning uses contract type specific logic to suitably place the lances.
 
 ### Extra Lances
 
-Depending on the situation, and including random chance, extra lances will spawn.
+[TODO]
 
 ### Random Spawns
 
-Depending on the contract type, the lance spawns will change every playthrough. The spawning uses contract type specific logic to suitably place the lances.
+[TODO]
 
 ## Author
 
