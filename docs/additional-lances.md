@@ -55,5 +55,5 @@ Comments next to each setting explain its use.
 ```
 
 | Path | Required? | Default | Example | Details |
-| ------- | -------- | -------- | ------- |
+| ---- | --------- | ------- | ------- | ------- |
 | `IncludeContractTypes` | Optional | All available contract types | ["Rescue", "DestroyBase"] would limit lances to these two contract types | An empty array would fallback to 'default' |
