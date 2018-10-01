@@ -31,6 +31,7 @@ namespace MissionControl.Logic {
 
     public SpawnLanceAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) : base(encounterRules) {
       this.lanceKey = lanceKey;
+      this.orientationTargetKey = orientationTargetKey;
       this.minDistanceFromTarget = minDistance;
       this.maxDistanceFromTarget = maxDistance;
       this.lookDirection = lookDirection;

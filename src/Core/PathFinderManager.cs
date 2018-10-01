@@ -38,8 +38,9 @@ namespace MissionControl {
       MechDef mechDef = null;
       combatState.DataManager.MechDefs.TryGet("mechdef_spider_SDR-5V", out mechDef);
 
-      PilotDef pilot = game.Simulation.Commander.pilotDef;
-      Mech mech = new Mech(mechDef, pilot, new TagSet(), uniqueId, combatState, spawnerId, heraldryDef);
+      PilotDef pilotDef = null;
+      combatState.DataManager.PilotDefs.TryGet("pilot_default", out pilotDef);
+      Mech mech = new Mech(mechDef, pilotDef, new TagSet(), uniqueId, combatState, spawnerId, heraldryDef);
       return mech;
     }
 
