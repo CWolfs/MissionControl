@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace MissionControl.Config {
 	public class AdditionalLances {
 		[JsonProperty("IncludeContractTypes")]
-		public List<string> IncludeContractTypes { get; set; } = new List<string>(){ "ALL" };
+		public List<string> IncludeContractTypes { get; set; } = new List<string>();
 
 		[JsonProperty("ExcludeContractTypes")]
 		public List<string> ExcludeContractTypes { get; set; } = new List<string>();
@@ -55,6 +55,40 @@ namespace MissionControl.Config {
 			if (lancePool.ContainsKey(contractTypeIdentifier)) lancePoolKeys.AddRange(lancePool[contractTypeIdentifier]);
 
 			return lancePoolKeys;
+		}
+
+		public List<string> GetValidContractTypes(string teamType) {
+			List<string> validContracts = new List<string>();
+			bool useInclude = false;
+			bool useExclude = false;
+
+			if (ExcludeContractTypes.Count > 0) {
+				useExclude = true;
+			}
+
+			if (IncludeContractTypes.Count > 0) {
+				useExclude = false;
+				useInclude = true;
+			}
+
+			if (useInclude) {
+				validContracts.AddRange(IncludeContractTypes);
+			} else {
+				validContracts.AddRange(MissionControl.Instance.GetAllContractTypes());
+			}
+
+			if (useExclude) {
+				validContracts = validContracts.Except(ExcludeContractTypes).ToList();
+			}
+
+			if (teamType.ToLower() == "enemy") {
+				if (Enemy.ExcludeContractTypes.Count > 0) validContracts = validContracts.Except(Enemy.ExcludeContractTypes).ToList();
+			} else if (teamType.ToLower() == "allies") {
+				if (Allies.ExcludeContractTypes.Count > 0) validContracts = validContracts.Except(Allies.ExcludeContractTypes).ToList();
+			}
+
+			Main.Logger.Log($"[GetValidContractTypes] Valid contracts are '{string.Join(", ", validContracts.ToArray())}'");
+			return validContracts;
 		}
 	}
 }

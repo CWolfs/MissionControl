@@ -23,16 +23,20 @@ namespace MissionControl.Rules {
     private void BuildAdditionalLances() {
       Main.Logger.Log("[DestroyBaseEncounterRules] Building additional lance rules");
 
-      int numberOfAdditionalEnemyLances = Main.Settings.AdditionalLances.Enemy.SelectNumberOfAdditionalLances();
-      int objectivePriority = -10;
-      for (int i = 0; i < numberOfAdditionalEnemyLances; i++) {
-        new AddTargetLanceWithDestroyObjectiveBatch(this, "PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 50f, 150f,
-          $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i + 1}", objectivePriority--);
+      if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
+        int numberOfAdditionalEnemyLances = Main.Settings.AdditionalLances.Enemy.SelectNumberOfAdditionalLances();
+        int objectivePriority = -10;
+        for (int i = 0; i < numberOfAdditionalEnemyLances; i++) {
+          new AddTargetLanceWithDestroyObjectiveBatch(this, "PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 50f, 150f,
+            $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i + 1}", objectivePriority--);
+        }
       }
 
-      int numberOfAdditionalAllyLances = Main.Settings.AdditionalLances.Allies.SelectNumberOfAdditionalLances();
-      for (int i = 0; i < numberOfAdditionalAllyLances; i++) {
-        new AddEmployerLanceBatch(this, "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET, 150f, 200f);
+      if (MissionControl.Instance.AreAdditionalLancesAllowed("allies")) {
+        int numberOfAdditionalAllyLances = Main.Settings.AdditionalLances.Allies.SelectNumberOfAdditionalLances();
+        for (int i = 0; i < numberOfAdditionalAllyLances; i++) {
+          new AddEmployerLanceBatch(this, "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET, 150f, 200f);
+        }
       }
     }
 

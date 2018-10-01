@@ -55,6 +55,10 @@ namespace MissionControl {
       AvailableEncounters[contractType].Add(encounter);  
     }
 
+    public List<string> GetAllContractTypes() {
+      return new List<string>(AvailableEncounters.Keys);
+    }
+
     public void InitSceneData() {
       CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
 
@@ -143,6 +147,12 @@ namespace MissionControl {
       EncounterLayerData selectedEncounterLayerData = EncounterLayerParent.GetLayerByGuid(encounterObjectGuid);
       
       return selectedEncounterLayerData;
+    }
+
+    public bool AreAdditionalLancesAllowed(string teamType) {
+      bool areLancesAllowed = Main.Settings.AdditionalLances.GetValidContractTypes(teamType).Contains(CurrentContractType);
+      if (Main.Settings.DebugMode) Main.Logger.Log($"[AreAdditionalLancesAllowed] {areLancesAllowed}");
+      return areLancesAllowed;
     }
   }
 }

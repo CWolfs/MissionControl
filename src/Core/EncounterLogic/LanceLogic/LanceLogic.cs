@@ -23,10 +23,10 @@ namespace MissionControl.Logic {
 
       if (Main.Settings.DebugMode) {
         Main.Logger.Log($"[SelectAppropriateLanceOverride] Lance pool keys valid for '{teamType}', '{biome}', '{contractType}' are '{string.Join(", ", lancePoolKeys.ToArray())}'");
-        Main.Logger.Log($"[SelectAppropriateLanceOverride] Selected lance key '{selectedLanceKey}'");
       }
 
       if (DataManager.Instance.LanceOverrides.ContainsKey(selectedLanceKey)) {
+        Main.Logger.Log($"[SelectAppropriateLanceOverride] Selected lance key '{selectedLanceKey}'");
         return DataManager.Instance.LanceOverrides[selectedLanceKey];
       } else {
         Main.Logger.LogError($"[SelectAppropriateLanceOverride] MLanceOverride of {selectedLanceKey} not found. Defaulting to 'GENERIC_BATTLE_LANCE'");
