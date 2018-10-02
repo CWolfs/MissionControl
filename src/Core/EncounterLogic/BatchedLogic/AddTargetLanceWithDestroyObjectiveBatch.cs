@@ -18,8 +18,8 @@ namespace MissionControl.Logic {
         encounterRules.EncounterLogic.Add(new AddLanceToTargetTeam(lanceGuid, unitGuids));
         encounterRules.EncounterLogic.Add(new AddDestroyWholeUnitChunk(targetTeamGuid, lanceGuid, unitGuids, 
           spawnerName, objectiveName, priority));
-        encounterRules.EncounterLogic.Add(new SpawnLanceMembersAroundTarget(encounterRules, spawnerName, "PlotBase", 
-          SpawnLogic.LookDirection.AWAY_FROM_TARGET, 50f, 150f));
+        encounterRules.EncounterLogic.Add(new SpawnLanceMembersAroundTarget(encounterRules, spawnerName, orientationTargetKey, 
+          SpawnLogic.LookDirection.AWAY_FROM_TARGET, minDistance, maxDistance));
 
         encounterRules.ObjectReferenceQueue.Add(spawnerName);
     }

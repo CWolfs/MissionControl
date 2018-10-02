@@ -14,6 +14,8 @@ namespace MissionControl.Rules {
     public override void Build() {
       Main.Logger.Log("[SimpleBattleEncounterRules] Setting up rule object references");
       BuildSpawns();
+      BuildAdditionalLances("LanceEnemyOpposingForce", SpawnLogic.LookDirection.AWAY_FROM_TARGET,
+        "SpawnerPlayerLance", SpawnLogic.LookDirection.AWAY_FROM_TARGET);
     }
 
     public void BuildSpawns() {

@@ -170,5 +170,25 @@ namespace MissionControl.Rules {
 
       return "Spawner_PlayerLance";
     }
+
+    protected void BuildAdditionalLances(string enemyOrientationTargetKey, SpawnLogic.LookDirection enemyLookDirection, string allyOrientationKey, SpawnLogic.LookDirection allyLookDirection) {
+      Main.Logger.Log($"[{this.GetType().Name}] Building additional lance rules");
+
+      if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
+        int numberOfAdditionalEnemyLances = Main.Settings.AdditionalLances.Enemy.SelectNumberOfAdditionalLances();
+        int objectivePriority = -10;
+        for (int i = 0; i < numberOfAdditionalEnemyLances; i++) {
+          new AddTargetLanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, 50f, 200f,
+            $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i + 1}", objectivePriority--);
+        }
+      }
+
+      if (MissionControl.Instance.AreAdditionalLancesAllowed("allies")) {
+        int numberOfAdditionalAllyLances = Main.Settings.AdditionalLances.Allies.SelectNumberOfAdditionalLances();
+        for (int i = 0; i < numberOfAdditionalAllyLances; i++) {
+          new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, 150f, 250f);
+        }
+      }
+    }
   }
 }
