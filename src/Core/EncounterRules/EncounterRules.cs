@@ -107,9 +107,19 @@ namespace MissionControl.Rules {
     }
 
     private bool IsPlotValidForEncounter(Transform plotTransform) {
-      GameObject plotVariant = plotTransform.Find("PlotVariant1").gameObject;
-      if (plotVariant.activeSelf) return true;
-      return false;
+      Transform plotVariantTransform = plotTransform.Find("PlotVariant1");
+      if (plotVariantTransform != null) {
+        GameObject plotVariant = plotVariantTransform.gameObject;
+        if (plotVariant.activeSelf) return true;
+        return false;
+      } else {
+        List<string> childrenNames = new List<string>();
+        foreach (Transform t in plotTransform) {
+          childrenNames.Add(t.name);
+        }
+        Main.Logger.LogError($"[ISPlotValidForEncounter] Cannot find plot transform. Inconsistent naming for plots. Children are {string.Join(",", childrenNames.ToArray())}");
+        return false;
+      }
     }
 
     protected GameObject GetClosestPlot(Vector3 origin) {
