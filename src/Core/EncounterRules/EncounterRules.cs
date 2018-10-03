@@ -107,8 +107,15 @@ namespace MissionControl.Rules {
     }
 
     private bool IsPlotValidForEncounter(Transform plotTransform) {
-      GameObject plotVariant = plotTransform.Find("PlotVariant1").gameObject;
-      if (plotVariant.activeSelf) return true;
+      Transform selectedPlotTransform = plotTransform.FindIgnoreCaseStartsWith("PlotVariant");
+
+      if (selectedPlotTransform == null) {
+        return false;
+      }
+
+      GameObject selectedPlotGo = selectedPlotTransform.gameObject;
+      if (selectedPlotGo.activeSelf) return true;
+
       return false;
     }
 
