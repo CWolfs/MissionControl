@@ -29,7 +29,7 @@ namespace MissionControl.Logic {
         Main.Logger.Log($"[SelectAppropriateLanceOverride] Selected lance key '{selectedLanceKey}'");
         return DataManager.Instance.GetLanceOverride(selectedLanceKey);
       } else {
-        Main.Logger.LogError($"[SelectAppropriateLanceOverride] MLanceOverride of {selectedLanceKey} not found. Defaulting to 'GENERIC_BATTLE_LANCE'");
+        Main.Logger.LogError($"[SelectAppropriateLanceOverride] MLanceOverride of '{selectedLanceKey}' not found. Defaulting to 'GENERIC_BATTLE_LANCE'");
         return DataManager.Instance.GetLanceOverride("GENERIC_BATTLE_LANCE");
       }
     }
