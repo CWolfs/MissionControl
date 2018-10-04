@@ -109,7 +109,7 @@ namespace MissionControl {
         return false;
       }
 
-      int index = UnityEngine.Random.Range(0, encounters.Count - 1);
+      int index = UnityEngine.Random.Range(0, encounters.Count);
       Type selectedEncounter = encounters[index];
       Main.Logger.Log($"[MissionControl] Setting contract type to '{type}' and using Encounter Rule of '{selectedEncounter.Name}'");
       SetEncounterRule(selectedEncounter);

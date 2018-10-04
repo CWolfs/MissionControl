@@ -13,7 +13,7 @@
       "ChanceToSpawn": 0.3,
       "LancePool": {
         "ALL": [
-          "GENERIC_BATTLE_LANCE"
+          "lancedef_mech_d2_dynamic_lightFire"
         ],
         "CONTRACT_TYPE:DestroyBase": [
           "BRAWLER_LANCE", "DEFENDING_LANCE"
@@ -34,7 +34,7 @@
       "ChanceToSpawn": 0.3,
       "LancePool": {
         "ALL": [
-          "GENERIC_BATTLE_LANCE"
+          "REFERENCE_EXAMPLE_LANCE"
         ],
         "CONTRACT_TYPE:DestroyBase": [
           "HEAVY_MISSILE_LANCE", "ATTACKING_LANCE"
