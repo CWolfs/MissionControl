@@ -35,7 +35,7 @@ namespace MissionControl.Logic {
         }
       }
 
-      for (int i = 0; i < unitGuids.Count; i++) {
+      for (int i = 0; i < lanceOverride.unitSpawnPointOverrideList.Count; i++) {
         string unitGuid = unitGuids[i];
         UnitSpawnPointRef unitSpawnRef = new UnitSpawnPointRef();
         unitSpawnRef.EncounterObjectGuid = unitGuid;
