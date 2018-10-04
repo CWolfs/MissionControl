@@ -1,0 +1,8 @@
+{
+  "lanceKey": "REFERENCE_EXAMPLE_LANCE",
+  "lanceDefId": "lancedef_mech_d8_dynamic_HeavySupportMC",
+  "lanceDifficultyAdjustment": 1,
+  "spawnEffectTags": {
+    "items": []
+  }
+}

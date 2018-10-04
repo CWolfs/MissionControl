@@ -34,7 +34,7 @@
       "ChanceToSpawn": 0.3,
       "LancePool": {
         "ALL": [
-          "GENERIC_BATTLE_LANCE"
+          "REFERENCE_EXAMPLE_LANCE"
         ],
         "CONTRACT_TYPE:DestroyBase": [
           "HEAVY_MISSILE_LANCE", "ATTACKING_LANCE"
