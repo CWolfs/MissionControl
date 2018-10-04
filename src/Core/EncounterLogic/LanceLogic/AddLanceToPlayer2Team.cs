@@ -11,19 +11,19 @@ using MissionControl.Rules;
 using MissionControl.Utils;
 
 namespace MissionControl.Logic {
-  public class AddLanceToTargetTeam : LanceLogic {
+  public class AddLanceToPlayer2Team : LanceLogic {
     private string lanceGuid;
     private List<string> unitGuids;
 
-    public AddLanceToTargetTeam(string lanceGuid, List<string> unitGuids) {
+    public AddLanceToPlayer2Team(string lanceGuid, List<string> unitGuids) {
       this.lanceGuid = lanceGuid;
       this.unitGuids = unitGuids;
     }
 
     public override void Run(RunPayload payload) {
-      Main.Logger.Log($"[AddLanceToTargetTeam] Adding lance to target lance");
+      Main.Logger.Log($"[AddLanceToPlayer2TeamTeam] Adding lance to target lance");
       ContractOverride contractOverride = ((ContractOverridePayload)payload).ContractOverride;
-      TeamOverride teamOverride = contractOverride.targetTeam;
+      TeamOverride teamOverride = contractOverride.player2Team;
 
       LanceOverride lanceOverride = SelectAppropriateLanceOverride("Enemy").Copy();
       lanceOverride.name = $"Lance_Enemy_OpposingForce_{lanceGuid}";

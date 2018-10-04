@@ -14,6 +14,7 @@ namespace MissionControl.Rules {
     public override void Build() {
       Main.Logger.Log("[DebugArenaSkirmishEncounterRules] Setting up rule object references");
       BuildSpawns();
+      BuildAdditionalLances("Player2LanceSpawner", SpawnLogic.LookDirection.AWAY_FROM_TARGET, "SpawnerPlayerLance", SpawnLogic.LookDirection.AWAY_FROM_TARGET);
     }
 
     public void BuildSpawns() {
