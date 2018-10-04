@@ -1,6 +1,6 @@
 {
   "lanceKey": "REFERENCE_EXAMPLE_LANCE",
-  "lanceDefId": "lancedef_mech_d8_dynamic_HeavySupportMC",
+  "lanceDefId": "lancedef_mech_d4_dynamic_lightMedBattle",
   "lanceDifficultyAdjustment": 1,
   "spawnEffectTags": {
     "items": []

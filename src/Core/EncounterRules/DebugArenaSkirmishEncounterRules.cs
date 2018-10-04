@@ -20,7 +20,7 @@ namespace MissionControl.Rules {
     public void BuildSpawns() {
       Main.Logger.Log("[DebugArenaSkirmishEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceAnywhere(this, "Player2LanceSpawner", "SpawnerPlayerLance"));
-      EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerPlayerLance", "Player2LanceSpawner", SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 150f));
+      EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerPlayerLance", "Player2LanceSpawner", SpawnLogic.LookDirection.TOWARDS_TARGET, 50f, 150f));
     }
 
     public override void LinkObjectReferences(string mapName) {
