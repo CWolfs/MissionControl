@@ -70,6 +70,7 @@ namespace MissionControl {
       IDataItemStore<string, LanceDef> lanceDefs = UnityGameInstance.BattleTechGame.DataManager.LanceDefs;
       
       if (LanceOverrides.ContainsKey(key)) {
+        Main.Logger.Log($"[GetLanceOverride] Found a lance override for '{key}'");
         return LanceOverrides[key];
       }
 
@@ -78,6 +79,7 @@ namespace MissionControl {
       if (lanceDef != null) {
         MLanceOverride lanceOverride = new MLanceOverride(lanceDef);
         LanceOverrides.Add(lanceOverride.lanceDefId, lanceOverride);
+        Main.Logger.Log($"[GetLanceOverride] Found a lance def for '{key}', creating and caching a lance override for it. Using defaults of 'adjustedDifficulty - 0' and no 'spawnEffectTags'");
         return lanceOverride;
       }
 

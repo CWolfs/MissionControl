@@ -24,6 +24,7 @@ namespace MissionControl.Data {
       this.lanceDefId = lanceDef.Description.Id;
       this.lanceTagSet = lanceDef.LanceTags;
 
+      List<UnitSpawnPointOverride> unitSpawnPointOverrides = new List<UnitSpawnPointOverride>();
       foreach (LanceDef.Unit unit in lanceDef.LanceUnits) {
         UnitSpawnPointOverride unitSpawnOverride = new UnitSpawnPointOverride();
         unitSpawnOverride.unitType = unit.unitType;
@@ -33,7 +34,10 @@ namespace MissionControl.Data {
         unitSpawnOverride.unitExcludedTagSet = unit.excludedUnitTagSet;
         unitSpawnOverride.pilotTagSet = unit.pilotTagSet;
         unitSpawnOverride.pilotExcludedTagSet = unit.excludedPilotTagSet;
+        unitSpawnPointOverrides.Add(unitSpawnOverride);
       }
+
+      this.unitSpawnPointOverrideList = unitSpawnPointOverrides;
     }
 
     public MLanceOverride(string lanceDefId, TagSet lanceTagSet, TagSet lanceExcludedTagSet, TagSet spawnEffectTags,
