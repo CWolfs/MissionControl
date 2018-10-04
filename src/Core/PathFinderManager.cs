@@ -74,7 +74,11 @@ namespace MissionControl {
 
     public void Reset() {
       GameObject pathFinderGo = pathFinderMech.GameRep.gameObject;
+      GameObject blipUnknownGo = pathFinderMech.GameRep.BlipObjectUnknown.gameObject;
+      GameObject blipIdentified = pathFinderMech.GameRep.BlipObjectIdentified.gameObject;
       if (pathFinderGo) GameObject.Destroy(pathFinderGo);
+      if (blipUnknownGo) GameObject.Destroy(blipUnknownGo);
+      if (blipIdentified) GameObject.Destroy(blipIdentified);
     }
   }
 }
