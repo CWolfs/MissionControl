@@ -18,7 +18,13 @@ namespace MissionControl.Patches {
   public class ContractBeginPatch {
     public static void Prefix(Contract __instance) {
       if (!__instance.Accepted) return;
+
       Main.Logger.Log($"[ContractBeginPatch Postfix] Patching Begin");
+
+      if (__instance.ContractType == ContractType.ArenaSkirmish) {
+        AccessTools.Property(typeof(Contract), "Override").SetValue(__instance, new ContractOverride(), null);
+      }
+      
       Init(__instance);
     }
 
