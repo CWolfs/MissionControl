@@ -25,12 +25,12 @@ namespace MissionControl.Logic {
         Main.Logger.Log($"[SelectAppropriateLanceOverride] Lance pool keys valid for '{teamType}', '{biome}', '{contractType}' are '{string.Join(", ", lancePoolKeys.ToArray())}'");
       }
 
-      if (DataManager.Instance.LanceOverrides.ContainsKey(selectedLanceKey)) {
+      if (DataManager.Instance.DoesLanceOverrideExist(selectedLanceKey)) {
         Main.Logger.Log($"[SelectAppropriateLanceOverride] Selected lance key '{selectedLanceKey}'");
-        return DataManager.Instance.LanceOverrides[selectedLanceKey];
+        return DataManager.Instance.GetLanceOverride(selectedLanceKey);
       } else {
         Main.Logger.LogError($"[SelectAppropriateLanceOverride] MLanceOverride of {selectedLanceKey} not found. Defaulting to 'GENERIC_BATTLE_LANCE'");
-        return DataManager.Instance.LanceOverrides["GENERIC_BATTLE_LANCE"];
+        return DataManager.Instance.GetLanceOverride("GENERIC_BATTLE_LANCE");
       }
     }
   }

@@ -4,6 +4,12 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using BattleTech;
+using BattleTech.Designed;
+using BattleTech.Framework;
+
+using HBS.Data;
+
 using MissionControl.Data;
 
 namespace MissionControl {
@@ -17,7 +23,7 @@ namespace MissionControl {
     }
 
     public string ModDirectory { get; private set; }
-    public Dictionary<string, MLanceOverride> LanceOverrides { get; private set; } = new Dictionary<string, MLanceOverride>();
+    private Dictionary<string, MLanceOverride> LanceOverrides { get; set; } = new Dictionary<string, MLanceOverride>();
 
     private DataManager() {}
 
@@ -52,6 +58,30 @@ namespace MissionControl {
           }
         }
       }
+    }
+
+    public bool DoesLanceOverrideExist(string key) {
+      if (LanceOverrides.ContainsKey(key)) return true;
+      if (UnityGameInstance.BattleTechGame.DataManager.LanceDefs.Exists(key)) return true;
+      return false;
+    }
+
+    public LanceOverride GetLanceOverride(string key) {
+      IDataItemStore<string, LanceDef> lanceDefs = UnityGameInstance.BattleTechGame.DataManager.LanceDefs;
+      
+      if (LanceOverrides.ContainsKey(key)) {
+        return LanceOverrides[key];
+      }
+
+      LanceDef lanceDef = null;
+      lanceDefs.TryGet(key, out lanceDef);
+      if (lanceDef != null) {
+        MLanceOverride lanceOverride = new MLanceOverride(lanceDef);
+        LanceOverrides.Add(lanceOverride.lanceDefId, lanceOverride);
+        return lanceOverride;
+      }
+
+      return null;
     }
 
     public void Reset() {
