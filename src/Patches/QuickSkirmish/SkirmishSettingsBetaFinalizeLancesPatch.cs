@@ -18,10 +18,10 @@ using MissionControl.Logic;
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(SkirmishSettings_Beta), "FinalizeLances")]
   public class SkirmishSettingsBetaFinalizeLancesPatch {
-    public static string UNLIMITED_LANCE_COST = "999999999";
-    public static string WAR_LANCE_COST = "25000000";
-    public static string BATTLE_LANCE_COST = "20000000";
-    public static string CLASH_LANCE_COST = "15000000";
+    public static string UNLIMITED_LANCE_COST = "SP-999999999";
+    public static string WAR_LANCE_COST = "SP-25000000";
+    public static string BATTLE_LANCE_COST = "SP-20000000";
+    public static string CLASH_LANCE_COST = "SP-15000000";
 
     static bool Prefix(SkirmishSettings_Beta __instance, ref LanceConfiguration __result) {
       Main.Logger.Log($"[SkirmishSettingsBetaFinalizeLancesPatch Prefix] Patching FinalizeLances");
