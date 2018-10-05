@@ -1,9 +1,24 @@
 using UnityEngine;
 using UnityEngine.Events;
 
+using System;
+using System.Linq;
+using System.Reflection;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+
 using TMPro;
 
+using Harmony;
+
+using BattleTech;
 using BattleTech.UI;
+using BattleTech.Data;
+using BattleTech.Save;
+using BattleTech.Framework;
+
+using MissionControl.Data;
 
 namespace MissionControl {
   public class UiManager {
@@ -14,6 +29,8 @@ namespace MissionControl {
         return instance;
       }
     }
+
+    public bool ClickedQuickSkirmish { get; set; } = false;
 
     public void SetupQuickSkirmishMenu() {
       GameObject mainMenuScreenGo = GameObject.Find("uixPrfPanl_mainMenu-Screen(Clone)");
@@ -65,6 +82,37 @@ namespace MissionControl {
       MainMenu mainMenu = GameObject.Find("uixPrfPanl_mainMenu-Screen(Clone)").GetComponent<MainMenu>();
       mainMenu.ReceiveButtonPress("Back");
       Main.Logger.Log("[OnQuickSkirmishButtonClicked] Clicked");
+      ClickedQuickSkirmish = true;
+
+      GameObject skirmishMenuGo = new GameObject();
+      SkirmishSettings_Beta skirmishMenu = skirmishMenuGo.AddComponent<SkirmishSettings_Beta>();
+      AccessTools.Field(typeof(SkirmishSettings_Beta), "playButton").SetValue(skirmishMenu, new HBSDOTweenButton());
+      AccessTools.Field(typeof(SkirmishSettings_Beta), "playerLancePreview").SetValue(skirmishMenu, new LancePreviewPanel());
+      AccessTools.Field(typeof(SkirmishSettings_Beta), "opponentLancePreview").SetValue(skirmishMenu, new LancePreviewPanel());
+      AccessTools.Field(typeof(SkirmishSettings_Beta), "playerSettings").SetValue(skirmishMenu, ActiveOrDefaultSettings.CloudSettings);
+      
+      MapModule mapModule = new MapModule();
+      // MockTMPDropdown mockDropdown = new MockTMPDropdown();
+      // mockDropdown.AddOptions(new List<MockTMPDropdown.OptionData>(){ new MockTMPDropdown.OptionData("Placeholder") });
+      // AccessTools.Field(typeof(MapModule), "mapDropdown").SetValue(mapModule, mockDropdown);
+      
+
+      AccessTools.Field(typeof(SkirmishSettings_Beta), "mapModule").SetValue(skirmishMenu, mapModule);
+      
+      skirmishMenu.Init();
+      AccessTools.Method(typeof(SkirmishSettings_Beta), "LoadLanceConfiguratorData").Invoke(skirmishMenu, null);
+      LoadingCurtain.Show();
+      UnityGameInstance.Instance.StartCoroutine(WaitForLoadingCurtain(skirmishMenu));
+    }
+
+    private IEnumerator WaitForLoadingCurtain(SkirmishSettings_Beta skirmishMenu) {
+      while (LoadingCurtain.IsVisible) yield return new WaitForSeconds(1);
+      LoadQuickSkirmishMap(skirmishMenu);
+    }
+
+    private void LoadQuickSkirmishMap(SkirmishSettings_Beta skirmishMenu) {
+      AccessTools.Method(typeof(SkirmishSettings_Beta), "LaunchMap").Invoke(skirmishMenu, null);
+      ClickedQuickSkirmish = false;
     }
   }
 }
