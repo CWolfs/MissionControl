@@ -11,10 +11,6 @@ using BattleTech.Save;
 
 using MissionControl.Logic;
 
-/*
-  This patch sets the active contract type and starts any manipulation on the objectives in the game scene.
-  This is called after: EncounterLayerParentFirstTimeInitializationPatch
-*/
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(SkirmishSettings_Beta), "FinalizeLances")]
   public class SkirmishSettingsBetaFinalizeLancesPatch {

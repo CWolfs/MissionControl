@@ -15,10 +15,6 @@ using BattleTech.Rendering.Mood;
 using MissionControl;
 using MissionControl.Logic;
 
-/*
-  This patch is used to inject a custom lance into the target team.
-  This allows BT to then request the resources for the additional lance
-*/
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(MapModule), "get_SelectedMood")]
   public class MapModuleSelectedMoodPatch {

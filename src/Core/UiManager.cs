@@ -31,6 +31,7 @@ namespace MissionControl {
     }
 
     public bool ClickedQuickSkirmish { get; set; } = false;
+    public bool ReadyToLoadQuickSkirmish { get; set; } = false;
 
     public void SetupQuickSkirmishMenu() {
       GameObject mainMenuScreenGo = GameObject.Find("uixPrfPanl_mainMenu-Screen(Clone)");
@@ -82,6 +83,12 @@ namespace MissionControl {
       MainMenu mainMenu = GameObject.Find("uixPrfPanl_mainMenu-Screen(Clone)").GetComponent<MainMenu>();
       mainMenu.ReceiveButtonPress("Back");
       Main.Logger.Log("[OnQuickSkirmishButtonClicked] Clicked");
+      LoadingCurtain.Show();
+      UnityGameInstance.Instance.StartCoroutine(WaitForInitialCurtainToShow());
+    }
+
+    private IEnumerator WaitForInitialCurtainToShow() {
+      yield return null;
       ClickedQuickSkirmish = true;
 
       GameObject skirmishMenuGo = new GameObject();
@@ -90,29 +97,21 @@ namespace MissionControl {
       AccessTools.Field(typeof(SkirmishSettings_Beta), "playerLancePreview").SetValue(skirmishMenu, new LancePreviewPanel());
       AccessTools.Field(typeof(SkirmishSettings_Beta), "opponentLancePreview").SetValue(skirmishMenu, new LancePreviewPanel());
       AccessTools.Field(typeof(SkirmishSettings_Beta), "playerSettings").SetValue(skirmishMenu, ActiveOrDefaultSettings.CloudSettings);
-      
-      MapModule mapModule = new MapModule();
-      // MockTMPDropdown mockDropdown = new MockTMPDropdown();
-      // mockDropdown.AddOptions(new List<MockTMPDropdown.OptionData>(){ new MockTMPDropdown.OptionData("Placeholder") });
-      // AccessTools.Field(typeof(MapModule), "mapDropdown").SetValue(mapModule, mockDropdown);
-      
-
-      AccessTools.Field(typeof(SkirmishSettings_Beta), "mapModule").SetValue(skirmishMenu, mapModule);
+      AccessTools.Field(typeof(SkirmishSettings_Beta), "mapModule").SetValue(skirmishMenu, new MapModule());
       
       skirmishMenu.Init();
       AccessTools.Method(typeof(SkirmishSettings_Beta), "LoadLanceConfiguratorData").Invoke(skirmishMenu, null);
-      LoadingCurtain.Show();
+  
       UnityGameInstance.Instance.StartCoroutine(WaitForLoadingCurtain(skirmishMenu));
     }
 
     private IEnumerator WaitForLoadingCurtain(SkirmishSettings_Beta skirmishMenu) {
-      while (LoadingCurtain.IsVisible) yield return new WaitForSeconds(1);
+      while (!ReadyToLoadQuickSkirmish) yield return new WaitForSeconds(0.1f);
       LoadQuickSkirmishMap(skirmishMenu);
     }
 
     private void LoadQuickSkirmishMap(SkirmishSettings_Beta skirmishMenu) {
       AccessTools.Method(typeof(SkirmishSettings_Beta), "LaunchMap").Invoke(skirmishMenu, null);
-      ClickedQuickSkirmish = false;
     }
   }
 }

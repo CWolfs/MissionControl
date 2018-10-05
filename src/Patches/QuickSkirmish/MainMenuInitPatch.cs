@@ -10,10 +10,6 @@ using BattleTech.UI;
 
 using MissionControl.Logic;
 
-/*
-  This patch sets the active contract type and starts any manipulation on the objectives in the game scene.
-  This is called after: EncounterLayerParentFirstTimeInitializationPatch
-*/
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(MainMenu), "Init")]
   public class MainMenuInitPatch {
