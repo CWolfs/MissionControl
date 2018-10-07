@@ -46,7 +46,7 @@ namespace MissionControl {
 
       // Reposition submenus
       RectTransform layoutActionsCampaignTransform = layoutMainNavigationGo.FindRecursive("layout-actions-Campaign").GetComponent<RectTransform>();
-      layoutActionsCampaignTransform.anchoredPosition = new Vector2(-190, layoutActionsCampaignTransform.anchoredPosition.y);
+      layoutActionsCampaignTransform.anchoredPosition = new Vector2(-183, layoutActionsCampaignTransform.anchoredPosition.y);
       RectTransform layoutActionsSkirmishTransform = layoutMainNavigationGo.FindRecursive("layout-actions-Skirmish").GetComponent<RectTransform>();
       layoutActionsSkirmishTransform.anchoredPosition = new Vector2(30, layoutActionsSkirmishTransform.anchoredPosition.y);
 
@@ -77,6 +77,11 @@ namespace MissionControl {
       quickSkirmishToggleButton.OnClicked = onClickEvent;
       onClickEvent.RemoveAllListeners();
       onClickEvent.AddListener(OnQuickSkirmishButtonClicked);
+
+      // Check if there are any valid last used lances, if not - disable the button
+      CloudUserSettings playerSettings = ActiveOrDefaultSettings.CloudSettings;
+      LastUsedLances lastUsedLances = playerSettings.LastUsedLances;
+      if (lastUsedLances.Count <= 0) quickSkirmishToggleButton.SetState(ButtonState.Unavailable, true);
     }
 
     private void OnQuickSkirmishButtonClicked() {
@@ -91,7 +96,7 @@ namespace MissionControl {
       yield return null;
       ClickedQuickSkirmish = true;
 
-      GameObject skirmishMenuGo = new GameObject();
+      GameObject skirmishMenuGo = new GameObject("SkirmishMenuBypass");
       SkirmishSettings_Beta skirmishMenu = skirmishMenuGo.AddComponent<SkirmishSettings_Beta>();
       AccessTools.Field(typeof(SkirmishSettings_Beta), "playButton").SetValue(skirmishMenu, new HBSDOTweenButton());
       AccessTools.Field(typeof(SkirmishSettings_Beta), "playerLancePreview").SetValue(skirmishMenu, new LancePreviewPanel());
