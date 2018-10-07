@@ -33,29 +33,38 @@ namespace MissionControl.Data {
     public List<UnitSpawnPointOverride> GetUnitSpawnPointOverrideList() {
       List<UnitSpawnPointOverride> unitSpawnPointOverrideList = new List<UnitSpawnPointOverride>();
 
-      foreach (MUnitSpawnPointOverrideData unitSpawnPointOverideData in UnitSpawnPointOverride) {
-        UnitSpawnPointOverride unitSpawnPointOverride = new UnitSpawnPointOverride();
-        unitSpawnPointOverride.unitType = (UnitType)Enum.Parse(typeof(UnitType), unitSpawnPointOverideData.UnitType);
-        unitSpawnPointOverride.unitDefId = unitSpawnPointOverideData.UnitDefId;
-        
-        unitSpawnPointOverride.unitTagSet = new TagSet(unitSpawnPointOverideData.UnitTagSet.TagSetSourceFile);
-        unitSpawnPointOverride.unitTagSet.AddRange(unitSpawnPointOverideData.UnitTagSet.Items);
-        
-        unitSpawnPointOverride.unitExcludedTagSet = new TagSet(unitSpawnPointOverideData.UnitExcludedTagSet.TagSetSourceFile);
-        unitSpawnPointOverride.unitExcludedTagSet.AddRange(unitSpawnPointOverideData.UnitExcludedTagSet.Items);
-        
-        unitSpawnPointOverride.spawnEffectTags = new TagSet(unitSpawnPointOverideData.SpawnEffectTags.TagSetSourceFile);
-        unitSpawnPointOverride.spawnEffectTags.AddRange(unitSpawnPointOverideData.SpawnEffectTags.Items);
+      if (UnitSpawnPointOverride.Count <= 0) {  // handle pure lance def references in the `lances` folder
+        for (int i = 0; i < 4; i++) {
+          UnitSpawnPointOverride unitSpawnPointOverride = new UnitSpawnPointOverride();
+          unitSpawnPointOverride.unitDefId = "UseLance";
+          unitSpawnPointOverride.pilotDefId = "UseLance";
+          unitSpawnPointOverrideList.Add(unitSpawnPointOverride);
+        }
+      } else {
+        foreach (MUnitSpawnPointOverrideData unitSpawnPointOverideData in UnitSpawnPointOverride) {
+          UnitSpawnPointOverride unitSpawnPointOverride = new UnitSpawnPointOverride();
+          unitSpawnPointOverride.unitType = (UnitType)Enum.Parse(typeof(UnitType), unitSpawnPointOverideData.UnitType);
+          unitSpawnPointOverride.unitDefId = unitSpawnPointOverideData.UnitDefId;
+          
+          unitSpawnPointOverride.unitTagSet = new TagSet(unitSpawnPointOverideData.UnitTagSet.TagSetSourceFile);
+          unitSpawnPointOverride.unitTagSet.AddRange(unitSpawnPointOverideData.UnitTagSet.Items);
+          
+          unitSpawnPointOverride.unitExcludedTagSet = new TagSet(unitSpawnPointOverideData.UnitExcludedTagSet.TagSetSourceFile);
+          unitSpawnPointOverride.unitExcludedTagSet.AddRange(unitSpawnPointOverideData.UnitExcludedTagSet.Items);
+          
+          unitSpawnPointOverride.spawnEffectTags = new TagSet(unitSpawnPointOverideData.SpawnEffectTags.TagSetSourceFile);
+          unitSpawnPointOverride.spawnEffectTags.AddRange(unitSpawnPointOverideData.SpawnEffectTags.Items);
 
-        unitSpawnPointOverride.pilotDefId = unitSpawnPointOverideData.PilotDefId;
+          unitSpawnPointOverride.pilotDefId = unitSpawnPointOverideData.PilotDefId;
 
-        unitSpawnPointOverride.pilotTagSet = new TagSet(unitSpawnPointOverideData.PilotTagSet.TagSetSourceFile);
-        unitSpawnPointOverride.pilotTagSet.AddRange(unitSpawnPointOverideData.PilotTagSet.Items);
-        
-        unitSpawnPointOverride.pilotExcludedTagSet = new TagSet(unitSpawnPointOverideData.PilotExcludedTagSet.TagSetSourceFile);
-        unitSpawnPointOverride.pilotExcludedTagSet.AddRange(unitSpawnPointOverideData.PilotExcludedTagSet.Items);
+          unitSpawnPointOverride.pilotTagSet = new TagSet(unitSpawnPointOverideData.PilotTagSet.TagSetSourceFile);
+          unitSpawnPointOverride.pilotTagSet.AddRange(unitSpawnPointOverideData.PilotTagSet.Items);
+          
+          unitSpawnPointOverride.pilotExcludedTagSet = new TagSet(unitSpawnPointOverideData.PilotExcludedTagSet.TagSetSourceFile);
+          unitSpawnPointOverride.pilotExcludedTagSet.AddRange(unitSpawnPointOverideData.PilotExcludedTagSet.Items);
 
-        unitSpawnPointOverrideList.Add(unitSpawnPointOverride);
+          unitSpawnPointOverrideList.Add(unitSpawnPointOverride);
+        }
       }
 
       return unitSpawnPointOverrideList;

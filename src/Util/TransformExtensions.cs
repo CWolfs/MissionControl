@@ -29,4 +29,12 @@ public static class TransformExtensions {
 
     return null;
   }
+
+  public static Transform FindIgnoreCaseStartsWith(this Transform transform, string checkName) {
+    foreach (Transform t in transform) {
+      if (t.name.ToLower().StartsWith(checkName.ToLower())) return t;
+    }
+
+    return null; 
+  }
 }

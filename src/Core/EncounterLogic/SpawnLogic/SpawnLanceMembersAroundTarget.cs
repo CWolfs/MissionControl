@@ -64,28 +64,35 @@ namespace MissionControl.Logic {
 
     public void SpawnLanceMember(GameObject spawnPoint, GameObject orientationTarget, GameObject lookTarget, LookDirection lookDirection) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+      MissionControl encounterManager = MissionControl.Instance;
+
       Vector3 spawnPointPosition = combatState.HexGrid.GetClosestPointOnGrid(spawnPoint.transform.position);
       Vector3 newSpawnPosition = GetRandomPositionFromTarget(orientationTarget, minDistanceFromTarget, maxDistanceFromTarget);
       newSpawnPosition.y = combatState.MapMetaData.GetLerpedHeightAt(newSpawnPosition);
 
-      if (!IsWithinDistanceOfInvalidPosition(newSpawnPosition)) {      
-        spawnPoint.transform.position = newSpawnPosition;
-        invalidSpawnLocations.Add(newSpawnPosition);
+      if (encounterManager.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
+        if (!IsWithinDistanceOfInvalidPosition(newSpawnPosition)) {      
+          spawnPoint.transform.position = newSpawnPosition;
+          invalidSpawnLocations.Add(newSpawnPosition);
 
-        if (lookDirection == LookDirection.TOWARDS_TARGET) {
-          RotateToTarget(spawnPoint, lookTarget);
+          if (lookDirection == LookDirection.TOWARDS_TARGET) {
+            RotateToTarget(spawnPoint, lookTarget);
+          } else {
+            RotateAwayFromTarget(spawnPoint, lookTarget);
+          }
+
+          if (!IsSpawnValid(spawnPoint, orientationTarget)) {
+            SpawnLanceMember(spawnPoint, orientationTarget, lookTarget, lookDirection);
+          } else {
+            Main.Logger.Log("[SpawnLanceMembersAroundTarget] Lance member spawn complete");
+          }
         } else {
-          RotateAwayFromTarget(spawnPoint, lookTarget);
-        }
-
-        if (!IsSpawnValid(spawnPoint, orientationTarget)) {
+          Main.Logger.LogWarning("[SpawnLanceMembersAroundTarget] Cannot spawn a lance member on an invalid spawn. Finding new spawn point.");
           SpawnLanceMember(spawnPoint, orientationTarget, lookTarget, lookDirection);
-        } else {
-          Main.Logger.Log("[SpawnLanceMembersAroundTarget] Lance member spawn complete");
         }
       } else {
-        Main.Logger.LogWarning("[SpawnLanceMembersAroundTarget] Cannot spawn a lance member on an invalid spawn. Finding new spawn point.");
-        SpawnLanceMember(spawnPoint, orientationTarget, lookTarget, lookDirection);
+        Main.Logger.LogWarning("[SpawnLanceMembersAroundTarget] Selected lance spawn point is outside of the boundary. Select a new lance spawn point.");
+        SpawnLanceMember(spawnPoint, orientationTarget, lookTarget, lookDirection);  
       }
     }
 

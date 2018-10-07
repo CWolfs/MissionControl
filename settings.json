@@ -13,7 +13,7 @@
       "ChanceToSpawn": 0.3,
       "LancePool": {
         "ALL": [
-          "GENERIC_BATTLE_LANCE"
+          "lancedef_mech_d2_dynamic_lightFire"
         ],
         "CONTRACT_TYPE:DestroyBase": [
           "BRAWLER_LANCE", "DEFENDING_LANCE"
@@ -27,15 +27,14 @@
         "BIOME:LowlandsSpring": [
           "IM_LIKE_A_TURRET_IN_WATER_I_RUN_SO_HOT"
         ]
-      },
-
+      }
     },
     "Allies": {
       "Max": 1,
       "ChanceToSpawn": 0.3,
       "LancePool": {
         "ALL": [
-          "GENERIC_BATTLE_LANCE"
+          "REFERENCE_EXAMPLE_LANCE"
         ],
         "CONTRACT_TYPE:DestroyBase": [
           "HEAVY_MISSILE_LANCE", "ATTACKING_LANCE"

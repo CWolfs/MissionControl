@@ -18,19 +18,19 @@ namespace MissionControl.Logic {
       string contractType = MissionControl.Instance.CurrentContractType;
       List<string> lancePoolKeys = Main.Settings.AdditionalLances.GetLancePoolKeys(teamType, biome, contractType);
 
-      int index = UnityEngine.Random.Range(0, lancePoolKeys.Count - 1);
+      int index = UnityEngine.Random.Range(0, lancePoolKeys.Count);
       string selectedLanceKey = lancePoolKeys[index];
 
       if (Main.Settings.DebugMode) {
         Main.Logger.Log($"[SelectAppropriateLanceOverride] Lance pool keys valid for '{teamType}', '{biome}', '{contractType}' are '{string.Join(", ", lancePoolKeys.ToArray())}'");
       }
 
-      if (DataManager.Instance.LanceOverrides.ContainsKey(selectedLanceKey)) {
+      if (DataManager.Instance.DoesLanceOverrideExist(selectedLanceKey)) {
         Main.Logger.Log($"[SelectAppropriateLanceOverride] Selected lance key '{selectedLanceKey}'");
-        return DataManager.Instance.LanceOverrides[selectedLanceKey];
+        return DataManager.Instance.GetLanceOverride(selectedLanceKey);
       } else {
-        Main.Logger.LogError($"[SelectAppropriateLanceOverride] MLanceOverride of {selectedLanceKey} not found. Defaulting to 'GENERIC_BATTLE_LANCE'");
-        return DataManager.Instance.LanceOverrides["GENERIC_BATTLE_LANCE"];
+        Main.Logger.LogError($"[SelectAppropriateLanceOverride] MLanceOverride of '{selectedLanceKey}' not found. Defaulting to 'GENERIC_BATTLE_LANCE'");
+        return DataManager.Instance.GetLanceOverride("GENERIC_BATTLE_LANCE");
       }
     }
   }

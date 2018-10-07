@@ -14,12 +14,14 @@ namespace MissionControl.Rules {
     public override void Build() {
       Main.Logger.Log("[DebugArenaSkirmishEncounterRules] Setting up rule object references");
       BuildSpawns();
+      BuildAdditionalLances("Player2LanceSpawner", SpawnLogic.LookDirection.AWAY_FROM_TARGET, "SpawnerPlayerLance", SpawnLogic.LookDirection.AWAY_FROM_TARGET);
     }
 
     public void BuildSpawns() {
       Main.Logger.Log("[DebugArenaSkirmishEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceAnywhere(this, "Player2LanceSpawner", "SpawnerPlayerLance"));
       EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerPlayerLance", "Player2LanceSpawner", SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 150f));
+      EncounterLogic.Add(new LookAtTarget(this, "Player2LanceSpawner", "SpawnerPlayerLance"));
     }
 
     public override void LinkObjectReferences(string mapName) {

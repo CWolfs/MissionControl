@@ -44,9 +44,9 @@ namespace MissionControl.Logic {
       MissionControl encounterManager = MissionControl.Instance;
 
       Vector3 lancePosition = lance.transform.position;
-      Vector3 newSpawnPosition = GetRandomPositionFromTarget(lance, minDistanceFromTarget, maxDistanceFromTarget);
+      Vector3 newSpawnPosition = GetRandomPositionFromTarget(orientationTarget, minDistanceFromTarget, maxDistanceFromTarget);
 
-      if (encounterManager.EncounterLayerData.IsWithinBounds((int)newSpawnPosition.x, (int)newSpawnPosition.z)) {
+      if (encounterManager.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
         newSpawnPosition.y = combatState.MapMetaData.GetLerpedHeightAt(newSpawnPosition);
         lance.transform.position = newSpawnPosition;
 

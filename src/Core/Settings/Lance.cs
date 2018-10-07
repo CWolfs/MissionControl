@@ -21,7 +21,7 @@ namespace MissionControl.Config {
 			int chanceToSpawn = (int)(ChanceToSpawn * 100f);
 
 			for (int i = 0; i < Max; i++) {
-				int rollChance = UnityEngine.Random.Range(1, 100);
+				int rollChance = UnityEngine.Random.Range(1, 100 + 1);
 				if (rollChance > chanceToSpawn) break;
 				lanceNumber++;
 			}
