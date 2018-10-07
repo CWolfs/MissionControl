@@ -18,9 +18,11 @@ Depending on the contract type, the lance spawns will change every playthrough. 
 
 For full information on the random spawns, see the [Random Spawns](./docs/random-spawns.md) page.
 
-### Single Player Skirmish Support
+### Single Player Skirmish Support with Quick Skirmish Feature
 
-Mission Control works on single player skirmish if a contract type ruleset is created for it. 
+Mission Control works on single player skirmish if a contract type ruleset is created for it.
+
+The 'Quick Skirmish' feature adds a new main menu button. When clicked it will use the last lance the player used for the cost brackets (unlimited selected first and clash last) then give the player a random map and mood. This will then spawn the player lance and the enemy lance within firing range. This is ideal for modders testing their mods or people who want a very quick skirmish.
 
 ### Contract Type Rulesets
 
