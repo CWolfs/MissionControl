@@ -24,7 +24,7 @@ namespace MissionControl.Patches {
 
     public static void Init(BehaviorTree behaviourTree, AbstractActor unit, BehaviorTreeIDEnum behaviourTreeType) {
       AiManager aiManager = AiManager.Instance;
-      aiManager.AddCustomRootLeafBehaviourSequences(behaviourTree, behaviourTreeType);
+      aiManager.LoadCustomBehaviourSequences(behaviourTree, behaviourTreeType);
     }
   }
 }

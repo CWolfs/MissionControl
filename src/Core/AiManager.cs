@@ -1,8 +1,11 @@
 using System.Linq;
 using System.Reflection;
+using System.Collections;
+using System.Collections.Generic;
 
 using Harmony;
 
+using MissionControl.Data;
 using MissionControl.Utils;
 
 namespace MissionControl {
@@ -15,9 +18,14 @@ namespace MissionControl {
       }
     }
 
-    private AiManager() {}
+    private Dictionary<BehaviorTreeIDEnum, List<BranchInjectionData>> injectionBranchRoots = new Dictionary<BehaviorTreeIDEnum, List<BranchInjectionData>>();
 
-    public void AddCustomRootLeafBehaviourSequences(BehaviorTree behaviourTree, BehaviorTreeIDEnum behaviourTreeType) {
+    private AiManager() {
+      // Test
+      // AddCustomBehaviourBranch(BehaviorTreeIDEnum.CoreAITree, new string[] { "test " }, new SequenceNode("test_sequence_0000", ))
+    }
+
+    public void LoadCustomBehaviourSequences(BehaviorTree behaviourTree, BehaviorTreeIDEnum behaviourTreeType) {
       BehaviorNode rootNode = behaviourTree.RootNode;
 
       if (behaviourTreeType == BehaviorTreeIDEnum.CoreAITree) {
@@ -28,6 +36,11 @@ namespace MissionControl {
           return false;
         });
       }
+    }
+
+    public void AddCustomBehaviourBranch(BehaviorTreeIDEnum behaviourTreeType, string[] path, CompositeBehaviorNode compositeNode) {
+      if (!injectionBranchRoots.ContainsKey(behaviourTreeType)) injectionBranchRoots.Add(behaviourTreeType, new List<BranchInjectionData>());
+      injectionBranchRoots[behaviourTreeType].Add(new BranchInjectionData(path, compositeNode));
     }
   }
 }
