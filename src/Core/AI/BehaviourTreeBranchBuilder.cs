@@ -20,7 +20,7 @@ namespace MissionControl.AI {
       this.InjectionOrder = injectionOrder;
     }
 
-    public abstract void Build(BehaviorTree behaviourTree, List<BehaviorNode> siblings, int targetIndex, BehaviorNode target);
+    public abstract void Build(BehaviorTree behaviourTree, List<BehaviorNode> siblings, int targetIndex, BehaviorNode target, AbstractActor unit);
 
     public void Inject(List<BehaviorNode> siblings, int targetIndex, BehaviorNode branchRoot) {
       int injectionIndex = targetIndex;

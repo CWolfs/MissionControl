@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 using Harmony;
 
+using BattleTech;
+
 using MissionControl.AI;
 using MissionControl.Utils;
 
@@ -27,12 +29,12 @@ namespace MissionControl {
       AddCustomBehaviourBranch(customBehaviourBranch.BehaviourTreeType, customBehaviourBranch.Path, customBehaviourBranch);
     }
 
-    public void LoadCustomBehaviourSequences(BehaviorTree behaviourTree, BehaviorTreeIDEnum behaviourTreeType) {
+    public void LoadCustomBehaviourSequences(BehaviorTree behaviourTree, BehaviorTreeIDEnum behaviourTreeType, AbstractActor unit) {
       List<BehaviourTreeBranchBuilder> customBehaviourBranches = injectionBranchRoots[behaviourTreeType];
       foreach (BehaviourTreeBranchBuilder customBehaviourBranch in customBehaviourBranches) {
         NodeSearchResult nodeSearchResults = FindNode(behaviourTree, customBehaviourBranch);
         if (nodeSearchResults != null) {
-          customBehaviourBranch.Build(behaviourTree, nodeSearchResults.NodeSiblings, nodeSearchResults.NodeIndex, nodeSearchResults.Node);
+          customBehaviourBranch.Build(behaviourTree, nodeSearchResults.NodeSiblings, nodeSearchResults.NodeIndex, nodeSearchResults.Node, unit);
         }
       }
     }

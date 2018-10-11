@@ -6,19 +6,35 @@ using BattleTech;
 
 namespace MissionControl.AI {
   public class TestBranchBuilder  : BehaviourTreeBranchBuilder {
+    private BehaviorTree tree;
+    private AbstractActor unit;
+
     public TestBranchBuilder(BehaviorTreeIDEnum behaviourTreeType, string path, BehaviourInjectionOrder injectionOrder) : base(behaviourTreeType, path, injectionOrder) {
       Main.Logger.Log("[TestBranchNode] Created CustomBehaviourTreeBranch");
     }
 
-    public override void Build(BehaviorTree behaviourTree, List<BehaviorNode> siblings, int targetIndex, BehaviorNode target) {
+    public override void Build(BehaviorTree behaviourTree, List<BehaviorNode> siblings, int targetIndex, BehaviorNode target, AbstractActor unit) {
+      this.tree = behaviourTree;
+      this.unit = unit;
+
       string targetName = (string)AccessTools.Field(typeof(BehaviorNode), "name").GetValue(target);
       Main.Logger.Log($"[{this.GetType().Name}] Injecting custom behaviour branch {InjectionOrder} '{targetName}'");
 
-      // TODO: This stops the behaviour tree early due to it being a success as the top level of the tree
-      LogMessageNode debugLogToContent = new LogMessageNode("logMessageSuccess00001", behaviourTree,
-        behaviourTree.unit, "Debug message for the 'TestBranchNode' in the behaviour tree", BehaviorNodeState.Failure);
+      SequenceNode testBranchNodeRoot = new SequenceNode("test_branch_node_root", behaviourTree, unit);
+      BuildFirstLevel(testBranchNodeRoot);
 
-      Inject(siblings, targetIndex, debugLogToContent);
+      Inject(siblings, targetIndex, testBranchNodeRoot);
+    }
+
+    private void BuildFirstLevel(SequenceNode root) {
+      LogMessageNode debugLogToContent1 = new LogMessageNode("logMessageSuccess00000", tree,
+        tree.unit, "Log Node 1", BehaviorNodeState.Success);
+
+      LogMessageNode debugLogToContent2 = new LogMessageNode("logMessageSuccess00001", tree,
+        tree.unit, "Log Node 2", BehaviorNodeState.Failure);
+
+      root.AddChild(debugLogToContent1);
+      root.AddChild(debugLogToContent2);
     }
   }
 }
