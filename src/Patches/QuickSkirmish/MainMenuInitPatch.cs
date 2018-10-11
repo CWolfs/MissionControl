@@ -15,7 +15,10 @@ namespace MissionControl.Patches {
   public class MainMenuInitPatch {
     static void Prefix(MainMenu __instance) {
       Main.Logger.Log($"[MainMenuInitPatch Prefix] Patching Init");
-      if (Main.Settings.DebugSkirmishMode) UiManager.Instance.SetupQuickSkirmishMenu();
+      if (Main.Settings.DebugSkirmishMode) {
+        UnityEngine.Random.InitState(DateTime.Now.Millisecond);
+        UiManager.Instance.SetupQuickSkirmishMenu();
+      }
     }
   }
 }
