@@ -34,7 +34,7 @@ namespace MissionControl {
       foreach (BehaviourTreeBranchBuilder customBehaviourBranch in customBehaviourBranches) {
         NodeSearchResult nodeSearchResults = FindNode(behaviourTree, customBehaviourBranch);
         if (nodeSearchResults != null) {
-          customBehaviourBranch.Build(behaviourTree, nodeSearchResults.NodeSiblings, nodeSearchResults.NodeIndex, nodeSearchResults.Node, unit);
+          customBehaviourBranch.Build(behaviourTree, nodeSearchResults.ParentNode, nodeSearchResults.NodeIndex, nodeSearchResults.Node, unit);
         }
       }
     }
@@ -72,7 +72,7 @@ namespace MissionControl {
           return false;
         });
 
-        if (index != -1) return new NodeSearchResult(compositeParent.Children, index, compositeParent.Children[index]);
+        if (index != -1) return new NodeSearchResult(compositeParent, compositeParent.Children, index, compositeParent.Children[index]);
         return null;
       }
 

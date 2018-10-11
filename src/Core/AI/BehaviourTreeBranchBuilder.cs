@@ -20,10 +20,12 @@ namespace MissionControl.AI {
       this.InjectionOrder = injectionOrder;
     }
 
-    public abstract void Build(BehaviorTree behaviourTree, List<BehaviorNode> siblings, int targetIndex, BehaviorNode target, AbstractActor unit);
+    public abstract void Build(BehaviorTree behaviourTree, CompositeBehaviorNode parentNode, int targetIndex, BehaviorNode target, AbstractActor unit);
 
-    public void Inject(List<BehaviorNode> siblings, int targetIndex, BehaviorNode branchRoot) {
+    public void Inject(CompositeBehaviorNode parentNode, int targetIndex, BehaviorNode branchRoot) {
+      List<BehaviorNode> siblings = parentNode.Children;
       int injectionIndex = targetIndex;
+      
       if (InjectionOrder == BehaviourInjectionOrder.BEFORE_SIBLING) {
         injectionIndex = targetIndex - 1;
         if (injectionIndex < 0) injectionIndex = 0;

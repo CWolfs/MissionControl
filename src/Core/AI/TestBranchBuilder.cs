@@ -13,7 +13,7 @@ namespace MissionControl.AI {
       Main.Logger.Log("[TestBranchNode] Created CustomBehaviourTreeBranch");
     }
 
-    public override void Build(BehaviorTree behaviourTree, List<BehaviorNode> siblings, int targetIndex, BehaviorNode target, AbstractActor unit) {
+    public override void Build(BehaviorTree behaviourTree, CompositeBehaviorNode parentNode, int targetIndex, BehaviorNode target, AbstractActor unit) {
       this.tree = behaviourTree;
       this.unit = unit;
 
@@ -23,7 +23,7 @@ namespace MissionControl.AI {
       SequenceNode testBranchNodeRoot = new SequenceNode("test_branch_node_root", behaviourTree, unit);
       BuildFirstLevel(testBranchNodeRoot);
 
-      Inject(siblings, targetIndex, testBranchNodeRoot);
+      Inject(parentNode, targetIndex, testBranchNodeRoot);
     }
 
     private void BuildFirstLevel(SequenceNode root) {
