@@ -22,7 +22,7 @@ namespace MissionControl.AI {
 
 			BehaviorTreeIDEnum behaviorTreeType = (BehaviorTreeIDEnum)AccessTools.Field(typeof(BehaviorTree), "behaviorTreeIDEnum").GetValue(this.tree);
 
-			Main.Logger.Log($"[AI] [Round '{currentRound}' Phase '{currentPhase}' Unit Action '{actionCount}'] For unit '{unit.DisplayName}' with behaviour tree type '{behaviorTreeType}' logging out '{this.logMessage}'");
+			Main.Logger.Log($"[AI] [Round '{currentRound}' Phase '{currentPhase}' Unit Action '{actionCount}'] For '{unit.team.Name}' unit '{unit.DisplayName}' with behaviour tree type '{behaviorTreeType}' logging out '{this.logMessage}'");
 			return new BehaviorTreeResults(requestedState);
 		}
 	}
