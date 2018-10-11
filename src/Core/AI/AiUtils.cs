@@ -12,5 +12,13 @@ namespace MissionControl.AI {
     public static bool IsOnSecondAction(AbstractActor unit) {
       return !IsOnFirstAction(unit);
     }
+
+    public static bool HasFollowLanceTarget(AbstractActor unit) {
+      if (unit == null) return false;
+      if (unit.team.IsFriendly(UnityGameInstance.BattleTechGame.Combat.LocalPlayerTeam)) {
+        return true;
+      }
+      return false;
+    }
   }
 }

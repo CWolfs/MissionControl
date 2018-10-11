@@ -27,14 +27,13 @@ namespace MissionControl.AI {
     }
 
     private void BuildFirstLevel(SequenceNode root) {
-      LogMessageNode debugLogToContent1 = new LogMessageNode("logMessageSuccess00000", tree,
-        tree.unit, "Log Node 1", BehaviorNodeState.Success);
+      LogMessageNode debugLogToContent1 = new LogMessageNode("logMessageSuccess0000", tree,
+        tree.unit, "Log Node", BehaviorNodeState.Success);
 
-      LogMessageNode debugLogToContent2 = new LogMessageNode("logMessageSuccess00001", tree,
-        tree.unit, "Log Node 2", BehaviorNodeState.Failure);
+      HasFollowLanceTargetNode hasFollowLanceTarget = new HasFollowLanceTargetNode("hasFollowLanceTarget0001", tree, tree.unit);
 
       root.AddChild(debugLogToContent1);
-      root.AddChild(debugLogToContent2);
+      root.AddChild(hasFollowLanceTarget);
     }
   }
 }
