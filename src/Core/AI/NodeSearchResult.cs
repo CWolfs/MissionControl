@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 using BattleTech;
 
-namespace MissionControl.Data {
+namespace MissionControl.AI {
   public class NodeSearchResult {
     public List<BehaviorNode> NodeSiblings { get; private set; }
     public int NodeIndex { get; private set; }

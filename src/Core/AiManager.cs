@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 using Harmony;
 
-using MissionControl.Data;
+using MissionControl.AI;
 using MissionControl.Utils;
 
 namespace MissionControl {
@@ -18,25 +18,26 @@ namespace MissionControl {
       }
     }
 
-    private Dictionary<BehaviorTreeIDEnum, List<CustomBehaviourTreeBranch>> injectionBranchRoots = new Dictionary<BehaviorTreeIDEnum, List<CustomBehaviourTreeBranch>>();
+    private Dictionary<BehaviorTreeIDEnum, List<BehaviourTreeBranchBuilder>> injectionBranchRoots = new Dictionary<BehaviorTreeIDEnum, List<BehaviourTreeBranchBuilder>>();
 
     private AiManager() {
       // Test
-      CustomBehaviourTreeBranch customBehaviourBranch = new TestBranchNode(BehaviorTreeIDEnum.CoreAITree, "comply_with_stay_inside_region_order", BEHAVIOUR_INJECTION_ORDER.AFTER_SIBLING);
+      BehaviourTreeBranchBuilder customBehaviourBranch = new TestBranchBuilder(BehaviorTreeIDEnum.CoreAITree,
+        "comply_with_stay_inside_region_order", BehaviourInjectionOrder.AFTER_SIBLING);
       AddCustomBehaviourBranch(customBehaviourBranch.BehaviourTreeType, customBehaviourBranch.Path, customBehaviourBranch);
     }
 
     public void LoadCustomBehaviourSequences(BehaviorTree behaviourTree, BehaviorTreeIDEnum behaviourTreeType) {
-      List<CustomBehaviourTreeBranch> customBehaviourBranches = injectionBranchRoots[behaviourTreeType];
-      foreach (CustomBehaviourTreeBranch customBehaviourBranch in customBehaviourBranches) {
+      List<BehaviourTreeBranchBuilder> customBehaviourBranches = injectionBranchRoots[behaviourTreeType];
+      foreach (BehaviourTreeBranchBuilder customBehaviourBranch in customBehaviourBranches) {
         NodeSearchResult nodeSearchResults = FindNode(behaviourTree, customBehaviourBranch);
         if (nodeSearchResults != null) {
-          customBehaviourBranch.Inject(behaviourTree, nodeSearchResults.NodeSiblings, nodeSearchResults.NodeIndex, nodeSearchResults.Node);
+          customBehaviourBranch.Build(behaviourTree, nodeSearchResults.NodeSiblings, nodeSearchResults.NodeIndex, nodeSearchResults.Node);
         }
       }
     }
 
-    private NodeSearchResult FindNode(BehaviorTree behaviourTree, CustomBehaviourTreeBranch customBranch) {
+    private NodeSearchResult FindNode(BehaviorTree behaviourTree, BehaviourTreeBranchBuilder customBranch) {
       BehaviorNode rootNode = behaviourTree.RootNode;
       string[] pathNodeNames = customBranch.PathNodeNames;
 
@@ -78,8 +79,8 @@ namespace MissionControl {
       return null;
     }
 
-    public void AddCustomBehaviourBranch(BehaviorTreeIDEnum behaviourTreeType, string path, CustomBehaviourTreeBranch customBranch) {
-      if (!injectionBranchRoots.ContainsKey(behaviourTreeType)) injectionBranchRoots.Add(behaviourTreeType, new List<CustomBehaviourTreeBranch>());
+    public void AddCustomBehaviourBranch(BehaviorTreeIDEnum behaviourTreeType, string path, BehaviourTreeBranchBuilder customBranch) {
+      if (!injectionBranchRoots.ContainsKey(behaviourTreeType)) injectionBranchRoots.Add(behaviourTreeType, new List<BehaviourTreeBranchBuilder>());
       injectionBranchRoots[behaviourTreeType].Add(customBranch);
     }
   }
