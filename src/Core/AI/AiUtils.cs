@@ -18,6 +18,9 @@ namespace MissionControl.AI {
       if (unit.team.IsFriendly(UnityGameInstance.BattleTechGame.Combat.LocalPlayerTeam)) {
         return true;
       }
+
+      // AiManager.Instance.
+
       return false;
     }
   }

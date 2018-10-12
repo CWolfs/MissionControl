@@ -21,6 +21,7 @@ namespace MissionControl {
     }
 
     private Dictionary<BehaviorTreeIDEnum, List<BehaviourTreeBranchBuilder>> injectionBranchRoots = new Dictionary<BehaviorTreeIDEnum, List<BehaviourTreeBranchBuilder>>();
+    private Dictionary<string, Dictionary<string, CustomBehaviorVariableScope>> customBehaviourVariables = new Dictionary<string, Dictionary<string, CustomBehaviorVariableScope>>();
 
     private AiManager() {
       // Test
@@ -34,6 +35,7 @@ namespace MissionControl {
       foreach (BehaviourTreeBranchBuilder customBehaviourBranch in customBehaviourBranches) {
         NodeSearchResult nodeSearchResults = FindNode(behaviourTree, customBehaviourBranch);
         if (nodeSearchResults != null) {
+          AddCustomBehaviourVariableScopes(unit);
           customBehaviourBranch.Build(behaviourTree, nodeSearchResults.ParentNode, nodeSearchResults.NodeIndex, nodeSearchResults.Node, unit);
         }
       }
@@ -84,6 +86,54 @@ namespace MissionControl {
     public void AddCustomBehaviourBranch(BehaviorTreeIDEnum behaviourTreeType, string path, BehaviourTreeBranchBuilder customBranch) {
       if (!injectionBranchRoots.ContainsKey(behaviourTreeType)) injectionBranchRoots.Add(behaviourTreeType, new List<BehaviourTreeBranchBuilder>());
       injectionBranchRoots[behaviourTreeType].Add(customBranch);
+    }
+
+    public void AddCustomBehaviourVariableScopes(AbstractActor unit) {
+      AddCustomBehaviourVariableScope("UNIT", unit.GUID);
+      AddCustomBehaviourVariableScope("LANCE", unit.lance.GUID);
+      AddCustomBehaviourVariableScope("TEAM", unit.team.GUID);
+      // TODO: Support global support [pilot personality, unit role, ai skill] on a later release
+    }
+
+    public void AddCustomBehaviourVariableScope(string type, string ownerGuid) {
+      if (!customBehaviourVariables.ContainsKey(type)) customBehaviourVariables[type] = new Dictionary<string, CustomBehaviorVariableScope>();
+      if (!customBehaviourVariables[type].ContainsKey(ownerGuid)) customBehaviourVariables[ownerGuid][ownerGuid] = new CustomBehaviorVariableScope();
+    }
+
+    public BehaviorVariableValue GetBehaviourVariableValue(AbstractActor unit, string key) {
+      BehaviorVariableValue behaviourVariableValue = GetBehaviourVariableValue("UNIT", unit.GUID, key);
+      if (behaviourVariableValue != null) return behaviourVariableValue;
+
+      behaviourVariableValue = GetBehaviourVariableValue("LANCE", unit.lance.GUID, key);
+      if (behaviourVariableValue != null) return behaviourVariableValue;
+
+      behaviourVariableValue = GetBehaviourVariableValue("TEAM", unit.team.GUID, key);
+      if (behaviourVariableValue != null) return behaviourVariableValue;
+
+      return null;
+    }
+
+    public BehaviorVariableValue GetBehaviourVariableValue(string type, AbstractActor unit, string key) {
+      return GetBehaviourVariableValue(type, unit.GUID, key);
+    }
+
+    // TODO: This need to take into account all the scopes (unit, pilot personality, lance, team, unit role, ai skill)
+    // NOTE: Only supporting unit and lance to start with
+    public BehaviorVariableValue GetBehaviourVariableValue(string type, string ownerGuid, string key) {
+      if (this.customBehaviourVariables.ContainsKey(type)) {
+        Dictionary<string, CustomBehaviorVariableScope> typeScopes = this.customBehaviourVariables[type];
+        if (typeScopes.ContainsKey(ownerGuid)) {
+          CustomBehaviorVariableScope customScope = typeScopes[ownerGuid];
+
+          BehaviorVariableValue behaviourVariableValue = customScope.GetVariable(key);
+          if (behaviourVariableValue != null) return behaviourVariableValue;
+        }
+      }
+      return null;
+    }
+
+    public void ResetCustomBehaviourVariableScopes() {
+      customBehaviourVariables.Clear();
     }
   }
 }
