@@ -62,9 +62,10 @@ namespace MissionControl.AI {
 
     public bool IssueAIOrder(CustomAIOrder order)	{
       Main.Logger.Log("[IssueAIOrder] Handling order: " + order);
-      switch (order.OrderType) {
-        case "FollowLance": {
+      switch (order.CustomOrderType) {
+        case "FOLLOW_LANCE": {
           FollowLanceOrder followLanceOrder = order as FollowLanceOrder;
+          Main.Logger.Log($"[IssueAIOrder] Received 'FOLLOW_LANCE' AI order. Following entity with tag {followLanceOrder.EncounterTags[0]}");
           /*
           this.SetVariable(BehaviorVariableName.String_RouteGUID, new BehaviorVariableValue(setPatrolRouteAIOrder.routeToFollowGuid));
           this.SetVariable(BehaviorVariableName.Bool_RouteStarted, new BehaviorVariableValue(false));

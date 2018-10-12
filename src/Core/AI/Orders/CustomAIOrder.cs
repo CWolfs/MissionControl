@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
-using BattleTech.Serialization;
-using HBS.Collections;
-using HBS.Util;
-using UnityEngine;
+using BattleTech;
 
 namespace MissionControl.AI {
 	public class CustomAIOrder {
-		public virtual string OrderType {
+		public virtual string CustomOrderType {
 			get {
 				return "UNSET";
 			}

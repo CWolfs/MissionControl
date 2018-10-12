@@ -97,7 +97,10 @@ namespace MissionControl {
 
     public void AddCustomBehaviourVariableScope(string type, string ownerGuid) {
       if (!customBehaviourVariables.ContainsKey(type)) customBehaviourVariables[type] = new Dictionary<string, CustomBehaviorVariableScope>();
-      if (!customBehaviourVariables[type].ContainsKey(ownerGuid)) customBehaviourVariables[ownerGuid][ownerGuid] = new CustomBehaviorVariableScope();
+      if (!customBehaviourVariables[type].ContainsKey(ownerGuid)) {
+        // Main.Logger.Log($"[AddCustomBehaviourVariableScope] Adding for {type} and {ownerGuid}");
+        customBehaviourVariables[type][ownerGuid] = new CustomBehaviorVariableScope();
+      }
     }
 
     public BehaviorVariableValue GetBehaviourVariableValue(AbstractActor unit, string key) {
@@ -134,6 +137,16 @@ namespace MissionControl {
 
     public void ResetCustomBehaviourVariableScopes() {
       customBehaviourVariables.Clear();
+    }
+
+    public void IssueAiOrder(string type, string ownerGuid, CustomAIOrder aiOrder) {
+      if (this.customBehaviourVariables.ContainsKey(type)) {
+        Dictionary<string, CustomBehaviorVariableScope> typeScopes = this.customBehaviourVariables[type];
+        if (typeScopes.ContainsKey(ownerGuid)) {
+          CustomBehaviorVariableScope customScope = typeScopes[ownerGuid];
+          customScope.IssueAIOrder(aiOrder);
+        }
+      }
     }
   }
 }
