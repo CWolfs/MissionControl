@@ -65,15 +65,12 @@ namespace MissionControl.AI {
       switch (order.CustomOrderType) {
         case "FOLLOW_LANCE": {
           FollowLanceOrder followLanceOrder = order as FollowLanceOrder;
-          Main.Logger.Log($"[IssueAIOrder] Received 'FOLLOW_LANCE' AI order. Following entity with tag {followLanceOrder.EncounterTags[0]}");
-          /*
-          this.SetVariable(BehaviorVariableName.String_RouteGUID, new BehaviorVariableValue(setPatrolRouteAIOrder.routeToFollowGuid));
-          this.SetVariable(BehaviorVariableName.Bool_RouteStarted, new BehaviorVariableValue(false));
-          this.SetVariable(BehaviorVariableName.Bool_RouteCompleted, new BehaviorVariableValue(false));
-          this.SetVariable(BehaviorVariableName.Bool_RouteFollowingForward, new BehaviorVariableValue(setPatrolRouteAIOrder.forward));
-          this.SetVariable(BehaviorVariableName.Bool_RouteShouldSprint, new BehaviorVariableValue(setPatrolRouteAIOrder.shouldSprint));
-          this.SetVariable(BehaviorVariableName.Bool_RouteStartAtClosestPoint, new BehaviorVariableValue(setPatrolRouteAIOrder.startAtClosestPoint));
-          */
+          Main.Logger.Log($"[IssueAIOrder] Received 'FOLLOW_LANCE' AI order. Following entity with tags '{string.Join(", ", followLanceOrder.EncounterTags.ToArray())}'");
+          List<ITaggedItem> objectsOfTypeWithTagSet = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetObjectsOfTypeWithTagSet(TaggedObjectType.Lance, followLanceOrder.EncounterTags);
+          if (objectsOfTypeWithTagSet.Count > 0) {
+            Lance firstLance = objectsOfTypeWithTagSet[0] as Lance;
+            this.SetVariable("String_LanceGuid", new BehaviorVariableValue(firstLance.GUID));
+          }
           return true;
         }
       }
