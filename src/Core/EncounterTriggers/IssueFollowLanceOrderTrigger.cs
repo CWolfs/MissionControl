@@ -9,6 +9,7 @@ using HBS.Collections;
 
 using MissionControl.AI;
 using MissionControl.Result;
+using MissionControl.Conditional;
 using MissionControl.Logic;
 
 namespace MissionControl.Trigger {
@@ -19,10 +20,7 @@ namespace MissionControl.Trigger {
       SmartTriggerResponse onEncounterLoadIssueOrder = new SmartTriggerResponse();
       onEncounterLoadIssueOrder.inputMessage = MessageCenterMessageType.OnEncounterBegin;
       onEncounterLoadIssueOrder.designName = "Issue Follow Lance AI order on Encounter Start";
-
-      DesignConditionalBox conditonalBox = new DesignConditionalBox();
-      conditonalBox.CargoVTwo = new AlwaysTrueConditional();
-      onEncounterLoadIssueOrder.conditionalbox = conditonalBox;
+      onEncounterLoadIssueOrder.conditionalbox = new EncounterConditionalBox(new AlwaysTrueConditional());
 
       FollowLanceOrder followOrder = new FollowLanceOrder();
       followOrder.EncounterTags.Add("Player 1");
