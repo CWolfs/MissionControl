@@ -28,7 +28,7 @@ namespace MissionControl.Trigger {
       followOrder.EncounterTags.Add("Player 1");
       
       IssueCustomAIOrderResult issueOrder = ScriptableObject.CreateInstance<IssueCustomAIOrderResult>();
-      issueOrder.issueAIOrderTo = IssueAIOrderTo.ToTeam;
+      issueOrder.issueAIOrderTo = IssueAIOrderTo.ToLance;
       issueOrder.requiredReceiverTags.Add("Employer");
       issueOrder.aiOrder = followOrder;
 
