@@ -14,6 +14,19 @@ using MissionControl.Logic;
 
 namespace MissionControl.Trigger {
   public class IssueFollowLanceOrderTrigger : EncounterTrigger {
+    private List<string> receiverTags;
+    private IssueAIOrderTo receiverType;
+    private List<string> targetTags;
+    private TaggedObjectType targetType;
+
+    public IssueFollowLanceOrderTrigger(List<string> receiverTags, IssueAIOrderTo receiverType, List<string> targetTags, TaggedObjectType targetType) {
+      this.receiverTags = receiverTags;
+      this.receiverType = receiverType;
+      this.targetTags = targetTags;
+      this.targetType = targetType;
+    }
+
+    // TODO: Replace the bottom info with the passed in args for this class
     public override void Run(RunPayload payload) {
       Main.Logger.Log("[IssueFollowLanceOrderTrigger] Running trigger");
       EncounterLayerData encounterData = MissionControl.Instance.EncounterLayerData;
