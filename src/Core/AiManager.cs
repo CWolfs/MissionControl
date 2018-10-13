@@ -92,7 +92,7 @@ namespace MissionControl {
       AddCustomBehaviourVariableScope("UNIT", unit.GUID);
       AddCustomBehaviourVariableScope("LANCE", unit.lance.GUID);
       AddCustomBehaviourVariableScope("TEAM", unit.team.GUID);
-      // TODO: Support global support [pilot personality, unit role, ai skill] on a later release
+      // TODO: Support global scopes [pilot personality, unit role, ai skill] on a later release
     }
 
     public void AddCustomBehaviourVariableScope(string type, string ownerGuid) {
@@ -120,7 +120,7 @@ namespace MissionControl {
       return GetBehaviourVariableValue(type, unit.GUID, key);
     }
 
-    // TODO: This need to take into account all the scopes (unit, pilot personality, lance, team, unit role, ai skill)
+    // TODO: Support global scopes [pilot personality, unit role, ai skill] on a later release
     // NOTE: Only supporting unit and lance to start with
     public BehaviorVariableValue GetBehaviourVariableValue(string type, string ownerGuid, string key) {
       if (this.customBehaviourVariables.ContainsKey(type)) {

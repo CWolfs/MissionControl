@@ -17,13 +17,11 @@ namespace MissionControl.Trigger {
     private List<string> receiverTags;
     private IssueAIOrderTo receiverType;
     private List<string> targetTags;
-    private TaggedObjectType targetType;
 
-    public IssueFollowLanceOrderTrigger(List<string> receiverTags, IssueAIOrderTo receiverType, List<string> targetTags, TaggedObjectType targetType) {
+    public IssueFollowLanceOrderTrigger(List<string> receiverTags, IssueAIOrderTo receiverType, List<string> targetTags) {
       this.receiverTags = receiverTags;
       this.receiverType = receiverType;
       this.targetTags = targetTags;
-      this.targetType = targetType;
     }
 
     // TODO: Replace the bottom info with the passed in args for this class
@@ -36,11 +34,11 @@ namespace MissionControl.Trigger {
       onEncounterLoadIssueOrder.conditionalbox = new EncounterConditionalBox(new AlwaysTrueConditional());
 
       FollowLanceOrder followOrder = new FollowLanceOrder();
-      followOrder.EncounterTags.Add("Player 1");
+      followOrder.EncounterTags.AddRange(this.targetTags);
       
       IssueCustomAIOrderResult issueOrder = ScriptableObject.CreateInstance<IssueCustomAIOrderResult>();
-      issueOrder.issueAIOrderTo = IssueAIOrderTo.ToLance;
-      issueOrder.requiredReceiverTags.Add("Employer");
+      issueOrder.issueAIOrderTo = this.receiverType;
+      issueOrder.requiredReceiverTags.AddRange(this.receiverTags);
       issueOrder.aiOrder = followOrder;
 
       onEncounterLoadIssueOrder.resultList.contentsBox.Add(new EncounterResultBox(issueOrder));

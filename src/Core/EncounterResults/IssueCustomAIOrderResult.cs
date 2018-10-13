@@ -12,7 +12,7 @@ using MissionControl;
 using MissionControl.AI;
 
 namespace MissionControl.Result {
-	public class IssueCustomAIOrderResult : DesignResult {
+	public class IssueCustomAIOrderResult : EncounterResult {
     public IssueAIOrderTo issueAIOrderTo;
 		public TagSet requiredReceiverTags = new TagSet();
 		public CustomAIOrder aiOrder = new CustomAIOrder();

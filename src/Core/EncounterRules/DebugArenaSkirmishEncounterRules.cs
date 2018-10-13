@@ -20,7 +20,7 @@ namespace MissionControl.Rules {
 
     public void BuildSpawns() {
       Main.Logger.Log("[DebugArenaSkirmishEncounterRules] Building spawns rules");
-      EncounterLogic.Add(new IssueFollowLanceOrderTrigger(new List<string>(){ "Player 1" }, IssueAIOrderTo.ToLance, new List<string>() { "Employer"}, TaggedObjectType.Lance));
+      EncounterLogic.Add(new IssueFollowLanceOrderTrigger(new List<string>(){ "Employer" }, IssueAIOrderTo.ToLance, new List<string>() { "Player 1" }));
 
       EncounterLogic.Add(new SpawnLanceAnywhere(this, "Player2LanceSpawner", "SpawnerPlayerLance"));
       EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerPlayerLance", "Player2LanceSpawner", SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 150f));

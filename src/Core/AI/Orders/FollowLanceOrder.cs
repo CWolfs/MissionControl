@@ -9,7 +9,6 @@ namespace MissionControl.AI {
 		}
 
 		public TagSet EncounterTags { get; set; } = new TagSet();
-
 		public Lance TargetToFollow { get; set; }
 	}
 }
