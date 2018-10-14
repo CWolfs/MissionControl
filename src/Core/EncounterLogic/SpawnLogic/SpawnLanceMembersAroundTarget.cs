@@ -21,8 +21,11 @@ namespace MissionControl.Logic {
     private LookDirection lookDirection;
     private float minDistanceFromTarget = 50f;
     private float maxDistanceFromTarget = 100f;
-    private float minDistanceToSpawnFromInvalidSpawn = 30f;
+    private float minDistanceToSpawnFromInvalidSpawn = 10f;
     private List<Vector3> invalidSpawnLocations = new List<Vector3>();
+
+    private int AttemptCountMax { get; set; } = 10;
+    private int AttemptCount { get; set; } = 0;
 
     public SpawnLanceMembersAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, LookDirection lookDirection) :
       this(encounterRules, lanceKey, orientationTargetKey, lookDirection, 10, 10) { } // TODO: Replace the hard coded values with a setting.json setting
@@ -68,12 +71,10 @@ namespace MissionControl.Logic {
 
       Vector3 spawnPointPosition = combatState.HexGrid.GetClosestPointOnGrid(spawnPoint.transform.position);
       Vector3 newSpawnPosition = GetRandomPositionFromTarget(orientationTarget, minDistanceFromTarget, maxDistanceFromTarget);
-      newSpawnPosition.y = combatState.MapMetaData.GetLerpedHeightAt(newSpawnPosition);
 
       if (encounterManager.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
-        if (!IsWithinDistanceOfInvalidPosition(newSpawnPosition)) {      
+        if (!IsWithinDistanceOfInvalidPosition(newSpawnPosition)) {
           spawnPoint.transform.position = newSpawnPosition;
-          invalidSpawnLocations.Add(newSpawnPosition);
 
           if (lookDirection == LookDirection.TOWARDS_TARGET) {
             RotateToTarget(spawnPoint, lookTarget);
@@ -82,16 +83,20 @@ namespace MissionControl.Logic {
           }
 
           if (!IsSpawnValid(spawnPoint, orientationTarget)) {
+            CheckAttempts();
             SpawnLanceMember(spawnPoint, orientationTarget, lookTarget, lookDirection);
           } else {
+            invalidSpawnLocations.Add(newSpawnPosition);
             Main.Logger.Log("[SpawnLanceMembersAroundTarget] Lance member spawn complete");
           }
         } else {
           Main.Logger.LogWarning("[SpawnLanceMembersAroundTarget] Cannot spawn a lance member on an invalid spawn. Finding new spawn point.");
+          CheckAttempts();
           SpawnLanceMember(spawnPoint, orientationTarget, lookTarget, lookDirection);
         }
       } else {
         Main.Logger.LogWarning("[SpawnLanceMembersAroundTarget] Selected lance spawn point is outside of the boundary. Select a new lance spawn point.");
+        CheckAttempts();
         SpawnLanceMember(spawnPoint, orientationTarget, lookTarget, lookDirection);  
       }
     }
@@ -100,10 +105,22 @@ namespace MissionControl.Logic {
       foreach (Vector3 invalidSpawn in invalidSpawnLocations) {
         Vector3 vectorToInvalidSpawn = newSpawn - invalidSpawn;
         vectorToInvalidSpawn.y = 0;
-        float disatanceToInvalidSpawn = vectorToInvalidSpawn.magnitude;
-        if (disatanceToInvalidSpawn < minDistanceToSpawnFromInvalidSpawn) return true;
+        float distanceToInvalidSpawn = vectorToInvalidSpawn.magnitude;
+        if (distanceToInvalidSpawn < minDistanceToSpawnFromInvalidSpawn) return true;
       }
       return false;
+    }
+
+    private void CheckAttempts() {
+      AttemptCount++;
+
+      if (AttemptCount > AttemptCountMax) {
+        AttemptCount = 0;
+        Main.Logger.Log($"[SpawnLanceMembersAroundTarget] Cannot find a suitable lance member spawn within the boundaries of {minDistanceFromTarget} and {maxDistanceFromTarget}. Widening search");
+        minDistanceFromTarget -= 10;
+        if (minDistanceFromTarget <= 10) minDistanceFromTarget = 10;
+        maxDistanceFromTarget += 25;     
+      }
     }
   }
 }

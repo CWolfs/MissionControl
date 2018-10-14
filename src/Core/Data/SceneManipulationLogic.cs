@@ -40,10 +40,14 @@ namespace MissionControl.Logic {
 
       float xSignSelection = (UnityEngine.Random.value < 0.5f) ? -1f : 1f;
       float zSignSelection = (UnityEngine.Random.value < 0.5f) ? -1f : 1f;
-      float xValue = UnityEngine.Random.Range(minDistance / 1.5f, maxDistance / 1.5f) * xSignSelection;
-      float zValue = UnityEngine.Random.Range(minDistance  / 1.5f, maxDistance / 1.5f) * zSignSelection;
+
+      float randomBuffer = UnityEngine.Random.Range(1f, 2f);
+
+      float xValue = UnityEngine.Random.Range(minDistance / randomBuffer, maxDistance / randomBuffer) * xSignSelection;
+      float zValue = UnityEngine.Random.Range(minDistance  / randomBuffer, maxDistance / randomBuffer) * zSignSelection;
 
       Vector3 randomPositionFromTarget = new Vector3(targetPosition.x + xValue, 0, targetPosition.z + zValue);
+      randomPositionFromTarget = combatState.HexGrid.GetClosestPointOnGrid(randomPositionFromTarget);
       float yValue = combatState.MapMetaData.GetLerpedHeightAt(randomPositionFromTarget);
       randomPositionFromTarget.y = yValue;
 

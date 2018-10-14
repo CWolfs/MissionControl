@@ -69,7 +69,9 @@ namespace MissionControl.AI {
           List<ITaggedItem> objectsOfTypeWithTagSet = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetObjectsOfTypeWithTagSet(TaggedObjectType.Lance, followLanceOrder.EncounterTags);
           if (objectsOfTypeWithTagSet.Count > 0) {
             Lance firstLance = objectsOfTypeWithTagSet[0] as Lance;
-            this.SetVariable("String_LanceGuid", new BehaviorVariableValue(firstLance.GUID));
+            this.SetVariable(MoveToFollowLanceNode.FOLLOW_LANCE_TARGET_GUID_KEY, new BehaviorVariableValue(firstLance.GUID));
+            this.SetVariable(MoveToFollowLanceNode.FOLLOW_LANCE_SHOULD_SPRINT_KEY, new BehaviorVariableValue(followLanceOrder.ShouldSprint));
+            this.SetVariable(MoveToFollowLanceNode.FOLLOW_LANCE_ZONE_RADIUS_KEY, new BehaviorVariableValue(followLanceOrder.FollowLanceRadius));
           }
           return true;
         }

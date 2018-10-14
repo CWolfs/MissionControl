@@ -181,7 +181,9 @@ namespace MissionControl.Rules {
       return "Spawner_PlayerLance";
     }
 
-    protected void BuildAdditionalLances(string enemyOrientationTargetKey, SpawnLogic.LookDirection enemyLookDirection, string allyOrientationKey, SpawnLogic.LookDirection allyLookDirection) {
+    protected void BuildAdditionalLances(string enemyOrientationTargetKey, SpawnLogic.LookDirection enemyLookDirection,
+      string allyOrientationKey, SpawnLogic.LookDirection allyLookDirection, float minAllyDistance, float maxAllyDistance) {
+
       Main.Logger.Log($"[{this.GetType().Name}] Building additional lance rules");
 
       if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
@@ -201,7 +203,7 @@ namespace MissionControl.Rules {
       if (MissionControl.Instance.AreAdditionalLancesAllowed("allies")) {
         int numberOfAdditionalAllyLances = Main.Settings.AdditionalLances.Allies.SelectNumberOfAdditionalLances();
         for (int i = 0; i < numberOfAdditionalAllyLances; i++) {
-          new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, 150f, 250f);
+          new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, minAllyDistance, maxAllyDistance);
         }
       }
     }

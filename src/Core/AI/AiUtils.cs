@@ -16,7 +16,7 @@ namespace MissionControl.AI {
     public static bool HasFollowLanceTarget(AbstractActor unit) {
       if (unit == null) return false;
   
-      BehaviorVariableValue value = AiManager.Instance.GetBehaviourVariableValue(unit, "String_LanceGuid");
+      BehaviorVariableValue value = AiManager.Instance.GetBehaviourVariableValue(unit, MoveToFollowLanceNode.FOLLOW_LANCE_TARGET_GUID_KEY);
       if (value != null) {
         string lanceGuid = value.StringVal;
         Lance lance = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID(lanceGuid) as Lance;

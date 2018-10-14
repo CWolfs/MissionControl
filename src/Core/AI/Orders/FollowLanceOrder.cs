@@ -10,5 +10,7 @@ namespace MissionControl.AI {
 
 		public TagSet EncounterTags { get; set; } = new TagSet();
 		public Lance TargetToFollow { get; set; }
+		public bool ShouldSprint { get; set; } = false;
+		public float FollowLanceRadius { get; set; } = 10f;
 	}
 }

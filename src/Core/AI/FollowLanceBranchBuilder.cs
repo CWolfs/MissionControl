@@ -20,7 +20,7 @@ namespace MissionControl.AI {
       string targetName = (string)AccessTools.Field(typeof(BehaviorNode), "name").GetValue(target);
       Main.Logger.Log($"[{this.GetType().Name}] Injecting custom behaviour branch {InjectionOrder} '{targetName}'");
 
-      SequenceNode testBranchNodeRoot = new SequenceNode("test_branch_node_root", behaviourTree, unit);
+      SequenceNode testBranchNodeRoot = new SequenceNode("follow_lance_if_following", behaviourTree, unit);
       BuildFirstLevel(testBranchNodeRoot);
 
       Inject(parentNode, targetIndex, testBranchNodeRoot);
@@ -30,10 +30,12 @@ namespace MissionControl.AI {
       LogMessageNode debugLogToContent1 = new LogMessageNode("logMessageSuccess0000", tree,
         tree.unit, "Log Node", BehaviorNodeState.Success);
 
-      HasFollowLanceTargetNode hasFollowLanceTarget = new HasFollowLanceTargetNode("hasFollowLanceTarget0001", tree, tree.unit);
+      HasFollowLanceTargetNode hasFollowLanceTarget = new HasFollowLanceTargetNode("hasFollowLanceTarget0000", tree, tree.unit);
+      MoveToFollowLanceNode moveToFollowLance = new MoveToFollowLanceNode("moveToFollowLance0000", tree, tree.unit, false);
 
       root.AddChild(debugLogToContent1);
       root.AddChild(hasFollowLanceTarget);
+      root.AddChild(moveToFollowLance);
     }
   }
 }
