@@ -17,7 +17,7 @@ namespace MissionControl.Rules {
     public override void Build() {
       Main.Logger.Log("[DestroyBaseEncounterRules] Setting up rule object references");
       BuildSpawn();
-      BuildAdditionalLances("PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET);
+      BuildAdditionalLances("PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET, 150f, 250f);
     }
 
     private void BuildSpawn() {

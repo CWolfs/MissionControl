@@ -89,6 +89,7 @@ namespace MissionControl {
       Main.Logger.Log($"[MissionControl] Contract map is '{contract.mapName}'");
       ContractMapName = contract.mapName;
       SetContractType(CurrentContract.ContractType);
+      AiManager.Instance.ResetCustomBehaviourVariableScopes();
     }
 
     /*
