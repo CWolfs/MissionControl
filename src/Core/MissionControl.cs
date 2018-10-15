@@ -44,8 +44,11 @@ namespace MissionControl {
       AddEncounter("Assassinate", typeof(AssassinateEncounterRules));
       AddEncounter("CaptureBase", typeof(CaptureBaseEncounterRules));
       AddEncounter("CaptureEscort", typeof(CaptureEscortEncounterRules));
-      AddEncounter("DefendBase", typeof(DestroyBaseEncounterRules));
-      AddEncounter("DestroyBase", typeof(DestroyBaseEncounterRules));
+      AddEncounter("DefendBase", typeof(DefendBaseEncounterRules));
+      
+      AddEncounter("DestroyBase", typeof(DestroyBaseJointAssaultEncounterRules));
+      AddEncounter("DestroyBase", typeof(DestroyBaseAidAssaultEncounterRules));
+      
       AddEncounter("Rescue", typeof(RescueEncounterRules));
       AddEncounter("SimpleBattle", typeof(SimpleBattleEncounterRules));
     
