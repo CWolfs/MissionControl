@@ -18,6 +18,12 @@ Depending on the contract type, the lance spawns will change every playthrough. 
 
 For full information on the random spawns, see the [Random Spawns](./docs/random-spawns.md) page.
 
+### New AI
+
+Completely new AI behaviours that do not exist in the vanilla game.
+
+* Follow Lance - Follows the heaviest mech in the target lance
+
 ### Single Player Skirmish Support with Quick Skirmish Feature
 
 Mission Control works on single player skirmish if a contract type ruleset is created for it.
