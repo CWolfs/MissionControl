@@ -19,6 +19,8 @@ namespace MissionControl.Patches {
         UnityEngine.Random.InitState(DateTime.Now.Millisecond);
         UiManager.Instance.SetupQuickSkirmishMenu();
       }
+
+      DataManager.Instance.LoadVehicleDefs();
     }
   }
 }

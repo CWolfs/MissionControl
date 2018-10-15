@@ -24,12 +24,6 @@ namespace MissionControl.Logic {
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
 
-    /* // TODO: Enable this once a 'center of map' position can be obtained and then use this for the path finding check instead of orientationTarget
-    public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRules, string lanceKey) : base(encounterRules) {
-      this.lanceKey = lanceKey;
-    }
-    */
-
     public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRules, string lanceKey, string orientationTargetKey) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.useOrientationTarget = true;

@@ -33,7 +33,7 @@ namespace MissionControl.Logic {
         Vector3 checkTarget = combatState.HexGrid.GetClosestPointOnGrid(orientationTarget.transform.position);
         checkTarget.y = combatState.MapMetaData.GetLerpedHeightAt(checkTarget);
         
-        if (!PathFinderManager.Instance.IsSpawnValid(spawnPointPosition, checkTarget)) {
+        if (!PathFinderManager.Instance.IsSpawnValid(spawnPointPosition, checkTarget, UnitType.Vehicle)) {
           Main.Logger.LogWarning("[AreLanceMemberSpawnsValid] Lance member spawn path to first objective is blocked. Select a new lance spawn point");
           return false;
         }

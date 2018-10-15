@@ -4,6 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 using BattleTech;
+using BattleTech.Data;
+
 using HBS.Collections;
 
 namespace MissionControl {
@@ -17,6 +19,7 @@ namespace MissionControl {
     }
 
     private Mech pathFinderMech;
+    private Vehicle pathFinderVehicle;
 
     private PathFinderManager() {
       Init();
@@ -24,6 +27,7 @@ namespace MissionControl {
 
     public void Init() {
       pathFinderMech = CreatePathFinderMech();
+      pathFinderVehicle = CreatePathFindingVehicle();
     }
 
     private Mech CreatePathFinderMech() {
@@ -44,6 +48,24 @@ namespace MissionControl {
       return mech;
     }
 
+    private Vehicle CreatePathFindingVehicle() {
+      GameInstance game = UnityGameInstance.BattleTechGame;
+      CombatGameState combatState = game.Combat;
+      string spawnerId = Guid.NewGuid().ToString();
+      string uniqueId = $"{spawnerId}.9999999998";
+
+      HeraldryDef heraldryDef = null;
+      combatState.DataManager.Heraldries.TryGet(HeraldryDef.HeraldyrDef_SinglePlayerSkirmishPlayer1, out heraldryDef);
+
+      VehicleDef vehicleDef = null;
+      combatState.DataManager.VehicleDefs.TryGet("vehicledef_DEMOLISHER", out vehicleDef);
+
+      PilotDef pilotDef = null;
+      combatState.DataManager.PilotDefs.TryGet("pilot_default", out pilotDef);
+      Vehicle vehicle = new Vehicle(vehicleDef, pilotDef, new TagSet(), uniqueId, combatState, spawnerId, heraldryDef);
+      return vehicle;  
+    }
+
     public void RequestPathFinderMech() {
       Main.Logger.Log("[PathFinderManager] Requesting path finder mech");
       if (pathFinderMech == null) Init();
@@ -51,19 +73,34 @@ namespace MissionControl {
       UnityGameInstance.BattleTechGame.DataManager.ProcessRequests();
     }
 
-    public bool IsSpawnValid(Vector3 position, Vector3 validityPosition) {
-      if (pathFinderMech.GameRep == null) {
+    public void RequestPathFinderVehicle() {
+      Main.Logger.Log("[PathFinderManager] Requesting path finder vehicle");
+      if (pathFinderVehicle == null) Init();
+      UnityGameInstance.BattleTechGame.DataManager.RequestNewResource(BattleTechResourceType.Prefab, pathFinderVehicle.VehicleDef.Chassis.PrefabIdentifier, null);
+      UnityGameInstance.BattleTechGame.DataManager.ProcessRequests();  
+    }
+
+    public bool IsSpawnValid(Vector3 position, Vector3 validityPosition, UnitType type) {
+      AbstractActor pathfindingActor = null;
+
+      if (type == UnitType.Mech) {
+        pathfindingActor = pathFinderMech;
+      } else if (type == UnitType.Vehicle) {
+        pathfindingActor = pathFinderVehicle;
+      }
+
+      if (pathfindingActor.GameRep == null) {
         CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
-        pathFinderMech.Init(position, 0, pathFinderMech.thisUnitChecksEncounterCells);
-        pathFinderMech.InitGameRep(null);
+        pathfindingActor.Init(position, 0, pathfindingActor.thisUnitChecksEncounterCells);
+        pathfindingActor.InitGameRep(null);
       } else {
-        pathFinderMech.CurrentPosition = position;
-        pathFinderMech.GameRep.transform.position = position;
-        pathFinderMech.ResetPathing(false);
+        pathfindingActor.CurrentPosition = position;
+        pathfindingActor.GameRep.transform.position = position;
+        pathfindingActor.ResetPathing(false);
       }
 
       try {
-        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(validityPosition, 9999f, pathFinderMech, true, new List<AbstractActor>(), pathFinderMech.Pathing.CurrentGrid, 50f);
+        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(validityPosition, 9999f, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, 50f);
         if (path != null && path.Count > 5) return true;
       } catch (Exception) {
         Main.Logger.LogWarning($"[IsSpawnValid] Array out of bounds detected in the path finding code. Flagging as invalid spawn. Select a new spawn point.");
@@ -73,12 +110,23 @@ namespace MissionControl {
     }
 
     public void Reset() {
-      GameObject pathFinderGo = pathFinderMech.GameRep.gameObject;
-      GameObject blipUnknownGo = pathFinderMech.GameRep.BlipObjectUnknown.gameObject;
-      GameObject blipIdentified = pathFinderMech.GameRep.BlipObjectIdentified.gameObject;
-      if (pathFinderGo) GameObject.Destroy(pathFinderGo);
-      if (blipUnknownGo) GameObject.Destroy(blipUnknownGo);
-      if (blipIdentified) GameObject.Destroy(blipIdentified);
+      if (pathFinderMech.GameRep != null) {
+        GameObject pathFinderGo = pathFinderMech.GameRep.gameObject;
+        GameObject blipUnknownGo = pathFinderMech.GameRep.BlipObjectUnknown.gameObject;
+        GameObject blipIdentified = pathFinderMech.GameRep.BlipObjectIdentified.gameObject;
+        if (pathFinderGo) GameObject.Destroy(pathFinderGo);
+        if (blipUnknownGo) GameObject.Destroy(blipUnknownGo);
+        if (blipIdentified) GameObject.Destroy(blipIdentified);
+      }
+
+      if (pathFinderVehicle.GameRep != null) {
+        GameObject pathFinderVehicleGo = pathFinderVehicle.GameRep.gameObject;
+        GameObject vehicleBlipUnknownGo = pathFinderVehicle.GameRep.BlipObjectUnknown.gameObject;
+        GameObject vehicleBlipIdentified = pathFinderVehicle.GameRep.BlipObjectIdentified.gameObject;
+        if (pathFinderVehicleGo) GameObject.Destroy(pathFinderVehicleGo);
+        if (vehicleBlipUnknownGo) GameObject.Destroy(vehicleBlipUnknownGo);
+        if (vehicleBlipIdentified) GameObject.Destroy(vehicleBlipIdentified);
+      }
     }
   }
 }

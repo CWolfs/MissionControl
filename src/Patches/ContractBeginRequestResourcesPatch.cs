@@ -29,6 +29,7 @@ namespace MissionControl.Patches {
 
     static void RequestUnits(){
       PathFinderManager.Instance.RequestPathFinderMech();
+      PathFinderManager.Instance.RequestPathFinderVehicle();
     }
   }
 }
