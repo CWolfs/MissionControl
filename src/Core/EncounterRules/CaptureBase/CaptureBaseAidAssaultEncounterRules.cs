@@ -8,19 +8,18 @@ using BattleTech;
 using MissionControl.Logic;
 
 namespace MissionControl.Rules {
-  public class CaptureBaseEncounterRules : EncounterRules {
-    public CaptureBaseEncounterRules() : base() { }
+  public class CaptureBaseAidAssaultEncounterRules : EncounterRules {
+    public CaptureBaseAidAssaultEncounterRules() : base() { }
 
     public override void Build() {
-      Main.Logger.Log("[CaptureBaseEncounterRules] Setting up rule object references");
+      Main.Logger.Log("[CaptureBaseAidAssaultEncounterRules] Setting up rule object references");
       BuildSpawns();
+      BuildAdditionalLances("PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET, 150f, 250f);
     }
 
     public void BuildSpawns() {
-      Main.Logger.Log("[CaptureBaseEncounterRules] Building spawns rules");
+      Main.Logger.Log("[CaptureBaseAidAssaultEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "PlotBase"));
-      // TODO: Randomly spawn reinforcements X distance away from player unseen. Maybe a requiremnent for a new hook 
-      // On the unit spawner on objective complete or timer complete
     }
 
     public override void LinkObjectReferences(string mapName) {

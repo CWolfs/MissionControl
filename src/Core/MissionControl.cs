@@ -42,7 +42,10 @@ namespace MissionControl {
     private void LoadEncounterRules() {
       AddEncounter("AmbushConvoy", typeof(AmbushConvoyEncounterRules));
       AddEncounter("Assassinate", typeof(AssassinateEncounterRules));
-      AddEncounter("CaptureBase", typeof(CaptureBaseEncounterRules));
+
+      AddEncounter("CaptureBase", typeof(CaptureBaseJointAssaultEncounterRules));
+      AddEncounter("CaptureBase", typeof(CaptureBaseAidAssaultEncounterRules));
+
       AddEncounter("CaptureEscort", typeof(CaptureEscortEncounterRules));
       AddEncounter("DefendBase", typeof(DefendBaseEncounterRules));
       
