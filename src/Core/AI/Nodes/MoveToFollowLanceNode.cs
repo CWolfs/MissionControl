@@ -29,7 +29,6 @@ namespace MissionControl.AI {
     }
 
 		protected override BehaviorTreeResults Tick() {
-      Main.Logger.Log("[MoveToFollowLanceNode] Tick");
       if (unit.HasMovedThisRound) return new BehaviorTreeResults(BehaviorNodeState.Failure);
 
       BehaviorVariableValue targetLanceGuidValue = this.tree.GetCustomBehaviorVariableValue(FOLLOW_LANCE_TARGET_GUID_KEY);
@@ -38,20 +37,17 @@ namespace MissionControl.AI {
       string targetLanceGuid = targetLanceGuidValue.StringVal;
       Lance targetLance = DestinationUtil.FindLanceByGUID(this.tree, targetLanceGuid);
       if (targetLance == null) return new BehaviorTreeResults(BehaviorNodeState.Failure);
+      List<AbstractActor> lanceMembers = AIUtil.GetLanceUnits(this.unit.Combat, this.unit.LanceId);
 
       float travelDistance = Mathf.Max(this.unit.MaxSprintDistance, this.unit.MaxWalkDistance);
 
       if (this.waitForLance) {
-        for (int i = 0; i < this.unit.lance.unitGuids.Count; i++) {
-          ITaggedItem itemByGUID = this.unit.Combat.ItemRegistry.GetItemByGUID(this.unit.lance.unitGuids[i]);
+        for (int i = 0; i < lanceMembers.Count; i++) {
+          AbstractActor abstractActor = lanceMembers[i] as AbstractActor;
           
-          if (itemByGUID != null) {
-            AbstractActor abstractActor = itemByGUID as AbstractActor;
-            
-            if (abstractActor != null) {
-              float lanceMemberTravelDistance = Mathf.Max(abstractActor.MaxWalkDistance, abstractActor.MaxSprintDistance);
-              travelDistance = Mathf.Min(travelDistance, lanceMemberTravelDistance);
-            }
+          if (abstractActor != null) {
+            float lanceMemberTravelDistance = Mathf.Max(abstractActor.MaxWalkDistance, abstractActor.MaxSprintDistance);
+            travelDistance = Mathf.Min(travelDistance, lanceMemberTravelDistance);
           }
         }
       }
@@ -64,7 +60,7 @@ namespace MissionControl.AI {
           if (itemByGUID != null) {
             AbstractActor abstractActor = itemByGUID as AbstractActor;
             
-            if (abstractActor != null) {
+            if (abstractActor != null && !abstractActor.IsDead) {
               if (abstractActor is Mech) {
                 Mech mech = (Mech)abstractActor;
                 if (mech.tonnage > targetTonnage) {
@@ -89,7 +85,10 @@ namespace MissionControl.AI {
 
       Main.Logger.Log($"[MoveToFollowLanceNode] Target to follow is '{targetActor.DisplayName}'");
 
-      MoveType moveType = (!this.tree.GetCustomBehaviorVariableValue(FOLLOW_LANCE_SHOULD_SPRINT_KEY).BoolVal) ? MoveType.Walking : MoveType.Sprinting;
+      bool shouldSprint = this.tree.GetCustomBehaviorVariableValue(FOLLOW_LANCE_SHOULD_SPRINT_KEY).BoolVal;
+      shouldSprint = (!this.unit.HasAnyContactWithEnemy);
+
+      MoveType moveType = (shouldSprint) ? MoveType.Sprinting : MoveType.Walking;
       this.unit.Pathing.UpdateAIPath(targetActor.CurrentPosition, targetActor.CurrentPosition, moveType);
       
       Vector3 vectorToTarget = this.unit.Pathing.ResultDestination - this.unit.CurrentPosition;
@@ -103,28 +102,6 @@ namespace MissionControl.AI {
       Vector3 targetDestination = RoutingUtil.Decrowd(this.unit.CurrentPosition + vectorToTarget, this.unit);
       targetDestination = RegionUtil.MaybeClipMovementDestinationToStayInsideRegion(this.unit, targetDestination);
 
-      List<AbstractActor> lanceMembers = new List<AbstractActor>();
-      if (this.waitForLance) {
-        if (this.unit.lance != null) {
-          /*
-          for (int j = 0; j < this.unit.lance.unitGuids.Count; j++) {
-            string guid = this.unit.lance.unitGuids[j];
-            
-            ITaggedItem itemByGUID2 = this.unit.Combat.ItemRegistry.GetItemByGUID(guid);
-            if (itemByGUID2 != null) {
-              AbstractActor abstractActor2 = itemByGUID2 as AbstractActor;
-              if (abstractActor2 != null) {
-                lanceMembers.Add(abstractActor2);
-              }
-            }
-          }
-          */
-          lanceMembers = AIUtil.GetLanceUnits(this.unit.Combat, this.unit.LanceId);
-        } else {
-          lanceMembers.Add(this.unit);
-        }
-      }
-
       float followLanceZoneRadius = this.unit.BehaviorTree.GetCustomBehaviorVariableValue(FOLLOW_LANCE_ZONE_RADIUS_KEY).FloatVal;
 
       if (RoutingUtil.AllUnitsInsideRadiusOfPoint(lanceMembers, targetActor.CurrentPosition, followLanceZoneRadius)) {
@@ -132,15 +109,7 @@ namespace MissionControl.AI {
         return new BehaviorTreeResults(BehaviorNodeState.Failure);  // If within the radius then go onto other behaviours - if outside then pick this back up
       }
 
-      /*
-      // TODO: Consider if this is required. It removes the follow state once they reach the destination
-      if (RoutingUtil.AllUnitsInsideRadiusOfPoint(lanceMembers, targetActor.CurrentPosition, followLanceUnitZoneRadius)) {
-        this.tree.RemoveBehaviorVariableValue(this.destinationBVarName);
-      }
-      */
-
-      bool shouldSprint = this.tree.GetCustomBehaviorVariableValue(FOLLOW_LANCE_SHOULD_SPRINT_KEY).BoolVal;
-      this.unit.Pathing.UpdateAIPath(targetDestination, targetActor.CurrentPosition, (!shouldSprint) ? MoveType.Walking : MoveType.Sprinting);
+      this.unit.Pathing.UpdateAIPath(targetDestination, targetActor.CurrentPosition, (shouldSprint) ? MoveType.Sprinting : MoveType.Walking);
       targetDestination = this.unit.Pathing.ResultDestination;
       float maxCost = this.unit.Pathing.MaxCost;
       PathNodeGrid currentGrid = this.unit.Pathing.CurrentGrid;
