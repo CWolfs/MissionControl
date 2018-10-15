@@ -91,6 +91,11 @@ namespace MissionControl {
       return null;
     }
 
+    public void LoadVehicleDefs() {
+      BattleTech.Data.DataManager dataManager = UnityGameInstance.BattleTechGame.DataManager;
+      dataManager.RequestNewResource(BattleTechResourceType.VehicleDef, "vehicledef_DEMOLISHER", null);
+    }
+
     public void Reset() {
 
     }
