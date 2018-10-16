@@ -86,9 +86,13 @@ namespace MissionControl.AI {
 
       bool shouldSprint = this.tree.GetCustomBehaviorVariableValue(FOLLOW_LANCE_SHOULD_SPRINT_KEY).BoolVal;
       shouldSprint = (!this.unit.HasAnyContactWithEnemy);
+      shouldSprint = (this.unit.CurrentPosition - targetActor.CurrentPosition).magnitude > 200f; // sprint if the unit is over 200 metres away
+
+      AbstractActor closestDetectedEnemy = AiUtils.GetClosestDetectedEnemy(this.unit, targetLance);
+      Vector3 lookDirection = (closestDetectedEnemy == null) ? targetActor.CurrentPosition : closestDetectedEnemy.CurrentPosition;
 
       MoveType moveType = (shouldSprint) ? MoveType.Sprinting : MoveType.Walking;
-      this.unit.Pathing.UpdateAIPath(targetActor.CurrentPosition, targetActor.CurrentPosition, moveType);
+      this.unit.Pathing.UpdateAIPath(targetActor.CurrentPosition, lookDirection, moveType);
       
       Vector3 vectorToTarget = this.unit.Pathing.ResultDestination - this.unit.CurrentPosition;
       float distanceToTarget = vectorToTarget.magnitude;
@@ -102,13 +106,9 @@ namespace MissionControl.AI {
       targetDestination = RegionUtil.MaybeClipMovementDestinationToStayInsideRegion(this.unit, targetDestination);
 
       float followLanceZoneRadius = this.unit.BehaviorTree.GetCustomBehaviorVariableValue(FOLLOW_LANCE_ZONE_RADIUS_KEY).FloatVal;
+      if (RoutingUtils.IsUnitInsideRadiusOfPoint(this.unit, targetActor.CurrentPosition, followLanceZoneRadius)) return new BehaviorTreeResults(BehaviorNodeState.Failure);
 
-      if (RoutingUtil.AllUnitsInsideRadiusOfPoint(lanceMembers, targetActor.CurrentPosition, followLanceZoneRadius)) {
-        Main.LogDebug($"[MoveToFollowLanceNode] All units are within radius of target lance unit. Radius is '{followLanceZoneRadius}'.");
-        return new BehaviorTreeResults(BehaviorNodeState.Failure);  // If within the radius then go onto other behaviours - if outside then pick this back up
-      }
-
-      this.unit.Pathing.UpdateAIPath(targetDestination, targetActor.CurrentPosition, (shouldSprint) ? MoveType.Sprinting : MoveType.Walking);
+      this.unit.Pathing.UpdateAIPath(targetDestination, lookDirection, (shouldSprint) ? MoveType.Sprinting : MoveType.Walking);
       targetDestination = this.unit.Pathing.ResultDestination;
       float maxCost = this.unit.Pathing.MaxCost;
       PathNodeGrid currentGrid = this.unit.Pathing.CurrentGrid;

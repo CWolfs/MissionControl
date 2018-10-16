@@ -1,3 +1,7 @@
+using UnityEngine;
+
+using System.Collections.Generic;
+
 using BattleTech;
 
 namespace MissionControl.AI {
@@ -25,6 +29,26 @@ namespace MissionControl.AI {
       }
 
       return false;
+    }
+
+    public static AbstractActor GetClosestDetectedEnemy(AbstractActor focusedUnit, Lance allyLance) {
+      List<AbstractActor> detectedEnemyUnits = new List<AbstractActor>();
+      detectedEnemyUnits.AddRange(focusedUnit.lance.team.GetDetectedEnemyUnits());
+      detectedEnemyUnits.AddRange(allyLance.team.GetDetectedEnemyUnits());
+
+      float num = -1f;
+      AbstractActor closestActor = null;
+
+      for (int i = 0; i < detectedEnemyUnits.Count; i++) {
+        AbstractActor actor = detectedEnemyUnits[i] as AbstractActor;
+        float magnitude = (actor.CurrentPosition - focusedUnit.CurrentPosition).magnitude;
+        if (num < 0f || magnitude < num) {
+          num = magnitude;
+          closestActor = actor;
+        }
+      }
+
+      return closestActor;
     }
   }
 }
