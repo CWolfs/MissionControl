@@ -21,7 +21,6 @@ namespace MissionControl.Logic {
     private LookDirection lookDirection;
     private float minDistanceFromTarget = 50f;
     private float maxDistanceFromTarget = 100f;
-    private float minDistanceToSpawnFromInvalidSpawn = 10f;
     private List<Vector3> invalidSpawnLocations = new List<Vector3>();
 
     private int AttemptCountMax { get; set; } = 10;
