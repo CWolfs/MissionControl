@@ -16,7 +16,7 @@ namespace MissionControl.Rules {
       Main.Logger.Log("[AmbushConvoyEncounterRules] Setting up rule object references");
       BuildAi();
       BuildSpawns();
-      BuildAdditionalLances("ConvoyUnit1Spawn", SpawnLogic.LookDirection.AWAY_FROM_TARGET, "SpawnerPlayerLance", SpawnLogic.LookDirection.TOWARDS_TARGET, 25f, 100f);
+      BuildAdditionalLances("ConvoyUnit1Spawn", SpawnLogic.LookDirection.AWAY_FROM_TARGET, "SpawnerPlayerLance", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 25f, 100f);
     }
 
     public void BuildAi() {
