@@ -61,12 +61,12 @@ namespace MissionControl.AI {
     }
 
     public bool IssueAIOrder(CustomAIOrder order)	{
-      Main.Logger.Log("[IssueAIOrder] Handling order: " + order);
+      Main.LogDebug("[IssueAIOrder] Handling order: " + order);
       switch (order.CustomOrderType) {
         case "FOLLOW_LANCE": {
           FollowLanceOrder followLanceOrder = order as FollowLanceOrder;
-          Main.Logger.Log($"[IssueAIOrder] Received 'FOLLOW_LANCE' AI order. Following entity with tags '{string.Join(", ", followLanceOrder.EncounterTags.ToArray())}'");
-          List<ITaggedItem> objectsOfTypeWithTagSet = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetObjectsOfTypeWithTagSet(TaggedObjectType.Lance, followLanceOrder.EncounterTags);
+          Main.LogDebug($"[IssueAIOrder] Received 'FOLLOW_LANCE' AI order. Following entity with tags '{string.Join(", ", followLanceOrder.TargetEncounterTags.ToArray())}'");
+          List<ITaggedItem> objectsOfTypeWithTagSet = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetObjectsOfTypeWithTagSet(TaggedObjectType.Lance, followLanceOrder.TargetEncounterTags);
           if (objectsOfTypeWithTagSet.Count > 0) {
             Lance firstLance = objectsOfTypeWithTagSet[0] as Lance;
             this.SetVariable(MoveToFollowLanceNode.FOLLOW_LANCE_TARGET_GUID_KEY, new BehaviorVariableValue(firstLance.GUID));

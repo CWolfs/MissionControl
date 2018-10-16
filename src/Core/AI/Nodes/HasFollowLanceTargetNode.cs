@@ -12,7 +12,7 @@ namespace MissionControl.AI {
 
 		protected override BehaviorTreeResults Tick() {
       bool hasFollowLanceTarget = AiUtils.HasFollowLanceTarget(this.unit);
-			Main.Logger.Log($"[AI] [HasFollowLanceTargetNode] {hasFollowLanceTarget}");
+			Main.LogDebug($"[AI] [HasFollowLanceTargetNode] {hasFollowLanceTarget}");
 			return new BehaviorTreeResults((hasFollowLanceTarget) ? BehaviorNodeState.Success : BehaviorNodeState.Failure);
 		}
 	}

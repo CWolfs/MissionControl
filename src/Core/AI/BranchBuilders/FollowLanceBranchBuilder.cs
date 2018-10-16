@@ -5,12 +5,12 @@ using Harmony;
 using BattleTech;
 
 namespace MissionControl.AI {
-  public class TestBranchBuilder  : BehaviourTreeBranchBuilder {
+  public class FollowLanceBranchBuilder  : BehaviourTreeBranchBuilder {
     private BehaviorTree tree;
     private AbstractActor unit;
 
-    public TestBranchBuilder(BehaviorTreeIDEnum behaviourTreeType, string path, BehaviourInjectionOrder injectionOrder) : base(behaviourTreeType, path, injectionOrder) {
-      Main.Logger.Log("[TestBranchNode] Created CustomBehaviourTreeBranch");
+    public FollowLanceBranchBuilder(BehaviorTreeIDEnum behaviourTreeType, string path, BehaviourInjectionOrder injectionOrder) : base(behaviourTreeType, path, injectionOrder) {
+      Main.LogDebug("[FollowLanceBranchBuilder] Created CustomBehaviourTreeBranch");
     }
 
     public override void Build(BehaviorTree behaviourTree, CompositeBehaviorNode parentNode, int targetIndex, BehaviorNode target, AbstractActor unit) {
@@ -18,7 +18,7 @@ namespace MissionControl.AI {
       this.unit = unit;
 
       string targetName = (string)AccessTools.Field(typeof(BehaviorNode), "name").GetValue(target);
-      Main.Logger.Log($"[{this.GetType().Name}] Injecting custom behaviour branch {InjectionOrder} '{targetName}'");
+      Main.LogDebug($"[{this.GetType().Name}] Injecting custom behaviour branch {InjectionOrder} '{targetName}'");
 
       SequenceNode testBranchNodeRoot = new SequenceNode("follow_lance_if_following", behaviourTree, unit);
       BuildFirstLevel(testBranchNodeRoot);

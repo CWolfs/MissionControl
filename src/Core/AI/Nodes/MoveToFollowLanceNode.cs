@@ -12,9 +12,8 @@ using MissionControl;
 /*
   AI Logic - Move To Follow Lance
     - Get the lance to follow
-    - Find the mechs that are closest to each other - ignoring mechs too far away from the group
-    - Find the middle point between the selected mechs - this is the lance centre
-    - Move towards lance centre
+    - Get heaviest unit in lance
+    - Move towards target unit until reaching set radius around it
 */
 namespace MissionControl.AI {
 	public class MoveToFollowLanceNode : LeafBehaviorNode {
@@ -83,7 +82,7 @@ namespace MissionControl.AI {
         return new BehaviorTreeResults(BehaviorNodeState.Failure);
       }
 
-      Main.Logger.Log($"[MoveToFollowLanceNode] Target to follow is '{targetActor.DisplayName}'");
+      Main.LogDebug($"[MoveToFollowLanceNode] Target to follow is '{targetActor.DisplayName}'");
 
       bool shouldSprint = this.tree.GetCustomBehaviorVariableValue(FOLLOW_LANCE_SHOULD_SPRINT_KEY).BoolVal;
       shouldSprint = (!this.unit.HasAnyContactWithEnemy);
@@ -105,7 +104,7 @@ namespace MissionControl.AI {
       float followLanceZoneRadius = this.unit.BehaviorTree.GetCustomBehaviorVariableValue(FOLLOW_LANCE_ZONE_RADIUS_KEY).FloatVal;
 
       if (RoutingUtil.AllUnitsInsideRadiusOfPoint(lanceMembers, targetActor.CurrentPosition, followLanceZoneRadius)) {
-        Main.Logger.Log($"[MoveToFollowLanceNode] All units are within radius of target lance unit. Radius is '{followLanceZoneRadius}'.");
+        Main.LogDebug($"[MoveToFollowLanceNode] All units are within radius of target lance unit. Radius is '{followLanceZoneRadius}'.");
         return new BehaviorTreeResults(BehaviorNodeState.Failure);  // If within the radius then go onto other behaviours - if outside then pick this back up
       }
 

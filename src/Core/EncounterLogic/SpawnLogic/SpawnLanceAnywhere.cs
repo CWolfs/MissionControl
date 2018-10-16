@@ -23,7 +23,7 @@ namespace MissionControl.Logic {
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
 
-    /* // TODO: Reactive when you have a test for centre of map for pathfinding validity
+    /* // TODO: Reactivate when you have a test for centre of map for pathfinding validity
     public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey) : base(encounterRules) {
       this.lanceKey = lanceKey;
     }

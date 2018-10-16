@@ -27,6 +27,10 @@ namespace MissionControl {
 			Path = modDirectory;
 		}
 
+		public static void LogDebug(string message) {
+			if (Main.Settings.DebugMode) Main.Logger.LogDebug(message);
+		}
+
 		// Entry point into the mod, specified in the `mod.json`
 		public static void Init(string modDirectory, string modSettings) {
 			try {

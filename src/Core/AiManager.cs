@@ -25,7 +25,7 @@ namespace MissionControl {
 
     private AiManager() {
       // Test
-      BehaviourTreeBranchBuilder customBehaviourBranch = new TestBranchBuilder(BehaviorTreeIDEnum.CoreAITree,
+      BehaviourTreeBranchBuilder customBehaviourBranch = new FollowLanceBranchBuilder(BehaviorTreeIDEnum.CoreAITree,
         "comply_with_stay_inside_region_order", BehaviourInjectionOrder.AFTER_SIBLING);
       AddCustomBehaviourBranch(customBehaviourBranch.BehaviourTreeType, customBehaviourBranch.Path, customBehaviourBranch);
     }
@@ -57,7 +57,7 @@ namespace MissionControl {
 
         if (nodeSearchResults != null) {
           string name = (string)AccessTools.Field(typeof(BehaviorNode), "name").GetValue(nodeSearchResults.Node);
-          Main.Logger.Log($"[FindNode] Found target from path '{customBranch.Path}'. Target found was '{name}'");
+          Main.LogDebug($"[FindNode] Found target from path '{customBranch.Path}'. Target found was '{name}'");
           return nodeSearchResults;
         }
       }
