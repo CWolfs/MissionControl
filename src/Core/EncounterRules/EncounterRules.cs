@@ -148,12 +148,12 @@ namespace MissionControl.Rules {
       GameObject plot = GetClosestPlot(playerLanceSpawnPosition);
       
       if (plot == null) {
-        Main.Logger.LogError($"[{this.GetType().Name}] GetPlotBaseName for map '{mapName}' is empty");
+        Main.Logger.Log($"[{this.GetType().Name}] GetPlotBaseName for map '{mapName}' is empty");
         State = EncounterState.FAILED;
         return "";
       }
 
-      Main.Logger.LogError($"[{this.GetType().Name}] Using plot name '{plot.name}'");
+      Main.Logger.Log($"[{this.GetType().Name}] Using plot name '{plot.name}'");
       return plot.name;
     }
 
