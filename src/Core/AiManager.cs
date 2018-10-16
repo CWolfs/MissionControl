@@ -31,12 +31,14 @@ namespace MissionControl {
     }
 
     public void LoadCustomBehaviourSequences(BehaviorTree behaviourTree, BehaviorTreeIDEnum behaviourTreeType, AbstractActor unit) {
-      List<BehaviourTreeBranchBuilder> customBehaviourBranches = injectionBranchRoots[behaviourTreeType];
-      foreach (BehaviourTreeBranchBuilder customBehaviourBranch in customBehaviourBranches) {
-        NodeSearchResult nodeSearchResults = FindNode(behaviourTree, customBehaviourBranch);
-        if (nodeSearchResults != null) {
-          AddCustomBehaviourVariableScopes(unit);
-          customBehaviourBranch.Build(behaviourTree, nodeSearchResults.ParentNode, nodeSearchResults.NodeIndex, nodeSearchResults.Node, unit);
+      if (injectionBranchRoots.ContainsKey(behaviourTreeType)) {
+        List<BehaviourTreeBranchBuilder> customBehaviourBranches = injectionBranchRoots[behaviourTreeType];
+        foreach (BehaviourTreeBranchBuilder customBehaviourBranch in customBehaviourBranches) {
+          NodeSearchResult nodeSearchResults = FindNode(behaviourTree, customBehaviourBranch);
+          if (nodeSearchResults != null) {
+            AddCustomBehaviourVariableScopes(unit);
+            customBehaviourBranch.Build(behaviourTree, nodeSearchResults.ParentNode, nodeSearchResults.NodeIndex, nodeSearchResults.Node, unit);
+          }
         }
       }
     }
