@@ -20,14 +20,14 @@ namespace MissionControl.Rules {
 
     public void BuildSpawns() {
       Main.Logger.Log("[DefendBaseEncounterRules] Building spawns rules");
-      EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, "SpawnerPlayerLance", "PlotBase", "SpawnerLanceEnemyWave1", "PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 100f, 200f));
+      EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, "SpawnerPlayerLance", "PlotBase", "SpawnerLanceEnemyWave1", "PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 50f, 300f));
+      EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerLanceEnemyWave1", "PlotBase", "SpawnerLanceEnemyWave3", SpawnLogic.LookDirection.TOWARDS_TARGET, 400f, 600f));
       /*
-      EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerLanceEnemyWave1", "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET, 300f, 500f));
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerLanceEnemyWave2", "PlotBase"));
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerLanceEnemyWave3", "PlotBase"));
       EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, "SpawnerLanceEnemyWave1", "SpawnerLanceEnemyWave1", "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 200f));
-      EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, "SpawnerLanceEnemyWave2", "SpawnerLanceEnemyWave2", SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 200f));
-      EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, "SpawnerLanceEnemyWave3", "SpawnerLanceEnemyWave3", SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 200f));
+      EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, "SpawnerLanceEnemyWave2", "SpawnerLanceEnemyWave2", "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 200f));
+      EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, "SpawnerLanceEnemyWave3", "SpawnerLanceEnemyWave3", "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 200f));
       */
     }
 
