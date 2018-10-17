@@ -55,8 +55,6 @@ namespace MissionControl.Logic {
       Vector3 orientationTargetPosition = orientationTarget.transform.position.GetClosestHexLerpedPointOnGrid();
       lance.transform.position = orientationTargetPosition;
 
-      Main.Logger.Log($"[SpawnLanceMembersAroundTarget] Final orientation target position is '{orientationTargetPosition}'");
-  
       List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
       foreach (GameObject spawnPoint in spawnPoints) {
         SpawnLanceMember(spawnPoint, orientationTarget, lookTarget, lookDirection);
