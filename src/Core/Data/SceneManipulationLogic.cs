@@ -38,8 +38,9 @@ namespace MissionControl.Logic {
       return GetRandomPositionFromTarget(target.transform.position, minDistance, maxDistance);
     }
 
-    protected Vector3 GetRandomPositionFromTarget(Vector3 targetPosition, float minDistance, float maxDistance) {
+    protected Vector3 GetRandomPositionFromTarget(Vector3 targPosition, float minDistance, float maxDistance) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+      Vector3 targetPosition = targPosition.GetClosestHexLerpedPointOnGrid();
 
       float xSignSelection = (UnityEngine.Random.value < 0.5f) ? -1f : 1f;
       float zSignSelection = (UnityEngine.Random.value < 0.5f) ? -1f : 1f;
@@ -50,9 +51,7 @@ namespace MissionControl.Logic {
       float zValue = UnityEngine.Random.Range(minDistance  / randomBuffer, maxDistance / randomBuffer) * zSignSelection;
 
       Vector3 randomPositionFromTarget = new Vector3(targetPosition.x + xValue, 0, targetPosition.z + zValue);
-      randomPositionFromTarget = combatState.HexGrid.GetClosestPointOnGrid(randomPositionFromTarget);
-      float yValue = combatState.MapMetaData.GetLerpedHeightAt(randomPositionFromTarget);
-      randomPositionFromTarget.y = yValue;
+      randomPositionFromTarget = randomPositionFromTarget.GetClosestHexLerpedPointOnGrid();
 
       if (!IsWithinBoundedDistanceOfTarget(targetPosition, randomPositionFromTarget, minDistance, maxDistance)) {
         return GetRandomPositionFromTarget(targetPosition, minDistance, maxDistance);

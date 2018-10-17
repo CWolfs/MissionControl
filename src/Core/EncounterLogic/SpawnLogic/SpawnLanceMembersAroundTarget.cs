@@ -50,9 +50,9 @@ namespace MissionControl.Logic {
     public override void Run(RunPayload payload) {
       GetObjectReferences();
       Main.Logger.Log($"[SpawnLanceMembersAroundTarget] For {lance.name}");
+      CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
 
-      Vector3 orientationTargetPosition = orientationTarget.transform.position;
-      orientationTargetPosition = GetValidLocation(orientationTargetPosition, knownValidLocation.transform.position);
+      Vector3 orientationTargetPosition = orientationTarget.transform.position.GetClosestHexLerpedPointOnGrid();
       lance.transform.position = orientationTargetPosition;
 
       Main.Logger.Log($"[SpawnLanceMembersAroundTarget] Final orientation target position is '{orientationTargetPosition}'");
@@ -91,7 +91,7 @@ namespace MissionControl.Logic {
             RotateAwayFromTarget(spawnPoint, lookTarget);
           }
 
-          if (!IsSpawnValid(spawnPoint, orientationTarget)) {
+          if (!IsSpawnValid(spawnPoint, knownValidLocation)) {
             CheckAttempts();
             SpawnLanceMember(spawnPoint, orientationTarget, lookTarget, lookDirection);
           } else {

@@ -100,7 +100,7 @@ namespace MissionControl {
       }
 
       try {
-        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(validityPosition, 9999f, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, 50f);
+        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(validityPosition, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, 50f);
         if (path != null && path.Count > 5) return true;
       } catch (Exception) {
         Main.Logger.LogWarning($"[IsSpawnValid] Array out of bounds detected in the path finding code. Flagging as invalid spawn. Select a new spawn point.");
