@@ -35,8 +35,11 @@ namespace MissionControl.Logic {
     }
 
     protected Vector3 GetRandomPositionFromTarget(GameObject target, float minDistance, float maxDistance) {
+      return GetRandomPositionFromTarget(target.transform.position, minDistance, maxDistance);
+    }
+
+    protected Vector3 GetRandomPositionFromTarget(Vector3 targetPosition, float minDistance, float maxDistance) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-      Vector3 targetPosition = target.transform.position;
 
       float xSignSelection = (UnityEngine.Random.value < 0.5f) ? -1f : 1f;
       float zSignSelection = (UnityEngine.Random.value < 0.5f) ? -1f : 1f;
@@ -52,7 +55,7 @@ namespace MissionControl.Logic {
       randomPositionFromTarget.y = yValue;
 
       if (!IsWithinBoundedDistanceOfTarget(targetPosition, randomPositionFromTarget, minDistance, maxDistance)) {
-        return GetRandomPositionFromTarget(target, minDistance, maxDistance);
+        return GetRandomPositionFromTarget(targetPosition, minDistance, maxDistance);
       } else {
         return randomPositionFromTarget;
       }

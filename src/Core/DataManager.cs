@@ -42,6 +42,7 @@ namespace MissionControl {
 
           Main.Logger.Log($"[DataManager] Loaded lance override '{lanceOverrideData.LanceKey}'");
 
+          /*
           if (Main.Settings.DebugMode) {
             Main.Logger.Log($"[DataManager] Lance def id '{lanceOverrideData.LanceDefId}'");
             Main.Logger.Log($"[DataManager] Lance Tag Set items '{string.Join(",", lanceOverrideData.LanceTagSet.Items)}' and source file '{lanceOverrideData.LanceTagSet.TagSetSourceFile}'");
@@ -59,6 +60,7 @@ namespace MissionControl {
               Main.Logger.Log($"[DataManager] Pilot Excluded Tag Set items '{string.Join(",", unitSpawnPointOverrideData.PilotExcludedTagSet.Items)}' and source file '{unitSpawnPointOverrideData.PilotExcludedTagSet.TagSetSourceFile}'");
             }
           }
+          */
         } else {
           Main.Logger.LogError($"[DataManager] Json format is wrong. Read the documentation on the lance override format.");
         }
