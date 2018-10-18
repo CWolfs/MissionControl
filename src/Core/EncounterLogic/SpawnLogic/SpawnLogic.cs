@@ -12,8 +12,7 @@ using MissionControl.Utils;
 
 namespace MissionControl.Logic {
   public abstract class SpawnLogic : SceneManipulationLogic {
-    private int SearchCount = 0;
-    private const int SearchCountMax = 40;
+    private List<Vector3> checkedPoints = null;
 
     public SpawnLogic(EncounterRules encounterRules) : base(encounterRules) { }
 
@@ -23,11 +22,11 @@ namespace MissionControl.Logic {
 
     public Vector3 GetClosestValidPathFindingHex(Vector3 origin) {
       Main.LogDebug($"[GetClosestValidPathFindingHex] About to process with origin '{origin}'");
-      SearchCount = 0;
+      checkedPoints = new List<Vector3>();
       Vector3 validOrigin = PathfindFromPointToPlayerSpawn(origin, 0, 5);
       
       if (validOrigin == Vector3.zero) {
-        Main.Logger.LogError("[GetClosestValidPathFindingHex] Loop detected so reverting to original");
+        Main.Logger.LogError($"[GetClosestValidPathFindingHex] No valid points found. Reverting to original of '{origin}'");
         return origin;
       }
 
@@ -39,18 +38,15 @@ namespace MissionControl.Logic {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       Vector3 originOnGrid = origin.GetClosestHexLerpedPointOnGrid();
       Vector3 playerLanceSpawnPosition = EncounterRules.SpawnerPlayerLanceGo.transform.position.GetClosestHexLerpedPointOnGrid();
-
-      // Protection against loops
-      SearchCount++;
-      if (SearchCount > SearchCountMax) return Vector3.zero;
-
+      checkedPoints.Add(originOnGrid);
       // Main.LogDebug($"[PathfindFromPointToPlayerSpawn - depth '{depth}'] Starting test on '{originOnGrid}'");
 
       if (!PathFinderManager.Instance.IsSpawnValid(originOnGrid, playerLanceSpawnPosition, UnitType.Vehicle)) {
         // Main.LogDebug($"[PathfindFromPointToPlayerSpawn - depth '{depth}'] Origin of '{originOnGrid}' is not a valid pathfinding location. Finding a point nearby");
-
         List<Vector3> adjacentPointsOnGrid = combatState.HexGrid.GetAdjacentPointsOnGrid(originOnGrid);
+        adjacentPointsOnGrid = adjacentPointsOnGrid.Except(checkedPoints).ToList();
         adjacentPointsOnGrid.Shuffle();
+  
         foreach (Vector3 point in adjacentPointsOnGrid) {
           Vector3 validPoint = point.GetClosestHexLerpedPointOnGrid();
           // Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Testing point '{validPoint}'");
