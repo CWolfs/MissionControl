@@ -27,7 +27,15 @@ namespace MissionControl.Logic {
     }
 
     protected bool AreLanceMemberSpawnsValid(GameObject lance, Vector3 checkTarget) {
+      List<GameObject> invalidLanceSpawns = GetInvalidLanceMemberSpawns(lance, checkTarget);
+      if (invalidLanceSpawns.Count <= 0) return true;
+      return false;
+    }
+
+    protected List<GameObject> GetInvalidLanceMemberSpawns(GameObject lance, Vector3 checkTarget) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+
+      List<GameObject> invalidLanceSpawns = new List<GameObject>();
       List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
 
       foreach (GameObject spawnPoint in spawnPoints) {
@@ -36,24 +44,27 @@ namespace MissionControl.Logic {
         // Ensure the lance member's spawn's closest valid point isn't on another spawn point's closest valid point
         if (IsPointTooCloseToOtherPointsClosestPointOnGrid(spawnPointPosition, spawnPoints.Where(sp => spawnPoint.name != sp.name).ToList())) {
           Main.Logger.LogWarning("[AreLanceMemberSpawnsValid] Lance member spawn is too close to the other spawns when snapped to the grid");
-          return false;
+          invalidLanceSpawns.Add(spawnPoint);
+          continue;
         }
 
         Vector3 checkTargetPosition = checkTarget.GetClosestHexLerpedPointOnGrid();
         if (!PathFinderManager.Instance.IsSpawnValid(spawnPointPosition, checkTargetPosition, UnitType.Vehicle)) {
           Main.Logger.LogWarning($"[AreLanceMemberSpawnsValid] Lance member spawn '{spawnPoint.name}' path to check target '{checkTarget}' is blocked. Select a new lance spawn point");
-          return false;
+          invalidLanceSpawns.Add(spawnPoint);
+          continue;
         }
 
         EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
         if (!encounterLayerData.IsInEncounterBounds(spawnPointPosition)) {
           Main.Logger.LogWarning("[AreLanceMemberSpawnsValid] Lance member spawn is outside of the boundary. Select a new lance spawn point.");
-          return false;  
+          invalidLanceSpawns.Add(spawnPoint);
+          continue; 
         }
       }
 
       PathFinderManager.Instance.Reset();
-      return true;
+      return invalidLanceSpawns;
     }
 
     protected bool IsPointTooCloseToOtherPointsClosestPointOnGrid(Vector3 point, List<GameObject> points) {
