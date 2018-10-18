@@ -19,6 +19,7 @@ namespace MissionControl.Logic {
     private float minDistanceFromTarget = 50f;
     private float maxDistanceFromTarget = 150f;
     private LookDirection lookDirection = LookDirection.TOWARDS_TARGET;
+    private bool fitLanceMembers = false;
 
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
@@ -29,12 +30,13 @@ namespace MissionControl.Logic {
       this.lookDirection = lookDirection;
     }
 
-    public SpawnLanceAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) : base(encounterRules) {
+    public SpawnLanceAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance, bool fitLanceMembers) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.orientationTargetKey = orientationTargetKey;
       this.minDistanceFromTarget = minDistance;
       this.maxDistanceFromTarget = maxDistance;
       this.lookDirection = lookDirection;
+      this.fitLanceMembers = fitLanceMembers;
     }
 
     public override void Run(RunPayload payload) {
@@ -43,11 +45,10 @@ namespace MissionControl.Logic {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       MissionControl encounterManager = MissionControl.Instance;
 
-      Vector3 lancePosition = lance.transform.position;
-      Vector3 newSpawnPosition = GetRandomPositionFromTarget(orientationTarget, minDistanceFromTarget, maxDistanceFromTarget);
+      Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
+      Vector3 newSpawnPosition = GetRandomPositionFromTarget(validOrientationTargetPosition, minDistanceFromTarget, maxDistanceFromTarget);
 
       if (encounterManager.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
-        newSpawnPosition.y = combatState.MapMetaData.GetLerpedHeightAt(newSpawnPosition);
         lance.transform.position = newSpawnPosition;
 
         if (lookDirection == LookDirection.TOWARDS_TARGET) {
@@ -56,9 +57,18 @@ namespace MissionControl.Logic {
           RotateAwayFromTarget(lance, orientationTarget);
         }
 
-        if (!AreLanceMemberSpawnsValid(lance, orientationTarget)) {
-          CheckAttempts();
-          Run(payload);
+        List<GameObject> invalidLanceSpawns = GetInvalidLanceMemberSpawns(lance, validOrientationTargetPosition);
+
+        if (invalidLanceSpawns.Count > 0) {
+          if (fitLanceMembers & invalidLanceSpawns.Count <= 2) {
+            Main.Logger.Log($"[SpawnLanceAroundTarget] Fitting invalid lance member spawns");
+            foreach (GameObject invalidSpawn in invalidLanceSpawns) {
+              SpawnLanceMember(invalidSpawn);
+            }
+          } else {
+            CheckAttempts();
+            Run(payload);
+          }
         } else {
           Main.Logger.Log("[SpawnLanceAroundTarget] Lance spawn complete");
         }
@@ -67,6 +77,12 @@ namespace MissionControl.Logic {
         CheckAttempts();
         Run(payload);
       }
+    }
+
+    private void SpawnLanceMember(GameObject spawnPoint) {
+      Main.Logger.Log($"[SpawnLanceAroundTarget] Fitting member '{spawnPoint.name}'");
+      Vector3 newSpawnLocation = GetClosestValidPathFindingHex(spawnPoint.transform.position);
+      spawnPoint.transform.position = newSpawnLocation;
     }
 
     private void CheckAttempts() {

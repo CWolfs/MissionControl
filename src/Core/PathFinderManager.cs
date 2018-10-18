@@ -82,6 +82,7 @@ namespace MissionControl {
 
     public bool IsSpawnValid(Vector3 position, Vector3 validityPosition, UnitType type) {
       AbstractActor pathfindingActor = null;
+      float pathFindingZoneRadius = 25f;
 
       if (type == UnitType.Mech) {
         pathfindingActor = pathFinderMech;
@@ -100,8 +101,8 @@ namespace MissionControl {
       }
 
       try {
-        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(validityPosition, 9999f, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, 50f);
-        if (path != null && path.Count > 5) return true;
+        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(validityPosition, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
+        if (path != null && path.Count > 1 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) return true;
       } catch (Exception) {
         Main.Logger.LogWarning($"[IsSpawnValid] Array out of bounds detected in the path finding code. Flagging as invalid spawn. Select a new spawn point.");
       }

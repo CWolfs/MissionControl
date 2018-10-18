@@ -30,7 +30,7 @@ namespace MissionControl.Trigger {
       SmartTriggerResponse onEncounterLoadIssueOrder = new SmartTriggerResponse();
       onEncounterLoadIssueOrder.inputMessage = MessageCenterMessageType.OnEncounterBegin;
       onEncounterLoadIssueOrder.designName = "Issue Follow Lance AI order on Encounter Start";
-      onEncounterLoadIssueOrder.conditionalbox = new EncounterConditionalBox(new AlwaysTrueConditional());
+      onEncounterLoadIssueOrder.conditionalbox = new EncounterConditionalBox(ScriptableObject.CreateInstance<AlwaysTrueConditional>());
 
       FollowLanceOrder followOrder = new FollowLanceOrder();
       followOrder.TargetEncounterTags.AddRange(this.targetTags);

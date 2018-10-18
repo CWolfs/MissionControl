@@ -20,43 +20,50 @@ namespace MissionControl.Logic {
       List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
 
       foreach (GameObject spawnPoint in spawnPoints) {
-        Vector3 spawnPointPosition = combatState.HexGrid.GetClosestPointOnGrid(spawnPoint.transform.position);
-        spawnPointPosition.y = combatState.MapMetaData.GetLerpedHeightAt(spawnPointPosition);
+        Vector3 spawnPointPosition = spawnPoint.transform.position.GetClosestHexLerpedPointOnGrid();
         spawnPoint.transform.position = spawnPointPosition;
       }
     }
 
-    protected bool AreLanceMemberSpawnsValid(GameObject lance, GameObject orientationTarget) {
+    protected bool AreLanceMemberSpawnsValid(GameObject lance, Vector3 checkTarget) {
+      List<GameObject> invalidLanceSpawns = GetInvalidLanceMemberSpawns(lance, checkTarget);
+      if (invalidLanceSpawns.Count <= 0) return true;
+      return false;
+    }
+
+    protected List<GameObject> GetInvalidLanceMemberSpawns(GameObject lance, Vector3 checkTarget) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+
+      List<GameObject> invalidLanceSpawns = new List<GameObject>();
       List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
 
       foreach (GameObject spawnPoint in spawnPoints) {
-        Vector3 spawnPointPosition = combatState.HexGrid.GetClosestPointOnGrid(spawnPoint.transform.position);
-        spawnPointPosition.y = combatState.MapMetaData.GetLerpedHeightAt(spawnPointPosition);
+        Vector3 spawnPointPosition = spawnPoint.transform.position.GetClosestHexLerpedPointOnGrid();
 
         // Ensure the lance member's spawn's closest valid point isn't on another spawn point's closest valid point
         if (IsPointTooCloseToOtherPointsClosestPointOnGrid(spawnPointPosition, spawnPoints.Where(sp => spawnPoint.name != sp.name).ToList())) {
           Main.Logger.LogWarning("[AreLanceMemberSpawnsValid] Lance member spawn is too close to the other spawns when snapped to the grid");
-          return false;
+          invalidLanceSpawns.Add(spawnPoint);
+          continue;
         }
 
-        Vector3 checkTarget = combatState.HexGrid.GetClosestPointOnGrid(orientationTarget.transform.position);
-        checkTarget.y = combatState.MapMetaData.GetLerpedHeightAt(checkTarget);
-        
-        if (!PathFinderManager.Instance.IsSpawnValid(spawnPointPosition, checkTarget, UnitType.Vehicle)) {
-          Main.Logger.LogWarning("[AreLanceMemberSpawnsValid] Lance member spawn path to first objective is blocked. Select a new lance spawn point");
-          return false;
+        Vector3 checkTargetPosition = checkTarget.GetClosestHexLerpedPointOnGrid();
+        if (!PathFinderManager.Instance.IsSpawnValid(spawnPointPosition, checkTargetPosition, UnitType.Vehicle)) {
+          Main.Logger.LogWarning($"[AreLanceMemberSpawnsValid] Lance member spawn '{spawnPoint.name}' path to check target '{checkTarget}' is blocked. Select a new lance spawn point");
+          invalidLanceSpawns.Add(spawnPoint);
+          continue;
         }
 
         EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
         if (!encounterLayerData.IsInEncounterBounds(spawnPointPosition)) {
           Main.Logger.LogWarning("[AreLanceMemberSpawnsValid] Lance member spawn is outside of the boundary. Select a new lance spawn point.");
-          return false;  
+          invalidLanceSpawns.Add(spawnPoint);
+          continue; 
         }
       }
 
       PathFinderManager.Instance.Reset();
-      return true;
+      return invalidLanceSpawns;
     }
 
     protected bool IsPointTooCloseToOtherPointsClosestPointOnGrid(Vector3 point, List<GameObject> points) {
