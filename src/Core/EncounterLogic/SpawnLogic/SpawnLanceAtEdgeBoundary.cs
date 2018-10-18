@@ -57,11 +57,13 @@ namespace MissionControl.Logic {
       Vector3 newSpawnPosition = new Vector3(xzEdge.Position.x, lancePosition.y, xzEdge.Position.z);
       newSpawnPosition.y = combatState.MapMetaData.GetLerpedHeightAt(newSpawnPosition);
 
+      Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
+
       lance.transform.position = newSpawnPosition;
       if (useOrientationTarget) RotateToTarget(lance, orientationTarget);
 
-      if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(lance.transform.position, orientationTarget.transform.position, minimumDistance)) {
-        if (!AreLanceMemberSpawnsValid(lance, orientationTarget)) {
+      if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(lance.transform.position, validOrientationTargetPosition, minimumDistance)) {
+        if (!AreLanceMemberSpawnsValid(lance, validOrientationTargetPosition)) {
           if (AttemptCount > AttemptCountMax) {  // Attempt to spawn on the selected edge. If it's not possible, select another edge
             edge = RectExtensions.RectEdge.ANY;
             AttemptCount = 0;

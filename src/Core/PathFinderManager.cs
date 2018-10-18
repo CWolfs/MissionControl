@@ -82,7 +82,7 @@ namespace MissionControl {
 
     public bool IsSpawnValid(Vector3 position, Vector3 validityPosition, UnitType type) {
       AbstractActor pathfindingActor = null;
-      float pathFindingZoneRadius = 50f;
+      float pathFindingZoneRadius = 25f;
 
       if (type == UnitType.Mech) {
         pathfindingActor = pathFinderMech;

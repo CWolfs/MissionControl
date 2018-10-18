@@ -57,15 +57,15 @@ namespace MissionControl.Logic {
       Vector3 newPosition = usableBounds.CalculateRandomPosition(boundaryLogic.Position);
 
       Vector3 lancePosition = lance.transform.position;
-      Vector3 newSpawnPosition = new Vector3(newPosition.x, lancePosition.y, newPosition.z);
-      newSpawnPosition.y = combatState.MapMetaData.GetLerpedHeightAt(newSpawnPosition);
-
+      Vector3 newSpawnPosition = lancePosition.GetClosestHexLerpedPointOnGrid();
       lance.transform.position = newSpawnPosition;
+
+      Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
 
       if (useOrientationTarget) RotateToTarget(lance, orientationTarget);
 
-      if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(lance.transform.position, orientationTarget.transform.position, minimumDistance)) {
-        if (!AreLanceMemberSpawnsValid(lance, orientationTarget)) {
+      if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(lance.transform.position, validOrientationTargetPosition, minimumDistance)) {
+        if (!AreLanceMemberSpawnsValid(lance, validOrientationTargetPosition)) {
           Run(payload);
         } else {
           Main.Logger.Log("[SpawnLanceAnywhere] Lance spawn complete");

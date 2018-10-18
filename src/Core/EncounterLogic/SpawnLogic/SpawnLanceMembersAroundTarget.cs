@@ -14,11 +14,9 @@ namespace MissionControl.Logic {
     private string lanceKey = "";
     private string orientationTargetKey = "";
     private string lookTargetKey = "";
-    private string knownValidLocationKey = "";
 
     private GameObject lance;
     private GameObject orientationTarget;
-    private GameObject knownValidLocation;
     private GameObject lookTarget;
     private LookDirection lookDirection;
     private float minDistanceFromTarget = 50f;
@@ -34,13 +32,9 @@ namespace MissionControl.Logic {
     public SpawnLanceMembersAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) :
       this(encounterRules, lanceKey, orientationTargetKey, orientationTargetKey, lookDirection, minDistance, maxDistance) { }
 
-    public SpawnLanceMembersAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, string lookTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) :
-      this(encounterRules, lanceKey, orientationTargetKey, orientationTargetKey, orientationTargetKey, lookDirection, minDistance, maxDistance) { }
-    
-    public SpawnLanceMembersAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, string knownValidLocationKey, string lookTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) : base(encounterRules) {
+    public SpawnLanceMembersAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, string lookTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.orientationTargetKey = orientationTargetKey;
-      this.knownValidLocationKey = knownValidLocationKey;
       this.lookTargetKey = lookTargetKey;
       this.lookDirection = lookDirection;
       minDistanceFromTarget = minDistance;
@@ -66,7 +60,6 @@ namespace MissionControl.Logic {
     protected override void GetObjectReferences() {
       this.EncounterRules.ObjectLookup.TryGetValue(lanceKey, out lance);
       this.EncounterRules.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
-      this.EncounterRules.ObjectLookup.TryGetValue(knownValidLocationKey, out knownValidLocation);
       this.EncounterRules.ObjectLookup.TryGetValue(lookTargetKey, out lookTarget);
 
       if (lance == null || orientationTarget == null || lookTarget == null) {

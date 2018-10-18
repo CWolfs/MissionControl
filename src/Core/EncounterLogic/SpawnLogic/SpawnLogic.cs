@@ -1,5 +1,7 @@
 using UnityEngine;
+
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -18,7 +20,7 @@ namespace MissionControl.Logic {
 
     public Vector3 GetClosestValidPathFindingHex(Vector3 origin) {
       Vector3 validOrigin = PathfindFromPointToPlayerSpawn(origin, 0, 5);
-      Main.Logger.Log($"[GetClosestValidPathFindingHex] Returning final point '{validOrigin}'");
+      Main.LogDebug($"[GetClosestValidPathFindingHex] Returning final point '{validOrigin}'");
       return validOrigin;	
   	}
 
@@ -26,27 +28,29 @@ namespace MissionControl.Logic {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       Vector3 originOnGrid = origin.GetClosestHexLerpedPointOnGrid();
       Vector3 playerLanceSpawnPosition = EncounterRules.SpawnerPlayerLanceGo.transform.position.GetClosestHexLerpedPointOnGrid();
-      Main.Logger.Log($"[PathfindFromPointToPlayerSpawn - depth '{depth}'] Starting test on '{originOnGrid}'");
+      // Main.LogDebug($"[PathfindFromPointToPlayerSpawn - depth '{depth}'] Starting test on '{originOnGrid}'");
 
       if (!PathFinderManager.Instance.IsSpawnValid(originOnGrid, playerLanceSpawnPosition, UnitType.Vehicle)) {
-        Main.Logger.Log($"[PathfindFromPointToPlayerSpawn - depth '{depth}'] Origin of '{originOnGrid}' is not a valid pathfinding location. Finding a point nearby");
+        // Main.LogDebug($"[PathfindFromPointToPlayerSpawn - depth '{depth}'] Origin of '{originOnGrid}' is not a valid pathfinding location. Finding a point nearby");
 
         List<Vector3> adjacentPointsOnGrid = combatState.HexGrid.GetAdjacentPointsOnGrid(originOnGrid);
+        adjacentPointsOnGrid.Shuffle();
         foreach (Vector3 point in adjacentPointsOnGrid) {
           Vector3 validPoint = point.GetClosestHexLerpedPointOnGrid();
-          Main.Logger.Log($"[PathfindFromPointToPlayerSpawn] Testing point '{validPoint}'");
+          // Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Testing point '{validPoint}'");
           if (PathFinderManager.Instance.IsSpawnValid(validPoint, playerLanceSpawnPosition, UnitType.Vehicle)) {
             return validPoint;
           }
         }
 
         // If all points were not valid, go through and check their adajcent ones
-        if (depth <= maxDepth) {
-          Main.Logger.Log($"[PathfindFromPointToPlayerSpawn] Heading a depth lower from {depth} to {depth+1}");
+        if (depth < maxDepth) {
+          // Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Heading a depth lower from {depth} to {depth+1}");
           foreach (Vector3 point in adjacentPointsOnGrid) {
             originOnGrid = PathfindFromPointToPlayerSpawn(point, depth + 1, maxDepth);
             if (originOnGrid != Vector3.zero) return originOnGrid;
           }
+          return Vector3.zero;
         } else {
           return Vector3.zero;
         }

@@ -26,7 +26,7 @@ namespace MissionControl.Logic {
       }
     }
 
-    protected bool AreLanceMemberSpawnsValid(GameObject lance, GameObject checkTarget) {
+    protected bool AreLanceMemberSpawnsValid(GameObject lance, Vector3 checkTarget) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
 
@@ -39,9 +39,9 @@ namespace MissionControl.Logic {
           return false;
         }
 
-        Vector3 checkTargetPosition = checkTarget.transform.position.GetClosestHexLerpedPointOnGrid();
+        Vector3 checkTargetPosition = checkTarget.GetClosestHexLerpedPointOnGrid();
         if (!PathFinderManager.Instance.IsSpawnValid(spawnPointPosition, checkTargetPosition, UnitType.Vehicle)) {
-          Main.Logger.LogWarning($"[AreLanceMemberSpawnsValid] Lance member spawn '{spawnPoint.name}' path to check target '{checkTarget.name}' is blocked. Select a new lance spawn point");
+          Main.Logger.LogWarning($"[AreLanceMemberSpawnsValid] Lance member spawn '{spawnPoint.name}' path to check target '{checkTarget}' is blocked. Select a new lance spawn point");
           return false;
         }
 
