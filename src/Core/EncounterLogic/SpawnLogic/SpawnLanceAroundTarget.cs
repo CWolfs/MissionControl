@@ -60,7 +60,7 @@ namespace MissionControl.Logic {
         List<GameObject> invalidLanceSpawns = GetInvalidLanceMemberSpawns(lance, validOrientationTargetPosition);
 
         if (invalidLanceSpawns.Count > 0) {
-          if (fitLanceMembers) {
+          if (fitLanceMembers & invalidLanceSpawns.Count <= 2) {
             Main.Logger.Log($"[SpawnLanceAroundTarget] Fitting invalid lance member spawns");
             foreach (GameObject invalidSpawn in invalidLanceSpawns) {
               SpawnLanceMember(invalidSpawn);
