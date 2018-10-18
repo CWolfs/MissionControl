@@ -24,7 +24,7 @@ namespace MissionControl.Rules {
     protected GameObject EncounterLayerGo { get; set; }
     protected EncounterLayerData EncounterLayerData { get; private set; }
     protected GameObject ChunkPlayerLanceGo { get; set; }
-    protected GameObject SpawnerPlayerLanceGo { get; set; }
+    public GameObject SpawnerPlayerLanceGo { get; set; }
 
     public List<LogicBlock> EncounterLogic { get; private set; } = new List<LogicBlock>();
     public Dictionary<string, GameObject> ObjectLookup { get; private set; } = new Dictionary<string, GameObject>();
