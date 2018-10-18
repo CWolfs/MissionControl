@@ -20,8 +20,7 @@ namespace MissionControl.Logic {
       List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
 
       foreach (GameObject spawnPoint in spawnPoints) {
-        Vector3 spawnPointPosition = combatState.HexGrid.GetClosestPointOnGrid(spawnPoint.transform.position);
-        spawnPointPosition.y = combatState.MapMetaData.GetLerpedHeightAt(spawnPointPosition);
+        Vector3 spawnPointPosition = spawnPoint.transform.position.GetClosestHexLerpedPointOnGrid();
         spawnPoint.transform.position = spawnPointPosition;
       }
     }

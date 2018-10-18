@@ -12,6 +12,9 @@ using MissionControl.Utils;
 
 namespace MissionControl.Logic {
   public abstract class SpawnLogic : SceneManipulationLogic {
+    private int SearchCount = 0;
+    private const int SearchCountMax = 40;
+
     public SpawnLogic(EncounterRules encounterRules) : base(encounterRules) { }
 
     protected bool IsSpawnValid(GameObject spawnPoint, GameObject checkTarget) {
@@ -19,7 +22,15 @@ namespace MissionControl.Logic {
     }
 
     public Vector3 GetClosestValidPathFindingHex(Vector3 origin) {
+      Main.LogDebug($"[GetClosestValidPathFindingHex] About to process with origin '{origin}'");
+      SearchCount = 0;
       Vector3 validOrigin = PathfindFromPointToPlayerSpawn(origin, 0, 5);
+      
+      if (validOrigin == Vector3.zero) {
+        Main.Logger.LogError("[GetClosestValidPathFindingHex] Loop detected so reverting to original");
+        return origin;
+      }
+
       Main.LogDebug($"[GetClosestValidPathFindingHex] Returning final point '{validOrigin}'");
       return validOrigin;	
   	}
@@ -28,6 +39,11 @@ namespace MissionControl.Logic {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       Vector3 originOnGrid = origin.GetClosestHexLerpedPointOnGrid();
       Vector3 playerLanceSpawnPosition = EncounterRules.SpawnerPlayerLanceGo.transform.position.GetClosestHexLerpedPointOnGrid();
+
+      // Protection against loops
+      SearchCount++;
+      if (SearchCount > SearchCountMax) return Vector3.zero;
+
       // Main.LogDebug($"[PathfindFromPointToPlayerSpawn - depth '{depth}'] Starting test on '{originOnGrid}'");
 
       if (!PathFinderManager.Instance.IsSpawnValid(originOnGrid, playerLanceSpawnPosition, UnitType.Vehicle)) {
