@@ -22,6 +22,7 @@ namespace MissionControl {
       }
     }
 
+    public bool HasLoadedDeferredDefs { get; private set; } = false;
     public string ModDirectory { get; private set; }
     private Dictionary<string, MLanceOverride> LanceOverrides { get; set; } = new Dictionary<string, MLanceOverride>();
 
@@ -30,6 +31,11 @@ namespace MissionControl {
     public void Init(string modDirectory) {
       ModDirectory = modDirectory;
       LoadLanceOverries();
+    }
+
+    public void LoadDeferredDefs() {
+      LoadVehicleDefs();
+      HasLoadedDeferredDefs = true;
     }
 
     private void LoadLanceOverries() {
