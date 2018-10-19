@@ -36,18 +36,18 @@ namespace MissionControl.Logic {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       Vector3 originOnGrid = origin.GetClosestHexLerpedPointOnGrid();
       Vector3 playerLanceSpawnPosition = EncounterRules.SpawnerPlayerLanceGo.transform.position.GetClosestHexLerpedPointOnGrid();
-      Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Starting test on '{originOnGrid}'");
+      // Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Starting test on '{originOnGrid}'");
 
       if (!PathFinderManager.Instance.IsSpawnValid(originOnGrid, playerLanceSpawnPosition, UnitType.Vehicle)) {
-        Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Origin of '{originOnGrid}' is not a valid pathfinding location. Finding a point nearby");
+        // Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Origin of '{originOnGrid}' is not a valid pathfinding location. Finding a point nearby");
         List<Vector3> adjacentPointsOnGrid = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(originOnGrid, 5);
         adjacentPointsOnGrid.Shuffle();
   
         foreach (Vector3 point in adjacentPointsOnGrid) {
           Vector3 validPoint = point.GetClosestHexLerpedPointOnGrid();
-          Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Testing point '{validPoint}'");
+          // Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Testing point '{validPoint}'");
           if (PathFinderManager.Instance.IsSpawnValid(validPoint, playerLanceSpawnPosition, UnitType.Vehicle)) {
-            Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Adjacent spawn has been found valid by IsSpawnValid check for '{validPoint}'");
+            // Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Adjacent spawn has been found valid by IsSpawnValid check for '{validPoint}'");
             return validPoint;
           }
         }
