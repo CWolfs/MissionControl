@@ -15,10 +15,12 @@ namespace MissionControl.Patches {
   [HarmonyPatch(typeof(SkirmishSettings_Beta), "LaunchMap")]
   public class SkirmishSettingsBetaLaunchMapPatch {
     static void Postfix() {
-      Main.Logger.Log($"[SkirmishSettingsBetaLaunchMapPatch Postfix] Patching LaunchMap");
-      UiManager.Instance.ClickedQuickSkirmish = false;
-      UiManager.Instance.ReadyToLoadQuickSkirmish = false;
-      LoadingCurtain.Hide();
+      if (UiManager.Instance.ClickedQuickSkirmish) {
+        Main.Logger.Log($"[SkirmishSettingsBetaLaunchMapPatch Postfix] Patching LaunchMap");
+        UiManager.Instance.ClickedQuickSkirmish = false;
+        UiManager.Instance.ReadyToLoadQuickSkirmish = false;
+        LoadingCurtain.Hide();
+      }
     }
   }
 }

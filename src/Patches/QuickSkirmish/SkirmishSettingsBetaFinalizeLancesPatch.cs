@@ -20,8 +20,8 @@ namespace MissionControl.Patches {
     public static string CLASH_LANCE_COST = "SP-15000000";
 
     static bool Prefix(SkirmishSettings_Beta __instance, ref LanceConfiguration __result) {
-      Main.Logger.Log($"[SkirmishSettingsBetaFinalizeLancesPatch Prefix] Patching FinalizeLances");
       if (UiManager.Instance.ClickedQuickSkirmish) {
+        Main.Logger.Log($"[SkirmishSettingsBetaFinalizeLancesPatch Prefix] Patching FinalizeLances");
         CloudUserSettings playerSettings = ActiveOrDefaultSettings.CloudSettings;
         LastUsedLances lastUsedLances = playerSettings.LastUsedLances;
 

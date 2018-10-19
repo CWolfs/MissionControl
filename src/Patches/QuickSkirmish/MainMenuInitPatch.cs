@@ -13,14 +13,19 @@ using MissionControl.Logic;
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(MainMenu), "Init")]
   public class MainMenuInitPatch {
-    static void Prefix(MainMenu __instance) {
-      Main.Logger.Log($"[MainMenuInitPatch Prefix] Patching Init");
-      if (Main.Settings.DebugSkirmishMode) {
-        UnityEngine.Random.InitState(DateTime.Now.Millisecond);
-        UiManager.Instance.SetupQuickSkirmishMenu();
-      }
+    public static bool HasPatchedMainMenu = false;
 
-      DataManager.Instance.LoadVehicleDefs();
+    static void Postfix(MainMenu __instance) {
+      if (!HasPatchedMainMenu) {
+        if (Main.Settings.DebugSkirmishMode) {
+          Main.Logger.Log($"[MainMenuInitPatch Postfix] Patching Init");
+          UnityEngine.Random.InitState(DateTime.Now.Millisecond);
+          UiManager.Instance.SetupQuickSkirmishMenu();
+        }
+
+        DataManager.Instance.LoadVehicleDefs();
+        HasPatchedMainMenu = true;
+      }
     }
   }
 }
