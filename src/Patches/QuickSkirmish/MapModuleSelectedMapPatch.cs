@@ -20,9 +20,8 @@ namespace MissionControl.Patches {
     static MapAndEncounters mapAndEncounter = null;
 
     static bool Prefix(MapModule __instance, ref MapAndEncounters __result) {
-      Main.Logger.Log($"[MapModuleSelectedMapPatch Prefix] Patching SelectedMap");
-
       if (UiManager.Instance.ClickedQuickSkirmish) {
+        Main.Logger.Log($"[MapModuleSelectedMapPatch Prefix] Patching SelectedMap");
         if (mapAndEncounter == null) {
           using (MetadataDatabase metadataDatabase = new MetadataDatabase()) {
             List<MapAndEncounters> mapAndEncounters = metadataDatabase.GetReleasedMapsAndEncountersByContractType(new ContractType[] { ContractType.ArenaSkirmish });

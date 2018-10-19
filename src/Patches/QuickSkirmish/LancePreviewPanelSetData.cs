@@ -16,8 +16,10 @@ namespace MissionControl.Patches {
   [HarmonyPatch(typeof(LancePreviewPanel), "SetData")]
   public class LancePreviewPanelSetData {
     static bool Prefix(LancePreviewPanel __instance) {
-      Main.Logger.Log($"[LancePreviewPanelSetData Prefix] Patching SetData");
-      if (UiManager.Instance.ClickedQuickSkirmish) return false;
+      if (UiManager.Instance.ClickedQuickSkirmish) {
+        Main.Logger.Log($"[LancePreviewPanelSetData Prefix] Patching SetData");
+        return false;
+      }
       return true;
     }
   }

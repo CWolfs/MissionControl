@@ -21,9 +21,8 @@ namespace MissionControl.Patches {
     static BattleMood mood = null;
 
     static bool Prefix(MapModule __instance, ref BattleMood __result) {
-      Main.Logger.Log($"[MapModuleSelectedMoodPatch Prefix] Patching SelectedMood");
-
       if (UiManager.Instance.ClickedQuickSkirmish) {
+        Main.Logger.Log($"[MapModuleSelectedMoodPatch Prefix] Patching SelectedMood");
         if (mood == null) {
           using (MetadataDatabase metadataDatabase = new MetadataDatabase()) {
             List<Mood_MDD> moods = metadataDatabase.GetMoods();

@@ -32,6 +32,7 @@ namespace MissionControl {
 
     public bool ClickedQuickSkirmish { get; set; } = false;
     public bool ReadyToLoadQuickSkirmish { get; set; } = false;
+    public bool ShouldPatchMainMenu { get; set; } = true;
 
     public void SetupQuickSkirmishMenu() {
       GameObject mainMenuScreenGo = GameObject.Find("uixPrfPanl_mainMenu-Screen(Clone)");
