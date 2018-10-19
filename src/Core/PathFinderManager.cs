@@ -102,7 +102,28 @@ namespace MissionControl {
 
       try {
         List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(validityPosition, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
-        if (path != null && path.Count > 1 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) return true;
+        if (path != null && path.Count > 2 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) return true;
+
+        /* // Failed attempt to improve spawn checks
+        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(validityPosition, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
+        if (path != null && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
+          if (path.Count > 4) { // very strong pathfinding location
+            return true;
+          } else {
+            Main.Logger.Log($"[PathFinderManager] Spawn point is valid due to proximity but is not strong enough success for pathing. Attempting to confirm.");
+            CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+            List<Vector3> pointsAroundPosition = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(position, 3, 5);
+
+            foreach (Vector3 point in pointsAroundPosition) {
+              List<Vector3> secondaryPath = DynamicLongRangePathfinder.GetDynamicPathToDestination(point, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, 2); 
+              if (path != null && path.Count > 2) {
+                Main.Logger.Log($"[PathFinderManager] Spawn point is valid. It is close to the validation point but can be moved away from. Success.");
+                return true;
+              }
+            }
+          }
+        }
+        */
       } catch (Exception) {
         Main.Logger.LogWarning($"[IsSpawnValid] Array out of bounds detected in the path finding code. Flagging as invalid spawn. Select a new spawn point.");
       }
