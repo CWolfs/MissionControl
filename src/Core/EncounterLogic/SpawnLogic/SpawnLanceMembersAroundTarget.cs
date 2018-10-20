@@ -119,7 +119,8 @@ namespace MissionControl.Logic {
         Main.Logger.Log($"[SpawnLanceMembersAroundTarget] Cannot find a suitable lance member spawn within the boundaries of {minDistanceFromTarget} and {maxDistanceFromTarget}. Widening search");
         minDistanceFromTarget -= 10;
         if (minDistanceFromTarget <= 10) minDistanceFromTarget = 10;
-        maxDistanceFromTarget += 25;     
+        maxDistanceFromTarget += 25;
+        if (maxDistanceFromTarget > 700) maxDistanceFromTarget = 700;
       }
     }
   }

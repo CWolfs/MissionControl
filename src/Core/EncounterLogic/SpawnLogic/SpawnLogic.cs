@@ -16,7 +16,7 @@ namespace MissionControl.Logic {
     public SpawnLogic(EncounterRules encounterRules) : base(encounterRules) { }
 
     protected bool IsSpawnValid(GameObject spawnPoint, GameObject checkTarget) {
-      return IsSpawnValid(spawnPoint, checkTarget.transform.position);
+      return IsSpawnValid(spawnPoint, checkTarget.transform.position.GetClosestHexLerpedPointOnGrid());
     }
 
     public Vector3 GetClosestValidPathFindingHex(Vector3 origin) {

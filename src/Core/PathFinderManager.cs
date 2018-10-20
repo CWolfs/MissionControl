@@ -81,6 +81,12 @@ namespace MissionControl {
     }
 
     public bool IsSpawnValid(Vector3 position, Vector3 validityPosition, UnitType type) {
+      CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+      MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
+      TerrainMaskFlags terrainMaskFlags = cellData.terrainMask;
+      if (terrainMaskFlags == TerrainMaskFlags.DeepWater) return false;
+      if (terrainMaskFlags == TerrainMaskFlags.Impassable) return false;
+
       AbstractActor pathfindingActor = null;
       float pathFindingZoneRadius = 25f;
 
@@ -91,7 +97,6 @@ namespace MissionControl {
       }
 
       if (pathfindingActor.GameRep == null) {
-        CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
         pathfindingActor.Init(position, 0, pathfindingActor.thisUnitChecksEncounterCells);
         pathfindingActor.InitGameRep(null);
       } else {
