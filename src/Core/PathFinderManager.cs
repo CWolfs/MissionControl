@@ -83,9 +83,9 @@ namespace MissionControl {
     public bool IsSpawnValid(Vector3 position, Vector3 validityPosition, UnitType type) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
-      TerrainMaskFlags terrainMaskFlags = cellData.terrainMask;
-      if (terrainMaskFlags == TerrainMaskFlags.DeepWater) return false;
-      if (terrainMaskFlags == TerrainMaskFlags.Impassable) return false;
+      TerrainMaskFlags terrainMask = cellData.terrainMask;
+      bool isImpassableOrDeepWater = SplatMapInfo.IsImpassable(terrainMask) || (SplatMapInfo.IsDeepWater(terrainMask) && !cellData.MapEncounterLayerDataCell.HasBuilding);
+      if (isImpassableOrDeepWater) return false;
 
       AbstractActor pathfindingActor = null;
       float pathFindingZoneRadius = 25f;
