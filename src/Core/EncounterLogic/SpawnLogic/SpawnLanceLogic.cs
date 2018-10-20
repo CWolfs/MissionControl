@@ -40,6 +40,13 @@ namespace MissionControl.Logic {
       foreach (GameObject spawnPoint in spawnPoints) {
         Vector3 spawnPointPosition = spawnPoint.transform.position.GetClosestHexLerpedPointOnGrid();
 
+        EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
+        if (!encounterLayerData.IsInEncounterBounds(spawnPointPosition)) {
+          Main.Logger.LogWarning("[AreLanceMemberSpawnsValid] Lance member spawn is outside of the boundary. Select a new lance spawn point.");
+          invalidLanceSpawns.Add(spawnPoint);
+          continue; 
+        }
+
         // Ensure the lance member's spawn's closest valid point isn't on another spawn point's closest valid point
         if (IsPointTooCloseToOtherPointsClosestPointOnGrid(spawnPointPosition, spawnPoints.Where(sp => spawnPoint.name != sp.name).ToList())) {
           Main.Logger.LogWarning("[AreLanceMemberSpawnsValid] Lance member spawn is too close to the other spawns when snapped to the grid");
@@ -52,13 +59,6 @@ namespace MissionControl.Logic {
           Main.Logger.LogWarning($"[AreLanceMemberSpawnsValid] Lance member spawn '{spawnPoint.name}' path to check target '{checkTarget}' is blocked. Select a new lance spawn point");
           invalidLanceSpawns.Add(spawnPoint);
           continue;
-        }
-
-        EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
-        if (!encounterLayerData.IsInEncounterBounds(spawnPointPosition)) {
-          Main.Logger.LogWarning("[AreLanceMemberSpawnsValid] Lance member spawn is outside of the boundary. Select a new lance spawn point.");
-          invalidLanceSpawns.Add(spawnPoint);
-          continue; 
         }
       }
 
