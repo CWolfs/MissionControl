@@ -104,4 +104,9 @@ public static class RectExtensions {
     boundaryIntersect.y -= halfMapWithoutBorder;
     return boundaryIntersect;
   }
+
+  public static Vector2 GetRandomPosition(this Rect rect, float extendDistance = 0f) {
+    return new Vector2(Random.Range(rect.xMin - extendDistance, rect.xMax + extendDistance),
+                        Random.Range(rect.yMin - extendDistance, rect.yMax + extendDistance));
+  }
 }
