@@ -43,7 +43,7 @@ namespace MissionControl.Logic {
 
       foreach (GameObject spawnPoint in spawnPoints) {
         Vector3 spawnPointPosition = spawnPoint.transform.position.GetClosestHexLerpedPointOnGrid();
-        Main.Logger.Log($"[GetInvalidLanceMemberSpawns] Spawn point GetClosestHexLerpedPointOnGrid for '{spawnPoint.name}'is '{spawnPointPosition}'");
+        Main.Logger.Log($"[GetInvalidLanceMemberSpawns] Spawn point's closest hex lerped point on grid for '{spawnPoint.name}' is '{spawnPointPosition}'");
 
         EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
         if (!encounterLayerData.IsInEncounterBounds(spawnPointPosition)) {

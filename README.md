@@ -59,7 +59,7 @@ All feedback is welcome in the [issues section](https://github.com/CWolfs/Missio
 
 ## Special Thanks
 
-I wouldn't have completed such an ambious mod withou the support and help from so many people. Sorry if I miss anyone out as so many people have helped in their own way. In no particular order,
+I wouldn't have completed such an ambitious mod without the support and help of the modding community. Sorry if I miss anyone out as so many people have helped in their own way. In no particular order,
 
 * Eck
 * Morphyum
