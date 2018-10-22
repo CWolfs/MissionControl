@@ -17,7 +17,7 @@ using MissionControl.Logic;
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(MapModule), "get_SelectedMap")]
   public class MapModuleSelectedMapPatch {
-    static MapAndEncounters mapAndEncounter = null;
+    public static MapAndEncounters mapAndEncounter = null;
 
     static bool Prefix(MapModule __instance, ref MapAndEncounters __result) {
       if (UiManager.Instance.ClickedQuickSkirmish) {
