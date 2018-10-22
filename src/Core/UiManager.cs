@@ -19,6 +19,7 @@ using BattleTech.Save;
 using BattleTech.Framework;
 
 using MissionControl.Data;
+using MissionControl.Patches;
 
 namespace MissionControl {
   public class UiManager {
@@ -86,6 +87,7 @@ namespace MissionControl {
     }
 
     private void OnQuickSkirmishButtonClicked() {
+      ResetPatchValues();
       MainMenu mainMenu = GameObject.Find("uixPrfPanl_mainMenu-Screen(Clone)").GetComponent<MainMenu>();
       mainMenu.ReceiveButtonPress("Back");
       Main.Logger.Log("[OnQuickSkirmishButtonClicked] Clicked");
@@ -118,6 +120,11 @@ namespace MissionControl {
 
     private void LoadQuickSkirmishMap(SkirmishSettings_Beta skirmishMenu) {
       AccessTools.Method(typeof(SkirmishSettings_Beta), "LaunchMap").Invoke(skirmishMenu, null);
+    }
+
+    private void ResetPatchValues() {
+      MapModuleSelectedMapPatch.mapAndEncounter = null;
+      MapModuleSelectedMoodPatch.mood = null;
     }
   }
 }

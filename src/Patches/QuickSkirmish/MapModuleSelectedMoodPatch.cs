@@ -18,7 +18,7 @@ using MissionControl.Logic;
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(MapModule), "get_SelectedMood")]
   public class MapModuleSelectedMoodPatch {
-    static BattleMood mood = null;
+    public static BattleMood mood = null;
 
     static bool Prefix(MapModule __instance, ref BattleMood __result) {
       if (UiManager.Instance.ClickedQuickSkirmish) {
