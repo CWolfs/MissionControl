@@ -60,6 +60,8 @@ namespace MissionControl.Logic {
       Vector3 newSpawnPosition = new Vector3(xzEdge.Position.x, lancePosition.y, xzEdge.Position.z);
       newSpawnPosition = newSpawnPosition.GetClosestHexLerpedPointOnGrid();
       lance.transform.position = newSpawnPosition;
+      
+      Main.Logger.Log($"[SpawnLanceAtEdgeBoundary] Attempting to spance lance at point on lerped grid '{newSpawnPosition}'");
 
       Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
 

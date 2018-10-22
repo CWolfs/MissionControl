@@ -110,7 +110,13 @@ namespace MissionControl {
       }
 
       try {
-        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(validityPosition, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
+        PathNodeGrid pathfinderPathGrid = pathfindingActor.Pathing.CurrentGrid;
+        PathNode positionPathNode = pathfinderPathGrid.GetValidPathNodeAt(position, float.MaxValue);
+        DynamicLongRangePathfinder.PointWithCost pointWithCost = new DynamicLongRangePathfinder.PointWithCost(combatState.HexGrid.GetClosestHexPoint3OnGrid(positionPathNode.Position), (float)positionPathNode.DepthInPath, (validityPosition - positionPathNode.Position).magnitude) {
+					pathNode = positionPathNode
+				};
+        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(new List<DynamicLongRangePathfinder.PointWithCost>() { pointWithCost }, validityPosition, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
+        
         if (path != null && path.Count > 2 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) return true;
 
         /* // Failed attempt to improve spawn checks
