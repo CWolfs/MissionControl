@@ -45,6 +45,7 @@ namespace MissionControl.Logic {
         SpawnUnitMethodType.InstantlyAtSpawnPoint,
         unitGuids
       );
+      lanceSpawner.transform.position = Vector3.zero;
     }
   }
 }

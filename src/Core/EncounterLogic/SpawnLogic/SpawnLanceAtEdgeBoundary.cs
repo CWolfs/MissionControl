@@ -21,6 +21,8 @@ namespace MissionControl.Logic {
     private bool useMiniumDistance = false;
     private float minimumDistance = 400f;
 
+    private Vector3 vanillaPosition;
+
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
 
@@ -41,6 +43,7 @@ namespace MissionControl.Logic {
     public override void Run(RunPayload payload) {
       GetObjectReferences();
       Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] For {lance.name}");
+      vanillaPosition = lance.transform.position;
 
       AttemptCount++;
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
@@ -62,11 +65,23 @@ namespace MissionControl.Logic {
 
       if (useOrientationTarget) RotateToTarget(lance, orientationTarget);
 
-      if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(lance.transform.position, validOrientationTargetPosition, minimumDistance)) {
+      if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(newSpawnPosition, validOrientationTargetPosition, minimumDistance)) {
         if (!AreLanceMemberSpawnsValid(lance, validOrientationTargetPosition)) {
           if (AttemptCount > AttemptCountMax) {  // Attempt to spawn on the selected edge. If it's not possible, select another edge
             edge = RectExtensions.RectEdge.ANY;
             AttemptCount = 0;
+            minimumDistance -= 25f;
+            if (minimumDistance <= 0) {
+              if (vanillaPosition == Vector3.zero) {
+                Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Cannot find valid spawn. Spawning with 'SpawnAnywhere' profile.");
+                RunFallbackSpawn(payload, this.lanceKey, this.orientationTargetKey);
+              } else {
+                lance.transform.position = vanillaPosition;
+                Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Cannot find valid spawn. Spawning at vanilla location for the encounter");
+              }
+              return;
+            }
+            Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Cannot find valid spawn. Selecting a new edge and reducing minimum distance to '{minimumDistance}'");
             Run(payload);
           } else {
             edge = xzEdge.Edge;

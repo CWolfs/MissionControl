@@ -25,6 +25,11 @@ namespace MissionControl.Logic {
       }
     }
 
+    protected void RunFallbackSpawn(RunPayload payload, string lanceKey, string orientationTargetKey) {
+      SpawnLanceAnywhere spawnAnywhere = new SpawnLanceAnywhere(EncounterRules, lanceKey, orientationTargetKey);
+      spawnAnywhere.Run(payload);
+    }
+
     protected bool AreLanceMemberSpawnsValid(GameObject lance, Vector3 checkTarget) {
       List<GameObject> invalidLanceSpawns = GetInvalidLanceMemberSpawns(lance, checkTarget);
       if (invalidLanceSpawns.Count <= 0) return true;
@@ -33,7 +38,6 @@ namespace MissionControl.Logic {
 
     protected List<GameObject> GetInvalidLanceMemberSpawns(GameObject lance, Vector3 checkTarget) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-
       List<GameObject> invalidLanceSpawns = new List<GameObject>();
       List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
 

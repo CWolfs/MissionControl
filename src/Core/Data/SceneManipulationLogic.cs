@@ -87,7 +87,7 @@ namespace MissionControl.Logic {
       Vector3 vectorToTarget = target - origin;
       vectorToTarget.y = 0;
       float distance = vectorToTarget.magnitude;
-      if (distance > minDistance) return true;
+      if (distance >= minDistance) return true;
       Main.Logger.LogWarning($"[IsWithinBoundedDistanceOfTarget] Distance is {distance} and so not within bounds. Getting new random position");
       return false;  
     }
