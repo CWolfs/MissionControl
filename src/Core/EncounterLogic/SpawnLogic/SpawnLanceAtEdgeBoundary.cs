@@ -53,13 +53,13 @@ namespace MissionControl.Logic {
       Rect usableBounds = boundaryRec.GenerateUsableBoundary();
       RectEdgePosition xzEdge = usableBounds.CalculateRandomXZEdge(boundary.transform.position, edge);
 
-      Vector3 lancePosition = lance.transform.position;
+      Vector3 lancePosition = lance.transform.position.GetClosestHexLerpedPointOnGrid();
       Vector3 newSpawnPosition = new Vector3(xzEdge.Position.x, lancePosition.y, xzEdge.Position.z);
-      newSpawnPosition.y = combatState.MapMetaData.GetLerpedHeightAt(newSpawnPosition);
+      newSpawnPosition = newSpawnPosition.GetClosestHexLerpedPointOnGrid();
+      lance.transform.position = newSpawnPosition;
 
       Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
 
-      lance.transform.position = newSpawnPosition;
       if (useOrientationTarget) RotateToTarget(lance, orientationTarget);
 
       if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(lance.transform.position, validOrientationTargetPosition, minimumDistance)) {
