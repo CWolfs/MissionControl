@@ -57,6 +57,21 @@ This roadmap contains features that may not make it into the mod. It depends on 
 
 All feedback is welcome in the [issues section](https://github.com/CWolfs/MissionControl/issues).
 
+## Special Thanks
+
+I wouldn't have completed such an ambious mod withou the support and help from so many people. Sorry if I miss anyone out as so many people have helped in their own way. In no particular order,
+
+* Eck
+* Morphyum
+* jo
+* LadyAleko
+* akodoreign
+* GentlePayload
+* bloodydoves
+* gnivler
+* TekGnosis
+* ...and everyone in the modder channels at BATTLETECHGAME discord who helped in lots of different ways!
+
 ## Author
 
 Richard Griffiths (CWolf)
