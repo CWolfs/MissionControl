@@ -42,7 +42,7 @@ namespace MissionControl.Logic {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
 
       Vector3 newPosition = GetRandomPositionWithinBounds();
-      Main.Logger.Log($"[SpawnLanceAnywhere] Attempting selection of random position with bounds of '{newPosition}'");
+      Main.Logger.Log($"[SpawnLanceAnywhere] Attempting selection of random position in bounds. Selected position '{newPosition}'");
       lance.transform.position = newPosition;
 
       Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
@@ -60,20 +60,6 @@ namespace MissionControl.Logic {
         Main.Logger.Log("[SpawnLanceAnywhere] Spawn is too close to the target. Selecting a new spawn.");
         Run(payload);
       }
-    }
-
-    public Vector3 GetRandomPositionWithinBounds() {
-      MissionControl EncounterManager = MissionControl.Instance;
-      GameObject chunkBoundaryRect = EncounterManager.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary").gameObject;
-      GameObject boundary = chunkBoundaryRect.transform.Find("EncounterBoundaryRect").gameObject;
-      EncounterBoundaryChunkGameLogic chunkBoundary = chunkBoundaryRect.GetComponent<EncounterBoundaryChunkGameLogic>();
-      EncounterBoundaryRectGameLogic boundaryLogic = boundary.GetComponent<EncounterBoundaryRectGameLogic>();
-      Rect boundaryRec = chunkBoundary.GetEncounterBoundaryRectBounds();
-
-      Vector2 randomRecPosition = boundaryRec.GetRandomPosition();
-      Vector3 newPosition = new Vector3(randomRecPosition.x, 0f, randomRecPosition.y);
-
-      return newPosition.GetClosestHexLerpedPointOnGrid();
     }
 
     protected override void GetObjectReferences() {

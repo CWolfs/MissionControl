@@ -60,19 +60,6 @@ public static class RectExtensions {
     return edgePosition;
   }
 
-  public static Vector3 CalculateRandomPosition(this Rect rect) {
-    float width = rect.width;
-    float height = rect.height;
-
-    return new Vector3(Random.Range(0f, width), 0f, Random.Range(0f, height));
-  }
-
-  public static Vector3 CalculateRandomPosition(this Rect rect, Vector3 offset) {
-    Vector3 position = rect.CalculateRandomPosition();
-    position = position + offset;
-    return position;
-  }
-
   public static bool Intersects(this Rect r1, Rect r2, out Rect area) {
     area = new Rect();
 
@@ -92,6 +79,8 @@ public static class RectExtensions {
     return false;
   }
 
+  // TODO: Due to later knowledge gained, not sure this is required. Using the existing bounds might be fine without any offset. 
+  // Even though this works fine, might be a candidate for simplification.
   public static Rect GenerateUsableBoundary(this Rect boundaryRec) {
     float mapBorderSize = 50f;
     float mapSize = 2048f;
@@ -105,8 +94,20 @@ public static class RectExtensions {
     return boundaryIntersect;
   }
 
-  public static Vector2 GetRandomPosition(this Rect rect, float extendDistance = 0f) {
-    return new Vector2(Random.Range(rect.xMin - extendDistance, rect.xMax + extendDistance),
+  public static Vector3 GetRandomPosition(this Rect rect, float extendDistance = 0f) {
+    return new Vector3(Random.Range(rect.xMin - extendDistance, rect.xMax + extendDistance),
+                        0,
                         Random.Range(rect.yMin - extendDistance, rect.yMax + extendDistance));
+  }
+
+  public static Vector3 GetRandomPositionFromTarget(this Rect rect, Vector3 target, float maxDistance) {
+    float xMin = (target.x - maxDistance) < rect.xMin ? rect.xMin : target.x - maxDistance;
+    float xMax = (target.x + maxDistance) > rect.xMax ? rect.xMax : target.x + maxDistance;
+    float zMin = (target.z - maxDistance) < rect.yMin ? rect.yMin : target.z - maxDistance;
+    float zMax = (target.z + maxDistance) > rect.yMax ? rect.yMax : target.z + maxDistance;
+
+    return new Vector3(Random.Range(xMin, xMax),
+                        0,
+                        Random.Range(zMin, zMax));  
   }
 }

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using BattleTech;
+using BattleTech.Designed;
 
 using MissionControl.Rules;
 
@@ -39,25 +40,38 @@ namespace MissionControl.Logic {
     }
 
     protected Vector3 GetRandomPositionFromTarget(Vector3 targPosition, float minDistance, float maxDistance) {
-      CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       Vector3 targetPosition = targPosition.GetClosestHexLerpedPointOnGrid();
+      Vector3 randomPositionWithinBounds = GetRandomPositionWithinBounds(targPosition, maxDistance);
 
-      float xSignSelection = (UnityEngine.Random.value < 0.5f) ? -1f : 1f;
-      float zSignSelection = (UnityEngine.Random.value < 0.5f) ? -1f : 1f;
-
-      float randomBuffer = UnityEngine.Random.Range(1f, 2f);
-
-      float xValue = UnityEngine.Random.Range(minDistance / randomBuffer, maxDistance / randomBuffer) * xSignSelection;
-      float zValue = UnityEngine.Random.Range(minDistance  / randomBuffer, maxDistance / randomBuffer) * zSignSelection;
-
-      Vector3 randomPositionFromTarget = new Vector3(targetPosition.x + xValue, 0, targetPosition.z + zValue);
-      randomPositionFromTarget = randomPositionFromTarget.GetClosestHexLerpedPointOnGrid();
-
-      if (!IsWithinBoundedDistanceOfTarget(targetPosition, randomPositionFromTarget, minDistance, maxDistance)) {
+      if (!IsWithinBoundedDistanceOfTarget(targetPosition, randomPositionWithinBounds, minDistance, maxDistance)) {
         return GetRandomPositionFromTarget(targetPosition, minDistance, maxDistance);
       } else {
-        return randomPositionFromTarget;
+        return randomPositionWithinBounds;
       }
+    }
+
+    public Vector3 GetRandomPositionWithinBounds(Vector3 target, float maxDistance) {
+      MissionControl EncounterManager = MissionControl.Instance;
+      GameObject chunkBoundaryRect = EncounterManager.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary").gameObject;
+      GameObject boundary = chunkBoundaryRect.transform.Find("EncounterBoundaryRect").gameObject;
+      EncounterBoundaryChunkGameLogic chunkBoundary = chunkBoundaryRect.GetComponent<EncounterBoundaryChunkGameLogic>();
+      EncounterBoundaryRectGameLogic boundaryLogic = boundary.GetComponent<EncounterBoundaryRectGameLogic>();
+      Rect boundaryRec = chunkBoundary.GetEncounterBoundaryRectBounds();
+
+      Vector3 randomRecPosition = boundaryRec.GetRandomPositionFromTarget(target, maxDistance);
+      return randomRecPosition.GetClosestHexLerpedPointOnGrid();
+    }
+
+    public Vector3 GetRandomPositionWithinBounds() {
+      MissionControl EncounterManager = MissionControl.Instance;
+      GameObject chunkBoundaryRect = EncounterManager.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary").gameObject;
+      GameObject boundary = chunkBoundaryRect.transform.Find("EncounterBoundaryRect").gameObject;
+      EncounterBoundaryChunkGameLogic chunkBoundary = chunkBoundaryRect.GetComponent<EncounterBoundaryChunkGameLogic>();
+      EncounterBoundaryRectGameLogic boundaryLogic = boundary.GetComponent<EncounterBoundaryRectGameLogic>();
+      Rect boundaryRec = chunkBoundary.GetEncounterBoundaryRectBounds();
+
+      Vector3 randomRecPosition = boundaryRec.GetRandomPosition();
+      return randomRecPosition.GetClosestHexLerpedPointOnGrid();
     }
 
     public bool IsWithinBoundedDistanceOfTarget(Vector3 origin, Vector3 target, float minDistance, float maxDistance) {
