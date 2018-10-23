@@ -85,6 +85,11 @@ namespace MissionControl {
       EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
       MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
 
+      if (cellData.steepness > 30) {
+        Main.LogDebug("[IsSpawnValid] Spawn point is too steep (> 30). Not a valid spawn");
+        return false;
+      }
+
       TerrainMaskFlags terrainMask = cellData.terrainMask;
       bool isImpassableOrDeepWater = SplatMapInfo.IsImpassable(terrainMask) || (SplatMapInfo.IsDeepWater(terrainMask) && !cellData.MapEncounterLayerDataCell.HasBuilding);
       if (isImpassableOrDeepWater) return false;
@@ -112,11 +117,11 @@ namespace MissionControl {
 
       try {
         PathNodeGrid pathfinderPathGrid = pathfindingActor.Pathing.CurrentGrid;
-        PathNode positionPathNode = pathfinderPathGrid.GetValidPathNodeAt(position, float.MaxValue);
+        PathNode positionPathNode = pathfinderPathGrid.GetValidPathNodeAt(position, 10);
         DynamicLongRangePathfinder.PointWithCost pointWithCost = new DynamicLongRangePathfinder.PointWithCost(combatState.HexGrid.GetClosestHexPoint3OnGrid(positionPathNode.Position), (float)positionPathNode.DepthInPath, (validityPosition - positionPathNode.Position).magnitude) {
 					pathNode = positionPathNode
 				};
-        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(new List<DynamicLongRangePathfinder.PointWithCost>() { pointWithCost }, validityPosition, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
+        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(new List<DynamicLongRangePathfinder.PointWithCost>() { pointWithCost }, validityPosition, 3000f, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
         
         if (path != null && path.Count > 2 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) return true;
 
