@@ -85,8 +85,8 @@ namespace MissionControl {
       EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
       MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
 
-      if (cellData.steepness > 30) {
-        Main.LogDebug("[IsSpawnValid] Spawn point is too steep (> 30). Not a valid spawn");
+      if (cellData.steepness > 29.9f) {
+        Main.LogDebug("[IsSpawnValid] Spawn point is too steep (> 29.9). Not a valid spawn");
         return false;
       }
 
