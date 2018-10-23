@@ -38,14 +38,16 @@ namespace MissionControl.Logic {
 
     protected List<GameObject> GetInvalidLanceMemberSpawns(GameObject lance, Vector3 checkTarget) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+      EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
+
       List<GameObject> invalidLanceSpawns = new List<GameObject>();
       List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
+      Vector3 checkTargetPosition = checkTarget.GetClosestHexLerpedPointOnGrid();
 
       foreach (GameObject spawnPoint in spawnPoints) {
         Vector3 spawnPointPosition = spawnPoint.transform.position.GetClosestHexLerpedPointOnGrid();
         Main.Logger.Log($"[GetInvalidLanceMemberSpawns] Spawn point's closest hex lerped point on grid for '{spawnPoint.name}' is '{spawnPointPosition}'");
-
-        EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
+        
         if (!encounterLayerData.IsInEncounterBounds(spawnPointPosition)) {
           Main.Logger.LogWarning("[GetInvalidLanceMemberSpawns] Lance member spawn is outside of the boundary. Select a new lance spawn point.");
           invalidLanceSpawns.Add(spawnPoint);
@@ -59,7 +61,6 @@ namespace MissionControl.Logic {
           continue;
         }
 
-        Vector3 checkTargetPosition = checkTarget.GetClosestHexLerpedPointOnGrid();
         if (!PathFinderManager.Instance.IsSpawnValid(spawnPointPosition, checkTargetPosition, UnitType.Vehicle)) {
           Main.Logger.LogWarning($"[GetInvalidLanceMemberSpawns] Lance member spawn '{spawnPoint.name}' path to check target '{checkTarget}' is blocked. Select a new lance spawn point");
           invalidLanceSpawns.Add(spawnPoint);

@@ -82,13 +82,14 @@ namespace MissionControl {
 
     public bool IsSpawnValid(Vector3 position, Vector3 validityPosition, UnitType type) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+      EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
       MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
+
       TerrainMaskFlags terrainMask = cellData.terrainMask;
       bool isImpassableOrDeepWater = SplatMapInfo.IsImpassable(terrainMask) || (SplatMapInfo.IsDeepWater(terrainMask) && !cellData.MapEncounterLayerDataCell.HasBuilding);
       if (isImpassableOrDeepWater) return false;
 
       // Prevent any spawns outside encounter for good.
-      EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
       if (!encounterLayerData.IsInEncounterBounds(position)) return false;
 
       AbstractActor pathfindingActor = null;
