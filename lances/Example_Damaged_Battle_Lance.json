@@ -8,10 +8,20 @@
   },
   "unitSpawnPointOverrideList": [
     {
-      "unitType": "Mech"
+      "unitType": "Mech",
+      "spawnEffectTags": {
+        "items": [
+          "spawn_poorly_maintained_50"
+        ]
+      }
     },
     {
-      "unitType": "Mech"
+      "unitType": "Mech",
+      "spawnEffectTags": {
+        "items": [
+          "spawn_poorly_maintained_25"
+        ]
+      }
     },
     {
       "unitType": "Vehicle",
