@@ -137,6 +137,8 @@ public override void LinkObjectReferences(string mapName) {
 
 This is a very important method. Almost every logic block requires the use of keys to identify which item to move around the game map. This is how those keys are linked up to the game objects in the game scene / map. In this example, we assign the object found under the `EncounterLayerData` object in the Unity game scene which has the name `Lance_Enemy_AssassinationTarget`, which is a spawner object for the encounter, to the key `AssassinateSpawn`.
 
+You may notice there is no `SpawnerPlayerLance` entry. This is because `SpawnerPlayerLance` is a special key that is auto-linked for you already. It will always be available for you to use.
+
 To discover the name and unity game scene location of the object to link I highly recommend you use the mod [BTDebug](https://github.com/CWolfs/BTDebug) with the latest releases found in the [Releases](https://github.com/CWolfs/BTDebug/releases) area. It has a runtime inspector that allows you to view what objects are in the game scene / map so you can correctly link up what you need.
 
 ## Send Your Custom Ruleset To Mission Control
