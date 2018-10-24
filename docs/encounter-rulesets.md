@@ -96,9 +96,9 @@ Two things are happening here. Firstly, you add a logic block relating to AI to 
 * ENCOUNTER_MANIPULATION
 * SCENE_MANIPULATION
 
-and these types are executed in that order depeneding on when the game requires them to be executed.
+and these types are executed in that order depending on when the game requires them to be executed.
 
-Secondly, the logic block you submit is the AI logic block for assigning all the found targets with tag if `Employer` of type `Lance` to follow the lance with tag `Player 1`. This is used to allow allies who spawn on the encounter boundary to follow the player lance into combat and not get stuck.
+Secondly, the logic block you submit is the AI logic block for assigning all the found targets with tag `Employer` of type `Lance` to follow the lance with tag `Player 1`. This is used to allow allies who spawn on the encounter boundary to follow the player lance into combat and not get stuck.
 
 ### Build Spawns
 
