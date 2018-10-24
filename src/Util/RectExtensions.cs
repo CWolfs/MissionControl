@@ -25,25 +25,25 @@ public static class RectExtensions {
     RectEdge recEdge = (edge == RectEdge.ANY) ? (RectEdge)UnityEngine.Random.Range(0, 4) : edge;
     switch (recEdge) {
       case RectEdge.MAX_Z: { // Forward (Max-Z)
-        Main.Logger.LogDebug("[CalculateRandomXZEdge] Selecting Forward (Max-Z edge)");
+        Main.LogDebug("[CalculateRandomXZEdge] Selecting Forward (Max-Z edge)");
         x = UnityEngine.Random.Range(minHalfBoundaryXWidth, maxHalfBoundaryXWidth);
         z = maxHalfBoundaryZWidth;
         break;
       }
       case RectEdge.MAX_X: { // Right (Max-X)
-        Main.Logger.LogDebug("[CalculateRandomXZEdge] Selecting Right (Max-X edge)");
+        Main.LogDebug("[CalculateRandomXZEdge] Selecting Right (Max-X edge)");
         x = maxHalfBoundaryXWidth;
         z = UnityEngine.Random.Range(minHalfBoundaryZWidth, maxHalfBoundaryZWidth);
         break;
       }
       case RectEdge.MIN_Z: {  // Back (Min-Z)
-        Main.Logger.LogDebug("[CalculateRandomXZEdge] Selecting Back (Min-Z edge)");
+        Main.LogDebug("[CalculateRandomXZEdge] Selecting Back (Min-Z edge)");
         x = UnityEngine.Random.Range(minHalfBoundaryXWidth, maxHalfBoundaryXWidth);
         z = minHalfBoundaryZWidth;
         break;
       }
       case RectEdge.MIN_X: { // Left (Min-X)
-        Main.Logger.LogDebug("[CalculateRandomXZEdge] Selecting Left (Min-X edge)");
+        Main.LogDebug("[CalculateRandomXZEdge] Selecting Left (Min-X edge)");
         x = minHalfBoundaryXWidth;
         z = UnityEngine.Random.Range(minHalfBoundaryZWidth, maxHalfBoundaryZWidth);
         break;

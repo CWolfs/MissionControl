@@ -42,7 +42,7 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       GetObjectReferences();
-      Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] For {lance.name}");
+      Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Attemping for '{lance.name}'");
       vanillaPosition = lance.transform.position;
 
       AttemptCount++;
@@ -61,7 +61,7 @@ namespace MissionControl.Logic {
       newSpawnPosition = newSpawnPosition.GetClosestHexLerpedPointOnGrid();
       lance.transform.position = newSpawnPosition;
       
-      Main.Logger.Log($"[SpawnLanceAtEdgeBoundary] Attempting to spance lance at point on lerped grid '{newSpawnPosition}'");
+      Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Attempting to spance lance at point on lerped grid '{newSpawnPosition}'");
 
       Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
 
@@ -75,15 +75,15 @@ namespace MissionControl.Logic {
             minimumDistance -= 25f;
             if (minimumDistance <= 0) {
               if (vanillaPosition == Vector3.zero) {
-                Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Cannot find valid spawn. Spawning with 'SpawnAnywhere' profile.");
+                Main.LogDebug($"[SpawnLanceAtEdgeOfBoundary] Cannot find valid spawn. Spawning with 'SpawnAnywhere' profile.");
                 RunFallbackSpawn(payload, this.lanceKey, this.orientationTargetKey);
               } else {
                 lance.transform.position = vanillaPosition;
-                Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Cannot find valid spawn. Spawning at vanilla location for the encounter");
+                Main.LogDebug($"[SpawnLanceAtEdgeOfBoundary] Cannot find valid spawn. Spawning at vanilla location for the encounter");
               }
               return;
             }
-            Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Cannot find valid spawn. Selecting a new edge and reducing minimum distance to '{minimumDistance}'");
+            Main.LogDebug($"[SpawnLanceAtEdgeOfBoundary] Cannot find valid spawn. Selecting a new edge and reducing minimum distance to '{minimumDistance}'");
             Run(payload);
           } else {
             edge = xzEdge.Edge;
@@ -94,7 +94,7 @@ namespace MissionControl.Logic {
           CorrectLanceMemberSpawns(lance);
         }
       } else {
-        Main.Logger.Log("[SpawnLanceAtEdgeOfBoundary] Spawn is too close to the target. Selecting a new spawn.");
+        Main.LogDebug("[SpawnLanceAtEdgeOfBoundary] Spawn is too close to the target. Selecting a new spawn.");
         edge = xzEdge.Edge;
         Run(payload);
       }

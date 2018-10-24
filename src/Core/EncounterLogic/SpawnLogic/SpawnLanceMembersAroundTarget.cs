@@ -43,7 +43,7 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       GetObjectReferences();
-      Main.Logger.Log($"[SpawnLanceMembersAroundTarget] For {lance.name}");
+      Main.Logger.Log($"[SpawnLanceMembersAroundTarget] Attempting for '{lance.name}'");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
 
       Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
@@ -90,12 +90,12 @@ namespace MissionControl.Logic {
             Main.Logger.Log("[SpawnLanceMembersAroundTarget] Lance member spawn complete");
           }
         } else {
-          Main.Logger.LogWarning("[SpawnLanceMembersAroundTarget] Cannot spawn a lance member on an invalid spawn. Finding new spawn point.");
+          Main.LogDebugWarning("[SpawnLanceMembersAroundTarget] Cannot spawn a lance member on an invalid spawn. Finding new spawn point.");
           CheckAttempts();
           SpawnLanceMember(spawnPoint, orientationTargetPosition, lookTarget, lookDirection);
         }
       } else {
-        Main.Logger.LogWarning("[SpawnLanceMembersAroundTarget] Selected lance spawn point is outside of the boundary. Select a new lance spawn point.");
+        Main.LogDebugWarning("[SpawnLanceMembersAroundTarget] Selected lance spawn point is outside of the boundary. Select a new lance spawn point.");
         CheckAttempts();
         SpawnLanceMember(spawnPoint, orientationTargetPosition, lookTarget, lookDirection);  
       }

@@ -24,7 +24,7 @@ namespace MissionControl.Logic {
       Vector3 validOrigin = PathfindFromPointToPlayerSpawn(origin);
       
       if (validOrigin == Vector3.zero) {
-        Main.Logger.LogError($"[GetClosestValidPathFindingHex] No valid points found. Reverting to original of '{origin}'");
+        Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Reverting to original of '{origin}'");
         return origin;
       }
 

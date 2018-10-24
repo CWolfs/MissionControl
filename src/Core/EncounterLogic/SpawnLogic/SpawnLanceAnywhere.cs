@@ -38,11 +38,11 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       GetObjectReferences();
-      Main.Logger.Log($"[SpawnLanceAnywhere] For {lance.name}");
+      Main.Logger.Log($"[SpawnLanceAnywhere] Attemping for '{lance.name}'");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
 
       Vector3 newPosition = GetRandomPositionWithinBounds();
-      Main.Logger.Log($"[SpawnLanceAnywhere] Attempting selection of random position in bounds. Selected position '{newPosition}'");
+      Main.LogDebug($"[SpawnLanceAnywhere] Attempting selection of random position in bounds. Selected position '{newPosition}'");
       lance.transform.position = newPosition;
 
       Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);

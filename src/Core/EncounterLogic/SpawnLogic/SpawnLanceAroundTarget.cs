@@ -41,7 +41,7 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       GetObjectReferences();
-      Main.Logger.Log($"[SpawnLanceAroundTarget] For {lance.name}");
+      Main.Logger.Log($"[SpawnLanceAroundTarget] Attemping for '{lance.name}'");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       MissionControl encounterManager = MissionControl.Instance;
 
@@ -73,7 +73,7 @@ namespace MissionControl.Logic {
           Main.Logger.Log("[SpawnLanceAroundTarget] Lance spawn complete");
         }
       } else {
-        Main.Logger.LogWarning("[SpawnLanceAroundTarget] Selected lance spawn point is outside of the boundary. Select a new lance spawn point.");
+        Main.LogDebugWarning("[SpawnLanceAroundTarget] Selected lance spawn point is outside of the boundary. Select a new lance spawn point.");
         CheckAttempts();
         Run(payload);
       }
@@ -90,7 +90,7 @@ namespace MissionControl.Logic {
 
       if (AttemptCount > AttemptCountMax) {
         AttemptCount = 0;
-        Main.Logger.Log($"[SpawnLanceAroundTarget] Cannot find a suitable lance spawn within the boundaries of {minDistanceFromTarget} and {maxDistanceFromTarget}. Widening search");
+        Main.LogDebug($"[SpawnLanceAroundTarget] Cannot find a suitable lance spawn within the boundaries of {minDistanceFromTarget} and {maxDistanceFromTarget}. Widening search");
         minDistanceFromTarget -= 10;
         if (minDistanceFromTarget <= 10) minDistanceFromTarget = 10;
         maxDistanceFromTarget += 25;     
