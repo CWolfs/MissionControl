@@ -17,7 +17,7 @@ namespace MissionControl.Patches {
   public class BehaviourTreeInitRootNodePatch {
     public static void Postfix(BehaviorTree __instance, AbstractActor ___unit, BehaviorTreeIDEnum ___behaviorTreeIDEnum) {
       if (___behaviorTreeIDEnum != BehaviorTreeIDEnum.DoNothingTree) {
-        if (Main.Settings.DebugMode) Main.Logger.Log($"[BehaviourTreeInitRootNodePatch Postfix] Patching InitRootNode for unit '{___unit.DisplayName}' with behaviour tree id '{___behaviorTreeIDEnum}'");
+        Main.LogDebug($"[BehaviourTreeInitRootNodePatch Postfix] Patching InitRootNode for unit '{___unit.DisplayName}' with behaviour tree id '{___behaviorTreeIDEnum}'");
         Init(__instance, ___unit, ___behaviorTreeIDEnum);
       }
     }

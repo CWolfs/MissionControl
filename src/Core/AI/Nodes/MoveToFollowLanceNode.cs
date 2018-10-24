@@ -82,7 +82,7 @@ namespace MissionControl.AI {
         return new BehaviorTreeResults(BehaviorNodeState.Failure);
       }
 
-      Main.LogDebug($"[MoveToFollowLanceNode] Target to follow is '{targetActor.DisplayName}'");
+      Main.LogDebug($"[MoveToFollowLanceNode] Target to follow is '{targetActor.DisplayName} {targetActor.VariantName}'");
 
       bool shouldSprint = this.tree.GetCustomBehaviorVariableValue(FOLLOW_LANCE_SHOULD_SPRINT_KEY).BoolVal;
       shouldSprint = (!this.unit.HasAnyContactWithEnemy);

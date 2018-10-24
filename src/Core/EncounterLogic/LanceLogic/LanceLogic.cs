@@ -21,9 +21,7 @@ namespace MissionControl.Logic {
       int index = UnityEngine.Random.Range(0, lancePoolKeys.Count);
       string selectedLanceKey = lancePoolKeys[index];
 
-      if (Main.Settings.DebugMode) {
-        Main.Logger.Log($"[SelectAppropriateLanceOverride] Lance pool keys valid for '{teamType}', '{biome}', '{contractType}' are '{string.Join(", ", lancePoolKeys.ToArray())}'");
-      }
+      Main.LogDebug($"[SelectAppropriateLanceOverride] Lance pool keys valid for '{teamType}', '{biome}', '{contractType}' are '{string.Join(", ", lancePoolKeys.ToArray())}'");
 
       if (DataManager.Instance.DoesLanceOverrideExist(selectedLanceKey)) {
         Main.Logger.Log($"[SelectAppropriateLanceOverride] Selected lance key '{selectedLanceKey}'");

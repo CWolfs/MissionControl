@@ -79,7 +79,7 @@ namespace MissionControl.Logic {
       vectorToTarget.y = 0;
       float distance = vectorToTarget.magnitude;
       if ((distance > minDistance) && (distance < maxDistance)) return true;
-      Main.Logger.LogWarning($"[IsWithinBoundedDistanceOfTarget] Distance is {distance} and so not within bounds. Getting new random position");
+      Main.LogDebugWarning($"[IsWithinBoundedDistanceOfTarget] Distance is {distance} and so not within bounds. Getting new random position");
       return false;
     }
 
@@ -88,7 +88,7 @@ namespace MissionControl.Logic {
       vectorToTarget.y = 0;
       float distance = vectorToTarget.magnitude;
       if (distance >= minDistance) return true;
-      Main.Logger.LogWarning($"[IsWithinBoundedDistanceOfTarget] Distance is {distance} and so not within bounds. Getting new random position");
+      Main.LogDebugWarning($"[IsWithinBoundedDistanceOfTarget] Distance is {distance} and so not within bounds. Getting new random position");
       return false;  
     }
   }

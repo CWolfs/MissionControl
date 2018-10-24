@@ -67,14 +67,14 @@ namespace MissionControl {
     }
 
     public void RequestPathFinderMech() {
-      Main.Logger.Log("[PathFinderManager] Requesting path finder mech");
+      Main.LogDebug("[PathFinderManager] Requesting path finder mech");
       if (pathFinderMech == null) Init();
       UnityGameInstance.BattleTechGame.DataManager.RequestNewResource(BattleTechResourceType.Prefab, pathFinderMech.MechDef.Chassis.PrefabIdentifier, null);
       UnityGameInstance.BattleTechGame.DataManager.ProcessRequests();
     }
 
     public void RequestPathFinderVehicle() {
-      Main.Logger.Log("[PathFinderManager] Requesting path finder vehicle");
+      Main.LogDebug("[PathFinderManager] Requesting path finder vehicle");
       if (pathFinderVehicle == null) Init();
       UnityGameInstance.BattleTechGame.DataManager.RequestNewResource(BattleTechResourceType.Prefab, pathFinderVehicle.VehicleDef.Chassis.PrefabIdentifier, null);
       UnityGameInstance.BattleTechGame.DataManager.ProcessRequests();  
@@ -146,7 +146,7 @@ namespace MissionControl {
         }
         */
       } catch (Exception) {
-        Main.Logger.LogWarning($"[IsSpawnValid] Array out of bounds detected in the path finding code. Flagging as invalid spawn. Select a new spawn point.");
+        Main.LogDebug($"[IsSpawnValid] Array out of bounds detected in the path finding code. Flagging as invalid spawn. Select a new spawn point.");
       }
 
       return false;

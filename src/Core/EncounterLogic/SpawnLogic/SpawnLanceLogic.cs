@@ -46,23 +46,23 @@ namespace MissionControl.Logic {
 
       foreach (GameObject spawnPoint in spawnPoints) {
         Vector3 spawnPointPosition = spawnPoint.transform.position.GetClosestHexLerpedPointOnGrid();
-        Main.Logger.Log($"[GetInvalidLanceMemberSpawns] Spawn point's closest hex lerped point on grid for '{spawnPoint.name}' is '{spawnPointPosition}'");
+        Main.LogDebug($"[GetInvalidLanceMemberSpawns] Spawn point's closest hex lerped point on grid for '{spawnPoint.name}' is '{spawnPointPosition}'");
         
         if (!encounterLayerData.IsInEncounterBounds(spawnPointPosition)) {
-          Main.Logger.LogWarning("[GetInvalidLanceMemberSpawns] Lance member spawn is outside of the boundary. Select a new lance spawn point.");
+          Main.LogDebugWarning("[GetInvalidLanceMemberSpawns] Lance member spawn is outside of the boundary. Select a new lance spawn point.");
           invalidLanceSpawns.Add(spawnPoint);
           continue; 
         }
 
         // Ensure the lance member's spawn's closest valid point isn't on another spawn point's closest valid point
         if (IsPointTooCloseToOtherPointsClosestPointOnGrid(spawnPointPosition, spawnPoints.Where(sp => spawnPoint.name != sp.name).ToList())) {
-          Main.Logger.LogWarning("[GetInvalidLanceMemberSpawns] Lance member spawn is too close to the other spawns when snapped to the grid");
+          Main.LogDebugWarning("[GetInvalidLanceMemberSpawns] Lance member spawn is too close to the other spawns when snapped to the grid");
           invalidLanceSpawns.Add(spawnPoint);
           continue;
         }
 
         if (!PathFinderManager.Instance.IsSpawnValid(spawnPointPosition, checkTargetPosition, UnitType.Vehicle)) {
-          Main.Logger.LogWarning($"[GetInvalidLanceMemberSpawns] Lance member spawn '{spawnPoint.name}' path to check target '{checkTarget}' is blocked. Select a new lance spawn point");
+          Main.LogDebugWarning($"[GetInvalidLanceMemberSpawns] Lance member spawn '{spawnPoint.name}' path to check target '{checkTarget}' is blocked. Select a new lance spawn point");
           invalidLanceSpawns.Add(spawnPoint);
           continue;
         }

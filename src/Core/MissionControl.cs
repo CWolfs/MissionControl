@@ -170,7 +170,7 @@ namespace MissionControl {
 
     public bool AreAdditionalLancesAllowed(string teamType) {
       bool areLancesAllowed = Main.Settings.AdditionalLances.GetValidContractTypes(teamType).Contains(CurrentContractType);
-      if (Main.Settings.DebugMode) Main.Logger.Log($"[AreAdditionalLancesAllowed] {areLancesAllowed}");
+      Main.LogDebug($"[AreAdditionalLancesAllowed] {areLancesAllowed}");
       return areLancesAllowed;
     }
   }

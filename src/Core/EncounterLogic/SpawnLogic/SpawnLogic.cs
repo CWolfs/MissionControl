@@ -36,19 +36,15 @@ namespace MissionControl.Logic {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       Vector3 originOnGrid = origin.GetClosestHexLerpedPointOnGrid();
       Vector3 playerLanceSpawnPosition = EncounterRules.SpawnerPlayerLanceGo.transform.position.GetClosestHexLerpedPointOnGrid();
-      // Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Starting test on '{originOnGrid}'");
 
       if (!PathFinderManager.Instance.IsSpawnValid(originOnGrid, playerLanceSpawnPosition, UnitType.Vehicle)) {
-        // Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Origin of '{originOnGrid}' is not a valid pathfinding location. Finding a point nearby");
         List<Vector3> adjacentPointsOnGrid = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(originOnGrid, 2);
         Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Adjacent point count is '{adjacentPointsOnGrid.Count}'");
         adjacentPointsOnGrid.Shuffle();
   
         foreach (Vector3 point in adjacentPointsOnGrid) {
           Vector3 validPoint = point.GetClosestHexLerpedPointOnGrid();
-          // Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Testing point '{validPoint}'");
           if (PathFinderManager.Instance.IsSpawnValid(validPoint, playerLanceSpawnPosition, UnitType.Vehicle)) {
-            // Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Adjacent spawn has been found valid by IsSpawnValid check for '{validPoint}'");
             return validPoint;
           }
         }
@@ -68,7 +64,7 @@ namespace MissionControl.Logic {
       Vector3 checkTarget = checkTargetPosition.GetClosestHexLerpedPointOnGrid();
       
       if (!PathFinderManager.Instance.IsSpawnValid(spawnPointPosition, checkTarget, UnitType.Vehicle)) {
-        Main.Logger.LogWarning($"[IsSpawnValid] [Spawn point {spawnPoint.name}] Spawn path at '{spawnPointPosition}' to check target ({checkTarget}) is blocked. Select a new spawn point");
+        Main.LogDebug($"[IsSpawnValid] [Spawn point {spawnPoint.name}] Spawn path at '{spawnPointPosition}' to check target ({checkTarget}) is blocked. Select a new spawn point");
         return false;
       }
       

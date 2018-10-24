@@ -31,6 +31,10 @@ namespace MissionControl {
 			if (Main.Settings.DebugMode) Main.Logger.LogDebug(message);
 		}
 
+		public static void LogDebugWarning(string message) {
+			if (Main.Settings.DebugMode) Main.Logger.LogWarning(message);
+		}
+
 		// Entry point into the mod, specified in the `mod.json`
 		public static void Init(string modDirectory, string modSettings) {
 			try {
