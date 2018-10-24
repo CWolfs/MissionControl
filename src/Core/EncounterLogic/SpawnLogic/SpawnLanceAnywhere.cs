@@ -22,6 +22,7 @@ namespace MissionControl.Logic {
 
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
+    private Vector3 vanillaPosition;
 
     public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey) : base(encounterRules) {
       this.lanceKey = lanceKey;
@@ -39,6 +40,7 @@ namespace MissionControl.Logic {
     public override void Run(RunPayload payload) {
       GetObjectReferences();
       Main.Logger.Log($"[SpawnLanceAnywhere] Attemping for '{lance.name}'");
+      vanillaPosition = lance.transform.position;
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
 
       Vector3 newPosition = GetRandomPositionWithinBounds();
@@ -51,7 +53,19 @@ namespace MissionControl.Logic {
 
       if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(newPosition, validOrientationTargetPosition, minimumDistance)) {
         if (!AreLanceMemberSpawnsValid(lance, validOrientationTargetPosition)) {
-          Run(payload);
+          if (AttemptCount > AttemptCountMax) {
+            AttemptCount = 0;
+            minimumDistance -= 25f;
+            if (minimumDistance <= 0) {
+              if (vanillaPosition == Vector3.zero) {
+                Main.LogDebug($"[SpawnLanceAnywhere] Cannot find valid spawn. Not spawning.");
+              } else {
+                lance.transform.position = vanillaPosition;
+                Main.LogDebug($"[SpawnLanceAnywhere] Cannot find valid spawn. Spawning at vanilla location for the encounter");
+              }
+              return;
+            }
+          }
         } else {
           Main.Logger.Log("[SpawnLanceAnywhere] Lance spawn complete");
           CorrectLanceMemberSpawns(lance);
