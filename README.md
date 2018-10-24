@@ -14,7 +14,7 @@ For full configuration options, see the [Additional Lances](./docs/additional-la
 
 ### Random Spawns
 
-Depending on the contract type, the lance spawns will change every playthrough. The spawning uses contract type specific logic to suitably place the lances. There are no configuration options currently available for this as these come from the encounter type rulesets that are created. Which things are randomised in the game is deteremined by the `Contract Type Ruleset` which is run for that contract type.
+Depending on the contract type, the lance spawns will change every playthrough. The spawning uses contract type specific logic to suitably place the lances. There are no configuration options currently available for this as these come from the encounter type rulesets that are created. Which things are randomised in the game is deteremined by the `Encounter Ruleset` which is run for that contract type.
 
 ### New AI
 
@@ -28,13 +28,13 @@ Mission Control works on single player skirmish if a contract type ruleset is cr
 
 The 'Quick Skirmish' feature adds a new main menu button. When clicked it will use the last lance the player used for the cost brackets (unlimited selected first and clash last) then give the player a random map and mood. This will then spawn the player lance and the enemy lance within firing range. This is ideal for modders testing their mods or people who want a very quick skirmish.
 
-### Contract Type Rulesets
+### Encounter Rulesets
 
 Mission Control allows other modders to add their own contract type rulesets to be used. When added to the mod, the mod will randomly select a ruleset for a contract type from the given choices.
 
 **This is experimental and not yet fully supported. This system will change and it is _not_ recommended you build on this system yet.**
 
-For full information on contract type rulesets, see the [Contract Type Rulesets](./docs/contract-type-rulesets.md) page.
+For full information on contract type rulesets, see the [Encounter Rulesets](./docs/encounter-rulesets.md) page.
 
 ## Roadmap
 

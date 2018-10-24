@@ -1,6 +1,6 @@
-# Contract Type Rulesets
+# Encounter Rulesets
 
-Contract Type Rulesets are what control the manipulation of a mission/contract. To manipulate encounters you create lots of `Logic` objects and submit them to the `EncounterLogic` system. Mission Control then intelligently runs these logic blocks at the correct point as the game runs.
+Encounter Rulesets are what control the manipulation of a mission/contract. To manipulate encounters you create lots of `Logic` objects and submit them to the `EncounterLogic` system. Mission Control then intelligently runs these logic blocks at the correct point as the game runs.
 
 ## Example Ruleset
 Below is an example of the `AssassinateEncounterRules` used in Mission Control. We'll run through each bit of code to explain what is happening.
