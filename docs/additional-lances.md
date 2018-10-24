@@ -14,12 +14,12 @@ Lances are defined using a similar configuration to how they are defined in the 
     "IncludeContractTypes": [],
     "ExcludeContractTypes": [],
     "LancePool": {
-      "ALL": [ "GENERIC_BATTLE_LANCE"]
+      "ALL": ["GENERIC_BATTLE_LANCE"]
     },
     "Enemy": {
-      "Max": 3,
+      "Max": 2,
       "ExcludeContractTypes": ["Rescue"],
-      "ChanceToSpawn": 0.3,
+      "ChanceToSpawn": 0.4,
       "LancePool": {
         "ALL": [
           "GENERIC_BATTLE_LANCE"
@@ -41,7 +41,7 @@ Lances are defined using a similar configuration to how they are defined in the 
     },
     "Allies": {
       "Max": 1,
-      "ChanceToSpawn": 0.3,
+      "ChanceToSpawn": 0.4,
       "LancePool": {
         "ALL": [
           "GENERIC_BATTLE_LANCE"

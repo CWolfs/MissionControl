@@ -14,9 +14,7 @@ For full configuration options, see the [Additional Lances](./docs/additional-la
 
 ### Random Spawns
 
-Depending on the contract type, the lance spawns will change every playthrough. The spawning uses contract type specific logic to suitably place the lances. There are no configuration options currently available for this as these come from the encounter type rulesets that are created.
-
-For full information on the random spawns, see the [Random Spawns](./docs/random-spawns.md) page.
+Depending on the contract type, the lance spawns will change every playthrough. The spawning uses contract type specific logic to suitably place the lances. There are no configuration options currently available for this as these come from the encounter type rulesets that are created. Which things are randomised in the game is deteremined by the `Contract Type Ruleset` which is run for that contract type.
 
 ### New AI
 
@@ -46,6 +44,8 @@ This roadmap contains features that may not make it into the mod. It depends on 
 | ------- | ---------------- | ------- |
 | Encounter Objective - Defend X Units | Unknown | :heavy_minus_sign: |
 | Encounter Logic - Lance Faction Change | Unknown | :heavy_minus_sign: |
+| Encounter Logic - Random Extraction Zone | Unknown | :heavy_minus_sign: |
+| Encounter Logic - Combat Dialogue | Unknown | :heavy_minus_sign: |
 | Random Spawn - Buildings | Unknown | :heavy_minus_sign: |
 | Random Spawn - Plots | Unknown | :heavy_minus_sign: |
 | Additional Lances - Player Lances | Unknown | :heavy_minus_sign: |
