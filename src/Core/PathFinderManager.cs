@@ -18,7 +18,7 @@ namespace MissionControl {
       }
     }
 
-    private static float MAX_SLOPE_FOR_PATHFINDING = 25f;
+    private static float MAX_SLOPE_FOR_PATHFINDING = 29.5f;
 
     private Mech pathFinderMech;
     private Vehicle pathFinderVehicle;
@@ -88,7 +88,7 @@ namespace MissionControl {
       MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
 
       if (cellData.steepness > MAX_SLOPE_FOR_PATHFINDING) {
-        Main.LogDebug($"[IsSpawnValid] Spawn point is too steep (> {MAX_SLOPE_FOR_PATHFINDING}). Not a valid spawn");
+        Main.LogDebug($"[IsSpawnValid] Spawn point of '{cellData.steepness}' is too steep (> {MAX_SLOPE_FOR_PATHFINDING}). Not a valid spawn");
         return false;
       }
 
