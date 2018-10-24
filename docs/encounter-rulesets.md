@@ -145,7 +145,7 @@ To discover the name and unity game scene location of the object to link I highl
 
 You're able to provide your custom ruleset to Mission Control and it will use it. Mission Control randomly selects from all the available rulesets for a particular contract type.
 
-To do this you must first create your own rulset by linking your mod to `MissionControl.dll` then creating it as explained above. Then, in your mod code execute code similar to the below example
+To do this you must first create your own ruleset by linking your mod to `MissionControl.dll` then creating it as explained above. Then, in your mod code execute code similar to the below example:
 
 ```csharp
 MissionControl.Instance.AddEncounter("Assassinate", myCustomAssassinateRuleset);  // Add a custom assassinate ruleset
@@ -165,4 +165,4 @@ MissionControl.Instance.ClearEncounters("Assassinate");  // Clears all encounter
 
 ## Summary
 
-It's worth reviewing the code of the mod to see what already happens for the default encounter rulesets, especially looking at the `EncounterRules.cs` class to see what the mod already provides for you to use (e.g. it contains properties that link to the encounter object in the Unity game scene you can use).
+It's worth reviewing the code of this mod to see what already happens for the default encounter rulesets, especially looking at the `EncounterRules.cs` class to see what the mod already provides for you to use (e.g. it contains properties that link to the encounter object in the Unity game scene you can use).
