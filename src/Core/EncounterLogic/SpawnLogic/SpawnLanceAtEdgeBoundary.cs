@@ -65,6 +65,12 @@ namespace MissionControl.Logic {
 
       Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
 
+      // Fix heights of lance spawns
+      List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
+      foreach (GameObject spawn in spawnPoints) {
+        SpawnLanceMember(spawn);
+      }
+
       if (useOrientationTarget) RotateToTarget(lance, orientationTarget);
 
       if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(newSpawnPosition, validOrientationTargetPosition, minimumDistance)) {
@@ -98,6 +104,11 @@ namespace MissionControl.Logic {
         edge = xzEdge.Edge;
         Run(payload);
       }
+    }
+
+    private void SpawnLanceMember(GameObject spawnPoint) {
+      Vector3 newSpawnLocation = GetClosestValidPathFindingHex(spawnPoint.transform.position);
+      spawnPoint.transform.position = newSpawnLocation;
     }
 
     protected override void GetObjectReferences() {
