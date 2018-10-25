@@ -24,7 +24,7 @@ namespace MissionControl.Logic {
 
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
-    private int EdgeCheckMax { get; set; } = 5;
+    private int EdgeCheckMax { get; set; } = 10;
     private int EdgeCheckCount { get; set; } = 0;
 
     public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, bool clusterUnits = false) : base(encounterRules) {
@@ -116,11 +116,26 @@ namespace MissionControl.Logic {
 
     private void ClusterLanceMembers() {
       List<GameObject> originalSpawnPoints = lance.FindAllContains("SpawnPoint");
+      List<Vector3> usedPosition = new List<Vector3>();
       foreach (GameObject spawn in originalSpawnPoints) {
-        Vector3 clusteredSpawnPosition = GetRandomPositionWithinBounds(lance.transform.position, 150f);
+        Vector3 clusteredSpawnPosition = GetRandomPositionWithinBounds(lance.transform.position, 50f);
+        while (ContainsCompare(usedPosition, clusteredSpawnPosition)) {
+          clusteredSpawnPosition = GetRandomPositionWithinBounds(lance.transform.position, 50f);
+        }
         spawn.transform.position = clusteredSpawnPosition;
+        usedPosition.Add(clusteredSpawnPosition);
       }
       clusterUnits = false;
+    }
+
+    private bool ContainsCompare(List<Vector3> list, Vector3 vector) {
+      for (int i = 0; i < list.Count; i++) {
+        Vector3 listVector = list[i];
+        if (listVector == vector) {
+          return true;
+        }
+      }
+      return false;
     }
 
     private void CheckAttempts() {
