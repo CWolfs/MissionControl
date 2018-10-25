@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.Data;
 
+using Harmony;
+
 using HBS.Collections;
 
 namespace MissionControl {
@@ -82,6 +84,27 @@ namespace MissionControl {
       UnityGameInstance.BattleTechGame.DataManager.ProcessRequests();  
     }
 
+    private AbstractActor GetPathFindingActor(UnitType type) {
+      if (type == UnitType.Mech) {
+        return pathFinderMech;
+      } else if (type == UnitType.Vehicle) {
+        return pathFinderVehicle;
+      }
+
+      return null;
+    }
+
+    private void SetupPathfindingActor(Vector3 position, AbstractActor pathfindingActor) {
+      if (pathfindingActor.GameRep == null) {
+        pathfindingActor.Init(position, 0, pathfindingActor.thisUnitChecksEncounterCells);
+        pathfindingActor.InitGameRep(null);
+      } else {
+        pathfindingActor.CurrentPosition = position;
+        pathfindingActor.GameRep.transform.position = position;
+        pathfindingActor.ResetPathing(false);
+      }
+    }
+
     public bool IsSpawnValid(Vector3 position, Vector3 validityPosition, UnitType type) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
@@ -99,33 +122,28 @@ namespace MissionControl {
       // Prevent any spawns outside encounter for good.
       if (!encounterLayerData.IsInEncounterBounds(position)) return false;
 
-      AbstractActor pathfindingActor = null;
       float pathFindingZoneRadius = 25f;
-
-      if (type == UnitType.Mech) {
-        pathfindingActor = pathFinderMech;
-      } else if (type == UnitType.Vehicle) {
-        pathfindingActor = pathFinderVehicle;
-      }
-
-      if (pathfindingActor.GameRep == null) {
-        pathfindingActor.Init(position, 0, pathfindingActor.thisUnitChecksEncounterCells);
-        pathfindingActor.InitGameRep(null);
-      } else {
-        pathfindingActor.CurrentPosition = position;
-        pathfindingActor.GameRep.transform.position = position;
-        pathfindingActor.ResetPathing(false);
-      }
+      AbstractActor pathfindingActor = GetPathFindingActor(type);
+      SetupPathfindingActor(position, pathfindingActor);
 
       try {
         PathNodeGrid pathfinderPathGrid = pathfindingActor.Pathing.CurrentGrid;
-        PathNode positionPathNode = pathfinderPathGrid.GetValidPathNodeAt(position, 10);
+        PathNode positionPathNode = pathfinderPathGrid.GetValidPathNodeAt(position, pathfindingActor.Pathing.MaxCost);
+
         DynamicLongRangePathfinder.PointWithCost pointWithCost = new DynamicLongRangePathfinder.PointWithCost(combatState.HexGrid.GetClosestHexPoint3OnGrid(positionPathNode.Position), (float)positionPathNode.DepthInPath, (validityPosition - positionPathNode.Position).magnitude) {
 					pathNode = positionPathNode
 				};
         List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(new List<DynamicLongRangePathfinder.PointWithCost>() { pointWithCost }, validityPosition, 3000f, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
         
-        if (path != null && path.Count > 2 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) return true;
+        if (path != null && path.Count > 2 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
+          Main.LogDebug("[IsSpawnValid] Has valid long range path finding");
+          if (HasValidNeighbours(positionPathNode, validityPosition, type)) {
+            Main.LogDebug("[IsSpawnValid] Has at least one valid neighbour");
+            return true;
+          } else {
+            Main.LogDebug("[IsSpawnValid] Does not have valid neighbours");
+          }
+        }
 
         /* // Failed attempt to improve spawn checks
         List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(validityPosition, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
@@ -151,6 +169,22 @@ namespace MissionControl {
         Main.LogDebug($"[IsSpawnValid] Array out of bounds detected in the path finding code. Flagging as invalid spawn. Select a new spawn point.");
       }
 
+      return false;
+    }
+
+    public bool HasValidNeighbours(PathNode positionNode, Vector3 validityPosition, UnitType type) {
+      AbstractActor pathfindingActor = GetPathFindingActor(type);
+      SetupPathfindingActor(positionNode.Position, pathfindingActor);
+
+      AccessTools.Field(typeof(PathNodeGrid), "open").SetValue(pathfindingActor.Pathing.CurrentGrid, new List<PathNode>() { positionNode });
+      pathfindingActor.Pathing.CurrentGrid.UpdateBuild(1);
+      List<PathNode> neighbours = AccessTools.Field(typeof(PathNodeGrid), "open").GetValue(pathfindingActor.Pathing.CurrentGrid) as List<PathNode>;
+
+      foreach (PathNode neighbourNode in neighbours) {
+        float cost = pathfindingActor.Pathing.CurrentGrid.GetTerrainModifiedCost(positionNode, neighbourNode, pathfindingActor.Pathing.CurrentGrid.MaxDistance);
+        Main.LogDebug($"[HasValidNeighbours] Cost of neighbour is {cost} with max pathfinder cost being {pathfindingActor.MaxSprintDistance}");
+        if (cost < pathfindingActor.MaxSprintDistance) return true;
+      }
       return false;
     }
 
