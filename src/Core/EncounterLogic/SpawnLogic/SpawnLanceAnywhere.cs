@@ -20,7 +20,7 @@ namespace MissionControl.Logic {
     private bool useMiniumDistance = false;
     private float minimumDistance = 400f;
 
-    private int AttemptCountMax { get; set; } = 10;
+    private int AttemptCountMax { get; set; } = 5;
     private int AttemptCount { get; set; } = 0;
     private Vector3 vanillaPosition;
 
@@ -53,26 +53,30 @@ namespace MissionControl.Logic {
 
       if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(newPosition, validOrientationTargetPosition, minimumDistance)) {
         if (!AreLanceMemberSpawnsValid(lance, validOrientationTargetPosition)) {
-          if (AttemptCount > AttemptCountMax) {
-            AttemptCount = 0;
-            minimumDistance -= 25f;
-            if (minimumDistance <= 0) {
-              if (vanillaPosition == Vector3.zero) {
-                Main.LogDebug($"[SpawnLanceAnywhere] Cannot find valid spawn. Not spawning.");
-              } else {
-                lance.transform.position = vanillaPosition;
-                Main.LogDebug($"[SpawnLanceAnywhere] Cannot find valid spawn. Spawning at vanilla location for the encounter");
-              }
-              return;
-            }
-          }
+          AttemptCount++;
+          Run(payload);
         } else {
           Main.Logger.Log("[SpawnLanceAnywhere] Lance spawn complete");
           CorrectLanceMemberSpawns(lance);
         }
       } else {
         Main.Logger.Log("[SpawnLanceAnywhere] Spawn is too close to the target. Selecting a new spawn.");
-        Run(payload);
+        AttemptCount++;
+
+        if (AttemptCount > AttemptCountMax) {
+          AttemptCount = 0;
+          minimumDistance -= 50f;
+          if (minimumDistance <= 0) {
+            if (vanillaPosition == Vector3.zero) {
+              Main.LogDebug($"[SpawnLanceAnywhere] Cannot find valid spawn. Not spawning.");
+            } else {
+              lance.transform.position = vanillaPosition;
+              Main.LogDebug($"[SpawnLanceAnywhere] Cannot find valid spawn. Spawning at vanilla location for the encounter");
+            }
+          }
+        } else { 
+          Run(payload);
+        }
       }
     }
 
