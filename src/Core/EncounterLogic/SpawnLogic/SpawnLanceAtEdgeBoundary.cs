@@ -20,32 +20,38 @@ namespace MissionControl.Logic {
     private RectExtensions.RectEdge edge = RectExtensions.RectEdge.ANY;
     private bool useMiniumDistance = false;
     private float minimumDistance = 400f;
-
-    private Vector3 vanillaPosition;
+    private bool clusterUnits = false;
 
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
+    private int EdgeCheckMax { get; set; } = 5;
+    private int EdgeCheckCount { get; set; } = 0;
 
-    public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRules, string lanceKey, string orientationTargetKey) : base(encounterRules) {
+    public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, bool clusterUnits = false) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.useOrientationTarget = true;
       this.orientationTargetKey = orientationTargetKey;
+      this.clusterUnits = clusterUnits;
     }
 
-    public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, float minimumDistance) : base(encounterRules) {
+    public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, float minimumDistance, bool clusterUnits = false) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.useOrientationTarget = true;
       this.orientationTargetKey = orientationTargetKey;
       this.useMiniumDistance = true;
       this.minimumDistance = minimumDistance;
+      this.clusterUnits = clusterUnits;
     }
 
     public override void Run(RunPayload payload) {
       GetObjectReferences();
       Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Attemping for '{lance.name}'");
-      vanillaPosition = lance.transform.position;
-
+      SaveSpawnPositions(lance);
       AttemptCount++;
+
+      // Cluster units to make a tigher spread - makes hitting a successful spawn position generally easier
+      if (clusterUnits) ClusterLanceMembers();
+
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       MissionControl EncounterManager = MissionControl.Instance;
       GameObject chunkBoundaryRect = EncounterManager.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary").gameObject;
@@ -65,41 +71,37 @@ namespace MissionControl.Logic {
 
       Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
 
-      // Fix heights of lance spawns
-      List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
-      foreach (GameObject spawn in spawnPoints) {
-        SpawnLanceMember(spawn);
-      }
-
       if (useOrientationTarget) RotateToTarget(lance, orientationTarget);
 
       if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(newSpawnPosition, validOrientationTargetPosition, minimumDistance)) {
-        if (!AreLanceMemberSpawnsValid(lance, validOrientationTargetPosition)) {
+        List<GameObject> invalidLanceSpawns = GetInvalidLanceMemberSpawns(lance, validOrientationTargetPosition);
+
+        if (invalidLanceSpawns.Count > 0) {
           if (AttemptCount > AttemptCountMax) {  // Attempt to spawn on the selected edge. If it's not possible, select another edge
             edge = RectExtensions.RectEdge.ANY;
-            AttemptCount = 0;
-            minimumDistance -= 25f;
-            if (minimumDistance <= 0) {
-              if (vanillaPosition == Vector3.zero) {
-                Main.LogDebug($"[SpawnLanceAtEdgeOfBoundary] Cannot find valid spawn. Spawning with 'SpawnAnywhere' profile.");
-                RunFallbackSpawn(payload, this.lanceKey, this.orientationTargetKey);
-              } else {
-                lance.transform.position = vanillaPosition;
-                Main.LogDebug($"[SpawnLanceAtEdgeOfBoundary] Cannot find valid spawn. Spawning at vanilla location for the encounter");
-              }
+            if (EdgeCheckCount >= EdgeCheckMax) {
+              HandleFallback(payload);
               return;
             }
-            Main.LogDebug($"[SpawnLanceAtEdgeOfBoundary] Cannot find valid spawn. Selecting a new edge and reducing minimum distance to '{minimumDistance}'");
-            Run(payload);
+          }
+
+          if (invalidLanceSpawns.Count <= 2) {
+            Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Fitting invalid lance member spawns");
+            foreach (GameObject invalidSpawn in invalidLanceSpawns) {
+              SpawnLanceMember(invalidSpawn);
+            }
+
+            Main.Logger.Log("[SpawnLanceAtEdgeOfBoundary] Lance spawn complete");
           } else {
-            edge = xzEdge.Edge;
+            CheckAttempts();
             Run(payload);
           }
         } else {
-          Main.Logger.Log("[SpawnLanceAtEdgeOfBoundary] Lance spawn complete");
           CorrectLanceMemberSpawns(lance);
+          Main.Logger.Log("[SpawnLanceAtEdgeOfBoundary] Lance spawn complete");
         }
       } else {
+        CheckAttempts();
         Main.LogDebug("[SpawnLanceAtEdgeOfBoundary] Spawn is too close to the target. Selecting a new spawn.");
         edge = xzEdge.Edge;
         Run(payload);
@@ -107,8 +109,40 @@ namespace MissionControl.Logic {
     }
 
     private void SpawnLanceMember(GameObject spawnPoint) {
+      Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Fitting member '{spawnPoint.name}'");
       Vector3 newSpawnLocation = GetClosestValidPathFindingHex(spawnPoint.transform.position);
       spawnPoint.transform.position = newSpawnLocation;
+    }
+
+    private void ClusterLanceMembers() {
+      List<GameObject> originalSpawnPoints = lance.FindAllContains("SpawnPoint");
+      foreach (GameObject spawn in originalSpawnPoints) {
+        Vector3 clusteredSpawnPosition = GetRandomPositionWithinBounds(lance.transform.position, 150f);
+        spawn.transform.position = clusteredSpawnPosition;
+      }
+      clusterUnits = false;
+    }
+
+    private void CheckAttempts() {
+      AttemptCount++;
+
+      if (AttemptCount > AttemptCountMax) {
+        EdgeCheckCount++;
+        AttemptCount = 0;
+        Main.LogDebug($"[SpawnLanceAtEdgeOfBoundary] Cannot find a suitable lance spawn within the boundaries of {minimumDistance}. Widening search");
+        minimumDistance -= 50f;
+        if (minimumDistance <= 0f) minimumDistance = 0f;
+      }
+    }
+
+    private void HandleFallback(RunPayload payload) {
+       if (GetOriginalSpawnPosition() == Vector3.zero) {
+        Main.LogDebug($"[SpawnLanceAtEdgeOfBoundary] Cannot find valid spawn. Spawning with 'SpawnAnywhere' profile.");
+        RunFallbackSpawn(payload, this.lanceKey, this.orientationTargetKey);
+      } else {
+        RestoreSpawnPositions(this.lance);
+        Main.LogDebug($"[SpawnLanceAtEdgeOfBoundary] Cannot find valid spawn. Spawning at vanilla location for the encounter");
+      }
     }
 
     protected override void GetObjectReferences() {
@@ -116,7 +150,7 @@ namespace MissionControl.Logic {
       this.EncounterRules.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
 
       if (lance == null) {
-        Main.Logger.LogError("[SpawnLanceAroundTarget] Object references are null");
+        Main.Logger.LogError("[SpawnLanceAtEdgeOfBoundary] Object references are null");
       }
     }
   }

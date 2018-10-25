@@ -26,7 +26,7 @@ namespace MissionControl.Rules {
     public void BuildSpawns() {
       Main.Logger.Log("[CaptureEscortAdditionalBlockersEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "EscortRegion"));
-      EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "HunterLance", "EscortExtractionRegion", 300));
+      EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "HunterLance", "EscortExtractionRegion", 300, true));
     }
 
     public override void LinkObjectReferences(string mapName) {

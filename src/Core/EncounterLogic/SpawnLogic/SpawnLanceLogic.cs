@@ -12,6 +12,8 @@ using MissionControl.Rules;
 namespace MissionControl.Logic {
   public abstract class SpawnLanceLogic : SpawnLogic {
     protected float minDistanceToSpawnFromInvalidSpawn = 10f;
+    private Vector3 vanillaLanceSpawnPosition = Vector3.zero;
+    private List<Vector3> vanillaLanceUnitSpawnPositions = new List<Vector3>();
 
     public SpawnLanceLogic(EncounterRules encounterRules) : base(encounterRules) { }
 
@@ -23,6 +25,29 @@ namespace MissionControl.Logic {
         Vector3 spawnPointPosition = spawnPoint.transform.position.GetClosestHexLerpedPointOnGrid();
         spawnPoint.transform.position = spawnPointPosition;
       }
+    }
+
+    protected void SaveSpawnPositions(GameObject lance) {
+      if ((vanillaLanceSpawnPosition == Vector3.zero) && (vanillaLanceUnitSpawnPositions.Count <= 0)) {
+        vanillaLanceSpawnPosition = lance.transform.position;
+        List<GameObject> originalSpawnPoints = lance.FindAllContains("SpawnPoint");
+        foreach (GameObject spawn in originalSpawnPoints) {
+          vanillaLanceUnitSpawnPositions.Add(spawn.transform.position);
+        }
+      }
+    }
+
+    protected void RestoreSpawnPositions(GameObject lance) {
+      lance.transform.position = vanillaLanceSpawnPosition;
+      List<GameObject> originalSpawnPoints = lance.FindAllContains("SpawnPoint");
+      for (int i = 0; i < originalSpawnPoints.Count; i++) {
+        GameObject spawn = originalSpawnPoints[i];
+        spawn.transform.position = vanillaLanceUnitSpawnPositions[i];
+      }
+    }
+
+    protected Vector3 GetOriginalSpawnPosition() {
+      return vanillaLanceSpawnPosition;
     }
 
     protected void RunFallbackSpawn(RunPayload payload, string lanceKey, string orientationTargetKey) {

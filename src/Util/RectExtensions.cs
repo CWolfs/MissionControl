@@ -13,7 +13,7 @@ public static class RectExtensions {
     float z = 0f;
     float width = rect.width;
     float height = rect.height;
-    float buffer = UnityEngine.Random.Range(100f, 150f);
+    float buffer = UnityEngine.Random.Range(50f, 150f);
     float halfBoundaryXWidth = width / 2f;
     float halfBoundaryZWidth = height / 2f;
     float minHalfBoundaryXWidth = (halfBoundaryXWidth * -1f) + buffer;
