@@ -118,9 +118,9 @@ namespace MissionControl.Logic {
       List<GameObject> originalSpawnPoints = lance.FindAllContains("SpawnPoint");
       List<Vector3> usedPosition = new List<Vector3>();
       foreach (GameObject spawn in originalSpawnPoints) {
-        Vector3 clusteredSpawnPosition = GetRandomPositionWithinBounds(lance.transform.position, 50f);
+        Vector3 clusteredSpawnPosition = GetRandomPositionWithinBounds(lance.transform.position, 25f);
         while (ContainsCompare(usedPosition, clusteredSpawnPosition)) {
-          clusteredSpawnPosition = GetRandomPositionWithinBounds(lance.transform.position, 50f);
+          clusteredSpawnPosition = GetRandomPositionWithinBounds(lance.transform.position, 25f);
         }
         spawn.transform.position = clusteredSpawnPosition;
         usedPosition.Add(clusteredSpawnPosition);
