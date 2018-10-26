@@ -148,7 +148,7 @@ You're able to provide your custom ruleset to Mission Control and it will use it
 To do this you must first create your own ruleset by linking your mod to `MissionControl.dll` then creating it as explained above. Then, in your mod code execute code similar to the below example:
 
 ```csharp
-MissionControl.Instance.AddEncounter("Assassinate", myCustomAssassinateRuleset);  // Add a custom assassinate ruleset
+MissionControl.Instance.AddEncounter("Assassinate", typeof(MyCustomAssassinateRuleset));  // Add a custom assassinate ruleset
 ```
 
 If for whatever reason you wish to only have your custom rulesets running you can clear all loaded rulesets with the following code:
