@@ -31,6 +31,16 @@ namespace MissionControl.Logic {
       spawnAnywhere.Run(payload);
     }
 
+    protected void HandleFallback(RunPayload payload, string lanceKey, string orientationTargetKey) {
+       if (GetOriginalSpawnPosition() == Vector3.zero) {
+        Main.LogDebug($"[{this.GetType().Name}] Cannot find valid spawn. Spawning with 'SpawnAnywhere' profile.");
+        RunFallbackSpawn(payload, lanceKey, orientationTargetKey);
+      } else {
+        RestoreSpawnPositions(this.EncounterRules.ObjectLookup[lanceKey]);
+        Main.LogDebug($"[{this.GetType().Name}] Cannot find valid spawn. Spawning at vanilla location for the encounter");
+      }
+    }
+
     protected bool AreLanceMemberSpawnsValid(GameObject lance, Vector3 checkTarget) {
       List<GameObject> invalidLanceSpawns = GetInvalidLanceMemberSpawns(lance, checkTarget);
       if (invalidLanceSpawns.Count <= 0) return true;

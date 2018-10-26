@@ -23,6 +23,8 @@ namespace MissionControl.Logic {
 
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
+    private int TotalAttemptMax { get; set; } = 5;
+    private int TotalAttemptCount { get; set; } = 0;
 
     public SpawnLanceAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, LookDirection lookDirection) : base(encounterRules) {
       this.lanceKey = lanceKey;
@@ -45,6 +47,11 @@ namespace MissionControl.Logic {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       MissionControl encounterManager = MissionControl.Instance;
 
+      if (TotalAttemptCount >= TotalAttemptMax) {
+        HandleFallback(payload, this.lanceKey, this.orientationTargetKey);
+        return;
+      }
+
       Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
       Vector3 newSpawnPosition = GetRandomPositionFromTarget(validOrientationTargetPosition, minDistanceFromTarget, maxDistanceFromTarget);
 
@@ -52,9 +59,9 @@ namespace MissionControl.Logic {
         lance.transform.position = newSpawnPosition;
 
         if (lookDirection == LookDirection.TOWARDS_TARGET) {
-          RotateLanceMembersToTarget(lance, orientationTarget);
+          RotateToTarget(lance, orientationTarget);
         } else {
-          RotateLanceMembersAwayFromTarget(lance, orientationTarget);
+          RotateAwayFromTarget(lance, orientationTarget);
         }
 
         List<GameObject> invalidLanceSpawns = GetInvalidLanceMemberSpawns(lance, validOrientationTargetPosition);
@@ -87,6 +94,7 @@ namespace MissionControl.Logic {
 
     private void CheckAttempts() {
       AttemptCount++;
+      TotalAttemptCount++;
 
       if (AttemptCount > AttemptCountMax) {
         AttemptCount = 0;

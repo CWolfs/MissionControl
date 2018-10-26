@@ -49,7 +49,7 @@ namespace MissionControl.Logic {
 
       Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
 
-      if (useOrientationTarget) RotateLanceMembersToTarget(lance, orientationTarget);
+      if (useOrientationTarget) RotateToTarget(lance, orientationTarget);
 
       if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(newPosition, validOrientationTargetPosition, minimumDistance)) {
         if (!AreLanceMemberSpawnsValid(lance, validOrientationTargetPosition)) {

@@ -25,6 +25,8 @@ namespace MissionControl.Logic {
 
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
+    private int TotalAttemptMax { get; set; } = 5;
+    private int TotalAttemptCount { get; set; } = 0;
 
     public SpawnLanceMembersAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, LookDirection lookDirection) :
       this(encounterRules, lanceKey, orientationTargetKey, lookDirection, 10, 10) { } // TODO: Replace the hard coded values with a setting.json setting
@@ -45,6 +47,11 @@ namespace MissionControl.Logic {
       GetObjectReferences();
       Main.Logger.Log($"[SpawnLanceMembersAroundTarget] Attempting for '{lance.name}'");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+
+      if (TotalAttemptCount >= TotalAttemptMax) {
+        HandleFallback(payload, this.lanceKey, this.orientationTargetKey);
+        return;
+      }
 
       Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
       lance.transform.position = validOrientationTargetPosition;
@@ -77,9 +84,9 @@ namespace MissionControl.Logic {
           spawnPoint.transform.position = newSpawnPosition;
 
           if (lookDirection == LookDirection.TOWARDS_TARGET) {
-            RotateLanceMembersToTarget(spawnPoint, lookTarget);
+            RotateToTarget(spawnPoint, lookTarget);
           } else {
-            RotateLanceMembersAwayFromTarget(spawnPoint, lookTarget);
+            RotateAwayFromTarget(spawnPoint, lookTarget);
           }
 
           if (!IsSpawnValid(spawnPoint, orientationTargetPosition)) {
@@ -113,6 +120,7 @@ namespace MissionControl.Logic {
 
     private void CheckAttempts() {
       AttemptCount++;
+      TotalAttemptCount++;
 
       if (AttemptCount > AttemptCountMax) {
         AttemptCount = 0;

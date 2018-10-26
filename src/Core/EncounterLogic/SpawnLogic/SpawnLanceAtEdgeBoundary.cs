@@ -71,7 +71,7 @@ namespace MissionControl.Logic {
 
       Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
 
-      if (useOrientationTarget) RotateLanceMembersToTarget(lance, orientationTarget);
+      if (useOrientationTarget) RotateToTarget(lance, orientationTarget);
 
       if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(newSpawnPosition, validOrientationTargetPosition, minimumDistance)) {
         List<GameObject> invalidLanceSpawns = GetInvalidLanceMemberSpawns(lance, validOrientationTargetPosition);
@@ -80,7 +80,7 @@ namespace MissionControl.Logic {
           if (AttemptCount > AttemptCountMax) {  // Attempt to spawn on the selected edge. If it's not possible, select another edge
             edge = RectExtensions.RectEdge.ANY;
             if (EdgeCheckCount >= EdgeCheckMax) {
-              HandleFallback(payload);
+              HandleFallback(payload, this.lanceKey, this.orientationTargetKey);
               return;
             }
           }
@@ -147,16 +147,6 @@ namespace MissionControl.Logic {
         Main.LogDebug($"[SpawnLanceAtEdgeOfBoundary] Cannot find a suitable lance spawn within the boundaries of {minimumDistance}. Widening search");
         minimumDistance -= 50f;
         if (minimumDistance <= 0f) minimumDistance = 0f;
-      }
-    }
-
-    private void HandleFallback(RunPayload payload) {
-       if (GetOriginalSpawnPosition() == Vector3.zero) {
-        Main.LogDebug($"[SpawnLanceAtEdgeOfBoundary] Cannot find valid spawn. Spawning with 'SpawnAnywhere' profile.");
-        RunFallbackSpawn(payload, this.lanceKey, this.orientationTargetKey);
-      } else {
-        RestoreSpawnPositions(this.lance);
-        Main.LogDebug($"[SpawnLanceAtEdgeOfBoundary] Cannot find valid spawn. Spawning at vanilla location for the encounter");
       }
     }
 
