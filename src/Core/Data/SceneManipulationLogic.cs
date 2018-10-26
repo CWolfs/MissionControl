@@ -11,6 +11,8 @@ using MissionControl.Rules;
 namespace MissionControl.Logic {
   public abstract class SceneManipulationLogic : LogicBlock {
     public enum LookDirection { TOWARDS_TARGET, AWAY_FROM_TARGET };
+    private Vector3 vanillaLanceSpawnPosition = Vector3.zero;
+    private List<Vector3> vanillaLanceUnitSpawnPositions = new List<Vector3>();
 
     protected EncounterRules EncounterRules { get; set; }
 
@@ -21,9 +23,46 @@ namespace MissionControl.Logic {
 
     protected abstract void GetObjectReferences();
 
+    protected void SaveSpawnPositions(GameObject lance) {
+      if ((vanillaLanceSpawnPosition == Vector3.zero) && (vanillaLanceUnitSpawnPositions.Count <= 0)) {
+        vanillaLanceSpawnPosition = lance.transform.position;
+        List<GameObject> originalSpawnPoints = lance.FindAllContains("SpawnPoint");
+        foreach (GameObject spawn in originalSpawnPoints) {
+          vanillaLanceUnitSpawnPositions.Add(spawn.transform.position);
+        }
+      }
+    }
+
+    protected void RestoreSpawnPositions(GameObject lance) {
+      lance.transform.position = vanillaLanceSpawnPosition;
+      List<GameObject> originalSpawnPoints = lance.FindAllContains("SpawnPoint");
+      for (int i = 0; i < originalSpawnPoints.Count; i++) {
+        GameObject spawn = originalSpawnPoints[i];
+        spawn.transform.position = vanillaLanceUnitSpawnPositions[i];
+      }
+    }
+
+    protected void RestoreLanceMemberSpawnPositions(GameObject lance) {
+      List<GameObject> originalSpawnPoints = lance.FindAllContains("SpawnPoint");
+      for (int i = 0; i < originalSpawnPoints.Count; i++) {
+        GameObject spawn = originalSpawnPoints[i];
+        spawn.transform.position = vanillaLanceUnitSpawnPositions[i];
+      }  
+    }
+
+    protected Vector3 GetOriginalSpawnPosition() {
+      return vanillaLanceSpawnPosition;
+    }
+
     protected void RotateToTarget(GameObject focus, GameObject target) {
       Vector3 targetPosition = target.transform.position;
       focus.transform.LookAt(new Vector3(targetPosition.x, focus.transform.position.y, targetPosition.z));
+    }
+
+    protected void RotateLanceMembersToTarget(GameObject lance, GameObject target) {
+      foreach (Transform t in lance.transform) {
+        RotateToTarget(t.gameObject, target);
+      }
     }
 
     protected void RotateAwayFromTarget(GameObject focus, GameObject target) {
@@ -33,6 +72,12 @@ namespace MissionControl.Logic {
 
       Vector3 lookAtTargetPosition = new Vector3(lookAtPosition.x, focusPosition.y, lookAtPosition.z);
       focus.transform.LookAt(lookAtTargetPosition);
+    }
+
+    protected void RotateLanceMembersAwayFromTarget(GameObject lance, GameObject target) {
+      foreach (Transform t in lance.transform) {
+        RotateAwayFromTarget(t.gameObject, target);
+      }
     }
 
     protected Vector3 GetRandomPositionFromTarget(GameObject target, float minDistance, float maxDistance) {

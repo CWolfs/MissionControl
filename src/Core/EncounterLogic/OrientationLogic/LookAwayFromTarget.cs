@@ -18,16 +18,21 @@ namespace MissionControl.Logic {
     private string orientationTargetKey = "";
     private GameObject focus;
     private GameObject orientationTarget;
+    private bool isLance;
 
-    public LookAwayFromTarget(EncounterRules encounterRules, string focusKey, string orientationTargetKey) : base(encounterRules) {
+    public LookAwayFromTarget(EncounterRules encounterRules, string focusKey, string orientationTargetKey, bool isLance) : base(encounterRules) {
       this.focusKey = focusKey;
       this.orientationTargetKey = orientationTargetKey;
+      this.isLance = isLance;
     }
 
     public override void Run(RunPayload payload) {
       GetObjectReferences();
       Main.Logger.Log($"[LookAwayFromTarget] For {focus.name} to look away from {orientationTarget.name}");
+
+      if (isLance) SaveSpawnPositions(focus);
       RotateAwayFromTarget(focus, orientationTarget);
+      if (isLance) RestoreLanceMemberSpawnPositions(focus);      
     }
 
     protected override void GetObjectReferences() {

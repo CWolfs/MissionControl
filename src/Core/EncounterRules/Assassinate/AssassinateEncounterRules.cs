@@ -28,7 +28,7 @@ namespace MissionControl.Rules {
       Main.Logger.Log("[AssassinateEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "AssassinateSpawn"));
       EncounterLogic.Add(new SpawnLanceAnywhere(this, "AssassinateSpawn", "SpawnerPlayerLance", 400));
-      EncounterLogic.Add(new LookAtTarget(this, "SpawnerPlayerLance", "AssassinateSpawn"));
+      EncounterLogic.Add(new LookAtTarget(this, "SpawnerPlayerLance", "AssassinateSpawn", true));
     }
 
     public override void LinkObjectReferences(string mapName) {

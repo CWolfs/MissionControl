@@ -52,9 +52,9 @@ namespace MissionControl.Logic {
         lance.transform.position = newSpawnPosition;
 
         if (lookDirection == LookDirection.TOWARDS_TARGET) {
-          RotateToTarget(lance, orientationTarget);
+          RotateLanceMembersToTarget(lance, orientationTarget);
         } else {
-          RotateAwayFromTarget(lance, orientationTarget);
+          RotateLanceMembersAwayFromTarget(lance, orientationTarget);
         }
 
         List<GameObject> invalidLanceSpawns = GetInvalidLanceMemberSpawns(lance, validOrientationTargetPosition);

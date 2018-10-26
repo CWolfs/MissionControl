@@ -77,9 +77,9 @@ namespace MissionControl.Logic {
           spawnPoint.transform.position = newSpawnPosition;
 
           if (lookDirection == LookDirection.TOWARDS_TARGET) {
-            RotateToTarget(spawnPoint, lookTarget);
+            RotateLanceMembersToTarget(spawnPoint, lookTarget);
           } else {
-            RotateAwayFromTarget(spawnPoint, lookTarget);
+            RotateLanceMembersAwayFromTarget(spawnPoint, lookTarget);
           }
 
           if (!IsSpawnValid(spawnPoint, orientationTargetPosition)) {

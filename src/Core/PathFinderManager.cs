@@ -20,7 +20,7 @@ namespace MissionControl {
       }
     }
 
-    private static float MAX_SLOPE_FOR_PATHFINDING = 29.5f;
+    private static float MAX_SLOPE_FOR_PATHFINDING = 29f;
 
     private Mech pathFinderMech;
     private Vehicle pathFinderVehicle;
@@ -138,7 +138,7 @@ namespace MissionControl {
         if (path != null && path.Count > 2 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
           Main.LogDebug("[IsSpawnValid] Has valid long range path finding");
           if (HasValidNeighbours(positionPathNode, validityPosition, type)) {
-            Main.LogDebug("[IsSpawnValid] Has at least one valid neighbour");
+            Main.LogDebug("[IsSpawnValid] Has at least two valid neighbours");
 
             if (HasValidLocalPathfinding(positionPathNode, validityPosition, type)) {
               Main.LogDebug("[IsSpawnValid] Has a valid path");
@@ -147,7 +147,7 @@ namespace MissionControl {
               Main.LogDebug("[IsSpawnValid] Does NOT have a valid path");
             }
           } else {
-            Main.LogDebug("[IsSpawnValid] Does not have valid neighbours");
+            Main.LogDebug("[IsSpawnValid] Does not have two valid neighbours");
           }
         }
 
@@ -179,6 +179,7 @@ namespace MissionControl {
     }
 
     public bool HasValidNeighbours(PathNode positionNode, Vector3 validityPosition, UnitType type) {
+      int count = 0;
       AbstractActor pathfindingActor = GetPathFindingActor(type);
       SetupPathfindingActor(positionNode.Position, pathfindingActor);
 
@@ -189,7 +190,8 @@ namespace MissionControl {
       foreach (PathNode neighbourNode in neighbours) {
         float cost = pathfindingActor.Pathing.CurrentGrid.GetTerrainModifiedCost(positionNode, neighbourNode, pathfindingActor.MaxWalkDistance);
         Main.LogDebug($"[HasValidNeighbours] Cost of neighbour is {cost} with max pathfinder cost being {pathfindingActor.MaxWalkDistance}");
-        if (cost < pathfindingActor.MaxWalkDistance) return true;
+        if (cost < pathfindingActor.MaxWalkDistance) count++;
+        if (count >= 2) return true;
       }
       return false;
     }
