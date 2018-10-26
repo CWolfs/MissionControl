@@ -66,8 +66,8 @@ I wouldn't have completed such an ambitious mod without the support and help of 
 * jo
 * LadyAleko
 * akodoreign
-* GentlePayload
 * bloodydoves
+* GentlePayload
 * gnivler
 * TekGnosis
 * ...and everyone in the modder channels at BATTLETECHGAME discord who helped in lots of different ways!
