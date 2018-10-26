@@ -139,7 +139,13 @@ namespace MissionControl {
           Main.LogDebug("[IsSpawnValid] Has valid long range path finding");
           if (HasValidNeighbours(positionPathNode, validityPosition, type)) {
             Main.LogDebug("[IsSpawnValid] Has at least one valid neighbour");
-            return true;
+
+            if (HasValidLocalPathfinding(positionPathNode, validityPosition, type)) {
+              Main.LogDebug("[IsSpawnValid] Has a valid path");
+              return true;
+            } else {
+              Main.LogDebug("[IsSpawnValid] Does NOT have a valid path");
+            }
           } else {
             Main.LogDebug("[IsSpawnValid] Does not have valid neighbours");
           }
@@ -181,10 +187,30 @@ namespace MissionControl {
       List<PathNode> neighbours = AccessTools.Field(typeof(PathNodeGrid), "open").GetValue(pathfindingActor.Pathing.CurrentGrid) as List<PathNode>;
 
       foreach (PathNode neighbourNode in neighbours) {
-        float cost = pathfindingActor.Pathing.CurrentGrid.GetTerrainModifiedCost(positionNode, neighbourNode, pathfindingActor.Pathing.CurrentGrid.MaxDistance);
-        Main.LogDebug($"[HasValidNeighbours] Cost of neighbour is {cost} with max pathfinder cost being {pathfindingActor.MaxSprintDistance}");
-        if (cost < pathfindingActor.MaxSprintDistance) return true;
+        float cost = pathfindingActor.Pathing.CurrentGrid.GetTerrainModifiedCost(positionNode, neighbourNode, pathfindingActor.MaxWalkDistance);
+        Main.LogDebug($"[HasValidNeighbours] Cost of neighbour is {cost} with max pathfinder cost being {pathfindingActor.MaxWalkDistance}");
+        if (cost < pathfindingActor.MaxWalkDistance) return true;
       }
+      return false;
+    }
+
+    public bool HasValidLocalPathfinding(PathNode positionNode, Vector3 validityPosition, UnitType type) {
+      AbstractActor pathfindingActor = GetPathFindingActor(type);
+      SetupPathfindingActor(positionNode.Position, pathfindingActor);
+
+      AccessTools.Field(typeof(PathNodeGrid), "open").SetValue(pathfindingActor.Pathing.CurrentGrid, new List<PathNode>() { positionNode });
+      pathfindingActor.Pathing.UpdateBuild(10000);
+      pathfindingActor.Pathing.UpdateFreePath(validityPosition, validityPosition, false, false);
+
+      Vector3 vectorToTarget = pathfindingActor.Pathing.ResultDestination - pathfindingActor.CurrentPosition;
+      float distanceToTarget = vectorToTarget.magnitude;
+      if (distanceToTarget > pathfindingActor.MaxWalkDistance) {
+        vectorToTarget = vectorToTarget.normalized * pathfindingActor.MaxWalkDistance;
+      }
+
+      pathfindingActor.Pathing.UpdateFreePath(validityPosition, validityPosition, false, false);
+      if (pathfindingActor.Pathing.HasPath) return true;
+      
       return false;
     }
 
