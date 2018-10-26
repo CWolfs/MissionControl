@@ -39,6 +39,7 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       GetObjectReferences();
+      SaveSpawnPositions(lance);
       Main.Logger.Log($"[SpawnLanceAnywhere] Attemping for '{lance.name}'");
       vanillaPosition = lance.transform.position;
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;

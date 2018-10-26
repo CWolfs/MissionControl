@@ -45,8 +45,8 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       GetObjectReferences();
-      Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Attemping for '{lance.name}'");
       SaveSpawnPositions(lance);
+      Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Attemping for '{lance.name}'");
       AttemptCount++;
 
       // Cluster units to make a tigher spread - makes hitting a successful spawn position generally easier
