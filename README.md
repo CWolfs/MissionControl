@@ -4,6 +4,10 @@ A HBS BattleTech mod that provides a framework for runtime modifications of the 
 
 ![Additional Lances](./docs/images/mission-control.png)
 
+## Videos
+
+* [Release Trailer](https://www.youtube.com/watch?v=MGPrebHW0R0)
+
 ## Features
 
 ### Additional Lances
