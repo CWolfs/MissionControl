@@ -18,19 +18,19 @@ For full configuration options, see the [Additional Lances](./docs/additional-la
 
 ### Random Spawns
 
-Depending on the contract type, the lance spawns will change every playthrough. The spawning uses contract type specific logic to suitably place the lances. There are no configuration options currently available for this as these come from the encounter type rulesets that are created. Which things are randomised in the game is deteremined by the `Encounter Ruleset` which is run for that contract type.
+Depending on the contract type, the lance spawns will change every playthrough. The spawning uses contract type specific logic to suitably place the lances. There are no configuration options currently available for this as these come from the encounter type rulesets that are created. Which things are randomised in the game is determined by the `Encounter Ruleset` which is run for that contract type.
 
 ### New AI
 
 Completely new AI behaviours that do not exist in the vanilla game.
 
-* Follow Lance - Follows the heaviest mech in the target lance
+* Follow Lance - Follows the heaviest mech in the target lance. Favours the lance order when finding multiple mechs of the same tonnage.
 
 ### Single Player Skirmish Support with Quick Skirmish Feature
 
-Mission Control works on single player skirmish if a contract type ruleset is created for it.
+Mission Control works on single player skirmish if a contract type ruleset is created for it, or the 'DebugSkirmishMode' option is turned on (defaults to on).
 
-The 'Quick Skirmish' feature adds a new main menu button. When clicked it will use the last lance the player used for the cost brackets (unlimited selected first and clash last) then give the player a random map and mood. This will then spawn the player lance and the enemy lance within firing range. This is ideal for modders testing their mods or people who want a very quick skirmish.
+The 'Quick Skirmish' feature adds a new main menu button. When clicked it will use the last lance the player used for the cost brackets (unlimited selected first and clash last) then it gives the player a random map and mood. It will spawn the player lance and the enemy lance within firing range. This is ideal for modders testing their mods or people who want a very quick skirmish.
 
 ### Encounter Rulesets
 
@@ -39,6 +39,10 @@ Mission Control allows other modders to add their own contract type rulesets to 
 **This is experimental and not yet fully supported. This system will change and it is _not_ recommended you build on this system yet.**
 
 For full information on contract type rulesets, see the [Encounter Rulesets](./docs/encounter-rulesets.md) page.
+
+### AI
+
+In future updates Mission Control will provide an easy to use method to let other modders create AI and then inject it into the game.
 
 ## Roadmap
 
