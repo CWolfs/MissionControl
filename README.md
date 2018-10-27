@@ -2,7 +2,11 @@
 
 A HBS BattleTech mod that provides a framework for runtime modifications of the contracts and encounters. This includes varying the encounter specifics such as spawn locations, lance numbers and objectives.
 
-![Additional Lances](./docs/images/additional-lances.png)
+![Additional Lances](./docs/images/mission-control.png)
+
+## Videos
+
+* [Release Trailer](https://www.youtube.com/watch?v=MGPrebHW0R0)
 
 ## Features
 
