@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace SpawnVariation.Utils {
+namespace MissionControl.Utils {
     public static class ReflectionHelper {
         public static object InvokePrivateMethod(object instance, string methodname, object[] parameters) {
             Type type = instance.GetType();

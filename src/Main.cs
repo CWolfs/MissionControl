@@ -1,45 +1,64 @@
 using UnityEngine;
 using System;
+using System.IO;
 using System.Collections.Generic;
 using HBS.Logging;
 using Harmony;
 using Newtonsoft.Json;
 using System.Reflection;
 
-using SpawnVariation.Utils;
+using MissionControl.Config;
+using MissionControl.Utils;
 
-namespace SpawnVariation {
-    public class Main {
-        public static ILog Logger;
-        public static Settings Settings { get; private set; }
-        public static Assembly SpawnVariationAssembly { get; set; } 
-        public static AssetBundle SpawnVariationBundle { get; set; }
-        public static string Path { get; private set; }
+namespace MissionControl {
+	public class Main {
+		public static ILog Logger;
+		public static Config.Settings Settings { get; private set; }
+		public static Assembly MissionControlAssembly { get; set; } 
+		public static AssetBundle MissionControlBundle { get; set; }
+		public static string Path { get; private set; }
 
-        public static void InitLogger(string modDirectory) {
-            Dictionary<string, LogLevel> logLevels = new Dictionary<string, LogLevel> {
-                ["SpawnVariation"] = LogLevel.Debug
-            };
-            LogManager.Setup(modDirectory + "/output.log", logLevels);
-            Logger = LogManager.GetLogger("SpawnVariation");
-            Path = modDirectory;
-        }
+		public static void InitLogger(string modDirectory) {
+			Dictionary<string, LogLevel> logLevels = new Dictionary<string, LogLevel> {
+				["MissionControl"] = LogLevel.Debug
+			};
+			LogManager.Setup(modDirectory + "/output.log", logLevels);
+			Logger = LogManager.GetLogger("MissionControl");
+			Path = modDirectory;
+		}
 
-        // Entry point into the mod, specified in the `mod.json`
-        public static void Init(string modDirectory, string modSettings) {
-            try {
-                InitLogger(modDirectory);
+		public static void LogDebug(string message) {
+			if (Main.Settings.DebugMode) Main.Logger.LogDebug(message);
+		}
 
-                Logger.Log("Loading SpawnVariation settings");
-                Settings = JsonConvert.DeserializeObject<Settings>(modSettings);
-            } catch (Exception e) {
-                Logger.LogError(e);
-                Logger.Log("Error loading mod settings - using defaults.");
-                Settings = new Settings();
-            }
+		public static void LogDebugWarning(string message) {
+			if (Main.Settings.DebugMode) Main.Logger.LogWarning(message);
+		}
 
-            HarmonyInstance harmony = HarmonyInstance.Create("co.uk.cwolf.SpawnVariation");
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
-        }
-    }
+		// Entry point into the mod, specified in the `mod.json`
+		public static void Init(string modDirectory, string modSettings) {
+			try {
+				InitLogger(modDirectory);
+				LoadSettings(modDirectory);
+				LoadData(modDirectory);
+			} catch (Exception e) {
+				Logger.LogError(e);
+				Logger.Log("Error loading mod settings - using defaults.");
+				Settings = new Config.Settings();
+			}
+
+			HarmonyInstance harmony = HarmonyInstance.Create("co.uk.cwolf.MissionControl");
+			harmony.PatchAll(Assembly.GetExecutingAssembly());
+		}
+
+		private static void LoadSettings(string modDirectory) {
+			Logger.Log("Loading MissionControl settings");
+			string settingsJsonString = File.ReadAllText($"{modDirectory}/settings.json");
+			Settings = JsonConvert.DeserializeObject<Config.Settings>(settingsJsonString);
+		}
+
+		private static void LoadData(string modDirectory) {
+			DataManager.Instance.Init(modDirectory);
+		}
+	}
 }

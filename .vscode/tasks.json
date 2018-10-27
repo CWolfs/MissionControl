@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "D:/Modding/Battletech/SpawnVariation/src/SpawnVariation.csproj"
+                "D:/Modding/Battletech/MissionControl/src/MissionControl.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
