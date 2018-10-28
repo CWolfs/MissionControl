@@ -10,6 +10,12 @@ This works only for the generic contract types (e.g. Battle, Rescue etc) as it w
 
 * [Release Trailer](https://www.youtube.com/watch?v=MGPrebHW0R0)
 
+## Installation
+
+* Download the [latest release](https://github.com/CWolfs/MissionControl/releases)
+* Unzip the release into your ModTek `Mods` folder
+* Enjoy!
+
 ## Features
 
 ### Additional Lances
