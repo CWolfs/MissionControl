@@ -137,7 +137,7 @@ Each
 | Path | Required? | Default | Example | Details |
 | ---- | --------- | ------- | ------- | ------- |
 | `lanceKey` | Required | N/A | `GENERIC_BATTLE_LANCE` | Key must be unique. It is used by the mod in the `settings.json` LancePools to specify the lance selection |
-| `lanceDefId` | Optional | `Tagged` | `Tagged`, `Manual` or lance def id (e.g. `lancedef_arena_light_fire`) | This specifies what type of lance this definition is. `Tagged` uses the lance tags to select an appropriate lance and `Manual` allows you to manually create a specific lance. If a specific lance def id is used then it ignores the units specified below and uses the full lance definition. `lanceTagSet` is ignored if a specific mech def id is set.  |
+| `lanceDefId` | Optional | `Tagged` | `Tagged`, `Manual` or lance def id (e.g. `lancedef_arena_light_fire`) | This specifies what type of lance this definition is. `Tagged` uses the lance tags to select an appropriate lance and `Manual` allows you to manually create a specific lance. If a specific lance def id is used then it ignores the units specified below and uses the full lance definition. `lanceTagSet` and `lanceExcludedTagSet` is ignored if a specific mech def id is set.  |
 | `lanceTagSet` | Required | N/A | `"items": ["lance_type_battle", "lance_type_notallvehicles"]` | Allows the lance definition to specify what type of lance to select by tags |
 | `lanceExcludedTagSet` | Optional | None | | Allows the lance definition to exclude specific tags when selecting by tag |
 | `spawnEffectTags` | Optional | None | `"items": ["spawn_poorly_maintained_25"]`| Allows the lance definition to specify spawn specific tags that apply to the entire lance |
@@ -153,6 +153,6 @@ Each
 | `unitTagSet` | Optional | None | `"items": ["unit_vehicle_carrier"]` | Tags for selecting the unit if `Tagged` is selected |
 | `unitExcludedTagSet` | Optional | None | | Allows the unit definition to exclude specific tags when selecting by tag |
 | `spawnEffectTags` | Optional | None | `"items": ["spawn_poorly_maintained_25"]`| Allows the unit definition to specify spawn specific tags that apply to the specific lance member |
-| `pilotDefId` | Optional | `pilotDef_InheritLance` | `pilotDef_InheritLance`, `UseLance`, `Tagged`, `pilot_default` or `pilot_commander` | Allows for selection system for pilots |
+| `pilotDefId` | Optional | `pilotDef_InheritLance` | `pilotDef_InheritLance`, `UseLance`, `Tagged`, `pilot_default`, `pilot_commander` or a specific pilot def id (e.g. `pilot_d7_defender`) | Allows for selection system for pilots. `pilotTagSet` and `pilotExcludedTagSet` is ignored if a specific mech def id is set |
 | `pilotTagSet` | Optional | None | `"items": ["pilot_npc_outrider"]` | Tags for selecting the unit if `Tagged` is selected |
 | `pilotExcludedTagSet` | Optional | None | | Allows the pilot definition to exclude specific tags when selecting by tag |
