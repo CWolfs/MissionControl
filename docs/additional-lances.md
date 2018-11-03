@@ -149,7 +149,7 @@ Each
 | Path | Required? | Default | Example | Details |
 | ---- | --------- | ------- | ------- | ------- |
 | `unitType` | Optional | `Mech` | `Mech`, `Vehicle` or `Turret` | Type of lance member |
-| `unitDefId` | Optional | `UseLance` | `mechDef_None`, `mechDef_InheritLance`, `vehicleDef_None`, `vehicleDef_InheritLance`, `turretDef_None`, `turretDef_InheritLance`, `Tagged` or a specific mech def id (e.g `mechdef_orion_ON1-K`). `unitTagSet` is ignored if a specific mech def id is set. | Determines how the unit is selected |
+| `unitDefId` | Optional | `UseLance` | `mechDef_None`, `mechDef_InheritLance`, `vehicleDef_None`, `vehicleDef_InheritLance`, `turretDef_None`, `turretDef_InheritLance`, `Tagged` or a specific mech def id (e.g `mechdef_orion_ON1-K`) | Determines how the unit is selected. `unitTagSet` is ignored if a specific mech def id is set |
 | `unitTagSet` | Optional | None | `"items": ["unit_vehicle_carrier"]` | Tags for selecting the unit if `Tagged` is selected |
 | `unitExcludedTagSet` | Optional | None | | Allows the unit definition to exclude specific tags when selecting by tag |
 | `spawnEffectTags` | Optional | None | `"items": ["spawn_poorly_maintained_25"]`| Allows the unit definition to specify spawn specific tags that apply to the specific lance member |
