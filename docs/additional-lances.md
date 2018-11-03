@@ -137,7 +137,7 @@ Each
 | Path | Required? | Default | Example | Details |
 | ---- | --------- | ------- | ------- | ------- |
 | `lanceKey` | Required | N/A | `GENERIC_BATTLE_LANCE` | Key must be unique. It is used by the mod in the `settings.json` LancePools to specify the lance selection |
-| `lanceDefId` | Optional | `Tagged` | `Tagged` or `Manual` | This specifies what type of lance this definition is. `Tagged` uses the lance tags to select an appropriate lance and `Manual` allows you to manually create a specific lance |
+| `lanceDefId` | Optional | `Tagged` | `Tagged`, `Manual` or lance def id (e.g. `lancedef_mech_d4_dynamic_lightMedBattle`) | This specifies what type of lance this definition is. `Tagged` uses the lance tags to select an appropriate lance and `Manual` allows you to manually create a specific lance. A specific lance if will use that lance. It ignores the units specified below if this is set. |
 | `lanceTagSet` | Required | N/A | `"items": ["lance_type_battle", "lance_type_notallvehicles"]` | Allows the lance definition to specify what type of lance to select by tags |
 | `lanceExcludedTagSet` | Optional | None | | Allows the lance definition to exclude specific tags when selecting by tag |
 | `spawnEffectTags` | Optional | None | `"items": ["spawn_poorly_maintained_25"]`| Allows the lance definition to specify spawn specific tags that apply to the entire lance |
