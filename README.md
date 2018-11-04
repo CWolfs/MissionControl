@@ -9,6 +9,7 @@ This works only for the generic contract types (e.g. Battle, Rescue etc) as it w
 ## Videos
 
 * [Release Trailer](https://www.youtube.com/watch?v=MGPrebHW0R0)
+* [Additional Lances Tutorial](https://www.youtube.com/watch?v=srvqUjdeESk)
 
 ## Installation
 
