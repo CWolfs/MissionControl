@@ -26,7 +26,7 @@ namespace MissionControl.Rules {
     public void BuildSpawns() {
       Main.Logger.Log("[DebugArenaSkirmishEncounterRules] Building spawns rules");
 
-      EncounterLogic.Add(new SpawnLanceAnywhere(this, "Player2LanceSpawner", "SpawnerPlayerLance"));
+      EncounterLogic.Add(new SpawnLanceAnywhere(this, "Player2LanceSpawner", "SpawnerPlayerLance", true));
       EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerPlayerLance", "Player2LanceSpawner", SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 150f, true));
       EncounterLogic.Add(new LookAtTarget(this, "Player2LanceSpawner", "SpawnerPlayerLance", true));
     }

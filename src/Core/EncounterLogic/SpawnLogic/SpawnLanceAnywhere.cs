@@ -19,6 +19,7 @@ namespace MissionControl.Logic {
     private GameObject orientationTarget;
     private bool useMiniumDistance = false;
     private float minimumDistance = 400f;
+    private bool clusterUnits = false;
 
     private int AttemptCountMax { get; set; } = 5;
     private int AttemptCount { get; set; } = 0;
@@ -26,17 +27,19 @@ namespace MissionControl.Logic {
     private int TotalAttemptCount { get; set; } = 0;
     private Vector3 vanillaPosition;
 
-    public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey) : base(encounterRules) {
+    public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, bool clusterUnits = false) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.orientationTargetKey = orientationTargetKey;
+      this.clusterUnits = clusterUnits;
     }
 
-    public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, float minimumDistance) : base(encounterRules) {
+    public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, float minimumDistance, bool clusterUnits = false) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.useOrientationTarget = true;
       this.orientationTargetKey = orientationTargetKey;
       this.useMiniumDistance = true;
       this.minimumDistance = minimumDistance;
+      this.clusterUnits = clusterUnits;
     }
 
     public override void Run(RunPayload payload) {
@@ -45,6 +48,12 @@ namespace MissionControl.Logic {
       Main.Logger.Log($"[SpawnLanceAnywhere] Attemping for '{lance.name}'");
       vanillaPosition = lance.transform.position;
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+
+      // Cluster units to make a tigher spread - makes hitting a successful spawn position generally easier
+      if (clusterUnits) {
+        ClusterLanceMembers(lance);
+        clusterUnits = false;
+      }
 
       if (TotalAttemptCount >= TotalAttemptMax) {
         HandleFallback(payload, this.lanceKey, this.orientationTargetKey);

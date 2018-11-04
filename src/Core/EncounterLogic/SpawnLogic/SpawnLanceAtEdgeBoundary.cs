@@ -47,10 +47,12 @@ namespace MissionControl.Logic {
       GetObjectReferences();
       SaveSpawnPositions(lance);
       Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Attemping for '{lance.name}'");
-      AttemptCount++;
 
       // Cluster units to make a tigher spread - makes hitting a successful spawn position generally easier
-      if (clusterUnits) ClusterLanceMembers();
+      if (clusterUnits) {
+        ClusterLanceMembers(lance);
+        clusterUnits = false;
+      }
 
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       MissionControl EncounterManager = MissionControl.Instance;
@@ -112,30 +114,6 @@ namespace MissionControl.Logic {
       Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Fitting member '{spawnPoint.name}'");
       Vector3 newSpawnLocation = GetClosestValidPathFindingHex(spawnPoint.transform.position);
       spawnPoint.transform.position = newSpawnLocation;
-    }
-
-    private void ClusterLanceMembers() {
-      List<GameObject> originalSpawnPoints = lance.FindAllContains("SpawnPoint");
-      List<Vector3> usedPosition = new List<Vector3>();
-      foreach (GameObject spawn in originalSpawnPoints) {
-        Vector3 clusteredSpawnPosition = GetRandomPositionWithinBounds(lance.transform.position, 25f);
-        while (ContainsCompare(usedPosition, clusteredSpawnPosition)) {
-          clusteredSpawnPosition = GetRandomPositionWithinBounds(lance.transform.position, 25f);
-        }
-        spawn.transform.position = clusteredSpawnPosition;
-        usedPosition.Add(clusteredSpawnPosition);
-      }
-      clusterUnits = false;
-    }
-
-    private bool ContainsCompare(List<Vector3> list, Vector3 vector) {
-      for (int i = 0; i < list.Count; i++) {
-        Vector3 listVector = list[i];
-        if (listVector == vector) {
-          return true;
-        }
-      }
-      return false;
     }
 
     private void CheckAttempts() {
