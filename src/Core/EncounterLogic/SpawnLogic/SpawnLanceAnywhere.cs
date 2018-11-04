@@ -22,6 +22,8 @@ namespace MissionControl.Logic {
 
     private int AttemptCountMax { get; set; } = 5;
     private int AttemptCount { get; set; } = 0;
+    private int TotalAttemptMax { get; set; } = 5;
+    private int TotalAttemptCount { get; set; } = 0;
     private Vector3 vanillaPosition;
 
     public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey) : base(encounterRules) {
@@ -44,6 +46,11 @@ namespace MissionControl.Logic {
       vanillaPosition = lance.transform.position;
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
 
+      if (TotalAttemptCount >= TotalAttemptMax) {
+        HandleFallback(payload, this.lanceKey, this.orientationTargetKey);
+        return;
+      }
+
       Vector3 newPosition = GetRandomPositionWithinBounds();
       Main.LogDebug($"[SpawnLanceAnywhere] Attempting selection of random position in bounds. Selected position '{newPosition}'");
       lance.transform.position = newPosition;
@@ -54,7 +61,7 @@ namespace MissionControl.Logic {
 
       if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(newPosition, validOrientationTargetPosition, minimumDistance)) {
         if (!AreLanceMemberSpawnsValid(lance, validOrientationTargetPosition)) {
-          AttemptCount++;
+          CheckAttempts();
           Run(payload);
         } else {
           Main.Logger.Log("[SpawnLanceAnywhere] Lance spawn complete");
@@ -62,22 +69,20 @@ namespace MissionControl.Logic {
         }
       } else {
         Main.Logger.Log("[SpawnLanceAnywhere] Spawn is too close to the target. Selecting a new spawn.");
-        AttemptCount++;
+        CheckAttempts();
+        Run(payload);
+      }
+    }
 
-        if (AttemptCount > AttemptCountMax) {
-          AttemptCount = 0;
-          minimumDistance -= 50f;
-          if (minimumDistance <= 0) {
-            if (vanillaPosition == Vector3.zero) {
-              Main.LogDebug($"[SpawnLanceAnywhere] Cannot find valid spawn. Not spawning.");
-            } else {
-              lance.transform.position = vanillaPosition;
-              Main.LogDebug($"[SpawnLanceAnywhere] Cannot find valid spawn. Spawning at vanilla location for the encounter");
-            }
-          }
-        } else { 
-          Run(payload);
-        }
+    private void CheckAttempts() {
+      AttemptCount++;
+      TotalAttemptCount++;
+
+      if (AttemptCount > AttemptCountMax) {
+        AttemptCount = 0;
+        Main.LogDebug($"[SpawnLanceAnywhere] Cannot find a suitable lance spawn within the boundaries of {minimumDistance}. Widening search");
+        minimumDistance -= 50f;
+        if (minimumDistance <= 10) minimumDistance = 10;
       }
     }
 
