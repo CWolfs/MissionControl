@@ -25,7 +25,7 @@ namespace MissionControl.Logic {
 
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
-    private int TotalAttemptMax { get; set; } = 5;
+    private int TotalAttemptMax { get; set; } = 40;
     private int TotalAttemptCount { get; set; } = 0;
 
     private RunPayload payload;
@@ -52,7 +52,7 @@ namespace MissionControl.Logic {
       Main.Logger.Log($"[SpawnLanceMembersAroundTarget] Attempting for '{lance.name}'");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
 
-      Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
+      Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position, 4);
       lance.transform.position = validOrientationTargetPosition;
 
       List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
@@ -97,20 +97,21 @@ namespace MissionControl.Logic {
 
           if (!IsSpawnValid(spawnPoint, orientationTargetPosition)) {
             CheckAttempts();
-            SpawnLanceMember(spawnPoint, orientationTargetPosition, lookTarget, lookDirection);
+            return SpawnLanceMember(spawnPoint, orientationTargetPosition, lookTarget, lookDirection);
           } else {
             invalidSpawnLocations.Add(newSpawnPosition);
+            AttemptCount = 0;
             Main.Logger.Log("[SpawnLanceMembersAroundTarget] Lance member spawn complete");
           }
         } else {
           Main.LogDebugWarning("[SpawnLanceMembersAroundTarget] Cannot spawn a lance member on an invalid spawn. Finding new spawn point.");
           CheckAttempts();
-          SpawnLanceMember(spawnPoint, orientationTargetPosition, lookTarget, lookDirection);
+          return SpawnLanceMember(spawnPoint, orientationTargetPosition, lookTarget, lookDirection);
         }
       } else {
         Main.LogDebugWarning("[SpawnLanceMembersAroundTarget] Selected lance spawn point is outside of the boundary. Select a new lance spawn point.");
         CheckAttempts();
-        SpawnLanceMember(spawnPoint, orientationTargetPosition, lookTarget, lookDirection);  
+        return SpawnLanceMember(spawnPoint, orientationTargetPosition, lookTarget, lookDirection);  
       }
 
       return true;
