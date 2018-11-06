@@ -19,30 +19,57 @@ namespace MissionControl.Logic {
     private GameObject orientationTarget;
     private bool useMiniumDistance = false;
     private float minimumDistance = 400f;
+    private bool clusterUnits = false;
 
     private int AttemptCountMax { get; set; } = 5;
     private int AttemptCount { get; set; } = 0;
-    private Vector3 vanillaPosition;
+    private int TotalAttemptMax { get; set; } = 5;
+    private int TotalAttemptCount { get; set; } = 0;
 
-    public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey) : base(encounterRules) {
+    private bool inited = false;
+    private Vector3 validOrientationTargetPosition;
+
+    public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, bool clusterUnits = false) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.orientationTargetKey = orientationTargetKey;
+      this.clusterUnits = clusterUnits;
     }
 
-    public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, float minimumDistance) : base(encounterRules) {
+    public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, float minimumDistance, bool clusterUnits = false) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.useOrientationTarget = true;
       this.orientationTargetKey = orientationTargetKey;
       this.useMiniumDistance = true;
       this.minimumDistance = minimumDistance;
+      this.clusterUnits = clusterUnits;
+    }
+
+    private void Init() {
+      if (!inited) {
+        Main.LogDebug($"[SpawnLanceAnywhere] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
+        validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position, 3);
+        inited = true;
+      }
     }
 
     public override void Run(RunPayload payload) {
       GetObjectReferences();
       SaveSpawnPositions(lance);
       Main.Logger.Log($"[SpawnLanceAnywhere] Attemping for '{lance.name}'");
-      vanillaPosition = lance.transform.position;
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+
+      Init();
+
+      // Cluster units to make a tigher spread - makes hitting a successful spawn position generally easier
+      if (clusterUnits) {
+        ClusterLanceMembers(lance);
+        clusterUnits = false;
+      }
+
+      if (TotalAttemptCount >= TotalAttemptMax) {
+        HandleFallback(payload, this.lanceKey, this.orientationTargetKey);
+        return;
+      }
 
       Vector3 newPosition = GetRandomPositionWithinBounds();
       Main.LogDebug($"[SpawnLanceAnywhere] Attempting selection of random position in bounds. Selected position '{newPosition}'");
@@ -54,7 +81,7 @@ namespace MissionControl.Logic {
 
       if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(newPosition, validOrientationTargetPosition, minimumDistance)) {
         if (!AreLanceMemberSpawnsValid(lance, validOrientationTargetPosition)) {
-          AttemptCount++;
+          CheckAttempts();
           Run(payload);
         } else {
           Main.Logger.Log("[SpawnLanceAnywhere] Lance spawn complete");
@@ -62,22 +89,20 @@ namespace MissionControl.Logic {
         }
       } else {
         Main.Logger.Log("[SpawnLanceAnywhere] Spawn is too close to the target. Selecting a new spawn.");
-        AttemptCount++;
+        CheckAttempts();
+        Run(payload);
+      }
+    }
 
-        if (AttemptCount > AttemptCountMax) {
-          AttemptCount = 0;
-          minimumDistance -= 50f;
-          if (minimumDistance <= 0) {
-            if (vanillaPosition == Vector3.zero) {
-              Main.LogDebug($"[SpawnLanceAnywhere] Cannot find valid spawn. Not spawning.");
-            } else {
-              lance.transform.position = vanillaPosition;
-              Main.LogDebug($"[SpawnLanceAnywhere] Cannot find valid spawn. Spawning at vanilla location for the encounter");
-            }
-          }
-        } else { 
-          Run(payload);
-        }
+    private void CheckAttempts() {
+      AttemptCount++;
+      TotalAttemptCount++;
+
+      if (AttemptCount > AttemptCountMax) {
+        AttemptCount = 0;
+        Main.LogDebug($"[SpawnLanceAnywhere] Cannot find a suitable lance spawn within the boundaries of {minimumDistance}. Widening search");
+        minimumDistance -= 50f;
+        if (minimumDistance <= 10) minimumDistance = 10;
       }
     }
 

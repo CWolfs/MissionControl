@@ -27,6 +27,9 @@ namespace MissionControl.Logic {
     private int EdgeCheckMax { get; set; } = 10;
     private int EdgeCheckCount { get; set; } = 0;
 
+    private bool inited = false;
+    private Vector3 validOrientationTargetPosition;
+
     public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, bool clusterUnits = false) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.useOrientationTarget = true;
@@ -43,14 +46,28 @@ namespace MissionControl.Logic {
       this.clusterUnits = clusterUnits;
     }
 
+    private void Init() {
+      if (!inited) {
+        Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
+        validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position, 3);
+
+        // Cluster units to make a tigher spread - makes hitting a successful spawn position generally easier
+        if (clusterUnits) {
+          ClusterLanceMembers(lance);
+          clusterUnits = false;
+        }
+
+        inited = true;
+      }
+    }
+
     public override void Run(RunPayload payload) {
       GetObjectReferences();
       SaveSpawnPositions(lance);
       Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Attemping for '{lance.name}'");
       AttemptCount++;
 
-      // Cluster units to make a tigher spread - makes hitting a successful spawn position generally easier
-      if (clusterUnits) ClusterLanceMembers();
+      Init();
 
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       MissionControl EncounterManager = MissionControl.Instance;
@@ -67,9 +84,7 @@ namespace MissionControl.Logic {
       newSpawnPosition = newSpawnPosition.GetClosestHexLerpedPointOnGrid();
       lance.transform.position = newSpawnPosition;
       
-      Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Attempting to spance lance at point on lerped grid '{newSpawnPosition}'");
-
-      Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
+      Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Attempting to spawn lance at point on lerped grid '{newSpawnPosition}'");
 
       if (useOrientationTarget) RotateToTarget(lance, orientationTarget);
 
@@ -114,33 +129,7 @@ namespace MissionControl.Logic {
       spawnPoint.transform.position = newSpawnLocation;
     }
 
-    private void ClusterLanceMembers() {
-      List<GameObject> originalSpawnPoints = lance.FindAllContains("SpawnPoint");
-      List<Vector3> usedPosition = new List<Vector3>();
-      foreach (GameObject spawn in originalSpawnPoints) {
-        Vector3 clusteredSpawnPosition = GetRandomPositionWithinBounds(lance.transform.position, 25f);
-        while (ContainsCompare(usedPosition, clusteredSpawnPosition)) {
-          clusteredSpawnPosition = GetRandomPositionWithinBounds(lance.transform.position, 25f);
-        }
-        spawn.transform.position = clusteredSpawnPosition;
-        usedPosition.Add(clusteredSpawnPosition);
-      }
-      clusterUnits = false;
-    }
-
-    private bool ContainsCompare(List<Vector3> list, Vector3 vector) {
-      for (int i = 0; i < list.Count; i++) {
-        Vector3 listVector = list[i];
-        if (listVector == vector) {
-          return true;
-        }
-      }
-      return false;
-    }
-
     private void CheckAttempts() {
-      AttemptCount++;
-
       if (AttemptCount > AttemptCountMax) {
         EdgeCheckCount++;
         AttemptCount = 0;

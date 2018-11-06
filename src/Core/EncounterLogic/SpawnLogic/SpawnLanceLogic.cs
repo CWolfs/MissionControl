@@ -39,6 +39,9 @@ namespace MissionControl.Logic {
         RestoreSpawnPositions(this.EncounterRules.ObjectLookup[lanceKey]);
         Main.LogDebug($"[{this.GetType().Name}] Cannot find valid spawn. Spawning at vanilla location for the encounter");
       }
+
+      LookAtTarget lookAtTarget = new LookAtTarget(this.EncounterRules, lanceKey, orientationTargetKey, true);
+      lookAtTarget.Run(payload);
     }
 
     protected bool AreLanceMemberSpawnsValid(GameObject lance, Vector3 checkTarget) {
