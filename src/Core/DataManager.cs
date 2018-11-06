@@ -30,7 +30,7 @@ namespace MissionControl {
 
     public void Init(string modDirectory) {
       ModDirectory = modDirectory;
-      LoadLanceOverries();
+      LoadLanceOverrides();
     }
 
     public void LoadDeferredDefs() {
@@ -38,7 +38,7 @@ namespace MissionControl {
       HasLoadedDeferredDefs = true;
     }
 
-    private void LoadLanceOverries() {
+    private void LoadLanceOverrides() {
       foreach (string file in Directory.GetFiles($"{ModDirectory}/lances", "*.json")) {
         string lanceData = File.ReadAllText(file);
         MLanceOverrideData lanceOverrideData = JsonConvert.DeserializeObject<MLanceOverrideData>(lanceData);
@@ -73,10 +73,23 @@ namespace MissionControl {
       }
     }
 
+    private bool LoadDirectLanceReference(string key) {
+      BattleTech.Data.DataManager dataManager = UnityGameInstance.BattleTechGame.DataManager;
+      if (dataManager.ResourceEntryExists(BattleTechResourceType.LanceDef, key)) {
+        Main.Logger.Log($"[LoadDirectLanceReference] Lance definition of '{key}' exists but has not been loaded yet. Loading it. [Experimental: If a crash occurs after this please report it]");
+        dataManager.RequestNewResource(BattleTechResourceType.LanceDef, key, null);
+        dataManager.ProcessRequests();
+        return true;
+      }
+      
+      Main.Logger.Log($"[LoadDirectLanceReference] No direct lance reference found for '{key}'");
+      return false;
+    }
+
     public bool DoesLanceOverrideExist(string key) {
       if (LanceOverrides.ContainsKey(key)) return true;
       if (UnityGameInstance.BattleTechGame.DataManager.LanceDefs.Exists(key)) return true;
-      return false;
+      return LoadDirectLanceReference(key);
     }
 
     public LanceOverride GetLanceOverride(string key) {
