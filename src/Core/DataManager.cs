@@ -30,7 +30,7 @@ namespace MissionControl {
 
     public void Init(string modDirectory) {
       ModDirectory = modDirectory;
-      LoadLanceOverries();
+      LoadLanceOverrides();
     }
 
     public void LoadDeferredDefs() {
@@ -38,7 +38,7 @@ namespace MissionControl {
       HasLoadedDeferredDefs = true;
     }
 
-    private void LoadLanceOverries() {
+    private void LoadLanceOverrides() {
       foreach (string file in Directory.GetFiles($"{ModDirectory}/lances", "*.json")) {
         string lanceData = File.ReadAllText(file);
         MLanceOverrideData lanceOverrideData = JsonConvert.DeserializeObject<MLanceOverrideData>(lanceData);
