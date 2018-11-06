@@ -27,7 +27,8 @@ namespace MissionControl.Logic {
     private int EdgeCheckMax { get; set; } = 10;
     private int EdgeCheckCount { get; set; } = 0;
 
-    Vector3 validOrientationTargetPosition;
+    private bool inited = false;
+    private Vector3 validOrientationTargetPosition;
 
     public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, bool clusterUnits = false) : base(encounterRules) {
       this.lanceKey = lanceKey;
@@ -46,13 +47,17 @@ namespace MissionControl.Logic {
     }
 
     private void Init() {
-      Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
-      validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position, 4);
+      if (!inited) {
+        Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
+        validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position, 4);
 
-      // Cluster units to make a tigher spread - makes hitting a successful spawn position generally easier
-      if (clusterUnits) {
-        ClusterLanceMembers(lance);
-        clusterUnits = false;
+        // Cluster units to make a tigher spread - makes hitting a successful spawn position generally easier
+        if (clusterUnits) {
+          ClusterLanceMembers(lance);
+          clusterUnits = false;
+        }
+
+        inited = true;
       }
     }
 

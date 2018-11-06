@@ -25,7 +25,9 @@ namespace MissionControl.Logic {
     private int AttemptCount { get; set; } = 0;
     private int TotalAttemptMax { get; set; } = 5;
     private int TotalAttemptCount { get; set; } = 0;
-    private Vector3 vanillaPosition;
+
+    private bool inited = false;
+    private Vector3 validOrientationTargetPosition;
 
     public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, bool clusterUnits = false) : base(encounterRules) {
       this.lanceKey = lanceKey;
@@ -42,12 +44,21 @@ namespace MissionControl.Logic {
       this.clusterUnits = clusterUnits;
     }
 
+    private void Init() {
+      if (!inited) {
+        Main.LogDebug($"[SpawnLanceAnywhere] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
+        validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position, 4);
+        inited = true;
+      }
+    }
+
     public override void Run(RunPayload payload) {
       GetObjectReferences();
       SaveSpawnPositions(lance);
       Main.Logger.Log($"[SpawnLanceAnywhere] Attemping for '{lance.name}'");
-      vanillaPosition = lance.transform.position;
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+
+      Init();
 
       // Cluster units to make a tigher spread - makes hitting a successful spawn position generally easier
       if (clusterUnits) {
