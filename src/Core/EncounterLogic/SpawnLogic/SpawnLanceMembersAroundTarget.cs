@@ -52,7 +52,7 @@ namespace MissionControl.Logic {
       Main.Logger.Log($"[SpawnLanceMembersAroundTarget] Attempting for '{lance.name}'");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
 
-      Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position, 4);
+      Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position, 3);
       lance.transform.position = validOrientationTargetPosition;
 
       List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");

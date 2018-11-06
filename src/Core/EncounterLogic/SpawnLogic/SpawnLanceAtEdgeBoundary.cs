@@ -49,7 +49,7 @@ namespace MissionControl.Logic {
     private void Init() {
       if (!inited) {
         Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
-        validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position, 4);
+        validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position, 3);
 
         // Cluster units to make a tigher spread - makes hitting a successful spawn position generally easier
         if (clusterUnits) {
