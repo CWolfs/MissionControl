@@ -16,6 +16,8 @@ namespace MissionControl.Logic {
       public static string PLURAL_DURATION_TYPE = "[pluralDurationType]";  // Round(s) or Phase(s)
     }
 
+    public static string DIALOGUE_ADDITIONAL_LANCE_ALLY_START_GUID = "47647e3c-a82d-4946-a601-b7dddbb63452";
+
     public ChunkLogic() {
       this.Type = LogicType.ENCOUNTER_MANIPULATION;
     }
