@@ -18,10 +18,21 @@ namespace MissionControl.Logic {
     private string dialogChunkName;
     private string debugDescription;
 
+    private bool fromDialogueBucket = false;
+    private string dialogueBucketId;
+
     public AddDialogueChunk(string dialogueGuid, string dialogChunkName, string debugDescription) {
       this.dialogueGuid = dialogueGuid;
       this.dialogChunkName = dialogChunkName;
       this.debugDescription = debugDescription;
+    }
+
+    public AddDialogueChunk(string dialogueGuid, string dialogChunkName, string debugDescription, string dialogueBucketId) {
+      this.dialogueGuid = dialogueGuid;
+      this.dialogChunkName = dialogChunkName;
+      this.debugDescription = debugDescription;
+      this.fromDialogueBucket = true;
+      this.dialogueBucketId = dialogueBucketId;
     }
 
     public override void Run(RunPayload payload) {
@@ -31,7 +42,14 @@ namespace MissionControl.Logic {
       dialogChunk.encounterObjectGuid = System.Guid.NewGuid().ToString();
       dialogChunk.notes = debugDescription;
 
-      DialogueGameLogic dialogueGameLogic =  DialogueFactory.CreateDialogLogic(dialogChunk.gameObject, dialogChunkName);
+      DialogueGameLogic dialogueGameLogic;
+
+      if (fromDialogueBucket) {
+        dialogueGameLogic =  DialogueFactory.CreateBucketDialogLogic(dialogChunk.gameObject, dialogChunkName, dialogueBucketId);
+      } else {
+        dialogueGameLogic =  DialogueFactory.CreateDialogLogic(dialogChunk.gameObject, dialogChunkName);
+      }
+
       dialogueGameLogic.encounterObjectGuid = dialogueGuid;
     }
   }

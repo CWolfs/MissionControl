@@ -5,16 +5,41 @@ using BattleTech;
 
 namespace MissionControl.EncounterFactories {
   public class DialogueFactory {
-    public static DialogueGameLogic CreateDialogLogic(GameObject parent, string name) {
+    private static GameObject CreateDialogLogicGameObject(GameObject parent, string name) {
       GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
       GameObject dialogueGameLogicGo = new GameObject($"Dialogue_{name}");
       dialogueGameLogicGo.transform.parent = parent.transform;
       dialogueGameLogicGo.transform.localPosition = Vector3.zero;
-      
-      DialogueGameLogic dialogGameLogic = dialogueGameLogicGo.AddComponent<DialogueGameLogic>();
-      dialogGameLogic.conversationContent = CreateTestConversationContent();
 
-      return dialogGameLogic;
+      return dialogueGameLogicGo;
+    }
+    
+    public static DialogueGameLogic CreateDialogLogic(GameObject parent, string name) {
+      GameObject dialogueGameLogicGo = CreateDialogLogicGameObject(parent, name);
+      
+      DialogueGameLogic dialogueGameLogic = dialogueGameLogicGo.AddComponent<DialogueGameLogic>();
+      dialogueGameLogic.conversationContent = CreateTestConversationContent();
+
+      return dialogueGameLogic;
+    }
+
+    /*
+      Buckets seem to be a collection of conversation contents that contain only one conversation dialogue.
+      They are selected at random. Good for a certain level fo variation but fairly shallow in depth.
+      Buckets are loaded from /conversationBuckets and they take their individual entries from /conversations/dialogue_buckets
+    */
+    public static DialogueGameLogic CreateBucketDialogLogic(GameObject parent, string name, string dialogueBucketId) {
+      GameObject dialogueGameLogicGo = CreateDialogLogicGameObject(parent, name);
+
+      DialogueGameLogic dialogueGameLogic = dialogueGameLogicGo.AddComponent<DialogueGameLogic>();
+      dialogueGameLogic.dialogueSource = DialogueSourceType.FromBucket;
+      dialogueGameLogic.dialogBucketId = dialogueBucketId;
+
+      CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+      combatState.DataManager.RequestResource(BattleTechResourceType.DialogBucketDef, dialogueBucketId, null);
+      combatState.DataManager.ProcessRequests();
+
+      return dialogueGameLogic;
     }
 
     public static ConversationContent CreateTestConversationContent() {

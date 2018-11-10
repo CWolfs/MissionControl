@@ -16,10 +16,18 @@ namespace MissionControl.Trigger {
   public class DialogTrigger : EncounterTrigger {
     private MessageCenterMessageType onMessage;
     private string dialogueGuid;
+    private bool isInterrupt;
 
     public DialogTrigger(MessageCenterMessageType onMessage, string dialogueGuid) {
       this.onMessage = onMessage;
       this.dialogueGuid = dialogueGuid;
+      this.isInterrupt = true;
+    }
+
+    public DialogTrigger(MessageCenterMessageType onMessage, string dialogueGuid, bool isInterrupt) {
+      this.onMessage = onMessage;
+      this.dialogueGuid = dialogueGuid;
+      this.isInterrupt = isInterrupt;
     }
 
     public override void Run(RunPayload payload) {
@@ -32,6 +40,7 @@ namespace MissionControl.Trigger {
 
       DialogResult dialogueResult = ScriptableObject.CreateInstance<DialogResult>();
       dialogueResult.dialogueRef.EncounterObjectGuid = dialogueGuid;
+      dialogueResult.isInterrupt = this.isInterrupt;
       
       triggerDialogue.resultList.contentsBox.Add(new EncounterResultBox(dialogueResult));
       encounterData.responseGroup.triggerList.Add(triggerDialogue);
