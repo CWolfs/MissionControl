@@ -3,6 +3,8 @@ using System;
 
 using BattleTech;
 
+using MissionControl.RuntimeCast;
+
 namespace MissionControl.EncounterFactories {
   public class DialogueFactory {
     private static GameObject CreateDialogLogicGameObject(GameObject parent, string name) {
@@ -45,8 +47,21 @@ namespace MissionControl.EncounterFactories {
     public static ConversationContent CreateTestConversationContent() {
       // DialogueContent dialogueContent1 = new DialogueContent("Hello World, Commander", Color.blue, "castDef_DariusDefault", "Audio_Event_AmbushConvoy_EyesOn_3", 
       //  "", BattleTech.DialogCameraDistance.Far, BattleTech.DialogCameraHeight.Default, -1);
-       DialogueContent dialogueContent1 = new DialogueContent("Thanks for the assist on this matter, Commander. Let's wipe them out!", Color.blue, "castDef_SE01_AranoGuardsmanDefault", "Audio_Event_AmbushConvoy_EyesOn_3", 
-        "", BattleTech.DialogCameraDistance.Medium, BattleTech.DialogCameraHeight.Default, -1);
+
+      /*
+      DialogueContent dialogueContent1 = new DialogueContent(
+          "Thanks for the assist on this matter, Commander. Let's wipe them out!",
+          Color.blue, "castDef_SE01_AranoGuardsmanDefault", "Audio_Event_AmbushConvoy_EyesOn_3", 
+          "", BattleTech.DialogCameraDistance.Medium, BattleTech.DialogCameraHeight.Default, -1
+        );
+      */
+
+      CastDef castDef = RuntimeCastFactory.CreateCast();
+      DialogueContent dialogueContent1 = new DialogueContent(
+        "Thanks for the assist on this matter, Commander. Let's wipe them out!",
+        Color.blue, castDef.id, "Audio_Event_AmbushConvoy_EyesOn_3", 
+        "", BattleTech.DialogCameraDistance.Medium, BattleTech.DialogCameraHeight.Default, -1
+      );
 
       ConversationContent conversation = new ConversationContent("Conversation MC Test 1", new DialogueContent[] { dialogueContent1 });
 

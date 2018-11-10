@@ -26,8 +26,8 @@ namespace MissionControl.Logic {
         encounterRules.EncounterLogic.Add(new AddDialogueChunk(
           ChunkLogic.DIALOGUE_ADDITIONAL_LANCE_ALLY_START_GUID,
           "AdditionalLanceAllyStart",
-          "Start Conversation For Additional Lance Ally",
-          "DialogBucketDef_Universal_KillConfirmed"
+          "Start Conversation For Additional Lance Ally"// ,
+          // "DialogBucketDef_Universal_KillConfirmed"
         ));
       
         encounterRules.EncounterLogic.Add(new DialogTrigger(MessageCenterMessageType.OnEncounterIntroComplete, ChunkLogic.DIALOGUE_ADDITIONAL_LANCE_ALLY_START_GUID));
