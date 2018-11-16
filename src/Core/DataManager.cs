@@ -173,7 +173,7 @@ namespace MissionControl {
     }
 
     public string GetRandomRank(string factionKey) {
-      List<string> ranks = this.Ranks[factionKey];
+      List<string> ranks = new List<string>();
       ranks.AddRange(this.Ranks["All"]);
       if (this.Ranks.ContainsKey(factionKey)) ranks.AddRange(this.Ranks[factionKey]);
 
