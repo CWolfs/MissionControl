@@ -26,11 +26,17 @@ namespace MissionControl {
     public string ModDirectory { get; private set; }
     private Dictionary<string, MLanceOverride> LanceOverrides { get; set; } = new Dictionary<string, MLanceOverride>();
 
+    private List<string> Genders = new List<string>{ "Male", "Female", "Unspecified" };
+    private Dictionary<string, Dictionary<string, List<string>>> FirstNames = new Dictionary<string, Dictionary<string, List<string>>>(); // e.g. <Male, <FactionName, [list of names]>>
+    private Dictionary<string, List<string>> LastNames = new Dictionary<string, List<string>>();  // e.g. <All, [list of names]>
+    private Dictionary<string, List<string>> Ranks = new Dictionary<string, List<string>>();      // e.g. <FactionName, [list of ranks]>
+
     private DataManager() {}
 
     public void Init(string modDirectory) {
       ModDirectory = modDirectory;
       LoadLanceOverrides();
+      LoadRuntimeCastData();
     }
 
     public void LoadDeferredDefs() {
@@ -115,6 +121,63 @@ namespace MissionControl {
     public void LoadVehicleDefs() {
       BattleTech.Data.DataManager dataManager = UnityGameInstance.BattleTechGame.DataManager;
       dataManager.RequestNewResource(BattleTechResourceType.VehicleDef, "vehicledef_DEMOLISHER", null);
+    }
+
+    /* RUNTIME CREW NAMES */
+    public void LoadRuntimeCastData() {
+      LoadCastFirstNames();
+      LoadCastLastNames();
+      LoadCastRanks();
+    }
+
+    private void LoadCastFirstNames() {
+      string firstNameJson = File.ReadAllText($"{ModDirectory}/cast/FirstNames.json");
+      MCastFirstNames firstNames = JsonConvert.DeserializeObject<MCastFirstNames>(firstNameJson);
+      this.FirstNames.Add("All", firstNames.All);
+      this.FirstNames.Add("Male", firstNames.Male);
+      this.FirstNames.Add("Female", firstNames.Female);
+    }
+
+    private void LoadCastLastNames() {
+      string lastNameJson = File.ReadAllText($"{ModDirectory}/cast/LastNames.json");
+      this.LastNames = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(lastNameJson);
+    }
+
+    private void LoadCastRanks() {
+      string rankJson = File.ReadAllText($"{ModDirectory}/cast/Ranks.json");
+      this.Ranks = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(rankJson);
+    }
+
+    public string GetRandomGender() {
+      return Genders[UnityEngine.Random.Range(0, Genders.Count)];
+    }
+
+    public string GetRandomFirstName(string gender, string factionKey) {
+      List<string> names = new List<string>();
+      names.AddRange(this.FirstNames["All"]["All"]);
+      if (gender == "Male" || gender == "Female") {
+        Dictionary<string, List<string>> genderNames = this.FirstNames[gender];
+        names.AddRange(genderNames["All"]);
+        if (genderNames.ContainsKey(factionKey)) names.AddRange(genderNames[factionKey]);
+      }
+
+      return names[UnityEngine.Random.Range(0, names.Count)];
+    }
+
+    public string GetRandomLastName(string factionKey) {
+      List<string> names = new List<string>();
+      names.AddRange(this.LastNames["All"]);
+      if (this.LastNames.ContainsKey(factionKey)) names.AddRange(this.LastNames[factionKey]);
+
+      return names[UnityEngine.Random.Range(0, names.Count)];
+    }
+
+    public string GetRandomRank(string factionKey) {
+      List<string> ranks = this.Ranks[factionKey];
+      ranks.AddRange(this.Ranks["All"]);
+      if (this.Ranks.ContainsKey(factionKey)) ranks.AddRange(this.Ranks[factionKey]);
+
+      return ranks[UnityEngine.Random.Range(0, ranks.Count)];
     }
 
     public void Reset() {
