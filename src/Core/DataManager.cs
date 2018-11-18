@@ -30,6 +30,7 @@ namespace MissionControl {
     private Dictionary<string, Dictionary<string, List<string>>> FirstNames = new Dictionary<string, Dictionary<string, List<string>>>(); // e.g. <Male, <FactionName, [list of names]>>
     private Dictionary<string, List<string>> LastNames = new Dictionary<string, List<string>>();  // e.g. <All, [list of names]>
     private Dictionary<string, List<string>> Ranks = new Dictionary<string, List<string>>();      // e.g. <FactionName, [list of ranks]>
+    private Dictionary<string, List<string>> Portraits = new Dictionary<string, List<string>>();  // e.g. <Male, [list of male portraits]
 
     private DataManager() {}
 
@@ -128,6 +129,7 @@ namespace MissionControl {
       LoadCastFirstNames();
       LoadCastLastNames();
       LoadCastRanks();
+      LoadPortraits();
     }
 
     private void LoadCastFirstNames() {
@@ -146,6 +148,11 @@ namespace MissionControl {
     private void LoadCastRanks() {
       string rankJson = File.ReadAllText($"{ModDirectory}/cast/Ranks.json");
       this.Ranks = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(rankJson);
+    }
+
+    private void LoadPortraits() {
+      string portraitJson =  File.ReadAllText($"{ModDirectory}/cast/Portraits.json");
+      this.Portraits = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(portraitJson);
     }
 
     public string GetRandomGender() {
@@ -178,6 +185,14 @@ namespace MissionControl {
       if (this.Ranks.ContainsKey(factionKey)) ranks.AddRange(this.Ranks[factionKey]);
 
       return ranks[UnityEngine.Random.Range(0, ranks.Count)];
+    }
+
+    public string GetRandomPortraitPath(string gender) {
+      List<string> portraits = new List<string>();
+      portraits.AddRange(this.Portraits["All"]);
+      if (this.Portraits.ContainsKey(gender)) portraits.AddRange(this.Portraits[gender]);
+
+      return portraits[UnityEngine.Random.Range(0, portraits.Count)];  
     }
 
     public void Reset() {

@@ -1,0 +1,11 @@
+{
+  "All": [
+  	"sprites/Portraits/guiTxrPort_test.png"
+  ],
+  "Male": [
+    "sprites/Portraits/guiTxrPort_backerEck_utr.png"
+  ],
+  "Female": [
+    "sprites/Portraits/guiTxrPort_backerReinke_utr.png"
+  ]
+}

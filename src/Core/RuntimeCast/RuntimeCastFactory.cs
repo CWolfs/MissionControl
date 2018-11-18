@@ -18,6 +18,7 @@ namespace MissionControl.RuntimeCast {
       string firstName = DataManager.Instance.GetRandomFirstName(gender, employerFactionKey);
       string lastName = DataManager.Instance.GetRandomLastName(employerFactionKey);
       string rank = DataManager.Instance.GetRandomRank(employerFactionKey);
+      string portraitPath = DataManager.Instance.GetRandomPortraitPath(gender);
       Gender btGender = Gender.Male;
       if (gender == "Female") btGender = Gender.Female;
       if (gender == "Unspecified") btGender = Gender.NonBinary;
@@ -36,7 +37,7 @@ namespace MissionControl.RuntimeCast {
       runtimeCastDef.showFirstName = true;
       runtimeCastDef.showCallsign = false;
       runtimeCastDef.showLastName = true;
-      runtimeCastDef.defaultEmotePortrait.portraitAssetPath = "sprites/Portraits/guiTxrPort_SE01_AranoGuard_def_utr.png";
+      runtimeCastDef.defaultEmotePortrait.portraitAssetPath = portraitPath;
 
       ((DictionaryStore<CastDef>)UnityGameInstance.BattleTechGame.DataManager.CastDefs).Add(runtimeCastDef.id, runtimeCastDef);
 
