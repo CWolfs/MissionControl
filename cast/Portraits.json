@@ -1,9 +1,11 @@
 {
   "All": [
-  	"sprites/Portraits/guiTxrPort_test.png"
+  	"sprites/Portraits/guiTxrPort_KameaGuard1_utr.png"
   ],
   "Male": [
-    "sprites/Portraits/guiTxrPort_backerEck_utr.png"
+    "sprites/Portraits/guiTxrPort_backerEck_utr.png",
+    "sprites/Portraits/guiTxrPort_KameaGuard2_utr.png",
+    "sprites/Portraits/guiTxrPort_KameaGuard3_utr.png"
   ],
   "Female": [
     "sprites/Portraits/guiTxrPort_backerReinke_utr.png"

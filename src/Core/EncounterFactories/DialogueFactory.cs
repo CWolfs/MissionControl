@@ -16,11 +16,15 @@ namespace MissionControl.EncounterFactories {
       return dialogueGameLogicGo;
     }
     
-    public static DialogueGameLogic CreateDialogLogic(GameObject parent, string name, string cameraTargetGuid) {
+    public static DialogueGameLogic CreateDialogLogic(GameObject parent, string name, string cameraTargetGuid, string presetDialogue = null) {
       GameObject dialogueGameLogicGo = CreateDialogLogicGameObject(parent, name);
       
       DialogueGameLogic dialogueGameLogic = dialogueGameLogicGo.AddComponent<DialogueGameLogic>();
-      dialogueGameLogic.conversationContent = CreateConversationContent(cameraTargetGuid);
+      if (presetDialogue == null)  {
+        presetDialogue = DataManager.Instance.GetRandomDialogue("AllyDrop",
+          MissionControl.Instance.CurrentContractType, MissionControl.Instance.EncounterRulesName);
+      }
+      dialogueGameLogic.conversationContent = CreateConversationContent(presetDialogue, cameraTargetGuid);
 
       return dialogueGameLogic;
     }
@@ -44,11 +48,10 @@ namespace MissionControl.EncounterFactories {
       return dialogueGameLogic;
     }
 
-    public static ConversationContent CreateConversationContent(string cameraTargetGuid) {
+    public static ConversationContent CreateConversationContent(string presetDialogue, string cameraTargetGuid) {
       CastDef castDef = RuntimeCastFactory.CreateCast();
       DialogueContent dialogueContent1 = new DialogueContent(
-        "Thanks for the assist on this matter, Commander. Let's wipe them out!",
-        Color.blue, castDef.id, "Audio_Event_AmbushConvoy_EyesOn_3", 
+        presetDialogue, Color.white, castDef.id, "Audio_Event_AmbushConvoy_EyesOn_3", 
         cameraTargetGuid, BattleTech.DialogCameraDistance.Medium, BattleTech.DialogCameraHeight.Default, -1
       );
 

@@ -32,12 +32,15 @@ namespace MissionControl {
     private Dictionary<string, List<string>> Ranks = new Dictionary<string, List<string>>();      // e.g. <FactionName, [list of ranks]>
     private Dictionary<string, List<string>> Portraits = new Dictionary<string, List<string>>();  // e.g. <Male, [list of male portraits]
 
+    private Dictionary<string, Dictionary<string, List<string>>> Dialogue = new Dictionary<string, Dictionary<string, List<string>>>();
+
     private DataManager() {}
 
     public void Init(string modDirectory) {
       ModDirectory = modDirectory;
       LoadLanceOverrides();
       LoadRuntimeCastData();
+      LoadDialogueData();
     }
 
     public void LoadDeferredDefs() {
@@ -193,6 +196,27 @@ namespace MissionControl {
       if (this.Portraits.ContainsKey(gender)) portraits.AddRange(this.Portraits[gender]);
 
       return portraits[UnityEngine.Random.Range(0, portraits.Count)];  
+    }
+
+    public void LoadDialogueData() {
+      string allyDropJson = File.ReadAllText($"{ModDirectory}/dialogue/AllyDrop.json");
+      Dialogue.Add("AllyDrop", JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(allyDropJson));
+    }
+
+    public string GetRandomDialogue(string type, string contractType, string contractSubType) {
+      List<string> dialogues = new List<string>();
+
+      if (Dialogue.ContainsKey(type)) {
+        Dictionary<string, List<string>> dialogueOfType = Dialogue[type];
+
+        if (dialogueOfType.ContainsKey("All")) dialogues.AddRange(dialogueOfType["All"]);
+        if (dialogueOfType.ContainsKey(contractType)) dialogues.AddRange(dialogueOfType[contractType]);
+        if (dialogueOfType.ContainsKey(contractSubType)) dialogues.AddRange(dialogueOfType[contractSubType]);
+
+        return dialogues[UnityEngine.Random.Range(0, dialogues.Count)];  
+      }
+
+      return "Let's get them, Commander!";
     }
 
     public void Reset() {
