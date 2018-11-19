@@ -12,8 +12,17 @@ namespace MissionControl.RuntimeCast {
     public static CastDef CreateCast() {
       Contract contract = MissionControl.Instance.CurrentContract;
       Faction employerFaction = contract.GetTeamFaction(EncounterRules.EMPLOYER_TEAM_ID);
+      string factionId = SimGameState.GetFactionDefIDFromEnum(employerFaction);
+      string employerFactionName = "Military Support";
+
+      if (employerFaction != Faction.INVALID_UNSET && employerFaction != Faction.NoFaction) {
+        FactionDef employerFactionDef = UnityGameInstance.Instance.Game.DataManager.Factions.Get(factionId);
+        if (employerFactionDef == null) Main.Logger.LogError($"[RuntimeCastFactory] Error finding FactionDef for faction with id '{factionId}'");
+        employerFactionName = employerFactionDef.Name.ToUpper();
+      }
+
       string employerFactionKey = (employerFaction == Faction.INVALID_UNSET || employerFaction == Faction.NoFaction) ? "All" : employerFaction.ToString();
-      string employerFactionName = (employerFaction == Faction.INVALID_UNSET || employerFaction == Faction.NoFaction) ? "Military Support" : employerFaction.ToString();
+      
       string gender = DataManager.Instance.GetRandomGender();
       string firstName = DataManager.Instance.GetRandomFirstName(gender, employerFactionKey);
       string lastName = DataManager.Instance.GetRandomLastName(employerFactionKey);
