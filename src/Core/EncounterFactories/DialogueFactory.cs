@@ -16,11 +16,11 @@ namespace MissionControl.EncounterFactories {
       return dialogueGameLogicGo;
     }
     
-    public static DialogueGameLogic CreateDialogLogic(GameObject parent, string name) {
+    public static DialogueGameLogic CreateDialogLogic(GameObject parent, string name, string cameraTargetGuid) {
       GameObject dialogueGameLogicGo = CreateDialogLogicGameObject(parent, name);
       
       DialogueGameLogic dialogueGameLogic = dialogueGameLogicGo.AddComponent<DialogueGameLogic>();
-      dialogueGameLogic.conversationContent = CreateTestConversationContent();
+      dialogueGameLogic.conversationContent = CreateConversationContent(cameraTargetGuid);
 
       return dialogueGameLogic;
     }
@@ -44,23 +44,12 @@ namespace MissionControl.EncounterFactories {
       return dialogueGameLogic;
     }
 
-    public static ConversationContent CreateTestConversationContent() {
-      // DialogueContent dialogueContent1 = new DialogueContent("Hello World, Commander", Color.blue, "castDef_DariusDefault", "Audio_Event_AmbushConvoy_EyesOn_3", 
-      //  "", BattleTech.DialogCameraDistance.Far, BattleTech.DialogCameraHeight.Default, -1);
-
-      /*
-      DialogueContent dialogueContent1 = new DialogueContent(
-          "Thanks for the assist on this matter, Commander. Let's wipe them out!",
-          Color.blue, "castDef_SE01_AranoGuardsmanDefault", "Audio_Event_AmbushConvoy_EyesOn_3", 
-          "", BattleTech.DialogCameraDistance.Medium, BattleTech.DialogCameraHeight.Default, -1
-        );
-      */
-
+    public static ConversationContent CreateConversationContent(string cameraTargetGuid) {
       CastDef castDef = RuntimeCastFactory.CreateCast();
       DialogueContent dialogueContent1 = new DialogueContent(
         "Thanks for the assist on this matter, Commander. Let's wipe them out!",
         Color.blue, castDef.id, "Audio_Event_AmbushConvoy_EyesOn_3", 
-        "", BattleTech.DialogCameraDistance.Medium, BattleTech.DialogCameraHeight.Default, -1
+        cameraTargetGuid, BattleTech.DialogCameraDistance.Medium, BattleTech.DialogCameraHeight.Default, -1
       );
 
       ConversationContent conversation = new ConversationContent("Conversation MC Test 1", new DialogueContent[] { dialogueContent1 });

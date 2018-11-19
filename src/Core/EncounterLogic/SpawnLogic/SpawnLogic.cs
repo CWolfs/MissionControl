@@ -19,7 +19,7 @@ namespace MissionControl.Logic {
       return IsSpawnValid(spawnPoint, checkTarget.transform.position.GetClosestHexLerpedPointOnGrid());
     }
 
-    public Vector3 GetClosestValidPathFindingHex(Vector3 origin, int radius = 2) {
+    public Vector3 GetClosestValidPathFindingHex(Vector3 origin, int radius = 3) {
       Main.LogDebug($"[GetClosestValidPathFindingHex] About to process with origin '{origin}'");
       Vector3 validOrigin = PathfindFromPointToPlayerSpawn(origin, radius);
       
