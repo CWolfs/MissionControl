@@ -135,7 +135,7 @@ namespace MissionControl {
 				};
         List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(new List<DynamicLongRangePathfinder.PointWithCost>() { pointWithCost }, validityPosition, 3000f, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
         
-        if (path != null && path.Count > 2 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
+        if (path != null && path.Count > 3 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
           Main.LogDebug("[IsSpawnValid] Has valid long range path finding");
           if (HasValidNeighbours(positionPathNode, validityPosition, type)) {
             Main.LogDebug("[IsSpawnValid] Has at least two valid neighbours");
