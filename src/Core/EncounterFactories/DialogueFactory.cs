@@ -51,7 +51,7 @@ namespace MissionControl.EncounterFactories {
     public static ConversationContent CreateConversationContent(string presetDialogue, string cameraTargetGuid) {
       CastDef castDef = RuntimeCastFactory.CreateCast();
       DialogueContent dialogueContent1 = new DialogueContent(
-        presetDialogue, Color.white, castDef.id, "Audio_Event_AmbushConvoy_EyesOn_3", 
+        presetDialogue, Color.white, castDef.id, "", 
         cameraTargetGuid, BattleTech.DialogCameraDistance.Medium, BattleTech.DialogCameraHeight.Default, -1
       );
 
