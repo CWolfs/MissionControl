@@ -1,48 +1,4 @@
 {
   "DebugMode": true,
-  "DebugSkirmishMode": true,
-  "AdditionalLances": {
-    "IncludeContractTypes": [],
-    "ExcludeContractTypes": [],
-    "LancePool": {
-      "ALL": ["GENERIC_BATTLE_LANCE"]
-    },
-    "Enemy": {
-      "Max": 2,
-      "ExcludeContractTypes": [],
-      "ChanceToSpawn": 0.4,
-      "LancePool": {
-        "ALL": [
-          "GENERIC_BATTLE_LANCE"
-        ],
-        "CONTRACT_TYPE:DestroyBase": [
-          "BRAWLER_LANCE", "DEFENDING_LANCE"
-        ],
-        "CONTRACT_TYPE:DefendBase": [
-          "HEAVY_MISSILE_LANCE", "ATTACKING_LANCE"
-        ],
-        "BIOME:DesertParched": [
-          "BBQ_MASTERS"
-        ],
-        "BIOME:LowlandsSpring": [
-          "IM_LIKE_A_TURRET_IN_WATER_I_RUN_SO_HOT"
-        ]
-      }
-    },
-    "Allies": {
-      "Max": 1,
-      "ChanceToSpawn": 0.4,
-      "LancePool": {
-        "ALL": [
-          "REFERENCE_EXAMPLE_LANCE"
-        ],
-        "CONTRACT_TYPE:DestroyBase": [
-          "HEAVY_MISSILE_LANCE", "ATTACKING_LANCE"
-        ],
-        "CONTRACT_TYPE:DefendBase": [
-          "BRAWLER_LANCE", "DEFENDING_LANCE"
-        ]
-      }
-    }
-  }
+  "DebugSkirmishMode": true
 }

@@ -55,6 +55,9 @@ namespace MissionControl {
 			Logger.Log("Loading MissionControl settings");
 			string settingsJsonString = File.ReadAllText($"{modDirectory}/settings.json");
 			Settings = JsonConvert.DeserializeObject<Config.Settings>(settingsJsonString);
+
+			string additionalLancesJsonString = File.ReadAllText($"{modDirectory}/config/AdditionalLances.json");
+			Settings.AdditionalLances = JsonConvert.DeserializeObject<AdditionalLances>(additionalLancesJsonString);
 		}
 
 		private static void LoadData(string modDirectory) {
