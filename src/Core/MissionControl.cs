@@ -25,6 +25,7 @@ namespace MissionControl {
     public string ContractMapName { get; private set; }
     public string CurrentContractType { get; private set; } = "INVALID_UNSET";
     public EncounterRules EncounterRules { get; private set; }
+    public string EncounterRulesName { get; private set; }
     public GameObject EncounterLayerParentGameObject { get; private set; }
     public EncounterLayerParent EncounterLayerParent { get; private set; }
     public GameObject EncounterLayerGameObject { get; private set; }
@@ -128,6 +129,7 @@ namespace MissionControl {
 
     private void SetEncounterRule(Type encounterRules) {
       EncounterRules = (EncounterRules)Activator.CreateInstance(encounterRules);
+      EncounterRulesName = encounterRules.Name.Replace("EncounterRules", "");
       EncounterRules.Build();
     }
 

@@ -1,0 +1,14 @@
+{
+  "All": [
+    "Let's get out there and do this!"
+  ],
+  "DestroyBase": [
+    "Gotta destroy this base, Commander."
+  ],
+  "DestroyBaseJointAssault": [
+    "We've been attached to your company for this assault, Commander. I hope you know what you're doing."
+  ],
+  "DestroyBaseAidAssault": [
+    "Couldn't have arrived any sooner, Comma <b>***STATIC***<b/>. Shit. We need help!"
+  ]
+}

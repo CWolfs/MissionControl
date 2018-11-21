@@ -22,5 +22,16 @@ namespace MissionControl.EncounterFactories {
 
       return emptyCustomChunk.AddComponent<EmptyCustomChunkGameLogic>();
     } 
+
+    public static DialogueChunkGameLogic CreateDialogueChunk(string name) {
+      GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
+      GameObject dialogChunk = new GameObject(name);
+      dialogChunk.transform.parent = encounterLayerGameObject.transform;
+      dialogChunk.transform.localPosition = Vector3.zero;
+
+      DialogueChunkGameLogic dialogueChunkGameLogic = dialogChunk.AddComponent<DialogueChunkGameLogic>();
+      dialogueChunkGameLogic.encounterObjectName = name;
+      return dialogueChunkGameLogic;  
+    }
   }
 }

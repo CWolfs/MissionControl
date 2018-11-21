@@ -19,13 +19,20 @@ namespace MissionControl.Logic {
       return IsSpawnValid(spawnPoint, checkTarget.transform.position.GetClosestHexLerpedPointOnGrid());
     }
 
-    public Vector3 GetClosestValidPathFindingHex(Vector3 origin, int radius = 2) {
+    public Vector3 GetClosestValidPathFindingHex(Vector3 origin, int radius = 3) {
       Main.LogDebug($"[GetClosestValidPathFindingHex] About to process with origin '{origin}'");
       Vector3 validOrigin = PathfindFromPointToPlayerSpawn(origin, radius);
-      
-      if (validOrigin == Vector3.zero) {
+
+      // Fallback to original position if a search of 50 nodes radius turns up no valid path
+      if (radius > 50) {
         origin = origin.GetClosestHexLerpedPointOnGrid();
         Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Reverting to original with fixed height of '{origin}'");
+        return origin;
+      }
+      
+      if (validOrigin == Vector3.zero) {
+        Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Expanding search radius from radius '{radius}' to '{radius * 2}'");
+        origin = GetClosestValidPathFindingHex(origin, radius * 2);
         return origin;
       }
 
