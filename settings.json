@@ -1,4 +1,9 @@
 {
   "DebugMode": true,
-  "DebugSkirmishMode": true
+  "DebugSkirmishMode": true,
+  "AdditionalLances": {
+    "Enable": true,
+    "SkullValueMatters": true,
+    "BasedOnVisibleSkullValue": true,
+  }
 }

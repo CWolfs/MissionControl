@@ -56,8 +56,16 @@ namespace MissionControl {
 			string settingsJsonString = File.ReadAllText($"{modDirectory}/settings.json");
 			Settings = JsonConvert.DeserializeObject<Config.Settings>(settingsJsonString);
 
-			string additionalLancesJsonString = File.ReadAllText($"{modDirectory}/config/AdditionalLances.json");
-			Settings.AdditionalLances = JsonConvert.DeserializeObject<AdditionalLances>(additionalLancesJsonString);
+			string alPath = $"{modDirectory}/config/AdditionalLances/AdditionalLances";
+			string additionalLancesJsonString = File.ReadAllText($"{alPath}.json");
+			Settings.AdditionalLances[0] = JsonConvert.DeserializeObject<AdditionalLances>(additionalLancesJsonString);
+
+			for (int i = 1; i <= 10; i++) {
+				if (File.Exists($"{alPath}{i}.json")) {
+					string skullAdditionalLanceJsonString = File.ReadAllText($"{alPath}{i}.json");
+					Settings.AdditionalLances[i] = JsonConvert.DeserializeObject<AdditionalLances>(skullAdditionalLanceJsonString);
+				}
+			}
 		}
 
 		private static void LoadData(string modDirectory) {

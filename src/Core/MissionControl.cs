@@ -94,10 +94,31 @@ namespace MissionControl {
     public void SetContract(Contract contract) {
       Main.Logger.Log($"[MissionControl] Setting contract '{contract.Name}'");
       CurrentContract = contract;
+      SetActiveAdditionalLances(contract);
       Main.Logger.Log($"[MissionControl] Contract map is '{contract.mapName}'");
       ContractMapName = contract.mapName;
       SetContractType(CurrentContract.ContractType);
       AiManager.Instance.ResetCustomBehaviourVariableScopes();
+    }
+
+    public void SetActiveAdditionalLances(Contract contract) {
+      if (Main.Settings.AdditionalLanceSettings.SkullValueMatters) {
+        int difficulty = contract.Override.finalDifficulty;
+        if (Main.Settings.AdditionalLanceSettings.BasedOnVisibleSkullValue) {
+          difficulty = contract.Override.GetUIDifficulty();
+        }
+
+        if (Main.Settings.AdditionalLances.ContainsKey(difficulty)) {
+          Main.Logger.Log($"[MissionControl] Using AdditionalLances for difficulty '{difficulty}' (Skull value '{(float)difficulty / 2f}')");
+          Main.Settings.ActiveAdditionalLances = Main.Settings.AdditionalLances[difficulty];
+        } else {
+          Main.Logger.Log($"[MissionControl] No AdditionalLance exists for difficulty '{difficulty}' (Skull value '{(float)difficulty / 2f}'). Using general config.");
+          Main.Settings.ActiveAdditionalLances = Main.Settings.AdditionalLances[0];
+        }
+      } else {
+        Main.Logger.Log($"[MissionControl] Skull value doesn't matter for AdditionalLances. Using general config.");
+        Main.Settings.ActiveAdditionalLances = Main.Settings.AdditionalLances[0];
+      }
     }
 
     /*
@@ -171,9 +192,13 @@ namespace MissionControl {
     }
 
     public bool AreAdditionalLancesAllowed(string teamType) {
-      bool areLancesAllowed = Main.Settings.AdditionalLances.GetValidContractTypes(teamType).Contains(CurrentContractType);
-      Main.LogDebug($"[AreAdditionalLancesAllowed] {areLancesAllowed}");
-      return areLancesAllowed;
+      if (Main.Settings.AdditionalLanceSettings.Enable) {
+        bool areLancesAllowed = Main.Settings.ActiveAdditionalLances.GetValidContractTypes(teamType).Contains(CurrentContractType);
+        Main.LogDebug($"[AreAdditionalLancesAllowed] {areLancesAllowed}");
+        return areLancesAllowed;
+      }
+      Main.Logger.Log($"[MissionControl] AdditionalLances are disabled.");
+      return false;
     }
   }
 }
