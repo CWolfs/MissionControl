@@ -104,9 +104,11 @@ namespace MissionControl {
     public void SetActiveAdditionalLances(Contract contract) {
       if (Main.Settings.AdditionalLanceSettings.SkullValueMatters) {
         int difficulty = contract.Override.finalDifficulty;
+        Main.LogDebug($"[MissionControl] Difficulty '{difficulty}' (Skull value '{(float)difficulty / 2f}')");
         if (Main.Settings.AdditionalLanceSettings.BasedOnVisibleSkullValue) {
           difficulty = contract.Override.GetUIDifficulty();
         }
+        Main.LogDebug($"[MissionControl] Visisble Difficulty '{contract.Override.GetUIDifficulty()}' (Skull value '{(float)contract.Override.GetUIDifficulty() / 2f}')");
 
         if (Main.Settings.AdditionalLances.ContainsKey(difficulty)) {
           Main.Logger.Log($"[MissionControl] Using AdditionalLances for difficulty '{difficulty}' (Skull value '{(float)difficulty / 2f}')");
