@@ -5,5 +5,6 @@
     "Enable": true,
     "SkullValueMatters": true,
     "BasedOnVisibleSkullValue": true,
+    "UseGeneralProfileForSkirmish": true,
   }
 }

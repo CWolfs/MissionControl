@@ -12,5 +12,8 @@ namespace MissionControl.Config {
 
 		[JsonProperty("BasedOnVisibleSkullValue")]
 		public bool BasedOnVisibleSkullValue { get; set; } = true;
+
+		[JsonProperty("UseGeneralProfileForSkirmish")]
+		public bool UseGeneralProfileForSkirmish { get; set; } = true;
 	}
 }
