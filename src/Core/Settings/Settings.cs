@@ -1,8 +1,9 @@
 using Newtonsoft.Json;
 
+using System.Collections.Generic;
+
 namespace MissionControl.Config {
     public class Settings {
-
         [JsonProperty("DebugMode")]
         public bool DebugMode { get; set; } = false;
 
@@ -10,6 +11,11 @@ namespace MissionControl.Config {
         public bool DebugSkirmishMode { get; set; } = false;
 
         [JsonProperty("AdditionalLances")]
-        public AdditionalLances AdditionalLances { get; set; } = new AdditionalLances();
+        public AdditionalLanceSettings AdditionalLanceSettings { get; set; } = new AdditionalLanceSettings();
+
+        public AdditionalLances ActiveAdditionalLances { get; set; }
+
+        [JsonIgnore]
+        public Dictionary<int, AdditionalLances> AdditionalLances { get; set; } = new Dictionary<int, AdditionalLances>();
     }
 }

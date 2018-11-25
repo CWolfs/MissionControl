@@ -187,7 +187,7 @@ namespace MissionControl.Rules {
       Main.Logger.Log($"[{this.GetType().Name}] Building additional lance rules");
 
       if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
-        int numberOfAdditionalEnemyLances = Main.Settings.AdditionalLances.Enemy.SelectNumberOfAdditionalLances();
+        int numberOfAdditionalEnemyLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances();
         int objectivePriority = -10;
         for (int i = 0; i < numberOfAdditionalEnemyLances; i++) {
           if (MissionControl.Instance.CurrentContractType == "ArenaSkirmish") {
@@ -201,7 +201,7 @@ namespace MissionControl.Rules {
       }
 
       if (MissionControl.Instance.AreAdditionalLancesAllowed("allies")) {
-        int numberOfAdditionalAllyLances = Main.Settings.AdditionalLances.Allies.SelectNumberOfAdditionalLances();
+        int numberOfAdditionalAllyLances = Main.Settings.ActiveAdditionalLances.Allies.SelectNumberOfAdditionalLances();
         for (int i = 0; i < numberOfAdditionalAllyLances; i++) {
           new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, minAllyDistance, maxAllyDistance);
         }
