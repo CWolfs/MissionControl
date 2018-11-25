@@ -7,13 +7,14 @@ using BattleTech.Framework;
 
 namespace MissionControl.EncounterFactories {
   public class ObjectiveFactory {
-    public static DestroyLanceObjective CreateDestroyLanceObjective(GameObject parent, LanceSpawnerRef lanceToDestroy, string lanceGuid, string title, bool showProgress,
+    public static DestroyLanceObjective CreateDestroyLanceObjective(string objectiveGuid, GameObject parent, LanceSpawnerRef lanceToDestroy, string lanceGuid, string title, bool showProgress,
     string progressFormat, string description, int priority, bool displayToUser, ObjectiveMark markUnitsWith) {
       GameObject destroyWholeLanceObjectiveGo = new GameObject($"Objective_DestroyLance_{lanceGuid}");
       destroyWholeLanceObjectiveGo.transform.parent = parent.transform;
       destroyWholeLanceObjectiveGo.transform.localPosition = Vector3.zero;
 
       DestroyLanceObjective destroyLanceObjective = destroyWholeLanceObjectiveGo.AddComponent<DestroyLanceObjective>();
+      destroyLanceObjective.encounterObjectGuid = objectiveGuid;
       destroyLanceObjective.title = title;
       destroyLanceObjective.showProgress = showProgress;
       destroyLanceObjective.progressFormat = progressFormat;
