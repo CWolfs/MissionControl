@@ -15,17 +15,25 @@ namespace MissionControl.Logic {
     }
 
     public override void Run(RunPayload payload) {
+      // NOT IMPLEMENTED
+    }
+
+    /*
+    // This adds the contract objective early enough so it displays on the loading screen
+    public override void Run(RunPayload payload) {
       Main.Logger.Log($"[AddPrimaryObjective] Adding objective '{objectiveGuid}' as a primary objective");
       ContractOverride contractOverride = ((ContractOverridePayload)payload).ContractOverride;
-      ObjectiveOverride objectiveOverride = new ObjectiveOverride();
+      ContractObjectiveOverride contractObjectiveOverride = new ContractObjectiveOverride();
       
       ObjectiveRef objectiveRef = new ObjectiveRef();
       objectiveRef.EncounterObjectGuid = objectiveGuid;
-      objectiveOverride.objective = objectiveRef;
+      // contractObjectiveOverride.objective = objectiveRef;
+      contractObjectiveOverride.isPrimary = true;
+      contractObjectiveOverride.title = "Test";
+      contractObjectiveOverride.description = "Test Description";
 
-      objectiveOverride.isPrimary = true;
-
-      contractOverride.objectiveList.Add(objectiveOverride);
+      contractOverride.contractObjectiveList.Add(contractObjectiveOverride);
     }
+    */
   }
 }

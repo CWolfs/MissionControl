@@ -26,5 +26,11 @@ namespace MissionControl.EncounterFactories {
 
       return destroyLanceObjective;
     }
+
+    public static ContractObjectiveGameLogic CreateDestroyLanceContractObjective(DestroyLanceObjective destroyLanceObjective) {
+      ContractObjectiveGameLogic contractObjectiveGameLogic = destroyLanceObjective.transform.parent.gameObject.AddComponent<ContractObjectiveGameLogic>();
+      contractObjectiveGameLogic.objectiveRefList.Add(new ObjectiveRef(destroyLanceObjective));
+      return contractObjectiveGameLogic;
+    }
   }
 }

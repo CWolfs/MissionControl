@@ -35,10 +35,6 @@ namespace MissionControl.Logic {
       this.objectiveLabel = objectiveLabel;
       this.priority = priority;
       this.isPrimary = isPrimary;
-
-      if (isPrimary) {
-        encounterRules.EncounterLogic.Add(new AddPrimaryObjective(objectiveGuid));
-      }
     }
 
     public override void Run(RunPayload payload) {
@@ -76,6 +72,10 @@ namespace MissionControl.Logic {
         displayToUser,
         ObjectiveMark.AttackTarget
       );
+
+      if (isPrimary) {
+        ObjectiveFactory.CreateDestroyLanceContractObjective(objective);
+      }
 
       DestroyLanceObjectiveRef destroyLanceObjectiveRef = new DestroyLanceObjectiveRef();
       destroyLanceObjectiveRef.encounterObject = objective;
