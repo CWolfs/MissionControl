@@ -187,7 +187,7 @@ namespace MissionControl.Rules {
       Main.Logger.Log($"[{this.GetType().Name}] Building additional lance rules");
 
       if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
-        bool isPrimaryObjective = MissionControl.Instance.CurrentContractType.In("SimpleBattle", "DestroyBase", "CaptureBase");
+        bool isPrimaryObjective = MissionControl.Instance.CurrentContractType.In("SimpleBattle");
 
         int numberOfAdditionalEnemyLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances();
         int objectivePriority = -10;
