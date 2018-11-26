@@ -1,6 +1,11 @@
 {
   "DebugMode": true,
   "DebugSkirmishMode": true,
+  "HotDrop": {
+    "GuardOnHotDrop": false,
+    "EvasionPipsOnHotDrop": 4,
+    "IncludeEnemies": true,
+  },
   "AdditionalLances": {
     "Enable": true,
     "SkullValueMatters": true,

@@ -10,6 +10,9 @@ namespace MissionControl.Config {
         [JsonProperty("DebugSkirmishMode")]
         public bool DebugSkirmishMode { get; set; } = false;
 
+        [JsonProperty("HotDrop")]
+        public HotDrop HotDrop { get; set; } = new HotDrop();
+
         [JsonProperty("AdditionalLances")]
         public AdditionalLanceSettings AdditionalLanceSettings { get; set; } = new AdditionalLanceSettings();
 
