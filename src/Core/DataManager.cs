@@ -87,7 +87,7 @@ namespace MissionControl {
       BattleTech.Data.DataManager dataManager = UnityGameInstance.BattleTechGame.DataManager;
       if (dataManager.ResourceEntryExists(BattleTechResourceType.LanceDef, key)) {
         Main.Logger.Log($"[LoadDirectLanceReference] Lance definition of '{key}' exists but has not been loaded yet. Loading it. [Experimental: If a crash occurs after this please report it]");
-        dataManager.RequestNewResource(BattleTechResourceType.LanceDef, key, null);
+        dataManager.RequestNewResource(BattleTechResourceType.LanceDef, key);
         dataManager.ProcessRequests();
         return true;
       }
@@ -124,7 +124,7 @@ namespace MissionControl {
 
     public void LoadVehicleDefs() {
       BattleTech.Data.DataManager dataManager = UnityGameInstance.BattleTechGame.DataManager;
-      dataManager.RequestNewResource(BattleTechResourceType.VehicleDef, "vehicledef_DEMOLISHER", null);
+      dataManager.RequestNewResource(BattleTechResourceType.VehicleDef, "vehicledef_DEMOLISHER");
     }
 
     /* RUNTIME CREW NAMES */
