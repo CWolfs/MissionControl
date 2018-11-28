@@ -16,7 +16,7 @@ namespace MissionControl.Logic {
       string biome = Enum.GetName(typeof(Biome.BIOMESKIN), MissionControl.Instance.CurrentContract.ContractBiome);
       biome = biome.Capitalise();
       string contractType = MissionControl.Instance.CurrentContractType;
-      List<string> lancePoolKeys = Main.Settings.AdditionalLances.GetLancePoolKeys(teamType, biome, contractType);
+      List<string> lancePoolKeys = Main.Settings.ActiveAdditionalLances.GetLancePoolKeys(teamType, biome, contractType);
 
       int index = UnityEngine.Random.Range(0, lancePoolKeys.Count);
       string selectedLanceKey = lancePoolKeys[index];

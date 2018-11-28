@@ -187,21 +187,23 @@ namespace MissionControl.Rules {
       Main.Logger.Log($"[{this.GetType().Name}] Building additional lance rules");
 
       if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
-        int numberOfAdditionalEnemyLances = Main.Settings.AdditionalLances.Enemy.SelectNumberOfAdditionalLances();
+        bool isPrimaryObjective = MissionControl.Instance.CurrentContractType.In("SimpleBattle");
+
+        int numberOfAdditionalEnemyLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances();
         int objectivePriority = -10;
         for (int i = 0; i < numberOfAdditionalEnemyLances; i++) {
           if (MissionControl.Instance.CurrentContractType == "ArenaSkirmish") {
             new AddPlayer2LanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, 50f, 200f,
-              $"Destroy Enemy Support Lance {i + 1}", objectivePriority--);
+              $"Destroy Enemy Support Lance {i + 1}", objectivePriority--, isPrimaryObjective);
           } else {
             new AddTargetLanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, 50f, 200f,
-              $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i + 1}", objectivePriority--);
+              $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i + 1}", objectivePriority--, isPrimaryObjective);
           }
         }
       }
 
       if (MissionControl.Instance.AreAdditionalLancesAllowed("allies")) {
-        int numberOfAdditionalAllyLances = Main.Settings.AdditionalLances.Allies.SelectNumberOfAdditionalLances();
+        int numberOfAdditionalAllyLances = Main.Settings.ActiveAdditionalLances.Allies.SelectNumberOfAdditionalLances();
         for (int i = 0; i < numberOfAdditionalAllyLances; i++) {
           new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, minAllyDistance, maxAllyDistance);
         }

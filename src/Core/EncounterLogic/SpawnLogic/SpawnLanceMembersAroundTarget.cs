@@ -25,8 +25,10 @@ namespace MissionControl.Logic {
 
     private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
-    private int TotalAttemptMax { get; set; } = 5;
+    private int TotalAttemptMax { get; set; } = 40;
     private int TotalAttemptCount { get; set; } = 0;
+
+    private RunPayload payload;
 
     public SpawnLanceMembersAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, LookDirection lookDirection) :
       this(encounterRules, lanceKey, orientationTargetKey, lookDirection, 10, 10) { } // TODO: Replace the hard coded values with a setting.json setting
@@ -44,22 +46,19 @@ namespace MissionControl.Logic {
     }
 
     public override void Run(RunPayload payload) {
+      this.payload = payload;
       GetObjectReferences();
       SaveSpawnPositions(lance);
       Main.Logger.Log($"[SpawnLanceMembersAroundTarget] Attempting for '{lance.name}'");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-
-      if (TotalAttemptCount >= TotalAttemptMax) {
-        HandleFallback(payload, this.lanceKey, this.orientationTargetKey);
-        return;
-      }
 
       Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
       lance.transform.position = validOrientationTargetPosition;
 
       List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
       foreach (GameObject spawnPoint in spawnPoints) {
-        SpawnLanceMember(spawnPoint, validOrientationTargetPosition, lookTarget, lookDirection);
+        bool success = SpawnLanceMember(spawnPoint, validOrientationTargetPosition, lookTarget, lookDirection);
+        if (!success) break;
       }
 
       invalidSpawnLocations.Clear();
@@ -75,9 +74,15 @@ namespace MissionControl.Logic {
       }
     }
 
-    public void SpawnLanceMember(GameObject spawnPoint, Vector3 orientationTargetPosition, GameObject lookTarget, LookDirection lookDirection) {
+    public bool SpawnLanceMember(GameObject spawnPoint, Vector3 orientationTargetPosition, GameObject lookTarget, LookDirection lookDirection) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       MissionControl encounterManager = MissionControl.Instance;
+
+      if (TotalAttemptCount >= TotalAttemptMax) {
+        HandleFallback(this.payload, this.lanceKey, this.orientationTargetKey);
+        return false;
+      }
+
       Vector3 newSpawnPosition = GetRandomPositionFromTarget(orientationTargetPosition, minDistanceFromTarget, maxDistanceFromTarget);
 
       if (encounterManager.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
@@ -92,21 +97,24 @@ namespace MissionControl.Logic {
 
           if (!IsSpawnValid(spawnPoint, orientationTargetPosition)) {
             CheckAttempts();
-            SpawnLanceMember(spawnPoint, orientationTargetPosition, lookTarget, lookDirection);
+            return SpawnLanceMember(spawnPoint, orientationTargetPosition, lookTarget, lookDirection);
           } else {
             invalidSpawnLocations.Add(newSpawnPosition);
+            AttemptCount = 0;
             Main.Logger.Log("[SpawnLanceMembersAroundTarget] Lance member spawn complete");
           }
         } else {
           Main.LogDebugWarning("[SpawnLanceMembersAroundTarget] Cannot spawn a lance member on an invalid spawn. Finding new spawn point.");
           CheckAttempts();
-          SpawnLanceMember(spawnPoint, orientationTargetPosition, lookTarget, lookDirection);
+          return SpawnLanceMember(spawnPoint, orientationTargetPosition, lookTarget, lookDirection);
         }
       } else {
         Main.LogDebugWarning("[SpawnLanceMembersAroundTarget] Selected lance spawn point is outside of the boundary. Select a new lance spawn point.");
         CheckAttempts();
-        SpawnLanceMember(spawnPoint, orientationTargetPosition, lookTarget, lookDirection);  
+        return SpawnLanceMember(spawnPoint, orientationTargetPosition, lookTarget, lookDirection);  
       }
+
+      return true;
     }
 
     private bool IsWithinDistanceOfInvalidPosition(Vector3 newSpawn) {

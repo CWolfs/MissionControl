@@ -19,12 +19,20 @@ namespace MissionControl.Logic {
       return IsSpawnValid(spawnPoint, checkTarget.transform.position.GetClosestHexLerpedPointOnGrid());
     }
 
-    public Vector3 GetClosestValidPathFindingHex(Vector3 origin) {
+    public Vector3 GetClosestValidPathFindingHex(Vector3 origin, int radius = 3) {
       Main.LogDebug($"[GetClosestValidPathFindingHex] About to process with origin '{origin}'");
-      Vector3 validOrigin = PathfindFromPointToPlayerSpawn(origin);
+      Vector3 validOrigin = PathfindFromPointToPlayerSpawn(origin, radius);
+
+      // Fallback to original position if a search of 50 nodes radius turns up no valid path
+      if (radius > 50) {
+        origin = origin.GetClosestHexLerpedPointOnGrid();
+        Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Reverting to original with fixed height of '{origin}'");
+        return origin;
+      }
       
       if (validOrigin == Vector3.zero) {
-        Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Reverting to original of '{origin}'");
+        Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Expanding search radius from radius '{radius}' to '{radius * 2}'");
+        origin = GetClosestValidPathFindingHex(origin, radius * 2);
         return origin;
       }
 
@@ -32,13 +40,13 @@ namespace MissionControl.Logic {
       return validOrigin;	
   	}
 
-    private Vector3 PathfindFromPointToPlayerSpawn(Vector3 origin) {
+    private Vector3 PathfindFromPointToPlayerSpawn(Vector3 origin, int radius) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       Vector3 originOnGrid = origin.GetClosestHexLerpedPointOnGrid();
       Vector3 playerLanceSpawnPosition = EncounterRules.SpawnerPlayerLanceGo.transform.position.GetClosestHexLerpedPointOnGrid();
 
       if (!PathFinderManager.Instance.IsSpawnValid(originOnGrid, playerLanceSpawnPosition, UnitType.Vehicle)) {
-        List<Vector3> adjacentPointsOnGrid = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(originOnGrid, 2);
+        List<Vector3> adjacentPointsOnGrid = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(originOnGrid, radius);
         Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Adjacent point count is '{adjacentPointsOnGrid.Count}'");
         adjacentPointsOnGrid.Shuffle();
   

@@ -26,6 +26,9 @@ namespace MissionControl.Logic {
     private int TotalAttemptMax { get; set; } = 5;
     private int TotalAttemptCount { get; set; } = 0;
 
+    private bool inited = false;
+    private Vector3 validOrientationTargetPosition;
+
     public SpawnLanceAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, LookDirection lookDirection) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.orientationTargetKey = orientationTargetKey;
@@ -41,6 +44,14 @@ namespace MissionControl.Logic {
       this.fitLanceMembers = fitLanceMembers;
     }
 
+    private void Init() {
+      if (!inited) {
+        Main.LogDebug($"[SpawnLanceAroundTarget] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
+        validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
+        inited = true;
+      }
+    }
+
     public override void Run(RunPayload payload) {
       GetObjectReferences();
       SaveSpawnPositions(lance);
@@ -48,12 +59,13 @@ namespace MissionControl.Logic {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       MissionControl encounterManager = MissionControl.Instance;
 
+      Init();
+
       if (TotalAttemptCount >= TotalAttemptMax) {
         HandleFallback(payload, this.lanceKey, this.orientationTargetKey);
         return;
       }
 
-      Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
       Vector3 newSpawnPosition = GetRandomPositionFromTarget(validOrientationTargetPosition, minDistanceFromTarget, maxDistanceFromTarget);
 
       if (encounterManager.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
@@ -89,7 +101,7 @@ namespace MissionControl.Logic {
 
     private void SpawnLanceMember(GameObject spawnPoint) {
       Main.Logger.Log($"[SpawnLanceAroundTarget] Fitting member '{spawnPoint.name}'");
-      Vector3 newSpawnLocation = GetClosestValidPathFindingHex(spawnPoint.transform.position);
+      Vector3 newSpawnLocation = GetClosestValidPathFindingHex(spawnPoint.transform.position, 2);
       spawnPoint.transform.position = newSpawnLocation;
     }
 
