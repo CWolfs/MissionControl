@@ -36,7 +36,7 @@ namespace MissionControl {
     public bool ShouldPatchMainMenu { get; set; } = true;
 
     public void SetupQuickSkirmishMenu() {
-      GameObject mainMenuScreenGo = GameObject.Find("uixPrfPanl_mainMenu-Screen(Clone)");
+      GameObject mainMenuScreenGo = GameObject.Find("uixPrfPanl_mainMenu-Screen_V3(Clone)");
       GameObject layoutMainNavigationGo = GameObject.Find("layout_main-nav");
       GameObject mainNavigationActions = layoutMainNavigationGo.FindRecursive("layout-actions-radioSet");
       GameObject skirmishButton = mainNavigationActions.FindRecursive("button-SKIRMISH");
@@ -88,7 +88,7 @@ namespace MissionControl {
 
     private void OnQuickSkirmishButtonClicked() {
       ResetPatchValues();
-      MainMenu mainMenu = GameObject.Find("uixPrfPanl_mainMenu-Screen(Clone)").GetComponent<MainMenu>();
+      MainMenu mainMenu = GameObject.Find("uixPrfPanl_mainMenu-Screen_V3(Clone)").GetComponent<MainMenu>();
       mainMenu.ReceiveButtonPress("Back");
       Main.Logger.Log("[OnQuickSkirmishButtonClicked] Clicked");
       LoadingCurtain.Show();
@@ -106,6 +106,7 @@ namespace MissionControl {
       AccessTools.Field(typeof(SkirmishSettings_Beta), "opponentLancePreview").SetValue(skirmishMenu, new LancePreviewPanel());
       AccessTools.Field(typeof(SkirmishSettings_Beta), "playerSettings").SetValue(skirmishMenu, ActiveOrDefaultSettings.CloudSettings);
       AccessTools.Field(typeof(SkirmishSettings_Beta), "mapModule").SetValue(skirmishMenu, new MapModule());
+      AccessTools.Field(typeof(SkirmishSettings_Beta), "lanceBudgetDropdown").SetValue(skirmishMenu, new MockTMPDropdown());
       
       skirmishMenu.Init();
       AccessTools.Method(typeof(SkirmishSettings_Beta), "LoadLanceConfiguratorData").Invoke(skirmishMenu, null);
