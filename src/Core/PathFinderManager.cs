@@ -73,14 +73,14 @@ namespace MissionControl {
     public void RequestPathFinderMech() {
       Main.LogDebug("[PathFinderManager] Requesting path finder mech");
       if (pathFinderMech == null) Init();
-      UnityGameInstance.BattleTechGame.DataManager.RequestNewResource(BattleTechResourceType.Prefab, pathFinderMech.MechDef.Chassis.PrefabIdentifier, null);
+      UnityGameInstance.BattleTechGame.DataManager.RequestNewResource(BattleTechResourceType.Prefab, pathFinderMech.MechDef.Chassis.PrefabIdentifier);
       UnityGameInstance.BattleTechGame.DataManager.ProcessRequests();
     }
 
     public void RequestPathFinderVehicle() {
       Main.LogDebug("[PathFinderManager] Requesting path finder vehicle");
       if (pathFinderVehicle == null) Init();
-      UnityGameInstance.BattleTechGame.DataManager.RequestNewResource(BattleTechResourceType.Prefab, pathFinderVehicle.VehicleDef.Chassis.PrefabIdentifier, null);
+      UnityGameInstance.BattleTechGame.DataManager.RequestNewResource(BattleTechResourceType.Prefab, pathFinderVehicle.VehicleDef.Chassis.PrefabIdentifier);
       UnityGameInstance.BattleTechGame.DataManager.ProcessRequests();  
     }
 
