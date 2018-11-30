@@ -4,7 +4,7 @@
     "Lets rock and roll!",
     "Wouldn't want any other Company by our side, Commander. It's an honour to fight here along side you.",
     "Go to {TGT_SYSTEM.name}, they said. See the world they said. All I see are {TEAM_TAR.FactionDef.Demonym} Battlemechs. Lovely.",
-    "{COMMANDER.Callsign}? I fought along side you years ago. It's an honour to do the same again today."
+    "{COMMANDER.Callsign}, I fought along side you years ago. It's an honour to do the same again today."
   ],
 
   "AmbushConvoy": [
