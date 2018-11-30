@@ -212,5 +212,12 @@ namespace MissionControl {
       string type = Enum.GetName(typeof(ContractType), contract.ContractType);
       return type == "ArenaSkirmish";
     }
+
+    public bool IsSkirmish() {
+      if (CurrentContract != null) {
+        return IsSkirmish(CurrentContract);
+      }
+      return false;
+    }
   }
 }
