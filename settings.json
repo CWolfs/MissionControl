@@ -8,7 +8,7 @@
   },
   "AdditionalLances": {
     "Enable": true,
-    "Dialogue": true,
+    "UseDialogue": true,
     "SkullValueMatters": true,
     "BasedOnVisibleSkullValue": true,
     "UseGeneralProfileForSkirmish": true,
