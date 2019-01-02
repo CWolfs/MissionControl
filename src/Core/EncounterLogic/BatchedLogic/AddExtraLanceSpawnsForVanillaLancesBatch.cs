@@ -8,6 +8,7 @@ using MissionControl.Trigger;
 namespace MissionControl.Logic {
   public class AddExtraLanceSpawnsForVanillaLancesBatch {
     public AddExtraLanceSpawnsForVanillaLancesBatch(EncounterRules encounterRules) {
+      encounterRules.EncounterLogic.Add(new AddExtraLanceMembers());
       encounterRules.EncounterLogic.Add(new AddExtraLanceSpawnPoints());
     }
   }

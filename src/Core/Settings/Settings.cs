@@ -16,6 +16,9 @@ namespace MissionControl.Config {
         [JsonProperty("AdditionalLances")]
         public AdditionalLanceSettings AdditionalLanceSettings { get; set; } = new AdditionalLanceSettings();
 
+        [JsonProperty("ExtendedLances")]
+        public ExtendedLancesSettings ExtendedLances { get; set; } = new ExtendedLancesSettings();
+
         public AdditionalLances ActiveAdditionalLances { get; set; }
 
         [JsonIgnore]
