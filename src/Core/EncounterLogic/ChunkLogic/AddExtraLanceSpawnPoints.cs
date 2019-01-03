@@ -52,6 +52,7 @@ namespace MissionControl.Logic {
         LanceSpawnerGameLogic lanceSpawner = lanceSpawners.Find(spawner => spawner.GUID == lanceOverride.lanceSpawner.EncounterObjectGuid);
         List<GameObject> unitSpawnPoints = lanceSpawner.gameObject.FindAllContains("UnitSpawnPoint");
         Vector3 lastSpawnPosition = unitSpawnPoints[unitSpawnPoints.Count - 1].transform.localPosition;
+        numberOfUnitsInLance = lanceOverride.unitSpawnPointOverrideList.Count;
 
         if (lanceSpawner != null) {
           if (numberOfUnitsInLance > unitSpawnPoints.Count) {
@@ -69,8 +70,8 @@ namespace MissionControl.Logic {
 
     private void AddNewUnits(ContractOverride contractOverride, TeamOverride teamOverride, LanceOverride lanceOverride, int numberOfUnitsInLance, int factionLanceSize) {
       using (MetadataDatabase metadataDatabase = new MetadataDatabase()) {
-        for (int i = numberOfUnitsInLance - 1; i < factionLanceSize; i++) {
-          UnitSpawnPointOverride unitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0].Copy();
+        for (int i = numberOfUnitsInLance; i < factionLanceSize; i++) {
+          UnitSpawnPointOverride unitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0].DeepCopy();
           unitSpawnPointOverride.GenerateUnit(metadataDatabase, UnityGameInstance.Instance.Game.DataManager, lanceOverride.selectedLanceDifficulty, lanceOverride.name, null, i);
           lanceOverride.unitSpawnPointOverrideList.Add(unitSpawnPointOverride);
         }
