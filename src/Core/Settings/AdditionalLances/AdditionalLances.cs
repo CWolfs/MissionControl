@@ -25,7 +25,7 @@ namespace MissionControl.Config {
 		[JsonProperty("Allies")]
 		public Lance Allies { get; set; } = new Lance();
 
-		public List<string> GetLancePoolKeys(string teamType, string biome, string contractType) {
+		public List<string> GetLancePoolKeys(string teamType, string biome, string contractType, string faction) {
 			List<string> lancePoolKeys = new List<string>();
 			Dictionary<string, List<string>> teamLancePool = null;
 
@@ -38,21 +38,23 @@ namespace MissionControl.Config {
 					break;
 			}
 
-			lancePoolKeys.AddRange(GetLancePoolKeys(LancePool, teamType, biome, contractType));
-			if (teamLancePool != null) lancePoolKeys.AddRange(GetLancePoolKeys(teamLancePool, teamType, biome, contractType));
+			lancePoolKeys.AddRange(GetLancePoolKeys(LancePool, teamType, biome, contractType, faction));
+			if (teamLancePool != null) lancePoolKeys.AddRange(GetLancePoolKeys(teamLancePool, teamType, biome, contractType, faction));
 			
 			return lancePoolKeys.Distinct().ToList();
 		}
 
-		private List<string> GetLancePoolKeys(Dictionary<string, List<string>> lancePool, string teamType, string biome, string contractType) {
+		private List<string> GetLancePoolKeys(Dictionary<string, List<string>> lancePool, string teamType, string biome, string contractType, string faction) {
 			List<string> lancePoolKeys = new List<string>();
 			string allIdentifier = "ALL";
 			string biomeIdentifier = $"BIOME:{biome}";
 			string contractTypeIdentifier = $"CONTRACT_TYPE:{contractType}";
+			string factionIdentifier = $"FACTION:{faction}";
 
 			if (lancePool.ContainsKey(allIdentifier)) lancePoolKeys.AddRange(lancePool[allIdentifier]);
 			if (lancePool.ContainsKey(biomeIdentifier)) lancePoolKeys.AddRange(lancePool[biomeIdentifier]);
 			if (lancePool.ContainsKey(contractTypeIdentifier)) lancePoolKeys.AddRange(lancePool[contractTypeIdentifier]);
+			if (lancePool.ContainsKey(factionIdentifier)) lancePoolKeys.AddRange(lancePool[factionIdentifier]);
 
 			return lancePoolKeys;
 		}

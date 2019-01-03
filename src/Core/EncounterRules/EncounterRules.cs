@@ -201,6 +201,7 @@ namespace MissionControl.Rules {
 
         int numberOfAdditionalEnemyLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances();
         int objectivePriority = -10;
+
         for (int i = 0; i < numberOfAdditionalEnemyLances; i++) {
           if (MissionControl.Instance.CurrentContractType == "ArenaSkirmish") {
             new AddPlayer2LanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, 50f, 200f,

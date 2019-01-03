@@ -5,13 +5,32 @@ using Newtonsoft.Json;
 namespace MissionControl.Config {
 	public class Lance {
 		[JsonProperty("Max")]
-		public int Max { get; set; } = 1;
+		private int max = 0;
+		public int Max {
+			get {
+				return EliteLances.Overrides.ContainsKey("Max") ? int.Parse(EliteLances.Overrides["Max"]) : max;
+			}
+			set {
+				max = value;
+			}
+		}
 
 		[JsonProperty("ExcludeContractTypes")]
 		public List<string> ExcludeContractTypes { get; set; } = new List<string>();
 
 		[JsonProperty("ChanceToSpawn")]
-		public float ChanceToSpawn = 0;
+		private float chanceToSpawn = 0;
+		public float ChanceToSpawn {
+			get {
+				return EliteLances.Overrides.ContainsKey("ChanceToSpawn") ? float.Parse(EliteLances.Overrides["ChanceToSpawn"]) : chanceToSpawn;
+			}
+			set {
+				chanceToSpawn = value;
+			}
+		}
+
+		[JsonProperty("EliteLances")]
+		public EliteLances EliteLances = new EliteLances();
 
 		[JsonProperty("LancePool")]
 		public Dictionary<string, List<string>> LancePool { get; set; } = new Dictionary<string, List<string>>();
