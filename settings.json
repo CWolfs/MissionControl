@@ -12,5 +12,13 @@
     "SkullValueMatters": true,
     "BasedOnVisibleSkullValue": true,
     "UseGeneralProfileForSkirmish": true,
-  }
+  },
+  "ExtendedLances": {
+    "Enabled": true,
+    "Autofill": true,
+    "LanceSizes": {
+      "5": [],
+      "6": [],
+    }
+  },
 }
