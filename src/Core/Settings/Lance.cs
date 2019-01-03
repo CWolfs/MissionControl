@@ -6,6 +6,7 @@ namespace MissionControl.Config {
 	public class Lance {
 		[JsonProperty("Max")]
 		private int max = 0;
+		[JsonIgnore]
 		public int Max {
 			get {
 				return EliteLances.Overrides.ContainsKey("Max") ? int.Parse(EliteLances.Overrides["Max"]) : max;
@@ -20,6 +21,7 @@ namespace MissionControl.Config {
 
 		[JsonProperty("ChanceToSpawn")]
 		private float chanceToSpawn = 0;
+		[JsonIgnore]
 		public float ChanceToSpawn {
 			get {
 				return EliteLances.Overrides.ContainsKey("ChanceToSpawn") ? float.Parse(EliteLances.Overrides["ChanceToSpawn"]) : chanceToSpawn;

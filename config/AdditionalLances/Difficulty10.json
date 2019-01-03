@@ -8,6 +8,13 @@
     "Max": 2,
     "ExcludeContractTypes": [],
     "ChanceToSpawn": 0.4,
+    "EliteLances": {
+      "Conditions": ["IsEnemy"],
+      "Suffix": "_ELITE",
+      "Overrides": {
+        "ChanceToSpawn": 0.6
+      }
+    },
     "LancePool": {
       "ALL": [
         "GENERIC_BATTLE_LANCE"
@@ -23,12 +30,25 @@
       ],
       "BIOME:LowlandsSpring": [
         "IM_LIKE_A_TURRET_IN_WATER_I_RUN_SO_HOT"
+      ],
+      "FACTION:MercenaryReviewBoard:50:99": [
+        "HEAVY_MBR_BATTLEMECH_LANCE"
+      ],
+      "FACTION:Davion:50:99": [
+        "HEAVY_DAVION_BATTLEMECH_LANCE"
       ]
     }
   },
   "Allies": {
     "Max": 1,
     "ChanceToSpawn": 0.4,
+    "EliteLances": {
+      "Conditions": ["IsAlly"],
+      "Overrides": {
+        "Max": 2,
+        "ChanceToSpawn": 0.6
+      }
+    },
     "LancePool": {
       "ALL": [
         "REFERENCE_EXAMPLE_LANCE"
