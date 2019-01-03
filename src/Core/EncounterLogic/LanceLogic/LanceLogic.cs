@@ -20,8 +20,9 @@ namespace MissionControl.Logic {
       biome = biome.Capitalise();
       string contractType = MissionControl.Instance.CurrentContractType;
       Faction faction = GetFactionFromTeamType(teamType);
+      int factionRep = (MissionControl.Instance.IsSkirmish()) ? 0 : UnityGameInstance.Instance.Game.Simulation.GetRawReputation(faction);
       bool useElites = Main.Settings.AdditionalLanceSettings.UseElites && activeAdditionalLance.EliteLances.ShouldEliteLancesBeSelected(faction);
-      List<string> lancePoolKeys = Main.Settings.ActiveAdditionalLances.GetLancePoolKeys(teamType, biome, contractType, faction.ToString());
+      List<string> lancePoolKeys = Main.Settings.ActiveAdditionalLances.GetLancePoolKeys(teamType, biome, contractType, faction.ToString(), factionRep);
 
 
       int index = UnityEngine.Random.Range(0, lancePoolKeys.Count);

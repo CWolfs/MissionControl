@@ -25,7 +25,7 @@ namespace MissionControl.Config {
 		[JsonProperty("Allies")]
 		public Lance Allies { get; set; } = new Lance();
 
-		public List<string> GetLancePoolKeys(string teamType, string biome, string contractType, string faction) {
+		public List<string> GetLancePoolKeys(string teamType, string biome, string contractType, string faction, int factionRep) {
 			List<string> lancePoolKeys = new List<string>();
 			Dictionary<string, List<string>> teamLancePool = null;
 
@@ -38,13 +38,13 @@ namespace MissionControl.Config {
 					break;
 			}
 
-			lancePoolKeys.AddRange(GetLancePoolKeys(LancePool, teamType, biome, contractType, faction));
-			if (teamLancePool != null) lancePoolKeys.AddRange(GetLancePoolKeys(teamLancePool, teamType, biome, contractType, faction));
+			lancePoolKeys.AddRange(GetLancePoolKeys(LancePool, teamType, biome, contractType, faction, factionRep));
+			if (teamLancePool != null) lancePoolKeys.AddRange(GetLancePoolKeys(teamLancePool, teamType, biome, contractType, faction, factionRep));
 			
 			return lancePoolKeys.Distinct().ToList();
 		}
 
-		private List<string> GetLancePoolKeys(Dictionary<string, List<string>> lancePool, string teamType, string biome, string contractType, string faction) {
+		private List<string> GetLancePoolKeys(Dictionary<string, List<string>> lancePool, string teamType, string biome, string contractType, string faction, int factionRep) {
 			List<string> lancePoolKeys = new List<string>();
 			string allIdentifier = "ALL";
 			string biomeIdentifier = $"BIOME:{biome}";
@@ -54,7 +54,17 @@ namespace MissionControl.Config {
 			if (lancePool.ContainsKey(allIdentifier)) lancePoolKeys.AddRange(lancePool[allIdentifier]);
 			if (lancePool.ContainsKey(biomeIdentifier)) lancePoolKeys.AddRange(lancePool[biomeIdentifier]);
 			if (lancePool.ContainsKey(contractTypeIdentifier)) lancePoolKeys.AddRange(lancePool[contractTypeIdentifier]);
-			if (lancePool.ContainsKey(factionIdentifier)) lancePoolKeys.AddRange(lancePool[factionIdentifier]);
+
+			Dictionary<string, List<string>> factionLances = lancePool.Where(lancePoolEntry => lancePoolEntry.Key.StartsWith(factionIdentifier)).ToDictionary(lancePoolEntry => lancePoolEntry.Key, lancePoolEntry => lancePoolEntry.Value);
+			foreach(KeyValuePair<string, List<string>> factionLancesPair in factionLances) {
+				string[] key = factionLancesPair.Key.Split(':');
+				int minRep = int.Parse(key[2]);
+				int maxRep = int.Parse(key[3]);
+				if (factionRep >= minRep && factionRep <= maxRep) {
+					 lancePoolKeys.AddRange(factionLancesPair.Value);
+					 break;
+				}
+			}
 
 			return lancePoolKeys;
 		}

@@ -31,20 +31,12 @@
       "BIOME:LowlandsSpring": [
         "IM_LIKE_A_TURRET_IN_WATER_I_RUN_SO_HOT"
       ],
-      "FACTION:MercenaryReviewBoard": {
-        "Reputation": {
-          "Min": 50,
-          "Max": 100
-        },
-        "Lances": ["HEAVY_MBR_BATTLEMECH_LANCE"]
-      },
-      "FACTION:Davion": {
-        "Reputation": {
-          "Min": 50,
-          "Max": 100
-        },
-        "Lances": ["HEAVY_DAVION_BATTLEMECH_LANCE"]
-      }
+      "FACTION:MercenaryReviewBoard:50:99": [
+        "HEAVY_MBR_BATTLEMECH_LANCE"
+      ],
+      "FACTION:Davion:50:99": [
+        "HEAVY_DAVION_BATTLEMECH_LANCE"
+      ]
     }
   },
   "Allies": {
