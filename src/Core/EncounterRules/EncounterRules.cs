@@ -33,10 +33,14 @@ namespace MissionControl.Rules {
     public EncounterState State { get; protected set; } = EncounterState.NOT_STARTED;
 
     public EncounterRules() {
-      ActivateFeatures();
+      ActivatePreFeatures();
     }
 
-    private void ActivateFeatures() {
+    public void ActivatePreFeatures() {
+
+    }
+
+    public void ActivatePostFeatures() {
       if (Main.Settings.ExtendedLances.Enable) new AddExtraLanceSpawnsForExtendedLancesBatch(this);
     }
 

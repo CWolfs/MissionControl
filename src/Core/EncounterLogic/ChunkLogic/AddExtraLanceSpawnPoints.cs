@@ -29,7 +29,10 @@ namespace MissionControl.Logic {
       lanceSpawners = new List<LanceSpawnerGameLogic>(encounterLayerData.gameObject.GetComponentsInChildren<LanceSpawnerGameLogic>());
 
       TeamOverride targetTeamOverride = contractOverride.targetTeam;
+      TeamOverride employerTeamOverride = contractOverride.employerTeam;
+
       IncreaseLanceSpawnPoints(contractOverride, targetTeamOverride);
+      IncreaseLanceSpawnPoints(contractOverride, employerTeamOverride);
     }
 
     private void IncreaseLanceSpawnPoints(ContractOverride contractOverride, TeamOverride teamOverride) {
@@ -48,6 +51,8 @@ namespace MissionControl.Logic {
             Main.LogDebug("[AddExtraLanceSpawnPoints] Populated lance has fewer units than the faction requires. Allowing as a valid setup as 'Autofill' is false");
           }
         }
+
+        Main.Logger.LogDebug($"[AddExtraLanceSpawnPoints] Finished filling. Moving onto spawn creation.");
 
         LanceSpawnerGameLogic lanceSpawner = lanceSpawners.Find(spawner => spawner.GUID == lanceOverride.lanceSpawner.EncounterObjectGuid);
         List<GameObject> unitSpawnPoints = lanceSpawner.gameObject.FindAllContains("UnitSpawnPoint");

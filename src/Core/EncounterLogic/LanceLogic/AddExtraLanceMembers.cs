@@ -18,9 +18,12 @@ namespace MissionControl.Logic {
     public override void Run(RunPayload payload) {
       Main.Logger.Log($"[AddExtraLanceMembers] Adding extra lance units to lance");
       ContractOverride contractOverride = ((ContractOverridePayload)payload).ContractOverride;
+
       TeamOverride targetTeamOverride = contractOverride.targetTeam;
+      TeamOverride employerTeamOverride = contractOverride.employerTeam;
 
       IncreaseLanceMembers(contractOverride, targetTeamOverride);
+      IncreaseLanceMembers(contractOverride, employerTeamOverride);
     }
 
     private void IncreaseLanceMembers(ContractOverride contractOverride, TeamOverride teamOverride) {
@@ -30,13 +33,13 @@ namespace MissionControl.Logic {
 
       foreach (LanceOverride lanceOverride in lanceOverrides) {
         int numberOfUnitsInLance = lanceOverride.unitSpawnPointOverrideList.Count;
-        bool isLanceTagged = lanceOverride.lanceDefId == "Tagged";
+        bool isLanceTagged = lanceOverride.lanceDefId == "Tagged" || lanceOverride.lanceDefId == "UseLance";
         bool AreAnyLanceUnitsTagged = AreAnyLanceMembersTagged(lanceOverride);
 
         // If tagged, then a lance is selected from the 'data/lance' folder. If we need to increase size we do it later for this usecase.
         // If not, we want to add a new lance member if the vanilla lance size isn't large enough
         //  - If the lance members are 'tagged', then we'll copy any of the tagged units as a base
-        //  - If the lance members are 'manual', then we'll do nothing and send an error saying this should be fixed by the modder
+        //  - If the lance members are 'manual', then do nothing and let the later code handle this usecase
         if (numberOfUnitsInLance < factionLanceSize) {
           Main.LogDebug($"[IncreaseLanceMembers] Override lance size is '{numberOfUnitsInLance}' but '{factionLanceSize}' is required. Adding more units to lance");
           if (!isLanceTagged && AreAnyLanceUnitsTagged) {
@@ -56,7 +59,7 @@ namespace MissionControl.Logic {
     private UnitSpawnPointOverride GetAnyTaggedLanceMember(LanceOverride lanceOverride) {
       List<UnitSpawnPointOverride> unitSpawnOverrides = lanceOverride.unitSpawnPointOverrideList;
       foreach (UnitSpawnPointOverride unitSpawnOverride in unitSpawnOverrides) {
-        if (unitSpawnOverride.unitDefId == "Tagged") return unitSpawnOverride;
+        if ((unitSpawnOverride.unitDefId == "Tagged") || (unitSpawnOverride.unitDefId == "UseLance")) return unitSpawnOverride;
       }
       return null;  
     }

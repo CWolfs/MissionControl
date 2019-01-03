@@ -159,6 +159,7 @@ namespace MissionControl {
       EncounterRules = (EncounterRules)Activator.CreateInstance(encounterRules);
       EncounterRulesName = encounterRules.Name.Replace("EncounterRules", "");
       EncounterRules.Build();
+      EncounterRules.ActivatePostFeatures();
     }
 
     public void RunEncounterRules(LogicBlock.LogicType type, RunPayload payload = null) {
