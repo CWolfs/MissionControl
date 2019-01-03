@@ -43,7 +43,7 @@ namespace MissionControl.Logic {
           // This is usually from a 'tagged' lance being selected which has less lance members than the faction lance size
           if (Main.Settings.ExtendedLances.Autofill) {
             Main.LogDebug("[AddExtraLanceSpawnPoints] Populated lance has fewer units than the faction requires. Autofilling the missing units");
-            AddNewUnits(contractOverride, teamOverride, lanceOverride, numberOfUnitsInLance, factionLanceSize);
+            AddNewLanceMembers(contractOverride, teamOverride, lanceOverride, numberOfUnitsInLance, factionLanceSize);
           } else {
             Main.LogDebug("[AddExtraLanceSpawnPoints] Populated lance has fewer units than the faction requires. Allowing as a valid setup as 'Autofill' is false");
           }
@@ -68,7 +68,7 @@ namespace MissionControl.Logic {
       }
     }
 
-    private void AddNewUnits(ContractOverride contractOverride, TeamOverride teamOverride, LanceOverride lanceOverride, int numberOfUnitsInLance, int factionLanceSize) {
+    private void AddNewLanceMembers(ContractOverride contractOverride, TeamOverride teamOverride, LanceOverride lanceOverride, int numberOfUnitsInLance, int factionLanceSize) {
       using (MetadataDatabase metadataDatabase = new MetadataDatabase()) {
         for (int i = numberOfUnitsInLance; i < factionLanceSize; i++) {
           UnitSpawnPointOverride unitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0].DeepCopy();
