@@ -37,7 +37,7 @@ namespace MissionControl.Rules {
     }
 
     private void ActivateFeatures() {
-       new AddExtraLanceSpawnsForVanillaLancesBatch(this);
+       new AddExtraLanceSpawnsForExtendedLancesBatch(this);
     }
 
     public abstract void Build();
