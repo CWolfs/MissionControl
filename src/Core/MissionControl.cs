@@ -223,5 +223,20 @@ namespace MissionControl {
       }
       return false;
     }
+
+    public bool ShouldUseElites(Faction faction, string teamType) {
+      Config.Lance activeAdditionalLances = Main.Settings.ActiveAdditionalLances.GetActiveAdditionalLanceByTeamType(teamType);
+      return Main.Settings.AdditionalLanceSettings.UseElites && activeAdditionalLances.EliteLances.ShouldEliteLancesBeSelected(faction);
+    }
+    
+    public Faction GetFactionFromTeamType(string teamType) {
+      switch (teamType.ToLower()) {
+				case "enemy":
+					return MissionControl.Instance.CurrentContract.Override.targetTeam.faction;
+				case "allies":
+					return MissionControl.Instance.CurrentContract.Override.employerTeam.faction;
+			}
+      return Faction.INVALID_UNSET;
+    }
   }
 }

@@ -15,15 +15,14 @@ namespace MissionControl.Logic {
     }
 
     public LanceOverride SelectAppropriateLanceOverride(string teamType) {
-      var activeAdditionalLance = (teamType == "Enemy") ? Main.Settings.ActiveAdditionalLances.Enemy : Main.Settings.ActiveAdditionalLances.Allies;
       string biome = Enum.GetName(typeof(Biome.BIOMESKIN), MissionControl.Instance.CurrentContract.ContractBiome);
       biome = biome.Capitalise();
       string contractType = MissionControl.Instance.CurrentContractType;
-      Faction faction = GetFactionFromTeamType(teamType);
+      Faction faction = MissionControl.Instance.GetFactionFromTeamType(teamType);
       int factionRep = (MissionControl.Instance.IsSkirmish()) ? 0 : UnityGameInstance.Instance.Game.Simulation.GetRawReputation(faction);
-      bool useElites = Main.Settings.AdditionalLanceSettings.UseElites && activeAdditionalLance.EliteLances.ShouldEliteLancesBeSelected(faction);
+      bool useElites = MissionControl.Instance.ShouldUseElites(faction, teamType);
+      Config.Lance activeAdditionalLance = Main.Settings.ActiveAdditionalLances.GetActiveAdditionalLanceByTeamType(teamType);
       List<string> lancePoolKeys = Main.Settings.ActiveAdditionalLances.GetLancePoolKeys(teamType, biome, contractType, faction.ToString(), factionRep);
-
 
       int index = UnityEngine.Random.Range(0, lancePoolKeys.Count);
       string selectedLanceKey = lancePoolKeys[index];
@@ -48,16 +47,6 @@ namespace MissionControl.Logic {
         Main.Logger.LogError($"[SelectAppropriateLanceOverride] MLanceOverride of '{selectedLanceKey}' not found. Defaulting to 'GENERIC_BATTLE_LANCE'");
         return DataManager.Instance.GetLanceOverride("GENERIC_BATTLE_LANCE");
       }
-    }
-
-    public Faction GetFactionFromTeamType(string teamType) {
-      switch (teamType.ToLower()) {
-				case "enemy":
-					return MissionControl.Instance.CurrentContract.Override.targetTeam.faction;
-				case "allies":
-					return MissionControl.Instance.CurrentContract.Override.employerTeam.faction;
-			}
-      return Faction.INVALID_UNSET;
     }
   }
 }

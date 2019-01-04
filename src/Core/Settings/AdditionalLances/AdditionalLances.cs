@@ -20,10 +20,10 @@ namespace MissionControl.Config {
 		public Lance Player { get; set; } = new Lance();
 
 		[JsonProperty("Enemy")]
-		public Lance Enemy { get; set; } = new Lance();
+		public Lance Enemy { get; set; } = new Lance("Enemy");
 
 		[JsonProperty("Allies")]
-		public Lance Allies { get; set; } = new Lance();
+		public Lance Allies { get; set; } = new Lance("Allies");
 
 		public List<string> GetLancePoolKeys(string teamType, string biome, string contractType, string faction, int factionRep) {
 			List<string> lancePoolKeys = new List<string>();
@@ -102,5 +102,9 @@ namespace MissionControl.Config {
 			Main.Logger.Log($"[GetValidContractTypes] Valid contracts are '{string.Join(", ", validContracts.ToArray())}'");
 			return validContracts;
 		}
+
+		public Config.Lance GetActiveAdditionalLanceByTeamType(string teamType) {
+      return (teamType == "enemy") ? Main.Settings.ActiveAdditionalLances.Enemy : Main.Settings.ActiveAdditionalLances.Allies;
+    }
 	}
 }
