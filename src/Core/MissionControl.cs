@@ -36,6 +36,8 @@ namespace MissionControl {
 
     private Dictionary<string, List<Type>> AvailableEncounters = new Dictionary<string, List<Type>>();
 
+    public Dictionary<ContractStats, object> ContractStats = new Dictionary<ContractStats, object>();
+
     private MissionControl() {
       LoadEncounterRules();
     }
@@ -99,6 +101,7 @@ namespace MissionControl {
       ContractMapName = contract.mapName;
       SetContractType(CurrentContract.ContractType);
       AiManager.Instance.ResetCustomBehaviourVariableScopes();
+      ContractStats.Clear();
     }
 
     public void SetActiveAdditionalLances(Contract contract) {
