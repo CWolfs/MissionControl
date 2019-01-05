@@ -1,6 +1,7 @@
 {
   "DebugMode": true,
   "DebugSkirmishMode": true,
+  "DisableIfFlashpointContract": true,
   "HotDrop": {
     "GuardOnHotDrop": false,
     "EvasionPipsOnHotDrop": 4,

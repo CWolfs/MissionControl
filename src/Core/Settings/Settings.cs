@@ -10,6 +10,9 @@ namespace MissionControl.Config {
         [JsonProperty("DebugSkirmishMode")]
         public bool DebugSkirmishMode { get; set; } = false;
 
+        [JsonProperty("DisableIfFlashpointContract")]
+        public bool DisableIfFlashpointContract { get; set; } = true;
+
         [JsonProperty("HotDrop")]
         public HotDrop HotDrop { get; set; } = new HotDrop();
 

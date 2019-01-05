@@ -159,10 +159,15 @@ namespace MissionControl {
     }
 
     private void SetEncounterRule(Type encounterRules) {
-      EncounterRules = (EncounterRules)Activator.CreateInstance(encounterRules);
-      EncounterRulesName = encounterRules.Name.Replace("EncounterRules", "");
-      EncounterRules.Build();
-      EncounterRules.ActivatePostFeatures();
+      if (AllowMissionControl()) {
+        EncounterRules = (EncounterRules)Activator.CreateInstance(encounterRules);
+        EncounterRulesName = encounterRules.Name.Replace("EncounterRules", "");
+        EncounterRules.Build();
+        EncounterRules.ActivatePostFeatures();
+      } else {
+        EncounterRules = null;
+        EncounterRulesName = null;
+      }
     }
 
     public void RunEncounterRules(LogicBlock.LogicType type, RunPayload payload = null) {
@@ -240,6 +245,11 @@ namespace MissionControl {
 					return MissionControl.Instance.CurrentContract.Override.employerTeam.faction;
 			}
       return Faction.INVALID_UNSET;
+    }
+
+    public bool AllowMissionControl() {
+      if (!this.CurrentContract.IsFlashpointContract) return true;
+      return this.CurrentContract.IsFlashpointContract && !Main.Settings.AdditionalLanceSettings.DisableIfFlashpointContract;
     }
   }
 }
