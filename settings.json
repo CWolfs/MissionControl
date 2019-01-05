@@ -13,6 +13,7 @@
     "SkullValueMatters": true,
     "BasedOnVisibleSkullValue": true,
     "UseGeneralProfileForSkirmish": true,
+    "DisableIfFlashpointContract": true,
     "DisableWhenMaxTonnage": {
       "Enable": true,
       "Limited": false,
