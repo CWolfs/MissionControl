@@ -13,6 +13,7 @@
     "SkullValueMatters": true,
     "BasedOnVisibleSkullValue": true,
     "UseGeneralProfileForSkirmish": true,
+    "DisableWhenTonnageLimitedUnder": 300,
   },
   "ExtendedLances": {
     "Enabled": true,

@@ -21,5 +21,8 @@ namespace MissionControl.Config {
 
 		[JsonProperty("UseGeneralProfileForSkirmish")]
 		public bool UseGeneralProfileForSkirmish { get; set; } = true;
+
+		[JsonProperty("DisableWhenTonnageLimitedUnder")]
+		public int DisableWhenTonnageLimitedUnder { get; set; } = 300;
 	}
 }
