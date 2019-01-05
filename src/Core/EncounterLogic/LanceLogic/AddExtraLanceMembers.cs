@@ -43,7 +43,7 @@ namespace MissionControl.Logic {
         if (numberOfUnitsInLance < factionLanceSize) {
           Main.LogDebug($"[IncreaseLanceMembers] Override lance size is '{numberOfUnitsInLance}' but '{factionLanceSize}' is required. Adding more units to lance");
           if (!isLanceTagged && AreAnyLanceUnitsTagged) {
-            lanceOverride.unitSpawnPointOverrideList.Add(GetAnyTaggedLanceMember(lanceOverride).DeepCopy());
+            lanceOverride.unitSpawnPointOverrideList.Add(lanceOverride.GetAnyTaggedLanceMember().DeepCopy());
           } else if (!isLanceTagged && !AreAnyLanceUnitsTagged) {
             Main.Logger.LogError($"[AddExtraLanceMembers] The contract '{contractOverride.ID}' for the team '{teamOverride.teamName}' has a manual lance and manual unit setup but it does not specify the right number of lance members. When manually setting lances they should match the Mission Control ExtendedLance lance member count. For this lance you should have exactly '{factionLanceSize}' but only '{numberOfUnitsInLance}' are set.");
           }
@@ -52,16 +52,8 @@ namespace MissionControl.Logic {
     }
 
     private bool AreAnyLanceMembersTagged(LanceOverride lanceOverride) {
-      UnitSpawnPointOverride unitSpawnOverrides = GetAnyTaggedLanceMember(lanceOverride);
+      UnitSpawnPointOverride unitSpawnOverrides = lanceOverride.GetAnyTaggedLanceMember();
       return (unitSpawnOverrides != null);
-    }
-
-    private UnitSpawnPointOverride GetAnyTaggedLanceMember(LanceOverride lanceOverride) {
-      List<UnitSpawnPointOverride> unitSpawnOverrides = lanceOverride.unitSpawnPointOverrideList;
-      foreach (UnitSpawnPointOverride unitSpawnOverride in unitSpawnOverrides) {
-        if ((unitSpawnOverride.unitDefId == "Tagged") || (unitSpawnOverride.unitDefId == "UseLance")) return unitSpawnOverride;
-      }
-      return null;  
     }
   }
 }

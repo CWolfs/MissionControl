@@ -20,12 +20,12 @@ namespace MissionControl.Config {
 		public Lance Player { get; set; } = new Lance();
 
 		[JsonProperty("Enemy")]
-		public Lance Enemy { get; set; } = new Lance();
+		public Lance Enemy { get; set; } = new Lance("Enemy");
 
 		[JsonProperty("Allies")]
-		public Lance Allies { get; set; } = new Lance();
+		public Lance Allies { get; set; } = new Lance("Allies");
 
-		public List<string> GetLancePoolKeys(string teamType, string biome, string contractType) {
+		public List<string> GetLancePoolKeys(string teamType, string biome, string contractType, string faction, int factionRep) {
 			List<string> lancePoolKeys = new List<string>();
 			Dictionary<string, List<string>> teamLancePool = null;
 
@@ -38,21 +38,33 @@ namespace MissionControl.Config {
 					break;
 			}
 
-			lancePoolKeys.AddRange(GetLancePoolKeys(LancePool, teamType, biome, contractType));
-			if (teamLancePool != null) lancePoolKeys.AddRange(GetLancePoolKeys(teamLancePool, teamType, biome, contractType));
+			lancePoolKeys.AddRange(GetLancePoolKeys(LancePool, teamType, biome, contractType, faction, factionRep));
+			if (teamLancePool != null) lancePoolKeys.AddRange(GetLancePoolKeys(teamLancePool, teamType, biome, contractType, faction, factionRep));
 			
 			return lancePoolKeys.Distinct().ToList();
 		}
 
-		private List<string> GetLancePoolKeys(Dictionary<string, List<string>> lancePool, string teamType, string biome, string contractType) {
+		private List<string> GetLancePoolKeys(Dictionary<string, List<string>> lancePool, string teamType, string biome, string contractType, string faction, int factionRep) {
 			List<string> lancePoolKeys = new List<string>();
 			string allIdentifier = "ALL";
 			string biomeIdentifier = $"BIOME:{biome}";
 			string contractTypeIdentifier = $"CONTRACT_TYPE:{contractType}";
+			string factionIdentifier = $"FACTION:{faction}";
 
 			if (lancePool.ContainsKey(allIdentifier)) lancePoolKeys.AddRange(lancePool[allIdentifier]);
 			if (lancePool.ContainsKey(biomeIdentifier)) lancePoolKeys.AddRange(lancePool[biomeIdentifier]);
 			if (lancePool.ContainsKey(contractTypeIdentifier)) lancePoolKeys.AddRange(lancePool[contractTypeIdentifier]);
+
+			Dictionary<string, List<string>> factionLances = lancePool.Where(lancePoolEntry => lancePoolEntry.Key.StartsWith(factionIdentifier)).ToDictionary(lancePoolEntry => lancePoolEntry.Key, lancePoolEntry => lancePoolEntry.Value);
+			foreach(KeyValuePair<string, List<string>> factionLancesPair in factionLances) {
+				string[] key = factionLancesPair.Key.Split(':');
+				int minRep = int.Parse(key[2]);
+				int maxRep = int.Parse(key[3]);
+				if (factionRep >= minRep && factionRep <= maxRep) {
+					 lancePoolKeys.AddRange(factionLancesPair.Value);
+					 break;
+				}
+			}
 
 			return lancePoolKeys;
 		}
@@ -90,5 +102,9 @@ namespace MissionControl.Config {
 			Main.Logger.Log($"[GetValidContractTypes] Valid contracts are '{string.Join(", ", validContracts.ToArray())}'");
 			return validContracts;
 		}
+
+		public Config.Lance GetActiveAdditionalLanceByTeamType(string teamType) {
+      return (teamType == "enemy") ? Main.Settings.ActiveAdditionalLances.Enemy : Main.Settings.ActiveAdditionalLances.Allies;
+    }
 	}
 }

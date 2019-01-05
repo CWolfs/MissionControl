@@ -22,7 +22,8 @@ namespace MissionControl.Logic {
         encounterRules.EncounterLogic.Add(new SpawnLanceMembersAroundTarget(encounterRules, spawnerName, orientationTargetKey,
           lookDirection, minDistance, maxDistance));
 
-        if (Main.Settings.AdditionalLanceSettings.UseDialogue) {
+        if (Main.Settings.AdditionalLanceSettings.UseDialogue && !MissionControl.Instance.ContractStats.ContainsKey(ContractStats.DIALOGUE_ADDITIONAL_LANCE_ALLY_START)) {
+          MissionControl.Instance.ContractStats.Add(ContractStats.DIALOGUE_ADDITIONAL_LANCE_ALLY_START, true);
           encounterRules.EncounterLogic.Add(new AddDialogueChunk(
             ChunkLogic.DIALOGUE_ADDITIONAL_LANCE_ALLY_START_GUID,
             "AdditionalLanceAllyStart",

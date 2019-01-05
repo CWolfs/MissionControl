@@ -8,6 +8,7 @@
   },
   "AdditionalLances": {
     "Enable": true,
+    "UseElites": true,
     "UseDialogue": true,
     "SkullValueMatters": true,
     "BasedOnVisibleSkullValue": true,

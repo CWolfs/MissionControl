@@ -56,14 +56,14 @@ namespace MissionControl.Logic {
 
         LanceSpawnerGameLogic lanceSpawner = lanceSpawners.Find(spawner => spawner.GUID == lanceOverride.lanceSpawner.EncounterObjectGuid);
         List<GameObject> unitSpawnPoints = lanceSpawner.gameObject.FindAllContains("UnitSpawnPoint");
-        Vector3 lastSpawnPosition = unitSpawnPoints[unitSpawnPoints.Count - 1].transform.localPosition;
         numberOfUnitsInLance = lanceOverride.unitSpawnPointOverrideList.Count;
 
         if (lanceSpawner != null) {
           if (numberOfUnitsInLance > unitSpawnPoints.Count) {
             Main.Logger.Log($"[AddExtraLanceSpawnPoints] Detected lance that has more units than vanilla supports. Creating new lance spawns to accommodate.");
             for (int i = 4; i < numberOfUnitsInLance; i++) {
-              Vector3 spawnPositon = new Vector3(lastSpawnPosition.x + 24f, lastSpawnPosition.y, lastSpawnPosition.z + 24f);
+              Vector3 randomLanceSpawn = unitSpawnPoints.GetRandom().transform.localPosition;
+              Vector3 spawnPositon = new Vector3(randomLanceSpawn.x + 24f, randomLanceSpawn.y, randomLanceSpawn.z + 24f);
               LanceSpawnerFactory.CreateUnitSpawnPoint(lanceSpawner.gameObject, $"UnitSpawnPoint{i + 1}", spawnPositon, lanceOverride.unitSpawnPointOverrideList[i].unitSpawnPoint.EncounterObjectGuid);
             }
           }
@@ -76,7 +76,10 @@ namespace MissionControl.Logic {
     private void AddNewLanceMembers(ContractOverride contractOverride, TeamOverride teamOverride, LanceOverride lanceOverride, int numberOfUnitsInLance, int factionLanceSize) {
       using (MetadataDatabase metadataDatabase = new MetadataDatabase()) {
         for (int i = numberOfUnitsInLance; i < factionLanceSize; i++) {
-          UnitSpawnPointOverride unitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0].DeepCopy();
+          UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetAnyTaggedLanceMember();
+          if (originalUnitSpawnPointOverride == null) originalUnitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0];
+          UnitSpawnPointOverride unitSpawnPointOverride = originalUnitSpawnPointOverride.DeepCopy();
+
           unitSpawnPointOverride.GenerateUnit(metadataDatabase, UnityGameInstance.Instance.Game.DataManager, lanceOverride.selectedLanceDifficulty, lanceOverride.name, null, i);
           lanceOverride.unitSpawnPointOverrideList.Add(unitSpawnPointOverride);
         }

@@ -197,10 +197,13 @@ namespace MissionControl.Rules {
       Main.Logger.Log($"[{this.GetType().Name}] Building additional lance rules");
 
       if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
-        bool isPrimaryObjective = MissionControl.Instance.CurrentContractType.In("SimpleBattle");
 
-        int numberOfAdditionalEnemyLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances();
+        bool isPrimaryObjective = MissionControl.Instance.CurrentContractType.In("SimpleBattle");
+        Faction faction = MissionControl.Instance.GetFactionFromTeamType("enemy");
+
+        int numberOfAdditionalEnemyLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances(faction, "enemy");
         int objectivePriority = -10;
+
         for (int i = 0; i < numberOfAdditionalEnemyLances; i++) {
           if (MissionControl.Instance.CurrentContractType == "ArenaSkirmish") {
             new AddPlayer2LanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, 50f, 200f,
@@ -213,7 +216,9 @@ namespace MissionControl.Rules {
       }
 
       if (MissionControl.Instance.AreAdditionalLancesAllowed("allies")) {
-        int numberOfAdditionalAllyLances = Main.Settings.ActiveAdditionalLances.Allies.SelectNumberOfAdditionalLances();
+        Faction faction = MissionControl.Instance.GetFactionFromTeamType("allies");
+
+        int numberOfAdditionalAllyLances = Main.Settings.ActiveAdditionalLances.Allies.SelectNumberOfAdditionalLances(faction, "allies");
         for (int i = 0; i < numberOfAdditionalAllyLances; i++) {
           new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, minAllyDistance, maxAllyDistance);
         }

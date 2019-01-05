@@ -26,7 +26,7 @@ namespace MissionControl.Logic {
       TeamOverride teamOverride = contractOverride.employerTeam;
       TeamOverride targetTeamOverride = contractOverride.targetTeam;
 
-      LanceOverride lanceOverride = SelectAppropriateLanceOverride("Allies").Copy();
+      LanceOverride lanceOverride = SelectAppropriateLanceOverride("allies").Copy();
       lanceOverride.name = $"Lance_Ally_Force_{lanceGuid}";
 
       if (unitGuids.Count > 4) {

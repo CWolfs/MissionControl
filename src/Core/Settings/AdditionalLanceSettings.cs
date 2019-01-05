@@ -7,6 +7,9 @@ namespace MissionControl.Config {
 		[JsonProperty("Enable")]
 		public bool Enable { get; set; } = true;
 
+		[JsonProperty("UseElites")]
+		public bool UseElites { get; set; } = true;
+
 		[JsonProperty("UseDialogue")]
 		public bool UseDialogue { get; set; } = true;
 
