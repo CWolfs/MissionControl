@@ -184,8 +184,12 @@ namespace MissionControl {
 
     public string GetRandomRank(string factionKey) {
       List<string> ranks = new List<string>();
-      ranks.AddRange(this.Ranks["All"]);
-      if (this.Ranks.ContainsKey(factionKey)) ranks.AddRange(this.Ranks[factionKey]);
+
+      if (this.Ranks.ContainsKey(factionKey) && this.Ranks[factionKey].Count > 0) {
+        ranks.AddRange(this.Ranks[factionKey]);
+      } else {
+        ranks.AddRange(this.Ranks["Fallback"]);
+      }
 
       return ranks[UnityEngine.Random.Range(0, ranks.Count)];
     }
