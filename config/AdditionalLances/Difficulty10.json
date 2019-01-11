@@ -2,7 +2,7 @@
   "IncludeContractTypes": [],
   "ExcludeContractTypes": [],
   "LancePool": {
-    "ALL": ["GENERIC_BATTLE_LANCE"]
+    "ALL": ["Generic_Assault_Battle_Lance", "Damaged_Assault_Battle_Lance"]
   },
   "Enemy": {
     "Max": 2,
@@ -10,32 +10,29 @@
     "ChanceToSpawn": 0.4,
     "EliteLances": {
       "Conditions": ["IsEnemy"],
-      "Suffix": "_ELITE",
+      "Suffix": "_Elite",
       "Overrides": {
         "ChanceToSpawn": 0.6
       }
     },
     "LancePool": {
       "ALL": [
-        "GENERIC_BATTLE_LANCE"
+        "Generic_Assault_Battle_Lance"
       ],
       "CONTRACT_TYPE:DestroyBase": [
-        "BRAWLER_LANCE", "DEFENDING_LANCE"
+        "Brawler_Lance", "Defending_Lance"
       ],
       "CONTRACT_TYPE:DefendBase": [
-        "HEAVY_MISSILE_LANCE", "ATTACKING_LANCE"
+        "Heavy_Missile_Lance", "Attacking_Lance"
       ],
       "BIOME:DesertParched": [
-        "BBQ_MASTERS"
+        "BBQ_Masters"
       ],
       "BIOME:LowlandsSpring": [
-        "IM_LIKE_A_TURRET_IN_WATER_I_RUN_SO_HOT"
-      ],
-      "FACTION:MercenaryReviewBoard:50:99": [
-        "HEAVY_MBR_BATTLEMECH_LANCE"
+        "Im_Like_A_Turret_In_Water_I_Run_So_Hot"
       ],
       "FACTION:Davion:50:99": [
-        "HEAVY_DAVION_BATTLEMECH_LANCE"
+        "Heavy_Davion_Battle_Lance"
       ]
     }
   },
@@ -51,13 +48,13 @@
     },
     "LancePool": {
       "ALL": [
-        "REFERENCE_EXAMPLE_LANCE"
+        "Generic_Assault_Battle_Lance"
       ],
       "CONTRACT_TYPE:DestroyBase": [
-        "HEAVY_MISSILE_LANCE", "ATTACKING_LANCE"
+        "Heavy_Missile_Lance", "Attacking_Lance"
       ],
       "CONTRACT_TYPE:DefendBase": [
-        "BRAWLER_LANCE", "DEFENDING_LANCE"
+        "Brawler_Lance", "Defending_Lance"
       ]
     }
   }

@@ -51,7 +51,7 @@
         "Reference_Example_Lance"
       ],
       "CONTRACT_TYPE:DestroyBase": [
-        "Heavy_Missile_Lance", "Attacking_Lance"
+        "Heavy_Missile_Lance", "Attacking_Lance", "Reference_Example_Lance"
       ],
       "CONTRACT_TYPE:DefendBase": [
         "Brawler_Lance", "Defending_Lance"
