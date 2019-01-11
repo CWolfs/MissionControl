@@ -52,13 +52,11 @@ namespace MissionControl.Logic {
           }
         }
 
-        Main.Logger.LogDebug($"[AddExtraLanceSpawnPoints] Finished filling. Moving onto spawn creation.");
-
         LanceSpawnerGameLogic lanceSpawner = lanceSpawners.Find(spawner => spawner.GUID == lanceOverride.lanceSpawner.EncounterObjectGuid);
-        List<GameObject> unitSpawnPoints = lanceSpawner.gameObject.FindAllContains("UnitSpawnPoint");
-        numberOfUnitsInLance = lanceOverride.unitSpawnPointOverrideList.Count;
-
         if (lanceSpawner != null) {
+          List<GameObject> unitSpawnPoints = lanceSpawner.gameObject.FindAllContains("UnitSpawnPoint");
+          numberOfUnitsInLance = lanceOverride.unitSpawnPointOverrideList.Count;
+
           if (numberOfUnitsInLance > unitSpawnPoints.Count) {
             Main.Logger.Log($"[AddExtraLanceSpawnPoints] Detected lance that has more units than vanilla supports. Creating new lance spawns to accommodate.");
             for (int i = 4; i < numberOfUnitsInLance; i++) {
@@ -68,7 +66,7 @@ namespace MissionControl.Logic {
             }
           }
         } else {
-          Main.Logger.LogError($"[AddExtraLanceSpawnPoints] Spawner is null for {lanceOverride.lanceSpawner.EncounterObjectGuid}. This shouldn't be the case.");
+          Main.Logger.LogWarning($"[AddExtraLanceSpawnPoints] Spawner is null for {lanceOverride.lanceSpawner.EncounterObjectGuid}. This is probably data from a restarted contract that hasn't been cleared up. It can be safely ignored.");
         }
       }
     }
