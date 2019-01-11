@@ -62,7 +62,7 @@ This roadmap contains features that may not make it into the mod. It depends on 
 | Encounter Objective - Defend X Units | Unknown | :heavy_minus_sign: |
 | Encounter Logic - Lance Faction Change | Unknown | :heavy_minus_sign: |
 | Encounter Logic - Random Extraction Zone | Unknown | :heavy_minus_sign: |
-| Encounter Logic - Combat Dialogue | Unknown | :heavy_minus_sign: |
+| Encounter Logic - Combat Dialogue | v0.2.0 | :white_check_mark: |
 | Random Spawn - Buildings | Unknown | :heavy_minus_sign: |
 | Random Spawn - Plots | Unknown | :heavy_minus_sign: |
 | Additional Lances - Player Lances | Unknown | :heavy_minus_sign: |
