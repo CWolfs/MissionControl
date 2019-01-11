@@ -3,16 +3,20 @@
     "Let's get out there and do this!",
     "Lets rock and roll!",
     "Wouldn't want any other Company by our side, Commander. It's an honour to fight here along side you.",
-    "Go to {TGT_SYSTEM.name}, they said. See the world they said. All I see are {TEAM_TAR.FactionDef.Demonym} Battlemechs. Lovely.",
-    "{COMMANDER.Callsign}, I fought along side you years ago. It's an honour to do the same again today."
+    "Go to {TGT_SYSTEM.name}, they said. See the world, they said. All I see are {TEAM_TAR.FactionDef.Demonym} Battlemechs. Lovely.",
+    "{COMMANDER.Callsign}, I fought along side you years ago. It's an honour to do the same again today.",
+    "Glad you could grace us with your presence. Lead the way, Merc.",
+    "Only good {TEAM_TAR.FactionDef.Demonym} is a dead {TEAM_TAR.FactionDef.Demonym}."
   ],
 
   "AmbushConvoy": [
-    "We must be close to the convoy by now. Let's push on."
+    "We must be close to the convoy by now. Let's push on.",
+    "Those bastards are here somewhere. Let's get hunting, Commander",
+    "You make the initial engagement, {COMMANDER.Callsign}. We'll support you."
   ],
 
   "Assassinate": [
-
+    "Beat the bushes and bring me the target's head."
   ],
 
   "CaptureBase": [
@@ -22,11 +26,13 @@
     "We need to capture this base intact. We're going to make sure you don't mess this up for us."
   ],
   "CaptureBaseAidAssault": [
-    "Thanks for the assist, Commander. Get here as fast as you can!"
+    "Thanks for the assist, Commander. Get here as fast as you can!",
+    "We're in mid-assault, {COMMANDER.Callsign}. Help would be much appreciated!"
   ],
 
   "CaptureEscort": [
-
+    "Commander, we need to hurry and get to those vehicles. They won't last long",
+    "It's critical we get these guys off {TGT_SYSTEM.name}. Let's do this!"
   ],
 
   "DefendBase": [
@@ -48,10 +54,12 @@
   ],
 
   "Rescue": [
-
+    "Think we can get in and out without anyone noticing?",
+    "Let's just get the thing and get out fast!"
   ],
 
   "SimpleBattle": [
-
+    "So this is it. Finally.",
+    "This is it. We either get through this together... or not."
   ]
 }

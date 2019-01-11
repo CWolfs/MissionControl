@@ -20,9 +20,9 @@ namespace MissionControl.Config {
 
       if (Limited && contractMaxTonnage > -1) return false;
 
-      if ((contractMaxTonnage == -1) || contractMaxTonnage < LimitedToUnder) return false;
+      if ((contractMaxTonnage == -1) || contractMaxTonnage < LimitedToUnder) return true;
 
-      return true;
+      return false;
     }
   }
 }

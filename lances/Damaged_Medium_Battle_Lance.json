@@ -1,12 +1,21 @@
 {
-  "lanceKey": "EXAMPLE_DAMAGED_BATTLE_LANCE",
+  "lanceKey": "Damaged_Medium_Battle_Lance",
   "lanceDefId": "Tagged",
   "lanceTagSet": {
     "items": [
-      "lance_type_battle"
+      "lance_type_battle",
+      "lance_type_medium"
     ]
   },
   "unitSpawnPointOverrideList": [
+    {
+      "unitType": "Mech",
+      "spawnEffectTags": {
+        "items": [
+          "spawn_poorly_maintained_75"
+        ]
+      }
+    },
     {
       "unitType": "Mech",
       "spawnEffectTags": {
@@ -29,10 +38,12 @@
         "items": [
           "unit_vehicle_carrier"
         ]
+      },
+      "spawnEffectTags": {
+        "items": [
+          "spawn_poorly_maintained_50"
+        ]
       }
-    },
-    {
-      "unitType": "Mech"
     }
   ]
 }

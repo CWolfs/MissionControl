@@ -1,5 +1,5 @@
 {
-  "lanceKey": "Generic_Battle_Lance_Elite",
+  "lanceKey": "Generic_Assault_Battle_Lance",
   "lanceDefId": "Tagged",
   "lanceTagSet": {
     "items": [
@@ -15,15 +15,15 @@
       "unitType": "Mech"
     },
     {
+      "unitType": "Mech"
+    },
+    {
       "unitType": "Vehicle",
       "unitTagSet": {
         "items": [
           "unit_vehicle_carrier"
         ]
       }
-    },
-    {
-      "unitType": "Mech"
     }
   ]
 }

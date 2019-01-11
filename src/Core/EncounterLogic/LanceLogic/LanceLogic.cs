@@ -28,7 +28,7 @@ namespace MissionControl.Logic {
       string selectedLanceKey = lancePoolKeys[index];
       if (useElites) selectedLanceKey = $"{selectedLanceKey}{activeAdditionalLance.EliteLances.Suffix}";
 
-      Main.LogDebug($"[SelectAppropriateLanceOverride] Lance pool keys valid for '{teamType}', '{biome}', '{contractType}', '{faction}' are '{string.Join(", ", lancePoolKeys.ToArray())}'");
+      Main.LogDebug($"[SelectAppropriateLanceOverride] Lance pool keys valid for '{teamType.Capitalise()}', '{biome}', '{contractType}', '{faction}' are '{string.Join(", ", lancePoolKeys.ToArray())}'");
 
       if (DataManager.Instance.DoesLanceOverrideExist(selectedLanceKey)) {
         Main.Logger.Log($"[SelectAppropriateLanceOverride] Selected lance key '{selectedLanceKey}'");
@@ -44,8 +44,8 @@ namespace MissionControl.Logic {
           }
         }
 
-        Main.Logger.LogError($"[SelectAppropriateLanceOverride] MLanceOverride of '{selectedLanceKey}' not found. Defaulting to 'GENERIC_BATTLE_LANCE'");
-        return DataManager.Instance.GetLanceOverride("GENERIC_BATTLE_LANCE");
+        Main.Logger.LogError($"[SelectAppropriateLanceOverride] MLanceOverride of '{selectedLanceKey}' not found. Defaulting to 'Generic_Battle_Lance'");
+        return DataManager.Instance.GetLanceOverride("Generic_Battle_Lance");
       }
     }
   }
