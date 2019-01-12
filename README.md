@@ -25,7 +25,7 @@ This works only for the generic contract types (e.g. Battle, Rescue etc) as it w
 * Single Player Skirmish with Quick Skirmish (Bypass Skirmish Menus)
 * Encounter Rulesets (New Game Logic for Contract Types) | [Documentation](./docs/encounter-rulesets.md)
 * New Combat Dialogue
-* Larger Lance Sizes (Clan Stars [5 units], Level-II Lances [6 units])
+* Larger Lance Sizes (Clan Stars [5 units], Level-II Lances [6 units]) | [Documentation](./docs/extended-lances.md)
 * (Future) Modder Injected AI Behaviour Support
 
 ## Full Description
