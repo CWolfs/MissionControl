@@ -19,11 +19,11 @@ This works only for the generic contract types (e.g. Battle, Rescue etc) as it w
 
 ## Features
 
-* Additional Lances (AI Controlled Enemy & Allies)
+* Additional Lances (AI Controlled Enemy & Allies) | [Documentation](./docs/additional-lances.md)
 * Random Lance Spawns (Appropriate for Contract Type)
 * New AI Behaviours
 * Single Player Skirmish with Quick Skirmish (Bypass Skirmish Menus)
-* Encounter Rulesets (New Game Logic for Contract Types)
+* Encounter Rulesets (New Game Logic for Contract Types) | [Documentation](./docs/encounter-rulesets.md)
 * New Combat Dialogue
 * Larger Lance Sizes (Clan Stars [5 units], Level-II Lances [6 units])
 * (Future) Modder Injected AI Behaviour Support
