@@ -28,6 +28,8 @@ This works only for the generic contract types (e.g. Battle, Rescue etc) as it w
 * Larger Lance Sizes (Clan Stars [5 units], Level-II Lance [6 units])
 * (Future) Modder Injected AI Behaviour Support
 
+## Full Description
+
 ### Additional Lances
 
 Additional enemy and ally lances will spawn based on contract type, biome type, percentage chances, maximum limits and lance configs.
