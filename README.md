@@ -19,6 +19,15 @@ This works only for the generic contract types (e.g. Battle, Rescue etc) as it w
 
 ## Features
 
+* Additional Lances (AI Controlled Enemy & Allies)
+* Random Lance Spawns (Appropriate for Contract Type)
+* New AI Behaviours
+* Single Player Skirmish with Quick Skirmish (Bypass Skirmish Menus)
+* Encounter Rulesets (New Game Logic for Contract Types)
+* New Combat Dialogue
+* Larger Lance Sizes (Clan Stars [5 units], Level-II Lance [6 units])
+* (Future) Modder Injected AI Behaviour Support
+
 ### Additional Lances
 
 Additional enemy and ally lances will spawn based on contract type, biome type, percentage chances, maximum limits and lance configs.
@@ -49,7 +58,7 @@ Mission Control allows other modders to add their own contract type rulesets to 
 
 For full information on contract type rulesets, see the [Encounter Rulesets](./docs/encounter-rulesets.md) page.
 
-### AI
+### Modder Injected AI
 
 In future updates Mission Control will provide an easy to use method to let other modders create AI and then inject it into the game.
 
