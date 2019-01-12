@@ -66,20 +66,7 @@ In future updates Mission Control will provide an easy to use method to let othe
 
 ## Roadmap
 
-This roadmap contains features that may not make it into the mod. It depends on the technical feasibility of the feature.
-
-| Feature | Expected Version | Status  |
-| ------- | ---------------- | ------- |
-| Encounter Objective - Defend X Units | Unknown | :heavy_minus_sign: |
-| Encounter Logic - Lance Faction Change | Unknown | :heavy_minus_sign: |
-| Encounter Logic - Random Extraction Zone | Unknown | :heavy_minus_sign: |
-| Encounter Logic - Combat Dialogue | v0.2.0 | :white_check_mark: |
-| Random Spawn - Buildings | Unknown | :heavy_minus_sign: |
-| Random Spawn - Plots | Unknown | :heavy_minus_sign: |
-| Additional Lances - Player Lances | Unknown | :heavy_minus_sign: |
-| Reuse Maps - Story - 1B Retreat | Unknown | :heavy_minus_sign: |
-
-...many more to be added soon.
+For a glimpse into the future of Mission Control check out the milestones, for example [v0.3.0](https://github.com/CWolfs/MissionControl/milestone/3), and the [issues section](https://github.com/CWolfs/MissionControl/issues).
 
 ## Feedback
 
