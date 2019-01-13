@@ -36,6 +36,8 @@ namespace MissionControl {
 
     private Dictionary<string, List<Type>> AvailableEncounters = new Dictionary<string, List<Type>>();
 
+    public Dictionary<ContractStats, object> ContractStats = new Dictionary<ContractStats, object>();
+
     private MissionControl() {
       LoadEncounterRules();
     }
@@ -99,6 +101,7 @@ namespace MissionControl {
       ContractMapName = contract.mapName;
       SetContractType(CurrentContract.ContractType);
       AiManager.Instance.ResetCustomBehaviourVariableScopes();
+      ContractStats.Clear();
     }
 
     public void SetActiveAdditionalLances(Contract contract) {
@@ -156,9 +159,15 @@ namespace MissionControl {
     }
 
     private void SetEncounterRule(Type encounterRules) {
-      EncounterRules = (EncounterRules)Activator.CreateInstance(encounterRules);
-      EncounterRulesName = encounterRules.Name.Replace("EncounterRules", "");
-      EncounterRules.Build();
+      if (AllowMissionControl()) {
+        EncounterRules = (EncounterRules)Activator.CreateInstance(encounterRules);
+        EncounterRulesName = encounterRules.Name.Replace("EncounterRules", "");
+        EncounterRules.Build();
+        EncounterRules.ActivatePostFeatures();
+      } else {
+        EncounterRules = null;
+        EncounterRulesName = null;
+      }
     }
 
     public void RunEncounterRules(LogicBlock.LogicType type, RunPayload payload = null) {
@@ -200,7 +209,10 @@ namespace MissionControl {
 
     public bool AreAdditionalLancesAllowed(string teamType) {
       if (Main.Settings.AdditionalLanceSettings.Enable) {
-        bool areLancesAllowed = Main.Settings.ActiveAdditionalLances.GetValidContractTypes(teamType).Contains(CurrentContractType);
+        bool areLancesAllowed = !(this.CurrentContract.IsFlashpointContract && Main.Settings.AdditionalLanceSettings.DisableIfFlashpointContract);
+        if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.DisableWhenMaxTonnage.AreLancesAllowed((int)this.CurrentContract.Override.lanceMaxTonnage);
+        if (areLancesAllowed) areLancesAllowed = Main.Settings.ActiveAdditionalLances.GetValidContractTypes(teamType).Contains(CurrentContractType);
+        
         Main.LogDebug($"[AreAdditionalLancesAllowed] {areLancesAllowed}");
         return areLancesAllowed;
       }
@@ -211,6 +223,33 @@ namespace MissionControl {
     public bool IsSkirmish(Contract contract) {
       string type = Enum.GetName(typeof(ContractType), contract.ContractType);
       return type == "ArenaSkirmish";
+    }
+
+    public bool IsSkirmish() {
+      if (CurrentContract != null) {
+        return IsSkirmish(CurrentContract);
+      }
+      return false;
+    }
+
+    public bool ShouldUseElites(Faction faction, string teamType) {
+      Config.Lance activeAdditionalLances = Main.Settings.ActiveAdditionalLances.GetActiveAdditionalLanceByTeamType(teamType);
+      return Main.Settings.AdditionalLanceSettings.UseElites && activeAdditionalLances.EliteLances.ShouldEliteLancesBeSelected(faction);
+    }
+    
+    public Faction GetFactionFromTeamType(string teamType) {
+      switch (teamType.ToLower()) {
+				case "enemy":
+					return MissionControl.Instance.CurrentContract.Override.targetTeam.faction;
+				case "allies":
+					return MissionControl.Instance.CurrentContract.Override.employerTeam.faction;
+			}
+      return Faction.INVALID_UNSET;
+    }
+
+    public bool AllowMissionControl() {
+      if (!this.CurrentContract.IsFlashpointContract) return true;
+      return this.CurrentContract.IsFlashpointContract && !Main.Settings.AdditionalLanceSettings.DisableIfFlashpointContract;
     }
   }
 }

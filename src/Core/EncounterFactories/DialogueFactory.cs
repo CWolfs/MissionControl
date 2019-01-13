@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Text.RegularExpressions;
 
 using BattleTech;
 
@@ -50,6 +51,9 @@ namespace MissionControl.EncounterFactories {
 
     public static ConversationContent CreateConversationContent(string presetDialogue, string cameraTargetGuid) {
       CastDef castDef = RuntimeCastFactory.CreateCast();
+
+      if (MissionControl.Instance.IsSkirmish()) presetDialogue = Regex.Replace(presetDialogue, "{COMMANDER\\..+}", "Commander");
+
       DialogueContent dialogueContent1 = new DialogueContent(
         presetDialogue, Color.white, castDef.id, "", 
         cameraTargetGuid, BattleTech.DialogCameraDistance.Medium, BattleTech.DialogCameraHeight.Default, -1

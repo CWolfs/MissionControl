@@ -25,7 +25,7 @@ namespace MissionControl.Logic {
       ContractOverride contractOverride = ((ContractOverridePayload)payload).ContractOverride;
       TeamOverride teamOverride = contractOverride.player2Team;
 
-      LanceOverride lanceOverride = SelectAppropriateLanceOverride("Enemy").Copy();
+      LanceOverride lanceOverride = SelectAppropriateLanceOverride("enemy").Copy();
       lanceOverride.name = $"Lance_Enemy_OpposingForce_{lanceGuid}";
 
       if (unitGuids.Count > 4) {

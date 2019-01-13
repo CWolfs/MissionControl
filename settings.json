@@ -1,6 +1,7 @@
 {
   "DebugMode": true,
   "DebugSkirmishMode": true,
+  "DisableIfFlashpointContract": true,
   "HotDrop": {
     "GuardOnHotDrop": false,
     "EvasionPipsOnHotDrop": 4,
@@ -8,8 +9,24 @@
   },
   "AdditionalLances": {
     "Enable": true,
+    "UseElites": true,
+    "UseDialogue": true,
     "SkullValueMatters": true,
     "BasedOnVisibleSkullValue": true,
     "UseGeneralProfileForSkirmish": true,
-  }
+    "DisableIfFlashpointContract": true,
+    "DisableWhenMaxTonnage": {
+      "Enable": true,
+      "Limited": false,
+      "LimitedToUnder": 300,
+    }
+  },
+  "ExtendedLances": {
+    "Enable": true,
+    "Autofill": true,
+    "LanceSizes": {
+      "5": [],
+      "6": [],
+    }
+  },
 }

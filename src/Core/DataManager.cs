@@ -175,17 +175,28 @@ namespace MissionControl {
     }
 
     public string GetRandomLastName(string factionKey) {
-      List<string> names = new List<string>();
-      names.AddRange(this.LastNames["All"]);
-      if (this.LastNames.ContainsKey(factionKey)) names.AddRange(this.LastNames[factionKey]);
+      List<string> names = null;
+      float chance = UnityEngine.Random.Range(0f, 100f);
+      bool useFactionName = false;
+      if (chance < 75) useFactionName = true;
+
+      if (this.LastNames.ContainsKey(factionKey) && this.LastNames[factionKey].Count > 0 && useFactionName) {
+        names = this.LastNames[factionKey];
+      } else {
+        names = this.LastNames["All"];
+      }
 
       return names[UnityEngine.Random.Range(0, names.Count)];
     }
 
     public string GetRandomRank(string factionKey) {
       List<string> ranks = new List<string>();
-      ranks.AddRange(this.Ranks["All"]);
-      if (this.Ranks.ContainsKey(factionKey)) ranks.AddRange(this.Ranks[factionKey]);
+
+      if (this.Ranks.ContainsKey(factionKey) && this.Ranks[factionKey].Count > 0) {
+        ranks.AddRange(this.Ranks[factionKey]);
+      } else {
+        ranks.AddRange(this.Ranks["Fallback"]);
+      }
 
       return ranks[UnityEngine.Random.Range(0, ranks.Count)];
     }

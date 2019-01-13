@@ -19,15 +19,32 @@ This works only for the generic contract types (e.g. Battle, Rescue etc) as it w
 
 ## Features
 
+* Additional Lances (AI Controlled Enemy & Allies) | [Documentation](./docs/additional-lances.md)
+* Random Lance Spawns (Appropriate for Contract Type)
+* Extended Lances (Clan Stars [5 units], Level-II Lances [6 units]) | [Documentation](./docs/extended-lances.md)
+* New AI Behaviours
+* Single Player Skirmish with Quick Skirmish (Bypass Skirmish Menus)
+* Encounter Rulesets (New Game Logic for Contract Types) | [Documentation](./docs/encounter-rulesets.md)
+* New Combat Dialogue
+* (Future) Modder Injected AI Behaviour Support
+
+## Full Description
+
 ### Additional Lances
 
-Additional enemy and ally lances will spawn based on contract type, biome type, percentage chances, maximum limits and lance configs.
+Additional enemy and ally lances will spawn based on contract type, biome type, faction reputation, allies/enemies, percentage chances, maximum limits and lance configs.
 
 For full configuration options, see the [Additional Lances](./docs/additional-lances.md) page.
 
 ### Random Spawns
 
 Depending on the contract type, the lance spawns will change every playthrough. The spawning uses contract type specific logic to suitably place the lances. There are no configuration options currently available for this as these come from the encounter type rulesets that are created. Which things are randomised in the game is determined by the `Encounter Ruleset` which is run for that contract type.
+
+### Extended Lances
+
+Increase the sizes of lances where it makes sense. For the vanilla game this does nothing. If another mod is using Mission Control, then they can set Clan stars (5 mechs) or Comstar Demi-lances / Reinforced lances (6 mechs).
+
+This works for both vanilla spawn points for contract types and spawns created by Mission Control.
 
 ### New AI
 
@@ -49,26 +66,13 @@ Mission Control allows other modders to add their own contract type rulesets to 
 
 For full information on contract type rulesets, see the [Encounter Rulesets](./docs/encounter-rulesets.md) page.
 
-### AI
+### Modder Injected AI
 
 In future updates Mission Control will provide an easy to use method to let other modders create AI and then inject it into the game.
 
 ## Roadmap
 
-This roadmap contains features that may not make it into the mod. It depends on the technical feasibility of the feature.
-
-| Feature | Expected Version | Status  |
-| ------- | ---------------- | ------- |
-| Encounter Objective - Defend X Units | Unknown | :heavy_minus_sign: |
-| Encounter Logic - Lance Faction Change | Unknown | :heavy_minus_sign: |
-| Encounter Logic - Random Extraction Zone | Unknown | :heavy_minus_sign: |
-| Encounter Logic - Combat Dialogue | Unknown | :heavy_minus_sign: |
-| Random Spawn - Buildings | Unknown | :heavy_minus_sign: |
-| Random Spawn - Plots | Unknown | :heavy_minus_sign: |
-| Additional Lances - Player Lances | Unknown | :heavy_minus_sign: |
-| Reuse Maps - Story - 1B Retreat | Unknown | :heavy_minus_sign: |
-
-...many more to be added soon.
+For a glimpse into the future of Mission Control check out the milestones, for example [v0.3.0](https://github.com/CWolfs/MissionControl/milestone/3), and the [issues section](https://github.com/CWolfs/MissionControl/issues).
 
 ## Feedback
 

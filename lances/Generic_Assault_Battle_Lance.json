@@ -1,12 +1,16 @@
 {
-  "lanceKey": "Generic_Battle_Lance",
+  "lanceKey": "Generic_Assault_Battle_Lance",
   "lanceDefId": "Tagged",
   "lanceTagSet": {
     "items": [
-      "lance_type_battle"
+      "lance_type_battle",
+      "lance_type_assault"
     ]
   },
   "unitSpawnPointOverrideList": [
+    {
+      "unitType": "Mech"
+    },
     {
       "unitType": "Mech"
     },
@@ -20,9 +24,6 @@
           "unit_vehicle_carrier"
         ]
       }
-    },
-    {
-      "unitType": "Mech"
     }
   ]
 }

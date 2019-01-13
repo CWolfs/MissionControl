@@ -10,11 +10,17 @@ namespace MissionControl.Config {
         [JsonProperty("DebugSkirmishMode")]
         public bool DebugSkirmishMode { get; set; } = false;
 
+        [JsonProperty("DisableIfFlashpointContract")]
+        public bool DisableIfFlashpointContract { get; set; } = true;
+
         [JsonProperty("HotDrop")]
         public HotDrop HotDrop { get; set; } = new HotDrop();
 
         [JsonProperty("AdditionalLances")]
         public AdditionalLanceSettings AdditionalLanceSettings { get; set; } = new AdditionalLanceSettings();
+
+        [JsonProperty("ExtendedLances")]
+        public ExtendedLancesSettings ExtendedLances { get; set; } = new ExtendedLancesSettings();
 
         public AdditionalLances ActiveAdditionalLances { get; set; }
 
