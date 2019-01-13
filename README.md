@@ -46,6 +46,10 @@ Increase the sizes of lances where it makes sense. For the vanilla game this doe
 
 This works for both vanilla spawn points for contract types and spawns created by Mission Control.
 
+### Ally Combat Dialogue
+
+When dropping with your allies they will break radio silence to inform you of the current situation, show their joy at your arrival or generally complain they are fighting with dirty Mercs.
+
 ### New AI
 
 Completely new AI behaviours that do not exist in the vanilla game.
