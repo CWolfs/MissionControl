@@ -21,24 +21,30 @@ This works only for the generic contract types (e.g. Battle, Rescue etc) as it w
 
 * Additional Lances (AI Controlled Enemy & Allies) | [Documentation](./docs/additional-lances.md)
 * Random Lance Spawns (Appropriate for Contract Type)
+* Extended Lances (Clan Stars [5 units], Level-II Lances [6 units]) | [Documentation](./docs/extended-lances.md)
 * New AI Behaviours
 * Single Player Skirmish with Quick Skirmish (Bypass Skirmish Menus)
 * Encounter Rulesets (New Game Logic for Contract Types) | [Documentation](./docs/encounter-rulesets.md)
 * New Combat Dialogue
-* Larger Lance Sizes (Clan Stars [5 units], Level-II Lances [6 units]) | [Documentation](./docs/extended-lances.md)
 * (Future) Modder Injected AI Behaviour Support
 
 ## Full Description
 
 ### Additional Lances
 
-Additional enemy and ally lances will spawn based on contract type, biome type, percentage chances, maximum limits and lance configs.
+Additional enemy and ally lances will spawn based on contract type, biome type, faction reputation, allies/enemies, percentage chances, maximum limits and lance configs.
 
 For full configuration options, see the [Additional Lances](./docs/additional-lances.md) page.
 
 ### Random Spawns
 
 Depending on the contract type, the lance spawns will change every playthrough. The spawning uses contract type specific logic to suitably place the lances. There are no configuration options currently available for this as these come from the encounter type rulesets that are created. Which things are randomised in the game is determined by the `Encounter Ruleset` which is run for that contract type.
+
+### Extended Lances
+
+Increase the sizes of lances where it makes sense. For the vanilla game this does nothing. If another mod is using Mission Control, then they can set Clan stars (5 mechs) or Comstar Demi-lances / Reinforced lances (6 mechs).
+
+This works for both vanilla spawn points for contract types and spawns created by Mission Control.
 
 ### New AI
 
