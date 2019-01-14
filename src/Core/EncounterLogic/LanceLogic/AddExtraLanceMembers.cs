@@ -45,7 +45,7 @@ namespace MissionControl.Logic {
           if (!isLanceTagged && AreAnyLanceUnitsTagged) {
             lanceOverride.unitSpawnPointOverrideList.Add(lanceOverride.GetAnyTaggedLanceMember().DeepCopy());
           } else if (!isLanceTagged && !AreAnyLanceUnitsTagged) {
-            Main.Logger.LogError($"[AddExtraLanceMembers] The contract '{contractOverride.ID}' for the team '{teamOverride.teamName}' has a manual lance and manual unit setup but it does not specify the right number of lance members. When manually setting lances they should match the Mission Control ExtendedLance lance member count. For this lance you should have exactly '{factionLanceSize}' but only '{numberOfUnitsInLance}' are set.");
+            Main.Logger.LogWarning($"[AddExtraLanceMembers] The contract '{contractOverride.ID}' for the team '{teamOverride.teamName}' has a manual lance and manual unit setup but it does not specify the right number of lance members. When manually setting lances they should match the Mission Control ExtendedLance lance member count. For this lance you should have exactly '{factionLanceSize}' but only '{numberOfUnitsInLance}' are set.");
           }
         }
       }
