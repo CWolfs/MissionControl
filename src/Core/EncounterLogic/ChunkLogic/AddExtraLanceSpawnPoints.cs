@@ -42,9 +42,9 @@ namespace MissionControl.Logic {
       foreach (LanceOverride lanceOverride in lanceOverrides) {
         int numberOfUnitsInLance = lanceOverride.unitSpawnPointOverrideList.Count;
 
-        if (numberOfUnitsInLance < factionLanceSize) {
+        if ((numberOfUnitsInLance < factionLanceSize) && numberOfUnitsInLance > 0) {
           // This is usually from a 'tagged' lance being selected which has less lance members than the faction lance size
-          if (Main.Settings.ExtendedLances.Autofill) {
+          if (Main.Settings.ExtendedLances.Autofill ) {
             Main.LogDebug("[AddExtraLanceSpawnPoints] Populated lance has fewer units than the faction requires. Autofilling the missing units");
             AddNewLanceMembers(contractOverride, teamOverride, lanceOverride, numberOfUnitsInLance, factionLanceSize);
           } else {
