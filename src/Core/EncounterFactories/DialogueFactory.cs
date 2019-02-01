@@ -43,8 +43,7 @@ namespace MissionControl.EncounterFactories {
       dialogueGameLogic.dialogBucketId = dialogueBucketId;
 
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-      combatState.DataManager.RequestResource(BattleTechResourceType.DialogBucketDef, dialogueBucketId, null);
-      combatState.DataManager.ProcessRequests();
+      DataManager.Instance.RequestResourcesAndProcess(BattleTechResourceType.DialogBucketDef, dialogueBucketId);
 
       return dialogueGameLogic;
     }

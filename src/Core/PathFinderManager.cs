@@ -73,15 +73,21 @@ namespace MissionControl {
     public void RequestPathFinderMech() {
       Main.LogDebug("[PathFinderManager] Requesting path finder mech");
       if (pathFinderMech == null) Init();
-      UnityGameInstance.BattleTechGame.DataManager.RequestNewResource(BattleTechResourceType.Prefab, pathFinderMech.MechDef.Chassis.PrefabIdentifier);
-      UnityGameInstance.BattleTechGame.DataManager.ProcessRequests();
+        LoadRequest loadRequest = UnityGameInstance.BattleTechGame.DataManager.CreateLoadRequest(delegate(LoadRequest request) {
+          Main.LogDebug("[RequestPathFinderMech] Finished load request");
+        }, false);
+        loadRequest.AddBlindLoadRequest(BattleTechResourceType.Prefab, pathFinderMech.MechDef.Chassis.PrefabIdentifier);
+        loadRequest.ProcessRequests(1000u);
     }
 
     public void RequestPathFinderVehicle() {
       Main.LogDebug("[PathFinderManager] Requesting path finder vehicle");
       if (pathFinderVehicle == null) Init();
-      UnityGameInstance.BattleTechGame.DataManager.RequestNewResource(BattleTechResourceType.Prefab, pathFinderVehicle.VehicleDef.Chassis.PrefabIdentifier);
-      UnityGameInstance.BattleTechGame.DataManager.ProcessRequests();  
+        LoadRequest loadRequest = UnityGameInstance.BattleTechGame.DataManager.CreateLoadRequest(delegate(LoadRequest request) {
+          Main.LogDebug("[RequestPathFinderMech] Finished load request");
+        }, false);
+        loadRequest.AddBlindLoadRequest(BattleTechResourceType.Prefab, pathFinderVehicle.VehicleDef.Chassis.PrefabIdentifier);
+        loadRequest.ProcessRequests(1000u);
     }
 
     private AbstractActor GetPathFindingActor(UnitType type) {

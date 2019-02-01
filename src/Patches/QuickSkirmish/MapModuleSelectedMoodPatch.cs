@@ -24,12 +24,10 @@ namespace MissionControl.Patches {
       if (UiManager.Instance.ClickedQuickSkirmish) {
         Main.Logger.Log($"[MapModuleSelectedMoodPatch Prefix] Patching SelectedMood");
         if (mood == null) {
-          using (MetadataDatabase metadataDatabase = new MetadataDatabase()) {
-            List<Mood_MDD> moods = metadataDatabase.GetMoods();
-            int index = UnityEngine.Random.Range(0, moods.Count);
-            Mood_MDD moodMdd = moods[index];
-            mood = new BattleMood { Name = moodMdd.Name, FriendlyName = moodMdd.FriendlyName, Path = "MOOD_PATH_UNSET" };
-          }
+          List<Mood_MDD> moods = MetadataDatabase.Instance.GetMoods();
+          int index = UnityEngine.Random.Range(0, moods.Count);
+          Mood_MDD moodMdd = moods[index];
+          mood = new BattleMood { Name = moodMdd.Name, FriendlyName = moodMdd.FriendlyName, Path = "MOOD_PATH_UNSET" };
         }
         
         __result = mood;
