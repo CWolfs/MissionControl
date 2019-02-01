@@ -1,10 +1,12 @@
-using System.Collections.Generic;
+using System;
 using System.IO;
+using System.Collections.Generic;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using BattleTech;
+using BattleTech.Data;
 using BattleTech.Designed;
 using BattleTech.Framework;
 
@@ -87,8 +89,7 @@ namespace MissionControl {
       BattleTech.Data.DataManager dataManager = UnityGameInstance.BattleTechGame.DataManager;
       if (dataManager.ResourceEntryExists(BattleTechResourceType.LanceDef, key)) {
         Main.Logger.Log($"[LoadDirectLanceReference] Lance definition of '{key}' exists but has not been loaded yet. Loading it. [Experimental: If a crash occurs after this please report it]");
-        dataManager.RequestNewResource(BattleTechResourceType.LanceDef, key);
-        dataManager.ProcessRequests();
+        RequestResourcesAndProcess(BattleTechResourceType.LanceDef, key);
         return true;
       }
       
@@ -123,8 +124,7 @@ namespace MissionControl {
     }
 
     public void LoadVehicleDefs() {
-      BattleTech.Data.DataManager dataManager = UnityGameInstance.BattleTechGame.DataManager;
-      dataManager.RequestNewResource(BattleTechResourceType.VehicleDef, "vehicledef_DEMOLISHER");
+      RequestResourcesAndProcess(BattleTechResourceType.VehicleDef, "vehicledef_DEMOLISHER");
     }
 
     /* RUNTIME CREW NAMES */
@@ -233,5 +233,21 @@ namespace MissionControl {
     public void Reset() {
 
     }
+
+    public void RequestResourcesAndProcess(BattleTechResourceType resourceType, string resourceId, bool filterByOwnership = false) {
+        LoadRequest loadRequest = UnityGameInstance.BattleTechGame.DataManager.CreateLoadRequest(delegate(LoadRequest request) {
+          Main.LogDebug($"[RequestResourcesAndProcess] Finished load request for {resourceId}");
+        }, filterByOwnership);
+        loadRequest.AddBlindLoadRequest(resourceType, resourceId);
+        loadRequest.ProcessRequests(1000u);
+    }
+
+    public DateTime? GetSimGameCurrentDate() {
+			DateTime? result = null;
+			if (UnityGameInstance.BattleTechGame != null && UnityGameInstance.BattleTechGame.Simulation != null) {
+				result = new DateTime?(UnityGameInstance.BattleTechGame.Simulation.CurrentDate);
+			}
+			return result;
+		}
   }
 }

@@ -9,6 +9,8 @@ using BattleTech.Data;
 using BattleTech.Designed;
 using BattleTech.Framework;
 
+using HBS.Collections;
+
 using MissionControl.Logic;
 using MissionControl.Rules;
 using MissionControl.EncounterFactories;
@@ -42,9 +44,9 @@ namespace MissionControl.Logic {
       foreach (LanceOverride lanceOverride in lanceOverrides) {
         int numberOfUnitsInLance = lanceOverride.unitSpawnPointOverrideList.Count;
 
-        if (numberOfUnitsInLance < factionLanceSize) {
+        if ((numberOfUnitsInLance < factionLanceSize) && numberOfUnitsInLance > 0) {
           // This is usually from a 'tagged' lance being selected which has less lance members than the faction lance size
-          if (Main.Settings.ExtendedLances.Autofill) {
+          if (Main.Settings.ExtendedLances.Autofill ) {
             Main.LogDebug("[AddExtraLanceSpawnPoints] Populated lance has fewer units than the faction requires. Autofilling the missing units");
             AddNewLanceMembers(contractOverride, teamOverride, lanceOverride, numberOfUnitsInLance, factionLanceSize);
           } else {
@@ -72,15 +74,14 @@ namespace MissionControl.Logic {
     }
 
     private void AddNewLanceMembers(ContractOverride contractOverride, TeamOverride teamOverride, LanceOverride lanceOverride, int numberOfUnitsInLance, int factionLanceSize) {
-      using (MetadataDatabase metadataDatabase = new MetadataDatabase()) {
-        for (int i = numberOfUnitsInLance; i < factionLanceSize; i++) {
-          UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetAnyTaggedLanceMember();
-          if (originalUnitSpawnPointOverride == null) originalUnitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0];
-          UnitSpawnPointOverride unitSpawnPointOverride = originalUnitSpawnPointOverride.DeepCopy();
+      for (int i = numberOfUnitsInLance; i < factionLanceSize; i++) {
+        UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetAnyTaggedLanceMember();
+        if (originalUnitSpawnPointOverride == null) originalUnitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0];
+        UnitSpawnPointOverride unitSpawnPointOverride = originalUnitSpawnPointOverride.DeepCopy();
+        TagSet companyTags = new TagSet(UnityGameInstance.BattleTechGame.Simulation.CompanyTags);
 
-          unitSpawnPointOverride.GenerateUnit(metadataDatabase, UnityGameInstance.Instance.Game.DataManager, lanceOverride.selectedLanceDifficulty, lanceOverride.name, null, i);
-          lanceOverride.unitSpawnPointOverrideList.Add(unitSpawnPointOverride);
-        }
+        unitSpawnPointOverride.GenerateUnit(MetadataDatabase.Instance, UnityGameInstance.Instance.Game.DataManager, lanceOverride.selectedLanceDifficulty, lanceOverride.name, null, i, DataManager.Instance.GetSimGameCurrentDate(), companyTags);
+        lanceOverride.unitSpawnPointOverrideList.Add(unitSpawnPointOverride);
       }
     }
   }

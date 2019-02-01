@@ -23,11 +23,9 @@ namespace MissionControl.Patches {
       if (UiManager.Instance.ClickedQuickSkirmish) {
         Main.Logger.Log($"[MapModuleSelectedMapPatch Prefix] Patching SelectedMap");
         if (mapAndEncounter == null) {
-          using (MetadataDatabase metadataDatabase = new MetadataDatabase()) {
-            List<MapAndEncounters> mapAndEncounters = metadataDatabase.GetReleasedMapsAndEncountersByContractType(new ContractType[] { ContractType.ArenaSkirmish });
-            int index = UnityEngine.Random.Range(0, mapAndEncounters.Count);
-            mapAndEncounter = mapAndEncounters[index];
-          }
+          List<MapAndEncounters> mapAndEncounters = MetadataDatabase.Instance.GetReleasedMapsAndEncountersByContractType(new ContractType[] { ContractType.ArenaSkirmish });
+          int index = UnityEngine.Random.Range(0, mapAndEncounters.Count);
+          mapAndEncounter = mapAndEncounters[index];
         }
         
         __result = mapAndEncounter;
