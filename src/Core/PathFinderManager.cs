@@ -73,21 +73,13 @@ namespace MissionControl {
     public void RequestPathFinderMech() {
       Main.LogDebug("[PathFinderManager] Requesting path finder mech");
       if (pathFinderMech == null) Init();
-        LoadRequest loadRequest = UnityGameInstance.BattleTechGame.DataManager.CreateLoadRequest(delegate(LoadRequest request) {
-          Main.LogDebug("[RequestPathFinderMech] Finished load request");
-        }, false);
-        loadRequest.AddBlindLoadRequest(BattleTechResourceType.Prefab, pathFinderMech.MechDef.Chassis.PrefabIdentifier);
-        loadRequest.ProcessRequests(1000u);
+        DataManager.Instance.RequestResourcesAndProcess(BattleTechResourceType.Prefab, pathFinderMech.MechDef.Chassis.PrefabIdentifier);
     }
 
     public void RequestPathFinderVehicle() {
       Main.LogDebug("[PathFinderManager] Requesting path finder vehicle");
       if (pathFinderVehicle == null) Init();
-        LoadRequest loadRequest = UnityGameInstance.BattleTechGame.DataManager.CreateLoadRequest(delegate(LoadRequest request) {
-          Main.LogDebug("[RequestPathFinderMech] Finished load request");
-        }, false);
-        loadRequest.AddBlindLoadRequest(BattleTechResourceType.Prefab, pathFinderVehicle.VehicleDef.Chassis.PrefabIdentifier);
-        loadRequest.ProcessRequests(1000u);
+        DataManager.Instance.RequestResourcesAndProcess(BattleTechResourceType.Prefab, pathFinderVehicle.VehicleDef.Chassis.PrefabIdentifier);
     }
 
     private AbstractActor GetPathFindingActor(UnitType type) {
