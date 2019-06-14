@@ -17,7 +17,7 @@ namespace MissionControl.Result {
 		public TagSet requiredReceiverTags = new TagSet();
 		public CustomAIOrder aiOrder = new CustomAIOrder();
 
-		public override void Trigger(MessageCenterMessage inMessage) {
+		public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
 			Main.Logger.Log("[IssueCustomAIOrderResult] Triggered");
 			if ((this.issueAIOrderTo & IssueAIOrderTo.ToUnit) != IssueAIOrderTo.INVALID_UNSET) {
 				List<ITaggedItem> objectsOfTypeWithTagSet = this.combat.ItemRegistry.GetObjectsOfTypeWithTagSet(TaggedObjectType.Unit, this.requiredReceiverTags);

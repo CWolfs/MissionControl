@@ -47,6 +47,7 @@ namespace MissionControl {
 
     public void LoadDeferredDefs() {
       LoadVehicleDefs();
+      LoadPilotDefs();
       HasLoadedDeferredDefs = true;
     }
 
@@ -125,6 +126,10 @@ namespace MissionControl {
 
     public void LoadVehicleDefs() {
       RequestResourcesAndProcess(BattleTechResourceType.VehicleDef, "vehicledef_DEMOLISHER");
+    }
+
+    public void LoadPilotDefs() {
+      RequestResourcesAndProcess(BattleTechResourceType.PilotDef, UnitSpawnPointGameLogic.PilotDef_Default);
     }
 
     /* RUNTIME CREW NAMES */
