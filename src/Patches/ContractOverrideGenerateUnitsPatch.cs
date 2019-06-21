@@ -20,6 +20,9 @@ namespace MissionControl.Patches {
   public class ContractOverrideGenerateUnitsPatch {
     static void Prefix(ContractOverride __instance) {
       Main.Logger.Log($"[ContractOveridePatch Prefix] Patching GenerateUnits");
+
+      if (__instance.contract == null) __instance.SetupContract(MissionControl.Instance.CurrentContract);
+
       RunPayload payload = new ContractOverridePayload(__instance);
       MissionControl.Instance.RunEncounterRules(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
     }
