@@ -108,8 +108,10 @@ namespace MissionControl {
       EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
       MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
 
-      if (cellData.steepness > MAX_SLOPE_FOR_PATHFINDING) {
-        Main.LogDebug($"[IsSpawnValid] Spawn point of '{cellData.steepness}' is too steep (> {MAX_SLOPE_FOR_PATHFINDING}). Not a valid spawn");
+      if (Mathf.Approximately(cellData.cachedSteepness, 0.0f)) cellData.UpdateCachedValues();
+
+      if (cellData.cachedSteepness > MAX_SLOPE_FOR_PATHFINDING) {
+        Main.LogDebug($"[IsSpawnValid] Spawn point of '{cellData.cachedSteepness}' is too steep (> {MAX_SLOPE_FOR_PATHFINDING}). Not a valid spawn");
         return false;
       }
 
