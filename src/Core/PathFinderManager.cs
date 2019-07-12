@@ -1,10 +1,8 @@
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 using BattleTech;
-using BattleTech.Data;
 
 using Harmony;
 
@@ -107,8 +105,6 @@ namespace MissionControl {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
       MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
-
-      if (Mathf.Approximately(cellData.cachedSteepness, 0.0f)) cellData.UpdateCachedValues();
 
       if (cellData.cachedSteepness > MAX_SLOPE_FOR_PATHFINDING) {
         Main.LogDebug($"[IsSpawnValid] Spawn point of '{cellData.cachedSteepness}' is too steep (> {MAX_SLOPE_FOR_PATHFINDING}). Not a valid spawn");
