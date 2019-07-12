@@ -169,6 +169,9 @@ namespace MissionControl {
         }
         */
       } catch (Exception) {
+        // TODO: Sometimes this gets triggered in very large amounts. It's usually because the SpawnLogic.GetClosestValidPathFindingHex is increasing
+        // the radius larger and larger and the checks keep going off the map
+        // I need a way to hard abort out of this and either use the original origin of the focus or trigger the rule logic again (random, around a position etc)
         Main.LogDebug($"[IsSpawnValid] Array out of bounds detected in the path finding code. Flagging as invalid spawn. Select a new spawn point.");
       }
 
