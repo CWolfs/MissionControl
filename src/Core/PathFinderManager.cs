@@ -111,9 +111,7 @@ namespace MissionControl {
         return false;
       }
 
-      TerrainMaskFlags terrainMask = cellData.terrainMask;
-      bool isImpassableOrDeepWater = SplatMapInfo.IsImpassable(terrainMask) || (SplatMapInfo.IsDeepWater(terrainMask) && !cellData.MapEncounterLayerDataCell.HasBuilding);
-      if (isImpassableOrDeepWater) return false;
+      if (IsCellImpassableOrDeepWater(cellData)) return false;
 
       // Prevent any spawns outside encounter for good.
       if (!encounterLayerData.IsInEncounterBounds(position)) return false;
@@ -131,6 +129,9 @@ namespace MissionControl {
 				};
         List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(new List<DynamicLongRangePathfinder.PointWithCost>() { pointWithCost }, validityPosition, 3000f, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
         
+        // GUARD: Against deep water and other impassables that have slipped through
+        if (HasPathImpassableOrDeepWaterTiles(combatState, path)) return false;
+
         if (path != null && path.Count > 2 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
           Main.LogDebug("[IsSpawnValid] Has valid long range path finding");
           if (HasValidNeighbours(positionPathNode, validityPosition, type)) {
@@ -171,6 +172,29 @@ namespace MissionControl {
         Main.LogDebug($"[IsSpawnValid] Array out of bounds detected in the path finding code. Flagging as invalid spawn. Select a new spawn point.");
       }
 
+      return false;
+    }
+
+    private bool HasPathImpassableOrDeepWaterTiles(CombatGameState combatState, List<Vector3> path) {
+      for (int i = 0; i < path.Count; i++) {
+        Vector3 position = path[i];
+        MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
+        if (IsCellImpassableOrDeepWater(cellData)) {
+          Main.LogDebug("[PathFinderManager] Path has impassable or deep water tiles in it");
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    private bool IsCellImpassableOrDeepWater(MapTerrainDataCell cellData) {
+      TerrainMaskFlags terrainMask = cellData.terrainMask;
+      bool isImpassableOrDeepWater = SplatMapInfo.IsImpassable(terrainMask) || (SplatMapInfo.IsDeepWater(terrainMask) && !cellData.MapEncounterLayerDataCell.HasBuilding);
+      if (isImpassableOrDeepWater) {
+        Main.LogDebug("[PathFinderManager] Tile is impassable or deep water");
+        return true;
+      }
       return false;
     }
 
