@@ -18,7 +18,7 @@ namespace MissionControl {
       }
     }
 
-    private static float MAX_SLOPE_FOR_PATHFINDING = 29.8f;
+    private static float MAX_SLOPE_FOR_PATHFINDING = 39f;
 
     private Mech pathFinderMech;
     private Vehicle pathFinderVehicle;
