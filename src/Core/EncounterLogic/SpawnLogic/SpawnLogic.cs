@@ -23,8 +23,8 @@ namespace MissionControl.Logic {
       Main.LogDebug($"[GetClosestValidPathFindingHex] About to process with origin '{origin}'");
       Vector3 validOrigin = PathfindFromPointToPlayerSpawn(origin, radius);
 
-      // Fallback to original position if a search of 50 nodes radius turns up no valid path
-      if (radius > 50) {
+      // Fallback to original position if a search of 12 nodes radius turns up no valid path
+      if (radius > 12) {
         origin = origin.GetClosestHexLerpedPointOnGrid();
         Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Reverting to original with fixed height of '{origin}'");
         return origin;
@@ -43,6 +43,8 @@ namespace MissionControl.Logic {
     private Vector3 PathfindFromPointToPlayerSpawn(Vector3 origin, int radius) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       Vector3 originOnGrid = origin.GetClosestHexLerpedPointOnGrid();
+      // TODO: If the SpawnerPlayerLanceGo's closest hex point is in an inaccessible location - this will cause infinite loading issues
+      // TODO: Need to find a reliably accessible location (hard to do in a proc-genned setup)
       Vector3 playerLanceSpawnPosition = EncounterRules.SpawnerPlayerLanceGo.transform.position.GetClosestHexLerpedPointOnGrid();
 
       if (!PathFinderManager.Instance.IsSpawnValid(originOnGrid, playerLanceSpawnPosition, UnitType.Mech)) {

@@ -112,8 +112,6 @@ namespace MissionControl {
       }
 
       if (IsCellImpassableOrDeepWater(cellData)) return false;
-
-      // Prevent any spawns outside encounter for good.
       if (!encounterLayerData.IsInEncounterBounds(position)) return false;
 
       float pathFindingZoneRadius = 25f;
