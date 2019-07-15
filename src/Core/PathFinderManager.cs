@@ -92,7 +92,7 @@ namespace MissionControl {
 
     private void SetupPathfindingActor(Vector3 position, AbstractActor pathfindingActor) {
       if (pathfindingActor.GameRep == null) {
-        pathfindingActor.Init(position, 0, pathfindingActor.thisUnitChecksEncounterCells);
+        pathfindingActor.Init(position, 0, false);
         pathfindingActor.InitGameRep(null);
       } else {
         pathfindingActor.CurrentPosition = position;
@@ -121,11 +121,12 @@ namespace MissionControl {
       try {
         PathNodeGrid pathfinderPathGrid = pathfindingActor.Pathing.CurrentGrid;
         PathNode positionPathNode = pathfinderPathGrid.GetValidPathNodeAt(position, pathfindingActor.Pathing.MaxCost);
+        if (positionPathNode == null) return false;
 
-        DynamicLongRangePathfinder.PointWithCost pointWithCost = new DynamicLongRangePathfinder.PointWithCost(combatState.HexGrid.GetClosestHexPoint3OnGrid(positionPathNode.Position), (float)positionPathNode.DepthInPath, (validityPosition - positionPathNode.Position).magnitude) {
+        DynamicLongRangePathfinder.PointWithCost pointWithCost = new DynamicLongRangePathfinder.PointWithCost(combatState.HexGrid.GetClosestHexPoint3OnGrid(positionPathNode.Position), 0, (validityPosition - positionPathNode.Position).magnitude) {
 					pathNode = positionPathNode
 				};
-        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(new List<DynamicLongRangePathfinder.PointWithCost>() { pointWithCost }, validityPosition, 3000f, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
+        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(new List<DynamicLongRangePathfinder.PointWithCost>() { pointWithCost }, validityPosition, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
         
         // GUARD: Against deep water and other impassables that have slipped through
         if (HasPathImpassableOrDeepWaterTiles(combatState, path)) return false;
@@ -136,6 +137,7 @@ namespace MissionControl {
             Main.LogDebug("[IsSpawnValid] Has at least two valid neighbours");
 
             if (HasValidLocalPathfinding(positionPathNode, validityPosition, type)) {
+              
               Main.LogDebug("[IsSpawnValid] Has a valid path");
               return true;
             } else {
