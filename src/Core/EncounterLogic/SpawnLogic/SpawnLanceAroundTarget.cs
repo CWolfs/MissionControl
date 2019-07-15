@@ -83,7 +83,7 @@ namespace MissionControl.Logic {
           if (fitLanceMembers & invalidLanceSpawns.Count <= 2) {
             Main.Logger.Log($"[SpawnLanceAroundTarget] Fitting invalid lance member spawns");
             foreach (GameObject invalidSpawn in invalidLanceSpawns) {
-              SpawnLanceMember(invalidSpawn);
+              SpawnLanceMember(invalidSpawn, newSpawnPosition);
             }
           } else {
             CheckAttempts();
@@ -99,9 +99,9 @@ namespace MissionControl.Logic {
       }
     }
 
-    private void SpawnLanceMember(GameObject spawnPoint) {
-      Main.Logger.Log($"[SpawnLanceAroundTarget] Fitting member '{spawnPoint.name}'");
-      Vector3 newSpawnLocation = GetClosestValidPathFindingHex(spawnPoint.transform.position, 2);
+    private void SpawnLanceMember(GameObject spawnPoint, Vector3 anchorPoint) {
+      Main.Logger.Log($"[SpawnLanceAroundTarget] Fitting member '{spawnPoint.name}' around anchor point '{anchorPoint}'");
+      Vector3 newSpawnLocation = GetClosestValidPathFindingHex(anchorPoint, 2);
       spawnPoint.transform.position = newSpawnLocation;
     }
 
