@@ -12,6 +12,8 @@ using MissionControl.Utils;
 
 namespace MissionControl.Logic {
   public abstract class SpawnLogic : SceneManipulationLogic {
+    
+    private int ADJACENT_NODE_LIMITED = 150;
 
     public SpawnLogic(EncounterRules encounterRules) : base(encounterRules) { }
 
@@ -23,8 +25,8 @@ namespace MissionControl.Logic {
       Main.LogDebug($"[GetClosestValidPathFindingHex] About to process with origin '{origin}'");
       Vector3 validOrigin = PathfindFromPointToPlayerSpawn(origin, radius);
 
-      // Fallback to original position if a search of 12 nodes radius turns up no valid path
-      if (radius > 12) {
+      // Fallback to original position if a search of 8 nodes radius turns up no valid path
+      if (radius > 8) {
         origin = origin.GetClosestHexLerpedPointOnGrid();
         Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Reverting to original with fixed height of '{origin}'");
         return origin;
@@ -49,7 +51,14 @@ namespace MissionControl.Logic {
 
       if (!PathFinderManager.Instance.IsSpawnValid(originOnGrid, playerLanceSpawnPosition, UnitType.Mech)) {
         List<Vector3> adjacentPointsOnGrid = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(originOnGrid, radius);
-        Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Adjacent point count is '{adjacentPointsOnGrid.Count}'");
+
+        if (adjacentPointsOnGrid.Count > ADJACENT_NODE_LIMITED) {
+          Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Adjacent point count limited exceeded ({adjacentPointsOnGrid.Count} / {ADJACENT_NODE_LIMITED}). Bailing.");
+          return Vector3.zero;
+        } else {
+          Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Adjacent point count is '{adjacentPointsOnGrid.Count}'");
+        }
+
         adjacentPointsOnGrid.Shuffle();
   
         foreach (Vector3 point in adjacentPointsOnGrid) {
