@@ -1,10 +1,8 @@
 using UnityEngine;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 using BattleTech;
-using BattleTech.Data;
 
 using Harmony;
 
@@ -20,7 +18,7 @@ namespace MissionControl {
       }
     }
 
-    private static float MAX_SLOPE_FOR_PATHFINDING = 29.8f;
+    private static float MAX_SLOPE_FOR_PATHFINDING = 39f;
 
     private Mech pathFinderMech;
     private Vehicle pathFinderVehicle;
@@ -94,7 +92,7 @@ namespace MissionControl {
 
     private void SetupPathfindingActor(Vector3 position, AbstractActor pathfindingActor) {
       if (pathfindingActor.GameRep == null) {
-        pathfindingActor.Init(position, 0, pathfindingActor.thisUnitChecksEncounterCells);
+        pathfindingActor.Init(position, 0, false);
         pathfindingActor.InitGameRep(null);
       } else {
         pathfindingActor.CurrentPosition = position;
@@ -108,19 +106,14 @@ namespace MissionControl {
       EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
       MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
 
-      if (Mathf.Approximately(cellData.cachedSteepness, 0.0f)) cellData.UpdateCachedValues();
-
       if (cellData.cachedSteepness > MAX_SLOPE_FOR_PATHFINDING) {
         Main.LogDebug($"[IsSpawnValid] Spawn point of '{cellData.cachedSteepness}' is too steep (> {MAX_SLOPE_FOR_PATHFINDING}). Not a valid spawn");
         return false;
       }
 
-      TerrainMaskFlags terrainMask = cellData.terrainMask;
-      bool isImpassableOrDeepWater = SplatMapInfo.IsImpassable(terrainMask) || (SplatMapInfo.IsDeepWater(terrainMask) && !cellData.MapEncounterLayerDataCell.HasBuilding);
-      if (isImpassableOrDeepWater) return false;
-
-      // Prevent any spawns outside encounter for good.
+      if (IsCellImpassableOrDeepWater(cellData)) return false;
       if (!encounterLayerData.IsInEncounterBounds(position)) return false;
+      if (cellData.cachedHeight > (cellData.terrainHeight + 50f)) return false;
 
       float pathFindingZoneRadius = 25f;
       AbstractActor pathfindingActor = GetPathFindingActor(type);
@@ -129,18 +122,23 @@ namespace MissionControl {
       try {
         PathNodeGrid pathfinderPathGrid = pathfindingActor.Pathing.CurrentGrid;
         PathNode positionPathNode = pathfinderPathGrid.GetValidPathNodeAt(position, pathfindingActor.Pathing.MaxCost);
+        if (positionPathNode == null) return false;
 
-        DynamicLongRangePathfinder.PointWithCost pointWithCost = new DynamicLongRangePathfinder.PointWithCost(combatState.HexGrid.GetClosestHexPoint3OnGrid(positionPathNode.Position), (float)positionPathNode.DepthInPath, (validityPosition - positionPathNode.Position).magnitude) {
+        DynamicLongRangePathfinder.PointWithCost pointWithCost = new DynamicLongRangePathfinder.PointWithCost(combatState.HexGrid.GetClosestHexPoint3OnGrid(positionPathNode.Position), 0, (validityPosition - positionPathNode.Position).magnitude) {
 					pathNode = positionPathNode
 				};
-        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(new List<DynamicLongRangePathfinder.PointWithCost>() { pointWithCost }, validityPosition, 3000f, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
+        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(new List<DynamicLongRangePathfinder.PointWithCost>() { pointWithCost }, validityPosition, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
         
+        // GUARD: Against deep water and other impassables that have slipped through
+        if (HasPathImpassableOrDeepWaterTiles(combatState, path)) return false;
+
         if (path != null && path.Count > 2 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
           Main.LogDebug("[IsSpawnValid] Has valid long range path finding");
           if (HasValidNeighbours(positionPathNode, validityPosition, type)) {
             Main.LogDebug("[IsSpawnValid] Has at least two valid neighbours");
 
             if (HasValidLocalPathfinding(positionPathNode, validityPosition, type)) {
+              
               Main.LogDebug("[IsSpawnValid] Has a valid path");
               return true;
             } else {
@@ -171,10 +169,38 @@ namespace MissionControl {
           }
         }
         */
-      } catch (Exception) {
-        Main.LogDebug($"[IsSpawnValid] Array out of bounds detected in the path finding code. Flagging as invalid spawn. Select a new spawn point.");
+      } catch (Exception e) {
+        // TODO: Sometimes this gets triggered in very large amounts. It's usually because the SpawnLogic.GetClosestValidPathFindingHex is increasing
+        // the radius larger and larger and the checks keep going off the map
+        // I need a way to hard abort out of this and either use the original origin of the focus or trigger the rule logic again (random, around a position etc)
+        Main.LogDebug($"[IsSpawnValid] Array out of bounds detected in the path finding code. Flagging as invalid spawn. Select a new spawn point. {e.Message}, {e.StackTrace}");
       }
 
+      return false;
+    }
+
+    private bool HasPathImpassableOrDeepWaterTiles(CombatGameState combatState, List<Vector3> path) {
+      if (path == null) return true;
+
+      for (int i = 0; i < path.Count; i++) {
+        Vector3 position = path[i];
+        MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
+        if (IsCellImpassableOrDeepWater(cellData)) {
+          Main.LogDebug("[PathFinderManager] Path has impassable or deep water tiles in it");
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    private bool IsCellImpassableOrDeepWater(MapTerrainDataCell cellData) {
+      TerrainMaskFlags terrainMask = cellData.terrainMask;
+      bool isImpassableOrDeepWater = SplatMapInfo.IsImpassable(terrainMask) || (SplatMapInfo.IsDeepWater(terrainMask) && !cellData.MapEncounterLayerDataCell.HasBuilding);
+      if (isImpassableOrDeepWater) {
+        Main.LogDebug("[PathFinderManager] Tile is impassable or deep water");
+        return true;
+      }
       return false;
     }
 

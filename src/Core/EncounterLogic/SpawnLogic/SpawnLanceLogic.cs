@@ -75,7 +75,7 @@ namespace MissionControl.Logic {
           continue;
         }
 
-        if (!PathFinderManager.Instance.IsSpawnValid(spawnPointPosition, checkTargetPosition, UnitType.Vehicle)) {
+        if (!PathFinderManager.Instance.IsSpawnValid(spawnPointPosition, checkTargetPosition, UnitType.Mech)) {
           Main.LogDebugWarning($"[GetInvalidLanceMemberSpawns] Lance member spawn '{spawnPoint.name}' path to check target '{checkTarget}' is blocked. Select a new lance spawn point");
           invalidLanceSpawns.Add(spawnPoint);
           continue;
