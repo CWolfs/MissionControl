@@ -7,6 +7,7 @@ using BattleTech;
 
 using MissionControl.Trigger;
 using MissionControl.Logic;
+using MissionControl.Data;
 
 namespace MissionControl.Rules {
   public class AmbushConvoyEncounterRules : EncounterRules {
@@ -20,7 +21,7 @@ namespace MissionControl.Rules {
     }
 
     public void BuildAi() {
-      EncounterLogic.Add(new IssueFollowLanceOrderTrigger(new List<string>(){ "Employer" }, IssueAIOrderTo.ToLance, new List<string>() { "Player 1" }));
+      EncounterLogic.Add(new IssueFollowLanceOrderTrigger(new List<string>(){ Tags.EMPLOYER_TEAM }, IssueAIOrderTo.ToLance, new List<string>() { Tags.PLAYER_1_TEAM }));
     }
 
     public void BuildSpawns() {

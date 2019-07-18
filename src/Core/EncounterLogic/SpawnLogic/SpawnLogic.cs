@@ -12,6 +12,8 @@ using MissionControl.Utils;
 
 namespace MissionControl.Logic {
   public abstract class SpawnLogic : SceneManipulationLogic {
+    
+    private int ADJACENT_NODE_LIMITED = 150;
 
     public SpawnLogic(EncounterRules encounterRules) : base(encounterRules) { }
 
@@ -23,8 +25,8 @@ namespace MissionControl.Logic {
       Main.LogDebug($"[GetClosestValidPathFindingHex] About to process with origin '{origin}'");
       Vector3 validOrigin = PathfindFromPointToPlayerSpawn(origin, radius);
 
-      // Fallback to original position if a search of 50 nodes radius turns up no valid path
-      if (radius > 50) {
+      // Fallback to original position if a search of 8 nodes radius turns up no valid path
+      if (radius > 8) {
         origin = origin.GetClosestHexLerpedPointOnGrid();
         Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Reverting to original with fixed height of '{origin}'");
         return origin;
@@ -43,16 +45,25 @@ namespace MissionControl.Logic {
     private Vector3 PathfindFromPointToPlayerSpawn(Vector3 origin, int radius) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       Vector3 originOnGrid = origin.GetClosestHexLerpedPointOnGrid();
+      // TODO: If the SpawnerPlayerLanceGo's closest hex point is in an inaccessible location - this will cause infinite loading issues
+      // TODO: Need to find a reliably accessible location (hard to do in a proc-genned setup)
       Vector3 playerLanceSpawnPosition = EncounterRules.SpawnerPlayerLanceGo.transform.position.GetClosestHexLerpedPointOnGrid();
 
-      if (!PathFinderManager.Instance.IsSpawnValid(originOnGrid, playerLanceSpawnPosition, UnitType.Vehicle)) {
+      if (!PathFinderManager.Instance.IsSpawnValid(originOnGrid, playerLanceSpawnPosition, UnitType.Mech)) {
         List<Vector3> adjacentPointsOnGrid = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(originOnGrid, radius);
-        Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Adjacent point count is '{adjacentPointsOnGrid.Count}'");
+
+        if (adjacentPointsOnGrid.Count > ADJACENT_NODE_LIMITED) {
+          Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Adjacent point count limited exceeded ({adjacentPointsOnGrid.Count} / {ADJACENT_NODE_LIMITED}). Bailing.");
+          return Vector3.zero;
+        } else {
+          Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Adjacent point count is '{adjacentPointsOnGrid.Count}'");
+        }
+
         adjacentPointsOnGrid.Shuffle();
   
         foreach (Vector3 point in adjacentPointsOnGrid) {
           Vector3 validPoint = point.GetClosestHexLerpedPointOnGrid();
-          if (PathFinderManager.Instance.IsSpawnValid(validPoint, playerLanceSpawnPosition, UnitType.Vehicle)) {
+          if (PathFinderManager.Instance.IsSpawnValid(validPoint, playerLanceSpawnPosition, UnitType.Mech)) {
             return validPoint;
           }
         }
@@ -71,7 +82,7 @@ namespace MissionControl.Logic {
       Vector3 spawnPointPosition = spawnPoint.transform.position.GetClosestHexLerpedPointOnGrid();
       Vector3 checkTarget = checkTargetPosition.GetClosestHexLerpedPointOnGrid();
       
-      if (!PathFinderManager.Instance.IsSpawnValid(spawnPointPosition, checkTarget, UnitType.Vehicle)) {
+      if (!PathFinderManager.Instance.IsSpawnValid(spawnPointPosition, checkTarget, UnitType.Mech)) {
         Main.LogDebug($"[IsSpawnValid] [Spawn point {spawnPoint.name}] Spawn path at '{spawnPointPosition}' to check target ({checkTarget}) is blocked. Select a new spawn point");
         return false;
       }

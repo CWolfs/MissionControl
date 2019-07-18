@@ -81,7 +81,7 @@ namespace MissionControl.Logic {
 
       Vector3 lancePosition = lance.transform.position.GetClosestHexLerpedPointOnGrid();
       Vector3 newSpawnPosition = new Vector3(xzEdge.Position.x, lancePosition.y, xzEdge.Position.z);
-      newSpawnPosition = newSpawnPosition.GetClosestHexLerpedPointOnGrid();
+      newSpawnPosition = GetClosestValidPathFindingHex(newSpawnPosition, 2);
       lance.transform.position = newSpawnPosition;
       
       Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Attempting to spawn lance at point on lerped grid '{newSpawnPosition}'");
@@ -103,7 +103,7 @@ namespace MissionControl.Logic {
           if (invalidLanceSpawns.Count <= 2) {
             Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Fitting invalid lance member spawns");
             foreach (GameObject invalidSpawn in invalidLanceSpawns) {
-              SpawnLanceMember(invalidSpawn);
+              SpawnLanceMember(invalidSpawn, lance.transform.position);
             }
 
             Main.Logger.Log("[SpawnLanceAtEdgeOfBoundary] Lance spawn complete");
@@ -123,9 +123,9 @@ namespace MissionControl.Logic {
       }
     }
 
-    private void SpawnLanceMember(GameObject spawnPoint) {
-      Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Fitting member '{spawnPoint.name}'");
-      Vector3 newSpawnLocation = GetClosestValidPathFindingHex(spawnPoint.transform.position, 2);
+    private void SpawnLanceMember(GameObject spawnPoint, Vector3 anchorPoint) {
+      Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Fitting member '{spawnPoint.name}' at anchor point '{anchorPoint}'");
+      Vector3 newSpawnLocation = GetClosestValidPathFindingHex(anchorPoint, 2);
       spawnPoint.transform.position = newSpawnLocation;
     }
 
