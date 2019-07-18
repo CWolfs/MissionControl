@@ -113,6 +113,7 @@ namespace MissionControl {
 
       if (IsCellImpassableOrDeepWater(cellData)) return false;
       if (!encounterLayerData.IsInEncounterBounds(position)) return false;
+      if (cellData.cachedHeight > (cellData.terrainHeight + 50f)) return false;
 
       float pathFindingZoneRadius = 25f;
       AbstractActor pathfindingActor = GetPathFindingActor(type);
