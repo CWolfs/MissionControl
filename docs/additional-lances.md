@@ -20,6 +20,13 @@ Lances are defined using a similar configuration to how they are defined in the 
       "Max": 2,
       "ExcludeContractTypes": ["Rescue"],
       "ChanceToSpawn": 0.4,
+      "EliteLances": {
+        "Conditions": ["IsEnemy"],
+        "Suffix": "_Elite",
+        "Overrides": {
+          "ChanceToSpawn": 0.6
+        }
+      },
       "LancePool": {
         "ALL": [
           "GENERIC_BATTLE_LANCE"
@@ -35,6 +42,9 @@ Lances are defined using a similar configuration to how they are defined in the 
         ],
         "BIOME:LowlandsSpring": [
           "IM_LIKE_A_TURRET_IN_WATER_I_RUN_SO_HOT"
+        ],
+        "FACTION:Davion:50:99": [
+          "Heavy_Davion_Battle_Lance"
         ]
       },
 
@@ -42,6 +52,13 @@ Lances are defined using a similar configuration to how they are defined in the 
     "Allies": {
       "Max": 1,
       "ChanceToSpawn": 0.4,
+      "EliteLances": {
+        "Conditions": ["IsAlly"],
+        "Overrides": {
+          "Max": 2,
+          "ChanceToSpawn": 0.6
+        }
+      },
       "LancePool": {
         "ALL": [
           "GENERIC_BATTLE_LANCE"
@@ -61,7 +78,7 @@ Lances are defined using a similar configuration to how they are defined in the 
 | ---- | --------- | ------- | ------- | ------- |
 | `IncludeContractTypes` | Optional | All available contract types | `["Rescue", "DestroyBase"]` would limit lances to these two contract types <br><br> `[]` would fallback to default | When set, it overrides `ExcludeContractTypes` for this level |
 | `ExcludeContractTypes` | Optional | No contract types | `["Assasinate", "CaptureBase"]` would remove these two contract types from the entire list of available contract types. <br><br> `[]` would fallback to default | Allows you to explicitly exclude additional lance spawns for all teams for the specified contract types. Not used if `IncludeContractTypes` is set |
-| `LancePool` | Optional | `ALL` situations will use `GENERIC_BATTLE_LANCE` | See the above code as a full example. <br> Can match to `ALL`, `CONTRACT_TYPE:{key}` and `BIOME:{key}` | All matched conditions will be added to one list of lance pool keys. One key per lance spawn is selected at random for the specific lance. These lance keys reference the lances in the `/lances` folder. See [Lance Definition Breakdown](#lance-definition-breakdown) |
+| `LancePool` | Optional | `ALL` situations will use `GENERIC_BATTLE_LANCE` | See the above code as a full example. <br> Can match to `ALL`, `CONTRACT_TYPE:{key}`, `BIOME:{key}` and `FACTION:{factionKey}:{startRepRange}:{endRepRange}` | All matched conditions will be added to one list of lance pool keys. One key per lance spawn is selected at random for the specific lance. These lance keys reference the lances in the `/lances` folder. See [Lance Definition Breakdown](#lance-definition-breakdown) |
 | `Enemy` | Optional | Children defaults | - | Controls enemy/target specific lance details |
 | `Allies` | Optional | Children defaults | - | Controls allies/employer specific lance details |
 
@@ -72,7 +89,22 @@ Lances are defined using a similar configuration to how they are defined in the 
 | `Max` | Optional | `1` | `3` | Maximum number of lances to attempt to spawn |
 | `ExcludeContractTypes` | Optional | No contract types | Same as parent `ExcludeContractTypes` | Allows you to specifically exclude additional lances for a team based on contract type |
 | `ChanceToSpawn` | Optional | `0` | `0.3` | Float number from `0` to `1` to represent percentage. `1` being 100% |
+| `EliteLances` | Optional | None | - | Specifies is elite lances should spawn based on set conditions |
 | `LancePool` | Optional | Empty | Same as parent `LancePool` example | Additive process. Adds to the parent `LancePool` |
+
+**EliteLances**
+
+| Path | Required? | Default | Example | Details |
+| ---- | --------- | ------- | ------- | ------- |
+| `Conditions` | Optional | None | `["IsAlly"]` | Checks if the player merc company is an ally or enemy to the faction. If this check is true then the settings specified in this object override the general settings. Can match `IsAlly` or `IsEnemy` |
+| `Overrides` | Optional | None | - | Specifies the overrides to use if the `Conditions` return true |
+
+**EliteLances - Overrides**
+
+| Path | Required? | Default | Example | Details |
+| ---- | --------- | ------- | ------- | ------- |
+| `Max` | Optional | `1` | `3` | Overrides the generic `Max` setting. Maximum number of lances to attempt to spawn |
+| `ChanceToSpawn` | Optional | `0` | `0.3` | Overrides the generic `ChanceToSpawn` setting. Float number from `0` to `1` to represent percentage. `1` being 100% |
 
 ## Lance Definition Breakdown
 
