@@ -37,7 +37,7 @@ namespace MissionControl.Rules {
     }
 
     public void ActivatePreFeatures() {
-
+      SetBoundarySize();
     }
 
     public void ActivatePostFeatures() {
@@ -223,6 +223,12 @@ namespace MissionControl.Rules {
           new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, minAllyDistance, maxAllyDistance);
         }
       }
+    }
+
+    protected void SetBoundarySize() {
+      Main.Logger.Log($"[{this.GetType().Name}] Setting Boundary Size");
+
+      this.EncounterLogic.Add(new SetBoundarySize());
     }
   }
 }
