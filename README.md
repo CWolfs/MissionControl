@@ -28,6 +28,10 @@ This works only for the generic contract types (e.g. Battle, Rescue etc) as it w
 * New Combat Dialogue
 * (Future) Modder Injected AI Behaviour Support
 
+## Important Notes 
+
+* Mission Control does not work with in-combat saves. Finish your contract first (or restart it).
+
 ## Full Description
 
 ### Additional Lances
