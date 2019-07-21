@@ -6,18 +6,20 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.Designed;
 
-namespace MissionControl.Logic {
-  public class SetBoundarySize : LogicBlock {
+using MissionControl.Rules;
 
-    public SetBoundarySize() {
-      this.Type = LogicType.ENCOUNTER_MANIPULATION;
-    }
+namespace MissionControl.Logic {
+  public class SetBoundarySize : SceneManipulationLogic {
+
+    public SetBoundarySize(EncounterRules encounterRules) : base(encounterRules) { }
 
     public override void Run(RunPayload payload) {
       Main.Logger.Log($"[SetBoundarySize] Setting Boundary Size");
       EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
       MatchBoundarySizeToMapSize(encounterLayerData);
     }
+
+    protected override void GetObjectReferences() { }
 
     private void MatchBoundarySizeToMapSize(EncounterLayerData encounterLayerData) {
       EncounterBoundaryChunkGameLogic encounterBoundaryChunk = encounterLayerData.GetComponentInChildren<EncounterBoundaryChunkGameLogic>();
@@ -35,7 +37,8 @@ namespace MissionControl.Logic {
           if (encounterBoundaryRectGameLogic != null)	{
             encounterBoundaryRectGameLogic.width = (int)mapSide;
             encounterBoundaryRectGameLogic.height = (int)mapSide;
-            encounterBoundaryRectGameLogic.transform.position = new Vector3(0, encounterBoundaryRectGameLogic.transform.position.y, 0);
+            encounterBoundaryRectGameLogic.transform.position = new Vector3(-25, encounterBoundaryRectGameLogic.transform.position.y, 25);
+            encounterLayerData.CalculateEncounterBoundary();
           } else {
             Main.Logger.Log($"[SetBoundarySize] This encounter has no boundary to maximise.");
           }

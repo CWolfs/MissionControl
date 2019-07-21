@@ -228,7 +228,7 @@ namespace MissionControl.Rules {
     protected void SetBoundarySize() {
       Main.Logger.Log($"[{this.GetType().Name}] Setting Boundary Size");
 
-      this.EncounterLogic.Add(new SetBoundarySize());
+      this.EncounterLogic.Add(new SetBoundarySize(this));
     }
   }
 }
