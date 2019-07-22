@@ -9,12 +9,12 @@ using BattleTech.Designed;
 using MissionControl.Rules;
 
 namespace MissionControl.Logic {
-  public class SetBoundarySize : SceneManipulationLogic {
+  public class MaximiseBoundarySize : SceneManipulationLogic {
 
-    public SetBoundarySize(EncounterRules encounterRules) : base(encounterRules) { }
+    public MaximiseBoundarySize(EncounterRules encounterRules) : base(encounterRules) { }
 
     public override void Run(RunPayload payload) {
-      Main.Logger.Log($"[SetBoundarySize] Setting Boundary Size");
+      Main.Logger.Log($"[MaximiseBoundarySize] Setting Boundary Size");
       EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
       MatchBoundarySizeToMapSize(encounterLayerData);
     }
@@ -40,7 +40,7 @@ namespace MissionControl.Logic {
             encounterBoundaryRectGameLogic.transform.position = new Vector3(-25, encounterBoundaryRectGameLogic.transform.position.y, 25);
             encounterLayerData.CalculateEncounterBoundary();
           } else {
-            Main.Logger.Log($"[SetBoundarySize] This encounter has no boundary to maximise.");
+            Main.Logger.Log($"[MaximiseBoundarySize] This encounter has no boundary to maximise.");
           }
         }
 			}

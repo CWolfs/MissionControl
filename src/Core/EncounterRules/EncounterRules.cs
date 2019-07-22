@@ -37,7 +37,7 @@ namespace MissionControl.Rules {
     }
 
     public void ActivatePreFeatures() {
-      SetBoundarySize();
+       if (Main.Settings.ExtendedBoundaries) MaximiseEncounterBoundary();
     }
 
     public void ActivatePostFeatures() {
@@ -225,10 +225,10 @@ namespace MissionControl.Rules {
       }
     }
 
-    protected void SetBoundarySize() {
-      Main.Logger.Log($"[{this.GetType().Name}] Setting Boundary Size");
+    protected void MaximiseEncounterBoundary() {
+      Main.Logger.Log($"[{this.GetType().Name}] Maximising Boundary Size");
 
-      this.EncounterLogic.Add(new SetBoundarySize(this));
+      this.EncounterLogic.Add(new MaximiseBoundarySize(this));
     }
   }
 }
