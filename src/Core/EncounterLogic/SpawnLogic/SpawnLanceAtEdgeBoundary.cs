@@ -22,7 +22,7 @@ namespace MissionControl.Logic {
     private float minimumDistance = 400f;
     private bool clusterUnits = false;
 
-    private int AttemptCountMax { get; set; } = 5;
+    private int AttemptCountMax { get; set; } = 10;
     private int AttemptCount { get; set; } = 0;
     private int EdgeCheckMax { get; set; } = 10;
     private int EdgeCheckCount { get; set; } = 0;

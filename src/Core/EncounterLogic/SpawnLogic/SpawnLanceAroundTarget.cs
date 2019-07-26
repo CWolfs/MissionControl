@@ -67,7 +67,6 @@ namespace MissionControl.Logic {
       }
 
       Vector3 newSpawnPosition = GetRandomPositionFromTarget(validOrientationTargetPosition, minDistanceFromTarget, maxDistanceFromTarget);
-      newSpawnPosition = GetClosestValidPathFindingHex(newSpawnPosition, 2);
 
       if (encounterManager.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
         lance.transform.position = newSpawnPosition;

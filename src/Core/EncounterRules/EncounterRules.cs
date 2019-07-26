@@ -37,7 +37,7 @@ namespace MissionControl.Rules {
     }
 
     public void ActivatePreFeatures() {
-       if (Main.Settings.ExtendedBoundaries) MaximiseEncounterBoundary();
+
     }
 
     public void ActivatePostFeatures() {
@@ -184,7 +184,7 @@ namespace MissionControl.Rules {
       
       if (type == "ArenaSkirmish") {
         return "Player1LanceSpawner";
-      } else if ((type == "Story_1B_Retreat") || (type == "FireMission")) {
+      } else if (type == "Story_1B_Retreat") {
         return "PlayerLanceSpawner";
       }
 
@@ -223,12 +223,6 @@ namespace MissionControl.Rules {
           new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, minAllyDistance, maxAllyDistance);
         }
       }
-    }
-
-    protected void MaximiseEncounterBoundary() {
-      Main.Logger.Log($"[{this.GetType().Name}] Maximising Boundary Size");
-
-      this.EncounterLogic.Add(new MaximiseBoundarySize(this));
     }
   }
 }
