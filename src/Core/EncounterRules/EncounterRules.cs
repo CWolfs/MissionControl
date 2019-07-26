@@ -184,7 +184,7 @@ namespace MissionControl.Rules {
       
       if (type == "ArenaSkirmish") {
         return "Player1LanceSpawner";
-      } else if (type == "Story_1B_Retreat") {
+      } else if ((type == "Story_1B_Retreat") || (type == "FireMission")) {
         return "PlayerLanceSpawner";
       }
 
