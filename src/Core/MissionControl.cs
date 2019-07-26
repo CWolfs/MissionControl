@@ -44,6 +44,7 @@ namespace MissionControl {
 
     private void LoadEncounterRules() {
       AddEncounter("AmbushConvoy", typeof(AmbushConvoyEncounterRules));
+      
       AddEncounter("Assassinate", typeof(AssassinateEncounterRules));
 
       AddEncounter("CaptureBase", typeof(CaptureBaseJointAssaultEncounterRules));
@@ -57,7 +58,12 @@ namespace MissionControl {
       AddEncounter("DestroyBase", typeof(DestroyBaseAidAssaultEncounterRules));
       
       AddEncounter("Rescue", typeof(RescueEncounterRules));
+      
       AddEncounter("SimpleBattle", typeof(SimpleBattleEncounterRules));
+
+      AddEncounter("FireMission", typeof(FireMissionEncounterRules));
+
+      // AddEncounter("AttackDefend", typeof(AttackDefendEncounterRules));
     
       // Skirmish
       if (Main.Settings.DebugSkirmishMode) AddEncounter("ArenaSkirmish", typeof(DebugArenaSkirmishEncounterRules));
