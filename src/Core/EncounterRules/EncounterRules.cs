@@ -42,6 +42,7 @@ namespace MissionControl.Rules {
 
     public void ActivatePostFeatures() {
       if (Main.Settings.ExtendedLances.Enable) new AddExtraLanceSpawnsForExtendedLancesBatch(this);
+      if (Main.Settings.DynamicWithdraw.Enable) new AddDynamicWithdrawBatch(this);
     }
 
     public abstract void Build();

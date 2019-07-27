@@ -30,4 +30,8 @@
     }
   },
   "ExtendedBoundaries": true,
+  "DynamicWithdraw": {
+    "Enabled": true,
+    "OnWithdrawButton": true
+  }
 }
