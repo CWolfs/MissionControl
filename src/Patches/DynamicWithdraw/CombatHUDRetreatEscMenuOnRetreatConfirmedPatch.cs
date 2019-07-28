@@ -19,7 +19,7 @@ namespace MissionControl.Patches {
     static bool Prefix(CombatHUDRetreatEscMenu __instance) {
       if (Main.Settings.DynamicWithdraw.Enable && Main.Settings.DynamicWithdraw.OnWithdrawButton) {
         Main.LogDebug("[CombatHUDRetreatEscMenuOnRetreatConfirmedPatch] Sending Dynamic Withdraw Trigger Message");
-        ObjectiveUpdated triggerDynamicWithdrawMessage = new ObjectiveUpdated(ChunkLogic.DYNAMIC_WITHDRAW_CHUNK_GUID);
+        ObjectiveSucceeded triggerDynamicWithdrawMessage = new ObjectiveSucceeded(ChunkLogic.DYNAMIC_WITHDRAW_CHUNK_GUID);
         UnityGameInstance.Instance.Game.Combat.MessageCenter.PublishMessage(triggerDynamicWithdrawMessage);
         return false;
       }

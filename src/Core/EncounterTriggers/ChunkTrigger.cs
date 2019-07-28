@@ -18,15 +18,17 @@ namespace MissionControl.Trigger {
     private string chunkGuid;
     private DesignConditional conditional;
 
-    public ChunkTrigger(MessageCenterMessageType onMessage, string objectiveGuid) {
+    public ChunkTrigger(MessageCenterMessageType onMessage, string chunkGuid) {
       this.onMessage = onMessage;
-      this.chunkGuid = objectiveGuid;
-      this.conditional = ScriptableObject.CreateInstance<AlwaysTrueConditional>();
+      this.chunkGuid = chunkGuid;
+      ChunkMatchesChunkGuidConditional chunkConditional = ScriptableObject.CreateInstance<ChunkMatchesChunkGuidConditional>();
+      chunkConditional.ChunkGuid = chunkGuid;
+      this.conditional = chunkConditional;
     }
 
-    public ChunkTrigger(MessageCenterMessageType onMessage, string objectiveGuid, DesignConditional conditional) {
+    public ChunkTrigger(MessageCenterMessageType onMessage, string chunkGuid, DesignConditional conditional) {
       this.onMessage = onMessage;
-      this.chunkGuid = objectiveGuid;
+      this.chunkGuid = chunkGuid;
       this.conditional = conditional;
     }
 
@@ -35,7 +37,7 @@ namespace MissionControl.Trigger {
       EncounterLayerData encounterData = MissionControl.Instance.EncounterLayerData;
       SmartTriggerResponse trigger = new SmartTriggerResponse();
       trigger.inputMessage = onMessage;
-      trigger.designName = $"Initiate chunk on {trigger}";
+      trigger.designName = $"Initiate chunk on {onMessage}";
       trigger.conditionalbox = new EncounterConditionalBox(conditional);
 
       HACK_ActivateChunkResult activateChunkResult = ScriptableObject.CreateInstance<HACK_ActivateChunkResult>();
