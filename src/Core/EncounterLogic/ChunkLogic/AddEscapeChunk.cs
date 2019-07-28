@@ -30,6 +30,8 @@ namespace MissionControl.Logic {
         emptyCustomChunk.encounterObjectGuid = System.Guid.NewGuid().ToString();
         emptyCustomChunk.startingStatus = EncounterObjectStatus.Inactive;
         emptyCustomChunk.notes = debugDescription;
+
+        EscapeRegionFactory.CreateEscapeRegion(emptyCustomChunk.gameObject);
       } else {
         Main.Logger.Log($"[AddEscapeChunk] 'Escape_Chunk' already exists in map. No need to recreate.");
       }
