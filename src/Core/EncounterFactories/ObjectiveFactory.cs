@@ -35,14 +35,14 @@ namespace MissionControl.EncounterFactories {
       return contractObjectiveGameLogic;
     }
 
-    public static OccupyRegionObjective CreateOccupyRegionObjective(GameObject parent, string requiredLanceSpawnerGuid, string regionGameLogicGuid,
+    public static OccupyRegionObjective CreateOccupyRegionObjective(string objectiveGuid, GameObject parent, string requiredLanceSpawnerGuid, string regionGameLogicGuid,
     string objectName, string title, string progressFormat, string description, bool useDropship) {
       GameObject occupyRegionObjectiveGo = new GameObject($"Objective_{objectName}");
       occupyRegionObjectiveGo.transform.parent = parent.transform;
       occupyRegionObjectiveGo.transform.localPosition = Vector3.zero;
 
       OccupyRegionObjective occupyRegionObjective = occupyRegionObjectiveGo.AddComponent<OccupyRegionObjective>();
-      occupyRegionObjective.encounterObjectGuid = Guid.NewGuid().ToString();
+      occupyRegionObjective.encounterObjectGuid = objectiveGuid;
       occupyRegionObjective.requiredTagsOnUnit = new TagSet(new string[] { "player_unit" });
       
       LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();

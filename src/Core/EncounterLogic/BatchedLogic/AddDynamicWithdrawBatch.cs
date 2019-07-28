@@ -12,7 +12,8 @@ namespace MissionControl.Logic {
     public AddDynamicWithdrawBatch(EncounterRules encounterRules) {
       Main.Logger.Log($"[{this.GetType().Name}] Building Dynamic Withdraw");
       encounterRules.EncounterLogic.Add(new DoesChunkExist(state, "Chunk_Escape"));
-      encounterRules.EncounterLogic.Add(new AddEscapeChunk(state));
+      encounterRules.EncounterLogic.Add(new AddEscapeChunk(state, ChunkLogic.DYNAMIC_WITHDRAW_CHUNK_GUID, ChunkLogic.DYNAMIC_WITHDRAW_OBJECTIVE_GUID));
+      encounterRules.EncounterLogic.Add(new ChunkTrigger(MessageCenterMessageType.OnObjectiveUpdated, ChunkLogic.DYNAMIC_WITHDRAW_CHUNK_GUID));
     }
   }
 }

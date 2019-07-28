@@ -22,7 +22,8 @@ namespace MissionControl.Logic {
 
     public static string DIALOGUE_ADDITIONAL_LANCE_ALLY_START_GUID = "47647e3c-a82d-4946-a601-b7dddbb63452";
 
-    public static string PLAYER_SPAWN_GUID = "";
+    public static string DYNAMIC_WITHDRAW_CHUNK_GUID = "3e8be988-22c1-4d65-b0a7-3228d0f495a8";
+    public static string DYNAMIC_WITHDRAW_OBJECTIVE_GUID = "65f04a39-fc57-476c-bae4-6958f8062c3f";
 
     public ChunkLogic() {
       this.Type = LogicType.ENCOUNTER_MANIPULATION;
