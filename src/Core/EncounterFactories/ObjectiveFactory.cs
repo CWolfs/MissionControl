@@ -7,8 +7,6 @@ using BattleTech.Framework;
 
 using HBS.Collections;
 
-using MissionControl.Logic;
-
 namespace MissionControl.EncounterFactories {
   public class ObjectiveFactory {
     public static DestroyLanceObjective CreateDestroyLanceObjective(string objectiveGuid, GameObject parent, LanceSpawnerRef lanceToDestroy, string lanceGuid, string title, bool showProgress,
@@ -37,8 +35,9 @@ namespace MissionControl.EncounterFactories {
       return contractObjectiveGameLogic;
     }
 
-    public static OccupyRegionObjective CreateOccupyRegionObjective(GameObject parent, string requiredLanceSpawnerGuid, string regionGameLogicGuid) {
-      GameObject occupyRegionObjectiveGo = new GameObject($"Objective_Escape");
+    public static OccupyRegionObjective CreateOccupyRegionObjective(GameObject parent, string requiredLanceSpawnerGuid, string regionGameLogicGuid,
+    string objectName, string title, string progressFormat, string description, bool useDropship) {
+      GameObject occupyRegionObjectiveGo = new GameObject($"Objective_{objectName}");
       occupyRegionObjectiveGo.transform.parent = parent.transform;
       occupyRegionObjectiveGo.transform.localPosition = Vector3.zero;
 
@@ -61,12 +60,12 @@ namespace MissionControl.EncounterFactories {
       regionRef.EncounterObjectGuid = regionGameLogicGuid;
       occupyRegionObjective.occupyTargetRegion = regionRef;
 
-      occupyRegionObjective.triggerDropshipFlybyPickupOnSuccess = true;
-      occupyRegionObjective.extractViaDropship = true;
-      occupyRegionObjective.title = "Get to the Evac Zone (MC)";
+      occupyRegionObjective.triggerDropshipFlybyPickupOnSuccess = useDropship;
+      occupyRegionObjective.extractViaDropship = useDropship;
+      occupyRegionObjective.title = title;
       occupyRegionObjective.showProgress = true;
-      occupyRegionObjective.progressFormat = $"with {ChunkLogic.ProgressFormat.UNITS_OCCUPYING_SO_FAR}/{ChunkLogic.ProgressFormat.NUMBER_OF_UNITS_TO_OCCUPY} unit(s)";
-      occupyRegionObjective.description = "The objective for the player to escape and complete, or withdraw, the mission";
+      occupyRegionObjective.progressFormat = progressFormat;
+      occupyRegionObjective.description = description;
       occupyRegionObjective.priority = 3;
       occupyRegionObjective.displayToUser = true;
       occupyRegionObjective.checkObjectiveFlag = false;
