@@ -1,16 +1,11 @@
 using UnityEngine;
+
 using System;
-using System.Collections;
-using System.Collections.Generic;
 
 using BattleTech;
 using BattleTech.Designed;
-using BattleTech.Framework;
 
-using MissionControl.Logic;
-using MissionControl.Rules;
 using MissionControl.EncounterFactories;
-using MissionControl.Utils;
 
 namespace MissionControl.Logic {
   public class AddEscapeChunk : ChunkLogic {
@@ -25,13 +20,18 @@ namespace MissionControl.Logic {
     public override void Run(RunPayload payload) {
       if (!state.GetBool("Chunk_Escape_Exists")) {
         Main.Logger.Log($"[AddEscapeChunk] Adding encounter structure");
-        EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
+
+        string playerSpawnerGuid = GetPlayerSpawnGuid();
+        string regionGameLogicGuid = Guid.NewGuid().ToString();
+
         EmptyCustomChunkGameLogic emptyCustomChunk = ChunkFactory.CreateEmptyCustomChunk("Chunk_Escape");
+        GameObject escapeChunkGo = emptyCustomChunk.gameObject;
         emptyCustomChunk.encounterObjectGuid = System.Guid.NewGuid().ToString();
         emptyCustomChunk.startingStatus = EncounterObjectStatus.Inactive;
         emptyCustomChunk.notes = debugDescription;
 
-        EscapeRegionFactory.CreateEscapeRegion(emptyCustomChunk.gameObject);
+        EscapeRegionFactory.CreateEscapeRegion(escapeChunkGo, regionGameLogicGuid);
+        ObjectiveFactory.CreateOccupyRegionObjective(escapeChunkGo, playerSpawnerGuid, regionGameLogicGuid);
       } else {
         Main.Logger.Log($"[AddEscapeChunk] 'Escape_Chunk' already exists in map. No need to recreate.");
       }

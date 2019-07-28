@@ -168,7 +168,7 @@ namespace MissionControl.Rules {
       return plot.name;
     }
 
-    public string GetPlayerLanceChunkName() {
+    public static string GetPlayerLanceChunkName() {
       string type = Enum.GetName(typeof(ContractType), MissionControl.Instance.CurrentContract.ContractType);
       
       if (type == "ArenaSkirmish") {
@@ -180,7 +180,7 @@ namespace MissionControl.Rules {
       return "Chunk_PlayerLance";
     }
 
-    public string GetPlayerLanceSpawnerName() {
+    public static string GetPlayerLanceSpawnerName() {
       string type = Enum.GetName(typeof(ContractType), MissionControl.Instance.CurrentContract.ContractType);
       
       if (type == "ArenaSkirmish") {

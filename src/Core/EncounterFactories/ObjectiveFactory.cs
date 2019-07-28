@@ -5,6 +5,10 @@ using BattleTech;
 using BattleTech.Designed;
 using BattleTech.Framework;
 
+using HBS.Collections;
+
+using MissionControl.Logic;
+
 namespace MissionControl.EncounterFactories {
   public class ObjectiveFactory {
     public static DestroyLanceObjective CreateDestroyLanceObjective(string objectiveGuid, GameObject parent, LanceSpawnerRef lanceToDestroy, string lanceGuid, string title, bool showProgress,
@@ -31,6 +35,46 @@ namespace MissionControl.EncounterFactories {
       ContractObjectiveGameLogic contractObjectiveGameLogic = destroyLanceObjective.transform.parent.gameObject.AddComponent<ContractObjectiveGameLogic>();
       contractObjectiveGameLogic.objectiveRefList.Add(new ObjectiveRef(destroyLanceObjective));
       return contractObjectiveGameLogic;
+    }
+
+    public static OccupyRegionObjective CreateOccupyRegionObjective(GameObject parent, string requiredLanceSpawnerGuid, string regionGameLogicGuid) {
+      GameObject occupyRegionObjectiveGo = new GameObject($"Objective_Escape");
+      occupyRegionObjectiveGo.transform.parent = parent.transform;
+      occupyRegionObjectiveGo.transform.localPosition = Vector3.zero;
+
+      OccupyRegionObjective occupyRegionObjective = occupyRegionObjectiveGo.AddComponent<OccupyRegionObjective>();
+      occupyRegionObjective.encounterObjectGuid = Guid.NewGuid().ToString();
+      occupyRegionObjective.requiredTagsOnUnit = new TagSet(new string[] { "player_unit" });
+      
+      LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
+      lanceSpawnerRef.EncounterObjectGuid = requiredLanceSpawnerGuid;
+      occupyRegionObjective.requiredLance = lanceSpawnerRef;
+
+      occupyRegionObjective.durationType = DurationType.AfterMoveComplete;
+      occupyRegionObjective.durationToOccupy = 1;
+
+      occupyRegionObjective.applyTagsWhen = ApplyTagsWhen.OnCompleteObjective;
+
+      occupyRegionObjective.requiredTagsOnOpposingUnits = new TagSet(new string[] { "opposing_unit" });
+
+      RegionRef regionRef = new RegionRef();
+      regionRef.EncounterObjectGuid = regionGameLogicGuid;
+      occupyRegionObjective.occupyTargetRegion = regionRef;
+
+      occupyRegionObjective.triggerDropshipFlybyPickupOnSuccess = true;
+      occupyRegionObjective.extractViaDropship = true;
+      occupyRegionObjective.title = "Get to the Evac Zone (MC)";
+      occupyRegionObjective.showProgress = true;
+      occupyRegionObjective.progressFormat = $"with {ChunkLogic.ProgressFormat.UNITS_OCCUPYING_SO_FAR}/{ChunkLogic.ProgressFormat.NUMBER_OF_UNITS_TO_OCCUPY} unit(s)";
+      occupyRegionObjective.description = "The objective for the player to escape and complete, or withdraw, the mission";
+      occupyRegionObjective.priority = 3;
+      occupyRegionObjective.displayToUser = true;
+      occupyRegionObjective.checkObjectiveFlag = false;
+      occupyRegionObjective.useBeacon = true;
+      occupyRegionObjective.markUnitsWith = ObjectiveMark.None;
+      occupyRegionObjective.enableObjectiveLogging = true;
+
+      return occupyRegionObjective;
     }
   }
 }

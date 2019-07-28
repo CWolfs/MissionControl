@@ -2,8 +2,6 @@ using UnityEngine;
 using System;
 
 using BattleTech;
-using BattleTech.Designed;
-using BattleTech.Framework;
 
 using MissionControl.Utils;
 
@@ -29,7 +27,7 @@ namespace MissionControl.EncounterFactories {
       return regionPoint;
     }
 
-    public static RegionGameLogic CreateEscapeRegion(GameObject parent, string name = null) {
+    public static RegionGameLogic CreateEscapeRegion(GameObject parent, string regionGameLogicGuid, string name = null) {
       GameObject escapeRegionGo = CreateEscapeRegionGameObject(parent, name);
 
       // Test position
@@ -49,7 +47,7 @@ namespace MissionControl.EncounterFactories {
       escapeRegionGo.AddComponent<MeshRenderer>();
 
       RegionGameLogic regionGameLogic = escapeRegionGo.AddComponent<RegionGameLogic>();
-      regionGameLogic.encounterObjectGuid = Guid.NewGuid().ToString();
+      regionGameLogic.encounterObjectGuid = regionGameLogicGuid;
       regionGameLogic.radius = REGION_RADIUS;
       regionGameLogic.regionDefId = "regionDef_EvacZone";
       regionGameLogic.alwaysShowRegionWhenActive = true;
