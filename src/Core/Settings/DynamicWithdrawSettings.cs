@@ -8,6 +8,12 @@ namespace MissionControl.Config {
 		public bool Enable { get; set; } = true;
 
 		[JsonProperty("OnWithdrawButton")]
-		public bool OnWithdrawButton { get; set; } = true;
+		public bool FailUnfinishedObjectives { get; set; } = true;
+
+		[JsonProperty("MinDistanceForZone")]
+		public int MinDistanceForZone { get; set; } = 300;
+
+		[JsonProperty("MaxDistanceForZone")]
+		public int MaxDistanceForZone { get; set; } = 700;
 	}
 }

@@ -32,6 +32,8 @@
   "ExtendedBoundaries": true,
   "DynamicWithdraw": {
     "Enabled": true,
-    "OnWithdrawButton": true,
+    "FailUnfinishedObjectives": true,
+    "MinDistanceForZone": 300,
+    "MaxDistanceForZone": 700,
   }
 }
