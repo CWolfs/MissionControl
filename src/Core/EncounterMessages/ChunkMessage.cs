@@ -13,7 +13,7 @@ namespace MissionControl.Messages {
 
 		public override MessageCenterMessageType MessageType {
 			get {
-				return MessageCenterMessageType.OnObjectiveUpdated;
+				return (MessageCenterMessageType)MessageTypes.ON_CHUNK_ACTIVATED;
 			}
 		}
 

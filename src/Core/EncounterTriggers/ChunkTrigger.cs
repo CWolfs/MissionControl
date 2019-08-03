@@ -5,12 +5,14 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.Framework;
 using BattleTech.Designed;
+using BattleTech.Framework.Save;
 
 using HBS.Collections;
 
 using MissionControl.Result;
 using MissionControl.Conditional;
 using MissionControl.Logic;
+using MissionControl.Messages;
 
 namespace MissionControl.Trigger {
   public class ChunkTrigger : EncounterTrigger {
@@ -37,7 +39,7 @@ namespace MissionControl.Trigger {
       EncounterLayerData encounterData = MissionControl.Instance.EncounterLayerData;
       SmartTriggerResponse trigger = new SmartTriggerResponse();
       trigger.inputMessage = onMessage;
-      trigger.designName = $"Initiate chunk on {onMessage}";
+      trigger.designName = $"Initiate chunk on {(MessageTypes)onMessage}";
       trigger.conditionalbox = new EncounterConditionalBox(conditional);
 
       HACK_ActivateChunkResult activateChunkResult = ScriptableObject.CreateInstance<HACK_ActivateChunkResult>();

@@ -9,6 +9,9 @@ namespace MissionControl.Conditional {
     public override bool Evaluate(MessageCenterMessage message, string responseName) {
       base.Evaluate(message, responseName);
       ChunkMessage chunkMessage = message as ChunkMessage;
+      
+      Main.LogDebug("[ChunkMatchesChunkGuidConditional] Evaluating...");
+
 			if (chunkMessage != null && chunkMessage.ChunkGuid == this.ChunkGuid) {
 				base.LogEvaluationPassed("Chunk matches guid of message.", responseName);
 				return true;

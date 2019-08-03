@@ -11,6 +11,7 @@ using BattleTech.Designed;
 using BattleTech.Framework;
 
 using MissionControl.Logic;
+using MissionControl.Messages;
 
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(CombatHUDRetreatEscMenu), "OnRetreatConfirmed")]
@@ -19,7 +20,7 @@ namespace MissionControl.Patches {
     static bool Prefix(CombatHUDRetreatEscMenu __instance) {
       if (Main.Settings.DynamicWithdraw.Enable && Main.Settings.DynamicWithdraw.OnWithdrawButton) {
         Main.LogDebug("[CombatHUDRetreatEscMenuOnRetreatConfirmedPatch] Sending Dynamic Withdraw Trigger Message");
-        ObjectiveSucceeded triggerDynamicWithdrawMessage = new ObjectiveSucceeded(ChunkLogic.DYNAMIC_WITHDRAW_CHUNK_GUID);
+        ChunkMessage triggerDynamicWithdrawMessage = new ChunkMessage(ChunkLogic.DYNAMIC_WITHDRAW_CHUNK_GUID);
         UnityGameInstance.Instance.Game.Combat.MessageCenter.PublishMessage(triggerDynamicWithdrawMessage);
         return false;
       }
