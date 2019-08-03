@@ -35,5 +35,6 @@
     "FailUnfinishedObjectives": true,
     "MinDistanceForZone": 300,
     "MaxDistanceForZone": 700,
+    "DisorderlyWithdrawalCompatibility": false,
   }
 }
