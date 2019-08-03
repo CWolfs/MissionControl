@@ -7,6 +7,9 @@ namespace MissionControl.Config {
 		[JsonProperty("Enable")]
 		public bool Enable { get; set; } = true;
 
+		[JsonProperty("DisorderlyWithdrawalCompatibility")]
+		public bool DisorderlyWithdrawalCompatibility { get; set; } = false;
+
 		[JsonProperty("OnWithdrawButton")]
 		public bool FailUnfinishedObjectives { get; set; } = true;
 
