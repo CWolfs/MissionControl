@@ -30,14 +30,8 @@ namespace MissionControl.EncounterFactories {
     public static RegionGameLogic CreateEscapeRegion(GameObject parent, string regionGameLogicGuid, string name = null) {
       GameObject escapeRegionGo = CreateEscapeRegionGameObject(parent, name);
 
-      // Test position
-      escapeRegionGo.transform.position = new Vector3(-90, 300, 0);
-      // End Test
-
       MeshCollider collider = escapeRegionGo.AddComponent<MeshCollider>();
       MeshFilter mf = escapeRegionGo.AddComponent<MeshFilter>();
-
-      // TODO: Feed the height into this so it matches the terrain. Same as the below region points vectors
       Mesh mesh = MeshTools.CreateHexigon(REGION_RADIUS);
       collider.sharedMesh = mesh;
       mf.mesh = mesh;
