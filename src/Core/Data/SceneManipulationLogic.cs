@@ -85,26 +85,11 @@ namespace MissionControl.Logic {
     }
 
     protected Vector3 GetRandomPositionFromTarget(Vector3 targPosition, float minDistance, float maxDistance) {
-      Vector3 targetPosition = targPosition.GetClosestHexLerpedPointOnGrid();
-      Vector3 randomPositionWithinBounds = GetRandomPositionWithinBounds(targPosition, maxDistance);
-
-      if (!IsWithinBoundedDistanceOfTarget(targetPosition, randomPositionWithinBounds, minDistance, maxDistance)) {
-        return GetRandomPositionFromTarget(targetPosition, minDistance, maxDistance);
-      } else {
-        return randomPositionWithinBounds;
-      }
+      return SceneUtils.GetRandomPositionFromTarget(targPosition, minDistance, maxDistance);
     }
 
     public Vector3 GetRandomPositionWithinBounds(Vector3 target, float maxDistance) {
-      MissionControl EncounterManager = MissionControl.Instance;
-      GameObject chunkBoundaryRect = EncounterManager.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary").gameObject;
-      GameObject boundary = chunkBoundaryRect.transform.Find("EncounterBoundaryRect").gameObject;
-      EncounterBoundaryChunkGameLogic chunkBoundary = chunkBoundaryRect.GetComponent<EncounterBoundaryChunkGameLogic>();
-      EncounterBoundaryRectGameLogic boundaryLogic = boundary.GetComponent<EncounterBoundaryRectGameLogic>();
-      Rect boundaryRec = chunkBoundary.GetEncounterBoundaryRectBounds();
-
-      Vector3 randomRecPosition = boundaryRec.GetRandomPositionFromTarget(target, maxDistance);
-      return randomRecPosition.GetClosestHexLerpedPointOnGrid();
+      return SceneUtils.GetRandomPositionWithinBounds(target, maxDistance);
     }
 
     public Vector3 GetRandomPositionWithinBounds() {
@@ -120,12 +105,7 @@ namespace MissionControl.Logic {
     }
 
     public bool IsWithinBoundedDistanceOfTarget(Vector3 origin, Vector3 target, float minDistance, float maxDistance) {
-      Vector3 vectorToTarget = target - origin;
-      vectorToTarget.y = 0;
-      float distance = vectorToTarget.magnitude;
-      if ((distance > minDistance) && (distance < maxDistance)) return true;
-      Main.LogDebugWarning($"[IsWithinBoundedDistanceOfTarget] Distance is {distance} and so not within bounds. Getting new random position");
-      return false;
+      return SceneUtils.IsWithinBoundedDistanceOfTarget(origin, target, minDistance, maxDistance);
     }
 
     public bool IsWithinBoundedDistanceOfTarget(Vector3 origin, Vector3 target, float minDistance) {

@@ -42,11 +42,14 @@ namespace MissionControl.Trigger {
       trigger.designName = $"Initiate chunk on {(MessageTypes)onMessage}";
       trigger.conditionalbox = new EncounterConditionalBox(conditional);
 
+      PositionRegion positionRegionResult = ScriptableObject.CreateInstance<PositionRegion>();
+
       HACK_ActivateChunkResult activateChunkResult = ScriptableObject.CreateInstance<HACK_ActivateChunkResult>();
       EncounterChunkRef encounterChunkRef = new EncounterChunkRef();
       encounterChunkRef.EncounterObjectGuid = chunkGuid;
       activateChunkResult.encounterChunk = encounterChunkRef;
 
+      trigger.resultList.contentsBox.Add(new EncounterResultBox(positionRegionResult));
       trigger.resultList.contentsBox.Add(new EncounterResultBox(activateChunkResult));
       encounterData.responseGroup.triggerList.Add(trigger);
     }

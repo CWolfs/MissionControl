@@ -51,16 +51,14 @@ namespace MissionControl.EncounterFactories {
       regionGameLogic.radius = REGION_RADIUS;
       regionGameLogic.regionDefId = "regionDef_EvacZone";
       regionGameLogic.alwaysShowRegionWhenActive = true;
-
-
       // TODO: Add objective references
 
-      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint1", new Vector3(0, 0, REGION_RADIUS));                   // North
-      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint2", new Vector3(REGION_RADIUS, 0, REGION_RADIUS / 2f));   // North-East
-      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint3", new Vector3(REGION_RADIUS, 0, -(REGION_RADIUS / 2f)));  // South-East
-      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint4", new Vector3(0, 0, -REGION_RADIUS));                  // South
-      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint5", new Vector3(-REGION_RADIUS, 0, -(REGION_RADIUS / 2f))); // South-West
-      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint6", new Vector3(-REGION_RADIUS, 0, REGION_RADIUS / 2f));  // North-West
+      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint1", new Vector3(0, 0, REGION_RADIUS));                       // North
+      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint2", new Vector3(REGION_RADIUS, 0, REGION_RADIUS / 2f));      // North-East
+      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint3", new Vector3(REGION_RADIUS, 0, -(REGION_RADIUS / 2f)));   // South-East
+      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint4", new Vector3(0, 0, -REGION_RADIUS));                      // South
+      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint5", new Vector3(-REGION_RADIUS, 0, -(REGION_RADIUS / 2f)));  // South-West
+      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint6", new Vector3(-REGION_RADIUS, 0, REGION_RADIUS / 2f));     // North-West
 
       return regionGameLogic;
     }
