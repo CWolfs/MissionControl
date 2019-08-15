@@ -34,7 +34,7 @@ namespace MissionControl.Logic {
         emptyCustomChunk.startingStatus = EncounterObjectStatus.Inactive;
         emptyCustomChunk.notes = debugDescription;
 
-        EscapeRegionFactory.CreateEscapeRegion(escapeChunkGo, regionGameLogicGuid);
+        EscapeRegionFactory.CreateEscapeRegion(escapeChunkGo, regionGameLogicGuid, objectiveGuid);
 
         bool useDropship = true;
         ObjectiveFactory.CreateOccupyRegionObjective(

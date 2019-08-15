@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.Designed;
 
+using MissionControl;
+
 public static class SceneUtils {
     public static Vector3 GetRandomPositionWithinBounds(Vector3 target, float maxDistance) {
       GameObject chunkBoundaryRect = MissionControl.MissionControl.Instance.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary").gameObject;
@@ -53,5 +55,28 @@ public static class SceneUtils {
       centroid /= totalMass;
       
       return centroid;
+    }
+
+    public static List<MapEncounterLayerDataCell> GetMapEncounterLayerDataCellsWithinCollider(GameObject regionGo) {
+      MeshCollider collider = regionGo.GetComponent<MeshCollider>();
+      RegionGameLogic regionGameLogic = regionGo.GetComponent<RegionGameLogic>();
+      List<MapEncounterLayerDataCell> cells = new List<MapEncounterLayerDataCell>();
+      Vector3 colliderExtents = collider.bounds.extents;
+      Vector3 colliderCenter = collider.bounds.center;
+
+      EncounterLayerData encounterLayerData = MissionControl.MissionControl.Instance.EncounterLayerData;
+      int cellX = encounterLayerData.GetXIndex(colliderCenter.x);
+      int cellZ = encounterLayerData.GetZIndex(colliderCenter.z);
+      MapEncounterLayerDataCell layerDataCell = GetOrCreateEncounterLayerDataCell(cellX, cellZ);
+      
+      cells.Add(layerDataCell);
+
+      return cells;
+    }
+
+    public static MapEncounterLayerDataCell GetOrCreateEncounterLayerDataCell(int x, int y) {
+      MapEncounterLayerDataCell encounterLayerDataCell = MissionControl.MissionControl.Instance.EncounterLayerData.GetCellAt(x, y);
+      if (encounterLayerDataCell == null) encounterLayerDataCell = new MapEncounterLayerDataCell();
+      return encounterLayerDataCell;
     }
 }

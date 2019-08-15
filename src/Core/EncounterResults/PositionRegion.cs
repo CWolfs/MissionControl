@@ -2,9 +2,12 @@ using UnityEngine;
 
 using BattleTech;
 
+using System.Reflection;
 using System.Collections.Generic;
 
 using MissionControl.Utils;
+
+using Harmony;
 
 /**
 	This result will reposition a region within a min and max threshold. 
@@ -36,6 +39,7 @@ namespace MissionControl.Result {
 
 		private void RegenerateRegion(GameObject regionGo) {
 			CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+			RegionGameLogic regionGameLogic = regionGo.GetComponent<RegionGameLogic>();
 			List<Vector3> meshPoints = new List<Vector3>();
 
 			// Get all region points and fix the y height
@@ -55,6 +59,27 @@ namespace MissionControl.Result {
 			Mesh mesh = MeshTools.CreateHexigon(REGION_RADIUS, meshPoints);
 			collider.sharedMesh = mesh;
 			mf.mesh = mesh;
+
+			// TODO: Experiment: I think that I need to iterate over the hex positions in the cell data and add the region to each position
+			// This is then checked when a unit enters any location - it checks this for the region ID and sends a broadcast
+ 			// MapMetaDataExporter mapMetaDataExporter = MissionControl.Instance.EncounterLayerParentGameObject.GetComponent<MapMetaDataExporter>();
+			// EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
+			// MapMetaData mapMetaData = combat.MapMetaData;
+			// Vector3 regionPosition = regionGo.transform.position;
+			// int cellX = encounterLayerData.GetXIndex(regionPosition.x);
+			// int cellZ = encounterLayerData.GetZIndex(regionPosition.z);
+
+			/*
+			MapEncounterLayerDataCell encounterLayerDataCell = encounterLayerData.GetCellAt(cellX, cellZ);
+			if (encounterLayerDataCell == null) encounterLayerDataCell = new MapEncounterLayerDataCell();
+			encounterLayerDataCell.AddRegion(regionGo.GetComponent<RegionGameLogic>());
+			encounterLayerData.mapEncounterLayerDataCells[cellX, cellZ] = encounterLayerDataCell;
+			*/
+			List<MapEncounterLayerDataCell> cells = SceneUtils.GetMapEncounterLayerDataCellsWithinCollider(regionGo);
+			for (int i = 0; i < cells.Count; i++) {
+				MapEncounterLayerDataCell cell = cells[i];
+				cell.AddRegion(regionGameLogic);
+			}
 		}
 	}
 }

@@ -42,7 +42,7 @@ namespace MissionControl.Rules {
 
     public void ActivatePostFeatures() {
       if (Main.Settings.ExtendedLances.Enable) new AddExtraLanceSpawnsForExtendedLancesBatch(this);
-      if (Main.Settings.DynamicWithdraw.Enable) new AddDynamicWithdrawBatch(this);
+      if (Main.Settings.DynamicWithdraw.Enable && !MissionControl.Instance.IsSkirmish()) new AddDynamicWithdrawBatch(this);
     }
 
     public abstract void Build();

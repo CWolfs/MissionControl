@@ -24,7 +24,7 @@ namespace MissionControl.Logic {
 
     private int AttemptCountMax { get; set; } = 5;
     private int AttemptCount { get; set; } = 0;
-    private int EdgeCheckMax { get; set; } = 10;
+    private int EdgeCheckMax { get; set; } = 5;
     private int EdgeCheckCount { get; set; } = 0;
 
     private bool inited = false;
@@ -64,7 +64,7 @@ namespace MissionControl.Logic {
     public override void Run(RunPayload payload) {
       GetObjectReferences();
       SaveSpawnPositions(lance);
-      Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Attemping for '{lance.name}'");
+      Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Attemping for '{lance.name}'. Attempt: '{AttemptCount}/{AttemptCountMax}' and Edge Check: '{EdgeCheckCount}/{EdgeCheckMax}'");
       AttemptCount++;
 
       Init();

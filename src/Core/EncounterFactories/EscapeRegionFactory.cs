@@ -1,7 +1,9 @@
 using UnityEngine;
-using System;
+
+using System.Collections.Generic;
 
 using BattleTech;
+using BattleTech.Framework;
 
 using MissionControl.Utils;
 
@@ -27,8 +29,12 @@ namespace MissionControl.EncounterFactories {
       return regionPoint;
     }
 
-    public static RegionGameLogic CreateEscapeRegion(GameObject parent, string regionGameLogicGuid, string name = null) {
+    public static RegionGameLogic CreateEscapeRegion(GameObject parent, string regionGameLogicGuid, string objectiveGuid, string name = null) {
       GameObject escapeRegionGo = CreateEscapeRegionGameObject(parent, name);
+
+      //  Test
+      escapeRegionGo.transform.position = new Vector3(-90, 300, 0);
+      // End Test
 
       MeshCollider collider = escapeRegionGo.AddComponent<MeshCollider>();
       MeshFilter mf = escapeRegionGo.AddComponent<MeshFilter>();
@@ -45,7 +51,6 @@ namespace MissionControl.EncounterFactories {
       regionGameLogic.radius = REGION_RADIUS;
       regionGameLogic.regionDefId = "regionDef_EvacZone";
       regionGameLogic.alwaysShowRegionWhenActive = true;
-      // TODO: Add objective references
 
       CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint1", new Vector3(0, 0, REGION_RADIUS));                       // North
       CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint2", new Vector3(REGION_RADIUS, 0, REGION_RADIUS / 2f));      // North-East
