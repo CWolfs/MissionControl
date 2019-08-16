@@ -5,6 +5,7 @@ using BattleTech;
 using System.Reflection;
 using System.Collections.Generic;
 
+using MissionControl;
 using MissionControl.Utils;
 
 using Harmony;
@@ -60,26 +61,14 @@ namespace MissionControl.Result {
 			collider.sharedMesh = mesh;
 			mf.mesh = mesh;
 
-			// TODO: Experiment: I think that I need to iterate over the hex positions in the cell data and add the region to each position
-			// This is then checked when a unit enters any location - it checks this for the region ID and sends a broadcast
- 			// MapMetaDataExporter mapMetaDataExporter = MissionControl.Instance.EncounterLayerParentGameObject.GetComponent<MapMetaDataExporter>();
-			// EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
-			// MapMetaData mapMetaData = combat.MapMetaData;
-			// Vector3 regionPosition = regionGo.transform.position;
-			// int cellX = encounterLayerData.GetXIndex(regionPosition.x);
-			// int cellZ = encounterLayerData.GetZIndex(regionPosition.z);
-
-			/*
-			MapEncounterLayerDataCell encounterLayerDataCell = encounterLayerData.GetCellAt(cellX, cellZ);
-			if (encounterLayerDataCell == null) encounterLayerDataCell = new MapEncounterLayerDataCell();
-			encounterLayerDataCell.AddRegion(regionGo.GetComponent<RegionGameLogic>());
-			encounterLayerData.mapEncounterLayerDataCells[cellX, cellZ] = encounterLayerDataCell;
-			*/
 			List<MapEncounterLayerDataCell> cells = SceneUtils.GetMapEncounterLayerDataCellsWithinCollider(regionGo);
 			for (int i = 0; i < cells.Count; i++) {
 				MapEncounterLayerDataCell cell = cells[i];
 				cell.AddRegion(regionGameLogic);
 			}
+
+			// debug
+			// regionGameLogic.MarkAssociatedCellsAsDangerous(true);
 		}
 	}
 }

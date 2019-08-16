@@ -67,16 +67,40 @@ public static class SceneUtils {
       EncounterLayerData encounterLayerData = MissionControl.MissionControl.Instance.EncounterLayerData;
       int cellX = encounterLayerData.GetXIndex(colliderCenter.x);
       int cellZ = encounterLayerData.GetZIndex(colliderCenter.z);
-      MapEncounterLayerDataCell layerDataCell = GetOrCreateEncounterLayerDataCell(cellX, cellZ);
       
+      // Add center
+      MapEncounterLayerDataCell layerDataCell = GetOrCreateEncounterLayerDataCell(cellX, cellZ);
       cells.Add(layerDataCell);
 
+      float bottom = colliderCenter.x - colliderExtents.x;
+      float top = colliderCenter.x + colliderExtents.x;
+      float left = colliderCenter.z - colliderExtents.z;
+      float right = colliderCenter.z + colliderExtents.z;
+
+      for (float i = bottom; i < top; i += 0.5f) {
+        for (float j = left; j < right; j += 0.5f) {
+            cellX = encounterLayerData.GetXIndex(i);
+            cellZ = encounterLayerData.GetZIndex(j);
+            
+            layerDataCell = GetOrCreateEncounterLayerDataCell(cellX, cellZ);
+            if (layerDataCell != null) cells.Add(layerDataCell);
+        }
+      }
+      
       return cells;
     }
 
-    public static MapEncounterLayerDataCell GetOrCreateEncounterLayerDataCell(int x, int y) {
-      MapEncounterLayerDataCell encounterLayerDataCell = MissionControl.MissionControl.Instance.EncounterLayerData.GetCellAt(x, y);
-      if (encounterLayerDataCell == null) encounterLayerDataCell = new MapEncounterLayerDataCell();
-      return encounterLayerDataCell;
+    public static MapEncounterLayerDataCell GetOrCreateEncounterLayerDataCell(int x, int z) {
+      // Add a safe get cell
+      if (MissionControl.MissionControl.Instance.EncounterLayerData.IsWithinBounds(x, z)) {
+        MapEncounterLayerDataCell encounterLayerDataCell = MissionControl.MissionControl.Instance.EncounterLayerData.GetSafeCellAt(x, z);
+        if (encounterLayerDataCell == null) encounterLayerDataCell = new MapEncounterLayerDataCell();
+        if (encounterLayerDataCell.relatedTerrainCell == null) encounterLayerDataCell.relatedTerrainCell = UnityGameInstance.BattleTechGame.Combat.MapMetaData.SafeGetCellAt(x, z);
+
+        // Seems the x, z are reversed in the BT source, so better keep it the same
+        MissionControl.MissionControl.Instance.EncounterLayerData.mapEncounterLayerDataCells[z, x] = encounterLayerDataCell;
+        return encounterLayerDataCell;
+      }
+      return null;
     }
 }
