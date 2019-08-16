@@ -29,9 +29,9 @@ namespace MissionControl.EncounterFactories {
       return destroyLanceObjective;
     }
 
-    public static ContractObjectiveGameLogic CreateDestroyLanceContractObjective(DestroyLanceObjective destroyLanceObjective) {
-      ContractObjectiveGameLogic contractObjectiveGameLogic = destroyLanceObjective.transform.parent.gameObject.AddComponent<ContractObjectiveGameLogic>();
-      contractObjectiveGameLogic.objectiveRefList.Add(new ObjectiveRef(destroyLanceObjective));
+    public static ContractObjectiveGameLogic CreateContractObjective(ObjectiveGameLogic objective) {
+      ContractObjectiveGameLogic contractObjectiveGameLogic = objective.transform.parent.gameObject.AddComponent<ContractObjectiveGameLogic>();
+      contractObjectiveGameLogic.objectiveRefList.Add(new ObjectiveRef(objective));
       return contractObjectiveGameLogic;
     }
 
@@ -72,6 +72,8 @@ namespace MissionControl.EncounterFactories {
       occupyRegionObjective.useBeacon = true;
       occupyRegionObjective.markUnitsWith = ObjectiveMark.None;
       occupyRegionObjective.enableObjectiveLogging = true;
+
+      CreateContractObjective(occupyRegionObjective);
 
       return occupyRegionObjective;
     }

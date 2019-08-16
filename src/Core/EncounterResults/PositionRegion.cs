@@ -67,7 +67,7 @@ namespace MissionControl.Result {
 				cell.AddRegion(regionGameLogic);
 			}
 
-			// debug
+			// debug - this doesn't work for some reason. Need to figure out later why.
 			// regionGameLogic.MarkAssociatedCellsAsDangerous(true);
 		}
 	}

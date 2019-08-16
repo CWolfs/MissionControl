@@ -74,7 +74,7 @@ namespace MissionControl.Logic {
       );
 
       if (isPrimary) {
-        ObjectiveFactory.CreateDestroyLanceContractObjective(objective);
+        ObjectiveFactory.CreateContractObjective(objective);
       }
 
       DestroyLanceObjectiveRef destroyLanceObjectiveRef = new DestroyLanceObjectiveRef();
