@@ -1,14 +1,12 @@
 using UnityEngine;
 
 using BattleTech;
+using BattleTech.Framework;
 
-using System.Reflection;
+using System.Linq;
 using System.Collections.Generic;
 
-using MissionControl;
 using MissionControl.Utils;
-
-using Harmony;
 
 /**
 	This result will reposition a region within a min and max threshold. 
@@ -67,6 +65,18 @@ namespace MissionControl.Result {
 				cell.AddRegion(regionGameLogic);
 			}
 
+			ContractObjectiveGameLogic[] existingContractObjectives = MissionControl.Instance.EncounterLayerData.GetComponents<ContractObjectiveGameLogic>();
+			existingContractObjectives.ToList().ForEach(obj => {
+				obj.OverrideRequiredByMission(false);
+				obj.objectiveRefList.ForEach(o => {
+					Main.LogDebug("[PositionRegion] Objective name is: " + o.encounterObject.name);
+					if (o.encounterObject.name != "Objective_Escape") {
+						o.encounterObject.CompleteObjective("Dynamic Withdraw Triggered", CompleteObjectiveType.Failed, true, true);
+					}
+				});
+				ReflectionHelper.SetPrivateField(obj, "currentObjectiveStatus", ObjectiveStatus.Failed);
+			});
+			
 			// debug - this doesn't work for some reason. Need to figure out later why.
 			// regionGameLogic.MarkAssociatedCellsAsDangerous(true);
 		}

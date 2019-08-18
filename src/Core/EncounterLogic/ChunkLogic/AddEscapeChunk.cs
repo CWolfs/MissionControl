@@ -37,7 +37,7 @@ namespace MissionControl.Logic {
         EscapeRegionFactory.CreateEscapeRegion(escapeChunkGo, regionGameLogicGuid, objectiveGuid);
 
         bool useDropship = true;
-        ObjectiveFactory.CreateOccupyRegionObjective(
+        OccupyRegionObjective occupyRegionObjective = ObjectiveFactory.CreateOccupyRegionObjective(
           objectiveGuid,
           escapeChunkGo,
           playerSpawnerGuid,
@@ -48,6 +48,8 @@ namespace MissionControl.Logic {
           "The objective for the player to escape and complete, or withdraw, the mission",
           useDropship
         );
+  
+        ObjectiveFactory.CreateContractObjective(occupyRegionObjective);
       } else {
         Main.Logger.Log($"[AddEscapeChunk] 'Escape_Chunk' already exists in map. No need to recreate.");
       }

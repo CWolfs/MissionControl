@@ -7,6 +7,8 @@ using BattleTech.Framework;
 
 using HBS.Collections;
 
+using MissionControl;
+
 namespace MissionControl.EncounterFactories {
   public class ObjectiveFactory {
     public static DestroyLanceObjective CreateDestroyLanceObjective(string objectiveGuid, GameObject parent, LanceSpawnerRef lanceToDestroy, string lanceGuid, string title, bool showProgress,
@@ -26,6 +28,12 @@ namespace MissionControl.EncounterFactories {
       destroyLanceObjective.markUnitsWith = markUnitsWith;
       destroyLanceObjective.lanceToDestroy = lanceToDestroy;
 
+      // For ease of user we track objectives, by default, against the first contract objective
+      // TODO: Anchor them maybe against a new hidden contract objective to prevent objectives completing and completing this additional objectives
+      ContractObjectiveGameLogic contractObjective = MissionControl.Instance.EncounterLayerData.GetComponent<ContractObjectiveGameLogic>();
+      ObjectiveRef objectiveRef = new ObjectiveRef(destroyLanceObjective);
+      contractObjective.objectiveRefList.Add(objectiveRef);
+
       return destroyLanceObjective;
     }
 
@@ -42,6 +50,7 @@ namespace MissionControl.EncounterFactories {
       occupyRegionObjectiveGo.transform.localPosition = Vector3.zero;
 
       OccupyRegionObjective occupyRegionObjective = occupyRegionObjectiveGo.AddComponent<OccupyRegionObjective>();
+      occupyRegionObjective.title = occupyRegionObjectiveGo.name;
       occupyRegionObjective.encounterObjectGuid = objectiveGuid;
       occupyRegionObjective.requiredTagsOnUnit = new TagSet(new string[] { "player_unit" });
       
@@ -73,7 +82,7 @@ namespace MissionControl.EncounterFactories {
       occupyRegionObjective.markUnitsWith = ObjectiveMark.None;
       occupyRegionObjective.enableObjectiveLogging = true;
 
-      CreateContractObjective(occupyRegionObjective);
+      occupyRegionObjective.onSuccessDialogue = new DialogueRef();
 
       return occupyRegionObjective;
     }

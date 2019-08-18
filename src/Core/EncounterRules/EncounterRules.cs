@@ -37,7 +37,7 @@ namespace MissionControl.Rules {
     }
 
     public void ActivatePreFeatures() {
-       if (Main.Settings.ExtendedBoundaries) MaximiseEncounterBoundary();
+      if (Main.Settings.ExtendedBoundaries) MaximiseEncounterBoundary();
     }
 
     public void ActivatePostFeatures() {
