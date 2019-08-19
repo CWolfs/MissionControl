@@ -4,6 +4,7 @@ using System;
 
 using BattleTech;
 using BattleTech.Designed;
+using BattleTech.Framework;
 
 using MissionControl.EncounterFactories;
 
@@ -49,7 +50,6 @@ namespace MissionControl.Logic {
           useDropship
         );
 
-        occupyRegionObjective.invertObjective = true;
         ObjectiveFactory.CreateContractObjective(occupyRegionObjective);
       } else {
         Main.Logger.Log($"[AddEscapeChunk] 'Escape_Chunk' already exists in map. No need to recreate.");
