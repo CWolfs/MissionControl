@@ -12,6 +12,8 @@ using MissionControl.Rules;
 using MissionControl.EncounterFactories;
 using MissionControl.Utils;
 
+using Harmony;
+
 namespace MissionControl.Logic {
   public class AddDestroyWholeUnitChunk : ChunkLogic {
     private EncounterRules encounterRules;
@@ -74,7 +76,9 @@ namespace MissionControl.Logic {
       );
 
       if (isPrimary) {
-        ObjectiveFactory.CreateContractObjective(objective);
+        AccessTools.Field(typeof(ObjectiveGameLogic), "primary").SetValue(objective, true);
+      } else {
+        AccessTools.Field(typeof(ObjectiveGameLogic), "primary").SetValue(objective, false);
       }
 
       DestroyLanceObjectiveRef destroyLanceObjectiveRef = new DestroyLanceObjectiveRef();

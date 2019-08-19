@@ -68,10 +68,10 @@ namespace MissionControl.Result {
 			ContractObjectiveGameLogic[] existingContractObjectives = MissionControl.Instance.EncounterLayerData.GetComponents<ContractObjectiveGameLogic>();
 			existingContractObjectives.ToList().ForEach(obj => {
 				obj.OverrideRequiredByMission(false);
-				obj.objectiveRefList.ForEach(o => {
-					Main.LogDebug("[PositionRegion] Objective name is: " + o.encounterObject.name);
-					if (o.encounterObject.name != "Objective_Escape") {
-						o.encounterObject.CompleteObjective("Dynamic Withdraw Triggered", CompleteObjectiveType.Failed, true, true);
+				obj.objectiveRefList.ForEach(objective => {
+					Main.LogDebug("[PositionRegion] Objective name is: " + objective.encounterObject.name);
+					if (objective.encounterObject.name != "Objective_Escape") {
+						objective.encounterObject.CompleteObjective("Dynamic Withdraw Triggered", CompleteObjectiveType.Failed, true, true);
 					}
 				});
 				ReflectionHelper.SetPrivateField(obj, "currentObjectiveStatus", ObjectiveStatus.Failed);

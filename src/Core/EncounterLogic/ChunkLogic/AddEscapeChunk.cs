@@ -48,7 +48,8 @@ namespace MissionControl.Logic {
           "The objective for the player to escape and complete, or withdraw, the mission",
           useDropship
         );
-  
+
+        occupyRegionObjective.invertObjective = true;
         ObjectiveFactory.CreateContractObjective(occupyRegionObjective);
       } else {
         Main.Logger.Log($"[AddEscapeChunk] 'Escape_Chunk' already exists in map. No need to recreate.");
