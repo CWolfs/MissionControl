@@ -13,6 +13,10 @@ using BattleTech.Framework;
 using HBS.Data;
 
 using MissionControl.Data;
+using MissionControl.Messages;
+using MissionControl.Utils;
+
+using Harmony;
 
 namespace MissionControl {
   public class DataManager {
@@ -43,6 +47,7 @@ namespace MissionControl {
       LoadLanceOverrides();
       LoadRuntimeCastData();
       LoadDialogueData();
+      InjectMessageScopes();
     }
 
     public void LoadDeferredDefs() {
@@ -254,5 +259,18 @@ namespace MissionControl {
 			}
 			return result;
 		}
+
+    /*
+      This adds any custom messages to the message center scopes
+      Without this, when leaving combat (restarting or exiting) an error will occur
+    */
+    public void InjectMessageScopes() {
+      Dictionary<MessageCenterMessageType, MessageCenter.MessageScope> messageScopes = (Dictionary<MessageCenterMessageType, MessageCenter.MessageScope>)ReflectionHelper.GetPrivateStaticField(typeof(MessageCenter), "messageScopes");
+      MessageTypes[] customMessageTypes = (MessageTypes[])Enum.GetValues(typeof(MessageTypes));
+      for (int i = 0; i < customMessageTypes.Length; i++) {
+        Main.LogDebug($"[InjectMessageScopes] Injecting custom message {customMessageTypes.ToString()} into 'MessageCenter.MessageScope.CombatGame'");
+        messageScopes.Add((MessageCenterMessageType)customMessageTypes[i], MessageCenter.MessageScope.CombatGame);  
+      }
+    }
   }
 }
