@@ -21,9 +21,11 @@ namespace MissionControl.Logic {
     }
 
     public static string DIALOGUE_ADDITIONAL_LANCE_ALLY_START_GUID = "47647e3c-a82d-4946-a601-b7dddbb63452";
+    public static string DIALOGUE_DYNAMIC_WITHDRAW_ESCAPE_GUID = "a6eae1af-7fd1-41a4-a0cc-e2deca2cf2a1";
 
     public static string DYNAMIC_WITHDRAW_CHUNK_GUID = "3e8be988-22c1-4d65-b0a7-3228d0f495a8";
     public static string DYNAMIC_WITHDRAW_OBJECTIVE_GUID = "65f04a39-fc57-476c-bae4-6958f8062c3f";
+    public static string DYNAMIC_WITHDRAW_REGION_GUID = "bb9bef5d-aef1-4f83-9b9c-7ce5ce55bf63";
 
     public ChunkLogic() {
       this.Type = LogicType.ENCOUNTER_MANIPULATION;

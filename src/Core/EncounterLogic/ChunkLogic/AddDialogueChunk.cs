@@ -19,16 +19,18 @@ namespace MissionControl.Logic {
     private string debugDescription;
     private string cameraTargetGuid;
     private string presetDialog;
+    private CastDef castDef;
 
     private bool fromDialogueBucket = false;
     private string dialogueBucketId;
 
-    public AddDialogueChunk(string dialogueGuid, string dialogChunkName, string debugDescription, string cameraTargetGuid, bool usePresetDialog = true, string presetDialog = null) {
+    public AddDialogueChunk(string dialogueGuid, string dialogChunkName, string debugDescription, string cameraTargetGuid, bool usePresetDialog = true, string presetDialog = null, CastDef castDef = null) {
       this.dialogueGuid = dialogueGuid;
       this.dialogChunkName = dialogChunkName;
       this.debugDescription = debugDescription;
       this.cameraTargetGuid = cameraTargetGuid;
       if (usePresetDialog) this.presetDialog = presetDialog;
+      this.castDef = castDef;
     }
 
     public AddDialogueChunk(string dialogueGuid, string dialogChunkName, string debugDescription, string dialogueBucketId, string cameraTargetGuid) {
@@ -52,7 +54,7 @@ namespace MissionControl.Logic {
       if (fromDialogueBucket) {
         dialogueGameLogic =  DialogueFactory.CreateBucketDialogLogic(dialogChunk.gameObject, dialogChunkName, dialogueBucketId);
       } else {
-        dialogueGameLogic =  DialogueFactory.CreateDialogLogic(dialogChunk.gameObject, dialogChunkName, cameraTargetGuid, presetDialog);
+        dialogueGameLogic =  DialogueFactory.CreateDialogLogic(dialogChunk.gameObject, dialogChunkName, cameraTargetGuid, presetDialog, castDef);
       }
 
       dialogueGameLogic.encounterObjectGuid = dialogueGuid;

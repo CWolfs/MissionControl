@@ -14,11 +14,13 @@ namespace MissionControl.Logic {
     private string debugDescription;
     private string chunkGuid;
     private string objectiveGuid;
+    private string regionGameLogicGuid;
 
-    public AddEscapeChunk(LogicState state, string chunkGuid, string objectiveGuid) {
+    public AddEscapeChunk(LogicState state, string chunkGuid, string objectiveGuid, string regionGameLogicGuid = null) {
       this.state = state;
       this.objectiveGuid = objectiveGuid;
       this.chunkGuid = chunkGuid;
+      this.regionGameLogicGuid = (regionGameLogicGuid == null) ? Guid.NewGuid().ToString() : regionGameLogicGuid;
       this.debugDescription = $"Your lance must reach a region on the map. You complete the objective when your entire surviving lance is in the region.By default, the starting status of this chunk is inactive. The intended use is to be the last bit of a ContractObjective. You will have to activate the EscapeChunk manually when the other objectives are complete. Also, since the player lance lives outside of this chunk, there's no way to build it into the prefab. Wire up the player lance in the OccupyRegionObjective.";
     }
 
@@ -27,7 +29,6 @@ namespace MissionControl.Logic {
         Main.Logger.Log($"[AddEscapeChunk] Adding encounter structure");
 
         string playerSpawnerGuid = GetPlayerSpawnGuid();
-        string regionGameLogicGuid = Guid.NewGuid().ToString();
 
         EmptyCustomChunkGameLogic emptyCustomChunk = ChunkFactory.CreateEmptyCustomChunk("Chunk_Escape");
         GameObject escapeChunkGo = emptyCustomChunk.gameObject;
