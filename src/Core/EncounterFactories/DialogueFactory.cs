@@ -1,8 +1,10 @@
 using UnityEngine;
-using System;
+
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 using BattleTech;
+using BattleTech.Framework;
 
 using MissionControl.RuntimeCast;
 
@@ -26,6 +28,17 @@ namespace MissionControl.EncounterFactories {
           MissionControl.Instance.CurrentContractType, MissionControl.Instance.EncounterRulesName);
       }
       dialogueGameLogic.conversationContent = CreateConversationContent(presetDialogue, cameraTargetGuid, castDef);
+
+      return dialogueGameLogic;
+    }
+
+    public static DialogueGameLogic CreateDialogLogic(GameObject parent, string name, DialogueOverride dialogueOverride) {
+      GameObject dialogueGameLogicGo = CreateDialogLogicGameObject(parent, name);
+      Dictionary<string, EncounterObjectGameLogic> encounterObjects = new Dictionary<string, EncounterObjectGameLogic>();
+			MissionControl.Instance.EncounterLayerData.BuildEncounterObjectDictionary(encounterObjects);
+
+      DialogueGameLogic dialogueGameLogic = dialogueGameLogicGo.AddComponent<DialogueGameLogic>();
+      dialogueGameLogic.ApplyContractOverride(dialogueOverride, encounterObjects);
 
       return dialogueGameLogic;
     }

@@ -24,6 +24,8 @@ namespace MissionControl.Logic {
     private bool fromDialogueBucket = false;
     private string dialogueBucketId;
 
+    private DialogueOverride dialogueOverride;
+
     public AddDialogueChunk(string dialogueGuid, string dialogChunkName, string debugDescription, string cameraTargetGuid, bool usePresetDialog = true, string presetDialog = null, CastDef castDef = null) {
       this.dialogueGuid = dialogueGuid;
       this.dialogChunkName = dialogChunkName;
@@ -42,6 +44,13 @@ namespace MissionControl.Logic {
       this.cameraTargetGuid = cameraTargetGuid;
     }
 
+    public AddDialogueChunk(string dialogueGuid, string dialogChunkName, string debugDescription, DialogueOverride dialogueOverride) {
+      this.dialogueGuid = dialogueGuid;
+      this.dialogChunkName = dialogChunkName;
+      this.debugDescription = debugDescription;
+      this.dialogueOverride = dialogueOverride;
+    }
+
     public override void Run(RunPayload payload) {
       Main.Logger.Log($"[AddDialogueChunk] Adding encounter structure");
       EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
@@ -53,6 +62,8 @@ namespace MissionControl.Logic {
 
       if (fromDialogueBucket) {
         dialogueGameLogic =  DialogueFactory.CreateBucketDialogLogic(dialogChunk.gameObject, dialogChunkName, dialogueBucketId);
+      } else if (dialogueOverride != null) {
+        dialogueGameLogic = DialogueFactory.CreateDialogLogic(dialogChunk.gameObject, dialogChunkName, dialogueOverride);
       } else {
         dialogueGameLogic =  DialogueFactory.CreateDialogLogic(dialogChunk.gameObject, dialogChunkName, cameraTargetGuid, presetDialog, castDef);
       }
