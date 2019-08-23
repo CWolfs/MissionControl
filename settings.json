@@ -33,8 +33,8 @@
   "DynamicWithdraw": {
     "Enabled": true,
     "FailUnfinishedObjectives": true,
-    "MinDistanceForZone": 300,
-    "MaxDistanceForZone": 700,
+    "MinDistanceForZone": 50,
+    "MaxDistanceForZone": 400,
     "DisorderlyWithdrawalCompatibility": false,
   }
 }
