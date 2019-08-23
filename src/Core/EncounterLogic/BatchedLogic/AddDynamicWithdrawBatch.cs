@@ -25,7 +25,7 @@ namespace MissionControl.Logic {
     }
 
     private DialogueOverride GetPresetDynamicWithdrawDialogue() {
-      DialogueOverride dialogueOverride = MissionControl.Instance.CurrentContract.Override.dialogueList.First(
+      DialogueOverride dialogueOverride = MissionControl.Instance.CurrentContract.Override.dialogueList.FirstOrDefault(
         dialogue => dialogue.GUID == ChunkLogic.DIALOGUE_DYNAMIC_WITHDRAW_ESCAPE_GUID);
       return dialogueOverride;
     }
