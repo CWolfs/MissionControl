@@ -24,8 +24,19 @@ namespace MissionControl.Result {
 			Team playerTeam = combatState.LocalPlayerTeam;
 
 			Vector3 centerOfTeamMass = GetCenterOfTeamMass(playerTeam);
+			Vector3 possiblePosition = Vector3.zero;
+			AbstractActor actor = combatState.AllActors.First((AbstractActor x) => x.TeamId == playerTeam.GUID);
 
-			regionGo.transform.position = SceneUtils.GetRandomPositionFromTarget(centerOfTeamMass, Main.Settings.DynamicWithdraw.MinDistanceForZone, Main.Settings.DynamicWithdraw.MaxDistanceForZone);
+			while (possiblePosition == Vector3.zero || !PathFinderManager.Instance.IsSpawnValid(possiblePosition, actor.GameRep.transform.position, UnitType.Mech)) {
+				Main.LogDebug($"[PositionRegion] {(possiblePosition == Vector3.zero ? "Finding possible position..." : "Trying again to find a possible position...")}");
+				possiblePosition = SceneUtils.GetRandomPositionFromTarget(centerOfTeamMass, Main.Settings.DynamicWithdraw.MinDistanceForZone, Main.Settings.DynamicWithdraw.MaxDistanceForZone);
+			}
+
+			regionGo.transform.position = possiblePosition;
+
+			// Debug
+			// GameObjextExtensions.CreateDebugPoint("DEBUGCenterofTeamMassGizmo", centerOfTeamMass, Color.red);
+			// GameObjextExtensions.CreateDebugPoint("DEBUGDynamicWithdrawCenter", regionGo.transform.position, Color.blue);
 
 			RegenerateRegion(regionGo);
 		}

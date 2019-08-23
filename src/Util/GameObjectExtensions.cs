@@ -27,4 +27,15 @@ public static class GameObjextExtensions {
 
     return null;
   }
+
+  public static GameObject CreateDebugPoint(string name, Vector3 position, Color colour) {
+    GameObject debugPoint = GameObject.CreatePrimitive(PrimitiveType.Cube);
+    debugPoint.name = name;
+    debugPoint.transform.position = position;
+    debugPoint.transform.localScale = new Vector3(5, 5, 5);
+    Material mat = new Material(Shader.Find("UI/DefaultBackground"));
+    mat.color = colour;
+    debugPoint.GetComponent<Renderer>().sharedMaterial = mat;
+    return debugPoint;
+  }
 }

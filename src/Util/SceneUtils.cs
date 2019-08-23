@@ -1,11 +1,10 @@
 using UnityEngine;
 
+using System;
 using System.Collections.Generic;
 
 using BattleTech;
 using BattleTech.Designed;
-
-using MissionControl;
 
 public static class SceneUtils {
     public static Vector3 GetRandomPositionWithinBounds(Vector3 target, float maxDistance) {
@@ -40,21 +39,22 @@ public static class SceneUtils {
     }
     
     public static Vector3 CalculateCentroidOfActors(List<AbstractActor> actors) {
-      float totalMass = 1;
+      float totalMass = 0;
       Vector3 centroid = Vector3.zero;
 
       for (int i = 0; i < actors.Count; i++) {
         AbstractActor actor = actors[i];
         Vector3 position = actor.GameRep.transform.position;
-        float weight = 1; // placeholder weighting
+
+        float weight = 2; // placeholder weighting - maybe replace by tonnage?
         
-        centroid += position * totalMass;
+        centroid += position * weight;
         totalMass += weight;
       }
 
       centroid /= totalMass;
-      
-      return centroid;
+      return centroid.GetClosestHexLerpedPointOnGrid();
+      // return centroid;
     }
 
     public static List<MapEncounterLayerDataCell> GetMapEncounterLayerDataCellsWithinCollider(GameObject regionGo) {
