@@ -12,7 +12,7 @@ using MissionControl.Utils;
 	This result will end combat
 */
 namespace MissionControl.Result {
-	public class EndCombatResult : EncounterResult {
+	public class EndCombatRetreatResult : EncounterResult {
 		public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
 			Main.LogDebug("[EndCombatResult] Ending combat...");
 			MissionRetreatMessage message = new MissionRetreatMessage(this.IsGoodFaithEffort());

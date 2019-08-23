@@ -18,7 +18,7 @@ namespace MissionControl.Logic {
       encounterRules.EncounterLogic.Add(new DoesChunkExist(state, "Chunk_Escape"));
       encounterRules.EncounterLogic.Add(new AddEscapeChunk(state, ChunkLogic.DYNAMIC_WITHDRAW_CHUNK_GUID, ChunkLogic.DYNAMIC_WITHDRAW_OBJECTIVE_GUID, ChunkLogic.DYNAMIC_WITHDRAW_REGION_GUID));
       encounterRules.EncounterLogic.Add(new ChunkTrigger((MessageCenterMessageType)MessageTypes.ON_CHUNK_ACTIVATED, ChunkLogic.DYNAMIC_WITHDRAW_CHUNK_GUID));
-      encounterRules.EncounterLogic.Add(new EndCombatTrigger(MessageCenterMessageType.OnObjectiveSucceeded, ChunkLogic.DYNAMIC_WITHDRAW_OBJECTIVE_GUID));
+      encounterRules.EncounterLogic.Add(new EndCombatTrigger(MessageCenterMessageType.OnObjectiveSucceeded, ChunkLogic.DYNAMIC_WITHDRAW_OBJECTIVE_GUID, EndCombatTrigger.EndCombatType.RETREAT));
       AddDialogueChunk(encounterRules);
 
       encounterRules.EncounterLogic.Add(new DialogTrigger((MessageCenterMessageType)MessageTypes.ON_CHUNK_ACTIVATED, ChunkLogic.DIALOGUE_DYNAMIC_WITHDRAW_ESCAPE_GUID));

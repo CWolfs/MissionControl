@@ -9,11 +9,14 @@ using MissionControl.Logic;
 
 namespace MissionControl.Trigger {
   public class EndCombatTrigger : EncounterTrigger {
+    public enum EndCombatType { SUCCESS, FAILURE, RETREAT };
+    
     private MessageCenterMessageType onMessage;
     private string objectiveGuid;
     private DesignConditional conditional;
+    private EndCombatType type;
 
-    public EndCombatTrigger(MessageCenterMessageType onMessage, string objectiveGuid) {
+    public EndCombatTrigger(MessageCenterMessageType onMessage, string objectiveGuid, EndCombatType type) {
       this.onMessage = onMessage;
       this.objectiveGuid = objectiveGuid;
       
@@ -38,9 +41,15 @@ namespace MissionControl.Trigger {
       trigger.designName = $"End combat on '{onMessage}'";
       trigger.conditionalbox = new EncounterConditionalBox(conditional);
 
-      EndCombatResult endCombatResult = ScriptableObject.CreateInstance<EndCombatResult>();
+      DesignResult result = null;
+      if (type == EndCombatType.RETREAT) {
+        result = ScriptableObject.CreateInstance<EndCombatRetreatResult>();
+      } else {
+        // Fallback to the only end combat we currently have - Retreat
+        result = ScriptableObject.CreateInstance<EndCombatRetreatResult>(); 
+      }
 
-      trigger.resultList.contentsBox.Add(new EncounterResultBox(endCombatResult));
+      trigger.resultList.contentsBox.Add(new EncounterResultBox(result));
       encounterData.responseGroup.triggerList.Add(trigger);
     }
   }
