@@ -15,6 +15,7 @@ namespace MissionControl.Patches {
         Main.LogDebug("[CombatHUDRetreatEscMenuOnRetreatConfirmedPatch] Sending Dynamic Withdraw Trigger Message");
         ChunkMessage triggerDynamicWithdrawMessage = new ChunkMessage(ChunkLogic.DYNAMIC_WITHDRAW_CHUNK_GUID);
         UnityGameInstance.Instance.Game.Combat.MessageCenter.PublishMessage(triggerDynamicWithdrawMessage);
+        AccessTools.Method(typeof(CombatHUDRetreatEscMenu), "OnRetreatCancelled").Invoke(__instance, null);
         if (!Main.Settings.DynamicWithdraw.DisorderlyWithdrawalCompatibility) return false;
       }
       return true;
