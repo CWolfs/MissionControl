@@ -13,7 +13,7 @@ using MissionControl.Utils;
 	It will also recreate the Mesh to match the terrain for triggering the region correctly
 */
 namespace MissionControl.Result {
-	public class PositionRegion : EncounterResult {
+	public class PositionRegionResult : EncounterResult {
 		public string RegionName { get; set; } = "Region_Escape";
 		private static float REGION_RADIUS = 70.71068f;
 
@@ -64,21 +64,6 @@ namespace MissionControl.Result {
 				MapEncounterLayerDataCell cell = cells[i];
 				cell.AddRegion(regionGameLogic);
 			}
-
-			ContractObjectiveGameLogic[] existingContractObjectives = MissionControl.Instance.EncounterLayerData.GetComponents<ContractObjectiveGameLogic>();
-			existingContractObjectives.ToList().ForEach(obj => {
-				obj.OverrideRequiredByMission(false);
-				obj.objectiveRefList.ForEach(objective => {
-					Main.LogDebug("[PositionRegion] Objective name is: " + objective.encounterObject.name);
-					if (objective.encounterObject.name != "Objective_Escape") {
-						objective.encounterObject.CompleteObjective("Dynamic Withdraw Triggered", CompleteObjectiveType.Failed, true, true);
-					}
-				});
-				ReflectionHelper.SetPrivateField(obj, "currentObjectiveStatus", ObjectiveStatus.Failed);
-			});
-			
-			// debug - this doesn't work for some reason. Need to figure out later why.
-			// regionGameLogic.MarkAssociatedCellsAsDangerous(true);
 		}
 	}
 }

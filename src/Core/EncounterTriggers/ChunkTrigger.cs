@@ -15,12 +15,12 @@ using MissionControl.Logic;
 using MissionControl.Messages;
 
 namespace MissionControl.Trigger {
-  public class ChunkTrigger : EncounterTrigger {
+  public class WithdrawChunkTrigger : EncounterTrigger {
     private MessageCenterMessageType onMessage;
     private string chunkGuid;
     private DesignConditional conditional;
 
-    public ChunkTrigger(MessageCenterMessageType onMessage, string chunkGuid) {
+    public WithdrawChunkTrigger(MessageCenterMessageType onMessage, string chunkGuid) {
       this.onMessage = onMessage;
       this.chunkGuid = chunkGuid;
       ChunkMatchesChunkGuidConditional chunkConditional = ScriptableObject.CreateInstance<ChunkMatchesChunkGuidConditional>();
@@ -28,7 +28,7 @@ namespace MissionControl.Trigger {
       this.conditional = chunkConditional;
     }
 
-    public ChunkTrigger(MessageCenterMessageType onMessage, string chunkGuid, DesignConditional conditional) {
+    public WithdrawChunkTrigger(MessageCenterMessageType onMessage, string chunkGuid, DesignConditional conditional) {
       this.onMessage = onMessage;
       this.chunkGuid = chunkGuid;
       this.conditional = conditional;
@@ -42,7 +42,9 @@ namespace MissionControl.Trigger {
       trigger.designName = $"Initiate chunk on {(MessageTypes)onMessage}";
       trigger.conditionalbox = new EncounterConditionalBox(conditional);
 
-      PositionRegion positionRegionResult = ScriptableObject.CreateInstance<PositionRegion>();
+      PositionRegionResult positionRegionResult = ScriptableObject.CreateInstance<PositionRegionResult>();
+      FailObjectivesResult failObjectivesResult = ScriptableObject.CreateInstance<FailObjectivesResult>();
+      failObjectivesResult.ObjectiveNameWhiteList.Add("Objective_Escape");
 
       HACK_ActivateChunkResult activateChunkResult = ScriptableObject.CreateInstance<HACK_ActivateChunkResult>();
       EncounterChunkRef encounterChunkRef = new EncounterChunkRef();
@@ -50,6 +52,7 @@ namespace MissionControl.Trigger {
       activateChunkResult.encounterChunk = encounterChunkRef;
 
       trigger.resultList.contentsBox.Add(new EncounterResultBox(positionRegionResult));
+      trigger.resultList.contentsBox.Add(new EncounterResultBox(failObjectivesResult));
       trigger.resultList.contentsBox.Add(new EncounterResultBox(activateChunkResult));
       encounterData.responseGroup.triggerList.Add(trigger);
     }

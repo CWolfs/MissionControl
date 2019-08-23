@@ -19,6 +19,7 @@ namespace MissionControl.Trigger {
     public EndCombatTrigger(MessageCenterMessageType onMessage, string objectiveGuid, EndCombatType type) {
       this.onMessage = onMessage;
       this.objectiveGuid = objectiveGuid;
+      this.type = type;
       
       ObjectiveStatusConditional objectiveStatusConditional = ScriptableObject.CreateInstance<ObjectiveStatusConditional>();
       objectiveStatusConditional.objective.EncounterObjectGuid = objectiveGuid;
