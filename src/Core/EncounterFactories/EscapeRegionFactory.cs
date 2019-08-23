@@ -32,10 +32,6 @@ namespace MissionControl.EncounterFactories {
     public static RegionGameLogic CreateEscapeRegion(GameObject parent, string regionGameLogicGuid, string objectiveGuid, string name = null) {
       GameObject escapeRegionGo = CreateEscapeRegionGameObject(parent, name);
 
-      //  Test
-      escapeRegionGo.transform.position = new Vector3(-90, 300, 0);
-      // End Test
-
       MeshCollider collider = escapeRegionGo.AddComponent<MeshCollider>();
       MeshFilter mf = escapeRegionGo.AddComponent<MeshFilter>();
       Mesh mesh = MeshTools.CreateHexigon(REGION_RADIUS);
