@@ -22,9 +22,9 @@ namespace MissionControl.Logic {
     private float minimumDistance = 400f;
     private bool clusterUnits = false;
 
-    private int AttemptCountMax { get; set; } = 5;
+    private int AttemptCountMax { get; set; } = 3;
     private int AttemptCount { get; set; } = 0;
-    private int EdgeCheckMax { get; set; } = 5;
+    private int EdgeCheckMax { get; set; } = 3;
     private int EdgeCheckCount { get; set; } = 0;
 
     private bool inited = false;
@@ -46,8 +46,9 @@ namespace MissionControl.Logic {
       this.clusterUnits = clusterUnits;
     }
 
-    private void Init() {
-      if (!inited) {
+    private void Init(bool forced = false) {
+      if (!inited || forced) {
+        Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Forcing Re-init");
         Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
         validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
 
