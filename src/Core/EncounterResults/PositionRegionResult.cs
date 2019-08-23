@@ -23,7 +23,7 @@ namespace MissionControl.Result {
 			CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
 			Team playerTeam = combatState.LocalPlayerTeam;
 
-			Vector3 centerOfTeamMass = GetCenterOfTeamMass(playerTeam);
+			Vector3 centerOfTeamMass = GetCenterOfTeamMass(playerTeam, true);
 			Vector3 possiblePosition = Vector3.zero;
 			AbstractActor actor = combatState.AllActors.First((AbstractActor x) => x.TeamId == playerTeam.GUID);
 
@@ -31,7 +31,7 @@ namespace MissionControl.Result {
 				Main.LogDebug($"[PositionRegion] {(possiblePosition == Vector3.zero ? "Finding possible position..." : "Trying again to find a possible position...")}");
 				possiblePosition = SceneUtils.GetRandomPositionFromTarget(centerOfTeamMass, Main.Settings.DynamicWithdraw.MinDistanceForZone, Main.Settings.DynamicWithdraw.MaxDistanceForZone);
 			}
-
+			PathFinderManager.Instance.Reset();
 			regionGo.transform.position = possiblePosition;
 
 			// Debug
@@ -41,10 +41,14 @@ namespace MissionControl.Result {
 			RegenerateRegion(regionGo);
 		}
 
-		private Vector3 GetCenterOfTeamMass(Team team) {
+		private Vector3 GetCenterOfTeamMass(Team team, bool avoidEnemies) {
 			CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
 			List<AbstractActor> teamActors = combatState.AllActors.FindAll((AbstractActor x) => x.TeamId == team.GUID);
-			return SceneUtils.CalculateCentroidOfActors(teamActors);
+			List<AbstractActor> avoidTeamActors = null;
+			
+			if (avoidEnemies) avoidTeamActors = combatState.AllEnemies;
+
+			return SceneUtils.CalculateCentroidOfActors(teamActors, avoidTeamActors);
 		}
 
 		private void RegenerateRegion(GameObject regionGo) {

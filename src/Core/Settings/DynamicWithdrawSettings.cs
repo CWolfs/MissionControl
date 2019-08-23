@@ -14,9 +14,9 @@ namespace MissionControl.Config {
 		public bool FailUnfinishedObjectives { get; set; } = true;
 
 		[JsonProperty("MinDistanceForZone")]
-		public int MinDistanceForZone { get; set; } = 300;
+		public int MinDistanceForZone { get; set; } = 50;
 
 		[JsonProperty("MaxDistanceForZone")]
-		public int MaxDistanceForZone { get; set; } = 700;
+		public int MaxDistanceForZone { get; set; } = 400;
 	}
 }

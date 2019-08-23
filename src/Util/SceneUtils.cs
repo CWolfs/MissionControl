@@ -38,7 +38,7 @@ public static class SceneUtils {
       return false;
     }
     
-    public static Vector3 CalculateCentroidOfActors(List<AbstractActor> actors) {
+    public static Vector3 CalculateCentroidOfActors(List<AbstractActor> actors, List<AbstractActor> avoidActors = null) {
       float totalMass = 0;
       Vector3 centroid = Vector3.zero;
 
@@ -52,9 +52,20 @@ public static class SceneUtils {
         totalMass += weight;
       }
 
+      if (avoidActors != null) {
+        for (int i = 0; i < avoidActors.Count; i++) {
+          AbstractActor actor = avoidActors[i];
+          Vector3 position = actor.GameRep.transform.position;
+
+          float weight = 6; // placeholder weighting - maybe replace by tonnage?
+          
+          centroid -= position * weight;
+          totalMass += weight;
+        }
+      }
+
       centroid /= totalMass;
       return centroid.GetClosestHexLerpedPointOnGrid();
-      // return centroid;
     }
 
     public static List<MapEncounterLayerDataCell> GetMapEncounterLayerDataCellsWithinCollider(GameObject regionGo) {
