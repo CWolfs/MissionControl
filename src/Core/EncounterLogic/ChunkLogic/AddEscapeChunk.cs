@@ -9,14 +9,14 @@ using BattleTech.Framework;
 using MissionControl.EncounterFactories;
 
 namespace MissionControl.Logic {
-  public class AddEscapeChunk : ChunkLogic {
+  public class AddWithdrawChunk : ChunkLogic {
     private LogicState state;
     private string debugDescription;
     private string chunkGuid;
     private string objectiveGuid;
     private string regionGameLogicGuid;
 
-    public AddEscapeChunk(LogicState state, string chunkGuid, string objectiveGuid, string regionGameLogicGuid = null) {
+    public AddWithdrawChunk(LogicState state, string chunkGuid, string objectiveGuid, string regionGameLogicGuid = null) {
       this.state = state;
       this.objectiveGuid = objectiveGuid;
       this.chunkGuid = chunkGuid;
@@ -25,18 +25,18 @@ namespace MissionControl.Logic {
     }
 
     public override void Run(RunPayload payload) {
-      if (!state.GetBool("Chunk_Escape_Exists")) {
-        Main.Logger.Log($"[AddEscapeChunk] Adding encounter structure");
+      if (!state.GetBool("Chunk_Withdraw_Exists")) {
+        Main.Logger.Log($"[AddWithdrawChunk] Adding encounter structure");
 
         string playerSpawnerGuid = GetPlayerSpawnGuid();
 
-        EmptyCustomChunkGameLogic emptyCustomChunk = ChunkFactory.CreateEmptyCustomChunk("Chunk_Escape");
+        EmptyCustomChunkGameLogic emptyCustomChunk = ChunkFactory.CreateEmptyCustomChunk("Chunk_Withdraw");
         GameObject escapeChunkGo = emptyCustomChunk.gameObject;
         emptyCustomChunk.encounterObjectGuid = chunkGuid;
         emptyCustomChunk.startingStatus = EncounterObjectStatus.Inactive;
         emptyCustomChunk.notes = debugDescription;
 
-        EscapeRegionFactory.CreateEscapeRegion(escapeChunkGo, regionGameLogicGuid, objectiveGuid);
+        RegionFactory.CreateWithdrawRegion(escapeChunkGo, regionGameLogicGuid, objectiveGuid);
 
         bool useDropship = true;
         OccupyRegionObjective occupyRegionObjective = ObjectiveFactory.CreateOccupyRegionObjective(
@@ -44,16 +44,16 @@ namespace MissionControl.Logic {
           escapeChunkGo,
           playerSpawnerGuid,
           regionGameLogicGuid,
-          "Escape",
+          "Withdraw",
           "Get to the Evac Zone",
           $"with {ProgressFormat.UNITS_OCCUPYING_SO_FAR}/{ProgressFormat.NUMBER_OF_UNITS_TO_OCCUPY} unit(s)",
-          "The objective for the player to escape and complete, or withdraw, the mission",
+          "The objective for the player to withdraw and complete, or withdraw, the mission",
           useDropship
         );
 
         ObjectiveFactory.CreateContractObjective(occupyRegionObjective);
       } else {
-        Main.Logger.Log($"[AddEscapeChunk] 'Escape_Chunk' already exists in map. No need to recreate.");
+        Main.Logger.Log($"[AddWithdrawChunk] 'Chunk_Withdraw' already exists in map. No need to recreate.");
       }
     }
   }

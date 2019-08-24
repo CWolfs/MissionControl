@@ -43,8 +43,10 @@ namespace MissionControl.Trigger {
       trigger.conditionalbox = new EncounterConditionalBox(conditional);
 
       PositionRegionResult positionRegionResult = ScriptableObject.CreateInstance<PositionRegionResult>();
+      positionRegionResult.RegionName = "Region_Withdraw";
+
       FailObjectivesResult failObjectivesResult = ScriptableObject.CreateInstance<FailObjectivesResult>();
-      failObjectivesResult.ObjectiveNameWhiteList.Add("Objective_Escape");
+      failObjectivesResult.ObjectiveNameWhiteList.Add("Objective_Withdraw");
 
       HACK_ActivateChunkResult activateChunkResult = ScriptableObject.CreateInstance<HACK_ActivateChunkResult>();
       EncounterChunkRef encounterChunkRef = new EncounterChunkRef();

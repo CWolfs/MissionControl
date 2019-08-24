@@ -14,7 +14,7 @@ using MissionControl.Utils;
 */
 namespace MissionControl.Result {
 	public class PositionRegionResult : EncounterResult {
-		public string RegionName { get; set; } = "Region_Escape";
+		public string RegionName { get; set; } = "";
 		private static float REGION_RADIUS = 70.71068f;
 
 		public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {

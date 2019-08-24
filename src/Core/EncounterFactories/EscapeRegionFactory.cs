@@ -8,11 +8,11 @@ using BattleTech.Framework;
 using MissionControl.Utils;
 
 namespace MissionControl.EncounterFactories {
-  public class EscapeRegionFactory {
+  public class RegionFactory {
     private static float REGION_RADIUS = 70.71068f;
 
-    private static GameObject CreateEscapeRegionGameObject(GameObject parent, string name = null) {
-      GameObject escapeRegionGo = new GameObject((name == null) ? "Region_Escape" : name);
+    private static GameObject CreateWithdrawRegionGameObject(GameObject parent, string name = null) {
+      GameObject escapeRegionGo = new GameObject((name == null) ? "Region_Withdraw" : name);
       escapeRegionGo.transform.parent = parent.transform;
       escapeRegionGo.transform.localPosition = Vector3.zero;
 
@@ -29,31 +29,31 @@ namespace MissionControl.EncounterFactories {
       return regionPoint;
     }
 
-    public static RegionGameLogic CreateEscapeRegion(GameObject parent, string regionGameLogicGuid, string objectiveGuid, string name = null) {
-      GameObject escapeRegionGo = CreateEscapeRegionGameObject(parent, name);
+    public static RegionGameLogic CreateWithdrawRegion(GameObject parent, string regionGameLogicGuid, string objectiveGuid, string name = null) {
+      GameObject withdrawRegionGo = CreateWithdrawRegionGameObject(parent, name);
 
-      MeshCollider collider = escapeRegionGo.AddComponent<MeshCollider>();
-      MeshFilter mf = escapeRegionGo.AddComponent<MeshFilter>();
+      MeshCollider collider = withdrawRegionGo.AddComponent<MeshCollider>();
+      MeshFilter mf = withdrawRegionGo.AddComponent<MeshFilter>();
       Mesh mesh = MeshTools.CreateHexigon(REGION_RADIUS);
       collider.sharedMesh = mesh;
       mf.mesh = mesh;
 
-      escapeRegionGo.AddComponent<TerrainDataChangeDetection>();
-      escapeRegionGo.AddComponent<SnapToTerrain>();
-      escapeRegionGo.AddComponent<MeshRenderer>();
+      withdrawRegionGo.AddComponent<TerrainDataChangeDetection>();
+      withdrawRegionGo.AddComponent<SnapToTerrain>();
+      withdrawRegionGo.AddComponent<MeshRenderer>();
 
-      RegionGameLogic regionGameLogic = escapeRegionGo.AddComponent<RegionGameLogic>();
+      RegionGameLogic regionGameLogic = withdrawRegionGo.AddComponent<RegionGameLogic>();
       regionGameLogic.encounterObjectGuid = regionGameLogicGuid;
       regionGameLogic.radius = REGION_RADIUS;
       regionGameLogic.regionDefId = "regionDef_EvacZone";
       regionGameLogic.alwaysShowRegionWhenActive = true;
 
-      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint1", new Vector3(0, 0, REGION_RADIUS));                       // North
-      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint2", new Vector3(REGION_RADIUS, 0, REGION_RADIUS / 2f));      // North-East
-      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint3", new Vector3(REGION_RADIUS, 0, -(REGION_RADIUS / 2f)));   // South-East
-      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint4", new Vector3(0, 0, -REGION_RADIUS));                      // South
-      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint5", new Vector3(-REGION_RADIUS, 0, -(REGION_RADIUS / 2f)));  // South-West
-      CreateRegionPointGameObject(escapeRegionGo, $"RegionPoint6", new Vector3(-REGION_RADIUS, 0, REGION_RADIUS / 2f));     // North-West
+      CreateRegionPointGameObject(withdrawRegionGo, $"RegionPoint1", new Vector3(0, 0, REGION_RADIUS));                       // North
+      CreateRegionPointGameObject(withdrawRegionGo, $"RegionPoint2", new Vector3(REGION_RADIUS, 0, REGION_RADIUS / 2f));      // North-East
+      CreateRegionPointGameObject(withdrawRegionGo, $"RegionPoint3", new Vector3(REGION_RADIUS, 0, -(REGION_RADIUS / 2f)));   // South-East
+      CreateRegionPointGameObject(withdrawRegionGo, $"RegionPoint4", new Vector3(0, 0, -REGION_RADIUS));                      // South
+      CreateRegionPointGameObject(withdrawRegionGo, $"RegionPoint5", new Vector3(-REGION_RADIUS, 0, -(REGION_RADIUS / 2f)));  // South-West
+      CreateRegionPointGameObject(withdrawRegionGo, $"RegionPoint6", new Vector3(-REGION_RADIUS, 0, REGION_RADIUS / 2f));     // North-West
 
       return regionGameLogic;
     }
