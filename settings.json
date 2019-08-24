@@ -3,9 +3,12 @@
   "DebugSkirmishMode": true,
   "DisableIfFlashpointContract": true,
   "HotDrop": {
+    "Enable": true,
     "GuardOnHotDrop": false,
     "EvasionPipsOnHotDrop": 4,
     "IncludeEnemies": true,
+    "IncludeAllyTurrets": false,
+    "IncludeEnemyTurrets": false,
   },
   "AdditionalLances": {
     "Enable": true,
