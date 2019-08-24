@@ -85,7 +85,6 @@ namespace MissionControl.Logic {
         spawnPoint.transform.position = spawnPointPosition;
       }
 
-      PathFinderManager.Instance.Reset();
       return invalidLanceSpawns;
     }
 

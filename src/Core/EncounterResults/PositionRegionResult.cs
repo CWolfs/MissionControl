@@ -31,7 +31,6 @@ namespace MissionControl.Result {
 				Main.LogDebug($"[PositionRegion] {(possiblePosition == Vector3.zero ? "Finding possible position..." : "Trying again to find a possible position...")}");
 				possiblePosition = SceneUtils.GetRandomPositionFromTarget(centerOfTeamMass, Main.Settings.DynamicWithdraw.MinDistanceForZone, Main.Settings.DynamicWithdraw.MaxDistanceForZone);
 			}
-			PathFinderManager.Instance.Reset();
 			regionGo.transform.position = possiblePosition;
 
 			// Debug

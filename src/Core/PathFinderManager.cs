@@ -122,7 +122,10 @@ namespace MissionControl {
       try {
         PathNodeGrid pathfinderPathGrid = pathfindingActor.Pathing.CurrentGrid;
         PathNode positionPathNode = pathfinderPathGrid.GetValidPathNodeAt(position, pathfindingActor.Pathing.MaxCost);
-        if (positionPathNode == null) return false;
+        if (positionPathNode == null) {
+          Reset();
+          return false;
+        }
 
         DynamicLongRangePathfinder.PointWithCost pointWithCost = new DynamicLongRangePathfinder.PointWithCost(combatState.HexGrid.GetClosestHexPoint3OnGrid(positionPathNode.Position), 0, (validityPosition - positionPathNode.Position).magnitude) {
 					pathNode = positionPathNode
@@ -138,8 +141,8 @@ namespace MissionControl {
             Main.LogDebug("[IsSpawnValid] Has at least two valid neighbours");
 
             if (HasValidLocalPathfinding(positionPathNode, validityPosition, type)) {
-              
               Main.LogDebug("[IsSpawnValid] Has a valid path");
+              Reset();
               return true;
             } else {
               Main.LogDebug("[IsSpawnValid] Does NOT have a valid path");
@@ -176,6 +179,7 @@ namespace MissionControl {
         Main.LogDebug($"[IsSpawnValid] Array out of bounds detected in the path finding code. Flagging as invalid spawn. Select a new spawn point. {e.Message}, {e.StackTrace}");
       }
 
+      Reset();
       return false;
     }
 

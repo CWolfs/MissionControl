@@ -87,7 +87,6 @@ namespace MissionControl.Logic {
         return false;
       }
       
-      PathFinderManager.Instance.Reset();
       return true;
     }
   }
