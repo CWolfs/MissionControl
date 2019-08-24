@@ -25,6 +25,9 @@ namespace MissionControl.Config {
         [JsonProperty("ExtendedBoundaries")]
         public bool ExtendedBoundaries { get; set; } = true;
 
+        [JsonProperty("DynamicWithdraw")]
+        public DynamicWithdrawSettings DynamicWithdraw { get; set; } = new DynamicWithdrawSettings();
+
         public AdditionalLances ActiveAdditionalLances { get; set; }
 
         [JsonIgnore]

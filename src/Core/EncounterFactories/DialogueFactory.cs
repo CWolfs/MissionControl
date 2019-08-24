@@ -1,8 +1,10 @@
 using UnityEngine;
-using System;
+
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 using BattleTech;
+using BattleTech.Framework;
 
 using MissionControl.RuntimeCast;
 
@@ -17,7 +19,7 @@ namespace MissionControl.EncounterFactories {
       return dialogueGameLogicGo;
     }
     
-    public static DialogueGameLogic CreateDialogLogic(GameObject parent, string name, string cameraTargetGuid, string presetDialogue = null) {
+    public static DialogueGameLogic CreateDialogLogic(GameObject parent, string name, string cameraTargetGuid, string presetDialogue = null, CastDef castDef = null) {
       GameObject dialogueGameLogicGo = CreateDialogLogicGameObject(parent, name);
       
       DialogueGameLogic dialogueGameLogic = dialogueGameLogicGo.AddComponent<DialogueGameLogic>();
@@ -25,7 +27,18 @@ namespace MissionControl.EncounterFactories {
         presetDialogue = DataManager.Instance.GetRandomDialogue("AllyDrop",
           MissionControl.Instance.CurrentContractType, MissionControl.Instance.EncounterRulesName);
       }
-      dialogueGameLogic.conversationContent = CreateConversationContent(presetDialogue, cameraTargetGuid);
+      dialogueGameLogic.conversationContent = CreateConversationContent(presetDialogue, cameraTargetGuid, castDef);
+
+      return dialogueGameLogic;
+    }
+
+    public static DialogueGameLogic CreateDialogLogic(GameObject parent, string name, DialogueOverride dialogueOverride) {
+      GameObject dialogueGameLogicGo = CreateDialogLogicGameObject(parent, name);
+      Dictionary<string, EncounterObjectGameLogic> encounterObjects = new Dictionary<string, EncounterObjectGameLogic>();
+			MissionControl.Instance.EncounterLayerData.BuildEncounterObjectDictionary(encounterObjects);
+
+      DialogueGameLogic dialogueGameLogic = dialogueGameLogicGo.AddComponent<DialogueGameLogic>();
+      dialogueGameLogic.ApplyContractOverride(dialogueOverride, encounterObjects);
 
       return dialogueGameLogic;
     }
@@ -48,8 +61,8 @@ namespace MissionControl.EncounterFactories {
       return dialogueGameLogic;
     }
 
-    public static ConversationContent CreateConversationContent(string presetDialogue, string cameraTargetGuid) {
-      CastDef castDef = RuntimeCastFactory.CreateCast();
+    public static ConversationContent CreateConversationContent(string presetDialogue, string cameraTargetGuid, CastDef cast = null) {
+      CastDef castDef = (cast == null) ? RuntimeCastFactory.CreateCast() : cast;
 
       if (MissionControl.Instance.IsSkirmish()) presetDialogue = Regex.Replace(presetDialogue, "{COMMANDER\\..+}", "Commander");
 
