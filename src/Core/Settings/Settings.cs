@@ -22,6 +22,9 @@ namespace MissionControl.Config {
         [JsonProperty("ExtendedLances")]
         public ExtendedLancesSettings ExtendedLances { get; set; } = new ExtendedLancesSettings();
 
+        [JsonProperty("AiPlayerMechs")]
+        public bool AiPlayerMechs { get; set; } = true;
+
         [JsonProperty("ExtendedBoundaries")]
         public bool ExtendedBoundaries { get; set; } = true;
 
