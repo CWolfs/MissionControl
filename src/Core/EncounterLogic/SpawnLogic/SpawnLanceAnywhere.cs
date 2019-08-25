@@ -47,7 +47,7 @@ namespace MissionControl.Logic {
     private void Init() {
       if (!inited) {
         Main.LogDebug($"[SpawnLanceAnywhere] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
-        validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
+        validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position, $"OrientationTarget.{orientationTarget.name}");
         inited = true;
       }
     }
@@ -62,8 +62,10 @@ namespace MissionControl.Logic {
 
       // Cluster units to make a tigher spread - makes hitting a successful spawn position generally easier
       if (clusterUnits) {
+        Main.LogDebug($"[SpawnLanceAnywhere] Clustering lance '{lance.name}'");
         ClusterLanceMembers(lance);
         clusterUnits = false;
+        Main.LogDebug($"[SpawnLanceAnywhere] Finished clustering lance '{lance.name}'");
       }
 
       if (TotalAttemptCount >= TotalAttemptMax) {
@@ -75,7 +77,7 @@ namespace MissionControl.Logic {
       Main.LogDebug($"[SpawnLanceAnywhere] Attempting selection of random position in bounds. Selected position '{newPosition}'");
       lance.transform.position = newPosition;
 
-      Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position, 2);
+      // Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position, 2);
 
       if (useOrientationTarget) RotateToTarget(lance, orientationTarget);
 

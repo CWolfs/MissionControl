@@ -27,7 +27,7 @@ namespace MissionControl.Result {
 			Vector3 possiblePosition = Vector3.zero;
 			AbstractActor actor = combatState.AllActors.First((AbstractActor x) => x.TeamId == playerTeam.GUID);
 
-			while (possiblePosition == Vector3.zero || !PathFinderManager.Instance.IsSpawnValid(possiblePosition, actor.GameRep.transform.position, UnitType.Mech)) {
+			while (possiblePosition == Vector3.zero || !PathFinderManager.Instance.IsSpawnValid(possiblePosition, actor.GameRep.transform.position, UnitType.Mech, $"PositionRegionResult.{RegionName}")) {
 				Main.LogDebug($"[PositionRegion] {(possiblePosition == Vector3.zero ? "Finding possible position..." : "Trying again to find a possible position...")}");
 				possiblePosition = SceneUtils.GetRandomPositionFromTarget(centerOfTeamMass, Main.Settings.DynamicWithdraw.MinDistanceForZone, Main.Settings.DynamicWithdraw.MaxDistanceForZone);
 			}
