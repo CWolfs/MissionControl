@@ -42,15 +42,21 @@ namespace MissionControl.Logic {
       int factionLanceSize = Main.Settings.ExtendedLances.GetFactionLanceSize(teamOverride.faction.ToString());
 
       foreach (LanceOverride lanceOverride in lanceOverrides) {
+        bool isManualLance = lanceOverride.lanceDefId == "Manual";
         int numberOfUnitsInLance = lanceOverride.unitSpawnPointOverrideList.Count;
+
+        if (isManualLance && numberOfUnitsInLance <= 0) {
+          Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected a lance that is set to manual but no units were manually specified. This is a bad contract json setup. Fix it! Ignoring for Extended Lances");
+          continue;
+        }
 
         if ((numberOfUnitsInLance < factionLanceSize) && numberOfUnitsInLance > 0) {
           // This is usually from a 'tagged' lance being selected which has less lance members than the faction lance size
           if (Main.Settings.ExtendedLances.Autofill ) {
-            Main.LogDebug("[AddExtraLanceSpawnPoints] Populated lance has fewer units than the faction requires. Autofilling the missing units");
+            Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Populated lance '{lanceOverride.name}' has fewer units than the faction requires. Autofilling the missing units");
             AddNewLanceMembers(contractOverride, teamOverride, lanceOverride, numberOfUnitsInLance, factionLanceSize);
           } else {
-            Main.LogDebug("[AddExtraLanceSpawnPoints] Populated lance has fewer units than the faction requires. Allowing as a valid setup as 'Autofill' is false");
+            Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Populated lance '{lanceOverride.name}' has fewer units than the faction requires. Allowing as a valid setup as 'Autofill' is false");
           }
         }
 
@@ -60,15 +66,18 @@ namespace MissionControl.Logic {
           numberOfUnitsInLance = lanceOverride.unitSpawnPointOverrideList.Count;
 
           if (numberOfUnitsInLance > unitSpawnPoints.Count) {
-            Main.Logger.Log($"[AddExtraLanceSpawnPoints] Detected lance that has more units than vanilla supports. Creating new lance spawns to accommodate.");
-            for (int i = 4; i < numberOfUnitsInLance; i++) {
+            Main.Logger.Log($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected lance '{lanceOverride.name}' has more units than lance spawn points. Creating new lance spawns to accommodate.");
+            for (int i = unitSpawnPoints.Count; i < numberOfUnitsInLance; i++) {
               Vector3 randomLanceSpawn = unitSpawnPoints.GetRandom().transform.localPosition;
-              Vector3 spawnPositon = new Vector3(randomLanceSpawn.x + 24f, randomLanceSpawn.y, randomLanceSpawn.z + 24f);
+              Vector3 spawnPositon = SceneUtils.GetRandomPositionFromTarget(randomLanceSpawn, 24, 100);
+              spawnPositon = spawnPositon.GetClosestHexLerpedPointOnGrid();
+                            
+              Main.Logger.Log($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Creating lance '{lanceOverride.name}' spawn point 'UnitSpawnPoint{i + 1}'");
               LanceSpawnerFactory.CreateUnitSpawnPoint(lanceSpawner.gameObject, $"UnitSpawnPoint{i + 1}", spawnPositon, lanceOverride.unitSpawnPointOverrideList[i].unitSpawnPoint.EncounterObjectGuid);
             }
           }
         } else {
-          Main.Logger.LogWarning($"[AddExtraLanceSpawnPoints] Spawner is null for {lanceOverride.lanceSpawner.EncounterObjectGuid}. This is probably data from a restarted contract that hasn't been cleared up. It can be safely ignored.");
+          Main.Logger.LogWarning($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Spawner is null for {lanceOverride.lanceSpawner.EncounterObjectGuid}. This is probably data from a restarted contract that hasn't been cleared up. It can be safely ignored.");
         }
       }
     }
