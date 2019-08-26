@@ -36,7 +36,9 @@ namespace MissionControl.Config {
 
 				ExtendedLance lance = factions.FirstOrDefault(extendedLance => extendedLance.Faction == factionKey);
 
-				if (lance != null) return lanceOverride.lanceDifficultyAdjustment + lance.DifficultyMod;
+				if (lance != null) {
+					return lanceOverride.lanceDifficultyAdjustment + lance.DifficultyMod;
+				}
 			}
 
 			return lanceOverride.lanceDifficultyAdjustment;
