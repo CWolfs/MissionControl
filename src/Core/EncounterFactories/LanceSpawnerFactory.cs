@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.Designed;
 
+using MissionControl.LogicComponents.Spawners;
+
 namespace MissionControl.EncounterFactories {
   public class LanceSpawnerFactory {
     public static LanceSpawnerGameLogic CreateLanceSpawner(GameObject parent, string name, string guid, string teamDefinitionGuid, bool spawnUnitsOnActivation,
@@ -16,6 +18,32 @@ namespace MissionControl.EncounterFactories {
       lanceSpawnerGo.transform.localPosition = new Vector3(-674, 300, -280);
 
       LanceSpawnerGameLogic lanceSpawnerGameLogic = lanceSpawnerGo.AddComponent<LanceSpawnerGameLogic>();
+      lanceSpawnerGameLogic.encounterObjectGuid = guid;
+      lanceSpawnerGameLogic.teamDefinitionGuid = teamDefinitionGuid;
+      lanceSpawnerGameLogic.spawnMethod = spawnMethod;
+      lanceSpawnerGameLogic.spawnUnitsOnActivation = spawnUnitsOnActivation;
+
+      float x = 0;
+      float z = 0;
+      for (int i = 0; i < unitGuids.Count; i++) {
+        CreateUnitSpawnPoint(lanceSpawnerGo, $"UnitSpawnPoint{i + 1}", new Vector3(x, 0, z), unitGuids[i]);
+        x += 24;
+        z += 24;
+      }
+
+      lanceSpawnerGo.AddComponent<SnapToTerrain>();
+
+      return lanceSpawnerGameLogic;
+    }
+
+    public static PlayerLanceAiSpawnerGameLogic CreatePlayerAiLanceSpawner(GameObject parent, string name, string guid, string teamDefinitionGuid, bool spawnUnitsOnActivation,
+      SpawnUnitMethodType spawnMethod, List<string> unitGuids) {
+
+      GameObject lanceSpawnerGo = new GameObject(name);
+      lanceSpawnerGo.transform.parent = parent.transform;
+      lanceSpawnerGo.transform.localPosition = new Vector3(-674, 300, -280);
+
+      PlayerLanceAiSpawnerGameLogic lanceSpawnerGameLogic = lanceSpawnerGo.AddComponent<PlayerLanceAiSpawnerGameLogic>();
       lanceSpawnerGameLogic.encounterObjectGuid = guid;
       lanceSpawnerGameLogic.teamDefinitionGuid = teamDefinitionGuid;
       lanceSpawnerGameLogic.spawnMethod = spawnMethod;
