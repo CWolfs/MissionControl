@@ -41,6 +41,7 @@ namespace MissionControl.Rules {
     }
 
     public void ActivatePostFeatures() {
+      if (Main.Settings.AiPlayerMechs && MissionControl.Instance.IsDroppingAiControlledPlayerLance()) new AddAiPlayerMechsBatch(this);
       if (Main.Settings.ExtendedLances.Enable) new AddExtraLanceSpawnsForExtendedLancesBatch(this);
       if (Main.Settings.DynamicWithdraw.Enable && !MissionControl.Instance.IsSkirmish()) new AddDynamicWithdrawBatch(this);
     }

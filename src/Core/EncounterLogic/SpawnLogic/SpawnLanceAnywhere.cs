@@ -113,7 +113,7 @@ namespace MissionControl.Logic {
       this.EncounterRules.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
 
       if (lance == null) {
-        Main.Logger.LogError("[SpawnLanceAroundTarget] Object references are null");
+        Main.Logger.LogError("[SpawnLanceAnywhere] Object references are null");
       }
     }
   }

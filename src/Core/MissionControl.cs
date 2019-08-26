@@ -257,5 +257,11 @@ namespace MissionControl {
       if (!this.CurrentContract.IsFlashpointContract) return true;
       return this.CurrentContract.IsFlashpointContract && !Main.Settings.AdditionalLanceSettings.DisableIfFlashpointContract;
     }
+
+    public bool IsDroppingAiControlledPlayerLance() {
+      SpawnableUnit[] units = CurrentContract.Lances.GetLanceUnits(EncounterRules.EMPLOYER_TEAM_ID);
+      if (units.Length > 0) return true;
+      return false;
+    }
   }
 }

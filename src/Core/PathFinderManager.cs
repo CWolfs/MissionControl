@@ -136,10 +136,10 @@ namespace MissionControl {
         if (HasPathImpassableOrDeepWaterTiles(combatState, path)) return false;
 
         if (path != null && path.Count > 2 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
-          Main.LogDebug($"'");
-          Main.LogDebug($"-------- [PathFinderManager.IsSpawnValid] [{identifier}] --------'");
-          Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Current position is: '{position}'");
-          Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Path count is: '{path.Count}', last point is '{path[path.Count - 1]}', validity position is '{validityPosition}'");
+          Main.LogDebug($"");
+          Main.LogDebug($"-------- [PathFinderManager.IsSpawnValid] [{identifier}] --------");
+          Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Path count is: '{path.Count}', Current position is: '{position}'");
+          Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Last point is '{path[path.Count - 1]}', Validity position is '{validityPosition}'");
           Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Distance from last path to valdity position is: '{(path[path.Count - 1].DistanceFlat(validityPosition))}' and is it within zone radius? '{(path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)}'");
           Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Has valid long range path finding");
           if (HasValidNeighbours(positionPathNode, validityPosition, type)) {
@@ -148,8 +148,8 @@ namespace MissionControl {
             if (HasValidLocalPathfinding(positionPathNode, validityPosition, type)) {
               Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Has a valid path");
               Reset();
-              Main.LogDebug($"-------- END [PathFinderManager.IsSpawnValid] [{identifier}] END --------'");
-              Main.LogDebug($"'");
+              Main.LogDebug($"-------- END [PathFinderManager.IsSpawnValid] [{identifier}] END --------");
+              Main.LogDebug($"");
               return true;
             } else {
               Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Does NOT have a valid path");
@@ -186,8 +186,8 @@ namespace MissionControl {
         Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Array out of bounds detected in the path finding code. Flagging as invalid spawn. Select a new spawn point. {e.Message}, {e.StackTrace}");
       }
 
-      Main.LogDebug($"-------- END [PathFinderManager.IsSpawnValid] [{identifier}] END --------'");
-      Main.LogDebug($"'");
+      Main.LogDebug($"-------- END [PathFinderManager.IsSpawnValid] [{identifier}] END --------");
+      Main.LogDebug($"");
       Reset();
       return false;
     }
