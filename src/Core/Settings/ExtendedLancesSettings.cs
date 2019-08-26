@@ -1,6 +1,8 @@
 using System.Linq;
 using System.Collections.Generic;
 
+using BattleTech.Framework;
+
 using Newtonsoft.Json;
 
 namespace MissionControl.Config {
@@ -27,19 +29,17 @@ namespace MissionControl.Config {
 			return 4;
 		}
 
-		// public int GetFactionLanceDifficulty(string factionKey) {
-			/*
+		public int GetFactionLanceDifficulty(string factionKey, LanceOverride lanceOverride) {
 			foreach (KeyValuePair<string, List<ExtendedLance>> lanceSetPair in LanceSizes) {
 				int lanceSize = int.Parse(lanceSetPair.Key);
 				List<ExtendedLance> factions = lanceSetPair.Value;
 
 				ExtendedLance lance = factions.FirstOrDefault(extendedLance => extendedLance.Faction == factionKey);
 
-				if (lance != null) return lanceSize;
+				if (lance != null) return lanceOverride.lanceDifficultyAdjustment + lance.DifficultyMod;
 			}
 
-			return 4;
-			*/
-		// }
+			return lanceOverride.lanceDifficultyAdjustment;
+		}
 	}
 }

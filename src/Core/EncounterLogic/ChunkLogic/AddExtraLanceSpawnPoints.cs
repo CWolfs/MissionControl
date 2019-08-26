@@ -50,6 +50,8 @@ namespace MissionControl.Logic {
           continue;
         }
 
+        ApplyDifficultyMod(teamOverride, lanceOverride);
+
         if ((numberOfUnitsInLance < factionLanceSize) && numberOfUnitsInLance > 0) {
           // This is usually from a 'tagged' lance being selected which has less lance members than the faction lance size
           if (Main.Settings.ExtendedLances.Autofill ) {
@@ -92,6 +94,12 @@ namespace MissionControl.Logic {
         unitSpawnPointOverride.GenerateUnit(MetadataDatabase.Instance, UnityGameInstance.Instance.Game.DataManager, lanceOverride.selectedLanceDifficulty, lanceOverride.name, null, i, DataManager.Instance.GetSimGameCurrentDate(), companyTags);
         lanceOverride.unitSpawnPointOverrideList.Add(unitSpawnPointOverride);
       }
+    }
+
+    private void ApplyDifficultyMod(TeamOverride teamOverride, LanceOverride lanceOverride) {
+      Faction faction = teamOverride.faction;
+      int updatedLanceDifficultyAdjustment = Main.Settings.ExtendedLances.GetFactionLanceDifficulty(faction.ToString(), lanceOverride);
+      lanceOverride.lanceDifficultyAdjustment = updatedLanceDifficultyAdjustment;
     }
   }
 }
