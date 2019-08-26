@@ -18,7 +18,7 @@ namespace MissionControl.Logic {
         "Spawns a Ai controlled player lance"));
 
       encounterRules.EncounterLogic.Add(new SpawnLanceAroundTarget(encounterRules, spawnerName, "SpawnerPlayerLance",
-         SpawnLogic.LookDirection.TOWARDS_TARGET, 50f, 150f, true));
+         SpawnLogic.LookDirection.AWAY_FROM_TARGET, 50f, 150f, true));
 
       encounterRules.ObjectReferenceQueue.Add(spawnerName);
     }
