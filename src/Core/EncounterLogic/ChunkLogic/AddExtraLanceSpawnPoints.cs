@@ -6,15 +6,11 @@ using System.Collections.Generic;
 
 using BattleTech;
 using BattleTech.Data;
-using BattleTech.Designed;
 using BattleTech.Framework;
 
 using HBS.Collections;
 
-using MissionControl.Logic;
-using MissionControl.Rules;
 using MissionControl.EncounterFactories;
-using MissionControl.Utils;
 
 namespace MissionControl.Logic {
   public class AddExtraLanceSpawnPoints : ChunkLogic {
@@ -49,6 +45,8 @@ namespace MissionControl.Logic {
           Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected a lance that is set to manual but no units were manually specified. This is a bad contract json setup. Fix it! Ignoring for Extended Lances");
           continue;
         }
+
+        ApplyDifficultyMod(teamOverride, lanceOverride);
 
         if ((numberOfUnitsInLance < factionLanceSize) && numberOfUnitsInLance > 0) {
           // This is usually from a 'tagged' lance being selected which has less lance members than the faction lance size
@@ -91,6 +89,17 @@ namespace MissionControl.Logic {
 
         unitSpawnPointOverride.GenerateUnit(MetadataDatabase.Instance, UnityGameInstance.Instance.Game.DataManager, lanceOverride.selectedLanceDifficulty, lanceOverride.name, null, i, DataManager.Instance.GetSimGameCurrentDate(), companyTags);
         lanceOverride.unitSpawnPointOverrideList.Add(unitSpawnPointOverride);
+      }
+    }
+
+    private void ApplyDifficultyMod(TeamOverride teamOverride, LanceOverride lanceOverride) {
+      Faction faction = teamOverride.faction;
+      int previousAjustedDifficulty = lanceOverride.lanceDifficultyAdjustment;
+      int updatedLanceDifficultyAdjustment = Main.Settings.ExtendedLances.GetFactionLanceDifficulty(faction.ToString(), lanceOverride);
+      
+      if (previousAjustedDifficulty != updatedLanceDifficultyAdjustment) {
+        Main.Logger.Log($"[AddExtraLanceSpawnPoints.ApplyDifficultyMod] [Faction:{teamOverride.faction}] Changing lance '{lanceOverride.name}' adjusted difficulty from '{lanceOverride.lanceDifficultyAdjustment}' to '{updatedLanceDifficultyAdjustment}'");
+        lanceOverride.lanceDifficultyAdjustment = updatedLanceDifficultyAdjustment;
       }
     }
   }
