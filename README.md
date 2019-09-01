@@ -21,12 +21,13 @@ This works only for the generic contract types (e.g. Battle, Rescue etc) as it w
 
 * Additional Lances (AI Controlled Enemy & Allies) | [Documentation](./docs/additional-lances.md)
 * Random Lance Spawns (Appropriate for Contract Type)
+* Bigger Maps (sometimes up to 4 times as big!)
 * Extended Lances (Clan Stars [5 units], Level-II Lances [6 units]) | [Documentation](./docs/extended-lances.md)
+* Dynamic Withdraw
 * New AI Behaviours
 * Single Player Skirmish with Quick Skirmish (Bypass Skirmish Menus)
 * Encounter Rulesets (New Game Logic for Contract Types) | [Documentation](./docs/encounter-rulesets.md)
 * New Combat Dialogue
-* (Future) Modder Injected AI Behaviour Support
 
 ## Important Notes 
 
@@ -44,11 +45,19 @@ For full configuration options, see the [Additional Lances](./docs/additional-la
 
 Depending on the contract type, the lance spawns will change every playthrough. The spawning uses contract type specific logic to suitably place the lances. There are no configuration options currently available for this as these come from the encounter type rulesets that are created. Which things are randomised in the game is determined by the `Encounter Ruleset` which is run for that contract type.
 
+### Bigger Maps
+
+Increase the size of the encounter to the maximum available map size. This can sometimes be as much as around four times the size!
+
 ### Extended Lances
 
 Increase the sizes of lances where it makes sense. For the vanilla game this does nothing. If another mod is using Mission Control, then they can set Clan stars (5 mechs) or Comstar Demi-lances / Reinforced lances (6 mechs).
 
 This works for both vanilla spawn points for contract types and spawns created by Mission Control.
+
+### Dynamic Withdraw
+
+When being forced to withdraw and extraction zone appears for you. You must extract there before you can end the mission. Plan your escape accordingly.
 
 ### Ally Combat Dialogue
 
@@ -74,13 +83,9 @@ Mission Control allows other modders to add their own contract type rulesets to 
 
 For full information on contract type rulesets, see the [Encounter Rulesets](./docs/encounter-rulesets.md) page.
 
-### Modder Injected AI
-
-In future updates Mission Control will provide an easy to use method to let other modders create AI and then inject it into the game.
-
 ## Roadmap
 
-For a glimpse into the future of Mission Control check out the milestones, for example [v0.3.0](https://github.com/CWolfs/MissionControl/milestone/3), and the [issues section](https://github.com/CWolfs/MissionControl/issues).
+For a glimpse into the future of Mission Control check out the milestones, for example [v0.4.0](https://github.com/CWolfs/MissionControl/milestone/6), and the [issues section](https://github.com/CWolfs/MissionControl/issues).
 
 ## Feedback
 

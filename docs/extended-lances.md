@@ -9,8 +9,23 @@ Extended lances can change the lance size of vanilla lance spawns and ones creat
   "Enable": true,
   "Autofill": true,
   "LanceSizes": {
-    "5": ["Davion"],
-    "6": ["Comstar"],
+    "5": [
+      {
+        "Faction": "AuriganRestoration",
+        "DifficultyMod": -1
+      },
+      {
+        "Faction": "TaurianConcordat",
+        "DifficultyMod": -2
+      }
+    ],
+    "6": [
+      {
+      "Faction": "Comstar",
+      "DifficultyMod": -4
+      }
+    ],
+  }
 }
 ```
 
@@ -21,7 +36,13 @@ Extended lances can change the lance size of vanilla lance spawns and ones creat
 | `LanceSizes` | Optional | N/A | Sets which faction should have higher lance sizes. By default all faction lances are 4 units like vanilla. |
 
 ### Lance Sizes
+| Path | Required? | Default | Example | Details |
+| ---- | --------- | ------- | ------- | ------- |
+| Any string number above 4 (e.g. "5") | Optional | N/A | See Table Below | -
+
+### Lance Sizes Data
 
 | Path | Required? | Default | Example | Details |
 | ---- | --------- | ------- | ------- | ------- |
-| Any string number above 4 (e.g. "5") | Optional | N/A | `"5": ["Davion"]` | The faction short name is used to identify which faction should have the set number of units
+| `Faction` | true | true | The faction short name is used to identify which faction should have the set number of units |
+| `DifficultyMod` | Optional | true | The difficulty modifier changes the lance selection criteria so a lower, or higher, difficulty lance is selected |
