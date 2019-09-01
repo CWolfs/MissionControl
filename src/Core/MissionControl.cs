@@ -44,6 +44,7 @@ namespace MissionControl {
 
     private void LoadEncounterRules() {
       AddEncounter("AmbushConvoy", typeof(AmbushConvoyEncounterRules));
+      
       AddEncounter("Assassinate", typeof(AssassinateEncounterRules));
 
       AddEncounter("CaptureBase", typeof(CaptureBaseJointAssaultEncounterRules));
@@ -57,7 +58,12 @@ namespace MissionControl {
       AddEncounter("DestroyBase", typeof(DestroyBaseAidAssaultEncounterRules));
       
       AddEncounter("Rescue", typeof(RescueEncounterRules));
+      
       AddEncounter("SimpleBattle", typeof(SimpleBattleEncounterRules));
+
+      AddEncounter("FireMission", typeof(FireMissionEncounterRules));
+
+      AddEncounter("AttackDefend", typeof(AttackDefendEncounterRules));
     
       // Skirmish
       if (Main.Settings.DebugSkirmishMode) AddEncounter("ArenaSkirmish", typeof(DebugArenaSkirmishEncounterRules));
@@ -250,6 +256,16 @@ namespace MissionControl {
     public bool AllowMissionControl() {
       if (!this.CurrentContract.IsFlashpointContract) return true;
       return this.CurrentContract.IsFlashpointContract && !Main.Settings.AdditionalLanceSettings.DisableIfFlashpointContract;
+    }
+
+    public bool IsDroppingCustomControlledPlayerLance() {
+      SpawnableUnit[] units = CurrentContract.Lances.GetLanceUnits(EncounterRules.EMPLOYER_TEAM_ID);
+      if (units.Length > 0) return true;
+
+      units = CurrentContract.Lances.GetLanceUnits(EncounterRules.PLAYER_TEAM_ID);
+      if (units.Length > 4) return true;
+
+      return false;
     }
   }
 }

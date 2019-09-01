@@ -22,6 +22,15 @@ namespace MissionControl.Config {
         [JsonProperty("ExtendedLances")]
         public ExtendedLancesSettings ExtendedLances { get; set; } = new ExtendedLancesSettings();
 
+        [JsonProperty("AdditionalPlayerMechs")]
+        public bool AdditionalPlayerMechs { get; set; } = true;
+
+        [JsonProperty("ExtendedBoundaries")]
+        public bool ExtendedBoundaries { get; set; } = true;
+
+        [JsonProperty("DynamicWithdraw")]
+        public DynamicWithdrawSettings DynamicWithdraw { get; set; } = new DynamicWithdrawSettings();
+
         public AdditionalLances ActiveAdditionalLances { get; set; }
 
         [JsonIgnore]

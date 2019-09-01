@@ -13,7 +13,6 @@ namespace MissionControl.Logic {
   public abstract class SpawnLanceLogic : SpawnLogic {
     protected float minDistanceToSpawnFromInvalidSpawn = 10f;
 
-
     public SpawnLanceLogic(EncounterRules encounterRules) : base(encounterRules) { }
 
     protected void CorrectLanceMemberSpawns(GameObject lance) {
@@ -59,24 +58,25 @@ namespace MissionControl.Logic {
       Vector3 checkTargetPosition = checkTarget.GetClosestHexLerpedPointOnGrid();
 
       foreach (GameObject spawnPoint in spawnPoints) {
-        Vector3 spawnPointPosition = spawnPoint.transform.position.GetClosestHexLerpedPointOnGrid();
-        Main.LogDebug($"[GetInvalidLanceMemberSpawns] Spawn point's closest hex lerped point on grid for '{spawnPoint.name}' is '{spawnPointPosition}'");
+        // Vector3 spawnPointPosition = spawnPoint.transform.position.GetClosestHexLerpedPointOnGrid();
+        Vector3 spawnPointPosition = GetClosestValidPathFindingHex(spawnPoint.transform.position, $"GetInvalidLanceMemberSpawns.{spawnPoint.name}", IsLancePlayerLance(lance.name) ? checkTargetPosition : Vector3.zero, 2);
+        Main.LogDebug($"[SpawnLanceLogic.GetInvalidLanceMemberSpawns] Spawn point's closest hex lerped point on grid for '{spawnPoint.name}' is '{spawnPointPosition}'");
         
         if (!encounterLayerData.IsInEncounterBounds(spawnPointPosition)) {
-          Main.LogDebugWarning("[GetInvalidLanceMemberSpawns] Lance member spawn is outside of the boundary. Select a new lance spawn point.");
+          Main.LogDebugWarning("[SpawnLanceLogic.GetInvalidLanceMemberSpawns] Lance member spawn is outside of the boundary. Select a new lance spawn point.");
           invalidLanceSpawns.Add(spawnPoint);
           continue; 
         }
 
         // Ensure the lance member's spawn's closest valid point isn't on another spawn point's closest valid point
         if (IsPointTooCloseToOtherPointsClosestPointOnGrid(spawnPointPosition, spawnPoints.Where(sp => spawnPoint.name != sp.name).ToList())) {
-          Main.LogDebugWarning("[GetInvalidLanceMemberSpawns] Lance member spawn is too close to the other spawns when snapped to the grid");
+          Main.LogDebugWarning("[SpawnLanceLogic.GetInvalidLanceMemberSpawns] Lance member spawn is too close to the other spawns when snapped to the grid");
           invalidLanceSpawns.Add(spawnPoint);
           continue;
         }
 
-        if (!PathFinderManager.Instance.IsSpawnValid(spawnPointPosition, checkTargetPosition, UnitType.Mech)) {
-          Main.LogDebugWarning($"[GetInvalidLanceMemberSpawns] Lance member spawn '{spawnPoint.name}' path to check target '{checkTarget}' is blocked. Select a new lance spawn point");
+        if (!PathFinderManager.Instance.IsSpawnValid(spawnPointPosition, checkTargetPosition, UnitType.Mech, spawnPoint.name)) {
+          Main.LogDebugWarning($"[SpawnLanceLogic.GetInvalidLanceMemberSpawns] Lance member spawn '{spawnPoint.name}' path to check target '{checkTarget}' is blocked. Select a new lance spawn point");
           invalidLanceSpawns.Add(spawnPoint);
           continue;
         }
@@ -84,7 +84,6 @@ namespace MissionControl.Logic {
         spawnPoint.transform.position = spawnPointPosition;
       }
 
-      PathFinderManager.Instance.Reset();
       return invalidLanceSpawns;
     }
 
@@ -107,6 +106,13 @@ namespace MissionControl.Logic {
         if (distanceBetweenPoints < minDistanceToSpawnFromInvalidSpawn) return true;
       }
       return false;
-    }    
+    }
+
+    public bool IsLancePlayerLance(string lanceKey) {
+      if (lanceKey.Contains("Player")) {
+        return true;
+      }
+      return false;
+    }
   }
 }

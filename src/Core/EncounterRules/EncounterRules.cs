@@ -37,11 +37,13 @@ namespace MissionControl.Rules {
     }
 
     public void ActivatePreFeatures() {
-
+      if (Main.Settings.ExtendedBoundaries) MaximiseEncounterBoundary();
     }
 
     public void ActivatePostFeatures() {
+      if (Main.Settings.AdditionalPlayerMechs && MissionControl.Instance.IsDroppingCustomControlledPlayerLance()) new AddCustomPlayerMechsBatch(this);
       if (Main.Settings.ExtendedLances.Enable) new AddExtraLanceSpawnsForExtendedLancesBatch(this);
+      if (Main.Settings.DynamicWithdraw.Enable && !MissionControl.Instance.IsSkirmish()) new AddDynamicWithdrawBatch(this);
     }
 
     public abstract void Build();
@@ -167,7 +169,7 @@ namespace MissionControl.Rules {
       return plot.name;
     }
 
-    public string GetPlayerLanceChunkName() {
+    public static string GetPlayerLanceChunkName() {
       string type = Enum.GetName(typeof(ContractType), MissionControl.Instance.CurrentContract.ContractType);
       
       if (type == "ArenaSkirmish") {
@@ -179,12 +181,12 @@ namespace MissionControl.Rules {
       return "Chunk_PlayerLance";
     }
 
-    public string GetPlayerLanceSpawnerName() {
+    public static string GetPlayerLanceSpawnerName() {
       string type = Enum.GetName(typeof(ContractType), MissionControl.Instance.CurrentContract.ContractType);
       
       if (type == "ArenaSkirmish") {
         return "Player1LanceSpawner";
-      } else if (type == "Story_1B_Retreat") {
+      } else if ((type == "Story_1B_Retreat") || (type == "FireMission") || (type == "AttackDefend")) {
         return "PlayerLanceSpawner";
       }
 
@@ -223,6 +225,12 @@ namespace MissionControl.Rules {
           new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, minAllyDistance, maxAllyDistance);
         }
       }
+    }
+
+    protected void MaximiseEncounterBoundary() {
+      Main.Logger.Log($"[{this.GetType().Name}] Maximising Boundary Size");
+
+      this.EncounterLogic.Add(new MaximiseBoundarySize(this));
     }
   }
 }

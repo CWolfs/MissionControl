@@ -22,9 +22,9 @@ namespace MissionControl.Logic {
     private float minimumDistance = 400f;
     private bool clusterUnits = false;
 
-    private int AttemptCountMax { get; set; } = 10;
+    private int AttemptCountMax { get; set; } = 3;
     private int AttemptCount { get; set; } = 0;
-    private int EdgeCheckMax { get; set; } = 10;
+    private int EdgeCheckMax { get; set; } = 3;
     private int EdgeCheckCount { get; set; } = 0;
 
     private bool inited = false;
@@ -46,15 +46,19 @@ namespace MissionControl.Logic {
       this.clusterUnits = clusterUnits;
     }
 
-    private void Init() {
-      if (!inited) {
+    private void Init(bool forced = false) {
+      if (!inited || forced) {
+        Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Forcing Re-init");
         Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
-        validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position);
+        validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position, $"OrientationTarget.{orientationTarget.name}");
 
         // Cluster units to make a tigher spread - makes hitting a successful spawn position generally easier
+        // TODO: Investigate if this causes bad grid placement since there's no 'IsSpawnValid' check in this call stack
         if (clusterUnits) {
+          Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Clustering lance '{lance.name}'");
           ClusterLanceMembers(lance);
           clusterUnits = false;
+          Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Finished clustering lance '{lance.name}'");
         }
 
         inited = true;
@@ -64,7 +68,7 @@ namespace MissionControl.Logic {
     public override void Run(RunPayload payload) {
       GetObjectReferences();
       SaveSpawnPositions(lance);
-      Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Attemping for '{lance.name}'");
+      Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Attemping for '{lance.name}'. Attempt: '{AttemptCount}/{AttemptCountMax}' and Edge Check: '{EdgeCheckCount}/{EdgeCheckMax}'");
       AttemptCount++;
 
       Init();
@@ -81,7 +85,7 @@ namespace MissionControl.Logic {
 
       Vector3 lancePosition = lance.transform.position.GetClosestHexLerpedPointOnGrid();
       Vector3 newSpawnPosition = new Vector3(xzEdge.Position.x, lancePosition.y, xzEdge.Position.z);
-      newSpawnPosition = GetClosestValidPathFindingHex(newSpawnPosition, 2);
+      newSpawnPosition = GetClosestValidPathFindingHex(newSpawnPosition, $"NewSpawnPosition.{lance.name}", IsLancePlayerLance(lanceKey) ? orientationTarget.transform.position : Vector3.zero, 2);
       lance.transform.position = newSpawnPosition;
       
       Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Attempting to spawn lance at point on lerped grid '{newSpawnPosition}'");
@@ -124,8 +128,8 @@ namespace MissionControl.Logic {
     }
 
     private void SpawnLanceMember(GameObject spawnPoint, Vector3 anchorPoint) {
-      Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Fitting member '{spawnPoint.name}' at anchor point '{anchorPoint}'");
-      Vector3 newSpawnLocation = GetClosestValidPathFindingHex(anchorPoint, 2);
+      Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary.SpawnLanceMember] Fitting member '{spawnPoint.name}' at anchor point '{anchorPoint}'");
+      Vector3 newSpawnLocation = GetClosestValidPathFindingHex(anchorPoint, $"SpawnLanceMember.{spawnPoint.name}", IsLancePlayerLance(lanceKey) ? orientationTarget.transform.position : Vector3.zero, 2);
       spawnPoint.transform.position = newSpawnLocation;
     }
 

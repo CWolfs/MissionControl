@@ -1,18 +1,12 @@
-using UnityEngine;
-using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using Harmony;
 
 using BattleTech;
-using BattleTech.Framework;
 
 using MissionControl.Logic;
 
 /*
   This patch sets the active contract type and starts any manipulation on the objectives in the game scene.
-  This is called after: EncounterLayerParentFirstTimeInitializationPatch
+  This is called before: EncounterLayerParentFirstTimeInitializationPatch
 */
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(EncounterLayerParent), "FirstTimeInitialization")]

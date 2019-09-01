@@ -12,10 +12,12 @@ namespace MissionControl.Patches {
   [HarmonyPatch(typeof(TurnDirector), "OnFirstContact")]
   public class TurnDirectorOnFirstContactPatch {
     static void Postfix(TurnDirector __instance) {
-      Main.LogDebug($"[TurnDirectorOnFirstContactPatch Postfix] Patching OnFirstContact");
-      Main.LogDebug($"[TurnDirectorOnFirstContactPatch Postfix] Current round is '{__instance.CurrentRound}'");
-      Main.LogDebug($"[TurnDirectorOnFirstContactPatch Postfix] DoAnyUnitsHaveContactWithEnemy '{__instance.DoAnyUnitsHaveContactWithEnemy}'");
-      if (__instance.CurrentRound == 0 && __instance.DoAnyUnitsHaveContactWithEnemy) ProtectHotDroppedLances();
+      if (Main.Settings.HotDrop.Enabled) {
+        Main.LogDebug($"[TurnDirectorOnFirstContactPatch Postfix] Patching OnFirstContact");
+        Main.LogDebug($"[TurnDirectorOnFirstContactPatch Postfix] Current round is '{__instance.CurrentRound}'");
+        Main.LogDebug($"[TurnDirectorOnFirstContactPatch Postfix] DoAnyUnitsHaveContactWithEnemy '{__instance.DoAnyUnitsHaveContactWithEnemy}'");
+        if (__instance.CurrentRound == 0 && __instance.DoAnyUnitsHaveContactWithEnemy) ProtectHotDroppedLances();
+      }
     }
 
     static void ProtectHotDroppedLances() {
@@ -28,13 +30,29 @@ namespace MissionControl.Patches {
       List<AbstractActor> focusedActors = new List<AbstractActor>();
       focusedActors.AddRange(allies);
 
+      if (!Main.Settings.HotDrop.IncludeAllyTurrets) {
+        RemoveTurrets(allies);
+      }
+
       if (Main.Settings.HotDrop.IncludeEnemies) {
         List<AbstractActor> enemies = combatState.GetAllEnemiesOf(playerTeam);
+
+        if (!Main.Settings.HotDrop.IncludeEnemyTurrets) {
+          RemoveTurrets(enemies);
+        }
+
         focusedActors.AddRange(enemies);
       }
     
       if (Main.Settings.HotDrop.GuardOnHotDrop) BraceAll(focusedActors);
       if (Main.Settings.HotDrop.EvasionPipsOnHotDrop > 0) AddEvasion(focusedActors, Main.Settings.HotDrop.EvasionPipsOnHotDrop);
+    }
+
+    private static void RemoveTurrets(List<AbstractActor> actors) {
+      for (int i = actors.Count - 1; i >= 0; i--) {
+        AbstractActor actor = actors[i];
+        if (actor is Turret) actors.Remove(actor);
+      }
     }
 
     static void BraceAll(List<AbstractActor> actors) {

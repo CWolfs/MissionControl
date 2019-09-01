@@ -26,7 +26,13 @@ namespace MissionControl.Rules {
 
     public void BuildSpawns() {
       Main.Logger.Log("[AmbushConvoyEncounterRules] Building spawns rules");
-      EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "ConvoyUnit1Spawn"));
+
+      if (Main.Settings.ExtendedBoundaries) {
+        Main.Logger.Log("[AmbushConvoyEncounterRules] Using Extended Boundary spawn rules");
+        EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerPlayerLance", "ConvoyUnit1Spawn", SceneManipulationLogic.LookDirection.TOWARDS_TARGET, 400, 600, true));
+      } else {
+        EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "ConvoyUnit1Spawn"));
+      }
     }
 
     public override void LinkObjectReferences(string mapName) {
