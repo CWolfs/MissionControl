@@ -36,14 +36,13 @@ namespace MissionControl.EncounterFactories {
       return lanceSpawnerGameLogic;
     }
 
-    public static PlayerLanceAiSpawnerGameLogic CreatePlayerAiLanceSpawner(GameObject parent, string name, string guid, string teamDefinitionGuid, bool spawnUnitsOnActivation,
+    public static CustomPlayerLanceSpawnerGameLogic CreateCustomPlayerLanceSpawner(GameObject parent, string name, string guid, string teamDefinitionGuid, bool spawnUnitsOnActivation,
       SpawnUnitMethodType spawnMethod, List<string> unitGuids) {
 
       GameObject lanceSpawnerGo = new GameObject(name);
       lanceSpawnerGo.transform.parent = parent.transform;
-      lanceSpawnerGo.transform.localPosition = new Vector3(-674, 300, -280);
 
-      PlayerLanceAiSpawnerGameLogic lanceSpawnerGameLogic = lanceSpawnerGo.AddComponent<PlayerLanceAiSpawnerGameLogic>();
+      CustomPlayerLanceSpawnerGameLogic lanceSpawnerGameLogic = lanceSpawnerGo.AddComponent<CustomPlayerLanceSpawnerGameLogic>();
       lanceSpawnerGameLogic.encounterObjectGuid = guid;
       lanceSpawnerGameLogic.teamDefinitionGuid = teamDefinitionGuid;
       lanceSpawnerGameLogic.spawnMethod = spawnMethod;

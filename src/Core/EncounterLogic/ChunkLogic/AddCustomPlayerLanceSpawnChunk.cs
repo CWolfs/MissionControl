@@ -14,15 +14,22 @@ using MissionControl.LogicComponents.Spawners;
 using MissionControl.Utils;
 
 namespace MissionControl.Logic {
-  public class AddPlayerLanceAiSpawnChunk : ChunkLogic {
+  public class AddCustomPlayerLanceSpawnChunk : ChunkLogic {
     private string teamGuid;
     private string lanceGuid;
     private List<string> unitGuids;
     private string spawnerName;
     private string debugDescription;
 
-    public AddPlayerLanceAiSpawnChunk(string teamGuid, string lanceGuid, List<string> unitGuids, string spawnerName, string debugDescription) {
+    public AddCustomPlayerLanceSpawnChunk(string teamGuid, string lanceGuid, List<string> unitGuids, string spawnerName, string debugDescription) {
       this.teamGuid = teamGuid;
+      this.lanceGuid = lanceGuid;
+      this.unitGuids = unitGuids;
+      this.spawnerName = spawnerName;
+      this.debugDescription = debugDescription;
+    }
+    
+    public AddCustomPlayerLanceSpawnChunk(string lanceGuid, List<string> unitGuids, string spawnerName, string debugDescription) {
       this.lanceGuid = lanceGuid;
       this.unitGuids = unitGuids;
       this.spawnerName = spawnerName;
@@ -30,14 +37,28 @@ namespace MissionControl.Logic {
     }
 
     public override void Run(RunPayload payload) {
-      Main.Logger.Log($"[AddPlayerLanceAiSpawnChunk] Adding encounter structure");
+      Main.Logger.Log($"[AddCustomPlayerLanceSpawnChunk] Adding encounter structure");
       EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
       EmptyCustomChunkGameLogic emptyCustomChunk = ChunkFactory.CreateEmptyCustomChunk("Chunk_Lance");
       emptyCustomChunk.encounterObjectGuid = System.Guid.NewGuid().ToString();
       emptyCustomChunk.notes = debugDescription;
 
+      // Auto select Player or Employer based on the lance configurator
+      if (teamGuid == null) {
+        SpawnableUnit[] lanceUnits = MissionControl.Instance.CurrentContract.Lances.GetLanceUnits(EncounterRules.PLAYER_TEAM_ID);
+        if (lanceUnits.Length > 4) {
+          teamGuid = EncounterRules.PLAYER_TEAM_ID;
+        } else {
+          teamGuid = EncounterRules.EMPLOYER_TEAM_ID;
+        }
+      }
+
+      // Guard: Don't do anything if there are no employer units and employer mode is on
+      SpawnableUnit[] employerLanceUnits = MissionControl.Instance.CurrentContract.Lances.GetLanceUnits(EncounterRules.EMPLOYER_TEAM_ID);
+      if (employerLanceUnits.Length <= 0) return;
+
       bool spawnOnActivation = true;
-      PlayerLanceAiSpawnerGameLogic lanceSpawner = LanceSpawnerFactory.CreatePlayerAiLanceSpawner(
+      CustomPlayerLanceSpawnerGameLogic lanceSpawner = LanceSpawnerFactory.CreateCustomPlayerLanceSpawner(
         emptyCustomChunk.gameObject,
         spawnerName,
         lanceGuid,
