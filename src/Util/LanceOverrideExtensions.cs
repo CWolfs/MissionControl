@@ -15,4 +15,23 @@ public static class LanceOverrideExtensions {
       }
       return null;  
   }
+
+  public static bool IsATurretLance(this LanceOverride lanceOverride) {
+    return lanceOverride.ContainsTurretTag() || lanceOverride.ContainsAtLeastOneTurret();
+  }
+
+  public static bool ContainsAtLeastOneTurret(this LanceOverride lanceOverride) {
+    List<UnitSpawnPointOverride> units = lanceOverride.unitSpawnPointOverrideList;
+
+    for (int i = 0; i < units.Count; i++) {
+      UnitSpawnPointOverride unit = units[i];
+      if (unit.unitType == BattleTech.UnitType.Turret) return true;
+    }
+
+    return false;
+  }
+
+  public static bool ContainsTurretTag(this LanceOverride lanceOverride) {
+    return lanceOverride.lanceTagSet.Contains("lance_type_turret");
+  }
 }

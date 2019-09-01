@@ -41,6 +41,11 @@ namespace MissionControl.Logic {
         bool isManualLance = lanceOverride.lanceDefId == "Manual";
         int numberOfUnitsInLance = lanceOverride.unitSpawnPointOverrideList.Count;
 
+        if (lanceOverride.IsATurretLance()) {
+          Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected a turret lance Ignoring for Extended Lances.");
+          continue;  
+        }
+
         if (isManualLance && numberOfUnitsInLance <= 0) {
           Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected a lance that is set to manual but no units were manually specified. This is a bad contract json setup. Fix it! Ignoring for Extended Lances");
           continue;
