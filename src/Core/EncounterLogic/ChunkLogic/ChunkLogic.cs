@@ -31,10 +31,15 @@ namespace MissionControl.Logic {
       this.Type = LogicType.ENCOUNTER_MANIPULATION;
     }
 
-    public string GetPlayerSpawnGuid() {
+    public GameObject GetPlayerSpawn() {
       GameObject encounterLayerGo = MissionControl.Instance.EncounterLayerGameObject;
       GameObject chunkPlayerLanceGo = encounterLayerGo.transform.Find(EncounterRules.GetPlayerLanceChunkName()).gameObject;
       GameObject spawnerPlayerLanceGo = chunkPlayerLanceGo.transform.Find(EncounterRules.GetPlayerLanceSpawnerName()).gameObject;
+      return spawnerPlayerLanceGo;
+    }
+
+    public string GetPlayerSpawnGuid() {
+      GameObject spawnerPlayerLanceGo = GetPlayerSpawn();
       return spawnerPlayerLanceGo.GetComponent<LanceSpawnerGameLogic>().encounterObjectGuid;
     }
   }
