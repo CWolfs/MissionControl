@@ -18,12 +18,21 @@ public static class SceneUtils {
       return randomRecPosition.GetClosestHexLerpedPointOnGrid();
     }
 
-    public static Vector3 GetRandomPositionFromTarget(Vector3 targPosition, float minDistance, float maxDistance) {
+    public static Vector3 GetRandomPositionFromTarget(Vector3 targPosition, float minDistance, float maxDistance, int attemptCount = 0) {
+      if (attemptCount > 5) {
+        maxDistance = maxDistance * 2;
+      }
+
       Vector3 targetPosition = targPosition.GetClosestHexLerpedPointOnGrid();
       Vector3 randomPositionWithinBounds = GetRandomPositionWithinBounds(targPosition, maxDistance);
 
+      if (attemptCount > 10) {
+        return randomPositionWithinBounds;
+      }
+
       if (!IsWithinBoundedDistanceOfTarget(targetPosition, randomPositionWithinBounds, minDistance, maxDistance)) {
-        return GetRandomPositionFromTarget(targetPosition, minDistance, maxDistance);
+        attemptCount++;
+        return GetRandomPositionFromTarget(targetPosition, minDistance, maxDistance, attemptCount);
       } else {
         return randomPositionWithinBounds;
       }

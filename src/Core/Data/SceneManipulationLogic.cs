@@ -12,7 +12,11 @@ namespace MissionControl.Logic {
   public abstract class SceneManipulationLogic : LogicBlock {
     public enum LookDirection { TOWARDS_TARGET, AWAY_FROM_TARGET };
     private Vector3 vanillaLanceSpawnPosition = Vector3.zero;
+
+    // Saved locations
     private List<Vector3> vanillaLanceUnitSpawnPositions = new List<Vector3>();
+    private Vector3 originalObjectPosition = Vector3.zero;
+    private List<Vector3> originalObjectPositions = new List<Vector3>();
 
     protected EncounterRules EncounterRules { get; set; }
 
@@ -22,6 +26,26 @@ namespace MissionControl.Logic {
     }
 
     protected abstract void GetObjectReferences();
+
+    protected void SaveSpawnPosition(GameObject objectGo) {
+      originalObjectPosition = objectGo.transform.position;
+    }
+
+    protected void RestoreSpawnPosition(GameObject objectGo) {
+      if (originalObjectPosition != Vector3.zero) objectGo.transform.position = originalObjectPosition;
+    }
+
+    protected void SaveSpawnPositions(List<GameObject> objectGos) {
+      for (int i = 0; i < objectGos.Count; i++) {
+        originalObjectPositions.Add(objectGos[i].transform.position);
+      }
+    }
+
+    protected void RestoreSpawnPositions(List<GameObject> objectGos) {
+      for (int i = 0; i < originalObjectPositions.Count; i++) {
+        objectGos[i].transform.position = originalObjectPositions[i];
+      }  
+    }
 
     protected void SaveSpawnPositions(GameObject lance) {
       if ((vanillaLanceSpawnPosition == Vector3.zero) && (vanillaLanceUnitSpawnPositions.Count <= 0)) {

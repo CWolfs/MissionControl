@@ -10,13 +10,20 @@ using BattleTech.Framework;
 
 using HBS.Collections;
 
+using MissionControl.Rules;
 using MissionControl.EncounterFactories;
 
 namespace MissionControl.Logic {
   public class AddExtraLanceSpawnPoints : ChunkLogic {
+    private EncounterRules encounterRules;
+    private LogicState state;
     private List<LanceSpawnerGameLogic> lanceSpawners;
+    private List<string[]> spawnKeys = new List<string[]>();
 
-    public AddExtraLanceSpawnPoints() { }
+    public AddExtraLanceSpawnPoints(EncounterRules encounterRules, LogicState state) {
+      this.encounterRules = encounterRules;
+      this.state = state;
+    }
 
     public override void Run(RunPayload payload) {
       Main.Logger.Log($"[AddExtraLanceSpawnPoints] Adding lance spawn points to match contract override data");
@@ -31,6 +38,8 @@ namespace MissionControl.Logic {
 
       IncreaseLanceSpawnPoints(contractOverride, targetTeamOverride);
       IncreaseLanceSpawnPoints(contractOverride, employerTeamOverride);
+
+      state.Set("ExtraLanceSpawnKeys", spawnKeys);
     }
 
     private void IncreaseLanceSpawnPoints(ContractOverride contractOverride, TeamOverride teamOverride) {
@@ -70,13 +79,22 @@ namespace MissionControl.Logic {
 
           if (numberOfUnitsInLance > unitSpawnPoints.Count) {
             Main.Logger.Log($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected lance '{lanceOverride.name}' has more units than lance spawn points. Creating new lance spawns to accommodate.");
+            string spawnerName = lanceSpawner.gameObject.name;
+            GameObject orientationUnit = unitSpawnPoints[0].gameObject;
+            string orientationKey = $"{spawnerName}.{orientationUnit.name}";
+            encounterRules.ObjectLookup.Add(orientationKey, orientationUnit);
+            
             for (int i = unitSpawnPoints.Count; i < numberOfUnitsInLance; i++) {
               Vector3 randomLanceSpawn = unitSpawnPoints.GetRandom().transform.localPosition;
               Vector3 spawnPositon = SceneUtils.GetRandomPositionFromTarget(randomLanceSpawn, 24, 100);
               spawnPositon = spawnPositon.GetClosestHexLerpedPointOnGrid();
                             
               Main.Logger.Log($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Creating lance '{lanceOverride.name}' spawn point 'UnitSpawnPoint{i + 1}'");
-              LanceSpawnerFactory.CreateUnitSpawnPoint(lanceSpawner.gameObject, $"UnitSpawnPoint{i + 1}", spawnPositon, lanceOverride.unitSpawnPointOverrideList[i].unitSpawnPoint.EncounterObjectGuid);
+              UnitSpawnPointGameLogic unitSpawnGameLogic = LanceSpawnerFactory.CreateUnitSpawnPoint(lanceSpawner.gameObject, $"UnitSpawnPoint{i + 1}", spawnPositon, lanceOverride.unitSpawnPointOverrideList[i].unitSpawnPoint.EncounterObjectGuid);
+              
+              string spawnKey = $"{spawnerName}.{unitSpawnGameLogic.gameObject.name}";
+              encounterRules.ObjectLookup.Add(spawnKey, unitSpawnGameLogic.gameObject);
+              spawnKeys.Add(new string[] { spawnKey, orientationKey });
             }
           }
         } else {

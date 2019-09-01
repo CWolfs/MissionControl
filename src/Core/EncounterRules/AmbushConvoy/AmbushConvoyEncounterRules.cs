@@ -29,7 +29,7 @@ namespace MissionControl.Rules {
 
       if (Main.Settings.ExtendedBoundaries) {
         Main.Logger.Log("[AmbushConvoyEncounterRules] Using Extended Boundary spawn rules");
-        EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerPlayerLance", "ConvoyUnit1Spawn", SceneManipulationLogic.LookDirection.TOWARDS_TARGET, 300, 600, true));
+        EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerPlayerLance", "ConvoyUnit1Spawn", SceneManipulationLogic.LookDirection.TOWARDS_TARGET, 400, 600, true));
       } else {
         EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "ConvoyUnit1Spawn"));
       }
