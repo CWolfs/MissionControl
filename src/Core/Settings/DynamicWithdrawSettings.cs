@@ -10,7 +10,7 @@ namespace MissionControl.Config {
 		[JsonProperty("DisorderlyWithdrawalCompatibility")]
 		public bool DisorderlyWithdrawalCompatibility { get; set; } = false;
 
-		[JsonProperty("OnWithdrawButton")]
+		[JsonProperty("FailUnfinishedObjectives")]
 		public bool FailUnfinishedObjectives { get; set; } = true;
 
 		[JsonProperty("MinDistanceForZone")]
