@@ -28,6 +28,7 @@ namespace MissionControl.Logic {
 
       LanceOverride lanceOverride = SelectAppropriateLanceOverride("allies").Copy();
       lanceOverride.name = $"Lance_Ally_Force_{lanceGuid}";
+      lanceOverride.RunMadLibs(contractOverride.contract, teamOverride);
 
       if (unitGuids.Count > 4) {
         for (int i = 4; i < unitGuids.Count; i++) {
