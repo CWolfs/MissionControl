@@ -27,7 +27,6 @@ namespace MissionControl.Logic {
 
       LanceOverride lanceOverride = SelectAppropriateLanceOverride("enemy").Copy();
       lanceOverride.name = $"Lance_Enemy_OpposingForce_{lanceGuid}";
-      lanceOverride.RunMadLibs(contractOverride.contract, teamOverride);
 
       if (unitGuids.Count > 4) {
         for (int i = 4; i < unitGuids.Count; i++) {
@@ -46,6 +45,8 @@ namespace MissionControl.Logic {
       LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
       lanceSpawnerRef.EncounterObjectGuid = lanceGuid;
       lanceOverride.lanceSpawner = lanceSpawnerRef;
+
+      lanceOverride.RunMadLibs(contractOverride.contract, teamOverride);
 
       teamOverride.lanceOverrideList.Add(lanceOverride);
     }
