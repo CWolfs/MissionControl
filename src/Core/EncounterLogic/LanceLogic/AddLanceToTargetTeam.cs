@@ -46,6 +46,8 @@ namespace MissionControl.Logic {
       lanceSpawnerRef.EncounterObjectGuid = lanceGuid;
       lanceOverride.lanceSpawner = lanceSpawnerRef;
 
+      lanceOverride.RunMadLibs(contractOverride.contract, teamOverride);
+
       teamOverride.lanceOverrideList.Add(lanceOverride);
     }
   }
