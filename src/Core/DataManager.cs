@@ -57,7 +57,7 @@ namespace MissionControl {
     }
 
     private void LoadLanceOverrides() {
-      foreach (string file in Directory.GetFiles($"{ModDirectory}/lances", "*.json")) {
+      foreach (string file in Directory.GetFiles($"{ModDirectory}/lances", "*.json", SearchOption.AllDirectories)) {
         string lanceData = File.ReadAllText(file);
         MLanceOverrideData lanceOverrideData = JsonConvert.DeserializeObject<MLanceOverrideData>(lanceData);
 
