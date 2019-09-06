@@ -64,6 +64,8 @@ namespace MissionControl {
       AddEncounter("FireMission", typeof(FireMissionEncounterRules));
 
       AddEncounter("AttackDefend", typeof(AttackDefendEncounterRules));
+
+      AddEncounter("ThreeWayBattle", typeof(BattlePlusEncounterRules));
     
       // Skirmish
       if (Main.Settings.DebugSkirmishMode) AddEncounter("ArenaSkirmish", typeof(DebugArenaSkirmishEncounterRules));
