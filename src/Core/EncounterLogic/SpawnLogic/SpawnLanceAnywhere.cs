@@ -74,6 +74,7 @@ namespace MissionControl.Logic {
       }
 
       Vector3 newPosition = GetRandomPositionWithinBounds();
+      newPosition = GetClosestValidPathFindingHex(newPosition, $"NewSpawnPosition.{lance.name}", IsLancePlayerLance(lanceKey) ? orientationTarget.transform.position : Vector3.zero, 2);
       Main.LogDebug($"[SpawnLanceAnywhere] Attempting selection of random position in bounds. Selected position '{newPosition}'");
       lance.transform.position = newPosition;
 

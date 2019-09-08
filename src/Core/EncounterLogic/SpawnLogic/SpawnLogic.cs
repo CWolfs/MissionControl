@@ -13,7 +13,8 @@ using MissionControl.Utils;
 namespace MissionControl.Logic {
   public abstract class SpawnLogic : SceneManipulationLogic {
     
-    private int ADJACENT_NODE_LIMITED = 30;
+    private int ADJACENT_NODE_LIMITED = 60;
+    private List<Vector3> checkedAdjacentPoints = new List<Vector3>();
 
     public SpawnLogic(EncounterRules encounterRules) : base(encounterRules) { }
 
@@ -30,19 +31,22 @@ namespace MissionControl.Logic {
       Vector3 validOrigin = PathfindFromPointToSpawn(origin, radius, identifier, pathfindingTarget);
 
       // Fallback to original position if a search of 8 nodes radius turns up no valid path
-      if (radius > 8) {
+      if (radius > 12) {
         origin = origin.GetClosestHexLerpedPointOnGrid();
         Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Reverting to original with fixed height of '{origin}'");
+        checkedAdjacentPoints.Clear();
         return origin;
       }
       
       if (validOrigin == Vector3.zero) {
         Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Expanding search radius from radius '{radius}' to '{radius * 2}'");
         origin = GetClosestValidPathFindingHex(origin, identifier, pathfindingTarget, radius * 2);
+        checkedAdjacentPoints.Clear();
         return origin;
       }
 
       Main.LogDebug($"[GetClosestValidPathFindingHex] Returning final point '{validOrigin}'");
+      checkedAdjacentPoints.Clear();
       return validOrigin;	
   	}
 
@@ -59,12 +63,17 @@ namespace MissionControl.Logic {
       if (!PathFinderManager.Instance.IsSpawnValid(originOnGrid, pathfindingPoint, UnitType.Mech, identifier)) {
         List<Vector3> adjacentPointsOnGrid = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(originOnGrid, radius);
         Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Adjacent point count is '{adjacentPointsOnGrid.Count}'");
+
+        adjacentPointsOnGrid = adjacentPointsOnGrid.Where(point => !checkedAdjacentPoints.Contains(point)).ToList();
+
+        Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Removed already checked points. Adjacent point count is now '{adjacentPointsOnGrid.Count}'");
+
         adjacentPointsOnGrid.Shuffle();
   
         int count = 0;
         foreach (Vector3 point in adjacentPointsOnGrid) {
           if (count > ADJACENT_NODE_LIMITED) {
-            Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Adjacent point count limited exceeded ({adjacentPointsOnGrid.Count} / {ADJACENT_NODE_LIMITED}). Bailing.");  
+            Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Adjacent point count limited exceeded (random selection of {ADJACENT_NODE_LIMITED} / {adjacentPointsOnGrid.Count}). Bailing.");  
             break;
           }
 
@@ -72,6 +81,8 @@ namespace MissionControl.Logic {
           if (PathFinderManager.Instance.IsSpawnValid(validPoint, pathfindingPoint, UnitType.Mech, identifier)) {
             return validPoint;
           }
+
+          checkedAdjacentPoints.Add(point);
           count++;
         }
 

@@ -21,9 +21,9 @@ namespace MissionControl.Logic {
     private LookDirection lookDirection = LookDirection.TOWARDS_TARGET;
     private bool fitLanceMembers = false;
 
-    private int AttemptCountMax { get; set; } = 10;
+    private int AttemptCountMax { get; set; } = 3;
     private int AttemptCount { get; set; } = 0;
-    private int TotalAttemptMax { get; set; } = 5;
+    private int TotalAttemptMax { get; set; } = 3;
     private int TotalAttemptCount { get; set; } = 0;
 
     private bool inited = false;
