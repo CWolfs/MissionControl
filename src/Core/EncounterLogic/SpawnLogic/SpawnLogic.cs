@@ -59,6 +59,7 @@ namespace MissionControl.Logic {
         EncounterRules.SpawnerPlayerLanceGo.transform.position.GetClosestHexLerpedPointOnGrid()
       : pathfindingTarget.GetClosestHexLerpedPointOnGrid();
 
+      Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Using pathfinding point '{pathfindingPoint}'");
 
       if (!PathFinderManager.Instance.IsSpawnValid(originOnGrid, pathfindingPoint, UnitType.Mech, identifier)) {
         List<Vector3> adjacentPointsOnGrid = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(originOnGrid, radius);

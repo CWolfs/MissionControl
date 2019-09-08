@@ -66,6 +66,7 @@ namespace MissionControl.Rules {
           break;
         case LogicBlock.LogicType.SCENE_MANIPULATION:
           RunSceneManipulationLogic(logicBlocks, payload);
+          MissionControl.Instance.IsMCLoadingFinished = true;
           break;
         default:
           Main.Logger.LogError($"[EncounterRules] Unknown logic type '{type}'");
