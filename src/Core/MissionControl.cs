@@ -33,6 +33,7 @@ namespace MissionControl {
     public HexGrid HexGrid { get; private set; }
 
     public bool IsContractValid { get; private set; } = false;
+    public bool IsMCLoadingFinished { get; set; } = false;
 
     private Dictionary<string, List<Type>> AvailableEncounters = new Dictionary<string, List<Type>>();
 
