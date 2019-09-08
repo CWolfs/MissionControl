@@ -84,7 +84,7 @@ namespace MissionControl.Logic {
       }
 
       Vector3 newSpawnPosition = GetRandomPositionFromTarget(orientationTargetPosition, minDistanceFromTarget, maxDistanceFromTarget);
-      newSpawnPosition = GetClosestValidPathFindingHex(newSpawnPosition, $"NewRandomSpawnPositionFromOrientationTarget.{orientationTarget.name}", IsLancePlayerLance(lanceKey) ? orientationTarget.transform.position : Vector3.zero);
+      newSpawnPosition = GetClosestValidPathFindingHex(newSpawnPosition, $"NewRandomSpawnPositionFromOrientationTarget.{orientationTarget.name}");
 
       if (encounterManager.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
         if (!IsWithinDistanceOfInvalidPosition(newSpawnPosition)) {

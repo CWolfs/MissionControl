@@ -32,6 +32,7 @@ public static class SceneUtils {
 
       if (!IsWithinBoundedDistanceOfTarget(targetPosition, randomPositionWithinBounds, minDistance, maxDistance)) {
         attemptCount++;
+        MissionControl.Main.LogDebugWarning($"[GetRandomPositionFromTarget] Position is not within bounds. Getting new random position");
         return GetRandomPositionFromTarget(targetPosition, minDistance, maxDistance, attemptCount);
       } else {
         return randomPositionWithinBounds;

@@ -13,7 +13,7 @@ using MissionControl.Utils;
 namespace MissionControl.Logic {
   public abstract class SpawnLogic : SceneManipulationLogic {
     
-    private int ADJACENT_NODE_LIMITED = 30;
+    private int ADJACENT_NODE_LIMITED = 60;
     private List<Vector3> checkedAdjacentPoints = new List<Vector3>();
 
     public SpawnLogic(EncounterRules encounterRules) : base(encounterRules) { }
@@ -31,7 +31,7 @@ namespace MissionControl.Logic {
       Vector3 validOrigin = PathfindFromPointToSpawn(origin, radius, identifier, pathfindingTarget);
 
       // Fallback to original position if a search of 8 nodes radius turns up no valid path
-      if (radius > 14) {
+      if (radius > 12) {
         origin = origin.GetClosestHexLerpedPointOnGrid();
         Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Reverting to original with fixed height of '{origin}'");
         checkedAdjacentPoints.Clear();
