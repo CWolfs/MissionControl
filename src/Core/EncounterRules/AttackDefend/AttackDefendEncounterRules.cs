@@ -29,8 +29,8 @@ namespace MissionControl.Rules {
     }
 
     public override void LinkObjectReferences(string mapName) {
-      ObjectLookup.Add("SpawnerLanceFriendlyTurret", EncounterLayerData.gameObject.FindRecursive("Lance_Friendly_BaseTurrets"));
-      ObjectLookup.Add("SpawnerLanceEnemyTurret", EncounterLayerData.gameObject.FindRecursive("Lance_Enemy_Turret"));
+      ObjectLookup["SpawnerLanceFriendlyTurret"] = EncounterLayerData.gameObject.FindRecursive("Lance_Friendly_BaseTurrets");
+      ObjectLookup["SpawnerLanceEnemyTurret"] = EncounterLayerData.gameObject.FindRecursive("Lance_Enemy_Turret");
     }
   }
 }

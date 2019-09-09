@@ -30,7 +30,7 @@ namespace MissionControl.Rules {
     }
 
     public override void LinkObjectReferences(string mapName) {
-      ObjectLookup.Add("LanceEnemyOpposingForce", EncounterLayerData.gameObject.FindRecursive("Lance_Target_EnemyForce"));
+      ObjectLookup["LanceEnemyOpposingForce"] = EncounterLayerData.gameObject.FindRecursive("Lance_Target_EnemyForce");
     }
   }
 }

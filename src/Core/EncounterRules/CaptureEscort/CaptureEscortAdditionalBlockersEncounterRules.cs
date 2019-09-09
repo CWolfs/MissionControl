@@ -30,10 +30,10 @@ namespace MissionControl.Rules {
     }
 
     public override void LinkObjectReferences(string mapName) {
-      ObjectLookup.Add("EnemyBlockingLance", EncounterLayerData.gameObject.FindRecursive("Lance_Enemy_BlockingForce"));
-      ObjectLookup.Add("EscortRegion", EncounterLayerData.gameObject.FindRecursive("Region_Occupy"));
-      ObjectLookup.Add("HunterLance", EncounterLayerData.gameObject.FindRecursive("Lance_Enemy_Hunter"));
-      ObjectLookup.Add("EscortExtractionRegion", EncounterLayerData.gameObject.FindRecursive("Region_Extraction"));
+      ObjectLookup["EnemyBlockingLance"] = EncounterLayerData.gameObject.FindRecursive("Lance_Enemy_BlockingForce");
+      ObjectLookup["EscortRegion"] = EncounterLayerData.gameObject.FindRecursive("Region_Occupy");
+      ObjectLookup["HunterLance"] = EncounterLayerData.gameObject.FindRecursive("Lance_Enemy_Hunter");
+      ObjectLookup["EscortExtractionRegion"] = EncounterLayerData.gameObject.FindRecursive("Region_Extraction");
     }
   }
 }
