@@ -24,7 +24,7 @@ namespace MissionControl.Rules {
     }
 
     public override void LinkObjectReferences(string mapName) {
-      ObjectLookup.Add("ChunkBeaconRegion1", EncounterLayerData.gameObject.FindRecursive("Chunk_BeaconRegion_1"));
+      ObjectLookup["ChunkBeaconRegion1"] = EncounterLayerData.gameObject.FindRecursive("Chunk_BeaconRegion_1");
     }
   }
 }

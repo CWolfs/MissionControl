@@ -82,7 +82,7 @@ namespace MissionControl.Logic {
             string spawnerName = lanceSpawner.gameObject.name;
             GameObject orientationUnit = unitSpawnPoints[0].gameObject;
             string orientationKey = $"{spawnerName}.{orientationUnit.name}";
-            encounterRules.ObjectLookup.Add(orientationKey, orientationUnit);
+            encounterRules.ObjectLookup[orientationKey] = orientationUnit;
             
             for (int i = unitSpawnPoints.Count; i < numberOfUnitsInLance; i++) {
               Vector3 randomLanceSpawn = unitSpawnPoints.GetRandom().transform.localPosition;
@@ -93,7 +93,7 @@ namespace MissionControl.Logic {
               UnitSpawnPointGameLogic unitSpawnGameLogic = LanceSpawnerFactory.CreateUnitSpawnPoint(lanceSpawner.gameObject, $"UnitSpawnPoint{i + 1}", spawnPositon, lanceOverride.unitSpawnPointOverrideList[i].unitSpawnPoint.EncounterObjectGuid);
               
               string spawnKey = $"{spawnerName}.{unitSpawnGameLogic.gameObject.name}";
-              encounterRules.ObjectLookup.Add(spawnKey, unitSpawnGameLogic.gameObject);
+              encounterRules.ObjectLookup[spawnKey] = unitSpawnGameLogic.gameObject;
               spawnKeys.Add(new string[] { spawnKey, orientationKey });
             }
           }

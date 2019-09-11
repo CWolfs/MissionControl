@@ -23,9 +23,9 @@ namespace MissionControl.Logic {
     private float maxDistanceFromTarget = 100f;
     private List<Vector3> invalidSpawnLocations = new List<Vector3>();
 
-    private int AttemptCountMax { get; set; } = 10;
+    private int AttemptCountMax { get; set; } = 5;
     private int AttemptCount { get; set; } = 0;
-    private int TotalAttemptMax { get; set; } = 40;
+    private int TotalAttemptMax { get; set; } = 20;
     private int TotalAttemptCount { get; set; } = 0;
 
     private RunPayload payload;
@@ -84,6 +84,7 @@ namespace MissionControl.Logic {
       }
 
       Vector3 newSpawnPosition = GetRandomPositionFromTarget(orientationTargetPosition, minDistanceFromTarget, maxDistanceFromTarget);
+      newSpawnPosition = GetClosestValidPathFindingHex(newSpawnPosition, $"NewRandomSpawnPositionFromOrientationTarget.{orientationTarget.name}");
 
       if (encounterManager.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
         if (!IsWithinDistanceOfInvalidPosition(newSpawnPosition)) {

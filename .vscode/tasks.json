@@ -16,7 +16,7 @@
             "type": "shell",
             "command": "cp",
             "args": [
-                "D:/Modding/Battletech/MissionControl/src/bin/Debug/net35/MissionControl.dll",
+                "D:/Modding/Battletech/MissionControl/src/bin/Debug/net451/MissionControl.dll",
                 "'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'"
             ]
         }

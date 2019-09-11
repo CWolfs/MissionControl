@@ -9,15 +9,15 @@ using MissionControl.Trigger;
 using MissionControl.Logic;
 
 namespace MissionControl.Rules {
-  public class SimpleBattleEncounterRules : EncounterRules {
-    public SimpleBattleEncounterRules() : base() { }
+  public class BattlePlusEncounterRules : EncounterRules {
+    public BattlePlusEncounterRules() : base() { }
 
     public override void Build() {
-      Main.Logger.Log("[SimpleBattleEncounterRules] Setting up rule object references");
+      Main.Logger.Log("[BattlePlusEncounterRules] Setting up rule object references");
       BuildAi();
       BuildSpawns();
       BuildAdditionalLances("LanceEnemyOpposingForce", SpawnLogic.LookDirection.AWAY_FROM_TARGET,
-        "SpawnerPlayerLance", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 25f, 100f);
+         "SpawnerPlayerLance", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 25f, 100f);
     }
 
     public void BuildAi() {
@@ -30,7 +30,7 @@ namespace MissionControl.Rules {
     }
 
     public override void LinkObjectReferences(string mapName) {
-      ObjectLookup["LanceEnemyOpposingForce"] = EncounterLayerData.gameObject.FindRecursive("Lance_Enemy_OpposingForce");
+      ObjectLookup["LanceEnemyOpposingForce"] = EncounterLayerData.gameObject.FindRecursive("Lance_Target_EnemyForce");
     }
   }
 }

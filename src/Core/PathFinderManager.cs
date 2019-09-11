@@ -106,6 +106,9 @@ namespace MissionControl {
       EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
       MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
 
+      Main.LogDebug($"");
+      Main.LogDebug($"-------- [PathFinderManager.IsSpawnValid] [{identifier}] --------");
+
       if (cellData.cachedSteepness > MAX_SLOPE_FOR_PATHFINDING) {
         Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Spawn point of '{cellData.cachedSteepness}' is too steep (> {MAX_SLOPE_FOR_PATHFINDING}). Not a valid spawn");
         return false;
@@ -132,12 +135,15 @@ namespace MissionControl {
 				};
         List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(new List<DynamicLongRangePathfinder.PointWithCost>() { pointWithCost }, validityPosition, float.MaxValue, pathfindingActor, false, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
         
+        // List<Vector3> path = DynamicLongRangePathfinder.GetPathToDestination(position, float.MaxValue, pathfindingActor, true, pathFindingZoneRadius);
+        // List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(position, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
+        
+        Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Path count is: '{path.Count}', Current position is: '{position}'");
+        
         // GUARD: Against deep water and other impassables that have slipped through
         if (HasPathImpassableOrDeepWaterTiles(combatState, path)) return false;
 
-        if (path != null && path.Count > 2 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
-          Main.LogDebug($"");
-          Main.LogDebug($"-------- [PathFinderManager.IsSpawnValid] [{identifier}] --------");
+        if (path != null && path.Count > 1 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
           Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Path count is: '{path.Count}', Current position is: '{position}'");
           Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Last point is '{path[path.Count - 1]}', Validity position is '{validityPosition}'");
           Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Distance from last path to valdity position is: '{(path[path.Count - 1].DistanceFlat(validityPosition))}' and is it within zone radius? '{(path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)}'");

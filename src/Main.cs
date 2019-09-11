@@ -15,7 +15,6 @@ namespace MissionControl {
 		public static ILog Logger;
 		public static Config.Settings Settings { get; private set; }
 		public static Assembly MissionControlAssembly { get; set; } 
-		public static AssetBundle MissionControlBundle { get; set; }
 		public static string Path { get; private set; }
 
 		public static void InitLogger(string modDirectory) {

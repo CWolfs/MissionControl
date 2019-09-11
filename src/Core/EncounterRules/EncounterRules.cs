@@ -66,6 +66,7 @@ namespace MissionControl.Rules {
           break;
         case LogicBlock.LogicType.SCENE_MANIPULATION:
           RunSceneManipulationLogic(logicBlocks, payload);
+          MissionControl.Instance.IsMCLoadingFinished = true;
           break;
         default:
           Main.Logger.LogError($"[EncounterRules] Unknown logic type '{type}'");
@@ -84,15 +85,15 @@ namespace MissionControl.Rules {
       EncounterLayerData = MissionControl.Instance.EncounterLayerData;
       ChunkPlayerLanceGo = EncounterLayerGo.transform.Find(GetPlayerLanceChunkName()).gameObject;
       SpawnerPlayerLanceGo = ChunkPlayerLanceGo.transform.Find(GetPlayerLanceSpawnerName()).gameObject;
-      ObjectLookup.Add("ChunkPlayerLance", ChunkPlayerLanceGo);
-      ObjectLookup.Add("SpawnerPlayerLance", SpawnerPlayerLanceGo);
+      ObjectLookup["ChunkPlayerLance"] = ChunkPlayerLanceGo;
+      ObjectLookup["SpawnerPlayerLance"] = SpawnerPlayerLanceGo;
 
       string mapName = MissionControl.Instance.ContractMapName;
 
       LinkObjectReferences(mapName);
 
       foreach (string objectName in ObjectReferenceQueue) {
-        ObjectLookup.Add(objectName, EncounterLayerData.gameObject.FindRecursive(objectName));    
+        ObjectLookup[objectName] = EncounterLayerData.gameObject.FindRecursive(objectName);
       }
 
       if (State == EncounterState.RUNNING) {
@@ -170,7 +171,7 @@ namespace MissionControl.Rules {
     }
 
     public static string GetPlayerLanceChunkName() {
-      string type = Enum.GetName(typeof(ContractType), MissionControl.Instance.CurrentContract.ContractType);
+      string type = MissionControl.Instance.CurrentContract.ContractTypeValue.Name;
       
       if (type == "ArenaSkirmish") {
         return "MultiPlayerSkirmishChunk";
@@ -182,12 +183,14 @@ namespace MissionControl.Rules {
     }
 
     public static string GetPlayerLanceSpawnerName() {
-      string type = Enum.GetName(typeof(ContractType), MissionControl.Instance.CurrentContract.ContractType);
+      string type =  MissionControl.Instance.CurrentContract.ContractTypeValue.Name;
       
       if (type == "ArenaSkirmish") {
         return "Player1LanceSpawner";
       } else if ((type == "Story_1B_Retreat") || (type == "FireMission") || (type == "AttackDefend")) {
         return "PlayerLanceSpawner";
+      } else if (type == "ThreeWayBattle") {
+        return "PlayerLanceSpawner_Battle+";
       }
 
       return "Spawner_PlayerLance";

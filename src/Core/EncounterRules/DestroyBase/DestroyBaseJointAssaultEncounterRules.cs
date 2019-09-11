@@ -32,7 +32,7 @@ namespace MissionControl.Rules {
     }
 
     public override void LinkObjectReferences(string mapName) {
-      ObjectLookup.Add("PlotBase", GameObject.Find(GetPlotBaseName(mapName)));
+      ObjectLookup["PlotBase"] = GameObject.Find(GetPlotBaseName(mapName));
     }
   }
 }

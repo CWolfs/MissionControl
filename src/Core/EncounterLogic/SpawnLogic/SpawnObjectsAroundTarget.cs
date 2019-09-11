@@ -147,7 +147,6 @@ namespace MissionControl.Logic {
       if (state != null) {
         List<string[]> extraLanceKeys = (List<string[]>)state.GetObject("ExtraLanceSpawnKeys");
         for (int i = 0; i < extraLanceKeys.Count; i++){
-          Main.LogDebug($"[SpawnObjectsAroundTarget] extraLanceKeys[{i}]");
           string[] keys = extraLanceKeys[i];
           string objectKey = keys[0];
           string orientationObjectKey = keys[1];
@@ -160,14 +159,12 @@ namespace MissionControl.Logic {
 
       for (int i = 0; i < objectKeys.Count; i++) {
         GameObject objectGoShell;
-        Main.LogDebug($"[SpawnObjectsAroundTarget] objectKeys[{i}]");
         this.EncounterRules.ObjectLookup.TryGetValue(objectKeys[i], out objectGoShell);
         objectGos.Add(objectGoShell);
       }
 
       for (int i = 0; i < orientationTargetKeys.Count; i++) {
         GameObject orientationTargetGoShell;
-        Main.LogDebug($"[SpawnObjectsAroundTarget] orientationTargetKeys[{i}]");
         this.EncounterRules.ObjectLookup.TryGetValue(orientationTargetKeys[i], out orientationTargetGoShell);
         orientationTargets[orientationTargetKeys[i]] = orientationTargetGoShell;
       }

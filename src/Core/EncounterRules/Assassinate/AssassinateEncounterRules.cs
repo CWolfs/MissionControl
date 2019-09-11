@@ -32,7 +32,7 @@ namespace MissionControl.Rules {
     }
 
     public override void LinkObjectReferences(string mapName) {
-      ObjectLookup.Add("AssassinateSpawn", EncounterLayerData.gameObject.FindRecursive("Lance_Enemy_AssassinationTarget"));
+      ObjectLookup["AssassinateSpawn"] = EncounterLayerData.gameObject.FindRecursive("Lance_Enemy_AssassinationTarget");
     }
   }
 }
