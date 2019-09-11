@@ -108,7 +108,7 @@ namespace MissionControl {
       SetActiveAdditionalLances(contract);
       Main.Logger.Log($"[MissionControl] Contract map is '{contract.mapName}'");
       ContractMapName = contract.mapName;
-      SetContractType(CurrentContract.ContractType);
+      SetContractType(CurrentContract.ContractTypeValue);
       AiManager.Instance.ResetCustomBehaviourVariableScopes();
       ContractStats.Clear();
     }
@@ -144,10 +144,10 @@ namespace MissionControl {
       Future proofed method to allow for string custom contract type names
       instead of relying only on the enum values
     */
-    public bool SetContractType(ContractType contractType) {
+    public bool SetContractType(ContractTypeValue contractTypeValue) {
       List<Type> encounters = null;
 
-      string type = Enum.GetName(typeof(ContractType), contractType);
+      string type = contractTypeValue.Name;
       CurrentContractType = type;
 
       if (AvailableEncounters.ContainsKey(type)) {
@@ -230,8 +230,7 @@ namespace MissionControl {
     }
 
     public bool IsSkirmish(Contract contract) {
-      string type = Enum.GetName(typeof(ContractType), contract.ContractType);
-      return type == "ArenaSkirmish";
+      return !contract.ContractTypeValue.IsSinglePlayerProcedural;
     }
 
     public bool IsSkirmish() {

@@ -23,7 +23,7 @@ namespace MissionControl.Patches {
       if (UiManager.Instance.ClickedQuickSkirmish) {
         Main.Logger.Log($"[MapModuleSelectedMapPatch Prefix] Patching SelectedMap");
         if (mapAndEncounter == null) {
-          List<MapAndEncounters> mapAndEncounters = MetadataDatabase.Instance.GetReleasedMapsAndEncountersByContractType(new ContractType[] { ContractType.ArenaSkirmish });
+          List<MapAndEncounters> mapAndEncounters = MetadataDatabase.Instance.GetReleasedMapsAndEncountersByContractTypeAndOwnership((int)ContractType.ArenaSkirmish, false);
           int index = UnityEngine.Random.Range(0, mapAndEncounters.Count);
           mapAndEncounter = mapAndEncounters[index];
         }

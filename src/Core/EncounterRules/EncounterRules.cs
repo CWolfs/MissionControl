@@ -171,7 +171,7 @@ namespace MissionControl.Rules {
     }
 
     public static string GetPlayerLanceChunkName() {
-      string type = Enum.GetName(typeof(ContractType), MissionControl.Instance.CurrentContract.ContractType);
+      string type = MissionControl.Instance.CurrentContract.ContractTypeValue.Name;
       
       if (type == "ArenaSkirmish") {
         return "MultiPlayerSkirmishChunk";
@@ -183,7 +183,7 @@ namespace MissionControl.Rules {
     }
 
     public static string GetPlayerLanceSpawnerName() {
-      string type = Enum.GetName(typeof(ContractType), MissionControl.Instance.CurrentContract.ContractType);
+      string type =  MissionControl.Instance.CurrentContract.ContractTypeValue.Name;
       
       if (type == "ArenaSkirmish") {
         return "Player1LanceSpawner";

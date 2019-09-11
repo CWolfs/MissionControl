@@ -21,7 +21,7 @@ namespace MissionControl.Patches {
 
       Main.Logger.Log($"[ContractBeginPatch Postfix] Patching Begin");
 
-      if (__instance.ContractType == ContractType.ArenaSkirmish) {
+      if (__instance.ContractTypeValue.Name == "ArenaSkirmish") {
         ContractOverride contractOverride = new ContractOverride();
         contractOverride.player1Team.faction = Faction.Player1sMercUnit;
         contractOverride.player2Team.faction = Faction.Player2sMercUnit;
