@@ -1,6 +1,6 @@
-using TMPro;
+using BattleTech.UI.TMProWrapper;
 
-public class MockTMPDropdown : TMP_Dropdown {
+public class MockTMPDropdown : HBS_Dropdown {
 
   public MockTMPDropdown() {}
 
