@@ -1,19 +1,10 @@
-using UnityEngine;
-using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Collections.Generic;
+
 using Harmony;
 
-using BattleTech;
 using BattleTech.Data;
 using BattleTech.UI;
-using BattleTech.Framework;
 using BattleTech.Rendering.Mood;
-
-using MissionControl;
-using MissionControl.Logic;
 
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(MapModule), "get_SelectedMood")]
