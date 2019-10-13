@@ -26,6 +26,9 @@ namespace MissionControl.Patches {
         contractOverride.player1Team.faction = Faction.Player1sMercUnit;
         contractOverride.player2Team.faction = Faction.Player2sMercUnit;
         contractOverride.employerTeam.faction = Faction.Locals;
+
+        contractOverride.player1Team.lanceOverrideList.Add(new LanceOverride());
+
         AccessTools.Property(typeof(Contract), "Override").SetValue(__instance, contractOverride, null);
       }
       
