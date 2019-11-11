@@ -9,7 +9,7 @@
     "EvasionPipsOnHotDrop": 4,
     "IncludeEnemies": true,
     "IncludeAllyTurrets": false,
-    "IncludeEnemyTurrets": false,
+    "IncludeEnemyTurrets": false
   },
   "AdditionalLances": {
     "Enable": true,
@@ -22,7 +22,7 @@
     "DisableWhenMaxTonnage": {
       "Enable": true,
       "Limited": false,
-      "LimitedToUnder": 300,
+      "LimitedToUnder": 300
     }
   },
   "ExtendedLances": {
@@ -30,7 +30,7 @@
     "Autofill": true,
     "LanceSizes": {
       "5": [],
-      "6": [],
+      "6": []
     }
   },
   "ExtendedBoundaries": true,
@@ -38,6 +38,6 @@
     "Enabled": true,
     "MinDistanceForZone": 50,
     "MaxDistanceForZone": 400,
-    "DisorderlyWithdrawalCompatibility": false,
+    "DisorderlyWithdrawalCompatibility": false
   }
 }
