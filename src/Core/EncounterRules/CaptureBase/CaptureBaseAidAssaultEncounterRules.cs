@@ -13,11 +13,13 @@ namespace MissionControl.Rules {
 
     public override void Build() {
       Main.Logger.Log("[CaptureBaseAidAssaultEncounterRules] Setting up rule object references");
-      BuildSpawns();
+      BuildRandomSpawns();
       BuildAdditionalLances("PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET, 150f, 250f);
     }
 
-    public void BuildSpawns() {
+    public void BuildRandomSpawns() {
+      if (!Main.Settings.RandomSpawns) return;
+      
       Main.Logger.Log("[CaptureBaseAidAssaultEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "PlotBase"));
     }

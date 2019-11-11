@@ -15,11 +15,13 @@ namespace MissionControl.Rules {
 
     public override void Build() {
       Main.Logger.Log("[DefendBaseEncounterRules] Setting up rule object references");
-      BuildSpawns();
+      BuildRandomSpawns();
       BuildAdditionalLances("SpawnerLanceEnemyWave1", SpawnLogic.LookDirection.AWAY_FROM_TARGET, "PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 50f, 250f);
     }
 
-    public void BuildSpawns() {
+    public void BuildRandomSpawns() {
+      if (!Main.Settings.RandomSpawns) return;
+      
       Main.Logger.Log("[DefendBaseEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, "SpawnerPlayerLance", "PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 100f, 250f));
       EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerLanceEnemyWave1", "PlotBase", SpawnLogic.LookDirection.TOWARDS_TARGET, 400f, 600f, true));
