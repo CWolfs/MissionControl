@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-using MissionControl.Config;
+using MissionControl.Data;
 
 using BattleTech;
 using BattleTech.Framework;
@@ -14,7 +14,7 @@ namespace MissionControl.Logic {
       this.Type = LogicType.CONTRACT_OVERRIDE_MANIPULATION;
     }
 
-    public LanceOverride SelectAppropriateLanceOverride(string teamType) {
+    public MLanceOverride SelectAppropriateLanceOverride(string teamType) {
       string biome = Enum.GetName(typeof(Biome.BIOMESKIN), MissionControl.Instance.CurrentContract.ContractBiome);
       biome = biome.Capitalise();
       string contractType = MissionControl.Instance.CurrentContractType;
@@ -38,7 +38,7 @@ namespace MissionControl.Logic {
           selectedLanceKey = selectedLanceKey.Replace(activeAdditionalLance.EliteLances.Suffix, "");
           if (DataManager.Instance.DoesLanceOverrideExist(selectedLanceKey)) {
             Main.Logger.LogError($"[SelectAppropriateLanceOverride] Cannot find 'ELITE' variant of '{selectedLanceKey}' so using original version with a +4 difficulty adjustment.");
-            LanceOverride lanceOverride = DataManager.Instance.GetLanceOverride(selectedLanceKey);
+            MLanceOverride lanceOverride = DataManager.Instance.GetLanceOverride(selectedLanceKey);
             lanceOverride.lanceDifficultyAdjustment = Mathf.Clamp(lanceOverride.lanceDifficultyAdjustment + 4, 1, 10);
             return lanceOverride;
           }

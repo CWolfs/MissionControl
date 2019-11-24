@@ -47,6 +47,15 @@ namespace MissionControl.Data {
       this.unitSpawnPointOverrideList = unitSpawnPointOverrides;
     }
 
+    public MLanceOverride(LanceOverride lanceOverride) {
+      this.lanceDefId = lanceOverride.lanceDefId;
+      this.lanceTagSet = new TagSet(lanceOverride.lanceTagSet);
+      this.lanceExcludedTagSet = new TagSet(lanceOverride.lanceExcludedTagSet);
+      this.spawnEffectTags = new TagSet(lanceOverride.spawnEffectTags);
+      this.lanceDifficultyAdjustment = lanceOverride.lanceDifficultyAdjustment;
+      this.unitSpawnPointOverrideList = lanceOverride.unitSpawnPointOverrideList;
+    }
+
     public MLanceOverride(string lanceDefId, TagSet lanceTagSet, TagSet lanceExcludedTagSet, TagSet spawnEffectTags,
       int lanceDifficultyAdjustment, List<UnitSpawnPointOverride> unitSpawnOverrides) {
 
@@ -56,6 +65,14 @@ namespace MissionControl.Data {
       this.spawnEffectTags = spawnEffectTags;
       this.lanceDifficultyAdjustment = lanceDifficultyAdjustment;
       this.unitSpawnPointOverrideList = unitSpawnOverrides;
+    }
+
+    public new MLanceOverride Copy() {
+      LanceOverride lanceOveride = base.Copy();
+      MLanceOverride mLanceOverride = new MLanceOverride(lanceOveride);
+      mLanceOverride.LanceKey = this.LanceKey;
+      mLanceOverride.SupportAutofill = this.SupportAutofill;
+      return mLanceOverride;
     }
   }
 }

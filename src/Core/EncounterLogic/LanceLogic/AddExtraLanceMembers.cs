@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 using BattleTech.Framework;
@@ -29,11 +30,13 @@ namespace MissionControl.Logic {
       Main.LogDebug($"[IncreaseLanceMembers] Faction '{teamOverride.faction}' lance size is '{factionLanceSize}");
 
       foreach (LanceOverride lanceOverride in lanceOverrides) {
-        // GUARD: If an AdditionalLance lance config has been set to 'supportAutoFill' false, then don't autofill
+        Main.LogDebug($"[IncreaseLanceMembers] [{teamOverride.faction}] Checking lance '{lanceOverride.name}'...");
+
+        // GUARD: If an AdditionalLance lance config has been set to 'supportAutofill' false, then don't autofill
         if (lanceOverride is MLanceOverride) {
           MLanceOverride mLanceOverride = (MLanceOverride)lanceOverride;
           if (!mLanceOverride.SupportAutofill) {
-            Main.LogDebug($"[IncreaseLanceMembers] Lance Override '{mLanceOverride.GUID}' has 'autofill' explicitly turned off in MC lance '{mLanceOverride.LanceKey}'");
+            Main.LogDebug($"[IncreaseLanceMembers] LanceOverride '{mLanceOverride.GUID}' has 'supportAutofill' explicitly set to 'false' in MC lance '{mLanceOverride.LanceKey}'. Will not autofill.");
             continue;
           }
         }
@@ -47,7 +50,6 @@ namespace MissionControl.Logic {
         //  - If the lance members are 'tagged', then we'll copy any of the tagged units as a base
         //  - If the lance members are 'manual', then do nothing and let the later code handle this usecase
         if (numberOfUnitsInLance < factionLanceSize) {
-          Main.LogDebug($"[IncreaseLanceMembers] [{teamOverride.faction}] Checking lance '{lanceOverride.name}'...");
           if (!isLanceTagged && AreAnyLanceUnitsTagged) {
             Main.LogDebug($"[IncreaseLanceMembers] [{teamOverride.faction}] Override manual lance '{lanceOverride.name}' size is '{numberOfUnitsInLance}' but '{factionLanceSize}' is required. Adding more units to lance.");
             lanceOverride.unitSpawnPointOverrideList.Add(lanceOverride.GetAnyTaggedLanceMember().DeepCopy());
