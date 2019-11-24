@@ -2,9 +2,7 @@
   "lanceKey": "Generic_Battle_Lance",
   "lanceDefId": "Tagged",
   "lanceTagSet": {
-    "items": [
-      "lance_type_battle"
-    ]
+    "items": ["lance_type_battle"]
   },
   "unitSpawnPointOverrideList": [
     {
@@ -16,9 +14,7 @@
     {
       "unitType": "Vehicle",
       "unitTagSet": {
-        "items": [
-          "unit_vehicle_carrier"
-        ]
+        "items": ["unit_vehicle_carrier"]
       }
     },
     {

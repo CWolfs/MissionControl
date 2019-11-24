@@ -15,6 +15,9 @@ namespace MissionControl.Data {
     [JsonProperty("lanceDefId")]
     public string LanceDefId { get; set; } = "Tagged";
 
+    [JsonProperty("supportAutofill")]
+    public bool SupportAutofill { get; set; } = true;
+
     [JsonProperty("lanceTagSet")]
     public MTagSetData LanceTagSet { get; set; } = new MTagSetData();
 

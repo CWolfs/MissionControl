@@ -32,7 +32,7 @@ namespace MissionControl {
     public string ModDirectory { get; private set; }
     private Dictionary<string, MLanceOverride> LanceOverrides { get; set; } = new Dictionary<string, MLanceOverride>();
 
-    private List<string> Genders = new List<string>{ "Male", "Female", "Unspecified" };
+    private List<string> Genders = new List<string> { "Male", "Female", "Unspecified" };
     private Dictionary<string, Dictionary<string, List<string>>> FirstNames = new Dictionary<string, Dictionary<string, List<string>>>(); // e.g. <Male, <FactionName, [list of names]>>
     private Dictionary<string, List<string>> LastNames = new Dictionary<string, List<string>>();  // e.g. <All, [list of names]>
     private Dictionary<string, List<string>> Ranks = new Dictionary<string, List<string>>();      // e.g. <FactionName, [list of ranks]>
@@ -40,7 +40,7 @@ namespace MissionControl {
 
     private Dictionary<string, Dictionary<string, List<string>>> Dialogue = new Dictionary<string, Dictionary<string, List<string>>>();
 
-    private DataManager() {}
+    private DataManager() { }
 
     public void Init(string modDirectory) {
       ModDirectory = modDirectory;
@@ -98,7 +98,7 @@ namespace MissionControl {
         RequestResourcesAndProcess(BattleTechResourceType.LanceDef, key);
         return true;
       }
-      
+
       Main.Logger.Log($"[LoadDirectLanceReference] No direct lance reference found for '{key}'");
       return false;
     }
@@ -109,9 +109,9 @@ namespace MissionControl {
       return LoadDirectLanceReference(key);
     }
 
-    public LanceOverride GetLanceOverride(string key) {
+    public MLanceOverride GetLanceOverride(string key) {
       IDataItemStore<string, LanceDef> lanceDefs = UnityGameInstance.BattleTechGame.DataManager.LanceDefs;
-      
+
       if (LanceOverrides.ContainsKey(key)) {
         Main.Logger.Log($"[GetLanceOverride] Found a lance override for '{key}'");
         return LanceOverrides[key];
@@ -164,7 +164,7 @@ namespace MissionControl {
     }
 
     private void LoadPortraits() {
-      string portraitJson =  File.ReadAllText($"{ModDirectory}/cast/Portraits.json");
+      string portraitJson = File.ReadAllText($"{ModDirectory}/cast/Portraits.json");
       this.Portraits = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(portraitJson);
     }
 
@@ -216,7 +216,7 @@ namespace MissionControl {
       portraits.AddRange(this.Portraits["All"]);
       if (this.Portraits.ContainsKey(gender)) portraits.AddRange(this.Portraits[gender]);
 
-      return portraits[UnityEngine.Random.Range(0, portraits.Count)];  
+      return portraits[UnityEngine.Random.Range(0, portraits.Count)];
     }
 
     public void LoadDialogueData() {
@@ -234,7 +234,7 @@ namespace MissionControl {
         if (dialogueOfType.ContainsKey(contractType)) dialogues.AddRange(dialogueOfType[contractType]);
         if (dialogueOfType.ContainsKey(contractSubType)) dialogues.AddRange(dialogueOfType[contractSubType]);
 
-        return dialogues[UnityEngine.Random.Range(0, dialogues.Count)];  
+        return dialogues[UnityEngine.Random.Range(0, dialogues.Count)];
       }
 
       return "Let's get them, Commander!";
@@ -245,20 +245,20 @@ namespace MissionControl {
     }
 
     public void RequestResourcesAndProcess(BattleTechResourceType resourceType, string resourceId, bool filterByOwnership = false) {
-        LoadRequest loadRequest = UnityGameInstance.BattleTechGame.DataManager.CreateLoadRequest(delegate(LoadRequest request) {
-          Main.LogDebug($"[RequestResourcesAndProcess] Finished load request for {resourceId}");
-        }, filterByOwnership);
-        loadRequest.AddBlindLoadRequest(resourceType, resourceId);
-        loadRequest.ProcessRequests(1000u);
+      LoadRequest loadRequest = UnityGameInstance.BattleTechGame.DataManager.CreateLoadRequest(delegate (LoadRequest request) {
+        Main.LogDebug($"[RequestResourcesAndProcess] Finished load request for {resourceId}");
+      }, filterByOwnership);
+      loadRequest.AddBlindLoadRequest(resourceType, resourceId);
+      loadRequest.ProcessRequests(1000u);
     }
 
     public DateTime? GetSimGameCurrentDate() {
-			DateTime? result = null;
-			if (UnityGameInstance.BattleTechGame != null && UnityGameInstance.BattleTechGame.Simulation != null) {
-				result = new DateTime?(UnityGameInstance.BattleTechGame.Simulation.CurrentDate);
-			}
-			return result;
-		}
+      DateTime? result = null;
+      if (UnityGameInstance.BattleTechGame != null && UnityGameInstance.BattleTechGame.Simulation != null) {
+        result = new DateTime?(UnityGameInstance.BattleTechGame.Simulation.CurrentDate);
+      }
+      return result;
+    }
 
     /*
       This adds any custom messages to the message center scopes
@@ -269,7 +269,7 @@ namespace MissionControl {
       MessageTypes[] customMessageTypes = (MessageTypes[])Enum.GetValues(typeof(MessageTypes));
       for (int i = 0; i < customMessageTypes.Length; i++) {
         Main.LogDebug($"[InjectMessageScopes] Injecting custom message {customMessageTypes.ToString()} into 'MessageCenter.MessageScope.CombatGame'");
-        messageScopes.Add((MessageCenterMessageType)customMessageTypes[i], MessageCenter.MessageScope.CombatGame);  
+        messageScopes.Add((MessageCenterMessageType)customMessageTypes[i], MessageCenter.MessageScope.CombatGame);
       }
     }
   }
