@@ -1,6 +1,7 @@
 {
   "lanceKey": "Damaged_Assault_Battle_Lance",
   "lanceDefId": "Tagged",
+  "supportAutofill": false,
   "lanceTagSet": {
     "items": [
       "lance_type_battle",

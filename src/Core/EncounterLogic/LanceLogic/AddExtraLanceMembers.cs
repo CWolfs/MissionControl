@@ -1,19 +1,16 @@
-using UnityEngine;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 
-using BattleTech;
-using BattleTech.Designed;
 using BattleTech.Framework;
 
-using MissionControl.Rules;
-using MissionControl.Utils;
+using MissionControl.Data;
 
 namespace MissionControl.Logic {
   public class AddExtraLanceMembers : LanceLogic {
+    private LogicState state;
 
-    public AddExtraLanceMembers() { }
+    public AddExtraLanceMembers(LogicState state) {
+      this.state = state;
+    }
 
     public override void Run(RunPayload payload) {
       Main.Logger.Log($"[AddExtraLanceMembers] Adding extra lance units to lance");
@@ -32,6 +29,15 @@ namespace MissionControl.Logic {
       Main.LogDebug($"[IncreaseLanceMembers] Faction '{teamOverride.faction}' lance size is '{factionLanceSize}");
 
       foreach (LanceOverride lanceOverride in lanceOverrides) {
+        // GUARD: If an AdditionalLance lance config has been set to 'supportAutoFill' false, then don't autofill
+        if (lanceOverride is MLanceOverride) {
+          MLanceOverride mLanceOverride = (MLanceOverride)lanceOverride;
+          if (!mLanceOverride.SupportAutofill) {
+            Main.LogDebug($"[IncreaseLanceMembers] Lance Override '{mLanceOverride.GUID}' has 'autofill' explicitly turned off in MC lance '{mLanceOverride.LanceKey}'");
+            continue;
+          }
+        }
+
         int numberOfUnitsInLance = lanceOverride.unitSpawnPointOverrideList.Count;
         bool isLanceTagged = lanceOverride.lanceDefId == "Tagged" || lanceOverride.lanceDefId == "UseLance";
         bool AreAnyLanceUnitsTagged = AreAnyLanceMembersTagged(lanceOverride);

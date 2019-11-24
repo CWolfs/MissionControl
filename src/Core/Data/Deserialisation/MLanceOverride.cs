@@ -8,7 +8,12 @@ using HBS.Collections;
 
 namespace MissionControl.Data {
   public class MLanceOverride : LanceOverride {
+
+    public string LanceKey { get; set; } = "MC_LANCE_KEY_NOT_SET";
+    public bool SupportAutofill { get; set; } = true;
+
     public MLanceOverride(MLanceOverrideData lanceOverrideData) {
+      this.LanceKey = lanceOverrideData.LanceKey;
       this.lanceDefId = lanceOverrideData.LanceDefId;
       this.lanceTagSet = new TagSet(lanceOverrideData.LanceTagSet.TagSetSourceFile);
       this.lanceTagSet.AddRange(lanceOverrideData.LanceTagSet.Items);
@@ -18,6 +23,8 @@ namespace MissionControl.Data {
       this.spawnEffectTags.AddRange(lanceOverrideData.SpawnEffectTags.Items);
       this.lanceDifficultyAdjustment = lanceOverrideData.LanceDifficultyAdjustment;
       this.unitSpawnPointOverrideList = lanceOverrideData.GetUnitSpawnPointOverrideList();
+
+      this.SupportAutofill = lanceOverrideData.SupportAutofill;
     }
 
     public MLanceOverride(LanceDef lanceDef) {
