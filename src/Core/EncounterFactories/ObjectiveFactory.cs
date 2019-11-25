@@ -1,5 +1,6 @@
 using UnityEngine;
-using System;
+using System.Collections;
+using System.Collections.Generic;
 
 using BattleTech;
 using BattleTech.Designed;
@@ -28,6 +29,11 @@ namespace MissionControl.EncounterFactories {
       destroyLanceObjective.markUnitsWith = markUnitsWith;
       destroyLanceObjective.lanceToDestroy = lanceToDestroy;
 
+      // Rewards
+      List<SimGameEventResult> onSuccessResults = new List<SimGameEventResult>();
+      onSuccessResults.Add(CreateRewardResult());
+      destroyLanceObjective.OnSuccessResults = onSuccessResults;
+
       // For ease of user we track objectives, by default, against the first contract objective
       // TODO: Anchor them maybe against a new hidden contract objective to prevent objectives completing and completing this additional objectives
       ContractObjectiveGameLogic contractObjective = MissionControl.Instance.EncounterLayerData.GetComponent<ContractObjectiveGameLogic>();
@@ -35,6 +41,16 @@ namespace MissionControl.EncounterFactories {
       contractObjective.objectiveRefList.Add(objectiveRef);
 
       return destroyLanceObjective;
+    }
+
+    public static SimGameEventResult CreateRewardResult() {
+      SimGameEventResult rewardResult = new SimGameEventResult();
+      rewardResult.Scope = EventScope.Company;
+
+      SimGameStat rewardStat = new SimGameStat("ContractBonusRewardPct", 0.1f);
+      rewardResult.Stats = new SimGameStat[] { rewardStat };
+
+      return rewardResult;
     }
 
     public static ContractObjectiveGameLogic CreateContractObjective(ObjectiveGameLogic objective) {
@@ -53,7 +69,7 @@ namespace MissionControl.EncounterFactories {
       occupyRegionObjective.title = occupyRegionObjectiveGo.name;
       occupyRegionObjective.encounterObjectGuid = objectiveGuid;
       occupyRegionObjective.requiredTagsOnUnit = new TagSet(new string[] { "player_unit" });
-      
+
       LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
       lanceSpawnerRef.EncounterObjectGuid = requiredLanceSpawnerGuid;
       occupyRegionObjective.requiredLance = lanceSpawnerRef;
