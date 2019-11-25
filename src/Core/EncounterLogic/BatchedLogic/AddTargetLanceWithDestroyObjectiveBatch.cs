@@ -17,7 +17,7 @@ namespace MissionControl.Logic {
       string targetTeamGuid = EncounterRules.TARGET_TEAM_ID;
       string spawnerName = $"Lance_Enemy_OpposingForce_{lanceGuid}";
 
-      AddPartialContractObjective addPartialContractObjective = new AddPartialContractObjective(contractObjectiveGuid, false, "Destroy Support Lances", "Destroy X Support Lances (Test)");
+      AddPartialContractObjective addPartialContractObjective = new AddPartialContractObjective(contractObjectiveGuid, false, objectiveName, objectiveName);
       addPartialContractObjective.ObjectiveGuids.Add(objectiveGuid);
       AddContractObjectiveToEncounter addContractObjectiveToEncounter = new AddContractObjectiveToEncounter(contractObjectiveGuid);
 
