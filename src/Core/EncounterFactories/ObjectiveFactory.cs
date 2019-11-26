@@ -13,7 +13,9 @@ using MissionControl;
 namespace MissionControl.EncounterFactories {
   public class ObjectiveFactory {
     public static DestroyLanceObjective CreateDestroyLanceObjective(string objectiveGuid, GameObject parent, LanceSpawnerRef lanceToDestroy, string lanceGuid, string title, bool showProgress,
-    string progressFormat, string description, int priority, bool displayToUser, ObjectiveMark markUnitsWith) {
+    string progressFormat, string description, int priority, bool displayToUser, ObjectiveMark markUnitsWith, string contractObjectiveGameLogicGuid) {
+      // TODO: Probably want to split out these two main chunks into their own methods
+      // OBJECTIVE OBJECTIVE GAME LOGIC
       GameObject destroyWholeLanceObjectiveGo = new GameObject($"Objective_DestroyLance_{lanceGuid}");
       destroyWholeLanceObjectiveGo.transform.parent = parent.transform;
       destroyWholeLanceObjectiveGo.transform.localPosition = Vector3.zero;
@@ -33,12 +35,33 @@ namespace MissionControl.EncounterFactories {
       List<SimGameEventResult> onSuccessResults = new List<SimGameEventResult>();
       onSuccessResults.Add(CreateRewardResult());
       destroyLanceObjective.OnSuccessResults = onSuccessResults;
+      destroyLanceObjective.onSuccessDialogue = new DialogueRef();
+      destroyLanceObjective.onFailureDialogue = new DialogueRef();
 
-      // For ease of user we track objectives, by default, against the first contract objective
-      // TODO: Anchor them maybe against a new hidden contract objective to prevent objectives completing and completing this additional objectives
-      ContractObjectiveGameLogic contractObjective = MissionControl.Instance.EncounterLayerData.GetComponent<ContractObjectiveGameLogic>();
+      ContractObjectiveGameLogic contractObjectiveGameLogic = null;
+      if (contractObjectiveGameLogicGuid == null) {
+        // For ease of user we track objectives, by default, against the first contract objective
+        contractObjectiveGameLogic = MissionControl.Instance.EncounterLayerData.GetComponent<ContractObjectiveGameLogic>();
+      } else {
+        contractObjectiveGameLogic = MissionControl.Instance.EncounterLayerData.GetContractObjectiveGameLogicByGUID(contractObjectiveGameLogicGuid);
+      }
+
+      if (contractObjectiveGameLogic == null) {
+        Main.Logger.LogError($"[CreateDestroyLanceObjective] Contract Objective is null!");
+      }
+
       ObjectiveRef objectiveRef = new ObjectiveRef(destroyLanceObjective);
-      contractObjective.objectiveRefList.Add(objectiveRef);
+      contractObjectiveGameLogic.objectiveRefList.Add(objectiveRef);
+
+      // OBJECTIVE OVERRIDE - This is needed otherwise the results don't apply in the 'End Contract' screen
+      ObjectiveOverride objectiveOverride = new ObjectiveOverride(destroyLanceObjective);
+      objectiveOverride.title = destroyLanceObjective.title;
+      objectiveOverride.description = destroyLanceObjective.description;
+      objectiveOverride.OnSuccessResults = destroyLanceObjective.OnSuccessResults;
+      objectiveOverride.OnFailureResults = destroyLanceObjective.OnFailureResults;
+      objectiveOverride.OnSuccessDialogueGUID = destroyLanceObjective.onSuccessDialogue.EncounterObjectGuid;
+      objectiveOverride.OnFailureDialogueGUID = destroyLanceObjective.onFailureDialogue.EncounterObjectGuid;
+      MissionControl.Instance.CurrentContract.Override.objectiveList.Add(objectiveOverride);
 
       return destroyLanceObjective;
     }

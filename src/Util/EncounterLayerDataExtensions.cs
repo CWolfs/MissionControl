@@ -16,6 +16,14 @@ public static class EncounterLayerDataExtensions {
     return null;
   }
 
+  public static ContractObjectiveGameLogic GetContractObjectiveGameLogicByGUID(this EncounterLayerData layerData, string guid) {
+    ContractObjectiveGameLogic[] components = layerData.GetComponentsInChildren<ContractObjectiveGameLogic>();
+    foreach (ContractObjectiveGameLogic logic in components) {
+      if (logic.encounterObjectGuid == guid) return logic;
+    }
+    return null;
+  }
+
   /*
   // TODO: Fix these deletes
   public static List<ITaggedItem> GetAllTaggedItems(GameObject go) {

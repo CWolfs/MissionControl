@@ -25,9 +25,10 @@ namespace MissionControl.Logic {
     private string objectiveLabel;
     private int priority;
     private bool isPrimary;
+    private string contractObjectiveGameLogicGuid;
 
     public AddDestroyWholeUnitChunk(EncounterRules encounterRules, string teamGuid, string lanceGuid, List<string> unitGuids,
-      string spawnerName, string objectiveGuid, string objectiveLabel, int priority, bool isPrimary) {
+      string spawnerName, string objectiveGuid, string objectiveLabel, int priority, bool isPrimary, string contractObjectiveGameLogicGuid = null) {
       this.encounterRules = encounterRules;
       this.teamGuid = teamGuid;
       this.lanceGuid = lanceGuid;
@@ -37,6 +38,7 @@ namespace MissionControl.Logic {
       this.objectiveLabel = objectiveLabel;
       this.priority = priority;
       this.isPrimary = isPrimary;
+      this.contractObjectiveGameLogicGuid = contractObjectiveGameLogicGuid;
     }
 
     public override void Run(RunPayload payload) {
@@ -72,7 +74,8 @@ namespace MissionControl.Logic {
         "The primary objective to destroy the enemy lance",
         priority,
         displayToUser,
-        ObjectiveMark.AttackTarget
+        ObjectiveMark.AttackTarget,
+        contractObjectiveGameLogicGuid
       );
 
       if (isPrimary) {

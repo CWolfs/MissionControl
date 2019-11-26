@@ -21,6 +21,7 @@ namespace MissionControl.Logic {
       contractObjectiveGameLogic.description = contractObjectiveOverride.description;
       contractObjectiveGameLogic.forPlayer = contractObjectiveOverride.forPlayer;
       contractObjectiveGameLogic.primary = contractObjectiveOverride.isPrimary;
+      contractObjectiveGameLogic.encounterObjectGuid = contractObjectiveOverrideGuid;
     }
   }
 }
