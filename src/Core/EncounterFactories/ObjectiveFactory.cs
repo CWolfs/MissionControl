@@ -33,7 +33,14 @@ namespace MissionControl.EncounterFactories {
 
       // Rewards
       List<SimGameEventResult> onSuccessResults = new List<SimGameEventResult>();
-      onSuccessResults.Add(CreateRewardResult());
+      List<Dictionary<string, string>> rewards = Main.Settings.ActiveAdditionalLances.RewardsPerLance;
+
+      foreach (Dictionary<string, string> reward in rewards) {
+        string type = Main.Settings.ActiveAdditionalLances.GetRewardType(reward);
+        float value = Main.Settings.ActiveAdditionalLances.GetRewardValue(reward);
+        onSuccessResults.Add(CreateRewardResult(type, value));
+      }
+
       destroyLanceObjective.OnSuccessResults = onSuccessResults;
       destroyLanceObjective.onSuccessDialogue = new DialogueRef();
       destroyLanceObjective.onFailureDialogue = new DialogueRef();
@@ -66,11 +73,11 @@ namespace MissionControl.EncounterFactories {
       return destroyLanceObjective;
     }
 
-    public static SimGameEventResult CreateRewardResult() {
+    public static SimGameEventResult CreateRewardResult(string type, float value) {
       SimGameEventResult rewardResult = new SimGameEventResult();
       rewardResult.Scope = EventScope.Company;
 
-      SimGameStat rewardStat = new SimGameStat("ContractBonusRewardPct", 0.1f);
+      SimGameStat rewardStat = new SimGameStat(type, value);
       rewardResult.Stats = new SimGameStat[] { rewardStat };
 
       return rewardResult;
