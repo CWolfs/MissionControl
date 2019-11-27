@@ -11,6 +11,7 @@ namespace MissionControl.Patches {
         UiManager.Instance.ClickedQuickSkirmish = false;
         UiManager.Instance.ReadyToLoadQuickSkirmish = false;
         LoadingCurtain.Hide();
+        LoadingCurtain.HACK_ClearClosingConditionals();
       }
     }
   }
