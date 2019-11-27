@@ -5,62 +5,62 @@ using Newtonsoft.Json;
 using BattleTech;
 
 namespace MissionControl.Config {
-	public class Lance {
-		
-		public string TeamType { get; set; } = "NONE";
-		
-		public Lance() {}
+  public class Lance {
 
-		public Lance(string teamType) {
-			TeamType = teamType;
-		}
+    public string TeamType { get; set; } = "NONE";
 
-		[JsonProperty("Max")]
-		public int Max { get; set; } = 0;
+    public Lance() { }
 
-		[JsonProperty("ExcludeContractTypes")]
-		public List<string> ExcludeContractTypes { get; set; } = new List<string>();
+    public Lance(string teamType) {
+      TeamType = teamType;
+    }
 
-		[JsonProperty("ChanceToSpawn")]
-		public float ChanceToSpawn { get; set; } = 0;
+    [JsonProperty("Max")]
+    public int Max { get; set; } = 0;
 
-		[JsonProperty("EliteLances")]
-		public EliteLances EliteLances = new EliteLances();
+    [JsonProperty("ExcludeContractTypes")]
+    public List<string> ExcludeContractTypes { get; set; } = new List<string>();
 
-		[JsonProperty("LancePool")]
-		public Dictionary<string, List<string>> LancePool { get; set; } = new Dictionary<string, List<string>>();
+    [JsonProperty("ChanceToSpawn")]
+    public float ChanceToSpawn { get; set; } = 0;
 
-		public int SelectNumberOfAdditionalLances(Faction faction, string teamType) {
-			bool useElites = MissionControl.Instance.ShouldUseElites(faction, teamType);
-			int lanceNumber = 0;
+    [JsonProperty("EliteLances")]
+    public EliteLances EliteLances = new EliteLances();
 
-			float rawChanceToSpawn = this.ChanceToSpawn;
-			if (useElites) {
-				if (EliteLances.Overrides.ContainsKey("ChanceToSpawn")) {
-					rawChanceToSpawn = float.Parse(EliteLances.Overrides["ChanceToSpawn"]);
-				} else {
-					Main.Logger.LogWarning("[SelectNumberOfAdditionalLances] Elite lances should be selected but no elite 'ChanceToSpawn' provided. Falling back to defaults.");
-				}
-			}
-			int resolvedChanceToSpawn = (int)(rawChanceToSpawn * 100f);
+    [JsonProperty("LancePool")]
+    public Dictionary<string, List<string>> LancePool { get; set; } = new Dictionary<string, List<string>>();
 
-			int resolvedMax = Max;
-			if (useElites) {
-				if (EliteLances.Overrides.ContainsKey("Max")) {
-					resolvedMax = int.Parse(EliteLances.Overrides["Max"]);
-				} else {
-					Main.Logger.LogWarning("[SelectNumberOfAdditionalLances] Elite lances should be selected but no elite 'Max' provided. Falling back to defaults.");
-				}
-			}
+    public int SelectNumberOfAdditionalLances(FactionDef faction, string teamType) {
+      bool useElites = MissionControl.Instance.ShouldUseElites(faction, teamType);
+      int lanceNumber = 0;
 
-			for (int i = 0; i < resolvedMax; i++) {
-				int rollChance = UnityEngine.Random.Range(1, 100 + 1);
-				if (rollChance > resolvedChanceToSpawn) break;
-				lanceNumber++;
-			}
+      float rawChanceToSpawn = this.ChanceToSpawn;
+      if (useElites) {
+        if (EliteLances.Overrides.ContainsKey("ChanceToSpawn")) {
+          rawChanceToSpawn = float.Parse(EliteLances.Overrides["ChanceToSpawn"]);
+        } else {
+          Main.Logger.LogWarning("[SelectNumberOfAdditionalLances] Elite lances should be selected but no elite 'ChanceToSpawn' provided. Falling back to defaults.");
+        }
+      }
+      int resolvedChanceToSpawn = (int)(rawChanceToSpawn * 100f);
 
-			Main.Logger.Log($"[SelectNumberOfAdditionalLances] {lanceNumber}");	
-			return lanceNumber;
-		}
-	}
+      int resolvedMax = Max;
+      if (useElites) {
+        if (EliteLances.Overrides.ContainsKey("Max")) {
+          resolvedMax = int.Parse(EliteLances.Overrides["Max"]);
+        } else {
+          Main.Logger.LogWarning("[SelectNumberOfAdditionalLances] Elite lances should be selected but no elite 'Max' provided. Falling back to defaults.");
+        }
+      }
+
+      for (int i = 0; i < resolvedMax; i++) {
+        int rollChance = UnityEngine.Random.Range(1, 100 + 1);
+        if (rollChance > resolvedChanceToSpawn) break;
+        lanceNumber++;
+      }
+
+      Main.Logger.Log($"[SelectNumberOfAdditionalLances] {lanceNumber}");
+      return lanceNumber;
+    }
+  }
 }

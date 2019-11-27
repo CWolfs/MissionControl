@@ -18,11 +18,12 @@ namespace MissionControl.Logic {
       string biome = Enum.GetName(typeof(Biome.BIOMESKIN), MissionControl.Instance.CurrentContract.ContractBiome);
       biome = biome.Capitalise();
       string contractType = MissionControl.Instance.CurrentContractType;
-      Faction faction = MissionControl.Instance.GetFactionFromTeamType(teamType);
-      int factionRep = (MissionControl.Instance.IsSkirmish()) ? 0 : UnityGameInstance.Instance.Game.Simulation.GetRawReputation(faction);
+      FactionDef faction = MissionControl.Instance.GetFactionFromTeamType(teamType);
+      string factionName = (faction == null) ? "UNKNOWN" : faction.Name;
+      int factionRep = (MissionControl.Instance.IsSkirmish()) ? 0 : UnityGameInstance.Instance.Game.Simulation.GetRawReputation(faction.FactionValue);
       bool useElites = MissionControl.Instance.ShouldUseElites(faction, teamType);
       Config.Lance activeAdditionalLance = Main.Settings.ActiveAdditionalLances.GetActiveAdditionalLanceByTeamType(teamType);
-      List<string> lancePoolKeys = Main.Settings.ActiveAdditionalLances.GetLancePoolKeys(teamType, biome, contractType, faction.ToString(), factionRep);
+      List<string> lancePoolKeys = Main.Settings.ActiveAdditionalLances.GetLancePoolKeys(teamType, biome, contractType, factionName, factionRep);
 
       int index = UnityEngine.Random.Range(0, lancePoolKeys.Count);
       string selectedLanceKey = lancePoolKeys[index];
