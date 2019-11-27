@@ -58,8 +58,15 @@ namespace MissionControl.Logic {
               float xPositon = position.x + movementFactor;
               float zPosition = position.z - movementFactor;
 
-              if (xPositon > -25) xPositon = -25;
-              if (zPosition < 25) zPosition = 25;
+              if (xPositon > -25) {
+                Main.Logger.Log($"[MaximiseBoundarySize.SetBoundarySizeToMedium] X width is to the map boundary. Stopping at the boundary.'");
+                xPositon = -25;
+              }
+
+              if (zPosition < 25) {
+                Main.Logger.Log($"[MaximiseBoundarySize.SetBoundarySizeToMedium] Z width is to the map boundary. Stopping at the boundary.'");
+                zPosition = 25;
+              }
 
               encounterBoundaryRectGameLogic.transform.position = new Vector3(xPositon, encounterBoundaryRectGameLogic.transform.position.y, zPosition);
               encounterLayerData.CalculateEncounterBoundary();
