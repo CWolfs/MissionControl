@@ -23,15 +23,15 @@ namespace MissionControl.Patches {
 
       if (__instance.ContractTypeValue.Name == "ArenaSkirmish") {
         ContractOverride contractOverride = new ContractOverride();
-        contractOverride.player1Team.faction = Faction.Player1sMercUnit;
-        contractOverride.player2Team.faction = Faction.Player2sMercUnit;
-        contractOverride.employerTeam.faction = Faction.Locals;
+        contractOverride.player1Team.faction = FactionEnumeration.GetPlayer1sMercUnitFactionValue().Name;
+        contractOverride.player2Team.faction = FactionEnumeration.GetPlayer2sMercUnitFactionValue().Name;
+        contractOverride.employerTeam.faction = "Locals";
 
         contractOverride.player1Team.lanceOverrideList.Add(new LanceOverride());
 
         AccessTools.Property(typeof(Contract), "Override").SetValue(__instance, contractOverride, null);
       }
-      
+
       Init(__instance);
     }
 

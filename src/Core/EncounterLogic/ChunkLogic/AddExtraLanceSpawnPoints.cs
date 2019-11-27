@@ -124,9 +124,8 @@ namespace MissionControl.Logic {
     }
 
     private void ApplyDifficultyMod(TeamOverride teamOverride, LanceOverride lanceOverride) {
-      Faction faction = teamOverride.faction;
       int previousAjustedDifficulty = lanceOverride.lanceDifficultyAdjustment;
-      int updatedLanceDifficultyAdjustment = Main.Settings.ExtendedLances.GetFactionLanceDifficulty(faction.ToString(), lanceOverride);
+      int updatedLanceDifficultyAdjustment = Main.Settings.ExtendedLances.GetFactionLanceDifficulty(teamOverride.faction, lanceOverride);
 
       if (previousAjustedDifficulty != updatedLanceDifficultyAdjustment) {
         Main.Logger.Log($"[AddExtraLanceSpawnPoints.ApplyDifficultyMod] [Faction:{teamOverride.faction}] Changing lance '{lanceOverride.name}' adjusted difficulty from '{lanceOverride.lanceDifficultyAdjustment}' to '{updatedLanceDifficultyAdjustment}'");

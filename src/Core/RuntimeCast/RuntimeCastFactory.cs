@@ -11,18 +11,18 @@ namespace MissionControl.RuntimeCast {
   public class RuntimeCastFactory {
     public static CastDef CreateCast() {
       Contract contract = MissionControl.Instance.CurrentContract;
-      Faction employerFaction = contract.GetTeamFaction(EncounterRules.EMPLOYER_TEAM_ID);
-      string factionId = SimGameState.GetFactionDefIDFromEnum(employerFaction);
+      FactionValue employerFaction = contract.GetTeamFaction(EncounterRules.EMPLOYER_TEAM_ID);
+      string factionId = employerFaction.FactionDefID;
       string employerFactionName = "Military Support";
 
-      if (employerFaction != Faction.INVALID_UNSET && employerFaction != Faction.NoFaction) {
+      if (employerFaction.Name != "INVALID_UNSET" && employerFaction.Name != "NoFaction") {
         FactionDef employerFactionDef = UnityGameInstance.Instance.Game.DataManager.Factions.Get(factionId);
         if (employerFactionDef == null) Main.Logger.LogError($"[RuntimeCastFactory] Error finding FactionDef for faction with id '{factionId}'");
         employerFactionName = employerFactionDef.Name.ToUpper();
       }
 
-      string employerFactionKey = (employerFaction == Faction.INVALID_UNSET || employerFaction == Faction.NoFaction) ? "All" : employerFaction.ToString();
-      
+      string employerFactionKey = (employerFaction.Name != "INVALID_UNSET" && employerFaction.Name != "NoFaction") ? "All" : employerFaction.ToString();
+
       string gender = DataManager.Instance.GetRandomGender();
       string firstName = DataManager.Instance.GetRandomFirstName(gender, employerFactionKey);
       string lastName = DataManager.Instance.GetRandomLastName(employerFactionKey);
@@ -41,7 +41,7 @@ namespace MissionControl.RuntimeCast {
       runtimeCastDef.callsign = rank;
       runtimeCastDef.rank = employerFactionName;
       runtimeCastDef.gender = btGender;
-      runtimeCastDef.faction = employerFaction;
+      runtimeCastDef.FactionValue = employerFaction;
       runtimeCastDef.showRank = true;
       runtimeCastDef.showFirstName = true;
       runtimeCastDef.showCallsign = false;
