@@ -33,7 +33,10 @@
       "6": []
     }
   },
-  "ExtendedBoundaries": true,
+  "ExtendedBoundaries": {
+    "Enabled": true,
+    "Size": "Medium"
+  },
   "DynamicWithdraw": {
     "Enabled": true,
     "MinDistanceForZone": 50,

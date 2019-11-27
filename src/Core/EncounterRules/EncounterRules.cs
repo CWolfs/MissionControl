@@ -37,7 +37,7 @@ namespace MissionControl.Rules {
     }
 
     public void ActivatePreFeatures() {
-      if (Main.Settings.ExtendedBoundaries) MaximiseEncounterBoundary();
+      if (Main.Settings.ExtendedBoundaries.Enable && Main.Settings.ExtendedBoundaries.Size != "Normal") MaximiseEncounterBoundary(Main.Settings.ExtendedBoundaries.Size);
     }
 
     public void ActivatePostFeatures() {
@@ -230,10 +230,10 @@ namespace MissionControl.Rules {
       }
     }
 
-    protected void MaximiseEncounterBoundary() {
-      Main.Logger.Log($"[{this.GetType().Name}] Maximising Boundary Size");
+    protected void MaximiseEncounterBoundary(string size) {
+      Main.Logger.Log($"[{this.GetType().Name}] Maximising Boundary Size to '{size}'");
 
-      this.EncounterLogic.Add(new MaximiseBoundarySize(this));
+      this.EncounterLogic.Add(new MaximiseBoundarySize(this, size));
     }
   }
 }
