@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 using System;
 using System.Linq;
 using System.Collections;
@@ -37,7 +39,7 @@ namespace MissionControl.Rules {
     }
 
     public void ActivatePreFeatures() {
-      if (Main.Settings.ExtendedBoundaries.Enable && Main.Settings.ExtendedBoundaries.Size != "None") MaximiseEncounterBoundary(Main.Settings.ExtendedBoundaries.Size);
+      if (Main.Settings.ExtendedBoundaries.Enable) MaximiseEncounterBoundary();
     }
 
     public void ActivatePostFeatures() {
@@ -230,8 +232,11 @@ namespace MissionControl.Rules {
       }
     }
 
-    protected void MaximiseEncounterBoundary(string size) {
-      Main.Logger.Log($"[{this.GetType().Name}] Maximising Boundary Size to '{size}'");
+    protected void MaximiseEncounterBoundary() {
+      string mapId = MissionControl.Instance.ContractMapName;
+      string contractTypeName = MissionControl.Instance.CurrentContractType;
+      float size = Main.Settings.ExtendedBoundaries.GetSizePercentage(mapId, contractTypeName);
+      Main.Logger.Log($"[{this.GetType().Name}] Maximising Boundary Size for '{mapId}.{contractTypeName}' to '{size}'");
 
       this.EncounterLogic.Add(new MaximiseBoundarySize(this, size));
     }
