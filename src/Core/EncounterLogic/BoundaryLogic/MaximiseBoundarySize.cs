@@ -44,7 +44,7 @@ namespace MissionControl.Logic {
           EncounterBoundaryRectGameLogic encounterBoundaryRectGameLogic = childEncounterObjectGameLogicList[i] as EncounterBoundaryRectGameLogic;
 
           int mediumSize = (int)(encounterBoundaryRectGameLogic.width * (1f + size));
-          int movementFactor = (int)((encounterBoundaryRectGameLogic.width * size) / 2f);
+          int movementFactor = (int)(encounterBoundaryRectGameLogic.width * size);
 
           int mediumXSize = mediumSize;
           int mediumZSize = mediumSize;
@@ -61,22 +61,10 @@ namespace MissionControl.Logic {
               float xPosition = position.x - movementFactor;
               float zPosition = position.z + movementFactor;
 
-              if (xPosition < -25) {
-                Main.Logger.Log($"[MaximiseBoundarySize.SetBoundarySizeToMedium] X position of '{xPosition}' is to the map boundary. Stopping at the boundary.'");
-                xPosition = -25;
-              }
-
-              if (zPosition > 25) {
-                Main.Logger.Log($"[MaximiseBoundarySize.SetBoundarySizeToMedium] Z position of '{zPosition}' is to the map boundary. Stopping at the boundary.'");
-                zPosition = 25;
-              }
-
               encounterBoundaryRectGameLogic.width = (int)mediumSize;
               encounterBoundaryRectGameLogic.height = (int)mediumSize;
 
-              // TODO: Fix this method - it's completely broken it seems
-
-              // encounterBoundaryRectGameLogic.transform.position = new Vector3(xPosition, encounterBoundaryRectGameLogic.transform.position.y, zPosition);
+              encounterBoundaryRectGameLogic.transform.position = new Vector3(xPosition, encounterBoundaryRectGameLogic.transform.position.y, zPosition);
               encounterLayerData.CalculateEncounterBoundary();
             } else {
               Main.Logger.Log($"[MaximiseBoundarySize] This encounter has no boundary to maximise.");
