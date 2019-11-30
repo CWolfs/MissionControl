@@ -8,6 +8,8 @@ using Harmony;
 
 using HBS.Collections;
 
+using MissionControl.Utils;
+
 namespace MissionControl {
   public class PathFinderManager {
     private static PathFinderManager instance;
@@ -37,7 +39,7 @@ namespace MissionControl {
       CombatGameState combatState = game.Combat;
       string spawnerId = Guid.NewGuid().ToString();
       string uniqueId = $"{spawnerId}.9999999999";
-      
+
       HeraldryDef heraldryDef = null;
       combatState.DataManager.Heraldries.TryGet(HeraldryDef.HeraldyrDef_SinglePlayerSkirmishPlayer1, out heraldryDef);
 
@@ -65,19 +67,19 @@ namespace MissionControl {
       PilotDef pilotDef = null;
       combatState.DataManager.PilotDefs.TryGet("pilot_default", out pilotDef);
       Vehicle vehicle = new Vehicle(vehicleDef, pilotDef, new TagSet(), uniqueId, combatState, spawnerId, heraldryDef);
-      return vehicle;  
+      return vehicle;
     }
 
     public void RequestPathFinderMech() {
       Main.LogDebug("[PathFinderManager] Requesting path finder mech");
       if (pathFinderMech == null) Init();
-        DataManager.Instance.RequestResourcesAndProcess(BattleTechResourceType.Prefab, pathFinderMech.MechDef.Chassis.PrefabIdentifier);
+      DataManager.Instance.RequestResourcesAndProcess(BattleTechResourceType.Prefab, pathFinderMech.MechDef.Chassis.PrefabIdentifier);
     }
 
     public void RequestPathFinderVehicle() {
       Main.LogDebug("[PathFinderManager] Requesting path finder vehicle");
       if (pathFinderVehicle == null) Init();
-        DataManager.Instance.RequestResourcesAndProcess(BattleTechResourceType.Prefab, pathFinderVehicle.VehicleDef.Chassis.PrefabIdentifier);
+      DataManager.Instance.RequestResourcesAndProcess(BattleTechResourceType.Prefab, pathFinderVehicle.VehicleDef.Chassis.PrefabIdentifier);
     }
 
     private AbstractActor GetPathFindingActor(UnitType type) {
@@ -92,7 +94,7 @@ namespace MissionControl {
 
     private void SetupPathfindingActor(Vector3 position, AbstractActor pathfindingActor) {
       if (pathfindingActor.GameRep == null) {
-        pathfindingActor.Init(position, 0, false);
+        pathfindingActor.Init(position, 0, true);
         pathfindingActor.InitGameRep(null);
       } else {
         pathfindingActor.CurrentPosition = position;
@@ -131,15 +133,15 @@ namespace MissionControl {
         }
 
         DynamicLongRangePathfinder.PointWithCost pointWithCost = new DynamicLongRangePathfinder.PointWithCost(combatState.HexGrid.GetClosestHexPoint3OnGrid(positionPathNode.Position), 0, (validityPosition - positionPathNode.Position).magnitude) {
-					pathNode = positionPathNode
-				};
+          pathNode = positionPathNode
+        };
         List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(new List<DynamicLongRangePathfinder.PointWithCost>() { pointWithCost }, validityPosition, float.MaxValue, pathfindingActor, false, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
-        
+
         // List<Vector3> path = DynamicLongRangePathfinder.GetPathToDestination(position, float.MaxValue, pathfindingActor, true, pathFindingZoneRadius);
         // List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(position, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
-        
+
         Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Path count is: '{path.Count}', Current position is: '{position}'");
-        
+
         // GUARD: Against deep water and other impassables that have slipped through
         if (HasPathImpassableOrDeepWaterTiles(combatState, path)) return false;
 
@@ -257,7 +259,7 @@ namespace MissionControl {
 
       pathfindingActor.Pathing.UpdateFreePath(validityPosition, validityPosition, false, false);
       if (pathfindingActor.Pathing.HasPath) return true;
-      
+
       return false;
     }
 
@@ -279,6 +281,12 @@ namespace MissionControl {
         if (vehicleBlipUnknownGo) GameObject.Destroy(vehicleBlipUnknownGo);
         if (vehicleBlipIdentified) GameObject.Destroy(vehicleBlipIdentified);
       }
+    }
+
+    public void FullReset() {
+      Reset();
+      pathFinderMech = null;
+      pathFinderVehicle = null;
     }
   }
 }

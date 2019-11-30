@@ -45,21 +45,21 @@ namespace MissionControl {
 
     private void LoadEncounterRules() {
       AddEncounter("AmbushConvoy", typeof(AmbushConvoyEncounterRules));
-      
+
       AddEncounter("Assassinate", typeof(AssassinateEncounterRules));
 
       AddEncounter("CaptureBase", typeof(CaptureBaseJointAssaultEncounterRules));
       AddEncounter("CaptureBase", typeof(CaptureBaseAidAssaultEncounterRules));
 
       AddEncounter("CaptureEscort", typeof(CaptureEscortAdditionalBlockersEncounterRules));
-      
+
       AddEncounter("DefendBase", typeof(DefendBaseEncounterRules));
-      
+
       AddEncounter("DestroyBase", typeof(DestroyBaseJointAssaultEncounterRules));
       AddEncounter("DestroyBase", typeof(DestroyBaseAidAssaultEncounterRules));
-      
+
       AddEncounter("Rescue", typeof(RescueEncounterRules));
-      
+
       AddEncounter("SimpleBattle", typeof(SimpleBattleEncounterRules));
 
       AddEncounter("FireMission", typeof(FireMissionEncounterRules));
@@ -67,14 +67,14 @@ namespace MissionControl {
       AddEncounter("AttackDefend", typeof(AttackDefendEncounterRules));
 
       AddEncounter("ThreeWayBattle", typeof(BattlePlusEncounterRules));
-    
+
       // Skirmish
       if (Main.Settings.DebugSkirmishMode) AddEncounter("ArenaSkirmish", typeof(DebugArenaSkirmishEncounterRules));
     }
 
     public void AddEncounter(string contractType, Type encounter) {
       if (!AvailableEncounters.ContainsKey(contractType)) AvailableEncounters.Add(contractType, new List<Type>());
-      AvailableEncounters[contractType].Add(encounter);  
+      AvailableEncounters[contractType].Add(encounter);
     }
 
     public void ClearEncounters() {
@@ -99,7 +99,7 @@ namespace MissionControl {
       EncounterLayerGameObject = EncounterLayerData.gameObject;
       EncounterLayerData.CalculateEncounterBoundary();
 
-      if (HexGrid == null) HexGrid = ReflectionHelper.GetPrivateStaticField(typeof(WorldPointGameLogic), "hexGrid") as HexGrid;
+      if (HexGrid == null) HexGrid = ReflectionHelper.GetPrivateStaticField(typeof(WorldPointGameLogic), "_hexGrid") as HexGrid;
     }
 
     public void SetContract(Contract contract) {
@@ -183,25 +183,25 @@ namespace MissionControl {
       if (EncounterRules != null) {
         switch (type) {
           case LogicBlock.LogicType.RESOURCE_REQUEST: {
-            EncounterRules.Run(LogicBlock.LogicType.RESOURCE_REQUEST, payload);
-            break;
-          }
+              EncounterRules.Run(LogicBlock.LogicType.RESOURCE_REQUEST, payload);
+              break;
+            }
           case LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION: {
-            EncounterRules.Run(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
-            break;
-          }
+              EncounterRules.Run(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
+              break;
+            }
           case LogicBlock.LogicType.ENCOUNTER_MANIPULATION: {
-            EncounterRules.Run(LogicBlock.LogicType.ENCOUNTER_MANIPULATION, payload);
-            break; 
-          }
+              EncounterRules.Run(LogicBlock.LogicType.ENCOUNTER_MANIPULATION, payload);
+              break;
+            }
           case LogicBlock.LogicType.SCENE_MANIPULATION: {
-            EncounterRules.Run(LogicBlock.LogicType.SCENE_MANIPULATION, payload);
-            break;
-          }
+              EncounterRules.Run(LogicBlock.LogicType.SCENE_MANIPULATION, payload);
+              break;
+            }
           default: {
-            Main.Logger.LogError($"[RunEncounterRules] Unknown type of '{type.ToString()}'");
-            break;
-          }
+              Main.Logger.LogError($"[RunEncounterRules] Unknown type of '{type.ToString()}'");
+              break;
+            }
         }
       }
     }
@@ -212,7 +212,7 @@ namespace MissionControl {
       Contract activeContract = UnityGameInstance.BattleTechGame.Combat.ActiveContract;
       string encounterObjectGuid = activeContract.encounterObjectGuid;
       EncounterLayerData selectedEncounterLayerData = EncounterLayerParent.GetLayerByGuid(encounterObjectGuid);
-      
+
       return selectedEncounterLayerData;
     }
 
@@ -221,7 +221,7 @@ namespace MissionControl {
         bool areLancesAllowed = !(this.CurrentContract.IsFlashpointContract && Main.Settings.AdditionalLanceSettings.DisableIfFlashpointContract);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.DisableWhenMaxTonnage.AreLancesAllowed((int)this.CurrentContract.Override.lanceMaxTonnage);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.ActiveAdditionalLances.GetValidContractTypes(teamType).Contains(CurrentContractType);
-        
+
         Main.LogDebug($"[AreAdditionalLancesAllowed] {areLancesAllowed}");
         return areLancesAllowed;
       }
@@ -240,19 +240,19 @@ namespace MissionControl {
       return false;
     }
 
-    public bool ShouldUseElites(Faction faction, string teamType) {
+    public bool ShouldUseElites(FactionDef faction, string teamType) {
       Config.Lance activeAdditionalLances = Main.Settings.ActiveAdditionalLances.GetActiveAdditionalLanceByTeamType(teamType);
       return Main.Settings.AdditionalLanceSettings.UseElites && activeAdditionalLances.EliteLances.ShouldEliteLancesBeSelected(faction);
     }
-    
-    public Faction GetFactionFromTeamType(string teamType) {
+
+    public FactionDef GetFactionFromTeamType(string teamType) {
       switch (teamType.ToLower()) {
-				case "enemy":
-					return MissionControl.Instance.CurrentContract.Override.targetTeam.faction;
-				case "allies":
-					return MissionControl.Instance.CurrentContract.Override.employerTeam.faction;
-			}
-      return Faction.INVALID_UNSET;
+        case "enemy":
+          return MissionControl.Instance.CurrentContract.Override.targetTeam.FactionDef;
+        case "allies":
+          return MissionControl.Instance.CurrentContract.Override.employerTeam.FactionDef;
+      }
+      return null;
     }
 
     public bool AllowMissionControl() {

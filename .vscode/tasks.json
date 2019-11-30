@@ -1,24 +1,33 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build",
-            "type": "process",
-            "command": "dotnet",
-            "args": [
-                "build",
-                "D:/Modding/Battletech/MissionControl/src/MissionControl.csproj"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "copy",
-            "type": "shell",
-            "command": "cp",
-            "args": [
-                "D:/Modding/Battletech/MissionControl/src/bin/Debug/net451/MissionControl.dll",
-                "'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'"
-            ]
-        }
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "D:/Modding/Battletech/MissionControl/src/MissionControl.csproj"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "copy",
+      "type": "shell",
+      "command": "cp",
+      "args": [
+        "D:/Modding/Battletech/MissionControl/src/bin/Debug/net471/MissionControl.dll",
+        "'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'"
+      ]
+    },
+    {
+      "label": "copy (hbs)",
+      "type": "shell",
+      "command": "cp",
+      "args": [
+        "D:/Modding/Battletech/MissionControl/src/bin/Debug/net471/MissionControl.dll",
+        "'C:/Users/Rich/Documents/my games/BattleTech/mods/HBS/MissionControl'"
+      ]
+    }
+  ]
 }

@@ -1,7 +1,4 @@
 using UnityEngine;
-using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 
 using BattleTech;
@@ -10,6 +7,7 @@ using BattleTech.Framework;
 
 using HBS.Collections;
 
+using MissionControl.Data;
 using MissionControl.Rules;
 using MissionControl.EncounterFactories;
 
@@ -52,7 +50,7 @@ namespace MissionControl.Logic {
 
         if (lanceOverride.IsATurretLance()) {
           Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected a turret lance Ignoring for Extended Lances.");
-          continue;  
+          continue;
         }
 
         if (isManualLance && numberOfUnitsInLance <= 0) {
@@ -64,8 +62,18 @@ namespace MissionControl.Logic {
 
         if ((numberOfUnitsInLance < factionLanceSize) && numberOfUnitsInLance > 0) {
           // This is usually from a 'tagged' lance being selected which has less lance members than the faction lance size
-          if (Main.Settings.ExtendedLances.Autofill ) {
+          if (Main.Settings.ExtendedLances.Autofill) {
             Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Populated lance '{lanceOverride.name}' has fewer units than the faction requires. Autofilling the missing units");
+
+            // GUARD: If an AdditionalLance lance config has been set to 'supportAutoFill' false, then don't autofill
+            if (lanceOverride is MLanceOverride) {
+              MLanceOverride mLanceOverride = (MLanceOverride)lanceOverride;
+              if (!mLanceOverride.SupportAutofill) {
+                Main.LogDebug($"[AddExtraLanceSpawnPoints] Lance Override '{mLanceOverride.GUID}' has 'autofill' explicitly turned off in MC lance '{mLanceOverride.LanceKey}'");
+                continue;
+              }
+            }
+
             AddNewLanceMembers(contractOverride, teamOverride, lanceOverride, numberOfUnitsInLance, factionLanceSize);
           } else {
             Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Populated lance '{lanceOverride.name}' has fewer units than the faction requires. Allowing as a valid setup as 'Autofill' is false");
@@ -83,15 +91,15 @@ namespace MissionControl.Logic {
             GameObject orientationUnit = unitSpawnPoints[0].gameObject;
             string orientationKey = $"{spawnerName}.{orientationUnit.name}";
             encounterRules.ObjectLookup[orientationKey] = orientationUnit;
-            
+
             for (int i = unitSpawnPoints.Count; i < numberOfUnitsInLance; i++) {
               Vector3 randomLanceSpawn = unitSpawnPoints.GetRandom().transform.localPosition;
               Vector3 spawnPositon = SceneUtils.GetRandomPositionFromTarget(randomLanceSpawn, 24, 100);
               spawnPositon = spawnPositon.GetClosestHexLerpedPointOnGrid();
-                            
+
               Main.Logger.Log($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Creating lance '{lanceOverride.name}' spawn point 'UnitSpawnPoint{i + 1}'");
               UnitSpawnPointGameLogic unitSpawnGameLogic = LanceSpawnerFactory.CreateUnitSpawnPoint(lanceSpawner.gameObject, $"UnitSpawnPoint{i + 1}", spawnPositon, lanceOverride.unitSpawnPointOverrideList[i].unitSpawnPoint.EncounterObjectGuid);
-              
+
               string spawnKey = $"{spawnerName}.{unitSpawnGameLogic.gameObject.name}";
               encounterRules.ObjectLookup[spawnKey] = unitSpawnGameLogic.gameObject;
               spawnKeys.Add(new string[] { spawnKey, orientationKey });
@@ -116,10 +124,9 @@ namespace MissionControl.Logic {
     }
 
     private void ApplyDifficultyMod(TeamOverride teamOverride, LanceOverride lanceOverride) {
-      Faction faction = teamOverride.faction;
       int previousAjustedDifficulty = lanceOverride.lanceDifficultyAdjustment;
-      int updatedLanceDifficultyAdjustment = Main.Settings.ExtendedLances.GetFactionLanceDifficulty(faction.ToString(), lanceOverride);
-      
+      int updatedLanceDifficultyAdjustment = Main.Settings.ExtendedLances.GetFactionLanceDifficulty(teamOverride.faction, lanceOverride);
+
       if (previousAjustedDifficulty != updatedLanceDifficultyAdjustment) {
         Main.Logger.Log($"[AddExtraLanceSpawnPoints.ApplyDifficultyMod] [Faction:{teamOverride.faction}] Changing lance '{lanceOverride.name}' adjusted difficulty from '{lanceOverride.lanceDifficultyAdjustment}' to '{updatedLanceDifficultyAdjustment}'");
         lanceOverride.lanceDifficultyAdjustment = updatedLanceDifficultyAdjustment;

@@ -3,37 +3,40 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace MissionControl.Config {
-    public class Settings {
-        [JsonProperty("DebugMode")]
-        public bool DebugMode { get; set; } = false;
+  public class Settings {
+    [JsonProperty("DebugMode")]
+    public bool DebugMode { get; set; } = false;
 
-        [JsonProperty("DebugSkirmishMode")]
-        public bool DebugSkirmishMode { get; set; } = false;
+    [JsonProperty("DebugSkirmishMode")]
+    public bool DebugSkirmishMode { get; set; } = false;
 
-        [JsonProperty("DisableIfFlashpointContract")]
-        public bool DisableIfFlashpointContract { get; set; } = true;
+    [JsonProperty("DisableIfFlashpointContract")]
+    public bool DisableIfFlashpointContract { get; set; } = true;
 
-        [JsonProperty("HotDrop")]
-        public HotDrop HotDrop { get; set; } = new HotDrop();
+    [JsonProperty("RandomSpawns")]
+    public bool RandomSpawns { get; set; } = true;
 
-        [JsonProperty("AdditionalLances")]
-        public AdditionalLanceSettings AdditionalLanceSettings { get; set; } = new AdditionalLanceSettings();
+    [JsonProperty("HotDrop")]
+    public HotDrop HotDrop { get; set; } = new HotDrop();
 
-        [JsonProperty("ExtendedLances")]
-        public ExtendedLancesSettings ExtendedLances { get; set; } = new ExtendedLancesSettings();
+    [JsonProperty("AdditionalLances")]
+    public AdditionalLanceSettings AdditionalLanceSettings { get; set; } = new AdditionalLanceSettings();
 
-        [JsonProperty("AdditionalPlayerMechs")]
-        public bool AdditionalPlayerMechs { get; set; } = true;
+    [JsonProperty("ExtendedLances")]
+    public ExtendedLancesSettings ExtendedLances { get; set; } = new ExtendedLancesSettings();
 
-        [JsonProperty("ExtendedBoundaries")]
-        public bool ExtendedBoundaries { get; set; } = true;
+    [JsonProperty("AdditionalPlayerMechs")]
+    public bool AdditionalPlayerMechs { get; set; } = true;
 
-        [JsonProperty("DynamicWithdraw")]
-        public DynamicWithdrawSettings DynamicWithdraw { get; set; } = new DynamicWithdrawSettings();
+    [JsonProperty("ExtendedBoundaries")]
+    public ExtendedBoundariesSettings ExtendedBoundaries { get; set; } = new ExtendedBoundariesSettings();
 
-        public AdditionalLances ActiveAdditionalLances { get; set; }
+    [JsonProperty("DynamicWithdraw")]
+    public DynamicWithdrawSettings DynamicWithdraw { get; set; } = new DynamicWithdrawSettings();
 
-        [JsonIgnore]
-        public Dictionary<int, AdditionalLances> AdditionalLances { get; set; } = new Dictionary<int, AdditionalLances>();
-    }
+    public AdditionalLances ActiveAdditionalLances { get; set; }
+
+    [JsonIgnore]
+    public Dictionary<int, AdditionalLances> AdditionalLances { get; set; } = new Dictionary<int, AdditionalLances>();
+  }
 }

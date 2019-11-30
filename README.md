@@ -8,30 +8,30 @@ This works only for the generic contract types (e.g. Battle, Rescue etc) as it w
 
 ## Videos
 
-* [Release Trailer](https://www.youtube.com/watch?v=MGPrebHW0R0)
-* [Additional Lances Tutorial](https://www.youtube.com/watch?v=srvqUjdeESk)
+- [Release Trailer](https://www.youtube.com/watch?v=MGPrebHW0R0)
+- [Additional Lances Tutorial](https://www.youtube.com/watch?v=srvqUjdeESk)
 
 ## Installation
 
-* Download the [latest release](https://github.com/CWolfs/MissionControl/releases)
-* Unzip the release into your ModTek `Mods` folder
-* Enjoy!
+- Download the [latest release](https://github.com/CWolfs/MissionControl/releases)
+- Unzip the release into your ModTek `Mods` folder
+- Enjoy!
 
 ## Features
 
-* Additional Lances (AI Controlled Enemy & Allies) | [Documentation](./docs/additional-lances.md)
-* Random Lance Spawns (Appropriate for Contract Type)
-* Bigger Maps (sometimes up to 4 times as big!)
-* Extended Lances (Clan Stars [5 units], Level-II Lances [6 units]) | [Documentation](./docs/extended-lances.md)
-* Dynamic Withdraw
-* New AI Behaviours
-* Single Player Skirmish with Quick Skirmish (Bypass Skirmish Menus)
-* Encounter Rulesets (New Game Logic for Contract Types) | [Documentation](./docs/encounter-rulesets.md)
-* New Combat Dialogue
+- Additional Lances (AI Controlled Enemy & Allies) | [Documentation](./docs/additional-lances.md)
+- Random Lance Spawns (Appropriate for Contract Type)
+- Extended Bounadries (Bigger Maps - sometimes up to 4 times as big!) | [Documentation](./docs/extended-boundaries.md)
+- Extended Lances (Clan Stars [5 units], Level-II Lances [6 units]) | [Documentation](./docs/extended-lances.md)
+- Dynamic Withdraw
+- New AI Behaviours
+- Single Player Skirmish with Quick Skirmish (Bypass Skirmish Menus)
+- Encounter Rulesets (New Game Logic for Contract Types) | [Documentation](./docs/encounter-rulesets.md)
+- New Combat Dialogue
 
-## Important Notes 
+## Important Notes
 
-* Mission Control does not work with in-combat saves. Finish your contract first (or restart it).
+- Mission Control does not work with in-combat saves. Finish your contract first (or restart it).
 
 ## Full Description
 
@@ -67,7 +67,7 @@ When dropping with your allies they will break radio silence to inform you of th
 
 Completely new AI behaviours that do not exist in the vanilla game.
 
-* Follow Lance - Follows the heaviest mech in the target lance. Favours the lance order when finding multiple mechs of the same tonnage.
+- Follow Lance - Follows the heaviest mech in the target lance. Favours the lance order when finding multiple mechs of the same tonnage.
 
 ### Single Player Skirmish Support with Quick Skirmish Feature
 
@@ -95,19 +95,20 @@ All feedback is welcome in the [issues section](https://github.com/CWolfs/Missio
 
 I wouldn't have completed such an ambitious mod without the support and help of the modding community. Sorry if I miss anyone out as so many people have helped in their own way. In no particular order,
 
-* Eck
-* Morphyum
-* jo
-* LadyAleko
-* akodoreign
-* bloodydoves
-* GentlePayload
-* gnivler
-* TekGnosis
-* ...and everyone in the modder channels at BATTLETECHGAME discord who helped in lots of different ways!
+- Eck
+- Morphyum
+- jo
+- LadyAleko
+- akodoreign
+- bloodydoves
+- GentlePayload
+- gnivler
+- TekGnosis
+- ...and everyone in the modder channels at BATTLETECHGAME discord who helped in lots of different ways!
 
 ## Author
 
 Richard Griffiths (CWolf)
-  * [Twitter](https://twitter.com/CWolf)
-  * [LinkedIn](https://www.linkedin.com/in/richard-griffiths-436b7a19/)
+
+- [Twitter](https://twitter.com/CWolf)
+- [LinkedIn](https://www.linkedin.com/in/richard-griffiths-436b7a19/)

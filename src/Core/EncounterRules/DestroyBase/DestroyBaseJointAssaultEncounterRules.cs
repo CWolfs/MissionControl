@@ -18,7 +18,7 @@ namespace MissionControl.Rules {
     public override void Build() {
       Main.Logger.Log("[DestroyBaseJointAssaultEncounterRules] Setting up rule object references");
       BuildAi();
-      BuildSpawn();
+      BuildRandomSpawn();
       BuildAdditionalLances("PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, "SpawnerPlayerLance", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 25f, 100f);
     }
 
@@ -26,7 +26,9 @@ namespace MissionControl.Rules {
       EncounterLogic.Add(new IssueFollowLanceOrderTrigger(new List<string>(){ Tags.EMPLOYER_TEAM }, IssueAIOrderTo.ToLance, new List<string>() { Tags.PLAYER_1_TEAM }));
     }
 
-    private void BuildSpawn() {
+    private void BuildRandomSpawn() {
+      if (!Main.Settings.RandomSpawns) return;
+      
       Main.Logger.Log("[DestroyBaseJointAssaultEncounterRules] Building player spawn rule");
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "PlotBase"));
     }

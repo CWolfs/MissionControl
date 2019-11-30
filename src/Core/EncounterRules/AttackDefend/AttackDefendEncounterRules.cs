@@ -15,7 +15,7 @@ namespace MissionControl.Rules {
     public override void Build() {
       Main.Logger.Log("[AttackDefendEncounterRules] Setting up rule object references");
       BuildAi();
-      BuildSpawns();
+      BuildRandomSpawns();
       BuildAdditionalLances("SpawnerLanceEnemyTurret", SpawnLogic.LookDirection.AWAY_FROM_TARGET, "SpawnerLanceFriendlyTurret", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 50f, 150f);
     }
 
@@ -23,7 +23,9 @@ namespace MissionControl.Rules {
       EncounterLogic.Add(new IssueFollowLanceOrderTrigger(new List<string>(){ Tags.EMPLOYER_TEAM }, IssueAIOrderTo.ToLance, new List<string>() { Tags.PLAYER_1_TEAM }));
     }
 
-    public void BuildSpawns() {
+    public void BuildRandomSpawns() {
+      if (!Main.Settings.RandomSpawns) return;
+      
       Main.Logger.Log("[DefendBaseEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceMembersAroundTarget(this, "SpawnerPlayerLance", "SpawnerLanceFriendlyTurret", "SpawnerLanceEnemyTurret", SpawnLogic.LookDirection.TOWARDS_TARGET, 100f, 150f));
     }

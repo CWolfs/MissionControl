@@ -3,7 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-using MissionControl.Config;
+using MissionControl.Data;
 
 using BattleTech;
 using BattleTech.Framework;
@@ -14,15 +14,16 @@ namespace MissionControl.Logic {
       this.Type = LogicType.CONTRACT_OVERRIDE_MANIPULATION;
     }
 
-    public LanceOverride SelectAppropriateLanceOverride(string teamType) {
+    public MLanceOverride SelectAppropriateLanceOverride(string teamType) {
       string biome = Enum.GetName(typeof(Biome.BIOMESKIN), MissionControl.Instance.CurrentContract.ContractBiome);
       biome = biome.Capitalise();
       string contractType = MissionControl.Instance.CurrentContractType;
-      Faction faction = MissionControl.Instance.GetFactionFromTeamType(teamType);
-      int factionRep = (MissionControl.Instance.IsSkirmish()) ? 0 : UnityGameInstance.Instance.Game.Simulation.GetRawReputation(faction);
+      FactionDef faction = MissionControl.Instance.GetFactionFromTeamType(teamType);
+      string factionName = (faction == null) ? "UNKNOWN" : faction.Name;
+      int factionRep = (MissionControl.Instance.IsSkirmish()) ? 0 : UnityGameInstance.Instance.Game.Simulation.GetRawReputation(faction.FactionValue);
       bool useElites = MissionControl.Instance.ShouldUseElites(faction, teamType);
       Config.Lance activeAdditionalLance = Main.Settings.ActiveAdditionalLances.GetActiveAdditionalLanceByTeamType(teamType);
-      List<string> lancePoolKeys = Main.Settings.ActiveAdditionalLances.GetLancePoolKeys(teamType, biome, contractType, faction.ToString(), factionRep);
+      List<string> lancePoolKeys = Main.Settings.ActiveAdditionalLances.GetLancePoolKeys(teamType, biome, contractType, factionName, factionRep);
 
       int index = UnityEngine.Random.Range(0, lancePoolKeys.Count);
       string selectedLanceKey = lancePoolKeys[index];
@@ -38,7 +39,7 @@ namespace MissionControl.Logic {
           selectedLanceKey = selectedLanceKey.Replace(activeAdditionalLance.EliteLances.Suffix, "");
           if (DataManager.Instance.DoesLanceOverrideExist(selectedLanceKey)) {
             Main.Logger.LogError($"[SelectAppropriateLanceOverride] Cannot find 'ELITE' variant of '{selectedLanceKey}' so using original version with a +4 difficulty adjustment.");
-            LanceOverride lanceOverride = DataManager.Instance.GetLanceOverride(selectedLanceKey);
+            MLanceOverride lanceOverride = DataManager.Instance.GetLanceOverride(selectedLanceKey);
             lanceOverride.lanceDifficultyAdjustment = Mathf.Clamp(lanceOverride.lanceDifficultyAdjustment + 4, 1, 10);
             return lanceOverride;
           }

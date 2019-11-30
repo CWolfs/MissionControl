@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 using System;
 using System.Linq;
 using System.Collections;
@@ -37,7 +39,7 @@ namespace MissionControl.Rules {
     }
 
     public void ActivatePreFeatures() {
-      if (Main.Settings.ExtendedBoundaries) MaximiseEncounterBoundary();
+      if (Main.Settings.ExtendedBoundaries.Enable) MaximiseEncounterBoundary();
     }
 
     public void ActivatePostFeatures() {
@@ -53,7 +55,7 @@ namespace MissionControl.Rules {
     public virtual void Run(LogicBlock.LogicType type, RunPayload payload) {
       IEnumerable<LogicBlock> logicBlocks = EncounterLogic.Where(logic => logic.Type == type);
 
-      switch(type) {
+      switch (type) {
         case LogicBlock.LogicType.RESOURCE_REQUEST:
           State = EncounterState.RUNNING;
           RunGeneralLogic(logicBlocks, payload);
@@ -159,7 +161,7 @@ namespace MissionControl.Rules {
     protected string GetPlotBaseName(string mapName) {
       Vector3 playerLanceSpawnPosition = SpawnerPlayerLanceGo.transform.position;
       GameObject plot = GetClosestPlot(playerLanceSpawnPosition);
-      
+
       if (plot == null) {
         Main.Logger.Log($"[{this.GetType().Name}] GetPlotBaseName for map '{mapName}' is empty");
         State = EncounterState.FAILED;
@@ -172,7 +174,7 @@ namespace MissionControl.Rules {
 
     public static string GetPlayerLanceChunkName() {
       string type = MissionControl.Instance.CurrentContract.ContractTypeValue.Name;
-      
+
       if (type == "ArenaSkirmish") {
         return "MultiPlayerSkirmishChunk";
       } else if (type == "Story_1B_Retreat") {
@@ -183,8 +185,8 @@ namespace MissionControl.Rules {
     }
 
     public static string GetPlayerLanceSpawnerName() {
-      string type =  MissionControl.Instance.CurrentContract.ContractTypeValue.Name;
-      
+      string type = MissionControl.Instance.CurrentContract.ContractTypeValue.Name;
+
       if (type == "ArenaSkirmish") {
         return "Player1LanceSpawner";
       } else if ((type == "Story_1B_Retreat") || (type == "FireMission") || (type == "AttackDefend")) {
@@ -204,7 +206,7 @@ namespace MissionControl.Rules {
       if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
 
         bool isPrimaryObjective = MissionControl.Instance.CurrentContractType.In("SimpleBattle");
-        Faction faction = MissionControl.Instance.GetFactionFromTeamType("enemy");
+        FactionDef faction = MissionControl.Instance.GetFactionFromTeamType("enemy");
 
         int numberOfAdditionalEnemyLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances(faction, "enemy");
         int objectivePriority = -10;
@@ -221,7 +223,7 @@ namespace MissionControl.Rules {
       }
 
       if (MissionControl.Instance.AreAdditionalLancesAllowed("allies")) {
-        Faction faction = MissionControl.Instance.GetFactionFromTeamType("allies");
+        FactionDef faction = MissionControl.Instance.GetFactionFromTeamType("allies");
 
         int numberOfAdditionalAllyLances = Main.Settings.ActiveAdditionalLances.Allies.SelectNumberOfAdditionalLances(faction, "allies");
         for (int i = 0; i < numberOfAdditionalAllyLances; i++) {
@@ -231,9 +233,12 @@ namespace MissionControl.Rules {
     }
 
     protected void MaximiseEncounterBoundary() {
-      Main.Logger.Log($"[{this.GetType().Name}] Maximising Boundary Size");
+      string mapId = MissionControl.Instance.ContractMapName;
+      string contractTypeName = MissionControl.Instance.CurrentContractType;
+      float size = Main.Settings.ExtendedBoundaries.GetSizePercentage(mapId, contractTypeName);
+      Main.Logger.Log($"[{this.GetType().Name}] Maximising Boundary Size for '{mapId}.{contractTypeName}' to '{size}'");
 
-      this.EncounterLogic.Add(new MaximiseBoundarySize(this));
+      this.EncounterLogic.Add(new MaximiseBoundarySize(this, size));
     }
   }
 }

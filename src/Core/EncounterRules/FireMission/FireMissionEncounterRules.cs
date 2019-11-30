@@ -1,11 +1,4 @@
-using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
 using BattleTech;
-
-using MissionControl.Trigger;
 using MissionControl.Logic;
 
 namespace MissionControl.Rules {
@@ -14,10 +7,12 @@ namespace MissionControl.Rules {
 
     public override void Build() {
       Main.Logger.Log("[FireMissionEncounterRules] Setting up rule object references");
-      BuildSpawns();
+      BuildRandomSpawns();
     }
 
-    public void BuildSpawns() {
+    public void BuildRandomSpawns() {
+      if (!Main.Settings.RandomSpawns) return;
+      
       Main.Logger.Log("[FireMissionEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerPlayerLance", "ChunkBeaconRegion1",
         SpawnLogic.LookDirection.TOWARDS_TARGET, 400, 600, true));
