@@ -9,7 +9,7 @@ namespace MissionControl.Config {
     public bool Enable { get; set; } = true;
 
     [JsonProperty("SizePercentage")]
-    public float SizePercentage { get; set; } = 0.2f;
+    public float IncreaseBoundarySizeByPercentage { get; set; } = 0.2f;
 
     [JsonProperty("Overrides")]
     public List<ExtendedBoundariesOverride> Overrides { get; set; } = new List<ExtendedBoundariesOverride>();
@@ -18,10 +18,10 @@ namespace MissionControl.Config {
       string id = $"{mapId}.{contractTypeName}";
 
       foreach (ExtendedBoundariesOverride ovr in Overrides) {
-        if (ovr.Id == id) return ovr.SizePercentage;
+        if (ovr.Id == id) return ovr.IncreaseBoundarySizeByPercentage;
       }
 
-      return SizePercentage;
+      return IncreaseBoundarySizeByPercentage;
     }
   }
 }

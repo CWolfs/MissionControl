@@ -35,12 +35,12 @@
   },
   "ExtendedBoundaries": {
     "Enable": true,
-    "SizePercentage": 0.2,
+    "IncreaseBoundarySizeByPercentage": 0.2,
     "Overrides": [
       {
         "MapId": "mapGeneral_fallenHills_uDeso",
         "ContractTypeName": "Battle",
-        "SizePercentage": 0.3
+        "IncreaseBoundarySizeByPercentage": 0.3
       }
     ]
   },
