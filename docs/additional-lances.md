@@ -16,6 +16,24 @@ Lances are defined using a similar configuration to how they are defined in the 
     "LancePool": {
       "ALL": ["GENERIC_BATTLE_LANCE"]
     },
+    "RewardsPerLance": [
+      {
+        "Type": "ContractBonusRewardFlat",
+        "Value": "3000000",
+      },
+      {
+        "Type": "ContractBonusRewardPct",
+        "Value": "0.4",
+      },
+      {
+        "Type": "ContractBonusEmployerReputation",
+        "Value": "1",
+      },
+      {
+        "Type": "ContractBonusTargetReputation",
+        "Value": "-1",
+      },
+    ],
     "Enemy": {
       "Max": 2,
       "ExcludeContractTypes": ["Rescue"],
@@ -79,8 +97,16 @@ Lances are defined using a similar configuration to how they are defined in the 
 | `IncludeContractTypes` | Optional | All available contract types | `["Rescue", "DestroyBase"]` would limit lances to these two contract types <br><br> `[]` would fallback to default | When set, it overrides `ExcludeContractTypes` for this level |
 | `ExcludeContractTypes` | Optional | No contract types | `["Assasinate", "CaptureBase"]` would remove these two contract types from the entire list of available contract types. <br><br> `[]` would fallback to default | Allows you to explicitly exclude additional lance spawns for all teams for the specified contract types. Not used if `IncludeContractTypes` is set |
 | `LancePool` | Optional | `ALL` situations will use `GENERIC_BATTLE_LANCE` | See the above code as a full example. <br> Can match to `ALL`, `CONTRACT_TYPE:{key}`, `BIOME:{key}` and `FACTION:{factionKey}:{startRepRange}:{endRepRange}` | All matched conditions will be added to one list of lance pool keys. One key per lance spawn is selected at random for the specific lance. These lance keys reference the lances in the `/lances` folder. See [Lance Definition Breakdown](#lance-definition-breakdown) |
+| `RewardsPerLance` | Optional | Children defaults | - | Specifies which rewards to provide for every enenmy lance that the player destroys. Max 4. |
 | `Enemy` | Optional | Children defaults | - | Controls enemy/target specific lance details |
 | `Allies` | Optional | Children defaults | - | Controls allies/employer specific lance details |
+
+**RewardsPerLance**
+
+| Path | Required? | Default | Example | Details |
+| ---- | --------- | ------- | ------- | ------- |
+| `Type` | Optional | N/A | `ContractBonusRewardFlat`, `ContractBonusRewardPct`, `ContractBonusEmployerReputation`, `ContractBonusTargetReputation` | Reward type |
+| `Value` | Optional | N/A | Value for the appropriate type |
 
 **Enemy or Allies**
 
