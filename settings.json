@@ -33,9 +33,19 @@
       "6": []
     }
   },
-  "ExtendedBoundaries": true,
+  "ExtendedBoundaries": {
+    "Enable": true,
+    "SizePercentage": 0.2,
+    "Overrides": [
+      {
+        "MapId": "mapGeneral_fallenHills_uDeso",
+        "ContractTypeName": "Battle",
+        "SizePercentage": 0.3
+      }
+    ]
+  },
   "DynamicWithdraw": {
-    "Enabled": true,
+    "Enable": true,
     "MinDistanceForZone": 50,
     "MaxDistanceForZone": 400,
     "DisorderlyWithdrawalCompatibility": false

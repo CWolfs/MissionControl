@@ -21,14 +21,14 @@ namespace MissionControl.Rules {
     }
 
     public void BuildAi() {
-      EncounterLogic.Add(new IssueFollowLanceOrderTrigger(new List<string>(){ Tags.EMPLOYER_TEAM }, IssueAIOrderTo.ToLance, new List<string>() { Tags.PLAYER_1_TEAM }));
+      EncounterLogic.Add(new IssueFollowLanceOrderTrigger(new List<string>() { Tags.EMPLOYER_TEAM }, IssueAIOrderTo.ToLance, new List<string>() { Tags.PLAYER_1_TEAM }));
     }
 
     public void BuildRandomSpawns() {
       if (!Main.Settings.RandomSpawns) return;
 
       Main.Logger.Log("[AmbushConvoyEncounterRules] Building spawns rules");
-      if (Main.Settings.ExtendedBoundaries) {
+      if (Main.Settings.ExtendedBoundaries.Enable) {
         Main.Logger.Log("[AmbushConvoyEncounterRules] Using Extended Boundary spawn rules");
         EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerPlayerLance", "ConvoyUnit1Spawn", SceneManipulationLogic.LookDirection.TOWARDS_TARGET, 400, 600, true));
       } else {
