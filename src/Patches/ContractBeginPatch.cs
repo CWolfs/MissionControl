@@ -19,6 +19,8 @@ namespace MissionControl.Patches {
     public static void Prefix(Contract __instance) {
       if (!__instance.Accepted) return;
 
+      PathFinderManager.Instance.FullReset();
+
       Main.Logger.Log($"[ContractBeginPatch Postfix] Patching Begin");
 
       if (__instance.ContractTypeValue.Name == "ArenaSkirmish") {
