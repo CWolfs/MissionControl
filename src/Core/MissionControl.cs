@@ -40,7 +40,12 @@ namespace MissionControl {
     public Dictionary<ContractStats, object> ContractStats = new Dictionary<ContractStats, object>();
 
     private MissionControl() {
+      LoadContractTypes();
       LoadEncounterRules();
+    }
+
+    private void LoadContractTypes() {
+      // TODO
     }
 
     private void LoadEncounterRules() {

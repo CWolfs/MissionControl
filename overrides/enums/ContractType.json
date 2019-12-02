@@ -1,0 +1,21 @@
+{
+  "enumerationValueList" : [
+    {
+      "ID" : 1000,
+      "Name" : "SoloDuel",
+      "FriendlyName" : "Solo Duel",
+      "Version" : 1,
+      "IsSinglePlayerProcedural" : true,
+      "IsStory" : false,
+      "IsRestoration" : false,
+      "CustomMusic" : null,
+      "IsMultiplayer" : false,
+      "UsesFury" : false,
+      "UsesSecondScaledStructureValues" : false,
+      "ContractRewardMultiplier" : 1,
+      "Illustration" : "uixTxrSpot_battleContract",
+      "Icon" : "uixSvgIcon_contract_Battle",
+      "IsPublished" : true
+    }
+  ]
+}
