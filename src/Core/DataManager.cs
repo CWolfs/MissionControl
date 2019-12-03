@@ -83,7 +83,8 @@ namespace MissionControl {
         Main.LogDebug($"[DataManager.LoadCustomContractTypes] Loading '{file}' custom encounter layer");
         string encounterLayer = File.ReadAllText(file);
         EncounterLayer encounterLayerData = JsonConvert.DeserializeObject<EncounterLayer>(encounterLayer);
-        MetadataDatabase.Instance.InsertOrUpdateEncounterLayer(encounterLayerData);
+
+        // MetadataDatabase.Instance.InsertOrUpdateEncounterLayer(encounterLayerData); // only write to db for debug
       }
     }
 
