@@ -11,7 +11,10 @@
   "DLLEntryPoint": "MissionControl.Main.Init",
 
   "Manifest": [
-    { "Type": "SimGameStatDescDef", "Path": "overrides/simGameStatDesc" },
-    { "Type": "AdvancedJSONMerge", "Path": "overrides/enums" }
+    { "Type": "SimGameStatDescDef", "Path": "overrides/simGameStatDesc" }
+  ],
+
+  "DataAddendumEntries": [
+    { "name": "BattleTech.ContractTypeEnumeration", "path": "overrides/enums/ContractType.json" }
   ]
 }

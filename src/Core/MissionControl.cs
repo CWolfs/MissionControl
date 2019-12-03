@@ -59,7 +59,7 @@ namespace MissionControl {
     private void AddContractType(MetadataDatabase mdd, ContractType_MDD contractTypeMDD) {
       ContractTypeValue contractTypeValue = ContractTypeEnumeration.Instance.CreateEnumValueFromDatabase(mdd, contractTypeMDD.EnumValueRow);
 
-      if (!AvailableEncounters.ContainsKey(contractTypeValue.Name)) AvailableEncounters.Add(contractTypeValue.Name, new List<Type>());
+      if (!AvailableCustomContractTypes.ContainsKey(contractTypeValue.Name)) AvailableCustomContractTypes.Add(contractTypeValue.Name, new List<ContractTypeBuilder>());
       Main.LogDebug($"[MissionControl.AddContractType] Adding custom contract type: {contractTypeValue.Name}");
       AvailableCustomContractTypes[contractTypeValue.Name].Add(new ContractTypeBuilder(contractTypeValue));
     }

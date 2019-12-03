@@ -9,6 +9,6 @@ public static class MetaDatabaseExtensions {
   }
 
   public static List<ContractType_MDD> GetCustomContractTypes(this MetadataDatabase mdd) {
-    return mdd.Query<ContractType_MDD>("SELECT * FROM Contract WHERE ContractTypeID >= 1000").ToList<ContractType_MDD>();
+    return mdd.Query<ContractType_MDD>("SELECT * FROM ContractType WHERE ContractTypeID >= 1000").ToList<ContractType_MDD>();
   }
 }
