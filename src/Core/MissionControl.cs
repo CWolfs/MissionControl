@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using BattleTech;
-using BattleTech.Framework;
+using BattleTech.Data;
 
 using MissionControl.Logic;
 using MissionControl.Rules;
@@ -24,17 +24,20 @@ namespace MissionControl {
     public Contract CurrentContract { get; private set; }
     public string ContractMapName { get; private set; }
     public string CurrentContractType { get; private set; } = "INVALID_UNSET";
+
     public EncounterRules EncounterRules { get; private set; }
     public string EncounterRulesName { get; private set; }
     public GameObject EncounterLayerParentGameObject { get; private set; }
     public EncounterLayerParent EncounterLayerParent { get; private set; }
     public GameObject EncounterLayerGameObject { get; private set; }
     public EncounterLayerData EncounterLayerData { get; private set; }
+
     public HexGrid HexGrid { get; private set; }
 
     public bool IsContractValid { get; private set; } = false;
     public bool IsMCLoadingFinished { get; set; } = false;
 
+    private Dictionary<string, List<ContractTypeBuilder>> AvailableCustomContractTypes = new Dictionary<string, List<ContractTypeBuilder>>();
     private Dictionary<string, List<Type>> AvailableEncounters = new Dictionary<string, List<Type>>();
 
     public Dictionary<ContractStats, object> ContractStats = new Dictionary<ContractStats, object>();
@@ -45,7 +48,20 @@ namespace MissionControl {
     }
 
     private void LoadContractTypes() {
-      // TODO
+      MetadataDatabase mdd = MetadataDatabase.Instance;
+      List<ContractType_MDD> contractTypes = mdd.GetCustomContractTypes();
+      Main.LogDebug($"[MissionControl.LoadContractTypes] Loading '{contractTypes.Count}' custom contract types");
+      foreach (ContractType_MDD contractType in contractTypes) {
+        AddContractType(mdd, contractType);
+      }
+    }
+
+    private void AddContractType(MetadataDatabase mdd, ContractType_MDD contractTypeMDD) {
+      ContractTypeValue contractTypeValue = ContractTypeEnumeration.Instance.CreateEnumValueFromDatabase(mdd, contractTypeMDD.EnumValueRow);
+
+      if (!AvailableEncounters.ContainsKey(contractTypeValue.Name)) AvailableEncounters.Add(contractTypeValue.Name, new List<Type>());
+      Main.LogDebug($"[MissionControl.AddContractType] Adding custom contract type: {contractTypeValue.Name}");
+      AvailableCustomContractTypes[contractTypeValue.Name].Add(new ContractTypeBuilder(contractTypeValue));
     }
 
     private void LoadEncounterRules() {

@@ -11,6 +11,7 @@
   "DLLEntryPoint": "MissionControl.Main.Init",
 
   "Manifest": [
-    { "Type": "SimGameStatDescDef", "Path": "overrides/simGameStatDesc" }
+    { "Type": "SimGameStatDescDef", "Path": "overrides/simGameStatDesc" },
+    { "Type": "AdvancedJSONMerge", "Path": "overrides/enums" }
   ]
 }
