@@ -35,4 +35,10 @@ public static class MetaDatabaseExtensions {
       EncounterLayerID = encounterLayerId
     }, null, true, null, null).FirstOrDefault<EncounterLayer_MDD>();
   }
+
+  public static EncounterLayer_MDD SelectEncounterLayerByGuid(this MetadataDatabase mdd, string encounterLayerGuid) {
+    return mdd.Query<EncounterLayer_MDD>("SELECT * FROM EncounterLayer WHERE EncounterLayerGUID=@encounterLayerGuid", new {
+      EncounterLayerGUID = encounterLayerGuid
+    }, null, true, null, null).FirstOrDefault<EncounterLayer_MDD>();
+  }
 }

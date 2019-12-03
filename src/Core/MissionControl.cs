@@ -10,6 +10,7 @@ using BattleTech.Data;
 using MissionControl.Logic;
 using MissionControl.Rules;
 using MissionControl.Utils;
+using MissionControl.EncounterFactories;
 
 namespace MissionControl {
   public class MissionControl {
@@ -99,10 +100,21 @@ namespace MissionControl {
       EncounterLayerParent = EncounterLayerParentGameObject.GetComponent<EncounterLayerParent>();
 
       EncounterLayerData = GetActiveEncounter();
+      if (EncounterLayerData == null) { // If no EncounterLayer matches the Contract Type GUID, it's a custom contract type
+        EncounterLayerData = ConstructCustomContractType();
+      }
+
       EncounterLayerGameObject = EncounterLayerData.gameObject;
       EncounterLayerData.CalculateEncounterBoundary();
 
       if (HexGrid == null) HexGrid = ReflectionHelper.GetPrivateStaticField(typeof(WorldPointGameLogic), "_hexGrid") as HexGrid;
+    }
+
+    private EncounterLayerData ConstructCustomContractType() {
+      Contract contract = UnityGameInstance.BattleTechGame.Combat.ActiveContract;
+      EncounterLayerData encounterLayer = EncounterLayerFactory.CreateEncounterLayer(contract);
+      encounterLayer.gameObject.transform.parent = EncounterLayerParent.transform;
+      return encounterLayer;
     }
 
     public void SetContract(Contract contract) {
@@ -213,7 +225,7 @@ namespace MissionControl {
       if (EncounterLayerData) return EncounterLayerData;
 
       Contract activeContract = UnityGameInstance.BattleTechGame.Combat.ActiveContract;
-      string encounterObjectGuid = activeContract.encounterObjectGuid;
+      string encounterObjectGuid = activeContract.encounterObjectGuid;  // Contract Type GUID
       EncounterLayerData selectedEncounterLayerData = EncounterLayerParent.GetLayerByGuid(encounterObjectGuid);
 
       return selectedEncounterLayerData;
