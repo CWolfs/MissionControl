@@ -84,7 +84,7 @@ namespace MissionControl {
         string encounterLayer = File.ReadAllText(file);
         EncounterLayer encounterLayerData = JsonConvert.DeserializeObject<EncounterLayer>(encounterLayer);
 
-        // MetadataDatabase.Instance.InsertOrUpdateEncounterLayer(encounterLayerData); // only write to db for debug
+        MetadataDatabase.Instance.InsertOrUpdateEncounterLayer(encounterLayerData); // only write to db for debug
       }
     }
 
