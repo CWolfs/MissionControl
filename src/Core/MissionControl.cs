@@ -43,25 +43,7 @@ namespace MissionControl {
     public Dictionary<ContractStats, object> ContractStats = new Dictionary<ContractStats, object>();
 
     private MissionControl() {
-      LoadContractTypes();
       LoadEncounterRules();
-    }
-
-    private void LoadContractTypes() {
-      MetadataDatabase mdd = MetadataDatabase.Instance;
-      List<ContractType_MDD> contractTypes = mdd.GetCustomContractTypes();
-      Main.LogDebug($"[MissionControl.LoadContractTypes] Loading '{contractTypes.Count}' custom contract types");
-      foreach (ContractType_MDD contractType in contractTypes) {
-        AddContractType(mdd, contractType);
-      }
-    }
-
-    private void AddContractType(MetadataDatabase mdd, ContractType_MDD contractTypeMDD) {
-      ContractTypeValue contractTypeValue = ContractTypeEnumeration.Instance.CreateEnumValueFromDatabase(mdd, contractTypeMDD.EnumValueRow);
-
-      if (!AvailableCustomContractTypes.ContainsKey(contractTypeValue.Name)) AvailableCustomContractTypes.Add(contractTypeValue.Name, new List<ContractTypeBuilder>());
-      Main.LogDebug($"[MissionControl.AddContractType] Adding custom contract type: {contractTypeValue.Name}");
-      AvailableCustomContractTypes[contractTypeValue.Name].Add(new ContractTypeBuilder(contractTypeValue));
     }
 
     private void LoadEncounterRules() {
