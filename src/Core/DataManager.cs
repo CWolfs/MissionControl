@@ -67,6 +67,7 @@ namespace MissionControl {
         AddContractType(mdd, contractType);
         LoadEncounterLayers(contractType.Name);
       }
+      MetadataDatabase.Instance.WriteInMemoryDBToDisk();
     }
 
     private void AddContractType(MetadataDatabase mdd, ContractType_MDD contractTypeMDD) {

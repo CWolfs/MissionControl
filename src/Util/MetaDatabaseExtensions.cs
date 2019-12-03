@@ -15,7 +15,7 @@ public static class MetaDatabaseExtensions {
   }
 
   public static EncounterLayer_MDD InsertOrUpdateEncounterLayer(this MetadataDatabase mdd, EncounterLayer encounterLayer) {
-    mdd.Execute("INSERT INTO EncounterLayer (EncounterLayerID, MapID, Name, FriendlyName, Description, BattleValue, ContractTypeID, EncounterLayerGUID, TagSetID, IncludeInBuild) values(@EncounterLayerID, @MapID, @Name, @FriendlyName, @Description, @BattleValue, @ContractTypeID, @EncounterLayerGUID, @TagSetID, @IncludeInBuild)", new {
+    mdd.Execute("INSERT OR REPLACE INTO EncounterLayer (EncounterLayerID, MapID, Name, FriendlyName, Description, BattleValue, ContractTypeID, EncounterLayerGUID, TagSetID, IncludeInBuild) values(@EncounterLayerID, @MapID, @Name, @FriendlyName, @Description, @BattleValue, @ContractTypeID, @EncounterLayerGUID, @TagSetID, @IncludeInBuild)", new {
       EncounterLayerID = encounterLayer.EncounterLayerId,
       MapID = encounterLayer.MapId,
       Name = encounterLayer.Name,
