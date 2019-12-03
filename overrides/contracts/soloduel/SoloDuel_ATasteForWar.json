@@ -603,6 +603,5 @@
       "teamLeaderCastDefId" : "castDef_TeamLeader_Current",
       "lanceOverrideList" : []
   },
-  "contractType" : "1000",
-  "contractTypeID" : "1000"
+  "contractTypeID" : "SoloDuel"
 }
