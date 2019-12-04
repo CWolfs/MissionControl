@@ -25,6 +25,7 @@ namespace MissionControl {
     public Contract CurrentContract { get; private set; }
     public string ContractMapName { get; private set; }
     public string CurrentContractType { get; private set; } = "INVALID_UNSET";
+    public ContractTypeValue CurrentContractTypeValue { get; private set; }
 
     public EncounterRules EncounterRules { get; private set; }
     public string EncounterRulesName { get; private set; }
@@ -32,6 +33,9 @@ namespace MissionControl {
     public EncounterLayerParent EncounterLayerParent { get; private set; }
     public GameObject EncounterLayerGameObject { get; private set; }
     public EncounterLayerData EncounterLayerData { get; private set; }
+
+    // Only populated for custom contract types
+    public EncounterLayer_MDD EncounterLayerMDD { get; private set; }
 
     public HexGrid HexGrid { get; private set; }
 
@@ -111,8 +115,13 @@ namespace MissionControl {
     }
 
     private EncounterLayerData ConstructCustomContractType() {
-      Contract contract = UnityGameInstance.BattleTechGame.Combat.ActiveContract;
-      EncounterLayerData encounterLayer = EncounterLayerFactory.CreateEncounterLayer(contract);
+      CurrentContract = UnityGameInstance.BattleTechGame.Combat.ActiveContract;
+      MetadataDatabase mdd = MetadataDatabase.Instance;
+
+      EncounterLayerMDD = mdd.SelectEncounterLayerByGuid(CurrentContract.encounterObjectGuid);
+      CurrentContractTypeValue = CurrentContract.ContractTypeValue;
+
+      EncounterLayerData encounterLayer = EncounterLayerFactory.CreateEncounterLayer(CurrentContract);
       encounterLayer.gameObject.transform.parent = EncounterLayerParent.transform;
       return encounterLayer;
     }
