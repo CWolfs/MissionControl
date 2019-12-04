@@ -1,5 +1,6 @@
 {
   "FormattingOptions": {
+    "IndentationSize": 2,
     "NewLinesForBracesInTypes": false,
     "NewLinesForBracesInMethods": false,
     "NewLinesForBracesInProperties": false,
