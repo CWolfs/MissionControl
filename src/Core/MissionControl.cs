@@ -36,6 +36,7 @@ namespace MissionControl {
 
     // Only populated for custom contract types
     public EncounterLayer_MDD EncounterLayerMDD { get; private set; }
+    public bool IsCustomContractType { get; set; } = false;
 
     public HexGrid HexGrid { get; private set; }
 
@@ -106,6 +107,9 @@ namespace MissionControl {
       EncounterLayerData = GetActiveEncounter();
       if (EncounterLayerData == null) { // If no EncounterLayer matches the Contract Type GUID, it's a custom contract type
         EncounterLayerData = ConstructCustomContractType();
+        IsCustomContractType = true;
+      } else {
+        IsCustomContractType = false;
       }
 
       EncounterLayerGameObject = EncounterLayerData.gameObject;
@@ -123,6 +127,7 @@ namespace MissionControl {
 
       EncounterLayerData encounterLayer = EncounterLayerFactory.CreateEncounterLayer(CurrentContract);
       encounterLayer.gameObject.transform.parent = EncounterLayerParent.transform;
+
       return encounterLayer;
     }
 

@@ -19,9 +19,18 @@ namespace MissionControl.EncounterFactories {
       encounterLayer.EDITOR_SetSupportedContractTypeID(MissionControl.Instance.CurrentContractTypeValue.Name);
       encounterLayer.version = MissionControl.Instance.CurrentContractTypeValue.Version;
 
-      encounterLayerGo.AddComponent<PlotOverride>();
+      // Need to dump the serialised binary data into a mock EncounterLayerData then throw it away to get the important bits
+      GameObject mockGo = new GameObject("MockGo");
+      EncounterLayerData mockLayer = mockGo.AddComponent<EncounterLayerData>();
+      List<EncounterLayerIdentifier> layerIdList = UnityGameInstance.BattleTechGame.Combat.MapMetaData.encounterLayerIdentifierList;
+      mockLayer.LoadMapData(layerIdList[0], UnityGameInstance.BattleTechGame.DataManager);
+      encounterLayer.mapEncounterLayerDataCells = mockLayer.mapEncounterLayerDataCells;
+      encounterLayer.inclineMeshData = mockLayer.inclineMeshData;
+      MonoBehaviour.Destroy(mockLayer);
 
       CreateContractObjectives(encounterLayerGo);
+
+      encounterLayerGo.AddComponent<PlotOverride>();
 
       return encounterLayer;
     }
