@@ -1,7 +1,6 @@
 using UnityEngine;
+
 using System;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
 
 using BattleTech;
@@ -11,6 +10,8 @@ using MissionControl.Logic;
 using MissionControl.Rules;
 using MissionControl.Utils;
 using MissionControl.EncounterFactories;
+
+using Newtonsoft.Json.Linq;
 
 namespace MissionControl {
   public class MissionControl {
@@ -43,7 +44,6 @@ namespace MissionControl {
     public bool IsContractValid { get; private set; } = false;
     public bool IsMCLoadingFinished { get; set; } = false;
 
-    private Dictionary<string, List<ContractTypeBuilder>> AvailableCustomContractTypes = new Dictionary<string, List<ContractTypeBuilder>>();
     private Dictionary<string, List<Type>> AvailableEncounters = new Dictionary<string, List<Type>>();
 
     public Dictionary<ContractStats, object> ContractStats = new Dictionary<ContractStats, object>();
@@ -128,7 +128,22 @@ namespace MissionControl {
       EncounterLayerData encounterLayer = EncounterLayerFactory.CreateEncounterLayer(CurrentContract);
       encounterLayer.gameObject.transform.parent = EncounterLayerParent.transform;
 
+      BuildConstructTypeEncounter();
+
       return encounterLayer;
+    }
+
+    private void BuildConstructTypeEncounter() {
+      CurrentContract = UnityGameInstance.BattleTechGame.Combat.ActiveContract;
+      string contractTypeName = CurrentContract.ContractTypeValue.Name;
+
+      if (DataManager.Instance.AvailableCustomContractTypeBuilds.ContainsKey(contractTypeName)) {
+        JObject contractTypeBuild = DataManager.Instance.AvailableCustomContractTypeBuilds[contractTypeName];
+        ContractTypeBuilder contractTypeBuilder = new ContractTypeBuilder(contractTypeBuild);
+        contractTypeBuilder.Build();
+      } else {
+        Main.Logger.LogError($"[MissionControl] Cannot build contract type of '{contractTypeName}'. No contract type build file exists.");
+      }
     }
 
     public void SetContract(Contract contract) {

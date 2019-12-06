@@ -1,0 +1,17 @@
+{
+  "Key": "SoloDuel", // Links to the ContractType Name
+  "Chunks": [
+    {
+      "Name": "Chunk_PlayerLance",
+      "Type": "PlayerLance",
+      "Position": { "x": 0, "y": 0, "z": 0 },
+      "Children": [
+        {
+          "Name": "Spawner_PlayerLance",
+          "Type": "PlayerLance", // If not specified the type should inherit from the parent
+          "SpawnPoints": 1
+        }
+      ]
+    }
+  ]
+}
