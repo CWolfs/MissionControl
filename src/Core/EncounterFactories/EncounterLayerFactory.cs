@@ -1,10 +1,14 @@
 using UnityEngine;
 
+using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using BattleTech;
 using BattleTech.Data;
 using BattleTech.Framework;
+
+using MissionControl.Rules;
 
 namespace MissionControl.EncounterFactories {
   public class EncounterLayerFactory {
@@ -29,6 +33,7 @@ namespace MissionControl.EncounterFactories {
       MonoBehaviour.Destroy(mockLayer);
 
       CreateContractObjectives(encounterLayerGo);
+      CreateSpawners(encounterLayerGo);
 
       encounterLayerGo.AddComponent<PlotOverride>();
 
@@ -42,6 +47,18 @@ namespace MissionControl.EncounterFactories {
         ContractObjectiveGameLogic contractObjectiveGameLogic = encounterLayerGo.AddComponent<ContractObjectiveGameLogic>();
         contractObjectiveGameLogic.encounterObjectGuid = contractObjective.GUID;
         contractObjectiveGameLogic.description = contractObjective.description;
+      }
+    }
+
+    public static void CreateSpawners(GameObject encounterLayerGo) {
+      ContractOverride contract = MissionControl.Instance.CurrentContract.Override;
+      List<LanceOverride> lanceOverrideList = contract.player1Team.lanceOverrideList;
+
+      foreach (LanceOverride lanceOverride in lanceOverrideList) {
+        PlayerLanceChunkGameLogic playerLanceChunkGameLogic = ChunkFactory.CreatePlayerLanceChunk("Chunk_PlayerLance", encounterLayerGo.transform);
+        playerLanceChunkGameLogic.encounterObjectGuid = new Guid().ToString();
+        LanceSpawnerFactory.CreatePlayerLanceSpawner(playerLanceChunkGameLogic.gameObject, "Spawner_PlayerLance", lanceOverride.lanceSpawner.EncounterObjectGuid,
+          EncounterRules.PLAYER_TEAM_ID, true, SpawnUnitMethodType.ViaLeopardDropship, lanceOverride.unitSpawnPointOverrideList.Select(unit => unit.unitSpawnPoint.EncounterObjectGuid).ToList<string>());
       }
     }
   }

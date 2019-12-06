@@ -1,6 +1,6 @@
 using UnityEngine;
-using System;
 
+using BattleTech;
 using BattleTech.Designed;
 
 namespace MissionControl.EncounterFactories {
@@ -21,7 +21,7 @@ namespace MissionControl.EncounterFactories {
       emptyCustomChunk.transform.localPosition = Vector3.zero;
 
       return emptyCustomChunk.AddComponent<EmptyCustomChunkGameLogic>();
-    } 
+    }
 
     public static DialogueChunkGameLogic CreateDialogueChunk(string name) {
       GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
@@ -31,7 +31,19 @@ namespace MissionControl.EncounterFactories {
 
       DialogueChunkGameLogic dialogueChunkGameLogic = dialogChunk.AddComponent<DialogueChunkGameLogic>();
       dialogueChunkGameLogic.encounterObjectName = name;
-      return dialogueChunkGameLogic;  
+      return dialogueChunkGameLogic;
+    }
+
+    public static PlayerLanceChunkGameLogic CreatePlayerLanceChunk(string name = "Chunk_PlayerLance", Transform parent = null) {
+      GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
+      GameObject playerLanceChunk = new GameObject(name);
+      playerLanceChunk.transform.parent = (parent != null) ? parent : encounterLayerGameObject.transform;
+      playerLanceChunk.transform.localPosition = Vector3.zero;
+
+      PlayerLanceChunkGameLogic playerLanceChunkGameLogic = playerLanceChunk.AddComponent<PlayerLanceChunkGameLogic>();
+      playerLanceChunkGameLogic.encounterObjectName = name;
+
+      return playerLanceChunkGameLogic;
     }
   }
 }
