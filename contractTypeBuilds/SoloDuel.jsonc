@@ -4,12 +4,19 @@
     {
       "Name": "Chunk_PlayerLance",
       "Type": "PlayerLance",
-      "Position": { "x": 0, "y": 0, "z": 0 },
+      "Placement": {
+        "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
+        "Value": { "x": 0, "y": 0, "z": 0 }
+      },
       "Children": [
         {
           "Name": "Spawner_PlayerLance",
-          "Type": "PlayerLance", // If not specified the type should inherit from the parent
-          "SpawnPoints": 1
+          "Type": "Spawner",
+          "Team": "Player1",
+          "Guid": "9bf836b4-3f56-4ba2-9eac-1c02bea4a0cf", // Must match the spawner Guids in the contract .json
+          "SpawnPoints": 1,
+          "SpawnPointGuids": ["ec9d2280-ca9a-4d90-8a20-963d8a4c0a39"], // Must match the unit spawn Guids in the contract .json
+          "SpawnType": "Leopard" // Leopard, DropPod, Instant
         }
       ]
     }

@@ -128,18 +128,18 @@ namespace MissionControl {
       EncounterLayerData encounterLayer = EncounterLayerFactory.CreateEncounterLayer(CurrentContract);
       encounterLayer.gameObject.transform.parent = EncounterLayerParent.transform;
 
-      BuildConstructTypeEncounter();
+      BuildConstructTypeEncounter(encounterLayer.gameObject);
 
       return encounterLayer;
     }
 
-    private void BuildConstructTypeEncounter() {
+    private void BuildConstructTypeEncounter(GameObject encounterLayerGo) {
       CurrentContract = UnityGameInstance.BattleTechGame.Combat.ActiveContract;
       string contractTypeName = CurrentContract.ContractTypeValue.Name;
 
       if (DataManager.Instance.AvailableCustomContractTypeBuilds.ContainsKey(contractTypeName)) {
         JObject contractTypeBuild = DataManager.Instance.AvailableCustomContractTypeBuilds[contractTypeName];
-        ContractTypeBuilder contractTypeBuilder = new ContractTypeBuilder(contractTypeBuild);
+        ContractTypeBuilder contractTypeBuilder = new ContractTypeBuilder(encounterLayerGo, contractTypeBuild);
         contractTypeBuilder.Build();
       } else {
         Main.Logger.LogError($"[MissionControl] Cannot build contract type of '{contractTypeName}'. No contract type build file exists.");
@@ -227,25 +227,25 @@ namespace MissionControl {
       if (EncounterRules != null) {
         switch (type) {
           case LogicBlock.LogicType.RESOURCE_REQUEST: {
-              EncounterRules.Run(LogicBlock.LogicType.RESOURCE_REQUEST, payload);
-              break;
-            }
+            EncounterRules.Run(LogicBlock.LogicType.RESOURCE_REQUEST, payload);
+            break;
+          }
           case LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION: {
-              EncounterRules.Run(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
-              break;
-            }
+            EncounterRules.Run(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
+            break;
+          }
           case LogicBlock.LogicType.ENCOUNTER_MANIPULATION: {
-              EncounterRules.Run(LogicBlock.LogicType.ENCOUNTER_MANIPULATION, payload);
-              break;
-            }
+            EncounterRules.Run(LogicBlock.LogicType.ENCOUNTER_MANIPULATION, payload);
+            break;
+          }
           case LogicBlock.LogicType.SCENE_MANIPULATION: {
-              EncounterRules.Run(LogicBlock.LogicType.SCENE_MANIPULATION, payload);
-              break;
-            }
+            EncounterRules.Run(LogicBlock.LogicType.SCENE_MANIPULATION, payload);
+            break;
+          }
           default: {
-              Main.Logger.LogError($"[RunEncounterRules] Unknown type of '{type.ToString()}'");
-              break;
-            }
+            Main.Logger.LogError($"[RunEncounterRules] Unknown type of '{type.ToString()}'");
+            break;
+          }
         }
       }
     }
