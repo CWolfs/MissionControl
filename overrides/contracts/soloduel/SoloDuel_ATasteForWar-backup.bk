@@ -271,6 +271,105 @@
                       "selectedUnitType" : "UNDEFINED",
                       "selectedUnitDefId" : null,
                       "selectedPilotDefId" : null
+                  },
+                  {
+                      "unitSpawnPoint" : {
+                          "EncounterObjectGuid" : "ebc06b6a-c5a8-4165-95ce-480bcf335570"
+                      },
+                      "customUnitName" : null,
+                      "customHeraldryDefId" : null,
+                      "unitType" : "Mech",
+                      "unitDefId" : "mechDef_None",
+                      "unitTagSet" : {
+                          "items" : [],
+                          "tagSetSourceFile" : "tags/UnitTags"
+                      },
+                      "unitExcludedTagSet" : {
+                          "items" : [],
+                          "tagSetSourceFile" : "tags/UnitTags"
+                      },
+                      "spawnEffectTags" : {
+                          "items" : [],
+                          "tagSetSourceFile" : "tags/SpawnEffectTags"
+                      },
+                      "pilotDefId" : "pilotDef_InheritLance",
+                      "pilotTagSet" : {
+                          "items" : [],
+                          "tagSetSourceFile" : "tags/PilotTags"
+                      },
+                      "pilotExcludedTagSet" : {
+                          "items" : [],
+                          "tagSetSourceFile" : "tags/PilotTags"
+                      },
+                      "selectedUnitType" : "UNDEFINED",
+                      "selectedUnitDefId" : null,
+                      "selectedPilotDefId" : null
+                  },
+                  {
+                      "unitSpawnPoint" : {
+                          "EncounterObjectGuid" : "d50f1e9d-0a0b-4dc8-9a06-a33233aaa8a1"
+                      },
+                      "customUnitName" : null,
+                      "customHeraldryDefId" : null,
+                      "unitType" : "Mech",
+                      "unitDefId" : "mechDef_None",
+                      "unitTagSet" : {
+                          "items" : [],
+                          "tagSetSourceFile" : "tags/UnitTags"
+                      },
+                      "unitExcludedTagSet" : {
+                          "items" : [],
+                          "tagSetSourceFile" : "tags/UnitTags"
+                      },
+                      "spawnEffectTags" : {
+                          "items" : [],
+                          "tagSetSourceFile" : "tags/SpawnEffectTags"
+                      },
+                      "pilotDefId" : "pilotDef_InheritLance",
+                      "pilotTagSet" : {
+                          "items" : [],
+                          "tagSetSourceFile" : "tags/PilotTags"
+                      },
+                      "pilotExcludedTagSet" : {
+                          "items" : [],
+                          "tagSetSourceFile" : "tags/PilotTags"
+                      },
+                      "selectedUnitType" : "UNDEFINED",
+                      "selectedUnitDefId" : null,
+                      "selectedPilotDefId" : null
+                  },
+                  {
+                      "unitSpawnPoint" : {
+                          "EncounterObjectGuid" : "461141c2-f956-49a5-b2c6-6f951b957a94"
+                      },
+                      "customUnitName" : null,
+                      "customHeraldryDefId" : null,
+                      "unitType" : "Mech",
+                      "unitDefId" : "mechDef_None",
+                      "unitTagSet" : {
+                          "items" : [],
+                          "tagSetSourceFile" : "tags/UnitTags"
+                      },
+                      "unitExcludedTagSet" : {
+                          "items" : [],
+                          "tagSetSourceFile" : "tags/UnitTags"
+                      },
+                      "spawnEffectTags" : {
+                          "items" : [],
+                          "tagSetSourceFile" : "tags/SpawnEffectTags"
+                      },
+                      "pilotDefId" : "pilotDef_InheritLance",
+                      "pilotTagSet" : {
+                          "items" : [],
+                          "tagSetSourceFile" : "tags/PilotTags"
+                      },
+                      "pilotExcludedTagSet" : {
+                          "items" : [],
+                          "tagSetSourceFile" : "tags/PilotTags"
+                      },
+                      "selectedUnitType" : "UNDEFINED",
+                      "selectedUnitDefId" : null,
+                      "selectedPilotDefId" : null
                   }
               ]
           }
@@ -338,6 +437,105 @@
                   "customHeraldryDefId" : "",
                   "unitType" : "Mech",
                   "unitDefId" : "mechDef_InheritLance",
+                  "unitTagSet" : {
+                      "items" : [],
+                      "tagSetSourceFile" : "tags/UnitTags"
+                  },
+                  "unitExcludedTagSet" : {
+                      "items" : [],
+                      "tagSetSourceFile" : "tags/UnitTags"
+                  },
+                  "spawnEffectTags" : {
+                      "items" : [],
+                      "tagSetSourceFile" : "tags/SpawnEffectTags"
+                  },
+                  "pilotDefId" : "pilotDef_InheritLance",
+                  "pilotTagSet" : {
+                      "items" : [],
+                      "tagSetSourceFile" : "tags/PilotTags"
+                  },
+                  "pilotExcludedTagSet" : {
+                      "items" : [],
+                      "tagSetSourceFile" : "tags/PilotTags"
+                  },
+                  "selectedUnitType" : "UNDEFINED",
+                  "selectedUnitDefId" : "",
+                  "selectedPilotDefId" : ""
+              },
+              {
+                  "unitSpawnPoint" : {
+                      "EncounterObjectGuid" : "32a78eeb-e3ee-4f2c-96ce-3f2aa6aefa6b"
+                  },
+                  "customUnitName" : "",
+                  "customHeraldryDefId" : "",
+                  "unitType" : "Mech",
+                  "unitDefId" : "mechDef_None",
+                  "unitTagSet" : {
+                      "items" : [],
+                      "tagSetSourceFile" : "tags/UnitTags"
+                  },
+                  "unitExcludedTagSet" : {
+                      "items" : [],
+                      "tagSetSourceFile" : "tags/UnitTags"
+                  },
+                  "spawnEffectTags" : {
+                      "items" : [],
+                      "tagSetSourceFile" : "tags/SpawnEffectTags"
+                  },
+                  "pilotDefId" : "pilotDef_InheritLance",
+                  "pilotTagSet" : {
+                      "items" : [],
+                      "tagSetSourceFile" : "tags/PilotTags"
+                  },
+                  "pilotExcludedTagSet" : {
+                      "items" : [],
+                      "tagSetSourceFile" : "tags/PilotTags"
+                  },
+                  "selectedUnitType" : "UNDEFINED",
+                  "selectedUnitDefId" : "",
+                  "selectedPilotDefId" : ""
+              },
+              {
+                  "unitSpawnPoint" : {
+                      "EncounterObjectGuid" : "fd6cffb3-edef-4892-8495-d1a5943869cf"
+                  },
+                  "customUnitName" : "",
+                  "customHeraldryDefId" : "",
+                  "unitType" : "Mech",
+                  "unitDefId" : "mechDef_None",
+                  "unitTagSet" : {
+                      "items" : [],
+                      "tagSetSourceFile" : "tags/UnitTags"
+                  },
+                  "unitExcludedTagSet" : {
+                      "items" : [],
+                      "tagSetSourceFile" : "tags/UnitTags"
+                  },
+                  "spawnEffectTags" : {
+                      "items" : [],
+                      "tagSetSourceFile" : "tags/SpawnEffectTags"
+                  },
+                  "pilotDefId" : "pilotDef_InheritLance",
+                  "pilotTagSet" : {
+                      "items" : [],
+                      "tagSetSourceFile" : "tags/PilotTags"
+                  },
+                  "pilotExcludedTagSet" : {
+                      "items" : [],
+                      "tagSetSourceFile" : "tags/PilotTags"
+                  },
+                  "selectedUnitType" : "UNDEFINED",
+                  "selectedUnitDefId" : "",
+                  "selectedPilotDefId" : ""
+              },
+              {
+                  "unitSpawnPoint" : {
+                      "EncounterObjectGuid" : "f9d76bd8-5c43-41c2-85d6-be237d2ca505"
+                  },
+                  "customUnitName" : "",
+                  "customHeraldryDefId" : "",
+                  "unitType" : "Mech",
+                  "unitDefId" : "mechDef_None",
                   "unitTagSet" : {
                       "items" : [],
                       "tagSetSourceFile" : "tags/UnitTags"
