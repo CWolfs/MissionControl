@@ -1,6 +1,7 @@
 using UnityEngine;
 
 using BattleTech;
+using BattleTech.Designed;
 
 using System;
 
@@ -27,6 +28,7 @@ namespace MissionControl.Logic {
     public GameObject Build() {
       switch (type) {
         case "PlayerLance": return BuildPlayerLanceChunk();
+        case "DestroyWholeLance": return BuildDestroyWholeLanceChunk();
         default: break;
       }
       return null;
@@ -34,9 +36,16 @@ namespace MissionControl.Logic {
 
     private GameObject BuildPlayerLanceChunk() {
       Main.LogDebug($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] Building 'PlayerLance' Chunk");
-      PlayerLanceChunkGameLogic playerLanceChunkGameLogic = ChunkFactory.CreatePlayerLanceChunk("Chunk_PlayerLance", contractTypeBuilder.EncounterLayerGo.transform);
+      PlayerLanceChunkGameLogic playerLanceChunkGameLogic = ChunkFactory.CreatePlayerLanceChunk(this.name, contractTypeBuilder.EncounterLayerGo.transform);
       playerLanceChunkGameLogic.encounterObjectGuid = Guid.NewGuid().ToString();
       return playerLanceChunkGameLogic.gameObject;
+    }
+
+    private GameObject BuildDestroyWholeLanceChunk() {
+      Main.LogDebug($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] Building 'DestroyWholeLance' Chunk");
+      DestroyWholeLanceChunk destroyWholeLanceChunkGameLogic = ChunkFactory.CreateDestroyWholeLanceChunk(this.name, contractTypeBuilder.EncounterLayerGo.transform);
+      destroyWholeLanceChunkGameLogic.encounterObjectGuid = Guid.NewGuid().ToString();
+      return destroyWholeLanceChunkGameLogic.gameObject;
     }
   }
 }
