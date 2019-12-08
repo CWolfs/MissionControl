@@ -14,14 +14,14 @@ namespace MissionControl.Logic {
     private ContractTypeBuilder contractTypeBuilder;
     private string name;
     private string type;
-    private JObject placement;
+    private JObject position;
     private JArray children;
 
-    public ChunkTypeBuilder(ContractTypeBuilder contractTypeBuilder, string name, string type, JObject placement, JArray children) {
+    public ChunkTypeBuilder(ContractTypeBuilder contractTypeBuilder, string name, string type, JObject position, JArray children) {
       this.contractTypeBuilder = contractTypeBuilder;
       this.name = name;
       this.type = type;
-      this.placement = placement;
+      this.position = position;
       this.children = children;
     }
 

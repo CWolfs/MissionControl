@@ -41,27 +41,31 @@ namespace MissionControl.Logic {
       }
     }
 
-    private void BuildChunk(JObject chunk) {
+    public void BuildChunk(JObject chunk) {
       Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Chunk is '{chunk["Name"]}'");
       string chunkName = chunk["Name"].ToString();
       string chunkType = chunk["Type"].ToString();
-      JObject placement = (JObject)chunk["Placement"];
+      JObject position = (JObject)chunk["Position"];
       JArray children = (JArray)chunk["Children"];
 
-      ChunkTypeBuilder chunkTypeBuilder = new ChunkTypeBuilder(this, chunkName, chunkType, placement, children);
+      ChunkTypeBuilder chunkTypeBuilder = new ChunkTypeBuilder(this, chunkName, chunkType, position, children);
       GameObject chunkGo = chunkTypeBuilder.Build();
       if (chunkGo == null) {
         Main.Logger.LogError("[ContractTypeBuild.{ContractTypeKey}] Chunk creation failed. GameObject is null");
       }
 
       foreach (JObject child in children.Children<JObject>()) {
-        string type = child["Type"].ToString();
-        Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Child type is '{type}'");
+        BuildNode(chunkGo, child);
+      }
+    }
 
-        switch (type) {
-          case "Spawner": BuildSpawner(chunkGo, child); break;
-          default: break;
-        }
+    public void BuildNode(GameObject parent, JObject child) {
+      string type = child["Type"].ToString();
+      Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Child type is '{type}'");
+
+      switch (type) {
+        case "Spawner": BuildSpawner(parent, child); break;
+        default: break;
       }
     }
 

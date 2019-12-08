@@ -4,7 +4,7 @@
     {
       "Name": "Chunk_PlayerLance",
       "Type": "PlayerLance",
-      "Placement": {
+      "Position": {
         "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
         "Value": { "x": 0, "y": 0, "z": 0 }
       },
@@ -23,7 +23,7 @@
     {
       "Name": "Chunk_DestroyWholeLance",
       "Type": "DestroyWholeLance",
-      "Placement": {
+      "Position": {
         "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
         "Value": { "x": 0, "y": 0, "z": 0 }
       },
