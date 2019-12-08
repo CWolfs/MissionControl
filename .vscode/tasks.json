@@ -30,13 +30,13 @@
       ]
     },
     {
-      "label": "copy (overrides)",
+      "label": "copy (all)",
+      "dependsOn": ["copy (overrides)", "copy (CT build)"]
+    },
+    {
+      "label": "copy (assets)",
       "type": "shell",
-      "command": "cp -r",
-      "args": [
-        "D:/Modding/Battletech/MissionControl/overrides",
-        "'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'"
-      ]
+      "command": "copy-assets.sh"
     }
   ]
 }
