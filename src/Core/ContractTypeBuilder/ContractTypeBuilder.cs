@@ -78,20 +78,35 @@ namespace MissionControl.Logic {
       List<string> spawnPointGuids = spawner["SpawnPointGuids"].ToObject<List<string>>();
       string spawnType = spawner["SpawnType"].ToString();
 
-      string teamId = EncounterRules.PLAYER_TEAM_ID;
-      switch (team) {
-        case "Target": teamId = EncounterRules.TARGET_TEAM_ID; break;
-        case "TargetAlly": teamId = EncounterRules.TARGETS_ALLY_TEAM_ID; break;
-        case "Employer": teamId = EncounterRules.EMPLOYER_TEAM_ID; break;
-      }
-
       SpawnUnitMethodType spawnMethodType = SpawnUnitMethodType.ViaLeopardDropship;
       switch (spawnType) {
         case "DropPod": spawnMethodType = SpawnUnitMethodType.DropPod; break;
         case "Instant": spawnMethodType = SpawnUnitMethodType.InstantlyAtSpawnPoint; break;
       }
 
-      LanceSpawnerFactory.CreatePlayerLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
+      string teamId = EncounterRules.PLAYER_TEAM_ID;
+      switch (team) {
+        case "Player1": {
+          teamId = EncounterRules.PLAYER_TEAM_ID;
+          LanceSpawnerFactory.CreatePlayerLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
+          break;
+        }
+        case "Target": {
+          teamId = EncounterRules.TARGET_TEAM_ID;
+          LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
+          break;
+        }
+        case "TargetAlly": {
+          teamId = EncounterRules.TARGETS_ALLY_TEAM_ID;
+          LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
+          break;
+        }
+        case "Employer": {
+          teamId = EncounterRules.EMPLOYER_TEAM_ID;
+          LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
+          break;
+        }
+      }
     }
   }
 }
