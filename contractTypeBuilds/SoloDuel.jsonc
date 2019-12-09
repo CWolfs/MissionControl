@@ -53,6 +53,23 @@
           "LanceToDestroyGuid": "f426f0dc-969d-477d-81a9-d02f9e1eff79"
         }
       ]
+    },
+    {
+      "Name": "Chunk_EncounterBoundary",
+      "Type": "Chunk",
+      "SubType": "EncounterBoundary",
+      "Position": {
+        "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
+        "Value": { "x": 0, "y": 0, "z": 0 }
+      },
+      "Children": [
+        {
+          "Name": "EncounterBoundaryRect",
+          "Type": "Region",
+          "SubType": "Boundary",
+          "Guid": ""
+        }
+      ]
     }
   ]
 }

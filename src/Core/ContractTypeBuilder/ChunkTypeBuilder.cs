@@ -31,6 +31,7 @@ namespace MissionControl.Logic {
       switch (subType) {
         case "PlayerLance": return BuildPlayerLanceChunk();
         case "DestroyWholeLance": return BuildDestroyWholeLanceChunk();
+        case "EncounterBoundary": return BuildEncounterBoundary();
         default: break;
       }
       return null;
@@ -48,6 +49,13 @@ namespace MissionControl.Logic {
       DestroyWholeLanceChunk destroyWholeLanceChunkGameLogic = ChunkFactory.CreateDestroyWholeLanceChunk(this.name, contractTypeBuilder.EncounterLayerGo.transform);
       destroyWholeLanceChunkGameLogic.encounterObjectGuid = Guid.NewGuid().ToString();
       return destroyWholeLanceChunkGameLogic.gameObject;
+    }
+
+    private GameObject BuildEncounterBoundary() {
+      Main.LogDebug($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] Building 'BuildEncounterBoundary' Chunk");
+      EncounterBoundaryChunkGameLogic encounterBoundaryChunkLogic = ChunkFactory.CreateEncounterBondaryChunk(this.name, contractTypeBuilder.EncounterLayerGo.transform);
+      encounterBoundaryChunkLogic.encounterObjectGuid = Guid.NewGuid().ToString();
+      return encounterBoundaryChunkLogic.gameObject;
     }
   }
 }
