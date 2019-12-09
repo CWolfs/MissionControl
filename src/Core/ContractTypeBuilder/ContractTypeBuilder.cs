@@ -43,12 +43,13 @@ namespace MissionControl.Logic {
 
     public void BuildChunk(JObject chunk) {
       Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Chunk is '{chunk["Name"]}'");
-      string chunkName = chunk["Name"].ToString();
-      string chunkType = chunk["Type"].ToString();
+      string name = chunk["Name"].ToString();
+      string type = chunk["Type"].ToString();
+      string subType = chunk["SubType"].ToString();
       JObject position = (JObject)chunk["Position"];
       JArray children = (JArray)chunk["Children"];
 
-      ChunkTypeBuilder chunkTypeBuilder = new ChunkTypeBuilder(this, chunkName, chunkType, position, children);
+      ChunkTypeBuilder chunkTypeBuilder = new ChunkTypeBuilder(this, name, type, subType, position, children);
       GameObject chunkGo = chunkTypeBuilder.Build();
       if (chunkGo == null) {
         Main.Logger.LogError("[ContractTypeBuild.{ContractTypeKey}] Chunk creation failed. GameObject is null");
@@ -71,7 +72,7 @@ namespace MissionControl.Logic {
 
     private void BuildSpawner(GameObject parent, JObject spawner) {
       string name = spawner["Name"].ToString();
-      string type = spawner["Type"].ToString();
+      string subType = spawner["SubType"].ToString();
       string team = spawner["Team"].ToString();
       string guid = spawner["Guid"].ToString();
       int spawnPoints = (int)spawner["SpawnPoints"];

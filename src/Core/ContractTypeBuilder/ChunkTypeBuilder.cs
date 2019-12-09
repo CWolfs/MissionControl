@@ -14,19 +14,21 @@ namespace MissionControl.Logic {
     private ContractTypeBuilder contractTypeBuilder;
     private string name;
     private string type;
+    private string subType;
     private JObject position;
     private JArray children;
 
-    public ChunkTypeBuilder(ContractTypeBuilder contractTypeBuilder, string name, string type, JObject position, JArray children) {
+    public ChunkTypeBuilder(ContractTypeBuilder contractTypeBuilder, string name, string type, string subType, JObject position, JArray children) {
       this.contractTypeBuilder = contractTypeBuilder;
       this.name = name;
       this.type = type;
+      this.subType = subType;
       this.position = position;
       this.children = children;
     }
 
     public GameObject Build() {
-      switch (type) {
+      switch (subType) {
         case "PlayerLance": return BuildPlayerLanceChunk();
         case "DestroyWholeLance": return BuildDestroyWholeLanceChunk();
         default: break;

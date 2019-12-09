@@ -3,7 +3,8 @@
   "Chunks": [
     {
       "Name": "Chunk_PlayerLance",
-      "Type": "PlayerLance",
+      "Type": "Chunk",
+      "SubType": "PlayerLance",
       "Position": {
         "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
         "Value": { "x": 0, "y": 0, "z": 0 }
@@ -12,6 +13,7 @@
         {
           "Name": "Spawner_PlayerLance",
           "Type": "Spawner",
+          "SubType": "SimpleSpawner",
           "Team": "Player1",
           "Guid": "9bf836b4-3f56-4ba2-9eac-1c02bea4a0cf", // Must match the spawner Guids in the contract .json
           "SpawnPoints": 1,
@@ -22,7 +24,8 @@
     },
     {
       "Name": "Chunk_DestroyWholeLance",
-      "Type": "DestroyWholeLance",
+      "Type": "Chunk",
+      "SubType": "DestroyWholeLance",
       "Position": {
         "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
         "Value": { "x": 0, "y": 0, "z": 0 }
@@ -31,6 +34,7 @@
         {
           "Name": "Lance_Enemy_OpposingForce",
           "Type": "Spawner",
+          "SubType": "SimpleSpawner",
           "Team": "Target",
           "Guid": "f426f0dc-969d-477d-81a9-d02f9e1eff79", // Must match the spawner Guids in the contract .json
           "SpawnPoints": 1,
@@ -40,7 +44,7 @@
         {
           "Name": "Objective_DestroyLance",
           "Type": "Objective",
-          "ObjectiveType": "DestroyLance",
+          "SubType": "DestroyLance",
           "Guid": "a0b9c5b2-c594-4c5a-be1d-028a51c51519", // Must match the spawner Guids in the contract .json
           "LanceToDestroyGuid": "f426f0dc-969d-477d-81a9-d02f9e1eff79",
           "IsPrimaryObjective": true
