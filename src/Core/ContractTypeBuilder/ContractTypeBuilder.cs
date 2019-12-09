@@ -1,13 +1,18 @@
 using UnityEngine;
 
 using MissionControl.Rules;
+using MissionControl.Logic;
 using MissionControl.EncounterFactories;
 
 using BattleTech;
+using BattleTech.Designed;
+using BattleTech.Framework;
 
 using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
+
+using Harmony;
 
 namespace MissionControl.Logic {
   public class ContractTypeBuilder {
@@ -66,6 +71,7 @@ namespace MissionControl.Logic {
 
       switch (type) {
         case "Spawner": BuildSpawner(parent, child); break;
+        case "Objective": BuildObjective(parent, child); break;
         default: break;
       }
     }
@@ -81,8 +87,10 @@ namespace MissionControl.Logic {
 
       SpawnUnitMethodType spawnMethodType = SpawnUnitMethodType.ViaLeopardDropship;
       switch (spawnType) {
+        case "Leopard": spawnMethodType = SpawnUnitMethodType.ViaLeopardDropship; break;
         case "DropPod": spawnMethodType = SpawnUnitMethodType.DropPod; break;
         case "Instant": spawnMethodType = SpawnUnitMethodType.InstantlyAtSpawnPoint; break;
+        default: Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] No support for spawnType '{spawnType}'. Check for spelling mistakes."); break;
       }
 
       string teamId = EncounterRules.PLAYER_TEAM_ID;
@@ -107,7 +115,62 @@ namespace MissionControl.Logic {
           LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
           break;
         }
+        default: Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] No support for team '{team}'. Check for spelling mistakes."); break;
       }
+    }
+
+    private void BuildObjective(GameObject parent, JObject objective) {
+      string name = objective["Name"].ToString();
+      string subType = objective["SubType"].ToString();
+      string guid = objective["Guid"].ToString();
+      bool isPrimaryObjectve = (bool)objective["IsPrimaryObjective"];
+      string label = objective["Label"].ToString();
+      int priority = (int)objective["Priority"];
+      string contractObjectiveGuid = objective["ContractObjectiveGuid"].ToString();
+
+      switch (subType) {
+        case "DestroyLance": BuildDestroyWholeLanceObjective(parent, objective, name, label, guid, isPrimaryObjectve, priority, contractObjectiveGuid); break;
+        default: Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] No support for sub-type '{subType}'. Check for spelling mistakes."); break;
+      }
+    }
+
+    private void BuildDestroyWholeLanceObjective(GameObject parent, JObject objective, string name, string label, string guid,
+      bool isPrimaryObjectve, int priority, string contractObjectiveGuid) {
+
+      DestroyWholeLanceChunk destroyWholeLanceChunk = parent.GetComponent<DestroyWholeLanceChunk>();
+      string lanceToDestroyGuid = objective["LanceToDestroyGuid"].ToString();
+      bool showProgress = true;
+      bool displayToUser = true;
+
+      LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
+      lanceSpawnerRef.EncounterObjectGuid = lanceToDestroyGuid;
+
+      DestroyLanceObjective objectiveLogic = ObjectiveFactory.CreateDestroyLanceObjective(
+        guid,
+        parent,
+        lanceSpawnerRef,
+        lanceToDestroyGuid,
+        label,
+        showProgress,
+        ChunkLogic.ProgressFormat.PERCENTAGE_COMPLETE,
+        "The primary objective to destroy the enemy lance",
+        priority,
+        displayToUser,
+        ObjectiveMark.AttackTarget,
+        contractObjectiveGuid
+      );
+
+      if (isPrimaryObjectve) {
+        AccessTools.Field(typeof(ObjectiveGameLogic), "primary").SetValue(objectiveLogic, true);
+      } else {
+        AccessTools.Field(typeof(ObjectiveGameLogic), "primary").SetValue(objectiveLogic, false);
+      }
+
+      DestroyLanceObjectiveRef destroyLanceObjectiveRef = new DestroyLanceObjectiveRef();
+      destroyLanceObjectiveRef.encounterObject = objectiveLogic;
+
+      destroyWholeLanceChunk.lanceSpawner = lanceSpawnerRef;
+      destroyWholeLanceChunk.destroyObjective = destroyLanceObjectiveRef;
     }
   }
 }

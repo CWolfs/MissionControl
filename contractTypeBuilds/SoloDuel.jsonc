@@ -15,9 +15,9 @@
           "Type": "Spawner",
           "SubType": "SimpleSpawner",
           "Team": "Player1",
-          "Guid": "9bf836b4-3f56-4ba2-9eac-1c02bea4a0cf", // Must match the spawner Guids in the contract .json
+          "Guid": "9bf836b4-3f56-4ba2-9eac-1c02bea4a0cf", // Must match the spawner guids in the contract .json
           "SpawnPoints": 1,
-          "SpawnPointGuids": ["ec9d2280-ca9a-4d90-8a20-963d8a4c0a39"], // Must match the unit spawn Guids in the contract .json
+          "SpawnPointGuids": ["ec9d2280-ca9a-4d90-8a20-963d8a4c0a39"], // Must match the unit spawn guids in the contract .json
           "SpawnType": "Leopard" // Leopard, DropPod, Instant
         }
       ]
@@ -36,18 +36,21 @@
           "Type": "Spawner",
           "SubType": "SimpleSpawner",
           "Team": "Target",
-          "Guid": "f426f0dc-969d-477d-81a9-d02f9e1eff79", // Must match the spawner Guids in the contract .json
+          "Guid": "f426f0dc-969d-477d-81a9-d02f9e1eff79", // Must match the spawner guids in the contract .json
           "SpawnPoints": 1,
-          "SpawnPointGuids": ["6cd3107e-0f9d-4809-ab8c-fb30faf4cd80"], // Must match the unit spawn Guids in the contract .json
+          "SpawnPointGuids": ["6cd3107e-0f9d-4809-ab8c-fb30faf4cd80"], // Must match the unit spawn guids in the contract .json
           "SpawnType": "Instant" // Leopard, DropPod, Instant
         },
         {
           "Name": "Objective_DestroyLance",
           "Type": "Objective",
           "SubType": "DestroyLance",
-          "Guid": "a0b9c5b2-c594-4c5a-be1d-028a51c51519", // Must match the spawner Guids in the contract .json
-          "LanceToDestroyGuid": "f426f0dc-969d-477d-81a9-d02f9e1eff79",
-          "IsPrimaryObjective": true
+          "Guid": "a0b9c5b2-c594-4c5a-be1d-028a51c51519", // Must match the objective guid in the contract .json
+          "ContractObjectiveGuid": "73275787-720a-4c33-9f20-953b1bbf48bd", // Must match the contract guid in the contract .json
+          "Label": "Destroy the enemy lance (test)",
+          "Priority": 1,
+          "IsPrimaryObjective": true,
+          "LanceToDestroyGuid": "f426f0dc-969d-477d-81a9-d02f9e1eff79"
         }
       ]
     }

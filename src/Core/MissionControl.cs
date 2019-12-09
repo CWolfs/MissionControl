@@ -125,12 +125,12 @@ namespace MissionControl {
       EncounterLayerMDD = mdd.SelectEncounterLayerByGuid(CurrentContract.encounterObjectGuid);
       CurrentContractTypeValue = CurrentContract.ContractTypeValue;
 
-      EncounterLayerData encounterLayer = EncounterLayerFactory.CreateEncounterLayer(CurrentContract);
-      encounterLayer.gameObject.transform.parent = EncounterLayerParent.transform;
+      EncounterLayerData = EncounterLayerFactory.CreateEncounterLayer(CurrentContract);
+      EncounterLayerData.gameObject.transform.parent = EncounterLayerParent.transform;
 
-      BuildConstructTypeEncounter(encounterLayer.gameObject);
+      BuildConstructTypeEncounter(EncounterLayerData.gameObject);
 
-      return encounterLayer;
+      return EncounterLayerData;
     }
 
     private void BuildConstructTypeEncounter(GameObject encounterLayerGo) {
