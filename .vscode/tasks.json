@@ -30,13 +30,9 @@
       ]
     },
     {
-      "label": "copy (all)",
-      "dependsOn": ["copy (overrides)", "copy (CT build)"]
-    },
-    {
       "label": "copy (assets)",
       "type": "shell",
-      "command": "copy-assets.sh"
+      "command": "./copy-assets.sh"
     }
   ]
 }
