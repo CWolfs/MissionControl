@@ -1,5 +1,9 @@
 using UnityEngine;
 
+using System;
+
+using MissionControl.Trigger;
+using MissionControl.Rules;
 using MissionControl.EncounterFactories;
 
 using Newtonsoft.Json.Linq;
@@ -13,6 +17,7 @@ namespace MissionControl.ContractTypeBuilders {
     private string name;
     private string subType;
     private string guid;
+    private string trigger;
     private bool showOnlyOnce;
 
     public DialogueBuilder(ContractTypeBuilder contractTypeBuilder, GameObject parent, JObject objective) {
@@ -23,6 +28,7 @@ namespace MissionControl.ContractTypeBuilders {
       this.name = objective["Name"].ToString();
       this.subType = objective["SubType"].ToString();
       this.guid = objective["Guid"].ToString();
+      this.trigger = objective["Trigger"].ToString();
       this.showOnlyOnce = objective.ContainsKey("ShowOnlyOnce") ? (bool)objective["ShowOnlyOnce"] : false;
     }
 
@@ -35,6 +41,9 @@ namespace MissionControl.ContractTypeBuilders {
 
     private void BuildSimpleDialogue() {
       DialogueFactory.CreateDialogLogic(this.parent, this.name, this.guid, this.showOnlyOnce);
+      MessageCenterMessageType triggerMessageType = (MessageCenterMessageType)Enum.Parse(typeof(MessageCenterMessageType), this.trigger);
+      DialogTrigger dialogueTrigger = new DialogTrigger(triggerMessageType, this.guid);
+      dialogueTrigger.Run();
     }
   }
 }

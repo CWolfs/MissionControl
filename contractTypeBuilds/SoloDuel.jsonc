@@ -86,6 +86,7 @@
           "Type": "Dialogue",
           "SubType": "Simple",
           "Guid": "73df8d9c-a274-48fd-98c9-2bd0d7860e83", // Must match the dialogue guid in the contract .json
+          "Trigger": "OnEncounterIntroComplete", // Anything from 'MessageCenterMessageType'
           "ShowOnlyOnce": true
         },
         {
@@ -93,6 +94,7 @@
           "Type": "Dialogue",
           "SubType": "Simple",
           "Guid": "4011a4c3-cba2-4d22-b2b3-3b19a3297ab9", // Must match the dialogue guid in the contract .json
+          "Trigger": "OnObjectiveSucceeded", // Anything from 'MessageCenterMessageType'
           "ShowOnlyOnce": true
         },
         {
@@ -100,6 +102,7 @@
           "Type": "Dialogue",
           "SubType": "Simple",
           "Guid": "d3d33d95-9ed7-4686-b9eb-954ebe51cc02", // Must match the dialogue guid in the contract .json
+          "Trigger": "OnMissionFailed", // Anything from 'MessageCenterMessageType'
           "ShowOnlyOnce": true
         }
       ]
