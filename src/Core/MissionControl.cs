@@ -274,6 +274,14 @@ namespace MissionControl {
       return false;
     }
 
+    public bool IsExtendedBoundariesAllowed() {
+      if (Main.Settings.ExtendedBoundaries.Enable) {
+        bool isExtendedBoundariesAllowed = Main.Settings.ExtendedBoundaries.GetValidContractTypes().Contains(CurrentContractType);
+        return isExtendedBoundariesAllowed;
+      }
+      return false;
+    }
+
     public bool IsSkirmish(Contract contract) {
       return !contract.ContractTypeValue.IsSinglePlayerProcedural;
     }

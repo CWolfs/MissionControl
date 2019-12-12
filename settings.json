@@ -35,6 +35,8 @@
   },
   "ExtendedBoundaries": {
     "Enable": true,
+    "IncludeContractTypes": [],
+    "ExcludeContractTypes": [],
     "IncreaseBoundarySizeByPercentage": 0.2
   },
   "DynamicWithdraw": {
