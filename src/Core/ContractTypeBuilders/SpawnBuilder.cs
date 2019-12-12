@@ -35,7 +35,7 @@ namespace MissionControl.ContractTypeBuilders {
       this.spawnType = spawner["SpawnType"].ToString();
     }
 
-    public void Build() {
+    public override void Build() {
       SpawnUnitMethodType spawnMethodType = SpawnUnitMethodType.ViaLeopardDropship;
       switch (spawnType) {
         case "Leopard": spawnMethodType = SpawnUnitMethodType.ViaLeopardDropship; break;

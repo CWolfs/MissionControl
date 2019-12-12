@@ -62,6 +62,7 @@ namespace MissionControl.ContractTypeBuilders {
       switch (type) {
         case "Spawner": nodeBuilder = new SpawnBuilder(this, parent, child); break;
         case "Objective": nodeBuilder = new ObjectiveBuilder(this, parent, child); break;
+        case "Region": nodeBuilder = new RegionBuilder(this, parent, child); break;
         default: break;
       }
 

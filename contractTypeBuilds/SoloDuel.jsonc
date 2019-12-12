@@ -58,16 +58,17 @@
       "Name": "Chunk_EncounterBoundary",
       "Type": "Chunk",
       "SubType": "EncounterBoundary",
-      "Position": {
-        "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
-        "Value": { "x": 0, "y": 0, "z": 0 }
-      },
       "Children": [
         {
           "Name": "EncounterBoundaryRect",
           "Type": "Region",
           "SubType": "Boundary",
-          "Guid": ""
+          "Position": {
+            "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
+            "Value": { "x": 15, "y": 50, "z": 450 }
+          },
+          "Width": 900,
+          "Length": 1024
         }
       ]
     }

@@ -38,7 +38,7 @@ namespace MissionControl.ContractTypeBuilders {
       this.contractObjectiveGuid = objective["ContractObjectiveGuid"].ToString();
     }
 
-    public void Build() {
+    public override void Build() {
       switch (subType) {
         case "DestroyLance": BuildDestroyWholeLanceObjective(parent, objective, name, label, guid, isPrimaryObjectve, priority, contractObjectiveGuid); break;
         default: Main.LogDebug($"[ObjectiveBuilder.{contractTypeBuilder.ContractTypeKey}] No support for sub-type '{subType}'. Check for spelling mistakes."); break;
