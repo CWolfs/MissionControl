@@ -9,7 +9,7 @@ using MissionControl.EncounterFactories;
 
 using Newtonsoft.Json.Linq;
 
-namespace MissionControl.Logic {
+namespace MissionControl.ContractTypeBuilders {
   public class ChunkTypeBuilder {
     private ContractTypeBuilder contractTypeBuilder;
     private string name;

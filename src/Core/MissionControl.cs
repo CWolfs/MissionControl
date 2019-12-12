@@ -10,6 +10,7 @@ using MissionControl.Logic;
 using MissionControl.Rules;
 using MissionControl.Utils;
 using MissionControl.EncounterFactories;
+using MissionControl.ContractTypeBuilders;
 
 using Newtonsoft.Json.Linq;
 
