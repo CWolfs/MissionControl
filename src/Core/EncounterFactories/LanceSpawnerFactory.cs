@@ -15,7 +15,7 @@ namespace MissionControl.EncounterFactories {
 
       GameObject lanceSpawnerGo = new GameObject(name);
       lanceSpawnerGo.transform.parent = parent.transform;
-      lanceSpawnerGo.transform.localPosition = new Vector3(-674, 300, -280);
+      lanceSpawnerGo.transform.localPosition = Vector3.zero;
 
       LanceSpawnerGameLogic lanceSpawnerGameLogic = lanceSpawnerGo.AddComponent<LanceSpawnerGameLogic>();
       lanceSpawnerGameLogic.encounterObjectGuid = guid;
