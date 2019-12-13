@@ -86,7 +86,6 @@
           "Type": "Dialogue",
           "SubType": "Simple",
           "Guid": "73df8d9c-a274-48fd-98c9-2bd0d7860e83", // Must match the dialogue guid in the contract .json
-          "Trigger": "OnEncounterIntroComplete", // Anything from 'MessageCenterMessageType'
           "ShowOnlyOnce": true
         },
         {
