@@ -62,7 +62,7 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static PlayerLanceSpawnerGameLogic CreatePlayerLanceSpawner(GameObject parent, string name, string guid, string teamDefinitionGuid, bool spawnUnitsOnActivation,
-      SpawnUnitMethodType spawnMethod, List<string> unitGuids) {
+      SpawnUnitMethodType spawnMethod, List<string> unitGuids, bool includeCameraStart) {
 
       GameObject lanceSpawnerGo = new GameObject(name);
       lanceSpawnerGo.transform.parent = parent.transform;
@@ -76,12 +76,18 @@ namespace MissionControl.EncounterFactories {
       float x = 0;
       float z = 0;
       for (int i = 0; i < unitGuids.Count; i++) {
-        CreateUnitSpawnPoint(lanceSpawnerGo, $"UnitSpawnPoint{i + 1}", new Vector3(x, 0, z), unitGuids[i]);
+        CreateUnitSpawnPoint(lanceSpawnerGo, $"PlayerLanceSpawnPoint{i + 1}", new Vector3(x, 0, z), unitGuids[i]);
         x += 24;
         z += 24;
       }
 
       lanceSpawnerGo.AddComponent<SnapToTerrain>();
+
+      if (includeCameraStart) {
+        GameObject cameraStartGo = new GameObject("CameraStart");
+        cameraStartGo.transform.parent = lanceSpawnerGo.FindRecursive("PlayerLanceSpawnPoint1").transform;
+        CameraStart cameraStart = cameraStartGo.AddComponent<CameraStart>();
+      }
 
       return lanceSpawnerGameLogic;
     }

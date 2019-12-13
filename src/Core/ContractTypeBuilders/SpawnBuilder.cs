@@ -50,7 +50,7 @@ namespace MissionControl.ContractTypeBuilders {
       switch (team) {
         case "Player1": {
           teamId = EncounterRules.PLAYER_TEAM_ID;
-          PlayerLanceSpawnerGameLogic playerLanceSpawnerGameLogic = LanceSpawnerFactory.CreatePlayerLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
+          PlayerLanceSpawnerGameLogic playerLanceSpawnerGameLogic = LanceSpawnerFactory.CreatePlayerLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids, true);
           if (position != null) SetPosition(playerLanceSpawnerGameLogic.gameObject, position);
           break;
         }
