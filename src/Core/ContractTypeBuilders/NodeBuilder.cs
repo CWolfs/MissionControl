@@ -10,9 +10,11 @@ namespace MissionControl.ContractTypeBuilders {
 
       if (type == "World") {
         Vector3 worldPosition = new Vector3((float)value["x"], (float)value["y"], (float)value["z"]);
+        worldPosition = worldPosition.GetClosestHexLerpedPointOnGrid();
         target.transform.position = worldPosition;
       } else if (type == "Local") {
         Vector3 localPosition = new Vector3((float)value["x"], (float)value["y"], (float)value["z"]);
+        localPosition = localPosition.GetClosestHexLerpedPointOnGrid();
         target.transform.position = localPosition;
       } else if (type == "SpawnProfile") {
         // TODO: Allow for spawners to be used

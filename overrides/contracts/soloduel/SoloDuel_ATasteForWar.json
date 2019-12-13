@@ -125,7 +125,7 @@
                   "revealRadius" : -1
               },
               {
-                  "words" : "All the Holo-cams are focused on you guys so put up a show but finish that {TEAM_TAR.FactionDef.ShortName} Champion in style.",
+                  "words" : "All the holo-cams are focused on you guys so put up a show but finish that {TEAM_TAR.FactionDef.Demonym} champion in style.",
                   "wordsColor" : {
                       "r" : 1,
                       "g" : 1,

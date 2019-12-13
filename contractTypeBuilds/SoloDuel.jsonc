@@ -5,15 +5,15 @@
       "Name": "Chunk_PlayerLance",
       "Type": "Chunk",
       "SubType": "PlayerLance",
-      "Position": {
-        "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
-        "Value": { "x": 0, "y": 0, "z": 0 }
-      },
       "Children": [
         {
           "Name": "Spawner_PlayerLance",
           "Type": "Spawner",
           "SubType": "SimpleSpawner",
+          "Position": {
+            "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
+            "Value": { "x": -100, "y": 86, "z": 0 }
+          },
           "Team": "Player1",
           "Guid": "9bf836b4-3f56-4ba2-9eac-1c02bea4a0cf", // Must match the spawner guids in the contract .json
           "SpawnPoints": 1,
