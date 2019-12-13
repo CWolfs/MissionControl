@@ -51,7 +51,7 @@
           "SubType": "DestroyLance",
           "Guid": "a0b9c5b2-c594-4c5a-be1d-028a51c51519", // Must match the objective guid in the contract .json
           "ContractObjectiveGuid": "73275787-720a-4c33-9f20-953b1bbf48bd", // Must match the contract guid in the contract .json
-          "Label": "Destroy the enemy lance (test)",
+          "Title": "Destroy the enemy lance (test)",
           "Priority": 1,
           "IsPrimaryObjective": true,
           "LanceToDestroyGuid": "f426f0dc-969d-477d-81a9-d02f9e1eff79"

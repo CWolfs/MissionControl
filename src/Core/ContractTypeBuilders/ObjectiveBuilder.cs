@@ -20,7 +20,7 @@ namespace MissionControl.ContractTypeBuilders {
     private string subType;
     private string guid;
     private bool isPrimaryObjectve;
-    private string label;
+    private string title;
     private int priority;
     private string contractObjectiveGuid;
 
@@ -33,19 +33,19 @@ namespace MissionControl.ContractTypeBuilders {
       this.subType = objective["SubType"].ToString();
       this.guid = objective["Guid"].ToString();
       this.isPrimaryObjectve = (bool)objective["IsPrimaryObjective"];
-      this.label = objective["Label"].ToString();
+      this.title = objective["Title"].ToString();
       this.priority = (int)objective["Priority"];
       this.contractObjectiveGuid = objective["ContractObjectiveGuid"].ToString();
     }
 
     public override void Build() {
       switch (subType) {
-        case "DestroyLance": BuildDestroyWholeLanceObjective(parent, objective, name, label, guid, isPrimaryObjectve, priority, contractObjectiveGuid); break;
+        case "DestroyLance": BuildDestroyWholeLanceObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, contractObjectiveGuid); break;
         default: Main.LogDebug($"[ObjectiveBuilder.{contractTypeBuilder.ContractTypeKey}] No support for sub-type '{subType}'. Check for spelling mistakes."); break;
       }
     }
 
-    private void BuildDestroyWholeLanceObjective(GameObject parent, JObject objective, string name, string label, string guid,
+    private void BuildDestroyWholeLanceObjective(GameObject parent, JObject objective, string name, string title, string guid,
       bool isPrimaryObjectve, int priority, string contractObjectiveGuid) {
 
       DestroyWholeLanceChunk destroyWholeLanceChunk = parent.GetComponent<DestroyWholeLanceChunk>();
@@ -61,7 +61,7 @@ namespace MissionControl.ContractTypeBuilders {
         parent,
         lanceSpawnerRef,
         lanceToDestroyGuid,
-        label,
+        title,
         showProgress,
         ChunkLogic.ProgressFormat.PERCENTAGE_COMPLETE,
         "The primary objective to destroy the enemy lance",
