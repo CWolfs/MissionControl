@@ -90,7 +90,7 @@
       {
           "name" : "Spawner_PlayerLance",
           "encounterObject" : {
-              "EncounterObjectGuid" : "9bf836b4-3f56-4ba2-9eac-1c02bea4a0cf"
+              "EncounterObjectGuid" : "76b654a6-4f2c-4a6f-86e6-d4cf868335fe"
           }
       },
       {
@@ -219,7 +219,7 @@
       "lanceOverrideList" : [
           {
               "lanceSpawner" : {
-                  "EncounterObjectGuid" : "9bf836b4-3f56-4ba2-9eac-1c02bea4a0cf"
+                  "EncounterObjectGuid" : "76b654a6-4f2c-4a6f-86e6-d4cf868335fe"
               },
               "name" : "Spawner_PlayerLance",
               "lanceDefId" : "Manual",
