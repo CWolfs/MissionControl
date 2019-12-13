@@ -11,8 +11,8 @@
   "missionSuccessStatementOverride" : null,
   "badFaithStatementOverride" : null,
   "goodFaithStatementOverride" : null,
-  "shortDescription" : "Last night a few of our crew members took some much needed R&R at the local {TEAM_TAR.FactionDef.Demonym} bar. Words were said and now it looks like we're stuck in a duel with two apparent {TEAM_TAR.FactionDef.Demonym} royal guards. Not sure how we can get out of this so best just get it over with, Commander.",
-  "longDescription" : "Commander, looks like those two guys we ticked off last night were actually {TEAM_TAR.FactionDef.Demonym} royal guards. Looks like we've got ourselves a duel.",
+  "shortDescription" : "Last night a few of our crew members took some much needed R&R at the local {TEAM_TAR.FactionDef.Demonym} bar. Words were said and now it looks like we're stuck in a duel with two apparent {TEAM_TAR.FactionDef.Demonym} guards. Not sure how we can get out of this so best just get it over with, Commander.",
+  "longDescription" : "Commander, looks like those two guys we ticked off last night were actually {TEAM_TAR.FactionDef.Demonym} guards. Looks like we've got ourselves a duel.",
   "salvagePotential" : 16,
   "requirementList" : [
       {
@@ -60,7 +60,7 @@
           "contractObjective" : {
               "EncounterObjectGuid" : "73275787-720a-4c33-9f20-953b1bbf48bd"
           },
-          "title" : "Defeat the Royal Guards in a Duel",
+          "title" : "Defeat the Guards in a Duel",
           "description" : "",
           "isPrimary" : true,
           "forPlayer" : "Player1",
@@ -74,7 +74,7 @@
           "objective" : {
               "EncounterObjectGuid" : "a0b9c5b2-c594-4c5a-be1d-028a51c51519"
           },
-          "title" : "Defeat Royal Guards",
+          "title" : "Defeat Guards",
           "description" : "",
           "isPrimary" : true,
           "OnSuccessResults" : [],
@@ -125,7 +125,7 @@
                   "revealRadius" : -1
               },
               {
-                  "words" : "It's unfortunate how this has turned out but we can't back down now. Sort these {TEAM_TAR.FactionDef.Demonym} royal guards out then let's get out of here.",
+                  "words" : "It's unfortunate how this has turned out but we can't back down now. Sort these {TEAM_TAR.FactionDef.Demonym} guards out then let's get out of here.",
                   "wordsColor" : {
                       "r" : 1,
                       "g" : 1,
@@ -342,7 +342,7 @@
           "lanceSpawner" : {
               "EncounterObjectGuid" : "f426f0dc-969d-477d-81a9-d02f9e1eff79"
           },
-          "name" : "Lance_Enemy_Champion",
+          "name" : "Lance_Enemy_Guards",
           "lanceDefId" : "Tagged",
           "lanceTagSet" : {
               "items" : [
@@ -366,7 +366,7 @@
                   "unitSpawnPoint" : {
                       "EncounterObjectGuid" : "6cd3107e-0f9d-4809-ab8c-fb30faf4cd80"
                   },
-                  "customUnitName" : "Queen's Guard",
+                  "customUnitName" : "Bar Guard",
                   "customHeraldryDefId" : "",
                   "unitType" : "Mech",
                   "unitDefId" : "mechDef_InheritLance",
@@ -399,7 +399,7 @@
                 "unitSpawnPoint" : {
                     "EncounterObjectGuid" : "14c58a13-96a6-4f91-a1e5-47b5d02b81d1"
                 },
-                "customUnitName" : "Prince's Guard",
+                "customUnitName" : "City Guard",
                 "customHeraldryDefId" : "",
                 "unitType" : "Mech",
                 "unitDefId" : "mechDef_InheritLance",
