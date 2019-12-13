@@ -101,7 +101,7 @@
           "Type": "Dialogue",
           "SubType": "Simple",
           "Guid": "4011a4c3-cba2-4d22-b2b3-3b19a3297ab9", // Must match the dialogue guid in the contract .json
-          "Trigger": "OnObjectiveSucceeded", // Anything from 'MessageCenterMessageType'
+          // "Trigger": "OnObjectiveSucceeded", // Anything from 'MessageCenterMessageType'
           "ShowOnlyOnce": true
         },
         {
