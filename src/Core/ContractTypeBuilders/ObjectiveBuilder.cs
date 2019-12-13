@@ -68,7 +68,8 @@ namespace MissionControl.ContractTypeBuilders {
         priority,
         displayToUser,
         ObjectiveMark.AttackTarget,
-        contractObjectiveGuid
+        contractObjectiveGuid,
+        false // Don't create the objective override as it's provided by the contract json
       );
 
       if (isPrimaryObjectve) {

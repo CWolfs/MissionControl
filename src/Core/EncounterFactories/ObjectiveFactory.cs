@@ -13,7 +13,7 @@ using MissionControl;
 namespace MissionControl.EncounterFactories {
   public class ObjectiveFactory {
     public static DestroyLanceObjective CreateDestroyLanceObjective(string objectiveGuid, GameObject parent, LanceSpawnerRef lanceToDestroy, string lanceGuid, string title, bool showProgress,
-    string progressFormat, string description, int priority, bool displayToUser, ObjectiveMark markUnitsWith, string contractObjectiveGameLogicGuid) {
+    string progressFormat, string description, int priority, bool displayToUser, ObjectiveMark markUnitsWith, string contractObjectiveGameLogicGuid, bool createObjectiveOverride = true) {
       // TODO: Probably want to split out these two main chunks into their own methods
       // OBJECTIVE OBJECTIVE GAME LOGIC
       GameObject destroyWholeLanceObjectiveGo = new GameObject($"Objective_DestroyLance_{lanceGuid}");
@@ -61,14 +61,17 @@ namespace MissionControl.EncounterFactories {
       contractObjectiveGameLogic.objectiveRefList.Add(objectiveRef);
 
       // OBJECTIVE OVERRIDE - This is needed otherwise the results don't apply in the 'End Contract' screen
-      ObjectiveOverride objectiveOverride = new ObjectiveOverride(destroyLanceObjective);
-      objectiveOverride.title = destroyLanceObjective.title;
-      objectiveOverride.description = destroyLanceObjective.description;
-      objectiveOverride.OnSuccessResults = destroyLanceObjective.OnSuccessResults;
-      objectiveOverride.OnFailureResults = destroyLanceObjective.OnFailureResults;
-      objectiveOverride.OnSuccessDialogueGUID = destroyLanceObjective.onSuccessDialogue.EncounterObjectGuid;
-      objectiveOverride.OnFailureDialogueGUID = destroyLanceObjective.onFailureDialogue.EncounterObjectGuid;
-      MissionControl.Instance.CurrentContract.Override.objectiveList.Add(objectiveOverride);
+      // IF - the objective override is not specified in the contract override .json
+      if (createObjectiveOverride) {
+        ObjectiveOverride objectiveOverride = new ObjectiveOverride(destroyLanceObjective);
+        objectiveOverride.title = destroyLanceObjective.title;
+        objectiveOverride.description = destroyLanceObjective.description;
+        objectiveOverride.OnSuccessResults = destroyLanceObjective.OnSuccessResults;
+        objectiveOverride.OnFailureResults = destroyLanceObjective.OnFailureResults;
+        objectiveOverride.OnSuccessDialogueGUID = destroyLanceObjective.onSuccessDialogue.EncounterObjectGuid;
+        objectiveOverride.OnFailureDialogueGUID = destroyLanceObjective.onFailureDialogue.EncounterObjectGuid;
+        MissionControl.Instance.CurrentContract.Override.objectiveList.Add(objectiveOverride);
+      }
 
       return destroyLanceObjective;
     }
