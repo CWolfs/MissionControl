@@ -18,6 +18,7 @@ namespace MissionControl.ContractTypeBuilders {
     private string name;
     private string subType;
     private JObject position;
+    private JObject rotation;
     private string team;
     private string guid;
     private int spawnPoints;
@@ -35,6 +36,7 @@ namespace MissionControl.ContractTypeBuilders {
       this.spawnPointGuids = spawner["SpawnPointGuids"].ToObject<List<string>>();
       this.spawnType = spawner["SpawnType"].ToString();
       this.position = spawner.ContainsKey("Position") ? (JObject)spawner["Position"] : null;
+      this.rotation = spawner.ContainsKey("Rotation") ? (JObject)spawner["Rotation"] : null;
     }
 
     public override void Build() {
@@ -52,24 +54,28 @@ namespace MissionControl.ContractTypeBuilders {
           teamId = EncounterRules.PLAYER_TEAM_ID;
           PlayerLanceSpawnerGameLogic playerLanceSpawnerGameLogic = LanceSpawnerFactory.CreatePlayerLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids, true);
           if (position != null) SetPosition(playerLanceSpawnerGameLogic.gameObject, position);
+          if (rotation != null) SetRotation(playerLanceSpawnerGameLogic.gameObject, rotation);
           break;
         }
         case "Target": {
           teamId = EncounterRules.TARGET_TEAM_ID;
           LanceSpawnerGameLogic lanceSpawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
           if (position != null) SetPosition(lanceSpawnerGameLogic.gameObject, position);
+          if (rotation != null) SetRotation(lanceSpawnerGameLogic.gameObject, rotation);
           break;
         }
         case "TargetAlly": {
           teamId = EncounterRules.TARGETS_ALLY_TEAM_ID;
           LanceSpawnerGameLogic lanceSpawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
           if (position != null) SetPosition(lanceSpawnerGameLogic.gameObject, position);
+          if (rotation != null) SetRotation(lanceSpawnerGameLogic.gameObject, rotation);
           break;
         }
         case "Employer": {
           teamId = EncounterRules.EMPLOYER_TEAM_ID;
           LanceSpawnerGameLogic lanceSpawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
           if (position != null) SetPosition(lanceSpawnerGameLogic.gameObject, position);
+          if (rotation != null) SetRotation(lanceSpawnerGameLogic.gameObject, rotation);
           break;
         }
         default: Main.LogDebug($"[SpawnBuilder.{contractTypeBuilder.ContractTypeKey}] No support for team '{team}'. Check for spelling mistakes."); break;

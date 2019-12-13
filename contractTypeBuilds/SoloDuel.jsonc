@@ -12,13 +12,17 @@
           "SubType": "SimpleSpawner",
           "Position": {
             "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
-            "Value": { "x": -100, "y": 86, "z": 0 }
+            "Value": { "x": -90, "y": 86, "z": 40 }
+          },
+          "Rotation": {
+            "Type": "World", // World, Local
+            "Value": { "x": 0, "y": 30, "z": 0 }
           },
           "Team": "Player1",
           "Guid": "76b654a6-4f2c-4a6f-86e6-d4cf868335fe", // Must be this Guid and the contract .json must have this specific. It's hardcoded in BT for PlayerLance.
           "SpawnPoints": 1,
           "SpawnPointGuids": ["ec9d2280-ca9a-4d90-8a20-963d8a4c0a39"], // Must match the unit spawn guids in the contract .json
-          "SpawnType": "Leopard" // Leopard, DropPod, Instant
+          "SpawnType": "Instant" // Leopard, DropPod, Instant
         }
       ]
     },
@@ -38,6 +42,10 @@
           "Position": {
             "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
             "Value": { "x": 0, "y": 60, "z": 650 }
+          },
+          "Rotation": {
+            "Type": "World", // World, Local
+            "Value": { "x": 0, "y": 180, "z": 0 }
           },
           "Team": "Target",
           "Guid": "f426f0dc-969d-477d-81a9-d02f9e1eff79", // Must match the spawner guids in the contract .json

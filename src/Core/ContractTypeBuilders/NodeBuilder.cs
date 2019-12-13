@@ -21,6 +21,18 @@ namespace MissionControl.ContractTypeBuilders {
       }
     }
 
+    public void SetRotation(GameObject target, JObject rotation) {
+      string type = rotation["Type"].ToString();
+      JObject value = (JObject)rotation["Value"];
+      Vector3 eulerRotation = new Vector3((float)value["x"], (float)value["y"], (float)value["z"]);
+
+      if (type == "World") {
+        target.transform.rotation = Quaternion.Euler(eulerRotation);
+      } else if (type == "Local") {
+        target.transform.localRotation = Quaternion.Euler(eulerRotation);
+      }
+    }
+
     public abstract void Build();
   }
 }
