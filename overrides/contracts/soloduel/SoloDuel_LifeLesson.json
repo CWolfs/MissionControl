@@ -211,7 +211,7 @@
                 "emote" : "Default",
                 "audioName" : "NONE",
                 "cameraFocusGuid" : "f426f0dc-969d-477d-81a9-d02f9e1eff79",
-                "cameraDistance" : "Far",
+                "cameraDistance" : "Close",
                 "cameraHeight" : "Default",
                 "revealRadius" : -1
             }
