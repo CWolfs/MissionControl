@@ -11,8 +11,8 @@
   "missionSuccessStatementOverride" : null,
   "badFaithStatementOverride" : null,
   "goodFaithStatementOverride" : null,
-  "shortDescription" : "Last night a few of our crew members took some much needed R&R at the local {TEAM_TAR.FactionDef.Demonym} bar. Words were said and now it looks like we're stuck in a duel with two apparent {TEAM_TAR.FactionDef.Demonym} guards. Not sure how we can get out of this so best just get it over with, Commander.",
-  "longDescription" : "Commander, looks like those two guys we ticked off last night were actually {TEAM_TAR.FactionDef.Demonym} guards. Looks like we've got ourselves a duel.",
+  "shortDescription" : "Last night a few of our crew members took some much needed R&R at the local {TEAM_TAR.FactionDef.Demonym} bar. Words were said and now it looks like we're stuck in a duel with two apparent {TEAM_TAR.FactionDef.Demonym} guards. Our crew aren't fighters so maybe you can help us out?",
+  "longDescription" : "Commander, looks like those two guys that the {TEAM_EMP.FactionDef.Demonym} crew ticked off last night were actually {TEAM_TAR.FactionDef.Demonym} guards. Looks like we've got ourselves a duel.",
   "salvagePotential" : 16,
   "requirementList" : [
       {

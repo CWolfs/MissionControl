@@ -1,5 +1,5 @@
 {
-  "ID" : "SoloDuel_LiftLesson",
+  "ID" : "SoloDuel_LifeLesson",
   "contractName" : "Life Lesson",
   "contractDisplayStyle" : "BaseCampaignNormal",
   "difficulty" : 2,
@@ -11,7 +11,7 @@
   "missionSuccessStatementOverride" : null,
   "badFaithStatementOverride" : null,
   "goodFaithStatementOverride" : null,
-  "shortDescription" : "A rich {TEAM_TAR.FactionDef.Demonym} business man has requested that we show his arrogant son what real fighting feels like. Don't hold back. This father wants to teach a real life lesson.",
+  "shortDescription" : "A rich {TEAM_TAR.FactionDef.Demonym} business man has requested that we show his arrogant son what real fighting feels like. We thought {COMPANY.CompanyName} could help us here. Don't hold back. This father wants to teach a real life lesson.",
   "longDescription" : "I have to hand it to this guy. At least he cares enough about his son to teach him a thing or two. Even if that means a knock on the head... or two.",
   "salvagePotential" : 2,
   "requirementList" : [
@@ -191,7 +191,32 @@
                   "revealRadius" : -1
               }
           ]
-      }
+      },
+      {
+        "dialogue" : {
+            "EncounterObjectGuid" : "8971ddc6-a882-4066-923f-f8be03450ce2"
+        },
+        "name" : "Dialogue_DuelTaunt",
+        "overrideDialogueBucketId" : "",
+        "dialogueContent" : [
+            {
+                "words" : "So you're the rubbish my father is sending to train against? Just like the other servants... pitiful.",
+                "wordsColor" : {
+                    "r" : 1,
+                    "g" : 1,
+                    "b" : 1,
+                    "a" : 1
+                },
+                "selectedCastDefId" : "castDef_MC_ArrogantSon",
+                "emote" : "Default",
+                "audioName" : "NONE",
+                "cameraFocusGuid" : "f426f0dc-969d-477d-81a9-d02f9e1eff79",
+                "cameraDistance" : "Far",
+                "cameraHeight" : "Default",
+                "revealRadius" : -1
+            }
+        ]
+    }
   ],
   "extractionOverrideList" : [],
   "overwriteMissionCompleteWhenAutoComplete" : true,

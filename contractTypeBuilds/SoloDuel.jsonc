@@ -112,6 +112,20 @@
           "ShowOnlyOnce": true
         }
       ]
+    },
+    {
+      "Name": "Chunk_DuelTaunt",
+      "Type": "Chunk",
+      "SubType": "Dialogue",
+      "Children": [
+        {
+          "Name": "Dialogue_DuelTaunt",
+          "Type": "Dialogue",
+          "SubType": "Simple",
+          "Guid": "8971ddc6-a882-4066-923f-f8be03450ce2", // Must match the dialogue guid in the contract .json
+          "Trigger": "OnEncounterIntroComplete"
+        }
+      ]
     }
   ]
 }
