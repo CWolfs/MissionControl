@@ -128,7 +128,7 @@
       ]
     },
     {
-      "Name": "Chunk_SwapPlacement",
+      "Name": "Chunk_SwapSpawnerPlacement",
       "Type": "Chunk",
       "SubType": "Placement",
       "ControlledByContract": true,
