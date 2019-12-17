@@ -13,6 +13,8 @@
   },
   "AdditionalLances": {
     "Enable": true,
+    "IncludeContractTypes": [],
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "UseElites": true,
     "UseDialogue": true,
     "SkullValueMatters": true,
@@ -29,7 +31,7 @@
     "Enable": true,
     "Autofill": true,
     "IncludeContractTypes": [],
-    "ExcludeContractTypes": [],
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "LanceSizes": {
       "5": [],
       "6": []
@@ -38,7 +40,7 @@
   "ExtendedBoundaries": {
     "Enable": true,
     "IncludeContractTypes": [],
-    "ExcludeContractTypes": [],
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "IncreaseBoundarySizeByPercentage": 0.2
   },
   "DynamicWithdraw": {

@@ -264,6 +264,7 @@ namespace MissionControl {
     public bool AreAdditionalLancesAllowed(string teamType) {
       if (Main.Settings.AdditionalLanceSettings.Enable) {
         bool areLancesAllowed = !(this.CurrentContract.IsFlashpointContract && Main.Settings.AdditionalLanceSettings.DisableIfFlashpointContract);
+        if (areLancesAllowed) areLancesAllowed = Main.Settings.ExtendedLances.GetValidContractTypes().Contains(CurrentContractType);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.DisableWhenMaxTonnage.AreLancesAllowed((int)this.CurrentContract.Override.lanceMaxTonnage);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.ActiveAdditionalLances.GetValidContractTypes(teamType).Contains(CurrentContractType);
 
