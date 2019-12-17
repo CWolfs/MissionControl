@@ -1,5 +1,9 @@
 using UnityEngine;
 
+using BattleTech;
+
+using MissionControl.Messages;
+
 using Newtonsoft.Json.Linq;
 
 namespace MissionControl.ContractTypeBuilders {
@@ -20,6 +24,8 @@ namespace MissionControl.ContractTypeBuilders {
       Main.LogDebug($"[ContractTypeBuild] Building '{ContractTypeKey}'");
 
       BuildChunks();
+
+      UnityGameInstance.BattleTechGame.MessageCenter.PublishMessage(new CustomContractTypeBuilt());
 
       return true;
     }

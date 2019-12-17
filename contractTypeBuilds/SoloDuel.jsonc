@@ -137,7 +137,7 @@
         {
           "Name": "SwapPlacement_SwapLanceSpawners",
           "Type": "SwapPlacement",
-          "SubType": "Simple",
+          "SubType": "EncounterStructure",
           "TargetGuid1": "76b654a6-4f2c-4a6f-86e6-d4cf868335fe", // Player spawner
           "TargetGuid2": "f426f0dc-969d-477d-81a9-d02f9e1eff79" // Enemy spawner
         }

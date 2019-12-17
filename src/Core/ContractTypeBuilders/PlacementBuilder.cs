@@ -31,7 +31,7 @@ namespace MissionControl.ContractTypeBuilders {
 
     public override void Build() {
       switch (subType) {
-        case "Simple": BuildSwapPlacement(); break;
+        case "EncounterStructure": BuildSwapPlacement(); break;
         default: Main.LogDebug($"[RegionBuilder.{contractTypeBuilder.ContractTypeKey}] No support for sub-type '{subType}'. Check for spelling mistakes."); break;
       }
     }

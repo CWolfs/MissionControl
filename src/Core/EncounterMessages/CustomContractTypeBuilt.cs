@@ -1,19 +1,13 @@
 using BattleTech;
 
 namespace MissionControl.Messages {
-  public class ChunkMessage : EncounterObjectMessage {
+  public class CustomContractTypeBuilt : EncounterObjectMessage {
 
-    public ChunkMessage(string objectiveGUID) : base(objectiveGUID, objectiveGUID) { }
-
-    public string ChunkGuid {
-      get {
-        return base.actingObjectGuid;
-      }
-    }
+    public CustomContractTypeBuilt() : base() { }
 
     public override MessageCenterMessageType MessageType {
       get {
-        return (MessageCenterMessageType)MessageTypes.OnChunkActivated;
+        return (MessageCenterMessageType)MessageTypes.OnCustomContractTypeBuilt;
       }
     }
 
