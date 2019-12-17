@@ -24,7 +24,9 @@ namespace MissionControl.Patches {
 
     public static void Init(BehaviorTree behaviourTree, AbstractActor unit, BehaviorTreeIDEnum behaviourTreeType) {
       AiManager aiManager = AiManager.Instance;
-      aiManager.LoadCustomBehaviourSequences(behaviourTree, behaviourTreeType, unit);
+      if (!(unit is Turret)) {
+        aiManager.LoadCustomBehaviourSequences(behaviourTree, behaviourTreeType, unit);
+      }
     }
   }
 }
