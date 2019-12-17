@@ -28,6 +28,8 @@
   "ExtendedLances": {
     "Enable": true,
     "Autofill": true,
+    "IncludeContractTypes": [],
+    "ExcludeContractTypes": [],
     "LanceSizes": {
       "5": [],
       "6": []

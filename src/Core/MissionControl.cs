@@ -282,6 +282,14 @@ namespace MissionControl {
       return false;
     }
 
+    public bool IsExtendedLancesAllowed() {
+      if (Main.Settings.ExtendedLances.Enable) {
+        bool isExtendedLancesAllowed = Main.Settings.ExtendedLances.GetValidContractTypes().Contains(CurrentContractType);
+        return isExtendedLancesAllowed;
+      }
+      return false;
+    }
+
     public bool IsSkirmish(Contract contract) {
       return !contract.ContractTypeValue.IsSinglePlayerProcedural;
     }
