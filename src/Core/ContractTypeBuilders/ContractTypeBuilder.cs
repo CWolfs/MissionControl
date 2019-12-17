@@ -39,10 +39,12 @@ namespace MissionControl.ContractTypeBuilders {
       string name = chunk["Name"].ToString();
       string type = chunk["Type"].ToString();
       string subType = chunk["SubType"].ToString();
+      bool controlledByContract = (chunk.ContainsKey("ControlledByContract")) ? (bool)chunk["ControlledByContract"] : false;
+      string guid = (chunk.ContainsKey("Guid")) ? chunk["Guid"].ToString() : null;
       JObject position = (JObject)chunk["Position"];
       JArray children = (JArray)chunk["Children"];
 
-      ChunkTypeBuilder chunkTypeBuilder = new ChunkTypeBuilder(this, name, type, subType, position, children);
+      ChunkTypeBuilder chunkTypeBuilder = new ChunkTypeBuilder(this, name, type, subType, controlledByContract, guid, position, children);
       GameObject chunkGo = chunkTypeBuilder.Build();
       if (chunkGo == null) {
         Main.Logger.LogError("[ContractTypeBuild.{ContractTypeKey}] Chunk creation failed. GameObject is null");

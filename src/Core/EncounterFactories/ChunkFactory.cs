@@ -3,6 +3,8 @@ using UnityEngine;
 using BattleTech;
 using BattleTech.Designed;
 
+using MissionControl.LogicComponents.Placers;
+
 namespace MissionControl.EncounterFactories {
   public class ChunkFactory {
     private static GameObject CreateGameObjectWithParent(string name, Transform parent = null) {
@@ -54,6 +56,16 @@ namespace MissionControl.EncounterFactories {
       encounterBoundaryChunkLogic.encounterObjectName = name;
 
       return encounterBoundaryChunkLogic;
+    }
+
+    public static SwapPlacementChunkLogic CreateSwapPlacementChunk(string name = "Chunk_SwapPlacement", Transform parent = null) {
+      GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
+      GameObject swapPlacementChunkGo = CreateGameObjectWithParent(name, parent);
+
+      SwapPlacementChunkLogic swapPlacementChunkLogic = swapPlacementChunkGo.AddComponent<SwapPlacementChunkLogic>();
+      swapPlacementChunkLogic.encounterObjectName = name;
+
+      return swapPlacementChunkLogic;
     }
   }
 }

@@ -126,6 +126,22 @@
           "Trigger": "OnFirstContact"
         }
       ]
+    },
+    {
+      "Name": "Chunk_SwapPlacement",
+      "Type": "Chunk",
+      "SubType": "Placement",
+      "ControlledByContract": true,
+      "Guid": "ed007c52-f4cb-4bfc-842a-a50454d8a82a",
+      "Children": [
+        {
+          "Name": "SwapPlacement_SwapLanceSpawners",
+          "Type": "SwapPlacement",
+          "SubType": "Simple",
+          "FocusGuid": "",
+          "TargetGuid": ""
+        }
+      ]
     }
   ]
 }
