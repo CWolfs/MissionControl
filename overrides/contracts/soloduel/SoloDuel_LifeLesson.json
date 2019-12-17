@@ -91,7 +91,7 @@
       "encounterChunk" : {
         "EncounterObjectGuid" : "ed007c52-f4cb-4bfc-842a-a50454d8a82a"
       },
-      "enableChunkFromContract" : false
+      "enableChunkFromContract" : true
     }
   ],
   "cameraFocusHelperList" : [
