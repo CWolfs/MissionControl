@@ -6,3 +6,4 @@ rm -rf 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionCon
 cp -r 'contractTypeBuilds/' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
 cp -r 'overrides/' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
 cp -r 'mod.json' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
+cp -r 'settings.json' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
