@@ -197,16 +197,15 @@ namespace MissionControl {
 
       if (AvailableEncounters.ContainsKey(type)) {
         encounters = AvailableEncounters[type];
-      } else {
-        Main.Logger.LogError($"[MissionControl] Unknown contract / encounter type of '{type}'");
-        EncounterRules = null;
-        return false;
-      }
 
-      int index = UnityEngine.Random.Range(0, encounters.Count);
-      Type selectedEncounter = encounters[index];
-      Main.Logger.Log($"[MissionControl] Setting contract type to '{type}' and using Encounter Rule of '{selectedEncounter.Name}'");
-      SetEncounterRule(selectedEncounter);
+        int index = UnityEngine.Random.Range(0, encounters.Count);
+        Type selectedEncounter = encounters[index];
+        Main.Logger.Log($"[MissionControl] Setting contract type to '{type}' and using Encounter Rule of '{selectedEncounter.Name}'");
+        SetEncounterRule(selectedEncounter);
+      } else {
+        Main.Logger.Log($"[MissionControl] Unknown contract / encounter type of '{type}'. Using fallback ruleset.");
+        SetEncounterRule(typeof(FallbackEncounterRules));
+      }
 
       IsContractValid = true;
       return true;

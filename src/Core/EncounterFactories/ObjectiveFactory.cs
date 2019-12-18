@@ -1,5 +1,6 @@
 using UnityEngine;
-using System.Collections;
+
+using System;
 using System.Collections.Generic;
 
 using BattleTech;
@@ -88,6 +89,7 @@ namespace MissionControl.EncounterFactories {
 
     public static ContractObjectiveGameLogic CreateContractObjective(ObjectiveGameLogic objective) {
       ContractObjectiveGameLogic contractObjectiveGameLogic = objective.transform.parent.gameObject.AddComponent<ContractObjectiveGameLogic>();
+      contractObjectiveGameLogic.encounterObjectGuid = Guid.NewGuid().ToString();
       contractObjectiveGameLogic.objectiveRefList.Add(new ObjectiveRef(objective));
       return contractObjectiveGameLogic;
     }
