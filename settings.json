@@ -2,7 +2,11 @@
   "DebugMode": true,
   "DebugSkirmishMode": true,
   "DisableIfFlashpointContract": true,
-  "RandomSpawns": true,
+  "RandomSpawns": {
+    "Enable": true,
+    "IncludeContractTypes": [],
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"]
+  },
   "HotDrop": {
     "Enable": true,
     "GuardOnHotDrop": false,

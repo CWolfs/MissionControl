@@ -23,12 +23,12 @@ namespace MissionControl.Rules {
     }
 
     public void BuildAi() {
-      EncounterLogic.Add(new IssueFollowLanceOrderTrigger(new List<string>(){ Tags.EMPLOYER_TEAM }, IssueAIOrderTo.ToLance, new List<string>() { Tags.PLAYER_1_TEAM }));
+      EncounterLogic.Add(new IssueFollowLanceOrderTrigger(new List<string>() { Tags.EMPLOYER_TEAM }, IssueAIOrderTo.ToLance, new List<string>() { Tags.PLAYER_1_TEAM }));
     }
 
     private void BuildRandomSpawn() {
-      if (!Main.Settings.RandomSpawns) return;
-      
+      if (!MissionControl.Instance.IsRandomSpawnsAllowed()) return;
+
       Main.Logger.Log("[DestroyBaseJointAssaultEncounterRules] Building player spawn rule");
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "PlotBase"));
     }

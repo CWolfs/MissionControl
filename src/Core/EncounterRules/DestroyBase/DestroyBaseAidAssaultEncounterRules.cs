@@ -21,14 +21,14 @@ namespace MissionControl.Rules {
     }
 
     private void BuildRandomSpawn() {
-      if (!Main.Settings.RandomSpawns) return;
-      
+      if (!MissionControl.Instance.IsRandomSpawnsAllowed()) return;
+
       Main.Logger.Log("[DestroyBaseAidAssaultEncounterRules] Building player spawn rule");
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "PlotBase"));
     }
 
     public override void LinkObjectReferences(string mapName) {
-      ObjectLookup["PlotBase"] =GameObject.Find(GetPlotBaseName(mapName));
+      ObjectLookup["PlotBase"] = GameObject.Find(GetPlotBaseName(mapName));
     }
   }
 }

@@ -291,6 +291,14 @@ namespace MissionControl {
       return false;
     }
 
+    public bool IsRandomSpawnsAllowed() {
+      if (Main.Settings.RandomSpawns.Enable) {
+        bool isRandomSpawnsAllowed = Main.Settings.RandomSpawns.GetValidContractTypes().Contains(CurrentContractType);
+        return isRandomSpawnsAllowed;
+      }
+      return false;
+    }
+
     public bool IsSkirmish(Contract contract) {
       return !contract.ContractTypeValue.IsSinglePlayerProcedural;
     }
