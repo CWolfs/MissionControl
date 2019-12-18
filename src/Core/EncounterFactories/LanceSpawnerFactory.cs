@@ -15,7 +15,7 @@ namespace MissionControl.EncounterFactories {
 
       GameObject lanceSpawnerGo = new GameObject(name);
       lanceSpawnerGo.transform.parent = parent.transform;
-      lanceSpawnerGo.transform.localPosition = new Vector3(-674, 300, -280);
+      lanceSpawnerGo.transform.localPosition = Vector3.zero;
 
       LanceSpawnerGameLogic lanceSpawnerGameLogic = lanceSpawnerGo.AddComponent<LanceSpawnerGameLogic>();
       lanceSpawnerGameLogic.encounterObjectGuid = guid;
@@ -57,6 +57,37 @@ namespace MissionControl.EncounterFactories {
       }
 
       lanceSpawnerGo.AddComponent<SnapToTerrain>();
+
+      return lanceSpawnerGameLogic;
+    }
+
+    public static PlayerLanceSpawnerGameLogic CreatePlayerLanceSpawner(GameObject parent, string name, string guid, string teamDefinitionGuid, bool spawnUnitsOnActivation,
+      SpawnUnitMethodType spawnMethod, List<string> unitGuids, bool includeCameraStart) {
+
+      GameObject lanceSpawnerGo = new GameObject(name);
+      lanceSpawnerGo.transform.parent = parent.transform;
+
+      PlayerLanceSpawnerGameLogic lanceSpawnerGameLogic = lanceSpawnerGo.AddComponent<PlayerLanceSpawnerGameLogic>();
+      lanceSpawnerGameLogic.encounterObjectGuid = guid;
+      lanceSpawnerGameLogic.teamDefinitionGuid = teamDefinitionGuid;
+      lanceSpawnerGameLogic.spawnMethod = spawnMethod;
+      lanceSpawnerGameLogic.spawnUnitsOnActivation = spawnUnitsOnActivation;
+
+      float x = 0;
+      float z = 0;
+      for (int i = 0; i < unitGuids.Count; i++) {
+        CreateUnitSpawnPoint(lanceSpawnerGo, $"PlayerLanceSpawnPoint{i + 1}", new Vector3(x, 0, z), unitGuids[i]);
+        x += 24;
+        z += 24;
+      }
+
+      lanceSpawnerGo.AddComponent<SnapToTerrain>();
+
+      if (includeCameraStart) {
+        GameObject cameraStartGo = new GameObject("CameraStart");
+        cameraStartGo.transform.parent = lanceSpawnerGo.FindRecursive("PlayerLanceSpawnPoint1").transform;
+        CameraStart cameraStart = cameraStartGo.AddComponent<CameraStart>();
+      }
 
       return lanceSpawnerGameLogic;
     }

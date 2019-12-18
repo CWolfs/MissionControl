@@ -1,9 +1,8 @@
 using UnityEngine;
 
-using System.Collections.Generic;
+using System;
 
 using BattleTech;
-using BattleTech.Framework;
 
 using MissionControl.Utils;
 
@@ -25,6 +24,7 @@ namespace MissionControl.EncounterFactories {
       regionPointGo.transform.localPosition = localPosition;
 
       RegionPointGameLogic regionPoint = regionPointGo.AddComponent<RegionPointGameLogic>();
+      regionPoint.encounterObjectGuid = Guid.NewGuid().ToString();
 
       return regionPoint;
     }

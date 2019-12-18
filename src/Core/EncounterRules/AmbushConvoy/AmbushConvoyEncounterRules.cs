@@ -25,10 +25,10 @@ namespace MissionControl.Rules {
     }
 
     public void BuildRandomSpawns() {
-      if (!Main.Settings.RandomSpawns) return;
+      if (!MissionControl.Instance.IsRandomSpawnsAllowed()) return;
 
       Main.Logger.Log("[AmbushConvoyEncounterRules] Building spawns rules");
-      if (Main.Settings.ExtendedBoundaries.Enable) {
+      if (MissionControl.Instance.IsExtendedBoundariesAllowed()) {
         Main.Logger.Log("[AmbushConvoyEncounterRules] Using Extended Boundary spawn rules");
         EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerPlayerLance", "ConvoyUnit1Spawn", SceneManipulationLogic.LookDirection.TOWARDS_TARGET, 400, 600, true));
       } else {

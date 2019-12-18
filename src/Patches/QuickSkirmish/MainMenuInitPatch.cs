@@ -4,6 +4,8 @@ using Harmony;
 
 using BattleTech.UI;
 
+using MissionControl;
+
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(MainMenu), "Init")]
   public class MainMenuInitPatch {

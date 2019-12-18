@@ -12,18 +12,19 @@ namespace MissionControl.EncounterFactories {
   public class DialogueFactory {
     private static GameObject CreateDialogLogicGameObject(GameObject parent, string name) {
       GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
-      GameObject dialogueGameLogicGo = new GameObject($"Dialogue_{name}");
+      name = (!name.StartsWith("Dialogue_")) ? $"Dialogue_{name}" : name;
+      GameObject dialogueGameLogicGo = new GameObject(name);
       dialogueGameLogicGo.transform.parent = parent.transform;
       dialogueGameLogicGo.transform.localPosition = Vector3.zero;
 
       return dialogueGameLogicGo;
     }
-    
+
     public static DialogueGameLogic CreateDialogLogic(GameObject parent, string name, string cameraTargetGuid, string presetDialogue = null, CastDef castDef = null) {
       GameObject dialogueGameLogicGo = CreateDialogLogicGameObject(parent, name);
-      
+
       DialogueGameLogic dialogueGameLogic = dialogueGameLogicGo.AddComponent<DialogueGameLogic>();
-      if (presetDialogue == null)  {
+      if (presetDialogue == null) {
         presetDialogue = DataManager.Instance.GetRandomDialogue("AllyDrop",
           MissionControl.Instance.CurrentContractType, MissionControl.Instance.EncounterRulesName);
       }
@@ -32,10 +33,18 @@ namespace MissionControl.EncounterFactories {
       return dialogueGameLogic;
     }
 
+    public static DialogueGameLogic CreateDialogLogic(GameObject parent, string name, string guid, bool showOnlyOnce) {
+      GameObject dialogueGameLogicGo = CreateDialogLogicGameObject(parent, name);
+      DialogueGameLogic dialogueGameLogic = dialogueGameLogicGo.AddComponent<DialogueGameLogic>();
+      dialogueGameLogic.encounterObjectGuid = guid;
+      dialogueGameLogic.showOnlyOnce = showOnlyOnce;
+      return dialogueGameLogic;
+    }
+
     public static DialogueGameLogic CreateDialogLogic(GameObject parent, string name, DialogueOverride dialogueOverride) {
       GameObject dialogueGameLogicGo = CreateDialogLogicGameObject(parent, name);
       Dictionary<string, EncounterObjectGameLogic> encounterObjects = new Dictionary<string, EncounterObjectGameLogic>();
-			MissionControl.Instance.EncounterLayerData.BuildEncounterObjectDictionary(encounterObjects);
+      MissionControl.Instance.EncounterLayerData.BuildEncounterObjectDictionary(encounterObjects);
 
       DialogueGameLogic dialogueGameLogic = dialogueGameLogicGo.AddComponent<DialogueGameLogic>();
       dialogueGameLogic.ApplyContractOverride(dialogueOverride, encounterObjects);
@@ -67,7 +76,7 @@ namespace MissionControl.EncounterFactories {
       if (MissionControl.Instance.IsSkirmish()) presetDialogue = Regex.Replace(presetDialogue, "{COMMANDER\\..+}", "Commander");
 
       DialogueContent dialogueContent1 = new DialogueContent(
-        presetDialogue, Color.white, castDef.id, "", 
+        presetDialogue, Color.white, castDef.id, "",
         cameraTargetGuid, BattleTech.DialogCameraDistance.Medium, BattleTech.DialogCameraHeight.Default, -1
       );
 

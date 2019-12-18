@@ -18,14 +18,14 @@ namespace MissionControl.Rules {
       BuildRandomSpawns();
       BuildAdditionalLances("PlotBase", SpawnLogic.LookDirection.AWAY_FROM_TARGET, "SpawnerPlayerLance", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 25f, 100f);
     }
-    
+
     public void BuildAi() {
-      EncounterLogic.Add(new IssueFollowLanceOrderTrigger(new List<string>(){ Tags.EMPLOYER_TEAM }, IssueAIOrderTo.ToLance, new List<string>() { Tags.PLAYER_1_TEAM }));
+      EncounterLogic.Add(new IssueFollowLanceOrderTrigger(new List<string>() { Tags.EMPLOYER_TEAM }, IssueAIOrderTo.ToLance, new List<string>() { Tags.PLAYER_1_TEAM }));
     }
 
     public void BuildRandomSpawns() {
-      if (!Main.Settings.RandomSpawns) return;
-      
+      if (!MissionControl.Instance.IsRandomSpawnsAllowed()) return;
+
       Main.Logger.Log("[CaptureBaseJointAssaultEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "PlotBase"));
     }

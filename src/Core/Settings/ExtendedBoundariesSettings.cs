@@ -1,13 +1,10 @@
 using System.Collections.Generic;
+using System.Linq;
 
 using Newtonsoft.Json;
 
 namespace MissionControl.Config {
-  public class ExtendedBoundariesSettings {
-
-    [JsonProperty("Enable")]
-    public bool Enable { get; set; } = true;
-
+  public class ExtendedBoundariesSettings : AdvancedSettings {
     [JsonProperty("SizePercentage")]
     public float IncreaseBoundarySizeByPercentage { get; set; } = 0.2f;
 

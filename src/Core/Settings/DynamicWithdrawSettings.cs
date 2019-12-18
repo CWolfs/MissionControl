@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace MissionControl.Config {
-  public class DynamicWithdrawSettings {
-    [JsonProperty("Enable")]
-    public bool Enable { get; set; } = true;
-
+  public class DynamicWithdrawSettings : AdvancedSettings {
     [JsonProperty("DisorderlyWithdrawalCompatibility")]
     public bool DisorderlyWithdrawalCompatibility { get; set; } = false;
 

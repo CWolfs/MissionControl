@@ -1,5 +1,7 @@
 {
   "FormattingOptions": {
+    "IndentationSize": 2,
+    "IndentSwitchCaseSectionWhenBlock": false,
     "NewLinesForBracesInTypes": false,
     "NewLinesForBracesInMethods": false,
     "NewLinesForBracesInProperties": false,
