@@ -85,7 +85,15 @@
   ],
   "artilleryObjectiveList" : [],
   "buildingList" : [],
-  "chunkList" : [],
+  "chunkList" : [
+    {
+        "name" : "Chunk_SwapSpawnerPlacement",
+        "encounterChunk" : {
+            "EncounterObjectGuid" : "ed007c52-f4cb-4bfc-842a-a50454d8a82a"
+        },
+        "enableChunkFromContract" : false
+    }
+  ],
   "cameraFocusHelperList" : [
       {
           "name" : "Spawner_PlayerLance",
