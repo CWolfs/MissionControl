@@ -4,11 +4,11 @@
   "DisableIfFlashpointContract": true,
   "RandomSpawns": {
     "Enable": true,
-    "IncludeContractTypes": [],
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"]
   },
   "HotDrop": {
     "Enable": true,
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "GuardOnHotDrop": false,
     "EvasionPipsOnHotDrop": 4,
     "IncludeEnemies": true,
@@ -17,7 +17,6 @@
   },
   "AdditionalLances": {
     "Enable": true,
-    "IncludeContractTypes": [],
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "UseElites": true,
     "UseDialogue": true,
@@ -34,7 +33,6 @@
   "ExtendedLances": {
     "Enable": true,
     "Autofill": true,
-    "IncludeContractTypes": [],
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "LanceSizes": {
       "5": [],
@@ -43,12 +41,12 @@
   },
   "ExtendedBoundaries": {
     "Enable": true,
-    "IncludeContractTypes": [],
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "IncreaseBoundarySizeByPercentage": 0.2
   },
   "DynamicWithdraw": {
     "Enable": true,
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "MinDistanceForZone": 50,
     "MaxDistanceForZone": 400,
     "DisorderlyWithdrawalCompatibility": false

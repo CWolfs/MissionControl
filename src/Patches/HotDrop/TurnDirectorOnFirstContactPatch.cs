@@ -1,10 +1,6 @@
-using UnityEngine;
-using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Collections.Generic;
 using Harmony;
+
+using System.Collections.Generic;
 
 using BattleTech;
 
@@ -12,7 +8,7 @@ namespace MissionControl.Patches {
   [HarmonyPatch(typeof(TurnDirector), "OnFirstContact")]
   public class TurnDirectorOnFirstContactPatch {
     static void Postfix(TurnDirector __instance) {
-      if (Main.Settings.HotDrop.Enabled) {
+      if (Main.Settings.HotDrop.Enable) {
         Main.LogDebug($"[TurnDirectorOnFirstContactPatch Postfix] Patching OnFirstContact");
         Main.LogDebug($"[TurnDirectorOnFirstContactPatch Postfix] Current round is '{__instance.CurrentRound}'");
         Main.LogDebug($"[TurnDirectorOnFirstContactPatch Postfix] DoAnyUnitsHaveContactWithEnemy '{__instance.DoAnyUnitsHaveContactWithEnemy}'");
@@ -43,7 +39,7 @@ namespace MissionControl.Patches {
 
         focusedActors.AddRange(enemies);
       }
-    
+
       if (Main.Settings.HotDrop.GuardOnHotDrop) BraceAll(focusedActors);
       if (Main.Settings.HotDrop.EvasionPipsOnHotDrop > 0) AddEvasion(focusedActors, Main.Settings.HotDrop.EvasionPipsOnHotDrop);
     }
@@ -58,7 +54,7 @@ namespace MissionControl.Patches {
     static void BraceAll(List<AbstractActor> actors) {
       foreach (AbstractActor actor in actors) {
         actor.ApplyBraced();
-      }  
+      }
     }
 
     static void AddEvasion(List<AbstractActor> actors, int evasionToAdd) {
