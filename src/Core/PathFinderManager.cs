@@ -71,13 +71,13 @@ namespace MissionControl {
     }
 
     public void RequestPathFinderMech() {
-      Main.LogDebug("[PathFinderManager] Requesting path finder mech");
+      Main.LogDebug("[PFM] Requesting path finder mech");
       if (pathFinderMech == null) Init();
       DataManager.Instance.RequestResourcesAndProcess(BattleTechResourceType.Prefab, pathFinderMech.MechDef.Chassis.PrefabIdentifier);
     }
 
     public void RequestPathFinderVehicle() {
-      Main.LogDebug("[PathFinderManager] Requesting path finder vehicle");
+      Main.LogDebug("[PFM] Requesting path finder vehicle");
       if (pathFinderVehicle == null) Init();
       DataManager.Instance.RequestResourcesAndProcess(BattleTechResourceType.Prefab, pathFinderVehicle.VehicleDef.Chassis.PrefabIdentifier);
     }
@@ -109,10 +109,10 @@ namespace MissionControl {
       MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
 
       Main.LogDebug($"");
-      Main.LogDebug($"-------- [PathFinderManager.IsSpawnValid] [{identifier}] --------");
+      Main.LogDebug($"-------- [PFM.IsSpawnValid] [{identifier}] --------");
 
       if (cellData.cachedSteepness > MAX_SLOPE_FOR_PATHFINDING) {
-        Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Spawn point of '{cellData.cachedSteepness}' is too steep (> {MAX_SLOPE_FOR_PATHFINDING}). Not a valid spawn");
+        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Spawn point of '{cellData.cachedSteepness}' is too steep (> {MAX_SLOPE_FOR_PATHFINDING}). Not a valid spawn");
         return false;
       }
 
@@ -140,30 +140,30 @@ namespace MissionControl {
         // List<Vector3> path = DynamicLongRangePathfinder.GetPathToDestination(position, float.MaxValue, pathfindingActor, true, pathFindingZoneRadius);
         // List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(position, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
 
-        Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Path count is: '{path.Count}', Current position is: '{position}'");
+        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Path count is: '{path.Count}', Current position is: '{position}'");
 
         // GUARD: Against deep water and other impassables that have slipped through
         if (HasPathImpassableOrDeepWaterTiles(combatState, path)) return false;
 
         if (path != null && path.Count > 1 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
-          Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Path count is: '{path.Count}', Current position is: '{position}'");
-          Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Last point is '{path[path.Count - 1]}', Validity position is '{validityPosition}'");
-          Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Distance from last path to valdity position is: '{(path[path.Count - 1].DistanceFlat(validityPosition))}' and is it within zone radius? '{(path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)}'");
-          Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Has valid long range path finding");
+          Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Path count is: '{path.Count}', Current position is: '{position}'");
+          Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Last point is '{path[path.Count - 1]}', Validity position is '{validityPosition}'");
+          Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Distance from last path to valdity position is: '{(path[path.Count - 1].DistanceFlat(validityPosition))}' and is it within zone radius? '{(path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)}'");
+          Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Has valid long range path finding");
           if (HasValidNeighbours(positionPathNode, validityPosition, type)) {
-            Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Has at least two valid neighbours");
+            Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Has at least two valid neighbours");
 
             if (HasValidLocalPathfinding(positionPathNode, validityPosition, type)) {
-              Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Has a valid path");
+              Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Has a valid path");
               Reset();
-              Main.LogDebug($"-------- END [PathFinderManager.IsSpawnValid] [{identifier}] END --------");
+              Main.LogDebug($"-------- END [PFM.IsSpawnValid] [{identifier}] END --------");
               Main.LogDebug($"");
               return true;
             } else {
-              Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Does NOT have a valid path");
+              Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Does NOT have a valid path");
             }
           } else {
-            Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Does not have two valid neighbours");
+            Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Does not have two valid neighbours");
           }
         }
 
@@ -173,14 +173,14 @@ namespace MissionControl {
           if (path.Count > 4) { // very strong pathfinding location
             return true;
           } else {
-            Main.Logger.Log($"[PathFinderManager] Spawn point is valid due to proximity but is not strong enough success for pathing. Attempting to confirm.");
+            Main.Logger.Log($"[PFM] Spawn point is valid due to proximity but is not strong enough success for pathing. Attempting to confirm.");
             CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
             List<Vector3> pointsAroundPosition = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(position, 3, 5);
 
             foreach (Vector3 point in pointsAroundPosition) {
               List<Vector3> secondaryPath = DynamicLongRangePathfinder.GetDynamicPathToDestination(point, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, 2); 
               if (path != null && path.Count > 2) {
-                Main.Logger.Log($"[PathFinderManager] Spawn point is valid. It is close to the validation point but can be moved away from. Success.");
+                Main.Logger.Log($"[PFM] Spawn point is valid. It is close to the validation point but can be moved away from. Success.");
                 return true;
               }
             }
@@ -191,10 +191,10 @@ namespace MissionControl {
         // TODO: Sometimes this gets triggered in very large amounts. It's usually because the SpawnLogic.GetClosestValidPathFindingHex is increasing
         // the radius larger and larger and the checks keep going off the map
         // I need a way to hard abort out of this and either use the original origin of the focus or trigger the rule logic again (random, around a position etc)
-        Main.LogDebug($"[PathFinderManager.IsSpawnValid] [{identifier}] Array out of bounds detected in the path finding code. Flagging as invalid spawn. Select a new spawn point. {e.Message}, {e.StackTrace}");
+        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Array out of bounds detected in the path finding code. Flagging as invalid spawn. Select a new spawn point. {e.Message}, {e.StackTrace}");
       }
 
-      Main.LogDebug($"-------- END [PathFinderManager.IsSpawnValid] [{identifier}] END --------");
+      Main.LogDebug($"-------- END [PFM.IsSpawnValid] [{identifier}] END --------");
       Main.LogDebug($"");
       Reset();
       return false;
@@ -207,7 +207,7 @@ namespace MissionControl {
         Vector3 position = path[i];
         MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
         if (IsCellImpassableOrDeepWater(cellData)) {
-          Main.LogDebug("[PathFinderManager.HasPathImpassableOrDeepWaterTiles] Path has impassable or deep water tiles in it");
+          Main.LogDebug("[PFM.HasPathImpassableOrDeepWaterTiles] Path has impassable or deep water tiles in it");
           return true;
         }
       }
@@ -219,7 +219,7 @@ namespace MissionControl {
       TerrainMaskFlags terrainMask = cellData.terrainMask;
       bool isImpassableOrDeepWater = SplatMapInfo.IsImpassable(terrainMask) || (SplatMapInfo.IsDeepWater(terrainMask) && !cellData.MapEncounterLayerDataCell.HasBuilding);
       if (isImpassableOrDeepWater) {
-        Main.LogDebug("[PathFinderManager.IsCellImpassableOrDeepWater] Tile is impassable or deep water");
+        Main.LogDebug("[PFM.IsCellImpassableOrDeepWater] Tile is impassable or deep water");
         return true;
       }
       return false;
@@ -236,7 +236,7 @@ namespace MissionControl {
 
       foreach (PathNode neighbourNode in neighbours) {
         float cost = pathfindingActor.Pathing.CurrentGrid.GetTerrainModifiedCost(positionNode, neighbourNode, pathfindingActor.MaxWalkDistance);
-        Main.LogDebug($"[PathFinderManager.HasValidNeighbours] Cost of neighbour is {cost} with max pathfinder cost being {pathfindingActor.MaxWalkDistance}");
+        Main.LogDebug($"[PFM.HasValidNeighbours] Cost of neighbour is {cost} with max pathfinder cost being {pathfindingActor.MaxWalkDistance}");
         if (cost < pathfindingActor.MaxWalkDistance) count++;
         if (count >= 2) return true;
       }
