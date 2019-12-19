@@ -1,6 +1,8 @@
 using UnityEngine;
 
 using BattleTech;
+using BattleTech.Framework;
+
 using HBS.Util;
 
 using MissionControl.Data;
@@ -24,27 +26,31 @@ namespace MissionControl.LogicComponents.Placers {
     public void Awake() {
       Main.LogDebug($"[SwapPlacementGameLogic.Awake] Awake");
       MessageCenter messageCenter = UnityGameInstance.BattleTechGame.MessageCenter;
-      messageCenter.AddSubscriber((MessageCenterMessageType)MessageTypes.OnCustomContractTypeBuilt, new ReceiveMessageCenterMessage(this.OnCustomContractTypeBuilt));
+      messageCenter.AddSubscriber((MessageCenterMessageType)MessageTypes.BeforeSceneManipulation, new ReceiveMessageCenterMessage(this.BeforeSceneManipulation));
     }
 
     public void OnDestroy() {
       Main.LogDebug($"[SwapPlacementGameLogic.OnDestroy] OnDestroy");
       MessageCenter messageCenter = UnityGameInstance.BattleTechGame.MessageCenter;
-      messageCenter.RemoveSubscriber((MessageCenterMessageType)MessageTypes.OnCustomContractTypeBuilt, new ReceiveMessageCenterMessage(this.OnCustomContractTypeBuilt));
+      messageCenter.RemoveSubscriber((MessageCenterMessageType)MessageTypes.BeforeSceneManipulation, new ReceiveMessageCenterMessage(this.BeforeSceneManipulation));
     }
 
     public override void AlwaysInit(CombatGameState combat) {
       base.AlwaysInit(combat);
-      //  this.messageMemory.TrackMethod((MessageCenterMessageType)MessageTypes.OnCustomContractTypeBuilt, new ReceiveMessageCenterMessage(this.OnCustomContractTypeBuilt));
+      //  this.messageMemory.TrackMethod((MessageCenterMessageType)MessageTypes.BeforeSceneManipulation, new ReceiveMessageCenterMessage(this.BeforeSceneManipulation));
     }
 
     protected override void SubscribeToMessages(bool shouldAdd) {
-      // this.messageMemory.Subscribe((MessageCenterMessageType)MessageTypes.OnCustomContractTypeBuilt, new ReceiveMessageCenterMessage(this.OnCustomContractTypeBuilt), shouldAdd);
+      // this.messageMemory.Subscribe((MessageCenterMessageType)MessageTypes.BeforeSceneManipulation, new ReceiveMessageCenterMessage(this.BeforeSceneManipulation), shouldAdd);
       base.SubscribeToMessages(shouldAdd);
     }
 
-    private void OnCustomContractTypeBuilt(MessageCenterMessage message) {
-      Main.LogDebug($"[SwapPlacementGameLogic.OnCustomContractTypeBuilt] {message.ToString()}");
+    private void BeforeSceneManipulation(MessageCenterMessage message) {
+      if (this.gameObject.GetComponentInParent<EncounterChunkGameLogic>().startingStatus == EncounterObjectStatus.ControlledByContract) {
+        Main.LogDebug($"[SwapPlacementGameLogic.BeforeSceneManipulation] Skipping as Chunk is set to not be enabled in the contract json");
+        return;
+      }
+
       SwapPlacement();
     }
 

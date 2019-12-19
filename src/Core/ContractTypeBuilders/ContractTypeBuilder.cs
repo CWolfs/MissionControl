@@ -25,8 +25,6 @@ namespace MissionControl.ContractTypeBuilders {
 
       BuildChunks();
 
-      UnityGameInstance.BattleTechGame.MessageCenter.PublishMessage(new CustomContractTypeBuilt());
-
       return true;
     }
 

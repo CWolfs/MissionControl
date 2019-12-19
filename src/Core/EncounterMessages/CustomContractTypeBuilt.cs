@@ -1,13 +1,13 @@
 using BattleTech;
 
 namespace MissionControl.Messages {
-  public class CustomContractTypeBuilt : EncounterObjectMessage {
+  public class BeforeSceneManipulation : EncounterObjectMessage {
 
-    public CustomContractTypeBuilt() : base() { }
+    public BeforeSceneManipulation() : base() { }
 
     public override MessageCenterMessageType MessageType {
       get {
-        return (MessageCenterMessageType)MessageTypes.OnCustomContractTypeBuilt;
+        return (MessageCenterMessageType)MessageTypes.BeforeSceneManipulation;
       }
     }
 
