@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[6],{92:function(o){o.exports=JSON.parse('{"allTagsPath":"/missioncontrol/blog/tags","slug":"changelog","name":"changelog","count":8,"permalink":"/missioncontrol/blog/tags/changelog"}')}}]);
