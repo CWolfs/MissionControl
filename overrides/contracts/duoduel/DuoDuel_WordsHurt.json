@@ -1,8 +1,8 @@
 {
-  "ID" : "DuoDuel_DoubleTrouble",
-  "contractName" : "Double Trouble",
+  "ID" : "DuoDuel_WordsHurt",
+  "contractName" : "Words Hurt",
   "contractDisplayStyle" : "BaseCampaignNormal",
-  "difficulty" : 5,
+  "difficulty" : 8,
   "difficultyUIModifier" : 0,
   "weight" : 1,
   "scope" : "STANDARD",
@@ -11,9 +11,9 @@
   "missionSuccessStatementOverride" : null,
   "badFaithStatementOverride" : null,
   "goodFaithStatementOverride" : null,
-  "shortDescription" : "Last night a few of our crew members took some much needed R&R at the local {TEAM_TAR.FactionDef.Demonym} bar. Words were said and now it looks like we're stuck in a duel with two apparent {TEAM_TAR.FactionDef.Demonym} guards. Our crew aren't fighters so maybe you can help us out?",
-  "longDescription" : "Commander, looks like those two guys that the {TEAM_EMP.FactionDef.Demonym} crew ticked off last night were actually {TEAM_TAR.FactionDef.Demonym} guards. Looks like we've got ourselves a duel.",
-  "salvagePotential" : 3,
+  "shortDescription" : "We've been informed by one of the largest news networks that a {TEAM_TAR.FactionDef.Demonym} Governor has taken issue with a recently released report on military fund spending irregularities. She's demanded a duel to fight those allegations. We'd like to hire you to represent and uphold that worthy news report, Commander.",
+  "longDescription" : "I just don't know, Commander. When people say they want to 'fight' allegations it's not meant to be a real fight. This {TEAM_TAR.FactionDef.Demonym} Governor is crazy. Let's uphold the truth... for a price.",
+  "salvagePotential" : 4,
   "requirementList" : [
       {
         "Scope" : "StarSystem",
@@ -60,7 +60,7 @@
           "contractObjective" : {
               "EncounterObjectGuid" : "73275787-720a-4c33-9f20-953b1bbf48bd"
           },
-          "title" : "Defeat the Guards in a Duel",
+          "title" : "Defend the Truth",
           "description" : "",
           "isPrimary" : true,
           "forPlayer" : "Player1",
@@ -74,7 +74,7 @@
           "objective" : {
               "EncounterObjectGuid" : "a0b9c5b2-c594-4c5a-be1d-028a51c51519"
           },
-          "title" : "Defeat Guards",
+          "title" : "Defeat the duelists",
           "description" : "",
           "isPrimary" : true,
           "OnSuccessResults" : [],
@@ -117,23 +117,7 @@
           "overrideDialogueBucketId" : "",
           "dialogueContent" : [
               {
-                  "words" : "Ready up, Commander.",
-                  "wordsColor" : {
-                      "r" : 1,
-                      "g" : 1,
-                      "b" : 1,
-                      "a" : 1
-                  },
-                  "selectedCastDefId" : "castDef_DariusDefault",
-                  "emote" : "Default",
-                  "audioName" : "NONE",
-                  "cameraFocusGuid" : "",
-                  "cameraDistance" : "Far",
-                  "cameraHeight" : "Default",
-                  "revealRadius" : -1
-              },
-              {
-                  "words" : "It's unfortunate how this has turned out but we can't back down now. Sort these {TEAM_TAR.FactionDef.Demonym} guards out then let's get out of here.",
+                  "words" : "The duelists are out there on the other side of the arena. Good luck, Commander.",
                   "wordsColor" : {
                       "r" : 1,
                       "g" : 1,
@@ -158,7 +142,7 @@
           "overrideDialogueBucketId" : "",
           "dialogueContent" : [
               {
-                  "words" : "Glad you did it, Commander but time to run! Reports of this duel are reaching the airwaves.",
+                  "words" : "There we go. Issue settled. Back to the dropship, Commander.",
                   "wordsColor" : {
                       "r" : 1,
                       "g" : 1,
@@ -183,7 +167,7 @@
           "overrideDialogueBucketId" : "",
           "dialogueContent" : [
               {
-                  "words" : "This isn't how it should have turned out, Commander. Let's get going. Nothing more we can do.",
+                  "words" : "This isn't how things should be. You shouldn't be able to repress the truth like this.",
                   "wordsColor" : {
                       "r" : 1,
                       "g" : 1,
@@ -199,7 +183,32 @@
                   "revealRadius" : -1
               }
           ]
-      }
+      },
+      {
+        "dialogue" : {
+            "EncounterObjectGuid" : "8971ddc6-a882-4066-923f-f8be03450ce2"
+        },
+        "name" : "Dialogue_DuelTaunt",
+        "overrideDialogueBucketId" : "",
+        "dialogueContent" : [
+            {
+                "words" : "You <b>will</b> retract that report. Right. Now.",
+                "wordsColor" : {
+                    "r" : 1,
+                    "g" : 1,
+                    "b" : 1,
+                    "a" : 1
+                },
+                "selectedCastDefId" : "castDef_Contract_TagTeam_OpFor",
+                "emote" : "Default",
+                "audioName" : "NONE",
+                "cameraFocusGuid" : "f426f0dc-969d-477d-81a9-d02f9e1eff79",
+                "cameraDistance" : "Close",
+                "cameraHeight" : "Default",
+                "revealRadius" : -1
+            }
+        ]
+    }
   ],
   "extractionOverrideList" : [],
   "overwriteMissionCompleteWhenAutoComplete" : true,
@@ -355,7 +364,7 @@
           "lanceTagSet" : {
               "items" : [
                 "lance_type_dynamic",
-                "lance_type_heavy"
+                "lance_type_assault"
               ],
               "tagSetSourceFile" : "tags/LanceTags"
           },
@@ -375,7 +384,7 @@
                   "unitSpawnPoint" : {
                       "EncounterObjectGuid" : "6cd3107e-0f9d-4809-ab8c-fb30faf4cd80"
                   },
-                  "customUnitName" : "Bar Guard",
+                  "customUnitName" : null,
                   "customHeraldryDefId" : "",
                   "unitType" : "Mech",
                   "unitDefId" : "mechDef_InheritLance",
@@ -408,7 +417,7 @@
                 "unitSpawnPoint" : {
                     "EncounterObjectGuid" : "14c58a13-96a6-4f91-a1e5-47b5d02b81d1"
                 },
-                "customUnitName" : "City Guard",
+                "customUnitName" : null,
                 "customHeraldryDefId" : "",
                 "unitType" : "Mech",
                 "unitDefId" : "mechDef_InheritLance",
