@@ -11,7 +11,7 @@
   "missionSuccessStatementOverride" : null,
   "badFaithStatementOverride" : null,
   "goodFaithStatementOverride" : null,
-  "shortDescription" : "A rich {TEAM_TAR.FactionDef.Demonym} business man has requested that we show his arrogant son what real fighting feels like. We thought {COMPANY.CompanyName} could help us here. Don't hold back. This father wants to teach a real life lesson.",
+  "shortDescription" : "A rich {TEAM_EMP.FactionDef.Demonym} business man has requested that we show his arrogant step-son what real fighting feels like. We thought {COMPANY.CompanyName} could help us here. Don't hold back. This father wants to teach a real life lesson - especially for his {TEAM_TAR.FactionDef.Demonym} side of the family.",
   "longDescription" : "I have to hand it to this guy. At least he cares enough about his son to teach him a thing or two. Even if that means a knock on the head... or two.",
   "salvagePotential" : 2,
   "requirementList" : [
@@ -74,7 +74,7 @@
           "objective" : {
               "EncounterObjectGuid" : "a0b9c5b2-c594-4c5a-be1d-028a51c51519"
           },
-          "title" : "Destroy Arrogant Son's Mech",
+          "title" : "Destroy Arrogant Step-Son's Mech",
           "description" : "",
           "isPrimary" : true,
           "OnSuccessResults" : [],
@@ -366,7 +366,7 @@
                   "unitSpawnPoint" : {
                       "EncounterObjectGuid" : "6cd3107e-0f9d-4809-ab8c-fb30faf4cd80"
                   },
-                  "customUnitName" : "Arrogant Son",
+                  "customUnitName" : "Arrogant Step-Son",
                   "customHeraldryDefId" : "",
                   "unitType" : "Mech",
                   "unitDefId" : "mechDef_InheritLance",
