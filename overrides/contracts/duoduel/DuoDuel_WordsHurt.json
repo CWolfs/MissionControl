@@ -1,8 +1,8 @@
 {
-  "ID" : "DuoDuel_FestiveCouple",
-  "contractName" : "Festive Couple",
+  "ID" : "DuoDuel_WordsHurt",
+  "contractName" : "Words Hurt",
   "contractDisplayStyle" : "BaseCampaignNormal",
-  "difficulty" : 2,
+  "difficulty" : 8,
   "difficultyUIModifier" : 0,
   "weight" : 1,
   "scope" : "STANDARD",
@@ -11,9 +11,9 @@
   "missionSuccessStatementOverride" : null,
   "badFaithStatementOverride" : null,
   "goodFaithStatementOverride" : null,
-  "shortDescription" : "As with every year at this festive time on {TGT_SYSTEM.name} we host an arena fight for the people. This year we'd like you to be our representative. Your duo duel is against {TEAM_TAR.FactionDef.ShortName}. We're placing our trust in you so please don't let us down.",
-  "longDescription" : "This actually sounds like fun! I'll have you both on coms the entire time but the rest of the crew will be cheering you on from the crowd. Let's do this, Commander.",
-  "salvagePotential" : 2,
+  "shortDescription" : "We've been informed by one of the largest news networks that a {TEAM_TAR.FactionDef.Demonym} Governor has taken issue with a recently released report on military fund spending irregularities. She's demanded a duel to fight those allegations. We'd like to hire you to represent and uphold that worthy news report, Commander.",
+  "longDescription" : "I just don't know, Commander. When people say they want to 'fight' allegations it's not meant to be a real fight. This {TEAM_TAR.FactionDef.Demonym} Governor is crazy. Let's uphold the truth... for a price.",
+  "salvagePotential" : 4,
   "requirementList" : [
       {
         "Scope" : "StarSystem",
@@ -48,8 +48,8 @@
       -1
   ],
   "mechMaxTonnages" : [
-      35,
-      35,
+      -1,
+      -1,
       -1,
       -1
   ],
@@ -60,7 +60,7 @@
           "contractObjective" : {
               "EncounterObjectGuid" : "73275787-720a-4c33-9f20-953b1bbf48bd"
           },
-          "title" : "Win the festive duel",
+          "title" : "Defend the Truth",
           "description" : "",
           "isPrimary" : true,
           "forPlayer" : "Player1",
@@ -74,7 +74,7 @@
           "objective" : {
               "EncounterObjectGuid" : "a0b9c5b2-c594-4c5a-be1d-028a51c51519"
           },
-          "title" : "Defeat the {TEAM_TAR.FactionDef.Demonym} team",
+          "title" : "Defeat the duelists",
           "description" : "",
           "isPrimary" : true,
           "OnSuccessResults" : [],
@@ -117,7 +117,7 @@
           "overrideDialogueBucketId" : "",
           "dialogueContent" : [
               {
-                  "words" : "The crowd is cheering for you two, Commander.",
+                  "words" : "The duelists are out there on the other side of the arena. Good luck, Commander.",
                   "wordsColor" : {
                       "r" : 1,
                       "g" : 1,
@@ -142,7 +142,7 @@
           "overrideDialogueBucketId" : "",
           "dialogueContent" : [
               {
-                  "words" : "Hah! That was a great show, Commander. Great job!",
+                  "words" : "There we go. Issue settled. Back to the dropship, Commander.",
                   "wordsColor" : {
                       "r" : 1,
                       "g" : 1,
@@ -167,7 +167,7 @@
           "overrideDialogueBucketId" : "",
           "dialogueContent" : [
               {
-                  "words" : "I think we've just rained on the festival celebrations with this loss.",
+                  "words" : "This isn't how things should be. You shouldn't be able to repress the truth like this.",
                   "wordsColor" : {
                       "r" : 1,
                       "g" : 1,
@@ -192,7 +192,7 @@
         "overrideDialogueBucketId" : "",
         "dialogueContent" : [
             {
-                "words" : "Let's make this a good show but make no mistake. We're winning this!",
+                "words" : "You <b>will</b> retract that report. Right. Now.",
                 "wordsColor" : {
                     "r" : 1,
                     "g" : 1,
@@ -364,7 +364,7 @@
           "lanceTagSet" : {
               "items" : [
                 "lance_type_dynamic",
-                "lance_type_light"
+                "lance_type_assault"
               ],
               "tagSetSourceFile" : "tags/LanceTags"
           },
