@@ -13,7 +13,7 @@
   "goodFaithStatementOverride" : null,
   "shortDescription" : "The Governor of {TGT_SYSTEM.name} has been challenged to a proxy war duel by a rival {TEAM_TAR.FactionDef.Demonym} Governor. We'd like you to be his proxy in this fight. If you lose, we'll just deny it was ever agreed to. We don't want to actually risk anything here.",
   "longDescription" : "'Don't want to risk anything here?' I think they forget that we're putting our necks on the line. I suppose if the pay is good that's what we do.",
-  "salvagePotential" : 2,
+  "salvagePotential" : 3,
   "requirementList" : [
       {
         "Scope" : "StarSystem",
