@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[37],{127:function(o){o.exports=JSON.parse('{"allTagsPath":"/MissionControl/blog/tags","slug":"v-0-3-2","name":"v0.3.2","count":1,"permalink":"/MissionControl/blog/tags/v-0-3-2"}')}}]);
