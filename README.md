@@ -4,7 +4,7 @@ A HBS BattleTech mod that provides a framework for runtime modifications of the 
 
 This works only for the generic contract types (e.g. Battle, Rescue etc) as it would break the balance for vanilla story missions.
 
-![Additional Lances](./docs/images/mission-control.jpg)
+![Additional Lances](./docs/gh-images/mission-control.jpg)
 
 ## Videos
 
