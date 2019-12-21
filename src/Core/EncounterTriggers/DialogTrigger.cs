@@ -40,6 +40,10 @@ namespace MissionControl.Trigger {
       this.conditional = conditional;
     }
 
+    public void Run() {
+      Run(null);
+    }
+
     public override void Run(RunPayload payload) {
       Main.LogDebug("[DialogTrigger] Running trigger");
       EncounterLayerData encounterData = MissionControl.Instance.EncounterLayerData;
@@ -51,7 +55,7 @@ namespace MissionControl.Trigger {
       DialogResult dialogueResult = ScriptableObject.CreateInstance<DialogResult>();
       dialogueResult.dialogueRef.EncounterObjectGuid = dialogueGuid;
       dialogueResult.isInterrupt = this.isInterrupt;
-      
+
       triggerDialogue.resultList.contentsBox.Add(new EncounterResultBox(dialogueResult));
       encounterData.responseGroup.triggerList.Add(triggerDialogue);
     }

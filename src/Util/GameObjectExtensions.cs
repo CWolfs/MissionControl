@@ -2,7 +2,9 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
-using MissionControl;
+using BattleTech;
+using BattleTech.Designed;
+using BattleTech.Framework;
 
 public static class GameObjextExtensions {
   public static List<GameObject> FindAllContains(this GameObject go, string name) {
@@ -15,6 +17,16 @@ public static class GameObjextExtensions {
     }
 
     return gameObjects;
+  }
+
+  public static EncounterObjectGameLogic GetEncounterObjectGameLogic(this GameObject go, string guid) {
+    EncounterObjectGameLogic[] encounterGameLogics = go.GetComponentsInChildren<EncounterObjectGameLogic>();
+    foreach (EncounterObjectGameLogic logic in encounterGameLogics) {
+      if (logic.encounterObjectGuid == guid) return logic;
+    }
+
+    MissionControl.Main.LogDebug("[GetEncounterObjectGameLogic] Encounter logic was not found (is null)");
+    return null;
   }
 
   public static GameObject FindRecursive(this GameObject gameObject, string checkName) {

@@ -14,7 +14,7 @@ namespace MissionControl.Config {
     public bool DisableIfFlashpointContract { get; set; } = true;
 
     [JsonProperty("RandomSpawns")]
-    public bool RandomSpawns { get; set; } = true;
+    public RandomSpawnsSettings RandomSpawns { get; set; } = new RandomSpawnsSettings();
 
     [JsonProperty("HotDrop")]
     public HotDrop HotDrop { get; set; } = new HotDrop();

@@ -125,7 +125,7 @@ namespace MissionControl.Config {
         if (Allies.ExcludeContractTypes.Count > 0) validContracts = validContracts.Except(Allies.ExcludeContractTypes).ToList();
       }
 
-      Main.Logger.Log($"[GetValidContractTypes] Valid contracts are '{string.Join(", ", validContracts.ToArray())}'");
+      Main.Logger.Log($"[AdditionalLances.GetValidContractTypes] Valid contracts are '{string.Join(", ", validContracts.ToArray())}'");
       return validContracts;
     }
 

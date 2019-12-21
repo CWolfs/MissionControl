@@ -11,8 +11,8 @@ namespace MissionControl.Rules {
     }
 
     public void BuildRandomSpawns() {
-      if (!Main.Settings.RandomSpawns) return;
-      
+      if (!MissionControl.Instance.IsRandomSpawnsAllowed()) return;
+
       Main.Logger.Log("[FireMissionEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerPlayerLance", "ChunkBeaconRegion1",
         SpawnLogic.LookDirection.TOWARDS_TARGET, 400, 600, true));

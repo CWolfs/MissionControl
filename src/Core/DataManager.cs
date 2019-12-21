@@ -13,6 +13,7 @@ using BattleTech.Framework;
 using HBS.Data;
 
 using MissionControl.Data;
+using MissionControl.Logic;
 using MissionControl.Messages;
 using MissionControl.Utils;
 
@@ -38,6 +39,9 @@ namespace MissionControl {
     private Dictionary<string, List<string>> Ranks = new Dictionary<string, List<string>>();      // e.g. <FactionName, [list of ranks]>
     private Dictionary<string, List<string>> Portraits = new Dictionary<string, List<string>>();  // e.g. <Male, [list of male portraits]
 
+    public Dictionary<string, JObject> AvailableCustomContractTypeBuilds { get; set; } = new Dictionary<string, JObject>();
+    private Dictionary<string, List<ContractTypeValue>> AvailableCustomContractTypes = new Dictionary<string, List<ContractTypeValue>>();
+
     private Dictionary<string, Dictionary<string, List<string>>> Dialogue = new Dictionary<string, Dictionary<string, List<string>>>();
 
     private DataManager() { }
@@ -53,7 +57,48 @@ namespace MissionControl {
     public void LoadDeferredDefs() {
       LoadVehicleDefs();
       LoadPilotDefs();
+      LoadCustomContractTypeBuilds();
+      LoadCustomContractTypes();
       HasLoadedDeferredDefs = true;
+    }
+
+    private void LoadCustomContractTypeBuilds() {
+      foreach (string file in Directory.GetFiles($"{ModDirectory}/contractTypeBuilds/", "*.json*", SearchOption.AllDirectories)) {
+        string contractTypeBuildSource = File.ReadAllText(file);
+        JObject contractTypeBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildSource);
+        Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type build '{contractTypeBuild["Key"]}'");
+
+        AvailableCustomContractTypeBuilds.Add(contractTypeBuild["Key"].ToString(), contractTypeBuild);
+      }
+    }
+
+    private void LoadCustomContractTypes() {
+      MetadataDatabase mdd = MetadataDatabase.Instance;
+      List<ContractType_MDD> contractTypes = mdd.GetCustomContractTypes();
+      Main.LogDebug($"[DataManager.LoadCustomContractTypes] Loading '{contractTypes.Count}' custom contract type(s)");
+      foreach (ContractType_MDD contractType in contractTypes) {
+        AddContractType(mdd, contractType);
+        LoadEncounterLayers(contractType.Name);
+      }
+      MetadataDatabase.Instance.WriteInMemoryDBToDisk();
+    }
+
+    private void AddContractType(MetadataDatabase mdd, ContractType_MDD contractTypeMDD) {
+      ContractTypeValue contractTypeValue = ContractTypeEnumeration.Instance.CreateEnumValueFromDatabase(mdd, contractTypeMDD.EnumValueRow);
+
+      if (!AvailableCustomContractTypes.ContainsKey(contractTypeValue.Name)) AvailableCustomContractTypes.Add(contractTypeValue.Name, new List<ContractTypeValue>());
+      Main.LogDebug($"[DataManager.AddContractType] Adding custom contract type: {contractTypeValue.Name}");
+      AvailableCustomContractTypes[contractTypeValue.Name].Add(contractTypeValue);
+    }
+
+    private void LoadEncounterLayers(string name) {
+      foreach (string file in Directory.GetFiles($"{ModDirectory}/overrides/encounterLayers/{name.ToLower()}", "*.json", SearchOption.AllDirectories)) {
+        Main.LogDebug($"[DataManager.LoadCustomContractTypes] Loading '{file}' custom encounter layer");
+        string encounterLayer = File.ReadAllText(file);
+        EncounterLayer encounterLayerData = JsonConvert.DeserializeObject<EncounterLayer>(encounterLayer);
+
+        MetadataDatabase.Instance.InsertOrUpdateEncounterLayer(encounterLayerData);
+      }
     }
 
     private void LoadLanceOverrides() {

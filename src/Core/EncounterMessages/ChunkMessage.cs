@@ -1,21 +1,21 @@
 using BattleTech;
 
 namespace MissionControl.Messages {
-	public class ChunkMessage : EncounterObjectMessage {
+  public class ChunkMessage : EncounterObjectMessage {
 
-		public ChunkMessage(string objectiveGUID) : base(objectiveGUID, objectiveGUID) {}
+    public ChunkMessage(string objectiveGUID) : base(objectiveGUID, objectiveGUID) { }
 
-		public string ChunkGuid {
-			get {
-				return base.actingObjectGuid;
-			}
-		}
+    public string ChunkGuid {
+      get {
+        return base.actingObjectGuid;
+      }
+    }
 
-		public override MessageCenterMessageType MessageType {
-			get {
-				return (MessageCenterMessageType)MessageTypes.ON_CHUNK_ACTIVATED;
-			}
-		}
+    public override MessageCenterMessageType MessageType {
+      get {
+        return (MessageCenterMessageType)MessageTypes.OnChunkActivated;
+      }
+    }
 
     public override void FromJSON(string json) { }
 

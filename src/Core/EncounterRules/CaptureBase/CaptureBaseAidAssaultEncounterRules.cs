@@ -18,8 +18,8 @@ namespace MissionControl.Rules {
     }
 
     public void BuildRandomSpawns() {
-      if (!Main.Settings.RandomSpawns) return;
-      
+      if (!MissionControl.Instance.IsRandomSpawnsAllowed()) return;
+
       Main.Logger.Log("[CaptureBaseAidAssaultEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "PlotBase"));
     }

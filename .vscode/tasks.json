@@ -28,6 +28,11 @@
         "D:/Modding/Battletech/MissionControl/src/bin/Debug/net471/MissionControl.dll",
         "'C:/Users/Rich/Documents/my games/BattleTech/mods/HBS/MissionControl'"
       ]
+    },
+    {
+      "label": "copy (assets)",
+      "type": "shell",
+      "command": "./copy-assets.sh"
     }
   ]
 }

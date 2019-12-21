@@ -1,15 +1,18 @@
 using UnityEngine;
+
 using System;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
 
 using BattleTech;
-using BattleTech.Framework;
+using BattleTech.Data;
 
 using MissionControl.Logic;
 using MissionControl.Rules;
 using MissionControl.Utils;
+using MissionControl.EncounterFactories;
+using MissionControl.ContractTypeBuilders;
+
+using Newtonsoft.Json.Linq;
 
 namespace MissionControl {
   public class MissionControl {
@@ -24,12 +27,19 @@ namespace MissionControl {
     public Contract CurrentContract { get; private set; }
     public string ContractMapName { get; private set; }
     public string CurrentContractType { get; private set; } = "INVALID_UNSET";
+    public ContractTypeValue CurrentContractTypeValue { get; private set; }
+
     public EncounterRules EncounterRules { get; private set; }
     public string EncounterRulesName { get; private set; }
     public GameObject EncounterLayerParentGameObject { get; private set; }
     public EncounterLayerParent EncounterLayerParent { get; private set; }
     public GameObject EncounterLayerGameObject { get; private set; }
     public EncounterLayerData EncounterLayerData { get; private set; }
+
+    // Only populated for custom contract types
+    public EncounterLayer_MDD EncounterLayerMDD { get; private set; }
+    public bool IsCustomContractType { get; set; } = false;
+
     public HexGrid HexGrid { get; private set; }
 
     public bool IsContractValid { get; private set; } = false;
@@ -96,10 +106,45 @@ namespace MissionControl {
       EncounterLayerParent = EncounterLayerParentGameObject.GetComponent<EncounterLayerParent>();
 
       EncounterLayerData = GetActiveEncounter();
+      if (EncounterLayerData == null) { // If no EncounterLayer matches the Contract Type GUID, it's a custom contract type
+        EncounterLayerData = ConstructCustomContractType();
+        IsCustomContractType = true;
+      } else {
+        IsCustomContractType = false;
+      }
+
       EncounterLayerGameObject = EncounterLayerData.gameObject;
       EncounterLayerData.CalculateEncounterBoundary();
 
       if (HexGrid == null) HexGrid = ReflectionHelper.GetPrivateStaticField(typeof(WorldPointGameLogic), "_hexGrid") as HexGrid;
+    }
+
+    private EncounterLayerData ConstructCustomContractType() {
+      CurrentContract = UnityGameInstance.BattleTechGame.Combat.ActiveContract;
+      MetadataDatabase mdd = MetadataDatabase.Instance;
+
+      EncounterLayerMDD = mdd.SelectEncounterLayerByGuid(CurrentContract.encounterObjectGuid);
+      CurrentContractTypeValue = CurrentContract.ContractTypeValue;
+
+      EncounterLayerData = EncounterLayerFactory.CreateEncounterLayer(CurrentContract);
+      EncounterLayerData.gameObject.transform.parent = EncounterLayerParent.transform;
+
+      BuildConstructTypeEncounter(EncounterLayerData.gameObject);
+
+      return EncounterLayerData;
+    }
+
+    private void BuildConstructTypeEncounter(GameObject encounterLayerGo) {
+      CurrentContract = UnityGameInstance.BattleTechGame.Combat.ActiveContract;
+      string contractTypeName = CurrentContract.ContractTypeValue.Name;
+
+      if (DataManager.Instance.AvailableCustomContractTypeBuilds.ContainsKey(contractTypeName)) {
+        JObject contractTypeBuild = DataManager.Instance.AvailableCustomContractTypeBuilds[contractTypeName];
+        ContractTypeBuilder contractTypeBuilder = new ContractTypeBuilder(encounterLayerGo, contractTypeBuild);
+        contractTypeBuilder.Build();
+      } else {
+        Main.Logger.LogError($"[MissionControl] Cannot build contract type of '{contractTypeName}'. No contract type build file exists.");
+      }
     }
 
     public void SetContract(Contract contract) {
@@ -152,16 +197,15 @@ namespace MissionControl {
 
       if (AvailableEncounters.ContainsKey(type)) {
         encounters = AvailableEncounters[type];
-      } else {
-        Main.Logger.LogError($"[MissionControl] Unknown contract / encounter type of '{type}'");
-        EncounterRules = null;
-        return false;
-      }
 
-      int index = UnityEngine.Random.Range(0, encounters.Count);
-      Type selectedEncounter = encounters[index];
-      Main.Logger.Log($"[MissionControl] Setting contract type to '{type}' and using Encounter Rule of '{selectedEncounter.Name}'");
-      SetEncounterRule(selectedEncounter);
+        int index = UnityEngine.Random.Range(0, encounters.Count);
+        Type selectedEncounter = encounters[index];
+        Main.Logger.Log($"[MissionControl] Setting contract type to '{type}' and using Encounter Rule of '{selectedEncounter.Name}'");
+        SetEncounterRule(selectedEncounter);
+      } else {
+        Main.Logger.Log($"[MissionControl] Unknown contract / encounter type of '{type}'. Using fallback ruleset.");
+        SetEncounterRule(typeof(FallbackEncounterRules));
+      }
 
       IsContractValid = true;
       return true;
@@ -183,25 +227,25 @@ namespace MissionControl {
       if (EncounterRules != null) {
         switch (type) {
           case LogicBlock.LogicType.RESOURCE_REQUEST: {
-              EncounterRules.Run(LogicBlock.LogicType.RESOURCE_REQUEST, payload);
-              break;
-            }
+            EncounterRules.Run(LogicBlock.LogicType.RESOURCE_REQUEST, payload);
+            break;
+          }
           case LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION: {
-              EncounterRules.Run(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
-              break;
-            }
+            EncounterRules.Run(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
+            break;
+          }
           case LogicBlock.LogicType.ENCOUNTER_MANIPULATION: {
-              EncounterRules.Run(LogicBlock.LogicType.ENCOUNTER_MANIPULATION, payload);
-              break;
-            }
+            EncounterRules.Run(LogicBlock.LogicType.ENCOUNTER_MANIPULATION, payload);
+            break;
+          }
           case LogicBlock.LogicType.SCENE_MANIPULATION: {
-              EncounterRules.Run(LogicBlock.LogicType.SCENE_MANIPULATION, payload);
-              break;
-            }
+            EncounterRules.Run(LogicBlock.LogicType.SCENE_MANIPULATION, payload);
+            break;
+          }
           default: {
-              Main.Logger.LogError($"[RunEncounterRules] Unknown type of '{type.ToString()}'");
-              break;
-            }
+            Main.Logger.LogError($"[RunEncounterRules] Unknown type of '{type.ToString()}'");
+            break;
+          }
         }
       }
     }
@@ -210,7 +254,7 @@ namespace MissionControl {
       if (EncounterLayerData) return EncounterLayerData;
 
       Contract activeContract = UnityGameInstance.BattleTechGame.Combat.ActiveContract;
-      string encounterObjectGuid = activeContract.encounterObjectGuid;
+      string encounterObjectGuid = activeContract.encounterObjectGuid;  // Contract Type GUID
       EncounterLayerData selectedEncounterLayerData = EncounterLayerParent.GetLayerByGuid(encounterObjectGuid);
 
       return selectedEncounterLayerData;
@@ -219,6 +263,7 @@ namespace MissionControl {
     public bool AreAdditionalLancesAllowed(string teamType) {
       if (Main.Settings.AdditionalLanceSettings.Enable) {
         bool areLancesAllowed = !(this.CurrentContract.IsFlashpointContract && Main.Settings.AdditionalLanceSettings.DisableIfFlashpointContract);
+        if (areLancesAllowed) areLancesAllowed = Main.Settings.ExtendedLances.GetValidContractTypes().Contains(CurrentContractType);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.DisableWhenMaxTonnage.AreLancesAllowed((int)this.CurrentContract.Override.lanceMaxTonnage);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.ActiveAdditionalLances.GetValidContractTypes(teamType).Contains(CurrentContractType);
 
@@ -226,6 +271,30 @@ namespace MissionControl {
         return areLancesAllowed;
       }
       Main.Logger.Log($"[MissionControl] AdditionalLances are disabled.");
+      return false;
+    }
+
+    public bool IsExtendedBoundariesAllowed() {
+      if (Main.Settings.ExtendedBoundaries.Enable) {
+        bool isExtendedBoundariesAllowed = Main.Settings.ExtendedBoundaries.GetValidContractTypes().Contains(CurrentContractType);
+        return isExtendedBoundariesAllowed;
+      }
+      return false;
+    }
+
+    public bool IsExtendedLancesAllowed() {
+      if (Main.Settings.ExtendedLances.Enable) {
+        bool isExtendedLancesAllowed = Main.Settings.ExtendedLances.GetValidContractTypes().Contains(CurrentContractType);
+        return isExtendedLancesAllowed;
+      }
+      return false;
+    }
+
+    public bool IsRandomSpawnsAllowed() {
+      if (Main.Settings.RandomSpawns.Enable) {
+        bool isRandomSpawnsAllowed = Main.Settings.RandomSpawns.GetValidContractTypes().Contains(CurrentContractType);
+        return isRandomSpawnsAllowed;
+      }
       return false;
     }
 

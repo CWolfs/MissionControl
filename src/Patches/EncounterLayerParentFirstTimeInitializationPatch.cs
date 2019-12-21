@@ -3,6 +3,7 @@ using Harmony;
 using BattleTech;
 
 using MissionControl.Logic;
+using MissionControl.Messages;
 
 /*
   This patch sets the active contract type and starts any manipulation on the objectives in the game scene.
@@ -14,7 +15,10 @@ namespace MissionControl.Patches {
     static void Prefix(EncounterLayerParent __instance) {
       Main.Logger.Log($"[EncounterLayerParentFirstTimeInitializationPatch Prefix] Patching FirstTimeInitialization");
       MissionControl EncounterManager = MissionControl.Instance;
-      if (EncounterManager.IsContractValid) EncounterManager.RunEncounterRules(LogicBlock.LogicType.SCENE_MANIPULATION);
+      if (EncounterManager.IsContractValid) {
+        UnityGameInstance.BattleTechGame.MessageCenter.PublishMessage(new BeforeSceneManipulation());
+        EncounterManager.RunEncounterRules(LogicBlock.LogicType.SCENE_MANIPULATION);
+      }
     }
   }
 }

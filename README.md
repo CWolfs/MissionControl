@@ -4,7 +4,7 @@ A HBS BattleTech mod that provides a framework for runtime modifications of the 
 
 This works only for the generic contract types (e.g. Battle, Rescue etc) as it would break the balance for vanilla story missions.
 
-![Additional Lances](./docs/images/mission-control.jpg)
+![Additional Lances](./docs/gh-images/mission-control.jpg)
 
 ## Videos
 
@@ -21,7 +21,7 @@ This works only for the generic contract types (e.g. Battle, Rescue etc) as it w
 
 - Additional Lances (AI Controlled Enemy & Allies) | [Documentation](./docs/additional-lances.md)
 - Random Lance Spawns (Appropriate for Contract Type)
-- Extended Bounadries (Bigger Maps - sometimes up to 4 times as big!) | [Documentation](./docs/extended-boundaries.md)
+- Extended Boundaries (Bigger Maps - sometimes up to 4 times as big!) | [Documentation](./docs/extended-boundaries.md)
 - Extended Lances (Clan Stars [5 units], Level-II Lances [6 units]) | [Documentation](./docs/extended-lances.md)
 - Dynamic Withdraw
 - New AI Behaviours
