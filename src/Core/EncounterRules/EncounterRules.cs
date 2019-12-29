@@ -177,7 +177,7 @@ namespace MissionControl.Rules {
 
       if (type == "ArenaSkirmish") {
         return "MultiPlayerSkirmishChunk";
-      } else if (type == "Story_1B_Retreat") {
+      } else if ((type == "Story_1B_Retreat") || (type == "Story_2_ThreeYearsLater_Default")) {
         return "Gen_PlayerLance";
       }
 
