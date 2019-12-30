@@ -27,7 +27,7 @@ namespace MissionControl.Logic {
       }
     }
 
-    protected override void GetObjectReferences() { }
+    protected override bool GetObjectReferences() { return true; }
 
     private void SetBoundarySizeToMedium(EncounterLayerData encounterLayerData, float size) {
       EncounterBoundaryChunkGameLogic encounterBoundaryChunk = encounterLayerData.GetComponentInChildren<EncounterBoundaryChunkGameLogic>();
