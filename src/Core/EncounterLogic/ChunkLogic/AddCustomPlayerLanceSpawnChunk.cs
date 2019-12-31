@@ -55,6 +55,7 @@ namespace MissionControl.Logic {
 
       // Guard: Don't do anything if there are no employer units and employer mode is on
       SpawnableUnit[] employerLanceUnits = MissionControl.Instance.CurrentContract.Lances.GetLanceUnits(EncounterRules.EMPLOYER_TEAM_ID);
+      Main.Logger.Log($"[AddCustomPlayerLanceExtraSpawnPoints] '{employerLanceUnits.Length}' employer lance units are being sent to Mission Control by Bigger Drops.");
       if (employerLanceUnits.Length <= 0) return;
 
       bool spawnOnActivation = true;

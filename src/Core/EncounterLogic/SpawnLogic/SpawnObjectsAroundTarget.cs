@@ -74,7 +74,7 @@ namespace MissionControl.Logic {
     }
 
     public override void Run(RunPayload payload) {
-      GetObjectReferences();
+      if (!GetObjectReferences()) return;
 
       for (int i = 0; i < objectGos.Count; i++) {
         GameObject objectGo = objectGos[i];
@@ -143,7 +143,8 @@ namespace MissionControl.Logic {
       }
     }
 
-    protected override void GetObjectReferences() {
+    // TODO: Check the object references properly for nulls like the other spawners
+    protected override bool GetObjectReferences() {
       if (state != null) {
         List<string[]> extraLanceKeys = (List<string[]>)state.GetObject("ExtraLanceSpawnKeys");
         for (int i = 0; i < extraLanceKeys.Count; i++){
@@ -174,6 +175,8 @@ namespace MissionControl.Logic {
         this.EncounterRules.ObjectLookup.TryGetValue(defaultOrientationTargetKey, out defaultOrientationTargetGoShell);
         orientationTargets[defaultOrientationTargetKey] = defaultOrientationTargetGoShell;
       }
+
+      return true;
     }
   }
 }

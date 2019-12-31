@@ -1,16 +1,6 @@
 using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 
-using BattleTech;
-using BattleTech.Designed;
-using BattleTech.Framework;
-
-using MissionControl.Logic;
 using MissionControl.Rules;
-using MissionControl.EncounterFactories;
-using MissionControl.Utils;
 
 namespace MissionControl.Logic {
   public class LookAwayFromTarget : SceneManipulationLogic {
@@ -35,13 +25,21 @@ namespace MissionControl.Logic {
       if (isLance) RestoreLanceMemberSpawnPositions(focus);      
     }
 
-    protected override void GetObjectReferences() {
+    protected override bool GetObjectReferences() {
       this.EncounterRules.ObjectLookup.TryGetValue(focusKey, out focus);
       this.EncounterRules.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
 
-      if (focus == null || orientationTarget == null) {
-        Main.Logger.LogError("[LookAwayFromTarget] Object references are null");
+      if (focus == null) {
+        Main.Logger.LogWarning($"[LookAwayFromTarget] Object reference for focus '{focusKey}' is null. This will be handled gracefully.");
+        return false;
       }
+
+      if (orientationTarget == null) {
+        Main.Logger.LogWarning($"[LookAwayFromTarget] Object reference for orientation target '{orientationTarget}' is null. This will be handled gracefully.");
+        return false;
+      }
+
+      return true;
     }
   }
 }

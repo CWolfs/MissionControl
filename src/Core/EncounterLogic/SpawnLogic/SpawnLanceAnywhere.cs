@@ -53,7 +53,8 @@ namespace MissionControl.Logic {
     }
 
     public override void Run(RunPayload payload) {
-      GetObjectReferences();
+      if (!GetObjectReferences()) return;
+      
       SaveSpawnPositions(lance);
       Main.Logger.Log($"[SpawnLanceAnywhere] Attemping for '{lance.name}'");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
@@ -109,13 +110,16 @@ namespace MissionControl.Logic {
       }
     }
 
-    protected override void GetObjectReferences() {
+    protected override bool GetObjectReferences() {
       this.EncounterRules.ObjectLookup.TryGetValue(lanceKey, out lance);
       this.EncounterRules.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
 
       if (lance == null) {
-        Main.Logger.LogError("[SpawnLanceAnywhere] Object references are null");
+        Main.Logger.LogWarning($"[SpawnLanceAnywhere] Object reference for target '{lanceKey}' is null. This will be handled gracefully.");
+        return false;
       }
+
+      return true;
     }
   }
 }

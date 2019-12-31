@@ -21,6 +21,7 @@ namespace MissionControl.Logic {
 
     private void IncreaseLanceSpawnPoints(GameObject playerSpawnGo) {
       SpawnableUnit[] lanceUnits = MissionControl.Instance.CurrentContract.Lances.GetLanceUnits(EncounterRules.PLAYER_TEAM_ID);
+      Main.Logger.Log($"[AddCustomPlayerLanceExtraSpawnPoints] '{lanceUnits.Length}' player lance units are being sent to Mission Control by Bigger Drops.");
       List<GameObject> unitSpawnPoints = playerSpawnGo.FindAllContains("SpawnPoint");
 
       for (int i = unitSpawnPoints.Count; i < lanceUnits.Length; i++) {

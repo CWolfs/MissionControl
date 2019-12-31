@@ -46,8 +46,9 @@ namespace MissionControl.Logic {
     }
 
     public override void Run(RunPayload payload) {
+      if (!GetObjectReferences()) return;
+
       this.payload = payload;
-      GetObjectReferences();
       SaveSpawnPositions(lance);
       Main.Logger.Log($"[SpawnLanceMembersAroundTarget] Attempting for '{lance.name}'");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
@@ -64,14 +65,27 @@ namespace MissionControl.Logic {
       invalidSpawnLocations.Clear();
     }
 
-    protected override void GetObjectReferences() {
+    protected override bool GetObjectReferences() {
       this.EncounterRules.ObjectLookup.TryGetValue(lanceKey, out lance);
       this.EncounterRules.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
       this.EncounterRules.ObjectLookup.TryGetValue(lookTargetKey, out lookTarget);
 
-      if (lance == null || orientationTarget == null || lookTarget == null) {
-        Main.Logger.LogError("[SpawnLanceMembersAroundTarget] Object references are null");
+      if (lance == null) {
+        Main.Logger.LogWarning($"[SpawnLanceMembersAroundTarget] Object reference for target '{lanceKey}' is null. This will be handled gracefully.");
+        return false;
       }
+
+      if (orientationTarget == null) {
+        Main.Logger.LogWarning($"[SpawnLanceMembersAroundTarget] Object reference for orientation target '{orientationTargetKey}' is null. This will be handled gracefully.");
+        return false;
+      }
+
+      if (lookTarget == null) {
+        Main.Logger.LogWarning($"[SpawnLanceMembersAroundTarget] Object reference for look target '{lookTarget}' is null. This will be handled gracefully.");
+        return false;
+      }
+
+      return true;
     }
 
     public bool SpawnLanceMember(GameObject spawnPoint, Vector3 orientationTargetPosition, GameObject lookTarget, LookDirection lookDirection) {
