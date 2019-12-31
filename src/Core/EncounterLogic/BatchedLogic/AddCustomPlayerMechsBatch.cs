@@ -23,7 +23,7 @@ namespace MissionControl.Logic {
         encounterRules.EncounterLogic.Add(new AddCustomPlayerLanceSpawnChunk(employerGuid, lanceGuid, unitGuids, spawnerName,
           "Spawns a custom (player or Ai) controlled player lance"));
 
-        encounterRules.EncounterLogic.Add(new SpawnLanceAroundTarget(encounterRules, spawnerName, EncounterRules.GetPlayerLanceSpawnerName(),
+        encounterRules.EncounterLogic.Add(new SpawnLanceAroundTarget(encounterRules, spawnerName, "SpawnerPlayerLance",
           SpawnLogic.LookDirection.AWAY_FROM_TARGET, 200f, 250f, true));
       }
 
