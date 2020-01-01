@@ -1,11 +1,5 @@
 using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 
-using BattleTech;
-
-using MissionControl.Config;
 using MissionControl.Logic;
 
 namespace MissionControl.Rules {

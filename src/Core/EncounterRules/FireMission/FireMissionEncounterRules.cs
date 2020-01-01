@@ -8,6 +8,8 @@ namespace MissionControl.Rules {
     public override void Build() {
       Main.Logger.Log("[FireMissionEncounterRules] Setting up rule object references");
       BuildRandomSpawns();
+      BuildAdditionalLances("ChunkBeaconRegion2", SpawnLogic.LookDirection.AWAY_FROM_TARGET,
+        "SpawnerPlayerLance", SpawnLogic.LookDirection.TOWARDS_TARGET, 25f, 100f);
     }
 
     public void BuildRandomSpawns() {
@@ -20,6 +22,7 @@ namespace MissionControl.Rules {
 
     public override void LinkObjectReferences(string mapName) {
       ObjectLookup["ChunkBeaconRegion1"] = EncounterLayerData.gameObject.FindRecursive("Chunk_BeaconRegion_1");
+      ObjectLookup["ChunkBeaconRegion2"] = EncounterLayerData.gameObject.FindRecursive("Chunk_BeaconRegion_2");
     }
   }
 }
