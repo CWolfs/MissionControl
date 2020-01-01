@@ -105,9 +105,7 @@ namespace MissionControl.AI {
 
       // Ensure the units aren't crowded
       Vector3 targetDestination = RoutingUtil.Decrowd(this.unit.CurrentPosition + vectorToTarget, this.unit);
-      Main.LogDebug($"[MoveToFollowLanceNode] targetDestination after decrowd method is '{targetDestination}'");
       targetDestination = RegionUtil.MaybeClipMovementDestinationToStayInsideRegion(this.unit, targetDestination);
-      Main.LogDebug($"[MoveToFollowLanceNode] targetDestination after clip method is '{targetDestination}'");
 
       float followLanceZoneRadius = this.unit.BehaviorTree.GetCustomBehaviorVariableValue(FOLLOW_LANCE_ZONE_RADIUS_KEY).FloatVal;
       Main.LogDebug($"[MoveToFollowLanceNode] My follow zone radius is '{followLanceZoneRadius}'");
@@ -124,15 +122,11 @@ namespace MissionControl.AI {
       PathNodeGrid currentGrid = this.unit.Pathing.CurrentGrid;
       Vector3 targetActorPosition = targetActor.CurrentPosition;
 
-      Main.LogDebug($"[MoveToFollowLanceNode] targetDestination before magic method is '{targetDestination}'");
-
       // This method seems to get called all the time - this is meant to be a last resort method I think. I wonder why the other AI pathfinding methods don't work?
       if ((currentGrid.GetValidPathNodeAt(targetDestination, maxCost) == null || (targetDestination - targetActor.CurrentPosition).magnitude > 1f) && this.unit.Combat.EncounterLayerData.inclineMeshData != null) {
-        Main.LogDebug($"[MoveToFollowLanceNode] Entering that magic 'if' statement I don't know what it really does.");
         float maxSlope = Mathf.Tan(0.0174532924f * AIUtil.GetMaxSteepnessForAllLance(this.unit));
         List<AbstractActor> lanceUnits = AIUtil.GetLanceUnits(this.unit.Combat, this.unit.LanceId);
         targetDestination = this.unit.Combat.EncounterLayerData.inclineMeshData.GetDestination(this.unit.CurrentPosition, targetDestination, maxCost, maxSlope, this.unit, shouldSprint, lanceUnits, this.unit.Pathing.CurrentGrid, out targetActorPosition);
-        Main.LogDebug($"[MoveToFollowLanceNode] targetDestination after magic method is '{targetDestination}'");
       }
 
       Vector3 currentPosition = this.unit.CurrentPosition;
