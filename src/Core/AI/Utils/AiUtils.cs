@@ -50,5 +50,25 @@ namespace MissionControl.AI {
 
       return closestActor;
     }
+
+    public static AbstractActor GetClosestVisibleEnemy(AbstractActor focusedUnit, Lance allyLance) {
+      List<AbstractActor> visibleEnemyUnits = new List<AbstractActor>();
+      visibleEnemyUnits.AddRange(focusedUnit.lance.team.GetVisibleEnemyUnits());
+      visibleEnemyUnits.AddRange(allyLance.team.GetVisibleEnemyUnits());
+
+      float num = -1f;
+      AbstractActor closestActor = null;
+
+      for (int i = 0; i < visibleEnemyUnits.Count; i++) {
+        AbstractActor actor = visibleEnemyUnits[i] as AbstractActor;
+        float magnitude = (actor.CurrentPosition - focusedUnit.CurrentPosition).magnitude;
+        if (num < 0f || magnitude < num) {
+          num = magnitude;
+          closestActor = actor;
+        }
+      }
+
+      return closestActor;
+    }
   }
 }
