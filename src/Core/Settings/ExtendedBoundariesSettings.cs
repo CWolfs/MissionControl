@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 
 namespace MissionControl.Config {
   public class ExtendedBoundariesSettings : AdvancedSettings {
-    [JsonProperty("SizePercentage")]
+    [JsonProperty("IncreaseBoundarySizeByPercentage")]
     public float IncreaseBoundarySizeByPercentage { get; set; } = 0.2f;
 
     [JsonProperty("Overrides")]
