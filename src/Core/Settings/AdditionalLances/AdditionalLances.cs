@@ -13,7 +13,7 @@ namespace MissionControl.Config {
 
     [JsonProperty("LancePool")]
     public Dictionary<string, List<string>> LancePool { get; set; } = new Dictionary<string, List<string>>() {
-      { "ALL", new List<string>{"GENERIC_BATTLE_LANCE"} }
+      { "ALL", new List<string>{"Generic_Light_Battle_Lance"} }
     };
 
     [JsonProperty(PropertyName = "RewardsPerLance", ObjectCreationHandling = ObjectCreationHandling.Replace)]

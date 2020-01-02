@@ -23,7 +23,7 @@
   },
   "Allies": {
     "Max": 1,
-    "ChanceToSpawn": 0.4,
+    "ChanceToSpawn": 0.5,
     "EliteLances": {
       "Conditions": ["IsAlly"],
       "Overrides": {
