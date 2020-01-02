@@ -5,34 +5,19 @@
     "ALL": ["Generic_Light_Battle_Lance", "Damaged_Light_Battle_Lance"]
   },
   "Enemy": {
-    "Max": 2,
+    "Max": 0,
     "ExcludeContractTypes": [],
-    "ChanceToSpawn": 0.4,
+    "ChanceToSpawn": 0,
     "EliteLances": {
       "Conditions": ["IsEnemy"],
       "Suffix": "_Elite",
       "Overrides": {
-        "ChanceToSpawn": 0.6
+        "ChanceToSpawn": 0.2
       }
     },
     "LancePool": {
       "ALL": [
         "Generic_Light_Battle_Lance"
-      ],
-      "CONTRACT_TYPE:DestroyBase": [
-        "Brawler_Lance", "Defending_Lance"
-      ],
-      "CONTRACT_TYPE:DefendBase": [
-        "Heavy_Missile_Lance", "Attacking_Lance"
-      ],
-      "BIOME:DesertParched": [
-        "BBQ_Masters"
-      ],
-      "BIOME:LowlandsSpring": [
-        "Im_Like_A_Turret_In_Water_I_Run_So_Hot"
-      ],
-      "FACTION:Davion:50:99": [
-        "Heavy_Davion_Battle_Lance"
       ]
     }
   },
@@ -49,12 +34,6 @@
     "LancePool": {
       "ALL": [
         "Generic_Light_Battle_Lance"
-      ],
-      "CONTRACT_TYPE:DestroyBase": [
-        "Heavy_Missile_Lance", "Attacking_Lance"
-      ],
-      "CONTRACT_TYPE:DefendBase": [
-        "Brawler_Lance", "Defending_Lance"
       ]
     }
   }
