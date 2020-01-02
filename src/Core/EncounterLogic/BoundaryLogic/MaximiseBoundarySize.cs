@@ -21,7 +21,7 @@ namespace MissionControl.Logic {
       EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
 
       if (size > 0f) {
-        SetBoundarySizeToMedium(encounterLayerData, size);
+        SetBoundarySizeToCustom(encounterLayerData, size);
       } else if (size >= 0.5f) {  // If you're going to extend by 4 times (50% width and depth) you might as well go full map
         MatchBoundarySizeToMapSize(encounterLayerData);
       }
@@ -29,10 +29,10 @@ namespace MissionControl.Logic {
 
     protected override bool GetObjectReferences() { return true; }
 
-    private void SetBoundarySizeToMedium(EncounterLayerData encounterLayerData, float size) {
+    private void SetBoundarySizeToCustom(EncounterLayerData encounterLayerData, float size) {
       EncounterBoundaryChunkGameLogic encounterBoundaryChunk = encounterLayerData.GetComponentInChildren<EncounterBoundaryChunkGameLogic>();
       if (encounterBoundaryChunk != null) {
-        Main.Logger.Log($"[MaximiseBoundarySize.SetBoundarySizeToMedium] Increasing Boundary Size by '{size * 100}%'");
+        Main.Logger.Log($"[MaximiseBoundarySize.SetBoundarySizeToCustom] Increasing Boundary Size by '{size * 100}%'");
         List<RectHolder> encounterBoundaryRectList = new List<RectHolder>();
         EncounterObjectGameLogic[] childEncounterObjectGameLogicList = encounterBoundaryChunk.childEncounterObjectGameLogicList;
 
@@ -43,28 +43,43 @@ namespace MissionControl.Logic {
         for (int i = 0; i < childEncounterObjectGameLogicList.Length; i++) {
           EncounterBoundaryRectGameLogic encounterBoundaryRectGameLogic = childEncounterObjectGameLogicList[i] as EncounterBoundaryRectGameLogic;
 
-          int mediumSize = (int)(encounterBoundaryRectGameLogic.width * (1f + size));
+          int sizeFactor = (int)(encounterBoundaryRectGameLogic.width * (1f + size));
           int movementFactor = (int)(encounterBoundaryRectGameLogic.width * size);
 
-          int mediumXSize = mediumSize;
-          int mediumZSize = mediumSize;
-
-          if (mediumSize > mapSide) {
-            Main.Logger.Log($"[MaximiseBoundarySize.SetBoundarySizeToMedium] Medium size would be greater than map size. Using map size.'");
+          if (sizeFactor > mapSide) {
+            Main.Logger.Log($"[MaximiseBoundarySize.SetBoundarySizeToCustom] Custom size would be greater than map size. Using map size.'");
             MatchBoundarySizeToMapSize(encounterLayerData);
           } else {
             if (encounterBoundaryRectGameLogic != null) {
               Vector3 position = encounterBoundaryRectGameLogic.transform.position;
 
-              Main.Logger.Log($"[MaximiseBoundarySize.SetBoundarySizeToMedium] Boundary [X,Z] is [{position.x}, {position.z}]");
+              Main.Logger.Log($"[MaximiseBoundarySize.SetBoundarySizeToCustom] Boundary [X,Z] originally was [{position.x}, {position.z}]");
 
-              float xPosition = position.x - movementFactor;
-              float zPosition = position.z + movementFactor;
+              float xPosition = 0;
+              if (position.x > 0) {
+                xPosition = position.x - (movementFactor / 2f);
+                if (xPosition < 0) xPosition = 0;
+              } else if (position.x < 0) {
+                xPosition = position.x + (movementFactor / 2f);
+                if (xPosition > 0) xPosition = 0;
+              }
 
-              encounterBoundaryRectGameLogic.width = (int)mediumSize;
-              encounterBoundaryRectGameLogic.height = (int)mediumSize;
+              float zPosition = 0;
+              if (position.z > 0) {
+                zPosition = position.z - (movementFactor / 2f);
+                if (zPosition < 0) zPosition = 0;
+              } else if (position.z < 0) {
+                zPosition = position.z + (movementFactor / 2f);
+                if (zPosition > 0) zPosition = 0;
+              }
+
+              encounterBoundaryRectGameLogic.width = (int)sizeFactor;
+              encounterBoundaryRectGameLogic.height = (int)sizeFactor;
 
               encounterBoundaryRectGameLogic.transform.position = new Vector3(xPosition, encounterBoundaryRectGameLogic.transform.position.y, zPosition);
+
+              Main.Logger.Log($"[MaximiseBoundarySize.SetBoundarySizeToCustom] Boundary [X,Z] is now [{xPosition}, {zPosition}]");
+
               encounterLayerData.CalculateEncounterBoundary();
             } else {
               Main.Logger.Log($"[MaximiseBoundarySize] This encounter has no boundary to maximise.");
