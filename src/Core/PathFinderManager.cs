@@ -103,19 +103,7 @@ namespace MissionControl {
       }
     }
 
-    // TODO: Find a better way to do this that caches things in a good way. Not so easy as new spawns can be created at any point
-    private bool IsPositionTooCloseToAnotherSpawn(Vector3 position) {
-      UnitSpawnPointGameLogic[] unitSpawns = MissionControl.Instance.EncounterLayerData.GetComponentsInChildren<UnitSpawnPointGameLogic>();
-
-      foreach (UnitSpawnPointGameLogic unitSpawn in unitSpawns) {
-        float distance = Vector3.Distance(unitSpawn.transform.position, position);
-        if (distance < 24) return true;
-      }
-
-      return false;
-    }
-
-    public bool IsSpawnValid(Vector3 position, Vector3 validityPosition, UnitType type, string identifier) {
+    public bool IsSpawnValid(GameObject spawnGo, Vector3 position, Vector3 validityPosition, UnitType type, string identifier) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
       MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
@@ -123,7 +111,7 @@ namespace MissionControl {
       Main.LogDebug($"");
       Main.LogDebug($"-------- [PFM.IsSpawnValid] [{identifier}] --------");
 
-      if (IsPositionTooCloseToAnotherSpawn(position)) {
+      if (position.IsTooCloseToAnotherSpawn(spawnGo)) {
         Main.LogDebug($"[PFM] Position '{position}' is too close to another spawn point. Not a valid location.");
         return false;
       }
