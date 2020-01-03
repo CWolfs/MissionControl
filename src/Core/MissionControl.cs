@@ -166,7 +166,7 @@ namespace MissionControl {
           if (Main.Settings.AdditionalLanceSettings.BasedOnVisibleSkullValue) {
             difficulty = contract.Override.GetUIDifficulty();
           }
-          Main.LogDebug($"[MissionControl] Visisble Difficulty '{contract.Override.GetUIDifficulty()}' (Skull value '{(float)contract.Override.GetUIDifficulty() / 2f}')");
+          Main.LogDebug($"[MissionControl] Visible Difficulty '{contract.Override.GetUIDifficulty()}' (Skull value '{(float)contract.Override.GetUIDifficulty() / 2f}')");
 
           if (Main.Settings.AdditionalLances.ContainsKey(difficulty)) {
             Main.Logger.Log($"[MissionControl] Using AdditionalLances for difficulty '{difficulty}' (Skull value '{(float)difficulty / 2f}')");
@@ -189,26 +189,31 @@ namespace MissionControl {
       Future proofed method to allow for string custom contract type names
       instead of relying only on the enum values
     */
-    public bool SetContractType(ContractTypeValue contractTypeValue) {
-      List<Type> encounters = null;
+    public void SetContractType(ContractTypeValue contractTypeValue) {
+      if (AllowMissionControl()) {
+        List<Type> encounters = null;
 
-      string type = contractTypeValue.Name;
-      CurrentContractType = type;
+        string type = contractTypeValue.Name;
+        CurrentContractType = type;
 
-      if (AvailableEncounters.ContainsKey(type)) {
-        encounters = AvailableEncounters[type];
+        if (AvailableEncounters.ContainsKey(type)) {
+          encounters = AvailableEncounters[type];
 
-        int index = UnityEngine.Random.Range(0, encounters.Count);
-        Type selectedEncounter = encounters[index];
-        Main.Logger.Log($"[MissionControl] Setting contract type to '{type}' and using Encounter Rule of '{selectedEncounter.Name}'");
-        SetEncounterRule(selectedEncounter);
+          int index = UnityEngine.Random.Range(0, encounters.Count);
+          Type selectedEncounter = encounters[index];
+          Main.Logger.Log($"[MissionControl] Setting contract type to '{type}' and using Encounter Rule of '{selectedEncounter.Name}'");
+          SetEncounterRule(selectedEncounter);
+        } else {
+          Main.Logger.Log($"[MissionControl] Unknown contract / encounter type of '{type}'. Using fallback ruleset.");
+          SetEncounterRule(typeof(FallbackEncounterRules));
+        }
+
+        IsContractValid = true;
       } else {
-        Main.Logger.Log($"[MissionControl] Unknown contract / encounter type of '{type}'. Using fallback ruleset.");
-        SetEncounterRule(typeof(FallbackEncounterRules));
+        Main.Logger.Log($"[MissionControl] Mission Control is not allowed to run. Possibly a story mission or flashpoint contract.");
+        EncounterRules = null;
+        EncounterRulesName = null;
       }
-
-      IsContractValid = true;
-      return true;
     }
 
     private void SetEncounterRule(Type encounterRules) {
@@ -218,6 +223,7 @@ namespace MissionControl {
         EncounterRules.Build();
         EncounterRules.ActivatePostFeatures();
       } else {
+        Main.Logger.Log($"[MissionControl] Mission Control is not allowed to run. Possibly a story mission or flashpoint contract.");
         EncounterRules = null;
         EncounterRulesName = null;
       }
@@ -325,6 +331,8 @@ namespace MissionControl {
     }
 
     public bool AllowMissionControl() {
+      if (this.CurrentContract.IsStoryContract) return false;
+      if (this.CurrentContract.IsRestorationContract) return false;
       if (!this.CurrentContract.IsFlashpointContract) return true;
       return this.CurrentContract.IsFlashpointContract && !Main.Settings.AdditionalLanceSettings.DisableIfFlashpointContract;
     }

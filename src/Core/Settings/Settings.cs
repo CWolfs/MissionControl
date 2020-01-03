@@ -38,5 +38,8 @@ namespace MissionControl.Config {
 
     [JsonIgnore]
     public Dictionary<int, AdditionalLances> AdditionalLances { get; set; } = new Dictionary<int, AdditionalLances>();
+
+    [JsonProperty("AI")]
+    public AiSettings AiSettings { get; set; } = new AiSettings();
   }
 }

@@ -10,6 +10,7 @@ using BattleTech;
 using BattleTech.Framework;
 
 using MissionControl.Logic;
+using MissionControl.Trigger;
 
 namespace MissionControl.Rules {
   public abstract class EncounterRules {
@@ -46,6 +47,7 @@ namespace MissionControl.Rules {
       if (Main.Settings.AdditionalPlayerMechs && MissionControl.Instance.IsDroppingCustomControlledPlayerLance()) new AddCustomPlayerMechsBatch(this);
       if (MissionControl.Instance.IsExtendedLancesAllowed()) new AddExtraLanceSpawnsForExtendedLancesBatch(this);
       if (Main.Settings.DynamicWithdraw.Enable && !MissionControl.Instance.IsSkirmish()) new AddDynamicWithdrawBatch(this);
+      BuildAi();
     }
 
     public abstract void Build();
@@ -177,7 +179,7 @@ namespace MissionControl.Rules {
 
       if (type == "ArenaSkirmish") {
         return "MultiPlayerSkirmishChunk";
-      } else if (type == "Story_1B_Retreat") {
+      } else if ((type == "Story_1B_Retreat") || (type == "Story_2_ThreeYearsLater_Default")) {
         return "Gen_PlayerLance";
       }
 
@@ -239,6 +241,10 @@ namespace MissionControl.Rules {
       Main.Logger.Log($"[{this.GetType().Name}] Maximising Boundary Size for '{mapId}.{contractTypeName}' to '{size}'");
 
       this.EncounterLogic.Add(new MaximiseBoundarySize(this, size));
+    }
+
+    private void BuildAi() {
+      EncounterLogic.Add(new IssueFollowLanceOrderTrigger(new List<string>() { Tags.EMPLOYER_TEAM }, IssueAIOrderTo.ToLance, new List<string>() { Tags.PLAYER_1_TEAM }));
     }
   }
 }

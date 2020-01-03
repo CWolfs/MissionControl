@@ -31,7 +31,7 @@ namespace MissionControl.Logic {
     }
 
     protected void HandleFallback(RunPayload payload, string lanceKey, string orientationTargetKey) {
-       if (GetOriginalSpawnPosition() == Vector3.zero) {
+      if (GetOriginalSpawnPosition() == Vector3.zero) {
         Main.LogDebug($"[{this.GetType().Name}] Cannot find valid spawn. Spawning with 'SpawnAnywhere' profile.");
         RunFallbackSpawn(payload, lanceKey, orientationTargetKey);
       } else {
@@ -59,13 +59,13 @@ namespace MissionControl.Logic {
 
       foreach (GameObject spawnPoint in spawnPoints) {
         // Vector3 spawnPointPosition = spawnPoint.transform.position.GetClosestHexLerpedPointOnGrid();
-        Vector3 spawnPointPosition = GetClosestValidPathFindingHex(spawnPoint.transform.position, $"GetInvalidLanceMemberSpawns.{spawnPoint.name}", IsLancePlayerLance(lance.name) ? checkTargetPosition : Vector3.zero, 2);
+        Vector3 spawnPointPosition = GetClosestValidPathFindingHex(spawnPoint, spawnPoint.transform.position, $"GetInvalidLanceMemberSpawns.{spawnPoint.name}", IsLancePlayerLance(lance.name) ? checkTargetPosition : Vector3.zero, 2);
         Main.LogDebug($"[SpawnLanceLogic.GetInvalidLanceMemberSpawns] Spawn point's closest hex lerped point on grid for '{spawnPoint.name}' is '{spawnPointPosition}'");
-        
+
         if (!encounterLayerData.IsInEncounterBounds(spawnPointPosition)) {
           Main.LogDebugWarning("[SpawnLanceLogic.GetInvalidLanceMemberSpawns] Lance member spawn is outside of the boundary. Select a new lance spawn point.");
           invalidLanceSpawns.Add(spawnPoint);
-          continue; 
+          continue;
         }
 
         // Ensure the lance member's spawn's closest valid point isn't on another spawn point's closest valid point
@@ -75,7 +75,7 @@ namespace MissionControl.Logic {
           continue;
         }
 
-        if (!PathFinderManager.Instance.IsSpawnValid(spawnPointPosition, checkTargetPosition, UnitType.Mech, spawnPoint.name)) {
+        if (!PathFinderManager.Instance.IsSpawnValid(spawnPoint, spawnPointPosition, checkTargetPosition, UnitType.Mech, spawnPoint.name)) {
           Main.LogDebugWarning($"[SpawnLanceLogic.GetInvalidLanceMemberSpawns] Lance member spawn '{spawnPoint.name}' path to check target '{checkTarget}' is blocked. Select a new lance spawn point");
           invalidLanceSpawns.Add(spawnPoint);
           continue;

@@ -47,13 +47,14 @@ namespace MissionControl.Logic {
     private void Init() {
       if (!inited) {
         Main.LogDebug($"[SpawnLanceAroundTarget] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
-        validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position, $"OrientationTarget.{orientationTarget.name}");
+        validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget, orientationTarget.transform.position, $"OrientationTarget.{orientationTarget.name}");
         inited = true;
       }
     }
 
     public override void Run(RunPayload payload) {
-      GetObjectReferences();
+      if (!GetObjectReferences()) return;
+
       SaveSpawnPositions(lance);
       Main.Logger.Log($"[SpawnLanceAroundTarget] Attemping for '{lance.name}'");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
@@ -67,7 +68,7 @@ namespace MissionControl.Logic {
       }
 
       Vector3 newSpawnPosition = GetRandomPositionFromTarget(validOrientationTargetPosition, minDistanceFromTarget, maxDistanceFromTarget);
-      newSpawnPosition = GetClosestValidPathFindingHex(newSpawnPosition, $"NewRandomSpawnPositionFromOrientationTarget.{orientationTarget.name}", 2);
+      newSpawnPosition = GetClosestValidPathFindingHex(lance, newSpawnPosition, $"NewRandomSpawnPositionFromOrientationTarget.{orientationTarget.name}", 2);
 
       if (encounterManager.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
         lance.transform.position = newSpawnPosition;
@@ -102,7 +103,7 @@ namespace MissionControl.Logic {
 
     private void SpawnLanceMember(GameObject spawnPoint, Vector3 anchorPoint) {
       Main.Logger.Log($"[SpawnLanceAroundTarget] Fitting member '{spawnPoint.name}' around anchor point '{anchorPoint}'");
-      Vector3 newSpawnLocation = GetClosestValidPathFindingHex(anchorPoint, $"SpawnLanceMember.{spawnPoint.name}", IsLancePlayerLance(lanceKey) ? orientationTarget.transform.position : Vector3.zero, 2);
+      Vector3 newSpawnLocation = GetClosestValidPathFindingHex(spawnPoint, anchorPoint, $"SpawnLanceMember.{spawnPoint.name}", IsLancePlayerLance(lanceKey) ? orientationTarget.transform.position : Vector3.zero, 2);
       spawnPoint.transform.position = newSpawnLocation;
     }
 
@@ -115,17 +116,25 @@ namespace MissionControl.Logic {
         Main.LogDebug($"[SpawnLanceAroundTarget] Cannot find a suitable lance spawn within the boundaries of {minDistanceFromTarget} and {maxDistanceFromTarget}. Widening search");
         minDistanceFromTarget -= 10;
         if (minDistanceFromTarget <= 10) minDistanceFromTarget = 10;
-        maxDistanceFromTarget += 25;     
+        maxDistanceFromTarget += 25;
       }
     }
 
-    protected override void GetObjectReferences() {
+    protected override bool GetObjectReferences() {
       this.EncounterRules.ObjectLookup.TryGetValue(lanceKey, out lance);
       this.EncounterRules.ObjectLookup.TryGetValue(orientationTargetKey, out orientationTarget);
 
-      if (lance == null || orientationTarget == null) {
-        Main.Logger.LogError("[SpawnLanceAroundTarget] Object references are null");
+      if (lance == null) {
+        Main.Logger.LogWarning($"[SpawnLanceAroundTarget] Object reference for target '{lanceKey}' is null. This will be handled gracefully.");
+        return false;
       }
+
+      if (orientationTarget == null) {
+        Main.Logger.LogWarning($"[SpawnLanceAroundTarget] Object reference for orientation target '{orientationTargetKey}' is null. This will be handled gracefully.");
+        return false;
+      }
+
+      return true;
     }
   }
 }

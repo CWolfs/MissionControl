@@ -74,7 +74,7 @@ namespace MissionControl.Logic {
     }
 
     public override void Run(RunPayload payload) {
-      GetObjectReferences();
+      if (!GetObjectReferences()) return;
 
       for (int i = 0; i < objectGos.Count; i++) {
         GameObject objectGo = objectGos[i];
@@ -94,7 +94,7 @@ namespace MissionControl.Logic {
           Main.LogDebug($"[SpawnObjectsAroundTarget] Reusing cached orientation target of '{orientationTarget.name}' at '{validOrientationTargetPosition}'.");
         } else {
           Main.LogDebug($"[SpawnObjectsAroundTarget] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
-          validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position, $"OrientationTarget.{orientationTarget.name}");
+          validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget, orientationTarget.transform.position, $"OrientationTarget.{orientationTarget.name}");
         }
 
         if (TotalAttemptCount >= TotalAttemptMax) {
@@ -103,7 +103,7 @@ namespace MissionControl.Logic {
         }
 
         Vector3 newSpawnPosition = GetRandomPositionFromTarget(validOrientationTargetPosition, minDistanceFromTarget, maxDistanceFromTarget);
-        newSpawnPosition = GetClosestValidPathFindingHex(newSpawnPosition, $"NewRandomSpawnPositionFromOrientationTarget.{orientationTarget.name}", 2);
+        newSpawnPosition = GetClosestValidPathFindingHex(objectGo, newSpawnPosition, $"NewRandomSpawnPositionFromOrientationTarget.{orientationTarget.name}", 2);
 
         if (encounterManager.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
           objectGo.transform.position = newSpawnPosition;
@@ -139,14 +139,15 @@ namespace MissionControl.Logic {
         Main.LogDebug($"[SpawnObjectsAroundTarget] Cannot find a suitable object spawn within the boundaries of {minDistanceFromTarget} and {maxDistanceFromTarget}. Widening search");
         minDistanceFromTarget -= 10;
         if (minDistanceFromTarget <= 10) minDistanceFromTarget = 10;
-        maxDistanceFromTarget += 25;     
+        maxDistanceFromTarget += 25;
       }
     }
 
-    protected override void GetObjectReferences() {
+    // TODO: Check the object references properly for nulls like the other spawners
+    protected override bool GetObjectReferences() {
       if (state != null) {
         List<string[]> extraLanceKeys = (List<string[]>)state.GetObject("ExtraLanceSpawnKeys");
-        for (int i = 0; i < extraLanceKeys.Count; i++){
+        for (int i = 0; i < extraLanceKeys.Count; i++) {
           string[] keys = extraLanceKeys[i];
           string objectKey = keys[0];
           string orientationObjectKey = keys[1];
@@ -174,6 +175,8 @@ namespace MissionControl.Logic {
         this.EncounterRules.ObjectLookup.TryGetValue(defaultOrientationTargetKey, out defaultOrientationTargetGoShell);
         orientationTargets[defaultOrientationTargetKey] = defaultOrientationTargetGoShell;
       }
+
+      return true;
     }
   }
 }

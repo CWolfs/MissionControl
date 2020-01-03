@@ -103,13 +103,18 @@ namespace MissionControl {
       }
     }
 
-    public bool IsSpawnValid(Vector3 position, Vector3 validityPosition, UnitType type, string identifier) {
+    public bool IsSpawnValid(GameObject spawnGo, Vector3 position, Vector3 validityPosition, UnitType type, string identifier) {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
       MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
 
       Main.LogDebug($"");
       Main.LogDebug($"-------- [PFM.IsSpawnValid] [{identifier}] --------");
+
+      if (position.IsTooCloseToAnotherSpawn(spawnGo)) {
+        Main.LogDebug($"[PFM] Position '{position}' is too close to another spawn point. Not a valid location.");
+        return false;
+      }
 
       if (cellData.cachedSteepness > MAX_SLOPE_FOR_PATHFINDING) {
         Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Spawn point of '{cellData.cachedSteepness}' is too steep (> {MAX_SLOPE_FOR_PATHFINDING}). Not a valid spawn");

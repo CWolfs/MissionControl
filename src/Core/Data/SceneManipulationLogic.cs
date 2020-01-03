@@ -25,7 +25,7 @@ namespace MissionControl.Logic {
       EncounterRules = encounterRules;
     }
 
-    protected abstract void GetObjectReferences();
+    protected abstract bool GetObjectReferences();
 
     protected void SaveSpawnPosition(GameObject objectGo) {
       originalObjectPosition = objectGo.transform.position;

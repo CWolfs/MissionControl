@@ -45,8 +45,8 @@ namespace MissionControl.Logic {
           }
         }
 
-        Main.Logger.LogError($"[SelectAppropriateLanceOverride] MLanceOverride of '{selectedLanceKey}' not found. Defaulting to 'Generic_Battle_Lance'");
-        return DataManager.Instance.GetLanceOverride("Generic_Battle_Lance");
+        Main.Logger.LogError($"[SelectAppropriateLanceOverride] MLanceOverride of '{selectedLanceKey}' not found. Defaulting to 'Generic_Light_Battle_Lance'");
+        return DataManager.Instance.GetLanceOverride("Generic_Light_Battle_Lance");
       }
     }
   }
