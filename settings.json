@@ -42,7 +42,7 @@
   "ExtendedBoundaries": {
     "Enable": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
-    "IncreaseBoundarySizeByPercentage": 0.3
+    "IncreaseBoundarySizeByPercentage": 0.2
   },
   "DynamicWithdraw": {
     "Enable": true,

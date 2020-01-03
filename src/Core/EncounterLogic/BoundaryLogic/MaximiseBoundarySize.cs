@@ -57,19 +57,19 @@ namespace MissionControl.Logic {
 
               float xPosition = 0;
               if (position.x > 0) {
-                xPosition = position.x - (movementFactor / 2f);
+                xPosition = position.x - movementFactor; // (movementFactor / 2f);
                 if (xPosition < 0) xPosition = 0;
               } else if (position.x < 0) {
-                xPosition = position.x + (movementFactor / 2f);
+                xPosition = position.x + movementFactor; // (movementFactor / 2f);
                 if (xPosition > 0) xPosition = 0;
               }
 
               float zPosition = 0;
               if (position.z > 0) {
-                zPosition = position.z - (movementFactor / 2f);
+                zPosition = position.z - movementFactor; // (movementFactor / 2f);
                 if (zPosition < 0) zPosition = 0;
               } else if (position.z < 0) {
-                zPosition = position.z + (movementFactor / 2f);
+                zPosition = position.z + movementFactor; // (movementFactor / 2f);
                 if (zPosition > 0) zPosition = 0;
               }
 
