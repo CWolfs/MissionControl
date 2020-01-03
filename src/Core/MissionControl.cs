@@ -332,6 +332,7 @@ namespace MissionControl {
 
     public bool AllowMissionControl() {
       if (this.CurrentContract.IsStoryContract) return false;
+      if (this.CurrentContract.IsRestorationContract) return false;
       if (!this.CurrentContract.IsFlashpointContract) return true;
       return this.CurrentContract.IsFlashpointContract && !Main.Settings.AdditionalLanceSettings.DisableIfFlashpointContract;
     }
