@@ -97,6 +97,15 @@ namespace MissionControl.Logic {
               Vector3 spawnPositon = SceneUtils.GetRandomPositionFromTarget(randomLanceSpawn, 24, 100);
               spawnPositon = spawnPositon.GetClosestHexLerpedPointOnGrid();
 
+              // Ensure spawn position isn't on another unit spawn. Give up if one isn't possible.
+              int failSafe = 0;
+              while (spawnPositon.IsTooCloseToAnotherSpawn()) {
+                spawnPositon = SceneUtils.GetRandomPositionFromTarget(randomLanceSpawn, 24, 100);
+                spawnPositon = spawnPositon.GetClosestHexLerpedPointOnGrid();
+                if (failSafe > 20) break;
+                failSafe++;
+              }
+
               Main.Logger.Log($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Creating lance '{lanceOverride.name}' spawn point 'UnitSpawnPoint{i + 1}'");
               UnitSpawnPointGameLogic unitSpawnGameLogic = LanceSpawnerFactory.CreateUnitSpawnPoint(lanceSpawner.gameObject, $"UnitSpawnPoint{i + 1}", spawnPositon, lanceOverride.unitSpawnPointOverrideList[i].unitSpawnPoint.EncounterObjectGuid);
 
