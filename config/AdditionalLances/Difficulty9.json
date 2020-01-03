@@ -2,7 +2,7 @@
   "IncludeContractTypes": [],
   "ExcludeContractTypes": [],
   "LancePool": {
-    "ALL": ["Generic_Assault_Battle_Lance", "Damaged_Assault_Battle_Lance"]
+    "ALL": ["Generic_Heavy_Battle_Lance", "Damaged_Heavy_Battle_Lance"]
   },
   "Enemy": {
     "Max": 2,
@@ -17,22 +17,7 @@
     },
     "LancePool": {
       "ALL": [
-        "Generic_Assault_Battle_Lance"
-      ],
-      "CONTRACT_TYPE:DestroyBase": [
-        "Brawler_Lance", "Defending_Lance"
-      ],
-      "CONTRACT_TYPE:DefendBase": [
-        "Heavy_Missile_Lance", "Attacking_Lance"
-      ],
-      "BIOME:DesertParched": [
-        "BBQ_Masters"
-      ],
-      "BIOME:LowlandsSpring": [
-        "Im_Like_A_Turret_In_Water_I_Run_So_Hot"
-      ],
-      "FACTION:Davion:50:99": [
-        "Heavy_Davion_Battle_Lance"
+        "Generic_Heavy_Battle_Lance"
       ]
     }
   },
@@ -48,13 +33,7 @@
     },
     "LancePool": {
       "ALL": [
-        "Generic_Assault_Battle_Lance"
-      ],
-      "CONTRACT_TYPE:DestroyBase": [
-        "Heavy_Missile_Lance", "Attacking_Lance"
-      ],
-      "CONTRACT_TYPE:DefendBase": [
-        "Brawler_Lance", "Defending_Lance"
+        "Generic_Heavy_Battle_Lance"
       ]
     }
   }

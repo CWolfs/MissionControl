@@ -18,12 +18,27 @@
     "LancePool": {
       "ALL": [
         "Generic_Medium_Battle_Lance"
+      ],
+      "CONTRACT_TYPE:DestroyBase": [
+        "Brawler_Lance", "Defending_Lance"
+      ],
+      "CONTRACT_TYPE:DefendBase": [
+        "Heavy_Missile_Lance", "Attacking_Lance"
+      ],
+      "BIOME:DesertParched": [
+        "BBQ_Masters"
+      ],
+      "BIOME:LowlandsSpring": [
+        "Im_Like_A_Turret_In_Water_I_Run_So_Hot"
+      ],
+      "FACTION:Davion:50:99": [
+        "Heavy_Davion_Battle_Lance"
       ]
     }
   },
   "Allies": {
     "Max": 1,
-    "ChanceToSpawn": 0.5,
+    "ChanceToSpawn": 0.4,
     "EliteLances": {
       "Conditions": ["IsAlly"],
       "Overrides": {
@@ -34,6 +49,12 @@
     "LancePool": {
       "ALL": [
         "Generic_Medium_Battle_Lance"
+      ],
+      "CONTRACT_TYPE:DestroyBase": [
+        "Heavy_Missile_Lance", "Attacking_Lance"
+      ],
+      "CONTRACT_TYPE:DefendBase": [
+        "Brawler_Lance", "Defending_Lance"
       ]
     }
   }
