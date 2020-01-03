@@ -54,7 +54,7 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       if (!GetObjectReferences()) return;
-      
+
       SaveSpawnPositions(lance);
       Main.Logger.Log($"[SpawnLanceAnywhere] Attemping for '{lance.name}'");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
@@ -78,8 +78,6 @@ namespace MissionControl.Logic {
       newPosition = GetClosestValidPathFindingHex(newPosition, $"NewSpawnPosition.{lance.name}", IsLancePlayerLance(lanceKey) ? orientationTarget.transform.position : Vector3.zero, 2);
       Main.LogDebug($"[SpawnLanceAnywhere] Attempting selection of random position in bounds. Selected position '{newPosition}'");
       lance.transform.position = newPosition;
-
-      // Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget.transform.position, 2);
 
       if (useOrientationTarget) RotateToTarget(lance, orientationTarget);
 
