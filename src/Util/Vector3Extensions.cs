@@ -25,7 +25,7 @@ public static class Vector3Extensions {
 
     foreach (UnitSpawnPointGameLogic unitSpawn in unitSpawns) {
       // Guard: Ignore the object that the position originated from
-      if (unitSpawn.name == ignoreGo.name) {
+      if ((ignoreGo != null) && (unitSpawn.name == ignoreGo.name)) {
         MissionControl.Main.LogDebug($"[IsTooCloseToAnotherSpawn] Checked target position '{position}' and found object the position originated from. Safely ignoring this for '{unitSpawn.name}'");
         continue;
       }
