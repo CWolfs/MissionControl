@@ -10,7 +10,7 @@ namespace MissionControl.Config {
     [JsonProperty("ContractTypeName")]
     public string ContractTypeName { get; set; } = "UNSET";
 
-    [JsonProperty("SizePercentage")]
+    [JsonProperty("IncreaseBoundarySizeByPercentage")]
     public float IncreaseBoundarySizeByPercentage { get; set; } = 0.2f;
 
     public string Id {
