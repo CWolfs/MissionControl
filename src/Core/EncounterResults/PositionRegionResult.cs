@@ -66,7 +66,7 @@ namespace MissionControl.Result {
         }
       }
 
-      // Create new mesh from points and set to collisder and mesh filter
+      // Create new mesh from points and set to collider and mesh filter
       MeshCollider collider = regionGo.GetComponent<MeshCollider>();
       MeshFilter mf = regionGo.GetComponent<MeshFilter>();
       Mesh mesh = MeshTools.CreateHexigon(REGION_RADIUS, meshPoints);
