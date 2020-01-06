@@ -22,7 +22,7 @@ namespace MissionControl.Logic {
 
       if (size > 0f) {
         SetBoundarySizeToCustom(encounterLayerData, size);
-      } else if (size >= 0.5f) {  // If you're going to extend by 4 times (50% width and depth) you might as well go full map
+      } else if (size > 0.75f) {  // If you're going to extend by a possible 6 times (75% extra width and depth depending on existing boundary) you might as well go full map
         MatchBoundarySizeToMapSize(encounterLayerData);
       }
     }
