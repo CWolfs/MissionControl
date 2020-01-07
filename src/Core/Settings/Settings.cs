@@ -7,6 +7,12 @@ namespace MissionControl.Config {
     [JsonProperty("DebugMode")]
     public bool DebugMode { get; set; } = false;
 
+    [JsonProperty("VersionCheck")]
+    public bool VersionCheck { get; set; } = true;
+
+    [JsonIgnore]
+    public string Version { get; set; } = "0.0.0";
+
     [JsonProperty("DebugSkirmishMode")]
     public bool DebugSkirmishMode { get; set; } = false;
 

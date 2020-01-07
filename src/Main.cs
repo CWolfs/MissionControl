@@ -1,10 +1,15 @@
-using UnityEngine;
 using System;
 using System.IO;
+
 using System.Collections.Generic;
+
 using HBS.Logging;
+
 using Harmony;
+
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 using System.Reflection;
 
 using MissionControl.Config;
@@ -58,6 +63,11 @@ namespace MissionControl {
 
       string settingsJsonString = File.ReadAllText($"{modDirectory}/settings.json");
       Settings = JsonConvert.DeserializeObject<Config.Settings>(settingsJsonString, serialiserSettings);
+
+      string modJsonString = File.ReadAllText($"{modDirectory}/mod.json");
+      JObject json = JObject.Parse(modJsonString);
+      string version = (string)json["Version"];
+      Settings.Version = version;
 
       string alPath = $"{modDirectory}/config/AdditionalLances/";
       string additionalLancesJsonString = File.ReadAllText($"{alPath}General.json");
