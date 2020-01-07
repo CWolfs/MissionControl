@@ -1,5 +1,6 @@
 {
   "DebugMode": true,
+  "VersionCheck": true,
   "DebugSkirmishMode": true,
   "DisableIfFlashpointContract": true,
   "RandomSpawns": {

@@ -1,12 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-using System;
-using System.Linq;
-using System.Reflection;
 using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
 
 using TMPro;
 
@@ -14,11 +9,8 @@ using Harmony;
 
 using BattleTech;
 using BattleTech.UI;
-using BattleTech.Data;
 using BattleTech.Save;
-using BattleTech.Framework;
 
-using MissionControl.Data;
 using MissionControl.Patches;
 
 namespace MissionControl {
@@ -107,10 +99,10 @@ namespace MissionControl {
       AccessTools.Field(typeof(SkirmishSettings_Beta), "playerSettings").SetValue(skirmishMenu, ActiveOrDefaultSettings.CloudSettings);
       AccessTools.Field(typeof(SkirmishSettings_Beta), "mapModule").SetValue(skirmishMenu, new MapModule());
       AccessTools.Field(typeof(SkirmishSettings_Beta), "lanceBudgetDropdown").SetValue(skirmishMenu, new MockTMPDropdown());
-      
+
       skirmishMenu.Init();
       AccessTools.Method(typeof(SkirmishSettings_Beta), "LoadLanceConfiguratorData").Invoke(skirmishMenu, null);
-  
+
       UnityGameInstance.Instance.StartCoroutine(WaitForLoadingCurtain(skirmishMenu));
     }
 
@@ -126,6 +118,12 @@ namespace MissionControl {
     private void ResetPatchValues() {
       MapModuleSelectedMapPatch.mapAndEncounter = null;
       MapModuleSelectedMoodPatch.mood = null;
+    }
+
+    public void ShowNewerVersionAvailablePopup(string currentVersion, string latestVersion) {
+      GenericPopupBuilder.Create(GenericPopupType.Warning,
+        $"A new version of Mission Control is available ({latestVersion}). You have {currentVersion}. (You can disable this warning in the settings.json)")
+        .AddButton("OK", null, true, null).Render();
     }
   }
 }
