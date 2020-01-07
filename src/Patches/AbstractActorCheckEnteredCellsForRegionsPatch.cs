@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 using Harmony;
 
 using BattleTech;
@@ -7,6 +10,7 @@ using BattleTech;
 */
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(AbstractActor), "CheckEnteredCellsForRegions")]
+  [HarmonyPatch(new Type[] { typeof(List<MapEncounterLayerDataCell>) })]
   public class AbstractActorCheckEnteredCellsForRegionsPatch {
     public static bool Prefix(Contract __instance) {
       if (!MissionControl.Instance.IsMCLoadingFinished) {
