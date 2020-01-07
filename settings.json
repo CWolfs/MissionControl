@@ -62,7 +62,8 @@
     "FollowPlayer": {
       "Target": "HeaviestMech",
       "StopWhen": "OnEnemyDetected",
-      "MaxDistanceFromTargetBeforeSprinting": 200
+      "MaxDistanceFromTargetBeforeSprinting": 200,
+      "TargetZoneRadius": 120
     }
   }
 }
