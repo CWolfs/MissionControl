@@ -12,5 +12,8 @@ namespace MissionControl.Config {
 
     [JsonProperty("MaxDistanceFromTargetBeforeSprinting")]
     public float MaxDistanceFromTargetBeforeSprinting { get; set; } = 200;
+
+    [JsonProperty("TargetZoneRadius")]
+    public float TargetZoneRadius { get; set; } = 120;
   }
 }
