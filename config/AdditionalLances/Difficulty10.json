@@ -18,7 +18,7 @@
     },
     "LancePool": {
       "ALL": [
-        "Generic_Assault_Battle_Lance"
+        "Generic_Medium_Battle_Lance", "Generic_Heavy_Battle_Lance", "Generic_Assault_Battle_Lance"
       ]
     }
   },
@@ -34,7 +34,7 @@
     },
     "LancePool": {
       "ALL": [
-        "Generic_Assault_Battle_Lance"
+        "Generic_Heavy_Battle_Lance", "Generic_Assault_Battle_Lance"
       ]
     }
   }
