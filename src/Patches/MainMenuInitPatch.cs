@@ -1,13 +1,8 @@
 using System;
-using System.Net;
 
 using Harmony;
 
 using BattleTech.UI;
-
-using Newtonsoft.Json.Linq;
-
-using MissionControl;
 
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(MainMenu), "Init")]
@@ -25,15 +20,14 @@ namespace MissionControl.Patches {
       }
 
       if (Main.Settings.VersionCheck) {
-        string modJson = new WebClient().DownloadString("https://raw.githubusercontent.com/CWolfs/MissionControl/master/mod.json");
-        JObject json = JObject.Parse(modJson);
-        string version = (string)json["Version"];
+        // GUARD: If the github version cannot be obtained, ignore this check
+        if (Main.Settings.GithubVersion == "0.0.0") return;
 
-        if (Main.Settings.Version != version) {
+        if (Main.Settings.Version != Main.Settings.GithubVersion) {
           Version currentVersion = new Version(Main.Settings.Version);
-          Version latestVersion = new Version(version);
+          Version latestVersion = new Version(Main.Settings.GithubVersion);
           if (currentVersion < latestVersion) {
-            UiManager.Instance.ShowNewerVersionAvailablePopup(Main.Settings.Version, version);
+            UiManager.Instance.ShowNewerVersionAvailablePopup(Main.Settings.Version, Main.Settings.GithubVersion);
           }
         }
       }

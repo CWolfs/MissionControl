@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Net;
 
 using System.Collections.Generic;
 
@@ -45,6 +46,7 @@ namespace MissionControl {
         InitLogger(modDirectory);
         LoadSettings(modDirectory);
         LoadData(modDirectory);
+        VersionCheck();
       } catch (Exception e) {
         Logger.LogError(e);
         Logger.Log("Error loading mod settings - using defaults.");
@@ -53,6 +55,17 @@ namespace MissionControl {
 
       HarmonyInstance harmony = HarmonyInstance.Create("co.uk.cwolf.MissionControl");
       harmony.PatchAll(Assembly.GetExecutingAssembly());
+    }
+
+    private static void VersionCheck() {
+      try {
+        string modJson = new WebClient().DownloadString("https://raw.githubusercontent.com/CWolfs/MissionControl/master/mod.json");
+        JObject json = JObject.Parse(modJson);
+        string version = (string)json["Version"];
+        Main.Settings.GithubVersion = version;
+      } catch (WebException) {
+        // Do nothing if there's a problem getting the version from Github
+      }
     }
 
     private static void LoadSettings(string modDirectory) {
