@@ -17,7 +17,7 @@
     },
     "LancePool": {
       "ALL": [
-        "Generic_Heavy_Battle_Lance"
+        "Generic_Light_Battle_Lance", "Generic_Light_Battle_Lance", "Generic_Heavy_Battle_Lance"
       ]
     }
   },
