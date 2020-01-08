@@ -5,7 +5,7 @@
     "ALL": ["Generic_Heavy_Battle_Lance", "Damaged_Heavy_Battle_Lance"]
   },
   "Enemy": {
-    "Max": 2,
+    "Max": 1,
     "ExcludeContractTypes": [],
     "ChanceToSpawn": 0.4,
     "EliteLances": {

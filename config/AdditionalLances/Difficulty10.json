@@ -5,14 +5,15 @@
     "ALL": ["Generic_Assault_Battle_Lance", "Damaged_Assault_Battle_Lance"]
   },
   "Enemy": {
-    "Max": 2,
+    "Max": 1,
     "ExcludeContractTypes": [],
     "ChanceToSpawn": 0.4,
     "EliteLances": {
       "Conditions": ["IsEnemy"],
       "Suffix": "_Elite",
       "Overrides": {
-        "ChanceToSpawn": 0.6
+        "Max": 2,
+        "ChanceToSpawn": 0.4
       }
     },
     "LancePool": {
@@ -28,7 +29,7 @@
       "Conditions": ["IsAlly"],
       "Overrides": {
         "Max": 2,
-        "ChanceToSpawn": 0.6
+        "ChanceToSpawn": 0.5
       }
     },
     "LancePool": {
