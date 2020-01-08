@@ -205,12 +205,13 @@ namespace MissionControl.Rules {
 
       Main.Logger.Log($"[{this.GetType().Name}] Building additional lance rules");
 
-      if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
+      int numberOfAdditionalEnemyLances = 0;
 
+      if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
         bool isPrimaryObjective = MissionControl.Instance.CurrentContractType.In("SimpleBattle");
         FactionDef faction = MissionControl.Instance.GetFactionFromTeamType("enemy");
 
-        int numberOfAdditionalEnemyLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances(faction, "enemy");
+        numberOfAdditionalEnemyLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances(faction, "enemy");
         int objectivePriority = -10;
 
         for (int i = 0; i < numberOfAdditionalEnemyLances; i++) {
@@ -228,6 +229,9 @@ namespace MissionControl.Rules {
         FactionDef faction = MissionControl.Instance.GetFactionFromTeamType("allies");
 
         int numberOfAdditionalAllyLances = Main.Settings.ActiveAdditionalLances.Allies.SelectNumberOfAdditionalLances(faction, "allies");
+
+        if (Main.Settings.AdditionalLanceSettings.MatchAllyLanceCountToEnemy) numberOfAdditionalAllyLances = numberOfAdditionalEnemyLances;
+
         for (int i = 0; i < numberOfAdditionalAllyLances; i++) {
           new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, minAllyDistance, maxAllyDistance);
         }

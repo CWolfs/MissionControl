@@ -29,7 +29,8 @@
       "Enable": true,
       "Limited": false,
       "LimitedToUnder": 300
-    }
+    },
+    "MatchAllyLanceCountToEnemy": false
   },
   "ExtendedLances": {
     "Enable": true,

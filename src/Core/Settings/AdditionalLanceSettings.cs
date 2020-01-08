@@ -26,5 +26,8 @@ namespace MissionControl.Config {
 
     [JsonProperty("DisableWhenMaxTonnage")]
     public DisableWhenMaxTonnage DisableWhenMaxTonnage { get; set; } = new DisableWhenMaxTonnage();
+
+    [JsonProperty("MatchAllyLanceCountToEnemy")]
+    public bool MatchAllyLanceCountToEnemy { get; set; } = false;
   }
 }
