@@ -1,5 +1,6 @@
-using System.Collections.Generic;
 using System.Linq;
+using System.Globalization;
+using System.Collections.Generic;
 
 using Newtonsoft.Json;
 
@@ -35,7 +36,7 @@ namespace MissionControl.Config {
 
     public float GetRewardValue(Dictionary<string, string> reward) {
       if (reward.ContainsKey("Type")) {
-        return float.Parse(reward["Value"]);
+        return float.Parse(reward["Value"], CultureInfo.InvariantCulture);
       } else {
         Main.LogDebugWarning("[AdditionalLances] You are setting 'RewardPerLance' but not setting 'Type'. Fix this!");
         return 0;
