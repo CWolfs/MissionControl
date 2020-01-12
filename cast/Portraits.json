@@ -32,9 +32,10 @@
         "sprites/Portraits/Male_Rank3_6.png",
         "sprites/Portraits/urban_garrison256.png",
         "sprites/Portraits/pirate_garrison256.png",
+        "sprites/Portraits/Commander_Pilot.png",
         "sprites/Portraits/Male_Rank3_7.png"
     ],
-    "Feale": [
+    "Female": [
         "sprites/Portraits/female_Rank1_1.png",
         "sprites/Portraits/Female_Rank1_2.png",
         "sprites/Portraits/Female_Rank1_3.png",
@@ -54,7 +55,10 @@
         "sprites/Portraits/Female_Rank3_3.png",
         "sprites/Portraits/Female_Rank3_4.png",
         "sprites/Portraits/Female_Rank3_5.png",
+        "sprites/Portraits/rebel_1.png",
+        "sprites/Portraits/rebel_2.png",
         "sprites/Portraits/urban_civilian_female.png",
+        "sprites/Portraits/pirate_liason_3.png",
         "sprites/Portraits/Female_Rank3_6.png"
     ],
     "All": [
