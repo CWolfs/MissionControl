@@ -334,7 +334,9 @@ namespace MissionControl {
       if (this.CurrentContract.IsStoryContract) return false;
       if (this.CurrentContract.IsRestorationContract) return false;
       if (!this.CurrentContract.IsFlashpointContract) return true;
-      return this.CurrentContract.IsFlashpointContract && !Main.Settings.AdditionalLanceSettings.DisableIfFlashpointContract;
+      if (!this.CurrentContract.IsFlashpointCampaignContract) return true;
+      return (this.CurrentContract.IsFlashpointContract || this.CurrentContract.IsFlashpointCampaignContract)
+        && !Main.Settings.AdditionalLanceSettings.DisableIfFlashpointContract;
     }
 
     public bool IsDroppingCustomControlledPlayerLance() {
