@@ -126,8 +126,8 @@ namespace MissionControl.Rules {
       return guids;
     }
 
-    private bool IsPlotValidForEncounter(Transform plotTransform) {
-      Transform selectedPlotTransform = plotTransform.FindIgnoreCaseStartsWith("PlotVariant");
+    private bool IsPlotValidForEncounter(Transform plotTransform, string name = "PlotVariant") {
+      Transform selectedPlotTransform = plotTransform.FindIgnoreCaseStartsWith(name);
 
       if (selectedPlotTransform == null) {
         return false;
@@ -139,15 +139,14 @@ namespace MissionControl.Rules {
       return false;
     }
 
-    protected GameObject GetClosestPlot(Vector3 origin) {
-      GameObject plotsParentGo = GameObject.Find("PlotParent");
+    private GameObject CheckAllPlotsForValidPlot(GameObject plotsParent, Vector3 origin, string name) {
       GameObject closestPlot = null;
       float closestDistance = -1;
 
-      foreach (Transform t in plotsParentGo.transform) {
+      foreach (Transform t in plotsParent.transform) {
         Vector3 plotPosition = t.position;
         if (EncounterLayerData.IsInEncounterBounds(plotPosition)) {
-          if (IsPlotValidForEncounter(t)) {
+          if (IsPlotValidForEncounter(t, name)) {
             float distance = Vector3.Distance(t.position, origin);
             if (closestDistance == -1 || closestDistance < distance) {
               closestDistance = distance;
@@ -155,6 +154,20 @@ namespace MissionControl.Rules {
             }
           }
         }
+      }
+
+      return closestPlot;
+    }
+
+    protected GameObject GetClosestPlot(Vector3 origin) {
+      GameObject plotsParentGo = GameObject.Find("PlotParent");
+      GameObject closestPlot = null;
+
+      closestPlot = CheckAllPlotsForValidPlot(plotsParentGo, origin, "PlotVariant");
+
+      // If no plot is found, select on a secondary fallback
+      if (closestPlot == null) {
+        closestPlot = CheckAllPlotsForValidPlot(plotsParentGo, origin, "Default");
       }
 
       return closestPlot;
