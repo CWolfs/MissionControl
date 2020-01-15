@@ -15,6 +15,8 @@ namespace MissionControl.Config {
       string id = $"{mapId}.{contractTypeName}";
 
       foreach (ExtendedBoundariesOverride ovr in Overrides) {
+        if (ovr.MapId == "UNSET") ovr.MapId = mapId;  // Allow for fuzzy map matching
+
         if (ovr.Id == id) return ovr.IncreaseBoundarySizeByPercentage;
       }
 
