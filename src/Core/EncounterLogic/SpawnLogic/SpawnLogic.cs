@@ -13,7 +13,7 @@ using MissionControl.Utils;
 namespace MissionControl.Logic {
   public abstract class SpawnLogic : SceneManipulationLogic {
 
-    private int ADJACENT_NODE_LIMITED = 60;
+    private int ADJACENT_NODE_LIMITED = 20;
     private List<Vector3> checkedAdjacentPoints = new List<Vector3>();
 
     public SpawnLogic(EncounterRules encounterRules) : base(encounterRules) { }
@@ -34,6 +34,9 @@ namespace MissionControl.Logic {
       if (radius > 12) {
         origin = origin.GetClosestHexLerpedPointOnGrid();
         Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Reverting to original with fixed height of '{origin}'");
+
+        // FIXME: At this point often the spawn point gets dumped on a valid hex but it's got not exit routes. 
+
         checkedAdjacentPoints.Clear();
         return origin;
       }
@@ -51,8 +54,10 @@ namespace MissionControl.Logic {
     }
 
     private Vector3 PathfindFromPointToSpawn(GameObject originGo, Vector3 origin, int radius, string identifier, Vector3 pathfindingTarget) {
+      EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       Vector3 originOnGrid = origin.GetClosestHexLerpedPointOnGrid();
+
       // TODO: If the SpawnerPlayerLanceGo's closest hex point is in an inaccessible location - this will cause infinite loading issues
       // TODO: Need to find a reliably accessible location (hard to do in a proc-genned setup)
       Vector3 pathfindingPoint = (pathfindingTarget == Vector3.zero) ?
@@ -65,9 +70,11 @@ namespace MissionControl.Logic {
         List<Vector3> adjacentPointsOnGrid = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(originOnGrid, radius);
         Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Adjacent point count is '{adjacentPointsOnGrid.Count}'");
 
-        adjacentPointsOnGrid = adjacentPointsOnGrid.Where(point => !checkedAdjacentPoints.Contains(point)).ToList();
+        adjacentPointsOnGrid = adjacentPointsOnGrid.Where(point => {
+          return !checkedAdjacentPoints.Contains(point) && encounterLayerData.IsInEncounterBounds(point);
+        }).ToList();
 
-        Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Removed already checked points. Adjacent point count is now '{adjacentPointsOnGrid.Count}'");
+        Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Removed already checked points & out of bounds points. Adjacent point count is now '{adjacentPointsOnGrid.Count}'");
 
         adjacentPointsOnGrid.Shuffle();
 
@@ -79,6 +86,8 @@ namespace MissionControl.Logic {
           }
 
           Vector3 validPoint = point.GetClosestHexLerpedPointOnGrid();
+
+          Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Testing an adjacent point of '{validPoint}'");
           if (PathFinderManager.Instance.IsSpawnValid(originGo, validPoint, pathfindingPoint, UnitType.Mech, identifier)) {
             return validPoint;
           }
