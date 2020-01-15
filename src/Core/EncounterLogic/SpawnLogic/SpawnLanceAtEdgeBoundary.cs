@@ -131,7 +131,12 @@ namespace MissionControl.Logic {
     private void SpawnLanceMember(GameObject spawnPoint, Vector3 anchorPoint) {
       Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary.SpawnLanceMember] Fitting member '{spawnPoint.name}' at anchor point '{anchorPoint}'");
       Vector3 newSpawnLocation = GetClosestValidPathFindingHex(spawnPoint, anchorPoint, $"SpawnLanceMember.{spawnPoint.name}", IsLancePlayerLance(lanceKey) ? orientationTarget.transform.position : Vector3.zero, 2);
-      spawnPoint.transform.position = newSpawnLocation;
+
+      if (!newSpawnLocation.IsTooCloseToAnotherSpawn(spawnPoint)) {
+        spawnPoint.transform.position = newSpawnLocation;
+      } else {
+        SpawnLanceMember(spawnPoint, anchorPoint);
+      }
     }
 
     private void CheckAttempts() {
