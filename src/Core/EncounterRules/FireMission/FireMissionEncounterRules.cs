@@ -17,7 +17,7 @@ namespace MissionControl.Rules {
 
       Main.Logger.Log("[FireMissionEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceAroundTarget(this, "SpawnerPlayerLance", "ChunkBeaconRegion1",
-        SpawnLogic.LookDirection.TOWARDS_TARGET, 400, 600, true));
+        SpawnLogic.LookDirection.TOWARDS_TARGET, 500, 700, true));
     }
 
     public override void LinkObjectReferences(string mapName) {
