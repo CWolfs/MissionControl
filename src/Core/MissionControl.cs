@@ -273,7 +273,7 @@ namespace MissionControl {
         if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.DisableWhenMaxTonnage.AreLancesAllowed((int)this.CurrentContract.Override.lanceMaxTonnage);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.ActiveAdditionalLances.GetValidContractTypes(teamType).Contains(CurrentContractType);
 
-        Main.LogDebug($"[AreAdditionalLancesAllowed] {areLancesAllowed}");
+        Main.LogDebug($"[AreAdditionalLancesAllowed] for {teamType}: {areLancesAllowed}");
         return areLancesAllowed;
       }
       Main.Logger.Log($"[MissionControl] AdditionalLances are disabled.");
