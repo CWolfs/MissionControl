@@ -1,11 +1,13 @@
 using UnityEngine;
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using BattleTech;
 using BattleTech.Data;
 
+using MissionControl.Data;
 using MissionControl.Logic;
 using MissionControl.Rules;
 using MissionControl.Utils;
@@ -156,6 +158,19 @@ namespace MissionControl {
       SetContractType(CurrentContract.ContractTypeValue);
       AiManager.Instance.ResetCustomBehaviourVariableScopes();
       ContractStats.Clear();
+      ClearOldContractData();
+    }
+
+    private void ClearOldContractData() {
+      Main.Logger.Log($"[MissionControl] Clearing old contract data");
+
+      IsMCLoadingFinished = false;
+
+      // Clear old lance data
+      CurrentContract.Override.targetTeam.lanceOverrideList =
+        CurrentContract.Override.targetTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
+      CurrentContract.Override.employerTeam.lanceOverrideList =
+        CurrentContract.Override.employerTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
     }
 
     public void SetActiveAdditionalLances(Contract contract) {
@@ -220,7 +235,6 @@ namespace MissionControl {
       if (AllowMissionControl()) {
         EncounterRules = (EncounterRules)Activator.CreateInstance(encounterRules);
         EncounterRulesName = encounterRules.Name.Replace("EncounterRules", "");
-        IsMCLoadingFinished = false;
         EncounterRules.Build();
         EncounterRules.ActivatePostFeatures();
       } else {
