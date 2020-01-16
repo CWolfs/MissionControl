@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace MissionControl.Config {
   public class AdditionalLanceSettings : AdvancedSettings {
+    [JsonProperty("IsPrimaryObjectiveIn")]
+    public List<string> IsPrimaryObjectiveIn { get; set; } = new List<string>() { "SimpleBattle" };
+
     [JsonProperty("UseElites")]
     public bool UseElites { get; set; } = true;
 

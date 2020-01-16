@@ -221,7 +221,8 @@ namespace MissionControl.Rules {
       int numberOfAdditionalEnemyLances = 0;
 
       if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
-        bool isPrimaryObjective = MissionControl.Instance.CurrentContractType.In("SimpleBattle");
+        bool isPrimaryObjective = MissionControl.Instance.CurrentContractType.In(Main.Settings.AdditionalLanceSettings.IsPrimaryObjectiveIn.ToArray());
+        Main.Logger.Log($"[{this.GetType().Name}] Additional Lances will be primary objectives? {isPrimaryObjective}");
         FactionDef faction = MissionControl.Instance.GetFactionFromTeamType("enemy");
 
         numberOfAdditionalEnemyLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances(faction, "enemy");
