@@ -220,6 +220,7 @@ namespace MissionControl {
       if (AllowMissionControl()) {
         EncounterRules = (EncounterRules)Activator.CreateInstance(encounterRules);
         EncounterRulesName = encounterRules.Name.Replace("EncounterRules", "");
+        IsMCLoadingFinished = false;
         EncounterRules.Build();
         EncounterRules.ActivatePostFeatures();
       } else {
