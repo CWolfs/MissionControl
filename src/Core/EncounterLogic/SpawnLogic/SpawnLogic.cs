@@ -26,6 +26,8 @@ namespace MissionControl.Logic {
       return GetClosestValidPathFindingHex(originGo, origin, identifier, Vector3.zero, radius);
     }
 
+    // FIXME: If this method struggles to find a spawn it will revert to an original or base spawn location. If it does that there's a high chance
+    //        That this mech will be in a path find hex dead spot.
     public Vector3 GetClosestValidPathFindingHex(GameObject originGo, Vector3 origin, string identifier, Vector3 pathfindingTarget, int radius = 3) {
       Main.LogDebug($"[GetClosestValidPathFindingHex] About to process with origin '{origin}'");
       Vector3 validOrigin = PathfindFromPointToSpawn(originGo, origin, radius, identifier, pathfindingTarget);
