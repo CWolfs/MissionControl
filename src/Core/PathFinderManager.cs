@@ -293,20 +293,14 @@ namespace MissionControl {
 
     public void WasABadPathfindTest(Vector3 pathfindTarget) {
       if (!estimatesOfBadPathfings.ContainsKey(pathfindTarget.ToString())) {
-        Main.LogDebug($"[PFM.WasABadPathfindTest] No entry for pathfind target {pathfindTarget}. Adding.");
         estimatesOfBadPathfings.Add(pathfindTarget.ToString(), 0);
       }
 
-      Main.LogDebug($"[PFM.WasABadPathfindTest] pathfindTarget.ToString() : " + pathfindTarget.ToString());
-      Main.LogDebug($"[PFM.WasABadPathfindTest] estimatesOfBadPathfings[pathfindTarget.ToString()] : " + estimatesOfBadPathfings[pathfindTarget.ToString()]);
-      Main.LogDebug($"[PFM.WasABadPathfindTest] estimatesOfBadPathfings[pathfindTarget.ToString()] + 0.3f : " + (estimatesOfBadPathfings[pathfindTarget.ToString()] + 0.3f));
       estimatesOfBadPathfings[pathfindTarget.ToString()] = estimatesOfBadPathfings[pathfindTarget.ToString()] + 0.3f;
-      Main.LogDebug($"[PFM.WasABadPathfindTest] after set : " + estimatesOfBadPathfings[pathfindTarget.ToString()]);
     }
 
     public bool IsProbablyABadPathfindTest(Vector3 pathfindTarget) {
       if (!estimatesOfBadPathfings.ContainsKey(pathfindTarget.ToString())) {
-        Main.LogDebug($"[PFM.IsProbablyABadPathfindTest] No entry for pathfind target position {pathfindTarget}. Not a bad pathfind.");
         return false;
       }
 
