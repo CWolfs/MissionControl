@@ -143,7 +143,7 @@ namespace MissionControl {
       }
 
       if (positionPathNode == null) {
-        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] positionPathNode is 'null' from 'pathfinderPathGrid.GetValidPathNodeAt' so not a valid spawn.");
+        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] PositionPathNode not set from 'pathfinderPathGrid.GetValidPathNodeAt'. No valid path found so not a valid spawn.");
         return false;
       }
 
