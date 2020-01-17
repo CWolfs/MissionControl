@@ -16,6 +16,7 @@ namespace MissionControl.Logic {
     public SpawnLanceLogic(EncounterRules encounterRules) : base(encounterRules) { }
 
     protected void CorrectLanceMemberSpawns(GameObject lance) {
+      Main.LogDebug($"[{this.GetType().Name}] CorrectLanceMemberSpawns to cloest hex lerped point on grid.");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
 

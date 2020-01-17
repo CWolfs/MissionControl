@@ -7,6 +7,9 @@ namespace MissionControl.Config {
     [JsonProperty("DebugMode")]
     public bool DebugMode { get; set; } = false;
 
+    [JsonProperty("Debug")]
+    public DebugSettings Debug { get; set; } = new DebugSettings();
+
     [JsonProperty("VersionCheck")]
     public bool VersionCheck { get; set; } = true;
 

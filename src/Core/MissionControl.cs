@@ -1,11 +1,13 @@
 using UnityEngine;
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using BattleTech;
 using BattleTech.Data;
 
+using MissionControl.Data;
 using MissionControl.Logic;
 using MissionControl.Rules;
 using MissionControl.Utils;
@@ -156,6 +158,19 @@ namespace MissionControl {
       SetContractType(CurrentContract.ContractTypeValue);
       AiManager.Instance.ResetCustomBehaviourVariableScopes();
       ContractStats.Clear();
+      ClearOldContractData();
+    }
+
+    private void ClearOldContractData() {
+      Main.Logger.Log($"[MissionControl] Clearing old contract data");
+
+      IsMCLoadingFinished = false;
+
+      // Clear old lance data
+      CurrentContract.Override.targetTeam.lanceOverrideList =
+        CurrentContract.Override.targetTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
+      CurrentContract.Override.employerTeam.lanceOverrideList =
+        CurrentContract.Override.employerTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
     }
 
     public void SetActiveAdditionalLances(Contract contract) {
@@ -273,7 +288,7 @@ namespace MissionControl {
         if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.DisableWhenMaxTonnage.AreLancesAllowed((int)this.CurrentContract.Override.lanceMaxTonnage);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.ActiveAdditionalLances.GetValidContractTypes(teamType).Contains(CurrentContractType);
 
-        Main.LogDebug($"[AreAdditionalLancesAllowed] {areLancesAllowed}");
+        Main.LogDebug($"[AreAdditionalLancesAllowed] for {teamType}: {areLancesAllowed}");
         return areLancesAllowed;
       }
       Main.Logger.Log($"[MissionControl] AdditionalLances are disabled.");
