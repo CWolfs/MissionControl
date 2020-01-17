@@ -160,7 +160,7 @@ namespace MissionControl {
       }
 
       if (path == null) {
-        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Path is 'null' from DynamicLongRangePathfinder so not a valid spawn.");
+        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Path not set from DynamicLongRangePathfinder so not a valid spawn.");
         return false;
       }
 
