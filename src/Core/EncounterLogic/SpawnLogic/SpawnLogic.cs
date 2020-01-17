@@ -15,6 +15,9 @@ namespace MissionControl.Logic {
 
     private int ADJACENT_NODE_LIMITED = 20;
     private List<Vector3> checkedAdjacentPoints = new List<Vector3>();
+    private int BAILOUT_MAX = 2;
+    private int bailoutCount = 0;
+    private Vector3 originalOrigin = Vector3.zero;
 
     public SpawnLogic(EncounterRules encounterRules) : base(encounterRules) { }
 
@@ -26,22 +29,36 @@ namespace MissionControl.Logic {
       return GetClosestValidPathFindingHex(originGo, origin, identifier, Vector3.zero, radius);
     }
 
-    // FIXME: If this method struggles to find a spawn it will revert to an original or base spawn location. If it does that there's a high chance
-    //        That this mech will be in a path find hex dead spot.
     public Vector3 GetClosestValidPathFindingHex(GameObject originGo, Vector3 origin, string identifier, Vector3 pathfindingTarget, int radius = 3) {
       Main.LogDebug($"[GetClosestValidPathFindingHex] About to process with origin '{origin}'");
-      Vector3 validOrigin = PathfindFromPointToSpawn(originGo, origin, radius, identifier, pathfindingTarget);
+      if (originalOrigin == Vector3.zero) originalOrigin = origin;
 
-      // Fallback to original position if a search of 8 nodes radius turns up no valid path
+      // If no valid pathfinds can be made then the pathfind target or origin might be bad
+      // Get a new point for both relatively close to the original points to test against and try again.
       if (radius > 12) {
-        origin = origin.GetClosestHexLerpedPointOnGrid();
-        Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Reverting to original with fixed height of '{origin}'");
+        if (bailoutCount >= BAILOUT_MAX) {
+          origin = originalOrigin.GetClosestHexLerpedPointOnGrid();
+          Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Returning original origin with fixed height of '{origin}'");
+          checkedAdjacentPoints.Clear();
+          bailoutCount = 0;
+          originalOrigin = Vector3.zero;
+          return origin;
+        } else {
+          bailoutCount++;
+          Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Casting net out to another location'");
+          radius = 3;
+          // Vector3 randomPositionFromBadSpawn = SceneUtils.GetRandomPositionWithinBounds(origin, 96);
+          // Main.LogDebugWarning($"[GetClosestValidPathFindingHex] New location to test for '{originGo.name}' is '{randomPositionFromBadSpawn}'");
 
-        // FIXME: At this point often the spawn point gets dumped on a valid hex but it's got not exit routes. 
+          Vector3 randomPositionFromBadPathfindTarget = SceneUtils.GetRandomPositionWithinBounds(pathfindingTarget, 96);
+          Main.LogDebugWarning($"[GetClosestValidPathFindingHex] New location to test for pathfind target is '{randomPositionFromBadPathfindTarget}'");
 
-        checkedAdjacentPoints.Clear();
-        return origin;
+          // origin = randomPositionFromBadSpawn;
+          pathfindingTarget = randomPositionFromBadPathfindTarget;
+        }
       }
+
+      Vector3 validOrigin = PathfindFromPointToSpawn(originGo, origin, radius, identifier, pathfindingTarget);
 
       if (validOrigin == Vector3.zero) {
         Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Expanding search radius from radius '{radius}' to '{radius * 2}'");
@@ -92,6 +109,13 @@ namespace MissionControl.Logic {
           Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Testing an adjacent point of '{validPoint}'");
           if (PathFinderManager.Instance.IsSpawnValid(originGo, validPoint, pathfindingPoint, UnitType.Mech, identifier)) {
             return validPoint;
+          }
+
+          bool isBadPathfindTest = PathFinderManager.Instance.IsProbablyABadPathfindTest(pathfindingPoint);
+          if (isBadPathfindTest) {
+            Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Estimated this is a bad pathfind setup so trying something new.");
+            radius = 100;
+            count = ADJACENT_NODE_LIMITED;
           }
 
           checkedAdjacentPoints.Add(point);

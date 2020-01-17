@@ -25,6 +25,8 @@ namespace MissionControl {
     private Mech pathFinderMech;
     private Vehicle pathFinderVehicle;
 
+    private Dictionary<string, float> estimatesOfBadPathfings = new Dictionary<string, float>();
+
     private PathFinderManager() {
       Init();
     }
@@ -139,11 +141,13 @@ namespace MissionControl {
         }
       } catch (Exception e) {
         Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Caught error in 'pathfinderPathGrid.GetValidPathNodeAt' chunk. Flagging as invalid spawn. Select a new spawn point. {e.Message}, {e.StackTrace}");
+        WasABadPathfindTest(validityPosition);
         return false;
       }
 
       if (positionPathNode == null) {
         Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] PositionPathNode not set from 'pathfinderPathGrid.GetValidPathNodeAt'. No valid path found so not a valid spawn.");
+        WasABadPathfindTest(validityPosition);
         return false;
       }
 
@@ -156,11 +160,13 @@ namespace MissionControl {
         // the radius larger and larger and the checks keep going off the map
         // I need a way to hard abort out of this and either use the original origin of the focus or trigger the rule logic again (random, around a position etc)
         Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Caught error in 'DynamicLongRangePathfinder' chunk. Flagging as invalid spawn. Select a new spawn point. {e.Message}, {e.StackTrace}");
+        WasABadPathfindTest(validityPosition);
         return false;
       }
 
       if (path == null) {
-        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Path is 'null' from DynamicLongRangePathfinder so not a valid spawn.");
+        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Path not set from DynamicLongRangePathfinder so not a valid spawn.");
+        WasABadPathfindTest(validityPosition);
         return false;
       }
 
@@ -285,6 +291,31 @@ namespace MissionControl {
       return false;
     }
 
+    public void WasABadPathfindTest(Vector3 pathfindTarget) {
+      if (!estimatesOfBadPathfings.ContainsKey(pathfindTarget.ToString())) {
+        Main.LogDebug($"[PFM.WasABadPathfindTest] No entry for pathfind target {pathfindTarget}. Adding.");
+        estimatesOfBadPathfings.Add(pathfindTarget.ToString(), 0);
+      }
+
+      Main.LogDebug($"[PFM.WasABadPathfindTest] pathfindTarget.ToString() : " + pathfindTarget.ToString());
+      Main.LogDebug($"[PFM.WasABadPathfindTest] estimatesOfBadPathfings[pathfindTarget.ToString()] : " + estimatesOfBadPathfings[pathfindTarget.ToString()]);
+      Main.LogDebug($"[PFM.WasABadPathfindTest] estimatesOfBadPathfings[pathfindTarget.ToString()] + 0.3f : " + (estimatesOfBadPathfings[pathfindTarget.ToString()] + 0.3f));
+      estimatesOfBadPathfings[pathfindTarget.ToString()] = estimatesOfBadPathfings[pathfindTarget.ToString()] + 0.3f;
+      Main.LogDebug($"[PFM.WasABadPathfindTest] after set : " + estimatesOfBadPathfings[pathfindTarget.ToString()]);
+    }
+
+    public bool IsProbablyABadPathfindTest(Vector3 pathfindTarget) {
+      if (!estimatesOfBadPathfings.ContainsKey(pathfindTarget.ToString())) {
+        Main.LogDebug($"[PFM.IsProbablyABadPathfindTest] No entry for pathfind target position {pathfindTarget}. Not a bad pathfind.");
+        return false;
+      }
+
+      float estimate = estimatesOfBadPathfings[pathfindTarget.ToString()];
+      if (estimate < 1f) return true;
+
+      return true;
+    }
+
     public void Reset() {
       if (pathFinderMech.GameRep != null) {
         GameObject pathFinderGo = pathFinderMech.GameRep.gameObject;
@@ -303,6 +334,8 @@ namespace MissionControl {
         if (vehicleBlipUnknownGo) GameObject.Destroy(vehicleBlipUnknownGo);
         if (vehicleBlipIdentified) GameObject.Destroy(vehicleBlipIdentified);
       }
+
+      estimatesOfBadPathfings.Clear();
     }
 
     public void FullReset() {
