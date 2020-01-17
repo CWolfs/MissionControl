@@ -29,8 +29,6 @@ namespace MissionControl.Logic {
       return GetClosestValidPathFindingHex(originGo, origin, identifier, Vector3.zero, radius);
     }
 
-    // FIXME: If this method struggles to find a spawn it will revert to an original or base spawn location. If it does that there's a high chance
-    //        That this mech will be in a path find hex dead spot.
     public Vector3 GetClosestValidPathFindingHex(GameObject originGo, Vector3 origin, string identifier, Vector3 pathfindingTarget, int radius = 3) {
       Main.LogDebug($"[GetClosestValidPathFindingHex] About to process with origin '{origin}'");
       if (originalOrigin == Vector3.zero) originalOrigin = origin;
@@ -49,13 +47,13 @@ namespace MissionControl.Logic {
           bailoutCount++;
           Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Casting net out to another location'");
           radius = 3;
-          Vector3 randomPositionFromBadSpawn = SceneUtils.GetRandomPositionWithinBounds(origin, 96);
-          Main.LogDebugWarning($"[GetClosestValidPathFindingHex] New location to test for '{originGo.name}' is '{randomPositionFromBadSpawn}'");
+          // Vector3 randomPositionFromBadSpawn = SceneUtils.GetRandomPositionWithinBounds(origin, 96);
+          // Main.LogDebugWarning($"[GetClosestValidPathFindingHex] New location to test for '{originGo.name}' is '{randomPositionFromBadSpawn}'");
 
           Vector3 randomPositionFromBadPathfindTarget = SceneUtils.GetRandomPositionWithinBounds(pathfindingTarget, 96);
           Main.LogDebugWarning($"[GetClosestValidPathFindingHex] New location to test for pathfind target is '{randomPositionFromBadPathfindTarget}'");
 
-          origin = randomPositionFromBadSpawn;
+          // origin = randomPositionFromBadSpawn;
           pathfindingTarget = randomPositionFromBadPathfindTarget;
         }
       }
@@ -111,6 +109,13 @@ namespace MissionControl.Logic {
           Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Testing an adjacent point of '{validPoint}'");
           if (PathFinderManager.Instance.IsSpawnValid(originGo, validPoint, pathfindingPoint, UnitType.Mech, identifier)) {
             return validPoint;
+          }
+
+          bool isBadPathfindTest = PathFinderManager.Instance.IsProbablyABadPathfindTest(pathfindingPoint);
+          if (isBadPathfindTest) {
+            Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Estimated this is a bad pathfind setup so trying something new.");
+            radius = 100;
+            count = ADJACENT_NODE_LIMITED;
           }
 
           checkedAdjacentPoints.Add(point);
