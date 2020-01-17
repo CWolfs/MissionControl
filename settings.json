@@ -11,7 +11,7 @@
     "Enable": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "GuardOnHotDrop": false,
-    "EvasionPipsOnHotDrop": 4,
+    "EvasionPipsOnHotDrop": 6,
     "IncludeEnemies": true,
     "IncludeAllyTurrets": false,
     "IncludeEnemyTurrets": false
