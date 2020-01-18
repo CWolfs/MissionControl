@@ -45,22 +45,22 @@
   "ExtendedBoundaries": {
     "Enable": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
-    "IncreaseBoundarySizeByPercentage": 0.2,
+    "IncreaseBoundarySizeByPercentage": 0.3,
     "Overrides": [
       {
         "MapId": "mapGeneral_frigidSteppes_iTnd",
         "ContractTypeName": "CaptureBase",
-        "IncreaseBoundarySizeByPercentage": 1
+        "IncreaseBoundarySizeByPercentage": 0.75
       },
       {
         "MapId": "mapGeneral_icyOutpost_iGlc",
         "ContractTypeName": "CaptureBase",
-        "IncreaseBoundarySizeByPercentage": 1
+        "IncreaseBoundarySizeByPercentage": 0.75
       },
       {
         "MapId": "mapGeneral_highPeak_iGlc",
         "ContractTypeName": "SimpleBattle",
-        "IncreaseBoundarySizeByPercentage": 1
+        "IncreaseBoundarySizeByPercentage": 0.75
       },
       {
         "ContractTypeName": "FireMission",
