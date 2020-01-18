@@ -2,10 +2,10 @@
   "IncludeContractTypes": [],
   "ExcludeContractTypes": [],
   "LancePool": {
-    "ALL": ["Generic_Heavy_Battle_Lance", "Damaged_Heavy_Battle_Lance"]
+    "ALL": ["Generic_Medium_Battle_Lance", "Generic_Heavy_Battle_Lance", "Damaged_Heavy_Battle_Lance"]
   },
   "Enemy": {
-    "Max": 2,
+    "Max": 1,
     "ExcludeContractTypes": [],
     "ChanceToSpawn": 0.4,
     "EliteLances": {
@@ -17,7 +17,7 @@
     },
     "LancePool": {
       "ALL": [
-        "Generic_Heavy_Battle_Lance"
+        "Generic_Light_Battle_Lance", "Generic_Heavy_Battle_Lance"
       ]
     }
   },

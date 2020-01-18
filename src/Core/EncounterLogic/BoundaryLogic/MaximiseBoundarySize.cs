@@ -22,7 +22,7 @@ namespace MissionControl.Logic {
 
       if (size > 0f) {
         SetBoundarySizeToCustom(encounterLayerData, size);
-      } else if (size >= 0.5f) {  // If you're going to extend by 4 times (50% width and depth) you might as well go full map
+      } else if (size > 0.75f) {  // If you're going to extend by a possible 6 times (75% extra width and depth depending on existing boundary) you might as well go full map
         MatchBoundarySizeToMapSize(encounterLayerData);
       }
     }
@@ -43,10 +43,12 @@ namespace MissionControl.Logic {
         for (int i = 0; i < childEncounterObjectGameLogicList.Length; i++) {
           EncounterBoundaryRectGameLogic encounterBoundaryRectGameLogic = childEncounterObjectGameLogicList[i] as EncounterBoundaryRectGameLogic;
 
-          int sizeFactor = (int)(encounterBoundaryRectGameLogic.width * (1f + size));
-          int movementFactor = (int)(encounterBoundaryRectGameLogic.width * size);
+          int xSizeFactor = (int)(encounterBoundaryRectGameLogic.width * (1f + size));
+          int zSizeFactor = (int)(encounterBoundaryRectGameLogic.height * (1f + size));
+          int xMovementFactor = (int)(encounterBoundaryRectGameLogic.width * size);
+          int zMovementFactor = (int)(encounterBoundaryRectGameLogic.height * size);
 
-          if (sizeFactor > mapSide) {
+          if (xSizeFactor > mapSide) {
             Main.Logger.Log($"[MaximiseBoundarySize.SetBoundarySizeToCustom] Custom size would be greater than map size. Using map size.'");
             MatchBoundarySizeToMapSize(encounterLayerData);
           } else {
@@ -57,24 +59,24 @@ namespace MissionControl.Logic {
 
               float xPosition = 0;
               if (position.x > 0) {
-                xPosition = position.x - movementFactor; // (movementFactor / 2f);
+                xPosition = position.x - (xMovementFactor / 2f);
                 if (xPosition < 0) xPosition = 0;
               } else if (position.x < 0) {
-                xPosition = position.x + movementFactor; // (movementFactor / 2f);
+                xPosition = position.x + (xMovementFactor / 2f);
                 if (xPosition > 0) xPosition = 0;
               }
 
               float zPosition = 0;
               if (position.z > 0) {
-                zPosition = position.z - movementFactor; // (movementFactor / 2f);
+                zPosition = position.z - (zMovementFactor / 2f);
                 if (zPosition < 0) zPosition = 0;
               } else if (position.z < 0) {
-                zPosition = position.z + movementFactor; // (movementFactor / 2f);
+                zPosition = position.z + (zMovementFactor / 2f);
                 if (zPosition > 0) zPosition = 0;
               }
 
-              encounterBoundaryRectGameLogic.width = (int)sizeFactor;
-              encounterBoundaryRectGameLogic.height = (int)sizeFactor;
+              encounterBoundaryRectGameLogic.width = (int)xSizeFactor;
+              encounterBoundaryRectGameLogic.height = (int)zSizeFactor;
 
               encounterBoundaryRectGameLogic.transform.position = new Vector3(xPosition, encounterBoundaryRectGameLogic.transform.position.y, zPosition);
 

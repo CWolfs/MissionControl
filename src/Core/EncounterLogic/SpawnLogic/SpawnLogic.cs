@@ -13,8 +13,11 @@ using MissionControl.Utils;
 namespace MissionControl.Logic {
   public abstract class SpawnLogic : SceneManipulationLogic {
 
-    private int ADJACENT_NODE_LIMITED = 60;
+    private int ADJACENT_NODE_LIMITED = 20;
     private List<Vector3> checkedAdjacentPoints = new List<Vector3>();
+    private int BAILOUT_MAX = 2;
+    private int bailoutCount = 0;
+    private Vector3 originalOrigin = Vector3.zero;
 
     public SpawnLogic(EncounterRules encounterRules) : base(encounterRules) { }
 
@@ -28,15 +31,34 @@ namespace MissionControl.Logic {
 
     public Vector3 GetClosestValidPathFindingHex(GameObject originGo, Vector3 origin, string identifier, Vector3 pathfindingTarget, int radius = 3) {
       Main.LogDebug($"[GetClosestValidPathFindingHex] About to process with origin '{origin}'");
-      Vector3 validOrigin = PathfindFromPointToSpawn(originGo, origin, radius, identifier, pathfindingTarget);
+      if (originalOrigin == Vector3.zero) originalOrigin = origin;
 
-      // Fallback to original position if a search of 8 nodes radius turns up no valid path
+      // If no valid pathfinds can be made then the pathfind target or origin might be bad
+      // Get a new point for both relatively close to the original points to test against and try again.
       if (radius > 12) {
-        origin = origin.GetClosestHexLerpedPointOnGrid();
-        Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Reverting to original with fixed height of '{origin}'");
-        checkedAdjacentPoints.Clear();
-        return origin;
+        if (bailoutCount >= BAILOUT_MAX) {
+          origin = originalOrigin.GetClosestHexLerpedPointOnGrid();
+          Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Returning original origin with fixed height of '{origin}'");
+          checkedAdjacentPoints.Clear();
+          bailoutCount = 0;
+          originalOrigin = Vector3.zero;
+          return origin;
+        } else {
+          bailoutCount++;
+          Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Casting net out to another location'");
+          radius = 3;
+          // Vector3 randomPositionFromBadSpawn = SceneUtils.GetRandomPositionWithinBounds(origin, 96);
+          // Main.LogDebugWarning($"[GetClosestValidPathFindingHex] New location to test for '{originGo.name}' is '{randomPositionFromBadSpawn}'");
+
+          Vector3 randomPositionFromBadPathfindTarget = SceneUtils.GetRandomPositionWithinBounds(pathfindingTarget, 96);
+          Main.LogDebugWarning($"[GetClosestValidPathFindingHex] New location to test for pathfind target is '{randomPositionFromBadPathfindTarget}'");
+
+          // origin = randomPositionFromBadSpawn;
+          pathfindingTarget = randomPositionFromBadPathfindTarget;
+        }
       }
+
+      Vector3 validOrigin = PathfindFromPointToSpawn(originGo, origin, radius, identifier, pathfindingTarget);
 
       if (validOrigin == Vector3.zero) {
         Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Expanding search radius from radius '{radius}' to '{radius * 2}'");
@@ -51,8 +73,10 @@ namespace MissionControl.Logic {
     }
 
     private Vector3 PathfindFromPointToSpawn(GameObject originGo, Vector3 origin, int radius, string identifier, Vector3 pathfindingTarget) {
+      EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       Vector3 originOnGrid = origin.GetClosestHexLerpedPointOnGrid();
+
       // TODO: If the SpawnerPlayerLanceGo's closest hex point is in an inaccessible location - this will cause infinite loading issues
       // TODO: Need to find a reliably accessible location (hard to do in a proc-genned setup)
       Vector3 pathfindingPoint = (pathfindingTarget == Vector3.zero) ?
@@ -65,9 +89,11 @@ namespace MissionControl.Logic {
         List<Vector3> adjacentPointsOnGrid = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(originOnGrid, radius);
         Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Adjacent point count is '{adjacentPointsOnGrid.Count}'");
 
-        adjacentPointsOnGrid = adjacentPointsOnGrid.Where(point => !checkedAdjacentPoints.Contains(point)).ToList();
+        adjacentPointsOnGrid = adjacentPointsOnGrid.Where(point => {
+          return !checkedAdjacentPoints.Contains(point) && encounterLayerData.IsInEncounterBounds(point);
+        }).ToList();
 
-        Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Removed already checked points. Adjacent point count is now '{adjacentPointsOnGrid.Count}'");
+        Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Removed already checked points & out of bounds points. Adjacent point count is now '{adjacentPointsOnGrid.Count}'");
 
         adjacentPointsOnGrid.Shuffle();
 
@@ -79,8 +105,17 @@ namespace MissionControl.Logic {
           }
 
           Vector3 validPoint = point.GetClosestHexLerpedPointOnGrid();
+
+          Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Testing an adjacent point of '{validPoint}'");
           if (PathFinderManager.Instance.IsSpawnValid(originGo, validPoint, pathfindingPoint, UnitType.Mech, identifier)) {
             return validPoint;
+          }
+
+          bool isBadPathfindTest = PathFinderManager.Instance.IsProbablyABadPathfindTest(pathfindingPoint);
+          if (isBadPathfindTest) {
+            Main.LogDebug($"[PathfindFromPointToPlayerSpawn] Estimated this is a bad pathfind setup so trying something new.");
+            radius = 100;
+            count = ADJACENT_NODE_LIMITED;
           }
 
           checkedAdjacentPoints.Add(point);

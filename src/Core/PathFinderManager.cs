@@ -25,6 +25,8 @@ namespace MissionControl {
     private Mech pathFinderMech;
     private Vehicle pathFinderVehicle;
 
+    private Dictionary<string, float> estimatesOfBadPathfings = new Dictionary<string, float>();
+
     private PathFinderManager() {
       Init();
     }
@@ -129,75 +131,96 @@ namespace MissionControl {
       AbstractActor pathfindingActor = GetPathFindingActor(type);
       SetupPathfindingActor(position, pathfindingActor);
 
+      PathNode positionPathNode = null;
       try {
         PathNodeGrid pathfinderPathGrid = pathfindingActor.Pathing.CurrentGrid;
-        PathNode positionPathNode = pathfinderPathGrid.GetValidPathNodeAt(position, pathfindingActor.Pathing.MaxCost);
+        positionPathNode = pathfinderPathGrid.GetValidPathNodeAt(position, pathfindingActor.Pathing.MaxCost);
         if (positionPathNode == null) {
           Reset();
           return false;
         }
+      } catch (Exception e) {
+        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Caught error in 'pathfinderPathGrid.GetValidPathNodeAt' chunk. Flagging as invalid spawn. Select a new spawn point. {e.Message}, {e.StackTrace}");
+        WasABadPathfindTest(validityPosition);
+        return false;
+      }
 
-        DynamicLongRangePathfinder.PointWithCost pointWithCost = new DynamicLongRangePathfinder.PointWithCost(combatState.HexGrid.GetClosestHexPoint3OnGrid(positionPathNode.Position), 0, (validityPosition - positionPathNode.Position).magnitude) {
-          pathNode = positionPathNode
-        };
-        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(new List<DynamicLongRangePathfinder.PointWithCost>() { pointWithCost }, validityPosition, float.MaxValue, pathfindingActor, false, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
+      if (positionPathNode == null) {
+        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] PositionPathNode not set from 'pathfinderPathGrid.GetValidPathNodeAt'. No valid path found so not a valid spawn.");
+        WasABadPathfindTest(validityPosition);
+        return false;
+      }
 
-        // List<Vector3> path = DynamicLongRangePathfinder.GetPathToDestination(position, float.MaxValue, pathfindingActor, true, pathFindingZoneRadius);
-        // List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(position, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
-
-        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Path count is: '{path.Count}', Current position is: '{position}'");
-
-        // GUARD: Against deep water and other impassables that have slipped through
-        if (HasPathImpassableOrDeepWaterTiles(combatState, path)) return false;
-
-        if (path != null && path.Count > 1 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
-          Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Path count is: '{path.Count}', Current position is: '{position}'");
-          Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Last point is '{path[path.Count - 1]}', Validity position is '{validityPosition}'");
-          Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Distance from last path to valdity position is: '{(path[path.Count - 1].DistanceFlat(validityPosition))}' and is it within zone radius? '{(path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)}'");
-          Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Has valid long range path finding");
-          if (HasValidNeighbours(positionPathNode, validityPosition, type)) {
-            Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Has at least two valid neighbours");
-
-            if (HasValidLocalPathfinding(positionPathNode, validityPosition, type)) {
-              Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Has a valid path");
-              Reset();
-              Main.LogDebug($"-------- END [PFM.IsSpawnValid] [{identifier}] END --------");
-              Main.LogDebug($"");
-              return true;
-            } else {
-              Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Does NOT have a valid path");
-            }
-          } else {
-            Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Does not have two valid neighbours");
-          }
-        }
-
-        /* // Failed attempt to improve spawn checks
-        List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(validityPosition, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
-        if (path != null && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
-          if (path.Count > 4) { // very strong pathfinding location
-            return true;
-          } else {
-            Main.Logger.Log($"[PFM] Spawn point is valid due to proximity but is not strong enough success for pathing. Attempting to confirm.");
-            CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-            List<Vector3> pointsAroundPosition = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(position, 3, 5);
-
-            foreach (Vector3 point in pointsAroundPosition) {
-              List<Vector3> secondaryPath = DynamicLongRangePathfinder.GetDynamicPathToDestination(point, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, 2); 
-              if (path != null && path.Count > 2) {
-                Main.Logger.Log($"[PFM] Spawn point is valid. It is close to the validation point but can be moved away from. Success.");
-                return true;
-              }
-            }
-          }
-        }
-        */
+      List<Vector3> path = null;
+      try {
+        DynamicLongRangePathfinder.PointWithCost pointWithCost = new DynamicLongRangePathfinder.PointWithCost(combatState.HexGrid.GetClosestHexPoint3OnGrid(positionPathNode.Position), 0, (validityPosition - positionPathNode.Position).magnitude);
+        path = DynamicLongRangePathfinder.GetDynamicPathToDestination(new List<DynamicLongRangePathfinder.PointWithCost>() { pointWithCost }, validityPosition, float.MaxValue, pathfindingActor, false, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
       } catch (Exception e) {
         // TODO: Sometimes this gets triggered in very large amounts. It's usually because the SpawnLogic.GetClosestValidPathFindingHex is increasing
         // the radius larger and larger and the checks keep going off the map
         // I need a way to hard abort out of this and either use the original origin of the focus or trigger the rule logic again (random, around a position etc)
-        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Array out of bounds detected in the path finding code. Flagging as invalid spawn. Select a new spawn point. {e.Message}, {e.StackTrace}");
+        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Caught error in 'DynamicLongRangePathfinder' chunk. Flagging as invalid spawn. Select a new spawn point. {e.Message}, {e.StackTrace}");
+        WasABadPathfindTest(validityPosition);
+        return false;
       }
+
+      if (path == null) {
+        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Path not set from DynamicLongRangePathfinder so not a valid spawn.");
+        WasABadPathfindTest(validityPosition);
+        return false;
+      }
+
+      // List<Vector3> path = DynamicLongRangePathfinder.GetPathToDestination(position, float.MaxValue, pathfindingActor, true, pathFindingZoneRadius);
+      // List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(position, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
+
+      Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Path count is: '{path.Count}', Current position is: '{position}'");
+
+      // GUARD: Against deep water and other impassables that have slipped through
+      if (HasPathImpassableOrDeepWaterTiles(combatState, path)) return false;
+
+      if (path != null && path.Count > 1 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
+        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Path count is: '{path.Count}', Current position is: '{position}'");
+        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Last point is '{path[path.Count - 1]}', Validity position is '{validityPosition}'");
+        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Distance from last path to valdity position is: '{(path[path.Count - 1].DistanceFlat(validityPosition))}' and is it within zone radius? '{(path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)}'");
+        Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Has valid long range path finding");
+        if (HasValidNeighbours(positionPathNode, validityPosition, type)) {
+          Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Has at least two valid neighbours");
+
+          if (HasValidLocalPathfinding(positionPathNode, validityPosition, type)) {
+            Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Has a valid path");
+            Reset();
+            Main.LogDebug($"-------- END [PFM.IsSpawnValid] [{identifier}] END --------");
+            Main.LogDebug($"");
+            return true;
+          } else {
+            Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Does NOT have a valid path");
+          }
+        } else {
+          Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Does not have two valid neighbours");
+        }
+      }
+
+      /* // Failed attempt to improve spawn checks
+      List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(validityPosition, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
+      if (path != null && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
+        if (path.Count > 4) { // very strong pathfinding location
+          return true;
+        } else {
+          Main.Logger.Log($"[PFM] Spawn point is valid due to proximity but is not strong enough success for pathing. Attempting to confirm.");
+          CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+          List<Vector3> pointsAroundPosition = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(position, 3, 5);
+
+          foreach (Vector3 point in pointsAroundPosition) {
+            List<Vector3> secondaryPath = DynamicLongRangePathfinder.GetDynamicPathToDestination(point, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, 2); 
+            if (path != null && path.Count > 2) {
+              Main.Logger.Log($"[PFM] Spawn point is valid. It is close to the validation point but can be moved away from. Success.");
+              return true;
+            }
+          }
+        }
+      }
+      */
+
 
       Main.LogDebug($"-------- END [PFM.IsSpawnValid] [{identifier}] END --------");
       Main.LogDebug($"");
@@ -268,6 +291,25 @@ namespace MissionControl {
       return false;
     }
 
+    public void WasABadPathfindTest(Vector3 pathfindTarget) {
+      if (!estimatesOfBadPathfings.ContainsKey(pathfindTarget.ToString())) {
+        estimatesOfBadPathfings.Add(pathfindTarget.ToString(), 0);
+      }
+
+      estimatesOfBadPathfings[pathfindTarget.ToString()] = estimatesOfBadPathfings[pathfindTarget.ToString()] + 0.3f;
+    }
+
+    public bool IsProbablyABadPathfindTest(Vector3 pathfindTarget) {
+      if (!estimatesOfBadPathfings.ContainsKey(pathfindTarget.ToString())) {
+        return false;
+      }
+
+      float estimate = estimatesOfBadPathfings[pathfindTarget.ToString()];
+      if (estimate < 1f) return true;
+
+      return true;
+    }
+
     public void Reset() {
       if (pathFinderMech.GameRep != null) {
         GameObject pathFinderGo = pathFinderMech.GameRep.gameObject;
@@ -286,6 +328,8 @@ namespace MissionControl {
         if (vehicleBlipUnknownGo) GameObject.Destroy(vehicleBlipUnknownGo);
         if (vehicleBlipIdentified) GameObject.Destroy(vehicleBlipIdentified);
       }
+
+      estimatesOfBadPathfings.Clear();
     }
 
     public void FullReset() {

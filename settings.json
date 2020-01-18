@@ -1,5 +1,6 @@
 {
   "DebugMode": true,
+  "VersionCheck": true,
   "DebugSkirmishMode": true,
   "DisableIfFlashpointContract": true,
   "RandomSpawns": {
@@ -10,7 +11,7 @@
     "Enable": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "GuardOnHotDrop": false,
-    "EvasionPipsOnHotDrop": 4,
+    "EvasionPipsOnHotDrop": 6,
     "IncludeEnemies": true,
     "IncludeAllyTurrets": false,
     "IncludeEnemyTurrets": false
@@ -18,6 +19,7 @@
   "AdditionalLances": {
     "Enable": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
+    "IsPrimaryObjectiveIn": ["SimpleBattle", "ThreeWayBattle"],
     "UseElites": true,
     "UseDialogue": true,
     "SkullValueMatters": true,
@@ -28,7 +30,8 @@
       "Enable": true,
       "Limited": false,
       "LimitedToUnder": 300
-    }
+    },
+    "MatchAllyLanceCountToEnemy": false
   },
   "ExtendedLances": {
     "Enable": true,
@@ -42,7 +45,28 @@
   "ExtendedBoundaries": {
     "Enable": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
-    "IncreaseBoundarySizeByPercentage": 0.2
+    "IncreaseBoundarySizeByPercentage": 0.3,
+    "Overrides": [
+      {
+        "MapId": "mapGeneral_frigidSteppes_iTnd",
+        "ContractTypeName": "CaptureBase",
+        "IncreaseBoundarySizeByPercentage": 0.75
+      },
+      {
+        "MapId": "mapGeneral_icyOutpost_iGlc",
+        "ContractTypeName": "CaptureBase",
+        "IncreaseBoundarySizeByPercentage": 0.75
+      },
+      {
+        "MapId": "mapGeneral_highPeak_iGlc",
+        "ContractTypeName": "SimpleBattle",
+        "IncreaseBoundarySizeByPercentage": 0.75
+      },
+      {
+        "ContractTypeName": "FireMission",
+        "IncreaseBoundarySizeByPercentage": 0.5
+      }
+    ]
   },
   "DynamicWithdraw": {
     "Enable": true,
@@ -55,7 +79,8 @@
     "FollowPlayer": {
       "Target": "HeaviestMech",
       "StopWhen": "OnEnemyDetected",
-      "MaxDistanceFromTargetBeforeSprinting": 200
+      "MaxDistanceFromTargetBeforeSprinting": 120,
+      "TargetZoneRadius": 120
     }
   }
 }

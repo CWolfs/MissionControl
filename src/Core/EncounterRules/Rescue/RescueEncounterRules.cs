@@ -16,7 +16,7 @@ namespace MissionControl.Rules {
       if (!MissionControl.Instance.IsRandomSpawnsAllowed()) return;
 
       Main.Logger.Log("[RescueEncounterRules] Building spawns rules");
-      EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "OccupyRegion1VIPGo"));
+      EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "OccupyRegion1VIPGo", 400f));
     }
 
     public override void LinkObjectReferences(string mapName) {

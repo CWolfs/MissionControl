@@ -126,8 +126,8 @@ namespace MissionControl.Rules {
       return guids;
     }
 
-    private bool IsPlotValidForEncounter(Transform plotTransform) {
-      Transform selectedPlotTransform = plotTransform.FindIgnoreCaseStartsWith("PlotVariant");
+    private bool IsPlotValidForEncounter(Transform plotTransform, string name = "PlotVariant") {
+      Transform selectedPlotTransform = plotTransform.FindIgnoreCaseStartsWith(name);
 
       if (selectedPlotTransform == null) {
         return false;
@@ -139,15 +139,14 @@ namespace MissionControl.Rules {
       return false;
     }
 
-    protected GameObject GetClosestPlot(Vector3 origin) {
-      GameObject plotsParentGo = GameObject.Find("PlotParent");
+    private GameObject CheckAllPlotsForValidPlot(GameObject plotsParent, Vector3 origin, string name) {
       GameObject closestPlot = null;
       float closestDistance = -1;
 
-      foreach (Transform t in plotsParentGo.transform) {
+      foreach (Transform t in plotsParent.transform) {
         Vector3 plotPosition = t.position;
         if (EncounterLayerData.IsInEncounterBounds(plotPosition)) {
-          if (IsPlotValidForEncounter(t)) {
+          if (IsPlotValidForEncounter(t, name)) {
             float distance = Vector3.Distance(t.position, origin);
             if (closestDistance == -1 || closestDistance < distance) {
               closestDistance = distance;
@@ -155,6 +154,20 @@ namespace MissionControl.Rules {
             }
           }
         }
+      }
+
+      return closestPlot;
+    }
+
+    protected GameObject GetClosestPlot(Vector3 origin) {
+      GameObject plotsParentGo = GameObject.Find("PlotParent");
+      GameObject closestPlot = null;
+
+      closestPlot = CheckAllPlotsForValidPlot(plotsParentGo, origin, "PlotVariant");
+
+      // If no plot is found, select on a secondary fallback
+      if (closestPlot == null) {
+        closestPlot = CheckAllPlotsForValidPlot(plotsParentGo, origin, "Default");
       }
 
       return closestPlot;
@@ -205,12 +218,16 @@ namespace MissionControl.Rules {
 
       Main.Logger.Log($"[{this.GetType().Name}] Building additional lance rules");
 
-      if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
+      int numberOfAdditionalEnemyLances = 0;
 
-        bool isPrimaryObjective = MissionControl.Instance.CurrentContractType.In("SimpleBattle");
+      if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
+        bool isPrimaryObjective = MissionControl.Instance.CurrentContractType.In(Main.Settings.AdditionalLanceSettings.IsPrimaryObjectiveIn.ToArray());
+        Main.Logger.Log($"[{this.GetType().Name}] Additional Lances will be primary objectives? {isPrimaryObjective}");
         FactionDef faction = MissionControl.Instance.GetFactionFromTeamType("enemy");
 
-        int numberOfAdditionalEnemyLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances(faction, "enemy");
+        numberOfAdditionalEnemyLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances(faction, "enemy");
+        if (Main.Settings.DebugMode && (Main.Settings.Debug.AdditionalLancesEnemyLanceCount > -1)) numberOfAdditionalEnemyLances = Main.Settings.Debug.AdditionalLancesEnemyLanceCount;
+
         int objectivePriority = -10;
 
         for (int i = 0; i < numberOfAdditionalEnemyLances; i++) {
@@ -228,6 +245,12 @@ namespace MissionControl.Rules {
         FactionDef faction = MissionControl.Instance.GetFactionFromTeamType("allies");
 
         int numberOfAdditionalAllyLances = Main.Settings.ActiveAdditionalLances.Allies.SelectNumberOfAdditionalLances(faction, "allies");
+
+        if (Main.Settings.AdditionalLanceSettings.MatchAllyLanceCountToEnemy) {
+          Main.Logger.LogDebug($"[{this.GetType().Name}] 'MatchAllyLanceCountToEnemy' is on. Ally lance count will be {numberOfAdditionalEnemyLances}");
+          numberOfAdditionalAllyLances = numberOfAdditionalEnemyLances;
+        }
+
         for (int i = 0; i < numberOfAdditionalAllyLances; i++) {
           new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, minAllyDistance, maxAllyDistance);
         }

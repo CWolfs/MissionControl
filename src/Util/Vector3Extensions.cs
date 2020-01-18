@@ -21,12 +21,12 @@ public static class Vector3Extensions {
   // TODO: Find a better way to do this that caches things in a good way. Not so easy as new spawns can be created at any point
   public static bool IsTooCloseToAnotherSpawn(this Vector3 position, GameObject ignoreGo = null) {
     UnitSpawnPointGameLogic[] unitSpawns = MissionControl.MissionControl.Instance.EncounterLayerData.GetComponentsInChildren<UnitSpawnPointGameLogic>();
-    MissionControl.Main.LogDebug($"[IsTooCloseToAnotherSpawn] There are {unitSpawns.Length} unit spawns found.");
+    // MissionControl.Main.LogDebug($"[IsTooCloseToAnotherSpawn] There are {unitSpawns.Length} unit spawns found.");
 
     foreach (UnitSpawnPointGameLogic unitSpawn in unitSpawns) {
       // Guard: Ignore the object that the position originated from
       if ((ignoreGo != null) && (unitSpawn.name == ignoreGo.name)) {
-        MissionControl.Main.LogDebug($"[IsTooCloseToAnotherSpawn] Checked target position '{position}' and found object the position originated from. Safely ignoring this for '{unitSpawn.name}'");
+        // MissionControl.Main.LogDebug($"[IsTooCloseToAnotherSpawn] Checked target position '{position}' and found object the position originated from. Safely ignoring this for '{unitSpawn.name}'");
         continue;
       }
 
