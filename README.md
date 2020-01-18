@@ -6,13 +6,13 @@ This works only for the generic contract types (e.g. Battle, Rescue etc) as it w
 
 ![Additional Lances](./docs/gh-images/mission-control.jpg)
 
-## Website
+## Website & Documentarion
 
 For the latest information and documentation visit [Mission Control Website](https://www.missioncontrolmod.com)
 
 ## Roadmap
 
-For a glimpse into the future of Mission Control check out the milestones, for example [v0.4.0](https://github.com/CWolfs/MissionControl/milestone/6), and the [issues section](https://github.com/CWolfs/MissionControl/issues).
+For a glimpse into the future of Mission Control check out the milestones, for example [v0.5.0](https://github.com/CWolfs/MissionControl/milestone/7), and the [issues section](https://github.com/CWolfs/MissionControl/issues).
 
 ## Feedback
 
@@ -31,7 +31,7 @@ I wouldn't have completed such an ambitious mod without the support and help of 
 - GentlePayload
 - gnivler
 - TekGnosis
-- ...and everyone in the modder channels at BATTLETECHGAME discord who helped in lots of different ways!
+- ...and everyone in the modder channels at Mission Control, RT and BATTLETECHGAME discord who helped in lots of different ways!
 
 ## Author
 
