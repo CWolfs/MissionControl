@@ -19,7 +19,7 @@
   "AdditionalLances": {
     "Enable": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
-    "IsPrimaryObjectiveIn": ["SimpleBattle"],
+    "IsPrimaryObjectiveIn": ["SimpleBattle", "ThreeWayBattle"],
     "UseElites": true,
     "UseDialogue": true,
     "SkullValueMatters": true,
