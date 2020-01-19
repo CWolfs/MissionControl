@@ -321,7 +321,7 @@ namespace MissionControl {
     }
 
     public bool IsSkirmish(Contract contract) {
-      return !contract.ContractTypeValue.IsSinglePlayerProcedural;
+      return !contract.ContractTypeValue.IsSinglePlayerProcedural && contract.ContractTypeValue.IsSkirmish;
     }
 
     public bool IsSkirmish() {
