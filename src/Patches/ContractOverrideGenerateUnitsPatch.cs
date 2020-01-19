@@ -23,19 +23,21 @@ namespace MissionControl.Patches {
       RunPayload payload = new ContractOverridePayload(__instance);
       MissionControl.Instance.RunEncounterRules(LogicBlock.LogicType.CONTRACT_OVERRIDE_MANIPULATION, payload);
 
-      TagSet companyTags = new TagSet(UnityGameInstance.BattleTechGame.Simulation.CompanyTags);
-      System.DateTime? date = DataManager.Instance.GetSimGameCurrentDate();
+      if (!MissionControl.Instance.IsSkirmish()) {
+        TagSet companyTags = new TagSet(UnityGameInstance.BattleTechGame.Simulation.CompanyTags);
+        System.DateTime? date = DataManager.Instance.GetSimGameCurrentDate();
 
-      // This is required because on the 3rd+ contract restart something bugs out and harmony skips the GenerateTeam method but runs pre- and post-fix
-      System.Reflection.MethodInfo generateTeamMethod = AccessTools.Method(typeof(ContractOverride), "GenerateTeam");
-      generateTeamMethod.Invoke(__instance, new object[] { MetadataDatabase.Instance, __instance.player1Team, date, companyTags });
-      generateTeamMethod.Invoke(__instance, new object[] { MetadataDatabase.Instance, __instance.player2Team, date, companyTags });
-      generateTeamMethod.Invoke(__instance, new object[] { MetadataDatabase.Instance, __instance.employerTeam, date, companyTags });
-      generateTeamMethod.Invoke(__instance, new object[] { MetadataDatabase.Instance, __instance.employersAllyTeam, date, companyTags });
-      generateTeamMethod.Invoke(__instance, new object[] { MetadataDatabase.Instance, __instance.targetTeam, date, companyTags });
-      generateTeamMethod.Invoke(__instance, new object[] { MetadataDatabase.Instance, __instance.targetsAllyTeam, date, companyTags });
-      generateTeamMethod.Invoke(__instance, new object[] { MetadataDatabase.Instance, __instance.neutralToAllTeam, date, companyTags });
-      generateTeamMethod.Invoke(__instance, new object[] { MetadataDatabase.Instance, __instance.hostileToAllTeam, date, companyTags });
+        // This is required because on the 3rd+ contract restart something bugs out and harmony skips the GenerateTeam method but runs pre- and post-fix
+        System.Reflection.MethodInfo generateTeamMethod = AccessTools.Method(typeof(ContractOverride), "GenerateTeam");
+        generateTeamMethod.Invoke(__instance, new object[] { MetadataDatabase.Instance, __instance.player1Team, date, companyTags });
+        generateTeamMethod.Invoke(__instance, new object[] { MetadataDatabase.Instance, __instance.player2Team, date, companyTags });
+        generateTeamMethod.Invoke(__instance, new object[] { MetadataDatabase.Instance, __instance.employerTeam, date, companyTags });
+        generateTeamMethod.Invoke(__instance, new object[] { MetadataDatabase.Instance, __instance.employersAllyTeam, date, companyTags });
+        generateTeamMethod.Invoke(__instance, new object[] { MetadataDatabase.Instance, __instance.targetTeam, date, companyTags });
+        generateTeamMethod.Invoke(__instance, new object[] { MetadataDatabase.Instance, __instance.targetsAllyTeam, date, companyTags });
+        generateTeamMethod.Invoke(__instance, new object[] { MetadataDatabase.Instance, __instance.neutralToAllTeam, date, companyTags });
+        generateTeamMethod.Invoke(__instance, new object[] { MetadataDatabase.Instance, __instance.hostileToAllTeam, date, companyTags });
+      }
     }
   }
 }
