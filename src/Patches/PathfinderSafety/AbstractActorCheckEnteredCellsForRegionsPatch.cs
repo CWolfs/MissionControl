@@ -13,7 +13,7 @@ namespace MissionControl.Patches {
   [HarmonyPatch(new Type[] { typeof(List<MapEncounterLayerDataCell>) })]
   public class AbstractActorCheckEnteredCellsForRegionsPatch {
     public static bool Prefix(Contract __instance) {
-      if (!MissionControl.Instance.IsMCLoadingFinished) {
+      if (MissionControl.Instance.AllowMissionControl() && !MissionControl.Instance.IsMCLoadingFinished) {
         Main.LogDebug("[CheckEnteredCellsForRegions] MC is running so this is a pathfinder check. Ignoring so not to trigger regions.");
         return false;
       }

@@ -8,7 +8,7 @@ namespace MissionControl.Patches {
   [HarmonyPatch(typeof(TurnDirector), "OnFirstContact")]
   public class TurnDirectorOnFirstContactPatch {
     static void Postfix(TurnDirector __instance) {
-      if (Main.Settings.HotDrop.Enable) {
+      if (MissionControl.Instance.AllowMissionControl() && Main.Settings.HotDrop.Enable) {
         Main.LogDebug($"[TurnDirectorOnFirstContactPatch Postfix] Patching OnFirstContact");
         Main.LogDebug($"[TurnDirectorOnFirstContactPatch Postfix] Current round is '{__instance.CurrentRound}'");
         Main.LogDebug($"[TurnDirectorOnFirstContactPatch Postfix] DoAnyUnitsHaveContactWithEnemy '{__instance.DoAnyUnitsHaveContactWithEnemy}'");

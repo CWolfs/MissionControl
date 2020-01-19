@@ -16,7 +16,7 @@ namespace MissionControl.Patches {
   [HarmonyPatch(typeof(BehaviorTree), "InitRootNode")]
   public class BehaviourTreeInitRootNodePatch {
     public static void Postfix(BehaviorTree __instance, AbstractActor ___unit, BehaviorTreeIDEnum ___behaviorTreeIDEnum) {
-      if (___behaviorTreeIDEnum != BehaviorTreeIDEnum.DoNothingTree) {
+      if (MissionControl.Instance.CurrentContract != null && MissionControl.Instance.AllowMissionControl() && ___behaviorTreeIDEnum != BehaviorTreeIDEnum.DoNothingTree) {
         Main.LogDebug($"[BehaviourTreeInitRootNodePatch Postfix] Patching InitRootNode for unit '{___unit.DisplayName}' with behaviour tree id '{___behaviorTreeIDEnum}'");
         Init(__instance, ___unit, ___behaviorTreeIDEnum);
       }

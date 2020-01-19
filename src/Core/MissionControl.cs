@@ -152,11 +152,21 @@ namespace MissionControl {
     public void SetContract(Contract contract) {
       Main.Logger.Log($"[MissionControl] Setting contract '{contract.Name}'");
       CurrentContract = contract;
-      SetActiveAdditionalLances(contract);
-      Main.Logger.Log($"[MissionControl] Contract map is '{contract.mapName}'");
-      ContractMapName = contract.mapName;
-      SetContractType(CurrentContract.ContractTypeValue);
-      AiManager.Instance.ResetCustomBehaviourVariableScopes();
+
+      if (AllowMissionControl()) {
+        IsMCLoadingFinished = false;
+        SetActiveAdditionalLances(contract);
+        Main.Logger.Log($"[MissionControl] Contract map is '{contract.mapName}'");
+        ContractMapName = contract.mapName;
+        SetContractType(CurrentContract.ContractTypeValue);
+        AiManager.Instance.ResetCustomBehaviourVariableScopes();
+      } else {
+        Main.Logger.Log($"[MissionControl] Mission Control is not allowed to run. Possibly a story mission or flashpoint contract.");
+        EncounterRules = null;
+        EncounterRulesName = null;
+        IsMCLoadingFinished = true;
+      }
+
       ContractStats.Clear();
       ClearOldContractData();
     }
@@ -164,13 +174,13 @@ namespace MissionControl {
     private void ClearOldContractData() {
       Main.Logger.Log($"[MissionControl] Clearing old contract data");
 
-      IsMCLoadingFinished = false;
-
       // Clear old lance data
-      CurrentContract.Override.targetTeam.lanceOverrideList =
-        CurrentContract.Override.targetTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
-      CurrentContract.Override.employerTeam.lanceOverrideList =
-        CurrentContract.Override.employerTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
+      if (CurrentContract != null) {
+        CurrentContract.Override.targetTeam.lanceOverrideList =
+          CurrentContract.Override.targetTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
+        CurrentContract.Override.employerTeam.lanceOverrideList =
+          CurrentContract.Override.employerTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
+      }
     }
 
     public void SetActiveAdditionalLances(Contract contract) {
@@ -228,6 +238,7 @@ namespace MissionControl {
         Main.Logger.Log($"[MissionControl] Mission Control is not allowed to run. Possibly a story mission or flashpoint contract.");
         EncounterRules = null;
         EncounterRulesName = null;
+        IsMCLoadingFinished = true;
       }
     }
 
@@ -241,6 +252,7 @@ namespace MissionControl {
         Main.Logger.Log($"[MissionControl] Mission Control is not allowed to run. Possibly a story mission or flashpoint contract.");
         EncounterRules = null;
         EncounterRulesName = null;
+        IsMCLoadingFinished = true;
       }
     }
 
@@ -320,7 +332,7 @@ namespace MissionControl {
     }
 
     public bool IsSkirmish(Contract contract) {
-      return !contract.ContractTypeValue.IsSinglePlayerProcedural;
+      return !contract.ContractTypeValue.IsSinglePlayerProcedural && contract.ContractTypeValue.IsSkirmish;
     }
 
     public bool IsSkirmish() {
