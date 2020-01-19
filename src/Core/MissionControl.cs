@@ -228,6 +228,7 @@ namespace MissionControl {
         Main.Logger.Log($"[MissionControl] Mission Control is not allowed to run. Possibly a story mission or flashpoint contract.");
         EncounterRules = null;
         EncounterRulesName = null;
+        IsMCLoadingFinished = true;
       }
     }
 
