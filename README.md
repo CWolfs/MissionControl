@@ -6,7 +6,7 @@ This works only for the generic contract types (e.g. Battle, Rescue etc) as it w
 
 ![Additional Lances](./docs/gh-images/mission-control.jpg)
 
-## Website & Documentarion
+## Website & Documentation
 
 For the latest information and documentation visit [Mission Control Website](https://www.missioncontrolmod.com)
 
