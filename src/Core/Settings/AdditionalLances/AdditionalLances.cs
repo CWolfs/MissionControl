@@ -21,7 +21,7 @@ namespace MissionControl.Config {
     public List<Dictionary<string, string>> RewardsPerLance { get; set; } = new List<Dictionary<string, string>>() {
       new Dictionary<string, string>() {
         { "Type", "ContractBonusRewardPct" },
-        { "Value", "1.5" }
+        { "Value", "0.75" }
       },
     };
 
