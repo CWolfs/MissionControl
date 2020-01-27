@@ -39,7 +39,7 @@ namespace MissionControl {
     private Dictionary<string, List<string>> Ranks = new Dictionary<string, List<string>>();      // e.g. <FactionName, [list of ranks]>
     private Dictionary<string, List<string>> Portraits = new Dictionary<string, List<string>>();  // e.g. <Male, [list of male portraits]
 
-    public Dictionary<string, JObject> AvailableCustomContractTypeBuilds { get; set; } = new Dictionary<string, JObject>();
+    public Dictionary<string, Dictionary<string, JObject>> AvailableCustomContractTypeBuilds { get; set; } = new Dictionary<string, Dictionary<string, JObject>>();
     private Dictionary<string, List<ContractTypeValue>> AvailableCustomContractTypes = new Dictionary<string, List<ContractTypeValue>>();
 
     private Dictionary<string, Dictionary<string, List<string>>> Dialogue = new Dictionary<string, Dictionary<string, List<string>>>();
@@ -63,12 +63,23 @@ namespace MissionControl {
     }
 
     private void LoadCustomContractTypeBuilds() {
-      foreach (string file in Directory.GetFiles($"{ModDirectory}/contractTypeBuilds/", "*.json*", SearchOption.AllDirectories)) {
-        string contractTypeBuildSource = File.ReadAllText(file);
-        JObject contractTypeBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildSource);
-        Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type build '{contractTypeBuild["Key"]}'");
+      foreach (string directory in Directory.GetDirectories($"{ModDirectory}/contractTypeBuilds/")) {
+        string contractTypeBuildCommonSource = File.ReadAllText($"{directory}/common.jsonc");
+        JObject contractTypeCommonBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildCommonSource);
+        Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type build '{contractTypeCommonBuild["Key"]}'");
 
-        AvailableCustomContractTypeBuilds.Add(contractTypeBuild["Key"].ToString(), contractTypeBuild);
+        Dictionary<string, JObject> contractTypeMapBuilds = new Dictionary<string, JObject>();
+        AvailableCustomContractTypeBuilds.Add(contractTypeCommonBuild["Key"].ToString(), contractTypeMapBuilds);
+
+        foreach (string file in Directory.GetFiles(directory, "*.json*", SearchOption.AllDirectories)) {
+          string contractTypeBuildMapSource = File.ReadAllText(file);
+          JObject contractTypeMapBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildMapSource);
+          string key = Path.GetFileNameWithoutExtension(file.Substring(file.LastIndexOf("\\")));
+
+          Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type map build '{key}'");
+
+          contractTypeMapBuilds.Add(key, contractTypeMapBuild);
+        }
       }
     }
 
@@ -283,6 +294,64 @@ namespace MissionControl {
       }
 
       return "Let's get them, Commander!";
+    }
+
+    public JObject GetAvailableCustomContractTypeBuilds(string contractTypeName, string mapId) {
+      if (AvailableCustomContractTypeBuilds.ContainsKey(contractTypeName)) {
+        Dictionary<string, JObject> contractTypeMapBuilds = AvailableCustomContractTypeBuilds[contractTypeName];
+
+        if (!contractTypeMapBuilds.ContainsKey("common")) {
+          Main.Logger.LogError($"[GetAvailableCustomContractTypeBuilds] No common.json for '{contractTypeName}'. It's mandatory for custom contract types.");
+          return null;
+        }
+
+        JObject commonBuild = contractTypeMapBuilds["common"];
+
+        if (!contractTypeMapBuilds.ContainsKey(mapId)) {
+          Main.Logger.LogError($"[GetAvailableCustomContractTypeBuilds] No map specific build for '{contractTypeName}' and '{mapId}'. Using only the common build.");
+        } else {
+          JObject mapBuild = contractTypeMapBuilds[mapId];
+
+          Main.LogDebug($"[GetAvailableCustomContractTypeBuilds] Merging common build for '{contractTypeName}' with map build '{mapId}'");
+
+          JArray overridesArray = (JArray)mapBuild["Overrides"];
+          if (overridesArray == null) {
+            Main.Logger.LogError($"[GetAvailableCustomContractTypeBuilds] No overrides found in contract type map build file '{contractTypeName}/{mapId}'");
+            return null;
+          }
+
+          foreach (JObject ovr in overridesArray.Children<JObject>()) {
+            string path = (string)ovr["Path"];
+            string action = (string)ovr["Action"];
+            JToken value = ovr["Value"];
+
+            JToken token = commonBuild.SelectToken(path);
+            if (token == null) {
+              Main.Logger.LogError($"[GetAvailableCustomContractTypeBuilds] No match found for path '{path}'");
+              return null;
+            }
+
+            if (action == "Replace") {
+              Main.LogDebug($"[GetAvailableCustomContractTypeBuilds] Replacing value for path '{path}'");
+              token.Replace(value);
+            } else if (action == "Remove") {
+              Main.LogDebug($"[GetAvailableCustomContractTypeBuilds] Removing value for path '{path}'");
+              token.Remove();
+            } else if (action == "ObjectMerge") {
+              Main.LogDebug($"[GetAvailableCustomContractTypeBuilds] Object merging value for path '{path}'");
+              JObject objTarget = (JObject)token;
+              JObject objValue = (JObject)value;
+
+              objTarget.Merge(objValue);
+            }
+          }
+        }
+
+        return commonBuild;
+      } else {
+        Main.Logger.LogError($"[GetAvailableCustomContractTypeBuilds] Requested custom contract type for '{contractTypeName}' and map id '{mapId}' has no custom contract type loaded.");
+      }
+      return null;
     }
 
     public void Reset() {
