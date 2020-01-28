@@ -104,7 +104,7 @@ namespace MissionControl {
 
     private void LoadEncounterLayers(string name) {
       foreach (string file in Directory.GetFiles($"{ModDirectory}/overrides/encounterLayers/{name.ToLower()}", "*.json", SearchOption.AllDirectories)) {
-        Main.LogDebug($"[DataManager.LoadCustomContractTypes] Loading '{file}' custom encounter layer");
+        Main.LogDebug($"[DataManager.LoadCustomContractTypes] Loading '{file.Substring('\\') + 1}' custom encounter layer");
         string encounterLayer = File.ReadAllText(file);
         EncounterLayer encounterLayerData = JsonConvert.DeserializeObject<EncounterLayer>(encounterLayer);
 
