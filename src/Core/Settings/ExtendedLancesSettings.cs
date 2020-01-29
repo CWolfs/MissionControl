@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 using BattleTech.Framework;
 
+using HBS.Collections;
+
 using Newtonsoft.Json;
 
 namespace MissionControl.Config {
@@ -12,6 +14,20 @@ namespace MissionControl.Config {
 
     [JsonProperty("LanceSizes")]
     public Dictionary<string, List<ExtendedLance>> LanceSizes { get; set; } = new Dictionary<string, List<ExtendedLance>>();
+
+    [JsonProperty("SkipWhenTaggedWithAny")]
+    public List<string> SkipWhenTaggedWithAny { get; set; } = new List<string>();
+
+    [JsonProperty("SkipWhenTaggedWithAll")]
+    public List<string> SkipWhenTaggedWithAll { get; set; } = new List<string>();
+
+    public TagSet GetSkipWhenTaggedWithAny() {
+      return new TagSet(SkipWhenTaggedWithAny);
+    }
+
+    public TagSet GetSkipWhenTaggedWithAll() {
+      return new TagSet(SkipWhenTaggedWithAll);
+    }
 
     public int GetFactionLanceSize(string factionKey) {
       foreach (KeyValuePair<string, List<ExtendedLance>> lanceSetPair in LanceSizes) {
