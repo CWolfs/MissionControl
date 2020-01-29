@@ -44,7 +44,7 @@ namespace MissionControl.Logic {
     protected void RestoreSpawnPositions(List<GameObject> objectGos) {
       for (int i = 0; i < originalObjectPositions.Count; i++) {
         objectGos[i].transform.position = originalObjectPositions[i];
-      }  
+      }
     }
 
     protected void SaveSpawnPositions(GameObject lance) {
@@ -71,7 +71,7 @@ namespace MissionControl.Logic {
       for (int i = 0; i < originalSpawnPoints.Count; i++) {
         GameObject spawn = originalSpawnPoints[i];
         spawn.transform.position = vanillaLanceUnitSpawnPositions[i];
-      }  
+      }
     }
 
     protected Vector3 GetOriginalSpawnPosition() {
@@ -92,7 +92,7 @@ namespace MissionControl.Logic {
     protected void RotateAwayFromTarget(GameObject focus, GameObject target) {
       Vector3 targetPosition = target.transform.position;
       Vector3 focusPosition = focus.transform.position;
-      Vector3 lookAtPosition = focusPosition - ( targetPosition - focusPosition);
+      Vector3 lookAtPosition = focusPosition - (targetPosition - focusPosition);
 
       Vector3 lookAtTargetPosition = new Vector3(lookAtPosition.x, focusPosition.y, lookAtPosition.z);
       focus.transform.LookAt(lookAtTargetPosition);
@@ -137,8 +137,8 @@ namespace MissionControl.Logic {
       vectorToTarget.y = 0;
       float distance = vectorToTarget.magnitude;
       if (distance >= minDistance) return true;
-      Main.LogDebugWarning($"[IsWithinBoundedDistanceOfTarget] Distance is {distance} and so not within bounds. Getting new random position");
-      return false;  
+      Main.LogDebugWarning($"[IsWithinBoundedDistanceOfTarget] Distance is '{distance}' and so not beyond bounds of '{minDistance}'. Getting new random position");
+      return false;
     }
 
     protected void ClusterLanceMembers(GameObject lance) {
