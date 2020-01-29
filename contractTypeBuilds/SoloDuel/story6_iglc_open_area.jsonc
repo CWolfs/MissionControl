@@ -1,5 +1,6 @@
 // This file overrides the contract type 'common.json' file with map specific values (such as locations and rotations)
 {
+  "EncounterLayerId": "mapStory_StoryEncounter6_iGlc.c70c1e8c-541e-49ea-94e3-a1f6fe3c8b56",
   "Overrides": [
     {
       "Path": "Chunks[?(@.Name == 'Chunk_PlayerLance')].Children[?(@.Name == 'Spawner_PlayerLance')]",
@@ -8,11 +9,11 @@
         "Name": "Spawner_PlayerLance",
         "Position": {
           "Type": "World",
-          "Value": { "x": -90, "y": 86, "z": 40 }
+          "Value": { "x": -200, "y": 250, "z": 500 }
         },
         "Rotation": {
           "Type": "World",
-          "Value": { "x": 0, "y": 30, "z": 0 }
+          "Value": { "x": 0, "y": 60, "z": 0 }
         }
       }
     },
@@ -23,11 +24,11 @@
         "Name": "Lance_Enemy_OpposingForce",
         "Position": {
           "Type": "World",
-          "Value": { "x": 0, "y": 60, "z": 650 }
+          "Value": { "x": 250, "y": 175, "z": 700 }
         },
         "Rotation": {
           "Type": "World",
-          "Value": { "x": 0, "y": 180, "z": 0 }
+          "Value": { "x": 0, "y": 250, "z": 0 }
         }
       }
     },
@@ -38,10 +39,10 @@
         "Name": "EncounterBoundaryRect",
         "Position": {
           "Type": "World",
-          "Value": { "x": 15, "y": 50, "z": 450 }
+          "Value": { "x": 15, "y": 350, "z": 650 }
         },
-        "Width": 900,
-        "Length": 1024
+        "Width": 700,
+        "Length": 600
       }
     }
   ]

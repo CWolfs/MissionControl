@@ -66,7 +66,8 @@ namespace MissionControl {
       foreach (string directory in Directory.GetDirectories($"{ModDirectory}/contractTypeBuilds/")) {
         string contractTypeBuildCommonSource = File.ReadAllText($"{directory}/common.jsonc");
         JObject contractTypeCommonBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildCommonSource);
-        Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type build '{contractTypeCommonBuild["Key"]}'");
+        string contractTypeName = (string)contractTypeCommonBuild["Key"];
+        Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type build '{contractTypeName}'");
 
         Dictionary<string, JObject> contractTypeMapBuilds = new Dictionary<string, JObject>();
         AvailableCustomContractTypeBuilds.Add(contractTypeCommonBuild["Key"].ToString(), contractTypeMapBuilds);
@@ -74,11 +75,15 @@ namespace MissionControl {
         foreach (string file in Directory.GetFiles(directory, "*.json*", SearchOption.AllDirectories)) {
           string contractTypeBuildMapSource = File.ReadAllText(file);
           JObject contractTypeMapBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildMapSource);
-          string key = Path.GetFileNameWithoutExtension(file.Substring(file.LastIndexOf("\\")));
+          string fileName = Path.GetFileNameWithoutExtension(file.Substring(file.LastIndexOf("\\")));
 
-          Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type map build '{key}'");
-
-          contractTypeMapBuilds.Add(key, contractTypeMapBuild);
+          if (fileName == "common" || contractTypeMapBuild.ContainsKey("EncounterLayerId")) {
+            string encounterLayerId = (fileName == "common") ? fileName : (string)contractTypeMapBuild["EncounterLayerId"];
+            Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type map build '{contractTypeName}/{fileName}' with encounterLayerId '{encounterLayerId}'");
+            contractTypeMapBuilds.Add(encounterLayerId, contractTypeMapBuild);
+          } else {
+            Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Unable to load contract type map build file '{fileName}' for contract type '{contractTypeName}' because no 'EncounterLayerId' exists");
+          }
         }
       }
     }
@@ -296,7 +301,8 @@ namespace MissionControl {
       return "Let's get them, Commander!";
     }
 
-    public JObject GetAvailableCustomContractTypeBuilds(string contractTypeName, string mapId) {
+    // TODO: Figure out how to have multiple encounters generated for the same map and select them using the debug selector
+    public JObject GetAvailableCustomContractTypeBuilds(string contractTypeName, string encounterLayerId) {
       if (AvailableCustomContractTypeBuilds.ContainsKey(contractTypeName)) {
         Dictionary<string, JObject> contractTypeMapBuilds = AvailableCustomContractTypeBuilds[contractTypeName];
 
@@ -307,16 +313,16 @@ namespace MissionControl {
 
         JObject commonBuild = contractTypeMapBuilds["common"];
 
-        if (!contractTypeMapBuilds.ContainsKey(mapId)) {
-          Main.Logger.LogError($"[GetAvailableCustomContractTypeBuilds] No map specific build for '{contractTypeName}' and '{mapId}'. Using only the common build.");
+        if (!contractTypeMapBuilds.ContainsKey(encounterLayerId)) {
+          Main.Logger.LogWarning($"[GetAvailableCustomContractTypeBuilds] No map specific build for '{contractTypeName}' and '{encounterLayerId}'. Using only the common build.");
         } else {
-          JObject mapBuild = contractTypeMapBuilds[mapId];
+          JObject mapBuild = contractTypeMapBuilds[encounterLayerId];
 
-          Main.LogDebug($"[GetAvailableCustomContractTypeBuilds] Merging common build for '{contractTypeName}' with map build '{mapId}'");
+          Main.LogDebug($"[GetAvailableCustomContractTypeBuilds] Merging common build for '{contractTypeName}' with map build '{encounterLayerId}'");
 
           JArray overridesArray = (JArray)mapBuild["Overrides"];
           if (overridesArray == null) {
-            Main.Logger.LogError($"[GetAvailableCustomContractTypeBuilds] No overrides found in contract type map build file '{contractTypeName}/{mapId}'");
+            Main.Logger.LogError($"[GetAvailableCustomContractTypeBuilds] No overrides found in contract type map build file for contract type '{contractTypeName}' with encounterLayerId '{encounterLayerId}'");
             return null;
           }
 
@@ -349,7 +355,7 @@ namespace MissionControl {
 
         return commonBuild;
       } else {
-        Main.Logger.LogError($"[GetAvailableCustomContractTypeBuilds] Requested custom contract type for '{contractTypeName}' and map id '{mapId}' has no custom contract type loaded.");
+        Main.Logger.LogError($"[GetAvailableCustomContractTypeBuilds] Requested custom contract type for '{contractTypeName}' and encounterLayerId '{encounterLayerId}' has no custom contract type loaded.");
       }
       return null;
     }
