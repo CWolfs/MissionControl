@@ -301,7 +301,6 @@ namespace MissionControl {
       return "Let's get them, Commander!";
     }
 
-    // TODO: Figure out how to have multiple encounters generated for the same map and select them using the debug selector
     public JObject GetAvailableCustomContractTypeBuilds(string contractTypeName, string encounterLayerId) {
       if (AvailableCustomContractTypeBuilds.ContainsKey(contractTypeName)) {
         Dictionary<string, JObject> contractTypeMapBuilds = AvailableCustomContractTypeBuilds[contractTypeName];
