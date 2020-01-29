@@ -163,7 +163,11 @@ namespace MissionControl.Rules {
       GameObject plotsParentGo = GameObject.Find("PlotParent");
       GameObject closestPlot = null;
 
-      closestPlot = CheckAllPlotsForValidPlot(plotsParentGo, origin, "PlotVariant");
+      closestPlot = CheckAllPlotsForValidPlot(plotsParentGo, origin, "plotVariant_");
+
+      if (closestPlot == null) {
+        closestPlot = CheckAllPlotsForValidPlot(plotsParentGo, origin, "PlotVariant");
+      }
 
       // If no plot is found, select on a secondary fallback
       if (closestPlot == null) {

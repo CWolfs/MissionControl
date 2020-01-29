@@ -18,7 +18,7 @@ namespace MissionControl.Rules {
       if (!MissionControl.Instance.IsRandomSpawnsAllowed()) return;
 
       Main.Logger.Log("[DestroyBaseAidAssaultEncounterRules] Building player spawn rule");
-      EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "PlotBase"));
+      EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "PlotBase", 400));
     }
 
     public override void LinkObjectReferences(string mapName) {
