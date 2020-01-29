@@ -17,6 +17,7 @@ namespace MissionControl.Logic {
     private LogicState state;
     private List<LanceSpawnerGameLogic> lanceSpawners;
     private List<string[]> spawnKeys = new List<string[]>();
+    private List<string> lancesToSkip = new List<string>();
 
     public AddExtraLanceSpawnPoints(EncounterRules encounterRules, LogicState state) {
       this.encounterRules = encounterRules;
@@ -29,6 +30,7 @@ namespace MissionControl.Logic {
       EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
       ContractOverride contractOverride = contract.Override;
 
+      lancesToSkip = (List<string>)state.GetObject("LancesToSkip");
       lanceSpawners = new List<LanceSpawnerGameLogic>(encounterLayerData.gameObject.GetComponentsInChildren<LanceSpawnerGameLogic>());
 
       TeamOverride targetTeamOverride = contractOverride.targetTeam;
@@ -49,6 +51,11 @@ namespace MissionControl.Logic {
         LanceOverride lanceOverride = lanceOverrides[i];
         bool isManualLance = lanceOverride.lanceDefId == "Manual";
         int numberOfUnitsInLance = lanceOverride.unitSpawnPointOverrideList.Count;
+
+        if (lancesToSkip.Contains(lanceOverride.GUID)) {
+          Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected a lance to skip. Skipping.");
+          continue;
+        }
 
         if (lanceOverride.IsATurretLance()) {
           Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected a turret lance Ignoring for Extended Lances.");

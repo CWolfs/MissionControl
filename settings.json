@@ -37,6 +37,8 @@
     "Enable": true,
     "Autofill": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
+    "SkipWhenTaggedWithAny": ["lance_type_solo"],
+    "SkipWhenTaggedWithAll": [],
     "LanceSizes": {
       "5": [],
       "6": []

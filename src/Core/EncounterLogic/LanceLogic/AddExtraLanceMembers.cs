@@ -1,16 +1,19 @@
-using System;
 using System.Collections.Generic;
 
 using BattleTech.Framework;
+
+using HBS.Collections;
 
 using MissionControl.Data;
 
 namespace MissionControl.Logic {
   public class AddExtraLanceMembers : LanceLogic {
     private LogicState state;
+    private List<string> lancesToSkip = new List<string>();
 
     public AddExtraLanceMembers(LogicState state) {
       this.state = state;
+      this.state.Set("LancesToSkip", lancesToSkip);
     }
 
     public override void Run(RunPayload payload) {
@@ -31,12 +34,24 @@ namespace MissionControl.Logic {
 
       foreach (LanceOverride lanceOverride in lanceOverrides) {
         Main.LogDebug($"[IncreaseLanceMembers] [{teamOverride.faction}] Checking lance '{lanceOverride.name}'...");
+        if (Main.Settings.ExtendedLances.GetSkipWhenTaggedWithAny().Count > 0 && lanceOverride.lanceTagSet.ContainsAny(Main.Settings.ExtendedLances.GetSkipWhenTaggedWithAny())) {
+          Main.LogDebug($"[IncreaseLanceMembers] [{teamOverride.faction}] Lance contains a tag set in 'SkipWhenTaggedWithAny'. Skipping '{lanceOverride.name}'");
+          lancesToSkip.Add(lanceOverride.GUID);
+          continue;
+        }
+
+        if (Main.Settings.ExtendedLances.GetSkipWhenTaggedWithAll().Count > 0 && lanceOverride.lanceTagSet.ContainsAll(Main.Settings.ExtendedLances.GetSkipWhenTaggedWithAll())) {
+          Main.LogDebug($"[IncreaseLanceMembers] [{teamOverride.faction}] Lance contains a tag set in 'SkipWhenTaggedWithAll'. Skipping '{lanceOverride.name}'");
+          lancesToSkip.Add(lanceOverride.GUID);
+          continue;
+        }
 
         // GUARD: If an AdditionalLance lance config has been set to 'supportAutofill' false, then don't autofill
         if (lanceOverride is MLanceOverride) {
           MLanceOverride mLanceOverride = (MLanceOverride)lanceOverride;
           if (!mLanceOverride.SupportAutofill) {
             Main.LogDebug($"[IncreaseLanceMembers] LanceOverride '{mLanceOverride.GUID}' has 'supportAutofill' explicitly set to 'false' in MC lance '{mLanceOverride.LanceKey}'. Will not autofill.");
+            lancesToSkip.Add(mLanceOverride.GUID);
             continue;
           }
         }
