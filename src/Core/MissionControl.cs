@@ -141,7 +141,7 @@ namespace MissionControl {
       string contractTypeName = CurrentContract.ContractTypeValue.Name;
 
       if (DataManager.Instance.AvailableCustomContractTypeBuilds.ContainsKey(contractTypeName)) {
-        JObject contractTypeBuild = DataManager.Instance.AvailableCustomContractTypeBuilds[contractTypeName];
+        JObject contractTypeBuild = DataManager.Instance.GetAvailableCustomContractTypeBuilds(contractTypeName, EncounterLayerMDD.EncounterLayerID);
         ContractTypeBuilder contractTypeBuilder = new ContractTypeBuilder(encounterLayerGo, contractTypeBuild);
         contractTypeBuilder.Build();
       } else {
@@ -150,7 +150,7 @@ namespace MissionControl {
     }
 
     public void SetContract(Contract contract) {
-      Main.Logger.Log($"[MissionControl] Setting contract '{contract.Name}'");
+      Main.Logger.Log($"[MissionControl] Setting contract '{contract.Name}' for contract type '{contract.ContractTypeValue.Name}'");
       CurrentContract = contract;
 
       if (AllowMissionControl()) {
