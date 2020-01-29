@@ -150,7 +150,7 @@ namespace MissionControl {
     }
 
     public void SetContract(Contract contract) {
-      Main.Logger.Log($"[MissionControl] Setting contract '{contract.Name}'");
+      Main.Logger.Log($"[MissionControl] Setting contract '{contract.Name}' for contract type '{contract.ContractTypeValue.Name}'");
       CurrentContract = contract;
 
       if (AllowMissionControl()) {
