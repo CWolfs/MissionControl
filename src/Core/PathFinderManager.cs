@@ -311,6 +311,8 @@ namespace MissionControl {
     }
 
     public void Reset() {
+      UnsubscribePathfinders();
+
       if (pathFinderMech.GameRep != null) {
         GameObject pathFinderGo = pathFinderMech.GameRep.gameObject;
         GameObject blipUnknownGo = pathFinderMech.GameRep.BlipObjectUnknown.gameObject;
@@ -336,6 +338,11 @@ namespace MissionControl {
       Reset();
       pathFinderMech = null;
       pathFinderVehicle = null;
+    }
+
+    private void UnsubscribePathfinders() {
+      AccessTools.Method(typeof(Mech), "SubscribeMessages").Invoke(pathFinderMech, new object[] { false });
+      AccessTools.Method(typeof(AbstractActor), "SubscribeMessages").Invoke(pathFinderVehicle, new object[] { false });
     }
   }
 }
