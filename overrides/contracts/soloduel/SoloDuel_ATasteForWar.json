@@ -326,7 +326,7 @@
               "tagSetSourceFile" : "tags/LanceTags"
           },
           "lanceExcludedTagSet" : {
-              "items" : [],
+              "items" : ["lance_type_vehicle"],
               "tagSetSourceFile" : "tags/LanceTags"
           },
           "spawnEffectTags" : {
