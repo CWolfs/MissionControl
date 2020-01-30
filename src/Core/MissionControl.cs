@@ -38,6 +38,10 @@ namespace MissionControl {
     public GameObject EncounterLayerGameObject { get; private set; }
     public EncounterLayerData EncounterLayerData { get; private set; }
 
+    public int PlayerLanceDropDifficultyValue { get; set; }
+    public float PlayerLanceDropSkullRating { get; set; }
+    public float PlayerLanceDropTonnage { get; set; }
+
     // Only populated for custom contract types
     public EncounterLayer_MDD EncounterLayerMDD { get; private set; }
     public bool IsCustomContractType { get; set; } = false;
@@ -154,6 +158,9 @@ namespace MissionControl {
       CurrentContract = contract;
 
       if (AllowMissionControl()) {
+        Main.Logger.Log($"[MissionControl] Player drop difficulty: '{PlayerLanceDropDifficultyValue}' (Skull value '{PlayerLanceDropSkullRating}')");
+        Main.Logger.Log($"[MissionControl] Player drop tonnage: '{PlayerLanceDropTonnage}' tons");
+
         IsMCLoadingFinished = false;
         SetActiveAdditionalLances(contract);
         Main.Logger.Log($"[MissionControl] Contract map is '{contract.mapName}'");
@@ -187,11 +194,11 @@ namespace MissionControl {
       if (Main.Settings.AdditionalLanceSettings.SkullValueMatters) {
         if (!IsSkirmish(contract) || (IsSkirmish(contract) && !Main.Settings.AdditionalLanceSettings.UseGeneralProfileForSkirmish)) {
           int difficulty = contract.Override.finalDifficulty;
-          Main.LogDebug($"[MissionControl] Difficulty '{difficulty}' (Skull value '{(float)difficulty / 2f}')");
+          Main.LogDebug($"[MissionControl] Contract difficulty '{difficulty}' (Skull value '{(float)difficulty / 2f}')");
           if (Main.Settings.AdditionalLanceSettings.BasedOnVisibleSkullValue) {
             difficulty = contract.Override.GetUIDifficulty();
           }
-          Main.LogDebug($"[MissionControl] Visible Difficulty '{contract.Override.GetUIDifficulty()}' (Skull value '{(float)contract.Override.GetUIDifficulty() / 2f}')");
+          Main.LogDebug($"[MissionControl] Visible Contract difficulty '{contract.Override.GetUIDifficulty()}' (Skull value '{(float)contract.Override.GetUIDifficulty() / 2f}')");
 
           if (Main.Settings.AdditionalLances.ContainsKey(difficulty)) {
             Main.Logger.Log($"[MissionControl] Using AdditionalLances for difficulty '{difficulty}' (Skull value '{(float)difficulty / 2f}')");

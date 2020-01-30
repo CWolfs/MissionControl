@@ -32,5 +32,8 @@ namespace MissionControl.Config {
 
     [JsonProperty("MatchAllyLanceCountToEnemy")]
     public bool MatchAllyLanceCountToEnemy { get; set; } = false;
+
+    [JsonProperty("DropWeightInfluenceSettings")]
+    public DropWeightInfluenceSettings DropWeightInfluenceSettings { get; set; } = new DropWeightInfluenceSettings();
   }
 }

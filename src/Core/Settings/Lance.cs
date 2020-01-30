@@ -31,6 +31,7 @@ namespace MissionControl.Config {
     public Dictionary<string, List<string>> LancePool { get; set; } = new Dictionary<string, List<string>>();
 
     public int SelectNumberOfAdditionalLances(FactionDef faction, string teamType) {
+      DropWeightInfluenceSettings dropWeightSettings = Main.Settings.AdditionalLanceSettings.DropWeightInfluenceSettings;
       bool useElites = MissionControl.Instance.ShouldUseElites(faction, teamType);
       int lanceNumber = 0;
 
@@ -43,6 +44,11 @@ namespace MissionControl.Config {
         }
       }
       int resolvedChanceToSpawn = (int)(rawChanceToSpawn * 100f);
+
+      // Use a different calculation approach instead then
+      if (dropWeightSettings.Enable) {
+        // Get drop weight
+      }
 
       int resolvedMax = Max;
       if (useElites) {

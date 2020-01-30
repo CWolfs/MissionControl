@@ -31,7 +31,14 @@
       "Limited": false,
       "LimitedToUnder": 300
     },
-    "MatchAllyLanceCountToEnemy": false
+    "MatchAllyLanceCountToEnemy": false,
+    "DropWeightInfluence": {
+      "Enable": false,
+      "GlobalEnemyChanceToSpawn": 0.3,
+      "GlobalAllyChanceToSpawn": 0.5,
+      "EnemySpawnInfluencePerHalfSkull": 0.1,
+      "AllySpawnInfluencePerHalfSkull": -0.1
+    }
   },
   "ExtendedLances": {
     "Enable": true,
