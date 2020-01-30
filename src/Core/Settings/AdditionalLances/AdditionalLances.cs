@@ -52,7 +52,7 @@ namespace MissionControl.Config {
     [JsonProperty("Allies")]
     public Lance Allies { get; set; } = new Lance("Allies");
 
-    public List<string> GetLancePoolKeys(string teamType, string biome, string contractType, string faction, int factionRep) {
+    public List<string> GetLancePoolKeys(string teamType, string biome, string contractType, string faction, int factionRep, int mrbLevel, int mrbRating) {
       List<string> lancePoolKeys = new List<string>();
       Dictionary<string, List<string>> teamLancePool = null;
 
@@ -65,18 +65,20 @@ namespace MissionControl.Config {
           break;
       }
 
-      lancePoolKeys.AddRange(GetLancePoolKeys(LancePool, teamType, biome, contractType, faction, factionRep));
-      if (teamLancePool != null) lancePoolKeys.AddRange(GetLancePoolKeys(teamLancePool, teamType, biome, contractType, faction, factionRep));
+      lancePoolKeys.AddRange(GetLancePoolKeys(LancePool, teamType, biome, contractType, faction, factionRep, mrbLevel, mrbRating));
+      if (teamLancePool != null) lancePoolKeys.AddRange(GetLancePoolKeys(teamLancePool, teamType, biome, contractType, faction, factionRep, mrbLevel, mrbRating));
 
       return lancePoolKeys.Distinct().ToList();
     }
 
-    private List<string> GetLancePoolKeys(Dictionary<string, List<string>> lancePool, string teamType, string biome, string contractType, string faction, int factionRep) {
+    private List<string> GetLancePoolKeys(Dictionary<string, List<string>> lancePool, string teamType, string biome, string contractType, string faction, int factionRep, int mrbLevel, int mrbRep) {
       List<string> lancePoolKeys = new List<string>();
       string allIdentifier = "ALL";
       string biomeIdentifier = $"BIOME:{biome}";
       string contractTypeIdentifier = $"CONTRACT_TYPE:{contractType}";
       string factionIdentifier = $"FACTION:{faction}";
+      string mrbLevelIdentifier = $"MRB_LEVEL:{mrbLevel}";
+      string mrbRatingIdentifier = $"MRB_RATING";
 
       if (lancePool.ContainsKey(allIdentifier)) lancePoolKeys.AddRange(lancePool[allIdentifier]);
       if (lancePool.ContainsKey(biomeIdentifier)) lancePoolKeys.AddRange(lancePool[biomeIdentifier]);
@@ -89,6 +91,19 @@ namespace MissionControl.Config {
         int maxRep = int.Parse(key[3]);
         if (factionRep >= minRep && factionRep <= maxRep) {
           lancePoolKeys.AddRange(factionLancesPair.Value);
+          break;
+        }
+      }
+
+      if (lancePool.ContainsKey(mrbLevelIdentifier)) lancePoolKeys.AddRange(lancePool[mrbLevelIdentifier]);
+
+      Dictionary<string, List<string>> mrbLances = lancePool.Where(lancePoolEntry => lancePoolEntry.Key.StartsWith(mrbRatingIdentifier)).ToDictionary(lancePoolEntry => lancePoolEntry.Key, lancePoolEntry => lancePoolEntry.Value);
+      foreach (KeyValuePair<string, List<string>> mrbLancesPair in mrbLances) {
+        string[] key = mrbLancesPair.Key.Split(':');
+        int minRep = int.Parse(key[1]);
+        int maxRep = int.Parse(key[2]);
+        if (mrbRep >= minRep && mrbRep <= maxRep) {
+          lancePoolKeys.AddRange(mrbLancesPair.Value);
           break;
         }
       }
