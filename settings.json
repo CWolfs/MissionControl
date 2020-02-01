@@ -74,6 +74,11 @@
       {
         "ContractTypeName": "FireMission",
         "IncreaseBoundarySizeByPercentage": 0.5
+      },
+      {
+        "MapId": "mapGeneral_desertDam_aDes",
+        "ContractTypeName": "SimpleBattle",
+        "IncreaseBoundarySizeByPercentage": 0.55
       }
     ]
   },
