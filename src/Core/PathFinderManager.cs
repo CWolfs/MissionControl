@@ -335,7 +335,6 @@ namespace MissionControl {
     }
 
     public void FullReset() {
-      Reset();
       pathFinderMech = null;
       pathFinderVehicle = null;
     }
