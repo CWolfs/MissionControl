@@ -20,6 +20,8 @@
     "Enable": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "IsPrimaryObjectiveIn": ["SimpleBattle", "ThreeWayBattle"],
+    "HideObjective": false,
+    "ForceDisplayOfHiddenObjectiveIfPrimary": true,
     "UseElites": true,
     "UseDialogue": true,
     "SkullValueMatters": true,
