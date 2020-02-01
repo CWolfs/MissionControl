@@ -226,6 +226,12 @@ namespace MissionControl.Rules {
 
       if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
         bool isPrimaryObjective = MissionControl.Instance.CurrentContractType.In(Main.Settings.AdditionalLanceSettings.IsPrimaryObjectiveIn.ToArray());
+        bool displayToUser = !Main.Settings.AdditionalLanceSettings.HideObjective;
+
+        if (Main.Settings.AdditionalLanceSettings.ForceDisplayOfHiddenObjectiveIfPrimary) {
+          displayToUser = (isPrimaryObjective) ? true : displayToUser;
+        }
+
         Main.Logger.Log($"[{this.GetType().Name}] Additional Lances will be primary objectives? {isPrimaryObjective}");
         FactionDef faction = MissionControl.Instance.GetFactionFromTeamType("enemy");
 
@@ -237,10 +243,10 @@ namespace MissionControl.Rules {
         for (int i = 0; i < numberOfAdditionalEnemyLances; i++) {
           if (MissionControl.Instance.CurrentContractType == "ArenaSkirmish") {
             new AddPlayer2LanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, 50f, 200f,
-              $"Destroy Enemy Support Lance {i + 1}", objectivePriority--, isPrimaryObjective);
+              $"Destroy Enemy Support Lance {i + 1}", objectivePriority--, isPrimaryObjective, displayToUser);
           } else {
             new AddTargetLanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, 50f, 200f,
-              $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i + 1}", objectivePriority--, isPrimaryObjective);
+              $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i + 1}", objectivePriority--, isPrimaryObjective, displayToUser);
           }
         }
       }
