@@ -36,8 +36,8 @@
     },
     "MatchAllyLanceCountToEnemy": false,
     "DropWeightInfluence": {
-      "Enable": true,
-      "GlobalEnemyChanceToSpawn": 2,
+      "Enable": false,
+      "GlobalEnemyChanceToSpawn": 0.05,
       "GlobalAllyChanceToSpawn": 0.8,
       "EnemySpawnInfluencePerHalfSkull": 0.1,
       "AllySpawnInfluencePerHalfSkull": -0.1
