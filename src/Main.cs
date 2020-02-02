@@ -9,6 +9,7 @@ using HBS.Logging;
 using Harmony;
 
 using Newtonsoft.Json;
+using System.Globalization;
 using Newtonsoft.Json.Linq;
 
 using System.Reflection;
@@ -71,7 +72,8 @@ namespace MissionControl {
     private static void LoadSettings(string modDirectory) {
       Logger.Log("Loading MissionControl settings");
       JsonSerializerSettings serialiserSettings = new JsonSerializerSettings() {
-        TypeNameHandling = TypeNameHandling.All
+        TypeNameHandling = TypeNameHandling.All,
+        Culture = CultureInfo.InvariantCulture
       };
 
       string settingsJsonString = File.ReadAllText($"{modDirectory}/settings.json");
