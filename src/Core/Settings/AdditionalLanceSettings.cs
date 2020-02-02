@@ -15,8 +15,8 @@ namespace MissionControl.Config {
     [JsonProperty("ShowObjectiveOnLanceDetected")]
     public bool ShowObjectiveOnLanceDetected { get; set; } = true;
 
-    [JsonProperty("ForceAlwaysDisplayHiddenObjectiveIfPrimary")]
-    public bool ForceAlwaysDisplayHiddenObjectiveIfPrimary { get; set; } = false;
+    [JsonProperty("AlwaysDisplayHiddenObjectiveIfPrimary")]
+    public bool AlwaysDisplayHiddenObjectiveIfPrimary { get; set; } = false;
 
     [JsonProperty("UseElites")]
     public bool UseElites { get; set; } = true;

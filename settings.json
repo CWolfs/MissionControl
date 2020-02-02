@@ -22,7 +22,7 @@
     "IsPrimaryObjectiveIn": ["SimpleBattle", "ThreeWayBattle"],
     "HideObjective": true,
     "ShowObjectiveOnLanceDetected": true,
-    "ForceAlwaysDisplayHiddenObjectiveIfPrimary": false,
+    "AlwaysDisplayHiddenObjectiveIfPrimary": false,
     "UseElites": true,
     "UseDialogue": true,
     "SkullValueMatters": true,

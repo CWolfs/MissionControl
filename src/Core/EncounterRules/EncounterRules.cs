@@ -228,7 +228,7 @@ namespace MissionControl.Rules {
         bool isPrimaryObjective = MissionControl.Instance.CurrentContractType.In(Main.Settings.AdditionalLanceSettings.IsPrimaryObjectiveIn.ToArray());
         bool displayToUser = !Main.Settings.AdditionalLanceSettings.HideObjective;
 
-        if (Main.Settings.AdditionalLanceSettings.ForceAlwaysDisplayHiddenObjectiveIfPrimary) {
+        if (Main.Settings.AdditionalLanceSettings.AlwaysDisplayHiddenObjectiveIfPrimary) {
           displayToUser = (isPrimaryObjective) ? true : displayToUser;
         }
 
