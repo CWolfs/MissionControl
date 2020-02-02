@@ -35,7 +35,7 @@ namespace MissionControl.Trigger {
     }
 
     public override void Run(RunPayload payload) {
-      Main.LogDebug("[ChunkTrigger] Running trigger");
+      Main.LogDebug("[ChunkTrigger] Setting up trigger");
       EncounterLayerData encounterData = MissionControl.Instance.EncounterLayerData;
       SmartTriggerResponse trigger = new SmartTriggerResponse();
       trigger.inputMessage = onMessage;

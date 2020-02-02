@@ -20,8 +20,9 @@
     "Enable": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "IsPrimaryObjectiveIn": ["SimpleBattle", "ThreeWayBattle"],
-    "HideObjective": false,
-    "ForceDisplayOfHiddenObjectiveIfPrimary": true,
+    "HideObjective": true,
+    "ShowObjectiveOnLanceDetected": true,
+    "ForceAlwaysDisplayHiddenObjectiveIfPrimary": false,
     "UseElites": true,
     "UseDialogue": true,
     "SkullValueMatters": true,
@@ -35,8 +36,8 @@
     },
     "MatchAllyLanceCountToEnemy": false,
     "DropWeightInfluence": {
-      "Enable": false,
-      "GlobalEnemyChanceToSpawn": 0.05,
+      "Enable": true,
+      "GlobalEnemyChanceToSpawn": 2,
       "GlobalAllyChanceToSpawn": 0.8,
       "EnemySpawnInfluencePerHalfSkull": 0.1,
       "AllySpawnInfluencePerHalfSkull": -0.1

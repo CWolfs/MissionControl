@@ -25,7 +25,7 @@ namespace MissionControl.Trigger {
     }
 
     public override void Run(RunPayload payload) {
-      Main.LogDebug("[IssueFollowLanceOrderTrigger] Running trigger");
+      Main.LogDebug("[IssueFollowLanceOrderTrigger] Setting up trigger");
       EncounterLayerData encounterData = MissionControl.Instance.EncounterLayerData;
       SmartTriggerResponse onEncounterLoadIssueOrder = new SmartTriggerResponse();
       onEncounterLoadIssueOrder.inputMessage = MessageCenterMessageType.OnEncounterBegin;
@@ -34,7 +34,7 @@ namespace MissionControl.Trigger {
 
       FollowLanceOrder followOrder = new FollowLanceOrder();
       followOrder.TargetEncounterTags.AddRange(this.targetTags);
-      
+
       IssueCustomAIOrderResult issueOrder = ScriptableObject.CreateInstance<IssueCustomAIOrderResult>();
       issueOrder.issueAIOrderTo = this.receiverType;
       issueOrder.requiredReceiverTags.AddRange(this.receiverTags);

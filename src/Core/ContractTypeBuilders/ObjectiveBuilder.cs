@@ -22,6 +22,7 @@ namespace MissionControl.ContractTypeBuilders {
     private bool isPrimaryObjectve;
     private string title;
     private int priority;
+    private bool displayToUser;
     private string contractObjectiveGuid;
 
     public ObjectiveBuilder(ContractTypeBuilder contractTypeBuilder, GameObject parent, JObject objective) {
@@ -35,23 +36,23 @@ namespace MissionControl.ContractTypeBuilders {
       this.isPrimaryObjectve = (bool)objective["IsPrimaryObjective"];
       this.title = objective["Title"].ToString();
       this.priority = (int)objective["Priority"];
+      this.displayToUser = objective.ContainsKey("DisplayToUser") ? (bool)objective["DisplayToUser"] : true;
       this.contractObjectiveGuid = objective["ContractObjectiveGuid"].ToString();
     }
 
     public override void Build() {
       switch (subType) {
-        case "DestroyLance": BuildDestroyWholeLanceObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, contractObjectiveGuid); break;
+        case "DestroyLance": BuildDestroyWholeLanceObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         default: Main.LogDebug($"[ObjectiveBuilder.{contractTypeBuilder.ContractTypeKey}] No support for sub-type '{subType}'. Check for spelling mistakes."); break;
       }
     }
 
     private void BuildDestroyWholeLanceObjective(GameObject parent, JObject objective, string name, string title, string guid,
-      bool isPrimaryObjectve, int priority, string contractObjectiveGuid) {
+      bool isPrimaryObjectve, int priority, bool displayToUser, string contractObjectiveGuid) {
 
       DestroyWholeLanceChunk destroyWholeLanceChunk = parent.GetComponent<DestroyWholeLanceChunk>();
       string lanceToDestroyGuid = objective["LanceToDestroyGuid"].ToString();
       bool showProgress = true;
-      bool displayToUser = true;
 
       LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
       lanceSpawnerRef.EncounterObjectGuid = lanceToDestroyGuid;

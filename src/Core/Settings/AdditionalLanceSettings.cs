@@ -10,10 +10,13 @@ namespace MissionControl.Config {
     public List<string> IsPrimaryObjectiveIn { get; set; } = new List<string>() { "SimpleBattle" };
 
     [JsonProperty("HideObjective")]
-    public bool HideObjective { get; set; } = false;
+    public bool HideObjective { get; set; } = true;
 
-    [JsonProperty("ForceDisplayOfHiddenObjectiveIfPrimary")]
-    public bool ForceDisplayOfHiddenObjectiveIfPrimary { get; set; } = false;
+    [JsonProperty("ShowObjectiveOnLanceDetected")]
+    public bool ShowObjectiveOnLanceDetected { get; set; } = true;
+
+    [JsonProperty("ForceAlwaysDisplayHiddenObjectiveIfPrimary")]
+    public bool ForceAlwaysDisplayHiddenObjectiveIfPrimary { get; set; } = false;
 
     [JsonProperty("UseElites")]
     public bool UseElites { get; set; } = true;

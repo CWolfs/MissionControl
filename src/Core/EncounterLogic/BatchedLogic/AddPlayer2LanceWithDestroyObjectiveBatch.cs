@@ -3,11 +3,14 @@ using System;
 using System.Collections.Generic;
 
 using MissionControl.Rules;
+using MissionControl.Trigger;
+using MissionControl.Messages;
 
 namespace MissionControl.Logic {
   public class AddPlayer2LanceWithDestroyObjectiveBatch {
     public AddPlayer2LanceWithDestroyObjectiveBatch(EncounterRules encounterRules, string orientationTargetKey,
-      SpawnLogic.LookDirection lookDirection, float minDistance, float maxDistance, string objectiveName, int priority, bool isPrimaryObjective, bool displayToUser) {
+      SpawnLogic.LookDirection lookDirection, float minDistance, float maxDistance, string objectiveName, int priority,
+      bool isPrimaryObjective, bool displayToUser, bool showObjectiveOnLanceDetected) {
 
       int numberOfUnitsInLance = 4;
       string lanceGuid = Guid.NewGuid().ToString();
@@ -21,6 +24,10 @@ namespace MissionControl.Logic {
         spawnerName, objectiveGuid, objectiveName, priority, isPrimaryObjective, displayToUser));
       encounterRules.EncounterLogic.Add(new SpawnLanceMembersAroundTarget(encounterRules, spawnerName, orientationTargetKey,
         SpawnLogic.LookDirection.AWAY_FROM_TARGET, minDistance, maxDistance));
+
+      if (showObjectiveOnLanceDetected) {
+        encounterRules.EncounterLogic.Add(new ShowObjectiveTrigger(MessageCenterMessageType.OnLanceDetected, lanceGuid, objectiveGuid, false));
+      }
 
       encounterRules.ObjectReferenceQueue.Add(spawnerName);
     }
