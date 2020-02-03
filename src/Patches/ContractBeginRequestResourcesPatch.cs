@@ -13,14 +13,16 @@ namespace MissionControl.Patches {
   [HarmonyPatch(typeof(Contract), "BeginRequestResources")]
   public class ContractBeginRequestResourcesPatch {
     static void Postfix(Contract __instance, bool generateUnits) {
-      if (generateUnits) {
-        Main.Logger.Log($"[ContractBeginRequestResourcesPatch Postfix] Patching BeginRequestResources");
-        RequestUnits();
-        MissionControl.Instance.RunEncounterRules(SpawnLogic.LogicType.RESOURCE_REQUEST);
+      if (MissionControl.Instance.AllowMissionControl()) {
+        if (generateUnits) {
+          Main.Logger.Log($"[ContractBeginRequestResourcesPatch Postfix] Patching BeginRequestResources");
+          RequestUnits();
+          MissionControl.Instance.RunEncounterRules(SpawnLogic.LogicType.RESOURCE_REQUEST);
+        }
       }
     }
 
-    static void RequestUnits(){
+    static void RequestUnits() {
       PathFinderManager.Instance.RequestPathFinderMech();
       PathFinderManager.Instance.RequestPathFinderVehicle();
     }
