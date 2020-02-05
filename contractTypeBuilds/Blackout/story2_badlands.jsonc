@@ -1,0 +1,34 @@
+// This file overrides the contract type 'common.json' file with map specific values (such as locations and rotations)
+{
+  "EncounterLayerId": "mapStory_StoryEncounter2_aDes.632245b7-a9b2-46e3-bf2a-01c45416d113",
+  "Overrides": [
+    {
+      "Path": "Chunks[?(@.Name == 'Chunk_PlayerLance')].Children[?(@.Name == 'Spawner_PlayerLance')]",
+      "Action": "ObjectMerge",
+      "Value": {
+        "Name": "Spawner_PlayerLance",
+        "Position": {
+          "Type": "World",
+          "Value": { "x": -850, "y": 275, "z": 620 }
+        },
+        "Rotation": {
+          "Type": "World",
+          "Value": { "x": 0, "y": 90, "z": 0 }
+        }
+      }
+    },
+    {
+      "Path": "Chunks[?(@.Name == 'Chunk_EncounterBoundary')].Children[?(@.Name == 'EncounterBoundaryRect')]",
+      "Action": "ObjectMerge",
+      "Value": {
+        "Name": "EncounterBoundaryRect",
+        "Position": {
+          "Type": "World",
+          "Value": { "x": -50, "y": 0, "z": 200 }
+        },
+        "Width": 1836,
+        "Length": 1524
+      }
+    }
+  ]
+}

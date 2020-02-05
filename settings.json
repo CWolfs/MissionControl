@@ -5,11 +5,11 @@
   "DisableIfFlashpointContract": true,
   "RandomSpawns": {
     "Enable": true,
-    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"]
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel", "Blackout"]
   },
   "HotDrop": {
     "Enable": true,
-    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel", "Blackout"],
     "GuardOnHotDrop": false,
     "EvasionPipsOnHotDrop": 6,
     "IncludeEnemies": true,
@@ -18,7 +18,7 @@
   },
   "AdditionalLances": {
     "Enable": true,
-    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel", "Blackout"],
     "IsPrimaryObjectiveIn": ["SimpleBattle", "ThreeWayBattle"],
     "HideObjective": true,
     "ShowObjectiveOnLanceDetected": true,
@@ -46,7 +46,7 @@
   "ExtendedLances": {
     "Enable": true,
     "Autofill": true,
-    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel", "Blackout"],
     "SkipWhenTaggedWithAny": ["lance_type_solo"],
     "SkipWhenTaggedWithAll": [],
     "LanceSizes": {
@@ -56,7 +56,7 @@
   },
   "ExtendedBoundaries": {
     "Enable": true,
-    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel", "Blackout"],
     "IncreaseBoundarySizeByPercentage": 0.3,
     "Overrides": [
       {
@@ -87,7 +87,7 @@
   },
   "DynamicWithdraw": {
     "Enable": true,
-    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel", "Blackout"],
     "MinDistanceForZone": 50,
     "MaxDistanceForZone": 400,
     "DisorderlyWithdrawalCompatibility": false

@@ -1,0 +1,78 @@
+{
+  "Key": "Blackout", // Links to the ContractType Name
+  "Chunks": [
+    {
+      "Name": "Chunk_PlayerLance",
+      "Type": "Chunk",
+      "SubType": "PlayerLance",
+      "Children": [
+        {
+          "Name": "Spawner_PlayerLance",
+          "Type": "Spawner",
+          "SubType": "SimpleSpawner",
+          "Position": {
+            "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
+            "Value": { "x": 0, "y": 0, "z": 0 }
+          },
+          "Rotation": {
+            "Type": "World", // World, Local
+            "Value": { "x": 0, "y": 0, "z": 0 }
+          },
+          "Team": "Player1",
+          "Guid": "76b654a6-4f2c-4a6f-86e6-d4cf868335fe", // Must be this Guid and the contract .json must have this specific. It's hardcoded in BT for PlayerLance.
+          "SpawnPoints": 4,
+          "SpawnPointGuids": [
+            "ec9d2280-ca9a-4d90-8a20-963d8a4c0a39",
+            "5df48a48-1840-49b0-84e9-126847053afa",
+            "92ea4a9a-0ea5-4445-b8ba-89a167e478de",
+            "8efee919-9d40-4269-bc22-b1bc2bce1f80"
+          ], // Must match the unit spawn guids in the contract .json
+          "SpawnType": "Leopard" // Leopard, DropPod, Instant
+        }
+      ]
+    },
+    {
+      "Name": "Chunk_EncounterBoundary",
+      "Type": "Chunk",
+      "SubType": "EncounterBoundary",
+      "Children": [
+        {
+          "Name": "EncounterBoundaryRect",
+          "Type": "Region",
+          "SubType": "Boundary",
+          "Position": {
+            "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
+            "Value": { "x": 0, "y": 0, "z": 0 }
+          },
+          "Width": 1024,
+          "Length": 1024
+        }
+      ]
+    },
+    {
+      "Name": "Chunk_DefaultDialogue",
+      "Type": "Chunk",
+      "SubType": "Dialogue",
+      "Children": [
+        {
+          "Name": "Dialogue_MissionStart",
+          "Type": "Dialogue",
+          "SubType": "Simple",
+          "Guid": "73df8d9c-a274-48fd-98c9-2bd0d7860e83" // Must match the dialogue guid in the contract .json
+        },
+        {
+          "Name": "Dialogue_MissionSuccess",
+          "Type": "Dialogue",
+          "SubType": "Simple",
+          "Guid": "4011a4c3-cba2-4d22-b2b3-3b19a3297ab9" // Must match the dialogue guid in the contract .json
+        },
+        {
+          "Name": "Dialogue_MissionFailure",
+          "Type": "Dialogue",
+          "SubType": "Simple",
+          "Guid": "d3d33d95-9ed7-4686-b9eb-954ebe51cc02" // Must match the dialogue guid in the contract .json
+        }
+      ]
+    }
+  ]
+}
