@@ -14,13 +14,11 @@ public static class RegionGameLogicExtensions {
 
     // Remove old region location from layer data cells
     // TODO: Uncomment when I've fixed regions to work again
-    /*
     List<MapEncounterLayerDataCell> beforeCells = SceneUtils.GetMapEncounterLayerDataCellsWithinCollider(regionGo);
     for (int i = 0; i < beforeCells.Count; i++) {
       MapEncounterLayerDataCell cell = beforeCells[i];
       cell.RemoveRegion(regionGameLogic);
     }
-    */
 
     // Get all region points and fix the y height
     foreach (Transform t in regionGo.transform) {
