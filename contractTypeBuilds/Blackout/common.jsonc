@@ -60,7 +60,7 @@
           "RegionDefId": "regionDef_TargetZone",
           "Position": {
             "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
-            "Value": { "x": 160, "y": 0, "z": -310 }
+            "Value": { "x": -320, "y": 0, "z": 260 }
           },
           "Radius": 140
         }

@@ -16,21 +16,18 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static DestroyWholeLanceChunk CreateDestroyWholeLanceChunk(string name = "Chunk_DestroyWholeLance", Transform parent = null) {
-      GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
       GameObject destroyWholeLanceChunkGo = CreateGameObjectWithParent(name, parent);
 
       return destroyWholeLanceChunkGo.AddComponent<DestroyWholeLanceChunk>();
     }
 
     public static EmptyCustomChunkGameLogic CreateEmptyCustomChunk(string name, Transform parent = null) {
-      GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
       GameObject emptyCustomChunk = CreateGameObjectWithParent(name, parent);
 
       return emptyCustomChunk.AddComponent<EmptyCustomChunkGameLogic>();
     }
 
     public static DialogueChunkGameLogic CreateDialogueChunk(string name, Transform parent = null) {
-      GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
       GameObject dialogChunk = CreateGameObjectWithParent(name, parent);
 
       DialogueChunkGameLogic dialogueChunkGameLogic = dialogChunk.AddComponent<DialogueChunkGameLogic>();
@@ -39,7 +36,6 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static PlayerLanceChunkGameLogic CreatePlayerLanceChunk(string name = "Chunk_PlayerLance", Transform parent = null) {
-      GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
       GameObject playerLanceChunk = CreateGameObjectWithParent(name, parent);
 
       PlayerLanceChunkGameLogic playerLanceChunkGameLogic = playerLanceChunk.AddComponent<PlayerLanceChunkGameLogic>();
@@ -49,7 +45,6 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static EncounterBoundaryChunkGameLogic CreateEncounterBondaryChunk(string name = "Chunk_EncounterBoundary", Transform parent = null) {
-      GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
       GameObject encounterBoundaryChunkGo = CreateGameObjectWithParent(name, parent);
 
       EncounterBoundaryChunkGameLogic encounterBoundaryChunkLogic = encounterBoundaryChunkGo.AddComponent<EncounterBoundaryChunkGameLogic>();
@@ -59,7 +54,6 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static SwapPlacementChunkLogic CreateSwapPlacementChunk(string name = "Chunk_SwapPlacement", Transform parent = null) {
-      GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
       GameObject swapPlacementChunkGo = CreateGameObjectWithParent(name, parent);
 
       SwapPlacementChunkLogic swapPlacementChunkLogic = swapPlacementChunkGo.AddComponent<SwapPlacementChunkLogic>();

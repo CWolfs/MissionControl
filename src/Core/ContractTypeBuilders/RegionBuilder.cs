@@ -1,6 +1,7 @@
 using UnityEngine;
 
 using System;
+using System.Collections.Generic;
 
 using BattleTech;
 
@@ -61,9 +62,12 @@ namespace MissionControl.ContractTypeBuilders {
       float radius = objective.ContainsKey("Radius") ? (float)objective["Radius"] : (float)0;
 
       RegionGameLogic regionLogic = RegionFactory.CreateRegion(this.parent, regionGuid, objectiveGuid, this.name, regionDefId, radius);
+      GameObject regionGo = regionLogic.gameObject;
 
-      if (position != null) SetPosition(regionLogic.gameObject, position);
-      if (rotation != null) SetRotation(regionLogic.gameObject, rotation);
+      if (position != null) SetPosition(regionGo, position);
+      if (rotation != null) SetRotation(regionGo, rotation);
+
+      regionLogic.Regenerate();
     }
   }
 }

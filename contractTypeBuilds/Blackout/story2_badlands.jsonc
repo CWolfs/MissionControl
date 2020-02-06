@@ -9,7 +9,7 @@
         "Name": "Spawner_PlayerLance",
         "Position": {
           "Type": "World",
-          "Value": { "x": -850, "y": 275, "z": 620 }
+          "Value": { "x": -850, "y": 275, "z": 650 }
         },
         "Rotation": {
           "Type": "World",
