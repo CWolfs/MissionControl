@@ -1,6 +1,8 @@
 using UnityEngine;
 
 using BattleTech;
+using BattleTech.Framework;
+using BattleTech.Designed;
 
 using MissionControl.Messages;
 
@@ -24,6 +26,8 @@ namespace MissionControl.ContractTypeBuilders {
       Main.LogDebug($"[ContractTypeBuild] Building '{ContractTypeKey}'");
 
       BuildChunks();
+
+      Validate();
 
       return true;
     }
@@ -79,6 +83,11 @@ namespace MissionControl.ContractTypeBuilders {
       } else {
         Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] No valid node was built for '{type}'");
       }
+    }
+
+    private void Validate() {
+      Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Validating");
+      MissionControl.Instance.EncounterLayerData.Validate();
     }
   }
 }

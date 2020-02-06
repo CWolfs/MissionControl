@@ -43,6 +43,7 @@ namespace MissionControl.ContractTypeBuilders {
     public override void Build() {
       switch (subType) {
         case "DestroyLance": BuildDestroyWholeLanceObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
+        case "OccupyRegion": BuildOccupyRegionObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         default: Main.LogDebug($"[ObjectiveBuilder.{contractTypeBuilder.ContractTypeKey}] No support for sub-type '{subType}'. Check for spelling mistakes."); break;
       }
     }
@@ -84,6 +85,33 @@ namespace MissionControl.ContractTypeBuilders {
 
       destroyWholeLanceChunk.lanceSpawner = lanceSpawnerRef;
       destroyWholeLanceChunk.destroyObjective = destroyLanceObjectiveRef;
+    }
+
+    private void BuildOccupyRegionObjective(GameObject parent, JObject objective, string name, string title, string guid,
+      bool isPrimaryObjectve, int priority, bool displayToUser, string contractObjectiveGuid) {
+
+      string lanceToUseRegionGuid = objective["LanceToUseRegionGuid"].ToString();
+      string regionGuid = objective["RegionGuid"].ToString();
+      string progressFormat = objective["ProgressFormat"].ToString();
+      string description = objective["Description"].ToString();
+      bool useDropship = (objective.ContainsKey("UseDropship")) ? (bool)objective["UseDropship"] : false;
+      string[] requiredTagsOnUnit = (objective.ContainsKey("RequiredTagsOnUnit")) ? ((JArray)objective["RequiredTagsOnUnit"]).ToObject<string[]>() : null;
+      string[] requiredTagsOnOpposingUnits = (objective.ContainsKey("RequiredTagsOpposingUnits")) ? ((JArray)objective["RequiredTagsOpposingUnits"]).ToObject<string[]>() : null;
+
+      OccupyRegionObjective occupyRegionObjective = ObjectiveFactory.CreateOccupyRegionObjective(
+        guid,
+        parent,
+        contractObjectiveGuid,
+        lanceToUseRegionGuid,
+        regionGuid,
+        this.name,
+        title,
+        progressFormat,
+        description,
+        useDropship,
+        requiredTagsOnUnit,
+        requiredTagsOnOpposingUnits
+      );
     }
   }
 }

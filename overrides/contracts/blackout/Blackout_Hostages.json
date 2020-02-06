@@ -1,6 +1,6 @@
 {
   "ID" : "Blackout_Hostages",
-  "contractName" : "Jammed Back In",
+  "contractName" : "Heavy Static",
   "contractDisplayStyle" : "BaseCampaignNormal",
   "difficulty" : 2,
   "difficultyUIModifier" : 0,
@@ -65,14 +65,14 @@
           "isPrimary" : true,
           "forPlayer" : "Player1",
           "objectiveGuids" : [
-              "a0b9c5b2-c594-4c5a-be1d-028a51c51519"
+              "786166e2-22ea-45c1-9786-68df31958bd8"
           ]
       }
   ],
   "objectiveList" : [
       {
           "objective" : {
-              "EncounterObjectGuid" : "a0b9c5b2-c594-4c5a-be1d-028a51c51519"
+              "EncounterObjectGuid" : "786166e2-22ea-45c1-9786-68df31958bd8"
           },
           "title" : "Investigate the Blackout",
           "description" : "",
@@ -85,15 +85,7 @@
   ],
   "artilleryObjectiveList" : [],
   "buildingList" : [],
-  "chunkList" : [
-    {
-        "name" : "Chunk_FriendlyTurrets",
-        "encounterChunk" : {
-            "EncounterObjectGuid" : "ed007c52-f4cb-4bfc-842a-a50454d8a82a"
-        },
-        "enableChunkFromContract" : true
-    }
-  ],
+  "chunkList" : [],
   "cameraFocusHelperList" : [
       {
           "name" : "Spawner_PlayerLance",

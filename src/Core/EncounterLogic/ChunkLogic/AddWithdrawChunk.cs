@@ -36,19 +36,22 @@ namespace MissionControl.Logic {
         emptyCustomChunk.startingStatus = EncounterObjectStatus.Inactive;
         emptyCustomChunk.notes = debugDescription;
 
-        RegionFactory.CreateWithdrawRegion(escapeChunkGo, regionGameLogicGuid, objectiveGuid);
+        RegionFactory.CreateRegion(escapeChunkGo, regionGameLogicGuid, objectiveGuid, "Region_Withdraw", "regionDef_EvacZone");
 
         bool useDropship = true;
         OccupyRegionObjective occupyRegionObjective = ObjectiveFactory.CreateOccupyRegionObjective(
           objectiveGuid,
           escapeChunkGo,
+          null,
           playerSpawnerGuid,
           regionGameLogicGuid,
           "Withdraw",
           "Get to the Evac Zone",
           $"with {ProgressFormat.UNITS_OCCUPYING_SO_FAR}/{ProgressFormat.NUMBER_OF_UNITS_TO_OCCUPY} unit(s)",
           "The objective for the player to withdraw and complete, or withdraw, the mission",
-          useDropship
+          useDropship,
+          new string[] { "player_unit" },
+          new string[] { "opposing_unit" }
         );
 
         ObjectiveFactory.CreateContractObjective(occupyRegionObjective);

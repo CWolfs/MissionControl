@@ -39,6 +39,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "EncounterBoundary": return BuildEncounterBoundary();
         case "Dialogue": return BuildDialogueChunk();
         case "Placement": return BuildPlacementChunk();
+        case "Container": return BuildEmptyChunk();
         default: break;
       }
       return null;
@@ -84,6 +85,14 @@ namespace MissionControl.ContractTypeBuilders {
       swapPlacementChunk.encounterObjectGuid = this.guid;
       if (controlledByContract) swapPlacementChunk.startingStatus = EncounterObjectStatus.ControlledByContract;
       return swapPlacementChunk.gameObject;
+    }
+
+    private GameObject BuildEmptyChunk() {
+      Main.LogDebug($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] Building 'BuildEmptyChunk' (Container) Chunk");
+      EmptyCustomChunkGameLogic emptyChunk = ChunkFactory.CreateEmptyCustomChunk(this.name, contractTypeBuilder.EncounterLayerGo.transform);
+      emptyChunk.encounterObjectGuid = this.guid;
+      if (controlledByContract) emptyChunk.startingStatus = EncounterObjectStatus.ControlledByContract;
+      return emptyChunk.gameObject;
     }
   }
 }

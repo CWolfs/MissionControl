@@ -32,6 +32,41 @@
       ]
     },
     {
+      "Name": "Chunk_Stage_1_Investigate",
+      "Type": "Chunk",
+      "SubType": "Container",
+      "Children": [
+        {
+          "Name": "Objective_Investigate_Region",
+          "Type": "Objective",
+          "SubType": "OccupyRegion",
+          "Guid": "786166e2-22ea-45c1-9786-68df31958bd8", // Must match the objective guid in the contract .json
+          "ContractObjectiveGuid": "73275787-720a-4c33-9f20-953b1bbf48bd", // Must match the contract guid in the contract .json
+          "Title": "Investigate the Blackout",
+          "Priority": 1,
+          "IsPrimaryObjective": true,
+          "RegionGuid": "e7e9f35b-7ed8-404e-9dae-69be61de2dd3",
+          "LanceToUseRegionGuid": "76b654a6-4f2c-4a6f-86e6-d4cf868335fe", // Player lance GUID
+          "ProgressFormat": "with [unitsOccupyingSoFar]/[numberOfUnitsToOccupy] unit(s)",
+          "Description": "The objective for the player to investigate the blackout",
+          "RequiredTagsOnUnit": ["Player 1"]
+        },
+        {
+          "Name": "Region_Investigate_Blackout",
+          "Type": "Region",
+          "SubType": "Normal",
+          "Guid": "e7e9f35b-7ed8-404e-9dae-69be61de2dd3", // Must match the region guid in the contract .json
+          "ObjectiveGuid": "786166e2-22ea-45c1-9786-68df31958bd8", // Must match the objective guid in the build file to link to
+          "RegionDefId": "regionDef_TargetZone",
+          "Position": {
+            "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
+            "Value": { "x": 160, "y": 0, "z": -310 }
+          },
+          "Radius": 140
+        }
+      ]
+    },
+    {
       "Name": "Chunk_EncounterBoundary",
       "Type": "Chunk",
       "SubType": "EncounterBoundary",
@@ -74,5 +109,6 @@
         }
       ]
     }
-  ]
+  ],
+  "ContractObjective": [{}]
 }

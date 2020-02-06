@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Globalization;
 
 using System.Collections.Generic;
 
@@ -9,7 +10,6 @@ using HBS.Logging;
 using Harmony;
 
 using Newtonsoft.Json;
-using System.Globalization;
 using Newtonsoft.Json.Linq;
 
 using System.Reflection;
@@ -86,13 +86,13 @@ namespace MissionControl {
 
       string alPath = $"{modDirectory}/config/AdditionalLances/";
       string additionalLancesJsonString = File.ReadAllText($"{alPath}General.json");
-      Settings.AdditionalLances[0] = JsonConvert.DeserializeObject<AdditionalLances>(additionalLancesJsonString);
+      Settings.AdditionalLances[0] = JsonConvert.DeserializeObject<AdditionalLances>(additionalLancesJsonString, serialiserSettings);
 
       string difficultyFileName = "Difficulty";
       for (int i = 1; i <= 10; i++) {
         if (File.Exists($"{alPath}{difficultyFileName}{i}.json")) {
           string skullAdditionalLanceJsonString = File.ReadAllText($"{alPath}{difficultyFileName}{i}.json");
-          Settings.AdditionalLances[i] = JsonConvert.DeserializeObject<AdditionalLances>(skullAdditionalLanceJsonString);
+          Settings.AdditionalLances[i] = JsonConvert.DeserializeObject<AdditionalLances>(skullAdditionalLanceJsonString, serialiserSettings);
         }
       }
     }

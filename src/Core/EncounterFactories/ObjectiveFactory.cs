@@ -9,17 +9,38 @@ using BattleTech.Framework;
 
 using HBS.Collections;
 
-using MissionControl;
-
 namespace MissionControl.EncounterFactories {
   public class ObjectiveFactory {
+    private static GameObject CreateGameObject(GameObject parent, string name = null) {
+      GameObject go = new GameObject((name == null) ? "Objective" : name);
+      go.transform.parent = parent.transform;
+      go.transform.localPosition = Vector3.zero;
+      return go;
+    }
+
+    private static void AttachRequiredReferences(ObjectiveGameLogic objectiveGameLogic, string contractObjectiveGuid) {
+      if (contractObjectiveGuid != null) {
+        ContractObjectiveGameLogic contractObjectiveGameLogic = MissionControl.Instance.EncounterLayerData.GetContractObjectiveGameLogicByGUID(contractObjectiveGuid);
+        ObjectiveRef objectiveRef = new ObjectiveRef(objectiveGameLogic);
+        contractObjectiveGameLogic.objectiveRefList.Add(objectiveRef);
+      }
+
+      objectiveGameLogic.onSuccessDialogue = new DialogueRef();
+      objectiveGameLogic.onFailureDialogue = new DialogueRef();
+    }
+
+    public static ContractObjectiveGameLogic CreateContractObjective(ObjectiveGameLogic objective) {
+      ContractObjectiveGameLogic contractObjectiveGameLogic = objective.transform.parent.gameObject.AddComponent<ContractObjectiveGameLogic>();
+      contractObjectiveGameLogic.encounterObjectGuid = Guid.NewGuid().ToString();
+      contractObjectiveGameLogic.objectiveRefList.Add(new ObjectiveRef(objective));
+      return contractObjectiveGameLogic;
+    }
+
     public static DestroyLanceObjective CreateDestroyLanceObjective(string objectiveGuid, GameObject parent, LanceSpawnerRef lanceToDestroy, string lanceGuid, string title, bool showProgress,
     string progressFormat, string description, int priority, bool displayToUser, ObjectiveMark markUnitsWith, string contractObjectiveGameLogicGuid, bool createObjectiveOverride = true) {
       // TODO: Probably want to split out these two main chunks into their own methods
       // OBJECTIVE OBJECTIVE GAME LOGIC
-      GameObject destroyWholeLanceObjectiveGo = new GameObject($"Objective_DestroyLance_{lanceGuid}");
-      destroyWholeLanceObjectiveGo.transform.parent = parent.transform;
-      destroyWholeLanceObjectiveGo.transform.localPosition = Vector3.zero;
+      GameObject destroyWholeLanceObjectiveGo = CreateGameObject(parent, $"Objective_DestroyLance_{lanceGuid}");
 
       DestroyLanceObjective destroyLanceObjective = destroyWholeLanceObjectiveGo.AddComponent<DestroyLanceObjective>();
       destroyLanceObjective.encounterObjectGuid = objectiveGuid;
@@ -87,23 +108,14 @@ namespace MissionControl.EncounterFactories {
       return rewardResult;
     }
 
-    public static ContractObjectiveGameLogic CreateContractObjective(ObjectiveGameLogic objective) {
-      ContractObjectiveGameLogic contractObjectiveGameLogic = objective.transform.parent.gameObject.AddComponent<ContractObjectiveGameLogic>();
-      contractObjectiveGameLogic.encounterObjectGuid = Guid.NewGuid().ToString();
-      contractObjectiveGameLogic.objectiveRefList.Add(new ObjectiveRef(objective));
-      return contractObjectiveGameLogic;
-    }
-
-    public static OccupyRegionObjective CreateOccupyRegionObjective(string objectiveGuid, GameObject parent, string requiredLanceSpawnerGuid, string regionGameLogicGuid,
-    string objectName, string title, string progressFormat, string description, bool useDropship) {
-      GameObject occupyRegionObjectiveGo = new GameObject($"Objective_{objectName}");
-      occupyRegionObjectiveGo.transform.parent = parent.transform;
-      occupyRegionObjectiveGo.transform.localPosition = Vector3.zero;
+    public static OccupyRegionObjective CreateOccupyRegionObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string requiredLanceSpawnerGuid, string regionGameLogicGuid,
+    string objectName, string title, string progressFormat, string description, bool useDropship, string[] requiredTagsOnUnit, string[] requiredTagsOnOpposingUnits) {
+      GameObject occupyRegionObjectiveGo = CreateGameObject(parent, objectName);
 
       OccupyRegionObjective occupyRegionObjective = occupyRegionObjectiveGo.AddComponent<OccupyRegionObjective>();
       occupyRegionObjective.title = occupyRegionObjectiveGo.name;
       occupyRegionObjective.encounterObjectGuid = objectiveGuid;
-      occupyRegionObjective.requiredTagsOnUnit = new TagSet(new string[] { "player_unit" });
+      occupyRegionObjective.requiredTagsOnUnit = (requiredTagsOnUnit == null) ? new TagSet(new string[] { "player_unit" }) : new TagSet(requiredTagsOnUnit);
 
       LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
       lanceSpawnerRef.EncounterObjectGuid = requiredLanceSpawnerGuid;
@@ -114,7 +126,7 @@ namespace MissionControl.EncounterFactories {
 
       occupyRegionObjective.applyTagsWhen = ApplyTagsWhen.OnCompleteObjective;
 
-      occupyRegionObjective.requiredTagsOnOpposingUnits = new TagSet(new string[] { "opposing_unit" });
+      occupyRegionObjective.requiredTagsOnOpposingUnits = (requiredTagsOnOpposingUnits == null) ? new TagSet(new string[] { "opposing_unit" }) : new TagSet(requiredTagsOnOpposingUnits);
 
       RegionRef regionRef = new RegionRef();
       regionRef.EncounterObjectGuid = regionGameLogicGuid;
@@ -133,7 +145,7 @@ namespace MissionControl.EncounterFactories {
       occupyRegionObjective.markUnitsWith = ObjectiveMark.None;
       occupyRegionObjective.enableObjectiveLogging = true;
 
-      occupyRegionObjective.onSuccessDialogue = new DialogueRef();
+      AttachRequiredReferences(occupyRegionObjective, contractObjectiveGuid);
 
       return occupyRegionObjective;
     }
