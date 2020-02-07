@@ -108,6 +108,22 @@
           "Guid": "d3d33d95-9ed7-4686-b9eb-954ebe51cc02" // Must match the dialogue guid in the contract .json
         }
       ]
+    },
+    {
+      "Name": "Chunk_SwapEmployerAndTarget",
+      "Type": "Chunk",
+      "SubType": "Container",
+      "ControlledByContract": true,
+      "Guid": "71e9b8ae-28c8-4b9f-a933-c21b692aab2b",
+      "Children": [
+        {
+          "Name": "Swap_EmployerAndTarget",
+          "Type": "ContractEdit",
+          "SubType": "SwapTeamFactions",
+          "TeamGuid1": "ecc8d4f2-74b4-465d-adf6-84445e5dfc230", // Employer faction
+          "TeamGuid2": "be77cadd-e245-4240-a93e-b99cc98902a5" // Target faction
+        }
+      ]
     }
   ],
   "ContractObjective": [{}]

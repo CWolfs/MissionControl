@@ -75,6 +75,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "Region": nodeBuilder = new RegionBuilder(this, parent, child); break;
         case "Dialogue": nodeBuilder = new DialogueBuilder(this, parent, child); break;
         case "SwapPlacement": nodeBuilder = new PlacementBuilder(this, parent, child); break;
+        case "ContractEdit": nodeBuilder = new ContractEditBuilder(this, parent, child); break;
         default: break;
       }
 
