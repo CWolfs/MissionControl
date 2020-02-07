@@ -42,10 +42,19 @@ namespace MissionControl.ContractTypeBuilders {
 
     public override void Build() {
       switch (subType) {
+        case "Generic": BuildGenericObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         case "DestroyLance": BuildDestroyWholeLanceObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         case "OccupyRegion": BuildOccupyRegionObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         default: Main.LogDebug($"[ObjectiveBuilder.{contractTypeBuilder.ContractTypeKey}] No support for sub-type '{subType}'. Check for spelling mistakes."); break;
       }
+    }
+
+    private void BuildGenericObjective(GameObject parent, JObject objective, string name, string title, string guid,
+      bool isPrimaryObjectve, int priority, bool displayToUser, string contractObjectiveGuid) {
+
+      string description = (objective.ContainsKey("Description") ? objective["Description"].ToString() : title);
+
+      EmptyObjectiveObjective objectiveLogic = ObjectiveFactory.CreateEmptyObjective(guid, parent, contractObjectiveGuid, name, title, description, isPrimaryObjectve, priority, displayToUser);
     }
 
     private void BuildDestroyWholeLanceObjective(GameObject parent, JObject objective, string name, string title, string guid,

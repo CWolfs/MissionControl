@@ -36,8 +36,25 @@ namespace MissionControl.EncounterFactories {
       return contractObjectiveGameLogic;
     }
 
+    public static EmptyObjectiveObjective CreateEmptyObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, string description,
+      bool isPrimaryObjectve, int priority, bool displayToUser) {
+
+      GameObject emptyObjectiveGo = CreateGameObject(parent, objectName);
+
+      EmptyObjectiveObjective emptyObjective = emptyObjectiveGo.AddComponent<EmptyObjectiveObjective>();
+      emptyObjective.title = title;
+      emptyObjective.description = description;
+      emptyObjective.priority = priority;
+      emptyObjective.displayToUser = displayToUser;
+
+      AttachRequiredReferences(emptyObjective, contractObjectiveGuid);
+
+      return emptyObjective;
+    }
+
     public static DestroyLanceObjective CreateDestroyLanceObjective(string objectiveGuid, GameObject parent, LanceSpawnerRef lanceToDestroy, string lanceGuid, string title, bool showProgress,
-    string progressFormat, string description, int priority, bool displayToUser, ObjectiveMark markUnitsWith, string contractObjectiveGameLogicGuid, bool createObjectiveOverride = true) {
+      string progressFormat, string description, int priority, bool displayToUser, ObjectiveMark markUnitsWith, string contractObjectiveGameLogicGuid, bool createObjectiveOverride = true) {
+
       // TODO: Probably want to split out these two main chunks into their own methods
       // OBJECTIVE OBJECTIVE GAME LOGIC
       GameObject destroyWholeLanceObjectiveGo = CreateGameObject(parent, $"Objective_DestroyLance_{lanceGuid}");

@@ -65,23 +65,36 @@
           "isPrimary" : true,
           "forPlayer" : "Player1",
           "objectiveGuids" : [
+              "68c23223-2a8a-4e1c-b34a-6985e419cf7c",
               "786166e2-22ea-45c1-9786-68df31958bd8"
           ]
       }
   ],
   "objectiveList" : [
-      {
-          "objective" : {
-              "EncounterObjectGuid" : "786166e2-22ea-45c1-9786-68df31958bd8"
-          },
-          "title" : "Investigate the Blackout",
-          "description" : "",
-          "isPrimary" : true,
-          "OnSuccessResults" : [],
-          "OnFailureResults" : [],
-          "OnSuccessDialogueGUID" : null,
-          "OnFailureDialogueGUID" : null
-      }
+    {
+        "objective" : {
+            "EncounterObjectGuid" : "68c23223-2a8a-4e1c-b34a-6985e419cf7c"
+        },
+        "title" : "Blackout Overview",
+        "description" : "Keeps the mission open for me to test",
+        "isPrimary" : true,
+        "OnSuccessResults" : [],
+        "OnFailureResults" : [],
+        "OnSuccessDialogueGUID" : null,
+        "OnFailureDialogueGUID" : null
+    },
+    {
+        "objective" : {
+            "EncounterObjectGuid" : "786166e2-22ea-45c1-9786-68df31958bd8"
+        },
+        "title" : "Investigate the Blackout",
+        "description" : "",
+        "isPrimary" : true,
+        "OnSuccessResults" : [],
+        "OnFailureResults" : [],
+        "OnSuccessDialogueGUID" : null,
+        "OnFailureDialogueGUID" : null
+    }
   ],
   "artilleryObjectiveList" : [],
   "buildingList" : [],

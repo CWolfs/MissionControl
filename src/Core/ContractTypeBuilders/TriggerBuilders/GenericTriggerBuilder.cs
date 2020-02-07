@@ -46,7 +46,7 @@ namespace MissionControl.ContractTypeBuilders {
 
     public override void Build() {
       Main.LogDebug("[GenericTriggerBuilder] Building 'Generic' trigger");
-      GenericTrigger genericTrigger = new GenericTrigger(this.name, this.description, this.triggerMessageType, null, results);
+      GenericTrigger genericTrigger = new GenericTrigger(this.name, this.description, this.triggerMessageType, this.conditional, results);
       genericTrigger.Run(null);
     }
   }

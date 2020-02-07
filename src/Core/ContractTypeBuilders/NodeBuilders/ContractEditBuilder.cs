@@ -23,7 +23,6 @@ namespace MissionControl.ContractTypeBuilders {
       this.parent = parent;
       this.name = objective["Name"].ToString();
       this.subType = objective["SubType"].ToString();
-
     }
 
     public override void Build() {
