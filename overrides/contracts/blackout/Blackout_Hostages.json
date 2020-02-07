@@ -113,6 +113,12 @@
           "encounterObject" : {
               "EncounterObjectGuid" : "76b654a6-4f2c-4a6f-86e6-d4cf868335fe"
           }
+      },
+      {
+        "name" : "Region_Investigate_Blackout",
+        "encounterObject" : {
+            "EncounterObjectGuid" : "e7e9f35b-7ed8-404e-9dae-69be61de2dd3"
+        }
       }
   ],
   "dialogueList" : [
@@ -186,6 +192,31 @@
                   "audioName" : "NONE",
                   "cameraFocusGuid" : "",
                   "cameraDistance" : "Far",
+                  "cameraHeight" : "Default",
+                  "revealRadius" : -1
+              }
+          ]
+      },
+      {
+          "dialogue" : {
+              "EncounterObjectGuid" : "e0ca3227-ffbf-4088-a261-3d4e9ab7d4c5"
+          },
+          "name" : "Dialogue_First_Point_Of_Interest",
+          "overrideDialogueBucketId" : "",
+          "dialogueContent" : [
+              {
+                  "words" : "Strange. There looks like there's been fighting here but it was a least a few weeks ago. Let's look up on ahead. Maybe we'll find something at the other base.",
+                  "wordsColor" : {
+                      "r" : 1,
+                      "g" : 1,
+                      "b" : 1,
+                      "a" : 1
+                  },
+                  "selectedCastDefId" : "castDef_DariusDefault",
+                  "emote" : "Default",
+                  "audioName" : "NONE",
+                  "cameraFocusGuid" : "e7e9f35b-7ed8-404e-9dae-69be61de2dd3",
+                  "cameraDistance" : "Close",
                   "cameraHeight" : "Default",
                   "revealRadius" : -1
               }

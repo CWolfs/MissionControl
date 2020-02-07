@@ -81,6 +81,12 @@
             "Value": { "x": -320, "y": 0, "z": 260 }
           },
           "Radius": 140
+        },
+        {
+          "Name": "Dialogue_First_Point_Of_Interest",
+          "Type": "Dialogue",
+          "SubType": "Simple",
+          "Guid": "e0ca3227-ffbf-4088-a261-3d4e9ab7d4c5" // Must match the dialogue guid in the contract .json
         }
       ]
     },
@@ -147,6 +153,23 @@
   "ContractObjective": [{}],
   "Triggers": [
     {
+      "Name": "Trigger_First_Dialogue",
+      "TriggerOn": "OnObjectiveUpdated",
+      "Description": "Show the first dialogue at the first base",
+      "Conditional": {
+        "Type": "ObjectiveStatusConditional",
+        "Guid": "786166e2-22ea-45c1-9786-68df31958bd8",
+        "Status": "Success"
+      },
+      "Results": [
+        {
+          "Type": "Dialogue",
+          "DialogueGuid": "e0ca3227-ffbf-4088-a261-3d4e9ab7d4c5"
+        }
+      ]
+    }
+    /*
+    {
       "Name": "Trigger_SwapEmployerAndTargetFaction",
       "TriggerOn": "OnObjectiveUpdated",
       "Description": "Swap Employer And Target Faction on OnObjectiveUpdated",
@@ -162,5 +185,6 @@
         }
       ]
     }
+    */
   ]
 }

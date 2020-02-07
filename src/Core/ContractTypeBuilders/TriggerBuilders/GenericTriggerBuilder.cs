@@ -27,7 +27,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       this.name = name;
       this.triggerOn = trigger["TriggerOn"].ToString();
-      this.description = trigger["Description"].ToString();
+      this.description = (trigger.ContainsKey("Description")) ? trigger["Description"].ToString() : "";
 
       if (trigger.ContainsKey("Conditional")) {
         ConditionalBuilder conditionalBuilder = new ConditionalBuilder(contractTypeBuilder, (JObject)trigger["Conditional"]);
