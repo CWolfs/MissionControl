@@ -15,6 +15,7 @@ namespace MissionControl.ContractTypeBuilders {
     public string ContractTypeKey { get; set; } = "UNSET";
 
     private const string CHUNKS_ID = "Chunks";
+    private const string TRIGGERS_ID = "Triggers";
 
     public ContractTypeBuilder(GameObject encounterLayerGo, JObject contractTypeBuild) {
       this.ContractTypeBuild = contractTypeBuild;
@@ -26,6 +27,7 @@ namespace MissionControl.ContractTypeBuilders {
       Main.LogDebug($"[ContractTypeBuild] Building '{ContractTypeKey}'");
 
       BuildChunks();
+      BuildTriggers();
 
       Validate();
 
@@ -42,7 +44,17 @@ namespace MissionControl.ContractTypeBuilders {
       }
     }
 
-    public void BuildChunk(JObject chunk) {
+    private void BuildTriggers() {
+      if (ContractTypeBuild.ContainsKey(TRIGGERS_ID)) {
+        JArray triggersArray = (JArray)ContractTypeBuild[TRIGGERS_ID];
+        Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] There are '{triggersArray.Count} trigger(s) defined.'");
+        foreach (JObject trigger in triggersArray.Children<JObject>()) {
+          BuildTrigger(trigger);
+        }
+      }
+    }
+
+    private void BuildChunk(JObject chunk) {
       Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Chunk is '{chunk["Name"]}'");
       string name = chunk["Name"].ToString();
       string type = chunk["Type"].ToString();
@@ -63,7 +75,7 @@ namespace MissionControl.ContractTypeBuilders {
       }
     }
 
-    public void BuildNode(GameObject parent, JObject child) {
+    private void BuildNode(GameObject parent, JObject child) {
       string type = child["Type"].ToString();
       Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Child type is '{type}'");
 
@@ -84,6 +96,29 @@ namespace MissionControl.ContractTypeBuilders {
       } else {
         Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] No valid node was built for '{type}'");
       }
+    }
+
+    private void BuildTrigger(JObject trigger) {
+      Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Trigger is '{trigger["Name"]}'");
+      string name = trigger["Name"].ToString();
+      string type = (trigger.ContainsKey("Type")) ? trigger["Type"].ToString() : "Generic";
+
+      TriggerBuilder triggerBuilder = null;
+
+      switch (type) {
+        case "Generic": triggerBuilder = new GenericTriggerBuilder(this, trigger, name); break;
+        default: break;
+      }
+
+      if (triggerBuilder != null) {
+        triggerBuilder.Build();
+      } else {
+        Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] No valid trigger was built for '{type}'");
+      }
+    }
+
+    private void BuildGenericTrigger() {
+
     }
 
     private void Validate() {

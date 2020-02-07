@@ -126,5 +126,21 @@
       ]
     }
   ],
-  "ContractObjective": [{}]
+  "ContractObjective": [{}],
+  "Triggers": [
+    {
+      "Name": "Trigger_SwapEmployerAndTargetFaction",
+      "TriggerOn": "OnObjectiveUpdated",
+      "Description": "Swap Employer And Target Faction on OnObjectiveUpdated",
+      "Condition": {
+        "Type": "AlwaysTrueConditional"
+      },
+      "Results": [
+        {
+          "Type": "ExecuteGameLogic",
+          "ChunkGuid": "71e9b8ae-28c8-4b9f-a933-c21b692aab2b"
+        }
+      ]
+    }
+  ]
 }

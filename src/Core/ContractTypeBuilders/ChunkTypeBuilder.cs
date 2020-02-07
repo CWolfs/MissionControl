@@ -42,6 +42,9 @@ namespace MissionControl.ContractTypeBuilders {
         case "Container": return BuildEmptyChunk();
         default: break;
       }
+
+      Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] No valid chunk was built for '{type}'");
+
       return null;
     }
 

@@ -1,8 +1,6 @@
 using UnityEngine;
 
-using BattleTech;
-
-using MissionControl.LogicComponents.Placers;
+using MissionControl.LogicComponents.ContractEdits;
 
 namespace MissionControl.EncounterFactories {
   public class ContractEditFactory {

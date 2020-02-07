@@ -3,7 +3,7 @@ using UnityEngine;
 using System;
 
 using MissionControl.EncounterFactories;
-using MissionControl.LogicComponents.Placers;
+using MissionControl.LogicComponents.ContractEdits;
 
 using Newtonsoft.Json.Linq;
 
