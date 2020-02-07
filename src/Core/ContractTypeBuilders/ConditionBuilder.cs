@@ -1,5 +1,7 @@
 using UnityEngine;
 
+using System;
+
 using Newtonsoft.Json.Linq;
 
 using BattleTech;
@@ -20,6 +22,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       switch (type) {
         case "AlwaysTrueConditional": return BuildAlwaysTrueConditional(conditionalObject);
+        case "ObjectiveStatusConditional": return BuildObjectiveStatusConditional(conditionalObject);
         default: break;
       }
 
@@ -31,6 +34,22 @@ namespace MissionControl.ContractTypeBuilders {
     private DesignConditional BuildAlwaysTrueConditional(JObject conditionalObject) {
       Main.LogDebug("[BuildAlwaysTrueConditional] Building 'AlwaysTrueConditional' conditional");
       return ScriptableObject.CreateInstance<AlwaysTrueConditional>();
+    }
+
+    private DesignConditional BuildObjectiveStatusConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildAlwaysTrueConditional] Building 'ObjectiveStatusConditional' conditional");
+      string guid = conditionalObject["Guid"].ToString();
+      string status = conditionalObject["Status"].ToString();
+      ObjectiveStatusEvaluationType statusType = (ObjectiveStatusEvaluationType)Enum.Parse(typeof(ObjectiveStatusEvaluationType), status);
+      ObjectiveStatusConditional conditional = ScriptableObject.CreateInstance<ObjectiveStatusConditional>();
+
+      ObjectiveRef objectiveRef = new ObjectiveRef();
+      objectiveRef.EncounterObjectGuid = guid;
+
+      conditional.objective = objectiveRef;
+      conditional.objectiveStatus = statusType;
+
+      return conditional;
     }
   }
 }

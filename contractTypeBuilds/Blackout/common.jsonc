@@ -133,7 +133,9 @@
       "TriggerOn": "OnObjectiveUpdated",
       "Description": "Swap Employer And Target Faction on OnObjectiveUpdated",
       "Conditional": {
-        "Type": "AlwaysTrueConditional"
+        "Type": "ObjectiveStatusConditional",
+        "Guid": "786166e2-22ea-45c1-9786-68df31958bd8",
+        "Status": "Complete"
       },
       "Results": [
         {
