@@ -8,6 +8,8 @@ using HBS.Util;
 using MissionControl.Data;
 using MissionControl.Rules;
 
+using Harmony;
+
 namespace MissionControl.LogicComponents.Placers {
   public class SwapTeamFactionGameLogic : EncounterObjectGameLogic {
 
@@ -53,6 +55,8 @@ namespace MissionControl.LogicComponents.Placers {
 
       MissionControl.Instance.CurrentContract.SetTeamFaction(team1Guid, originalFaction2Id);
       MissionControl.Instance.CurrentContract.SetTeamFaction(team2Guid, originalFaction1Id);
+
+      AccessTools.Method(typeof(ContractOverride), "AssignFactionsToTeams").Invoke(contract.Override, new object[] { contract.TeamFactionIDs });
     }
 
     public override void FromJSON(string json) {
