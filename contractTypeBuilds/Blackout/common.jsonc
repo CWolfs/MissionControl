@@ -132,7 +132,7 @@
       "Name": "Trigger_SwapEmployerAndTargetFaction",
       "TriggerOn": "OnObjectiveUpdated",
       "Description": "Swap Employer And Target Faction on OnObjectiveUpdated",
-      "Condition": {
+      "Conditional": {
         "Type": "AlwaysTrueConditional"
       },
       "Results": [

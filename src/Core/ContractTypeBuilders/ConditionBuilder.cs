@@ -29,7 +29,7 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     private DesignConditional BuildAlwaysTrueConditional(JObject conditionalObject) {
-      Main.LogDebug("[BuildAlwaysTrueConditional] Building BuildAlwaysTrue conditional");
+      Main.LogDebug("[BuildAlwaysTrueConditional] Building 'AlwaysTrueConditional' conditional");
       return ScriptableObject.CreateInstance<AlwaysTrueConditional>();
     }
   }

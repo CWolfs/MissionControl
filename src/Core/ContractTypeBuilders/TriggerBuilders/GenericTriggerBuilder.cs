@@ -30,13 +30,13 @@ namespace MissionControl.ContractTypeBuilders {
       this.description = trigger["Description"].ToString();
 
       if (trigger.ContainsKey("Conditional")) {
-        ConditionalBuilder resultsBuilder = new ConditionalBuilder(contractTypeBuilder, (JObject)trigger["Conditional"]);
-        conditional = resultsBuilder.Build();
+        ConditionalBuilder conditionalBuilder = new ConditionalBuilder(contractTypeBuilder, (JObject)trigger["Conditional"]);
+        this.conditional = conditionalBuilder.Build();
       }
 
       if (trigger.ContainsKey("Results")) {
         ResultsBuilder resultsBuilder = new ResultsBuilder(contractTypeBuilder, (JArray)trigger["Results"]);
-        results = resultsBuilder.Build();
+        this.results = resultsBuilder.Build();
       } else {
         Main.Logger.LogError("[GenericTriggerBuilder] Generic Triggers require 'Results'");
       }
