@@ -66,7 +66,8 @@
           "forPlayer" : "Player1",
           "objectiveGuids" : [
               "68c23223-2a8a-4e1c-b34a-6985e419cf7c",
-              "786166e2-22ea-45c1-9786-68df31958bd8"
+              "786166e2-22ea-45c1-9786-68df31958bd8",
+              "b8e02f26-f664-4314-a003-67737fef719d"
           ]
       }
   ],
@@ -89,6 +90,18 @@
         },
         "title" : "Investigate the Blackout",
         "description" : "",
+        "isPrimary" : true,
+        "OnSuccessResults" : [],
+        "OnFailureResults" : [],
+        "OnSuccessDialogueGUID" : null,
+        "OnFailureDialogueGUID" : null
+    },
+    {
+        "objective" : {
+            "EncounterObjectGuid" : "b8e02f26-f664-4314-a003-67737fef719d"
+        },
+        "title" : "Follow the Trail",
+        "description" : "Follow the trail to the next base",
         "isPrimary" : true,
         "OnSuccessResults" : [],
         "OnFailureResults" : [],
@@ -118,6 +131,12 @@
         "name" : "Region_Investigate_Blackout",
         "encounterObject" : {
             "EncounterObjectGuid" : "e7e9f35b-7ed8-404e-9dae-69be61de2dd3"
+        }
+      },
+      {
+        "name" : "Region_Follow_The_Trail",
+        "encounterObject" : {
+            "EncounterObjectGuid" : "21a03616-c88b-4edd-a9a9-b4dd54b46d6c"
         }
       }
   ],
@@ -221,7 +240,96 @@
                   "revealRadius" : -1
               }
           ]
-      }
+      },
+      {
+        "dialogue" : {
+            "EncounterObjectGuid" : "4ef16b5e-1486-4399-8835-b81026b22cac"
+        },
+        "name" : "Dialogue_Second_Point_Of_Interest",
+        "overrideDialogueBucketId" : "",
+        "dialogueContent" : [
+            {
+                "words" : "Unidentified BattleMech lance. Declare yourself. You are violating a {TEAM_EMP.FactionDef.ShortName} zone",
+                "wordsColor" : {
+                    "r" : 1,
+                    "g" : 1,
+                    "b" : 1,
+                    "a" : 1
+                },
+                "selectedCastDefId" : "castDef_SE06_KarosasCaptainDefault",
+                "emote" : "Default",
+                "audioName" : "NONE",
+                "cameraFocusGuid" : "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
+                "cameraDistance" : "Close",
+                "cameraHeight" : "Default",
+                "revealRadius" : -1
+            },
+            {
+                "words" : "{TEAM_EMP.FactionDef.Demonym} radio operator. We are {COMPANY.CompanyName} and have been hired to check the sit rep here. You've been out of contact for weeks. Everything ok here?",
+                "wordsColor" : {
+                    "r" : 1,
+                    "g" : 1,
+                    "b" : 1,
+                    "a" : 1
+                },
+                "selectedCastDefId" : "castDef_DariusDefault",
+                "emote" : "Default",
+                "audioName" : "NONE",
+                "cameraFocusGuid" : "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
+                "cameraDistance" : "Close",
+                "cameraHeight" : "Default",
+                "revealRadius" : -1
+            },
+            {
+                "words" : "Everythings fi..<b>***STATIC***</b>",
+                "wordsColor" : {
+                    "r" : 1,
+                    "g" : 1,
+                    "b" : 1,
+                    "a" : 1
+                },
+                "selectedCastDefId" : "castDef_SE06_KarosasCaptainDefault",
+                "emote" : "Default",
+                "audioName" : "NONE",
+                "cameraFocusGuid" : "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
+                "cameraDistance" : "Close",
+                "cameraHeight" : "Default",
+                "revealRadius" : -1
+            },
+            {
+                "words" : "Commander! It's a trap! Watch ou...<b>***STATIC***</b>",
+                "wordsColor" : {
+                    "r" : 1,
+                    "g" : 1,
+                    "b" : 1,
+                    "a" : 1
+                },
+                "selectedCastDefId" : "castDef_TeamLeader_Employer",
+                "emote" : "Default",
+                "audioName" : "NONE",
+                "cameraFocusGuid" : "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
+                "cameraDistance" : "Medium",
+                "cameraHeight" : "Default",
+                "revealRadius" : -1
+            },
+            {
+                "words" : "Damn it! Gun them down now!",
+                "wordsColor" : {
+                    "r" : 1,
+                    "g" : 1,
+                    "b" : 1,
+                    "a" : 1
+                },
+                "selectedCastDefId" : "castDef_TeamLeader_Hostile",
+                "emote" : "Default",
+                "audioName" : "NONE",
+                "cameraFocusGuid" : "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
+                "cameraDistance" : "Far",
+                "cameraHeight" : "Default",
+                "revealRadius" : -1
+            }
+        ]
+    }
   ],
   "extractionOverrideList" : [],
   "overwriteMissionCompleteWhenAutoComplete" : true,

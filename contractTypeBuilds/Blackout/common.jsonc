@@ -91,6 +91,47 @@
       ]
     },
     {
+      "Name": "Chunk_Stage_2_Follow_The_Trail",
+      "Type": "Chunk",
+      "SubType": "Container",
+      "Children": [
+        {
+          "Name": "Objective_Investigate_Second_Region",
+          "Type": "Objective",
+          "SubType": "OccupyRegion",
+          "Guid": "b8e02f26-f664-4314-a003-67737fef719d", // Must match the objective guid in the contract .json
+          "ContractObjectiveGuid": "73275787-720a-4c33-9f20-953b1bbf48bd", // Must match the contract guid in the contract .json
+          "Title": "Follow the Trail",
+          "Priority": 1,
+          "IsPrimaryObjective": true,
+          "RegionGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
+          "LanceToUseRegionGuid": "76b654a6-4f2c-4a6f-86e6-d4cf868335fe", // Player lance GUID
+          "ProgressFormat": "with [unitsOccupyingSoFar]/[numberOfUnitsToOccupy] unit(s)",
+          "Description": "The objective for the player to follow the trail",
+          "RequiredTagsOnUnit": ["Player 1"]
+        },
+        {
+          "Name": "Region_Follow_The_Trail",
+          "Type": "Region",
+          "SubType": "Normal",
+          "Guid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c", // Must match the region guid in the contract .json
+          "ObjectiveGuid": "786166e2-22ea-45c1-9786-68df31958bd8", // Must match the objective guid in the build file to link to
+          "RegionDefId": "regionDef_TargetZone",
+          "Position": {
+            "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
+            "Value": { "x": 180, "y": 0, "z": -300 }
+          },
+          "Radius": 360
+        },
+        {
+          "Name": "Dialogue_Second_Point_Of_Interest",
+          "Type": "Dialogue",
+          "SubType": "Simple",
+          "Guid": "4ef16b5e-1486-4399-8835-b81026b22cac" // Must match the dialogue guid in the contract .json
+        }
+      ]
+    },
+    {
       "Name": "Chunk_EncounterBoundary",
       "Type": "Chunk",
       "SubType": "EncounterBoundary",
@@ -165,6 +206,22 @@
         {
           "Type": "Dialogue",
           "DialogueGuid": "e0ca3227-ffbf-4088-a261-3d4e9ab7d4c5"
+        }
+      ]
+    },
+    {
+      "Name": "Trigger_Second_Dialogue",
+      "TriggerOn": "OnObjectiveUpdated",
+      "Description": "Show the second dialogue at the first base",
+      "Conditional": {
+        "Type": "ObjectiveStatusConditional",
+        "Guid": "b8e02f26-f664-4314-a003-67737fef719d",
+        "Status": "Success"
+      },
+      "Results": [
+        {
+          "Type": "Dialogue",
+          "DialogueGuid": "4ef16b5e-1486-4399-8835-b81026b22cac"
         }
       ]
     }
