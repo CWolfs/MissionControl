@@ -103,6 +103,8 @@ namespace MissionControl.ContractTypeBuilders {
       string regionGuid = objective["RegionGuid"].ToString();
       string progressFormat = objective["ProgressFormat"].ToString();
       string description = objective["Description"].ToString();
+      int numberOfUnitsToOccupy = (objective.ContainsKey("NumberOfUnitsToOccupy")) ? (int)objective["NumberOfUnitsToOccupy"] : 0;
+      int durationToOccupy = (objective.ContainsKey("DurationToOccupy")) ? (int)objective["DurationToOccupy"] : 0;
       bool useDropship = (objective.ContainsKey("UseDropship")) ? (bool)objective["UseDropship"] : false;
       string[] requiredTagsOnUnit = (objective.ContainsKey("RequiredTagsOnUnit")) ? ((JArray)objective["RequiredTagsOnUnit"]).ToObject<string[]>() : null;
       string[] requiredTagsOnOpposingUnits = (objective.ContainsKey("RequiredTagsOpposingUnits")) ? ((JArray)objective["RequiredTagsOpposingUnits"]).ToObject<string[]>() : null;
@@ -117,6 +119,8 @@ namespace MissionControl.ContractTypeBuilders {
         title,
         progressFormat,
         description,
+        numberOfUnitsToOccupy,
+        durationToOccupy,
         useDropship,
         requiredTagsOnUnit,
         requiredTagsOnOpposingUnits

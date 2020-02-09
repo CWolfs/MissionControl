@@ -49,6 +49,8 @@ namespace MissionControl.Logic {
           "Get to the Evac Zone",
           $"with {ProgressFormat.UNITS_OCCUPYING_SO_FAR}/{ProgressFormat.NUMBER_OF_UNITS_TO_OCCUPY} unit(s)",
           "The objective for the player to withdraw and complete, or withdraw, the mission",
+          0,
+          0,
           useDropship,
           new string[] { "player_unit" },
           new string[] { "opposing_unit" }

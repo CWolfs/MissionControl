@@ -1,5 +1,6 @@
 {
   "Key": "Blackout", // Links to the ContractType Name
+  "ContractObjective": [{}],
   "Chunks": [
     {
       "Name": "Chunk_PlayerLance",
@@ -191,12 +192,11 @@
       ]
     }
   ],
-  "ContractObjective": [{}],
   "Triggers": [
     {
       "Name": "Trigger_First_Dialogue",
       "TriggerOn": "OnObjectiveUpdated",
-      "Description": "Show the first dialogue at the first base",
+      "Description": "Show the dialogue at the first base",
       "Conditional": {
         "Type": "ObjectiveStatusConditional",
         "Guid": "786166e2-22ea-45c1-9786-68df31958bd8",
@@ -212,7 +212,7 @@
     {
       "Name": "Trigger_Second_Dialogue",
       "TriggerOn": "OnObjectiveUpdated",
-      "Description": "Show the second dialogue at the first base",
+      "Description": "Show the dialogue at the second base",
       "Conditional": {
         "Type": "ObjectiveStatusConditional",
         "Guid": "b8e02f26-f664-4314-a003-67737fef719d",

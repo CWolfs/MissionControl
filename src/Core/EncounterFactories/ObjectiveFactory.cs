@@ -126,7 +126,7 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static OccupyRegionObjective CreateOccupyRegionObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string requiredLanceSpawnerGuid, string regionGameLogicGuid,
-    string objectName, string title, string progressFormat, string description, bool useDropship, string[] requiredTagsOnUnit, string[] requiredTagsOnOpposingUnits) {
+    string objectName, string title, string progressFormat, string description, int numberOfUnitsToOccupy, int durationToOccupy, bool useDropship, string[] requiredTagsOnUnit, string[] requiredTagsOnOpposingUnits) {
       GameObject occupyRegionObjectiveGo = CreateGameObject(parent, objectName);
 
       OccupyRegionObjective occupyRegionObjective = occupyRegionObjectiveGo.AddComponent<OccupyRegionObjective>();
@@ -140,6 +140,8 @@ namespace MissionControl.EncounterFactories {
 
       occupyRegionObjective.durationType = DurationType.AfterMoveComplete;
       occupyRegionObjective.durationToOccupy = 1;
+
+      occupyRegionObjective.numberOfUnitsToOccupy = numberOfUnitsToOccupy;
 
       occupyRegionObjective.applyTagsWhen = ApplyTagsWhen.OnCompleteObjective;
 
