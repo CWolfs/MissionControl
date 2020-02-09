@@ -1,10 +1,8 @@
 using UnityEngine;
 
-using BattleTech;
-using BattleTech.Framework;
-using BattleTech.Designed;
+using System;
 
-using MissionControl.Messages;
+using BattleTech;
 
 using Newtonsoft.Json.Linq;
 
@@ -59,12 +57,15 @@ namespace MissionControl.ContractTypeBuilders {
       string name = chunk["Name"].ToString();
       string type = chunk["Type"].ToString();
       string subType = chunk["SubType"].ToString();
+      string status = (chunk.ContainsKey("StartingStatus")) ? chunk["StartingStatus"].ToString() : null;
       bool controlledByContract = (chunk.ContainsKey("ControlledByContract")) ? (bool)chunk["ControlledByContract"] : false;
       string guid = (chunk.ContainsKey("Guid")) ? chunk["Guid"].ToString() : null;
       JObject position = (JObject)chunk["Position"];
       JArray children = (JArray)chunk["Children"];
 
-      ChunkTypeBuilder chunkTypeBuilder = new ChunkTypeBuilder(this, name, type, subType, controlledByContract, guid, position, children);
+      EncounterObjectStatus? startingStatus = (status == null) ? null : (EncounterObjectStatus?)((EncounterObjectStatus)Enum.Parse(typeof(EncounterObjectStatus), status));
+
+      ChunkTypeBuilder chunkTypeBuilder = new ChunkTypeBuilder(this, name, type, subType, startingStatus, controlledByContract, guid, position, children);
       GameObject chunkGo = chunkTypeBuilder.Build();
       if (chunkGo == null) {
         Main.Logger.LogError("[ContractTypeBuild.{ContractTypeKey}] Chunk creation failed. GameObject is null");

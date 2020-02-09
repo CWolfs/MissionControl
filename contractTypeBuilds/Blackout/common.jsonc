@@ -95,6 +95,7 @@
       "Name": "Chunk_Stage_2_Follow_The_Trail",
       "Type": "Chunk",
       "SubType": "Container",
+      "StartingStatus": "Inactive",
       "Children": [
         {
           "Name": "Objective_Investigate_Second_Region",
