@@ -101,7 +101,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       string lanceToUseRegionGuid = objective["LanceToUseRegionGuid"].ToString();
       string regionGuid = objective["RegionGuid"].ToString();
-      string progressFormat = objective["ProgressFormat"].ToString();
+      string progressFormat = (objective.ContainsKey("ProgressFormat")) ? objective["ProgressFormat"].ToString() : "";
       string description = objective["Description"].ToString();
       int numberOfUnitsToOccupy = (objective.ContainsKey("NumberOfUnitsToOccupy")) ? (int)objective["NumberOfUnitsToOccupy"] : 0;
       int durationToOccupy = (objective.ContainsKey("DurationToOccupy")) ? (int)objective["DurationToOccupy"] : 0;

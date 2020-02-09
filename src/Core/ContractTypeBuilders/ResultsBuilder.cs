@@ -2,9 +2,11 @@ using UnityEngine;
 
 using Newtonsoft.Json.Linq;
 
+using BattleTech;
 using BattleTech.Designed;
 using BattleTech.Framework;
 
+using System;
 using System.Collections.Generic;
 
 using MissionControl.Result;
@@ -36,6 +38,7 @@ namespace MissionControl.ContractTypeBuilders {
       switch (type) {
         case "ExecuteGameLogic": BuildExecuteGameLogicResult(result); break;
         case "Dialogue": BuildDialogueGameLogicResult(result); break;
+        case "SetState": BuildSetStateResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -73,6 +76,23 @@ namespace MissionControl.ContractTypeBuilders {
       result.isInterrupt = isInterrupt;
 
       results.Add(result);
+    }
+
+    private void BuildSetStateResult(JObject resultObject) {
+      Main.LogDebug("[BuildSetStateResult] Building SetState result");
+      string encounterGuid = (resultObject.ContainsKey("EncounterGuid")) ? resultObject["EncounterGuid"].ToString() : null;
+      string state = (resultObject.ContainsKey("State")) ? resultObject["State"].ToString() : null;
+      EncounterObjectStatus stateType = (EncounterObjectStatus)Enum.Parse(typeof(EncounterObjectStatus), state);
+
+      if (encounterGuid != null) {
+        SetStateResult result = ScriptableObject.CreateInstance<SetStateResult>();
+        result.EncounterGuid = encounterGuid;
+        result.State = stateType;
+
+        results.Add(result);
+      } else {
+        Main.Logger.LogError("[BuildSetStateResult] You have not provided an 'EncounterGuid' to SetState on");
+      }
     }
   }
 }

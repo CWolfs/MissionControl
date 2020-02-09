@@ -107,9 +107,9 @@
           "IsPrimaryObjective": true,
           "RegionGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
           "LanceToUseRegionGuid": "76b654a6-4f2c-4a6f-86e6-d4cf868335fe", // Player lance GUID
-          "ProgressFormat": "with [unitsOccupyingSoFar]/[numberOfUnitsToOccupy] unit(s)",
           "Description": "The objective for the player to follow the trail",
-          "RequiredTagsOnUnit": ["Player 1"]
+          "RequiredTagsOnUnit": ["Player 1"],
+          "NumberOfUnitsToOccupy": 1
         },
         {
           "Name": "Region_Follow_The_Trail",
@@ -210,6 +210,23 @@
       ]
     },
     {
+      "Name": "Trigger_Disable_Region_1",
+      "TriggerOn": "OnObjectiveUpdated",
+      "Description": "Disable the first region on first objective complete",
+      "Conditional": {
+        "Type": "ObjectiveStatusConditional",
+        "Guid": "786166e2-22ea-45c1-9786-68df31958bd8",
+        "Status": "Success"
+      },
+      "Results": [
+        {
+          "Type": "SetState",
+          "EncounterGuid": "e7e9f35b-7ed8-404e-9dae-69be61de2dd3",
+          "State": "Finished"
+        }
+      ]
+    },
+    {
       "Name": "Trigger_Second_Dialogue",
       "TriggerOn": "OnObjectiveUpdated",
       "Description": "Show the dialogue at the second base",
@@ -222,6 +239,23 @@
         {
           "Type": "Dialogue",
           "DialogueGuid": "4ef16b5e-1486-4399-8835-b81026b22cac"
+        }
+      ]
+    },
+    {
+      "Name": "Trigger_Disable_Region_2",
+      "TriggerOn": "OnObjectiveUpdated",
+      "Description": "Disable the first region on first objective complete",
+      "Conditional": {
+        "Type": "ObjectiveStatusConditional",
+        "Guid": "b8e02f26-f664-4314-a003-67737fef719d",
+        "Status": "Success"
+      },
+      "Results": [
+        {
+          "Type": "SetState",
+          "EncounterGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
+          "State": "Finished"
         }
       ]
     }

@@ -30,10 +30,10 @@ namespace MissionControl.Result {
           Main.LogDebug($"[ExecuteGameLogicResult] Cannot find ChunkGameLogic with Guid '{ChunkGuid}'");
         }
       } else if (EncounterGuid != null) {
-        EncounterObjectGameLogic chunkGameLogic = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<EncounterObjectGameLogic>(ChunkGuid);
+        EncounterObjectGameLogic encounterGameLogic = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<EncounterObjectGameLogic>(EncounterGuid);
 
-        if (chunkGameLogic != null) {
-          MonoBehaviour[] monoBehaviours = chunkGameLogic.GetComponents<MonoBehaviour>();
+        if (encounterGameLogic != null) {
+          MonoBehaviour[] monoBehaviours = encounterGameLogic.GetComponents<MonoBehaviour>();
           foreach (MonoBehaviour monoBehaviour in monoBehaviours) {
             if (monoBehaviour is ExecutableGameLogic) {
               ((ExecutableGameLogic)monoBehaviour).Execute();
