@@ -245,7 +245,7 @@
         "dialogue" : {
             "EncounterObjectGuid" : "4ef16b5e-1486-4399-8835-b81026b22cac"
         },
-        "name" : "Dialogue_Second_Point_Of_Interest",
+        "name" : "Dialogue_Second_Point_Of_Interest_3a",
         "overrideDialogueBucketId" : "",
         "dialogueContent" : [
             {
@@ -325,6 +325,31 @@
                 "audioName" : "NONE",
                 "cameraFocusGuid" : "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
                 "cameraDistance" : "Far",
+                "cameraHeight" : "Default",
+                "revealRadius" : -1
+            }
+        ]
+    },
+    {
+        "dialogue" : {
+            "EncounterObjectGuid" : "d530f8a5-ce14-4af8-8da3-2020dab6def1"
+        },
+        "name" : "Dialogue_Second_Point_Of_Interest_3b",
+        "overrideDialogueBucketId" : "",
+        "dialogueContent" : [
+            {
+                "words" : "Mercenary! Are we glad to see you! {TEAM_EMP.FactionDef.ShortName} tactical base 231-Alpha.",
+                "wordsColor" : {
+                    "r" : 1,
+                    "g" : 1,
+                    "b" : 1,
+                    "a" : 1
+                },
+                "selectedCastDefId" : "castDef_TeamLeader_Employer",
+                "emote" : "Default",
+                "audioName" : "NONE",
+                "cameraFocusGuid" : "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
+                "cameraDistance" : "Close",
                 "cameraHeight" : "Default",
                 "revealRadius" : -1
             }

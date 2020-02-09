@@ -39,6 +39,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "ExecuteGameLogic": BuildExecuteGameLogicResult(result); break;
         case "Dialogue": BuildDialogueGameLogicResult(result); break;
         case "SetState": BuildSetStateResult(result); break;
+        case "SetStateAtRandom": BuildSetStateAtRandomResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -92,6 +93,23 @@ namespace MissionControl.ContractTypeBuilders {
         results.Add(result);
       } else {
         Main.Logger.LogError("[BuildSetStateResult] You have not provided an 'EncounterGuid' to SetState on");
+      }
+    }
+
+    private void BuildSetStateAtRandomResult(JObject resultObject) {
+      Main.LogDebug("[BuildSetStateAtRandomResult] Building SetState result");
+      List<string> encounterGuids = (resultObject.ContainsKey("EncounterGuids")) ? resultObject["EncounterGuids"].ToObject<List<string>>() : null;
+      string state = (resultObject.ContainsKey("State")) ? resultObject["State"].ToString() : null;
+      EncounterObjectStatus stateType = (EncounterObjectStatus)Enum.Parse(typeof(EncounterObjectStatus), state);
+
+      if (encounterGuids != null) {
+        SetStateAtRandomResult result = ScriptableObject.CreateInstance<SetStateAtRandomResult>();
+        result.EncounterGuids = encounterGuids;
+        result.State = stateType;
+
+        results.Add(result);
+      } else {
+        Main.Logger.LogError("[BuildSetStateAtRandomResult] You have not provided an 'EncounterGuids' to SetState on");
       }
     }
   }
