@@ -195,6 +195,23 @@
   ],
   "Triggers": [
     {
+      "Name": "Trigger_Enable_Chunk_2",
+      "TriggerOn": "OnObjectiveUpdated",
+      "Description": "Enable second objective on first objective complete",
+      "Conditional": {
+        "Type": "ObjectiveStatusConditional",
+        "Guid": "786166e2-22ea-45c1-9786-68df31958bd8",
+        "Status": "Success"
+      },
+      "Results": [
+        {
+          "Type": "SetState",
+          "EncounterGuid": "b8e02f26-f664-4314-a003-67737fef719d",
+          "State": "Active"
+        }
+      ]
+    },
+    {
       "Name": "Trigger_First_Dialogue",
       "TriggerOn": "OnObjectiveUpdated",
       "Description": "Show the dialogue at the first base",

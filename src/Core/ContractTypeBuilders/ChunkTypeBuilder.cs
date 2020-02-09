@@ -56,8 +56,6 @@ namespace MissionControl.ContractTypeBuilders {
       if (controlledByContract) chunkGameLogic.startingStatus = EncounterObjectStatus.ControlledByContract;
     }
 
-    // TODO: If the below methods continue to be the same then I should extract them out into a generics method
-
     private GameObject BuildPlayerLanceChunk() {
       Main.LogDebug($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] Building 'PlayerLance' Chunk");
       PlayerLanceChunkGameLogic playerLanceChunkGameLogic = ChunkFactory.CreatePlayerLanceChunk(this.name, contractTypeBuilder.EncounterLayerGo.transform);
