@@ -24,6 +24,8 @@ namespace MissionControl.ContractTypeBuilders {
     private int spawnPoints;
     private List<string> spawnPointGuids;
     private string spawnType;
+    private JArray aiOrdersArray;
+    private List<AIOrderBox> orders;
 
     public SpawnBuilder(ContractTypeBuilder contractTypeBuilder, GameObject parent, JObject spawner) {
       this.contractTypeBuilder = contractTypeBuilder;
@@ -37,6 +39,12 @@ namespace MissionControl.ContractTypeBuilders {
       this.spawnType = spawner["SpawnType"].ToString();
       this.position = spawner.ContainsKey("Position") ? (JObject)spawner["Position"] : null;
       this.rotation = spawner.ContainsKey("Rotation") ? (JObject)spawner["Rotation"] : null;
+      this.aiOrdersArray = spawner.ContainsKey("AI") ? (JArray)spawner["AI"] : null;
+
+      if (this.aiOrdersArray != null) {
+        AiOrderBuilder orderBuilder = new AiOrderBuilder(contractTypeBuilder, aiOrdersArray, name);
+        orders = orderBuilder.Build();
+      }
     }
 
     public override void Build() {
@@ -62,6 +70,7 @@ namespace MissionControl.ContractTypeBuilders {
           LanceSpawnerGameLogic lanceSpawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
           if (position != null) SetPosition(lanceSpawnerGameLogic.gameObject, position);
           if (rotation != null) SetRotation(lanceSpawnerGameLogic.gameObject, rotation);
+          if (orders != null) lanceSpawnerGameLogic.aiOrderList.contentsBox = orders;
           break;
         }
         case "TargetAlly": {
@@ -69,6 +78,7 @@ namespace MissionControl.ContractTypeBuilders {
           LanceSpawnerGameLogic lanceSpawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
           if (position != null) SetPosition(lanceSpawnerGameLogic.gameObject, position);
           if (rotation != null) SetRotation(lanceSpawnerGameLogic.gameObject, rotation);
+          if (orders != null) lanceSpawnerGameLogic.aiOrderList.contentsBox = orders;
           break;
         }
         case "Employer": {
@@ -76,6 +86,7 @@ namespace MissionControl.ContractTypeBuilders {
           LanceSpawnerGameLogic lanceSpawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
           if (position != null) SetPosition(lanceSpawnerGameLogic.gameObject, position);
           if (rotation != null) SetRotation(lanceSpawnerGameLogic.gameObject, rotation);
+          if (orders != null) lanceSpawnerGameLogic.aiOrderList.contentsBox = orders;
           break;
         }
         default: Main.LogDebug($"[SpawnBuilder.{contractTypeBuilder.ContractTypeKey}] No support for team '{team}'. Check for spelling mistakes."); break;

@@ -34,7 +34,7 @@
       "Path": "Chunks[?(@.Name == 'Chunk_Stage_3b_Incoming_Attack')].Children[?(@.Name == 'Lance_Enemy_OpposingForce')]",
       "Action": "ObjectMerge",
       "Value": {
-        "Name": "Spawner_PlayerLance",
+        "Name": "Lance_Enemy_OpposingForce",
         "Position": {
           "Type": "World",
           "Value": { "x": -300, "y": 140, "z": -460 }

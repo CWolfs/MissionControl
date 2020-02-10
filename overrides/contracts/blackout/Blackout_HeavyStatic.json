@@ -597,7 +597,7 @@
       "EncounterObjectGuid": "c1dd76b9-5f5f-46f1-b5a2-d1f22dd4991b"
     },
     "teamGuid": "be77cadd-e245-4240-a93e-b99cc98902a5",
-    "teamName": "Invaders",
+    "teamName": "Target",
     "faction": "INVALID_UNSET",
     "teamLeaderCastDefId": "castDef_TeamLeader_Current",
     "lanceOverrideList": [

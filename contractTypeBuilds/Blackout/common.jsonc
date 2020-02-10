@@ -189,7 +189,13 @@
             "92ea4a9a-0ea5-4445-b8ba-89a167e478de",
             "0cf6442f-d67d-41e3-a658-c5e9f564cf9e"
           ], // Must match the unit spawn guids in the contract .json
-          "SpawnType": "Leopard" // Leopard, DropPod, Instant
+          "SpawnType": "Leopard", // Leopard, DropPod, Instant
+          "AI": [
+            {
+              "Type": "StayInsideRegion",
+              "RegionGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c"
+            }
+          ]
         },
         {
           "Name": "Objective_DestroyLance",
