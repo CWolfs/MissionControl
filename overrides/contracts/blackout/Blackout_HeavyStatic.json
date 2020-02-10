@@ -1,5 +1,5 @@
 {
-  "ID" : "Blackout_Hostages",
+  "ID" : "Blackout_HeavyStatic",
   "contractName" : "Heavy Static",
   "contractDisplayStyle" : "BaseCampaignNormal",
   "difficulty" : 2,
@@ -338,7 +338,7 @@
         "overrideDialogueBucketId" : "",
         "dialogueContent" : [
             {
-                "words" : "Mercenary! Are we glad to see you! {TEAM_EMP.FactionDef.ShortName} tactical base 231-Alpha.",
+                "words" : "Commander! Are we glad to see you! {TEAM_EMP.FactionDef.ShortName} tactical base 231-Alpha.",
                 "wordsColor" : {
                     "r" : 1,
                     "g" : 1,
@@ -350,6 +350,38 @@
                 "audioName" : "NONE",
                 "cameraFocusGuid" : "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
                 "cameraDistance" : "Close",
+                "cameraHeight" : "Default",
+                "revealRadius" : -1
+            },
+            {
+                "words" : "We've been holding off assaults on our position for the past few weeks. We've fallen back to this base but we can't hold out for much longer.",
+                "wordsColor" : {
+                    "r" : 1,
+                    "g" : 1,
+                    "b" : 1,
+                    "a" : 1
+                },
+                "selectedCastDefId" : "castDef_TeamLeader_Employer",
+                "emote" : "Default",
+                "audioName" : "NONE",
+                "cameraFocusGuid" : "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
+                "cameraDistance" : "Medium",
+                "cameraHeight" : "Default",
+                "revealRadius" : -1
+            },
+            {
+                "words" : "We've got contacts! Incoming!",
+                "wordsColor" : {
+                    "r" : 1,
+                    "g" : 1,
+                    "b" : 1,
+                    "a" : 1
+                },
+                "selectedCastDefId" : "castDef_SE01_CommVoice01",
+                "emote" : "Default",
+                "audioName" : "NONE",
+                "cameraFocusGuid" : "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
+                "cameraDistance" : "Far",
                 "cameraHeight" : "Default",
                 "revealRadius" : -1
             }
