@@ -92,8 +92,10 @@ namespace MissionControl.ContractTypeBuilders {
       DestroyLanceObjectiveRef destroyLanceObjectiveRef = new DestroyLanceObjectiveRef();
       destroyLanceObjectiveRef.encounterObject = objectiveLogic;
 
-      destroyWholeLanceChunk.lanceSpawner = lanceSpawnerRef;
-      destroyWholeLanceChunk.destroyObjective = destroyLanceObjectiveRef;
+      if (destroyWholeLanceChunk != null) {
+        destroyWholeLanceChunk.lanceSpawner = lanceSpawnerRef;
+        destroyWholeLanceChunk.destroyObjective = destroyLanceObjectiveRef;
+      }
     }
 
     private void BuildOccupyRegionObjective(GameObject parent, JObject objective, string name, string title, string guid,

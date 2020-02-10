@@ -27,7 +27,22 @@
           "Value": { "x": -50, "y": 0, "z": 200 }
         },
         "Width": 1836,
-        "Length": 1524
+        "Length": 1624
+      }
+    },
+    {
+      "Path": "Chunks[?(@.Name == 'Chunk_Stage_3b_Incoming_Attack')].Children[?(@.Name == 'Lance_Enemy_OpposingForce')]",
+      "Action": "ObjectMerge",
+      "Value": {
+        "Name": "Spawner_PlayerLance",
+        "Position": {
+          "Type": "World",
+          "Value": { "x": -300, "y": 140, "z": -460 }
+        },
+        "Rotation": {
+          "Type": "World",
+          "Value": { "x": 0, "y": 90, "z": 0 }
+        }
       }
     }
   ]

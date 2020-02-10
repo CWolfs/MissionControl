@@ -1,4 +1,4 @@
- {
+{
   "Key": "Blackout", // Links to the ContractType Name
   "ContractObjective": [{}],
   "Chunks": [
@@ -25,8 +25,8 @@
           "SpawnPointGuids": [
             "ec9d2280-ca9a-4d90-8a20-963d8a4c0a39",
             "5df48a48-1840-49b0-84e9-126847053afa",
-            "92ea4a9a-0ea5-4445-b8ba-89a167e478de",
-            "8efee919-9d40-4269-bc22-b1bc2bce1f80"
+            "a55fc76c-c955-4b61-bb64-2608c9beb9f5",
+            "0f10a383-7325-4726-b2c4-a0ef416e4b27"
           ], // Must match the unit spawn guids in the contract .json
           "SpawnType": "Leopard" // Leopard, DropPod, Instant
         }
@@ -134,7 +134,7 @@
       "SubType": "Container",
       "Guid": "716aec95-e204-4033-8d56-8f659a30c51c",
       "StartingStatus": "Inactive",
-      "OnActiveExecute": [ 
+      "OnActiveExecute": [
         {
           "Type": "Dialogue",
           "EncounterGuid": "4ef16b5e-1486-4399-8835-b81026b22cac"
@@ -155,7 +155,7 @@
       "SubType": "Container",
       "Guid": "df31d9e4-762f-4556-bc49-ce8dc1659c0a",
       "StartingStatus": "Inactive",
-      "OnActiveExecute": [ 
+      "OnActiveExecute": [
         {
           "Type": "Dialogue",
           "EncounterGuid": "d530f8a5-ce14-4af8-8da3-2020dab6def1"
@@ -167,6 +167,40 @@
           "Type": "Dialogue",
           "SubType": "Simple",
           "Guid": "d530f8a5-ce14-4af8-8da3-2020dab6def1" // Must match the dialogue guid in the contract .json
+        },
+        {
+          "Name": "Lance_Enemy_OpposingForce",
+          "Type": "Spawner",
+          "SubType": "SimpleSpawner",
+          "Position": {
+            "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
+            "Value": { "x": 0, "y": 0, "z": 0 }
+          },
+          "Rotation": {
+            "Type": "World", // World, Local
+            "Value": { "x": 0, "y": 0, "z": 0 }
+          },
+          "Team": "Target",
+          "Guid": "f426f0dc-969d-477d-81a9-d02f9e1eff79", // Must match the spawner guids in the contract .json
+          "SpawnPoints": 4,
+          "SpawnPointGuids": [
+            "6cd3107e-0f9d-4809-ab8c-fb30faf4cd80",
+            "14c58a13-96a6-4f91-a1e5-47b5d02b81d1",
+            "92ea4a9a-0ea5-4445-b8ba-89a167e478de",
+            "0cf6442f-d67d-41e3-a658-c5e9f564cf9e"
+          ], // Must match the unit spawn guids in the contract .json
+          "SpawnType": "Leopard" // Leopard, DropPod, Instant
+        },
+        {
+          "Name": "Objective_DestroyLance",
+          "Type": "Objective",
+          "SubType": "DestroyLance",
+          "Guid": "a0b9c5b2-c594-4c5a-be1d-028a51c51519", // Must match the objective guid in the contract .json
+          "ContractObjectiveGuid": "73275787-720a-4c33-9f20-953b1bbf48bd", // Must match the contract guid in the contract .json
+          "Title": "Destroy the target lance",
+          "Priority": 1,
+          "IsPrimaryObjective": true,
+          "LanceToDestroyGuid": "f426f0dc-969d-477d-81a9-d02f9e1eff79"
         }
       ]
     },
@@ -311,7 +345,7 @@
         {
           "Type": "SetStateAtRandom",
           "EncounterGuids": [
-            "716aec95-e204-4033-8d56-8f659a30c51c",
+            /* "716aec95-e204-4033-8d56-8f659a30c51c", */
             "df31d9e4-762f-4556-bc49-ce8dc1659c0a"
           ],
           "State": "Active"
