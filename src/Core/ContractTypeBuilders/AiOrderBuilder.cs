@@ -4,6 +4,8 @@ using Newtonsoft.Json.Linq;
 
 using BattleTech;
 
+using HBS.Collections;
+
 using System.Collections.Generic;
 
 using MissionControl.AI;
@@ -38,6 +40,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       switch (type) {
         case "StayInsideRegion": BuildStayInsideRegionOrder(order); break;
+        case "MagicKnowledgeByTag": BuildMagicKnowledgeByTag(order); break;
         default:
           Main.Logger.LogError($"[AiOrderBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -49,6 +52,19 @@ namespace MissionControl.ContractTypeBuilders {
 
       StayInsideRegionAIOrder order = ScriptableObject.CreateInstance<StayInsideRegionAIOrder>();
       order.region.EncounterObjectGuid = regionGuid;
+
+      orders.Add(new EncounterAIOrderBox(order));
+    }
+
+    private void BuildMagicKnowledgeByTag(JObject orderObj) {
+      JArray tags = (JArray)orderObj["Tags"];
+      string action = orderObj["Action"].ToString();
+      bool mustMatchAllTags = (orderObj.ContainsKey("MustMatchAll")) ? (bool)orderObj["MustMatchAll"] : false;
+
+      AddMagicKnowledgeByTagAIOrder order = ScriptableObject.CreateInstance<AddMagicKnowledgeByTagAIOrder>();
+      order.TargetTagSet = new TagSet(tags.ToObject<List<string>>());
+      order.AddMagicKnowledge = (action == "Add") ? true : false;
+      order.MustMatchAllTags = mustMatchAllTags;
 
       orders.Add(new EncounterAIOrderBox(order));
     }
