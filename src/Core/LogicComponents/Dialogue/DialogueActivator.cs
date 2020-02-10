@@ -1,6 +1,7 @@
 using UnityEngine;
 
 using BattleTech;
+using BattleTech.Designed;
 using BattleTech.Framework;
 
 using HBS.Util;
@@ -13,9 +14,28 @@ namespace MissionControl.LogicComponents.Dialogue {
     [SerializeField]
     public string dialogueGuid { get; set; }
 
+    [SerializeField]
+    public EncounterChunkGameLogic chunk { get; set; }
+
+    [SerializeField]
+    public bool HasActivated { get; set; } = false;
+
     public override TaggedObjectType Type {
       get {
         return (TaggedObjectType)MCTaggedObjectType.ActivateDialogue;
+      }
+    }
+
+    void Start() {
+      chunk = this.GetComponent<EncounterChunkGameLogic>();
+    }
+
+    void Update() {
+      if (chunk != null && !HasActivated) {
+        if (chunk.GetState() == EncounterObjectStatus.Active) {
+          HasActivated = true;
+          ActivateDialogue();
+        }
       }
     }
 
