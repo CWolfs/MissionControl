@@ -26,6 +26,7 @@ namespace MissionControl.ContractTypeBuilders {
     private string spawnType;
     private JArray aiOrdersArray;
     private List<AIOrderBox> orders;
+    private bool alertLanceOnSpawn;
 
     public SpawnBuilder(ContractTypeBuilder contractTypeBuilder, GameObject parent, JObject spawner) {
       this.contractTypeBuilder = contractTypeBuilder;
@@ -40,6 +41,7 @@ namespace MissionControl.ContractTypeBuilders {
       this.position = spawner.ContainsKey("Position") ? (JObject)spawner["Position"] : null;
       this.rotation = spawner.ContainsKey("Rotation") ? (JObject)spawner["Rotation"] : null;
       this.aiOrdersArray = spawner.ContainsKey("AI") ? (JArray)spawner["AI"] : null;
+      this.alertLanceOnSpawn = spawner.ContainsKey("AlertLanceOnSpawn") ? (bool)spawner["AlertLanceOnSpawn"] : false;
 
       if (this.aiOrdersArray != null) {
         AiOrderBuilder orderBuilder = new AiOrderBuilder(contractTypeBuilder, aiOrdersArray, name);
@@ -71,6 +73,7 @@ namespace MissionControl.ContractTypeBuilders {
           if (position != null) SetPosition(lanceSpawnerGameLogic.gameObject, position);
           if (rotation != null) SetRotation(lanceSpawnerGameLogic.gameObject, rotation);
           if (orders != null) lanceSpawnerGameLogic.aiOrderList.contentsBox = orders;
+          lanceSpawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
           break;
         }
         case "TargetAlly": {
@@ -79,6 +82,7 @@ namespace MissionControl.ContractTypeBuilders {
           if (position != null) SetPosition(lanceSpawnerGameLogic.gameObject, position);
           if (rotation != null) SetRotation(lanceSpawnerGameLogic.gameObject, rotation);
           if (orders != null) lanceSpawnerGameLogic.aiOrderList.contentsBox = orders;
+          lanceSpawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
           break;
         }
         case "Employer": {
@@ -87,6 +91,7 @@ namespace MissionControl.ContractTypeBuilders {
           if (position != null) SetPosition(lanceSpawnerGameLogic.gameObject, position);
           if (rotation != null) SetRotation(lanceSpawnerGameLogic.gameObject, rotation);
           if (orders != null) lanceSpawnerGameLogic.aiOrderList.contentsBox = orders;
+          lanceSpawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
           break;
         }
         default: Main.LogDebug($"[SpawnBuilder.{contractTypeBuilder.ContractTypeKey}] No support for team '{team}'. Check for spelling mistakes."); break;
