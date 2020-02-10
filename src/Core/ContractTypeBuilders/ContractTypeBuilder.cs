@@ -58,6 +58,7 @@ namespace MissionControl.ContractTypeBuilders {
       string type = chunk["Type"].ToString();
       string subType = chunk["SubType"].ToString();
       string status = (chunk.ContainsKey("StartingStatus")) ? chunk["StartingStatus"].ToString() : null;
+      JArray onActiveExecute = (chunk.ContainsKey("OnActiveExecute")) ? (JArray)chunk["OnActiveExecute"] : null;
       bool controlledByContract = (chunk.ContainsKey("ControlledByContract")) ? (bool)chunk["ControlledByContract"] : false;
       string guid = (chunk.ContainsKey("Guid")) ? chunk["Guid"].ToString() : null;
       JObject position = (JObject)chunk["Position"];
@@ -71,8 +72,33 @@ namespace MissionControl.ContractTypeBuilders {
         Main.Logger.LogError("[ContractTypeBuild.{ContractTypeKey}] Chunk creation failed. GameObject is null");
       }
 
+      if (onActiveExecute != null) {
+        Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] There are '{onActiveExecute.Count} activators(s) defined on chunk '{name}'");
+        foreach (JObject activator in onActiveExecute.Children<JObject>()) {
+          BuildChunkNodeActivators(chunkGo, activator);
+        }
+      }
+
       foreach (JObject child in children.Children<JObject>()) {
         BuildNode(chunkGo, child);
+      }
+    }
+
+    private void BuildChunkNodeActivators(GameObject parent, JObject activator) {
+      string type = activator["Type"].ToString();
+      Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Activator type is '{type}'");
+
+      NodeBuilder nodeBuilder = null;
+
+      switch (type) {
+        case "Dialogue": nodeBuilder = new DialogueActivatorBuilder(this, parent, activator); break;
+        default: break;
+      }
+
+      if (nodeBuilder != null) {
+        nodeBuilder.Build();
+      } else {
+        Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] No valid chunk child activator was built for '{type}' on chunk '{parent.gameObject.name}'");
       }
     }
 
@@ -95,7 +121,7 @@ namespace MissionControl.ContractTypeBuilders {
       if (nodeBuilder != null) {
         nodeBuilder.Build();
       } else {
-        Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] No valid node was built for '{type}'");
+        Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] No valid node was built for '{type}' on chunk '{parent.gameObject.name}'");
       }
     }
 

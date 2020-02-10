@@ -1,5 +1,6 @@
 using UnityEngine;
 
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -7,6 +8,7 @@ using BattleTech;
 using BattleTech.Framework;
 
 using MissionControl.RuntimeCast;
+using MissionControl.LogicComponents.Dialogue;
 
 namespace MissionControl.EncounterFactories {
   public class DialogueFactory {
@@ -18,6 +20,13 @@ namespace MissionControl.EncounterFactories {
       dialogueGameLogicGo.transform.localPosition = Vector3.zero;
 
       return dialogueGameLogicGo;
+    }
+
+    public static DialogueActivator CreateDialogueActivator(GameObject parent, string guid) {
+      DialogueActivator dialogueActivator = parent.AddComponent<DialogueActivator>();
+      dialogueActivator.encounterObjectGuid = Guid.NewGuid().ToString();
+      dialogueActivator.dialogueGuid = guid;
+      return dialogueActivator;
     }
 
     public static DialogueGameLogic CreateDialogLogic(GameObject parent, string name, string cameraTargetGuid, string presetDialogue = null, CastDef castDef = null) {
