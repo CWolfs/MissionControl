@@ -168,5 +168,36 @@ namespace MissionControl.EncounterFactories {
 
       return occupyRegionObjective;
     }
+
+    public static DefendXUnitsObjective CreateDefendXUnitsObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, int priority,
+      string progressFormat, string description, string[] requiredTagsOnUnit, int numberOfUnitsToDefend, int durationToDefend, DurationType durationType) {
+
+      GameObject defendXUnitsObjectiveGo = CreateGameObject(parent, objectName);
+
+      DefendXUnitsObjective defendXUnitsObjective = defendXUnitsObjectiveGo.AddComponent<DefendXUnitsObjective>();
+      defendXUnitsObjective.title = defendXUnitsObjectiveGo.name;
+      defendXUnitsObjective.encounterObjectGuid = objectiveGuid;
+      defendXUnitsObjective.requiredTagsOnUnit = new TagSet(requiredTagsOnUnit);
+
+      defendXUnitsObjective.numberOfUnitsToDefend = numberOfUnitsToDefend;
+      defendXUnitsObjective.durationToOccupy = durationToDefend;
+      defendXUnitsObjective.durationType = durationType;
+
+      defendXUnitsObjective.title = title;
+      defendXUnitsObjective.showProgress = true;
+      defendXUnitsObjective.progressFormat = progressFormat;
+      defendXUnitsObjective.description = description;
+      defendXUnitsObjective.priority = priority;
+
+      defendXUnitsObjective.displayToUser = true;
+      defendXUnitsObjective.checkObjectiveFlag = false; // maybe true?
+      defendXUnitsObjective.useBeacon = true;
+      defendXUnitsObjective.markUnitsWith = ObjectiveMark.DefendTarget;
+      defendXUnitsObjective.enableObjectiveLogging = true;
+
+      AttachRequiredReferences(defendXUnitsObjective, contractObjectiveGuid);
+
+      return defendXUnitsObjective;
+    }
   }
 }

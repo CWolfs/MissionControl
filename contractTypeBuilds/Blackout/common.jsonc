@@ -213,6 +213,21 @@
           "Priority": 1,
           "IsPrimaryObjective": true,
           "LanceToDestroyGuid": "f426f0dc-969d-477d-81a9-d02f9e1eff79"
+        },
+        {
+          "Name": "Objective_DefendBuildings",
+          "Type": "Objective",
+          "SubType": "DefendXUnits",
+          "Guid": "67b973aa-d770-4be7-bfee-36b516bc4699", // Must match the objective guid in the contract .json
+          "ContractObjectiveGuid": "73275787-720a-4c33-9f20-953b1bbf48bd", // Must match the contract guid in the contract .json
+          "Title": "Defend buildings",
+          "Priority": 1,
+          "IsPrimaryObjective": true,
+          "RequiredTagsOnUnit": ["defend_building_3b"],
+          "DurationToDefend": 10,
+          "DurationType": "Rounds",
+          "ProgressFormat": "[numberOfUnitsToDefend] Must Survive, [numberOfUnitsToDefendRemaining] Remain",
+          "Description": "The objective for the player to defend the buildings"
         }
       ]
     },

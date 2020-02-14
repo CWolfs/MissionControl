@@ -1,5 +1,7 @@
 using UnityEngine;
 
+using System;
+
 using BattleTech.Designed;
 using BattleTech.Framework;
 
@@ -45,6 +47,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "Generic": BuildGenericObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         case "DestroyLance": BuildDestroyWholeLanceObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         case "OccupyRegion": BuildOccupyRegionObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
+        case "DefendXUnits": BuildDefendXUnitsObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         default: Main.LogDebug($"[ObjectiveBuilder.{contractTypeBuilder.ContractTypeKey}] No support for sub-type '{subType}'. Check for spelling mistakes."); break;
       }
     }
@@ -127,6 +130,20 @@ namespace MissionControl.ContractTypeBuilders {
         requiredTagsOnUnit,
         requiredTagsOnOpposingUnits
       );
+    }
+
+    private void BuildDefendXUnitsObjective(GameObject parent, JObject objective, string name, string title, string guid,
+      bool isPrimaryObjectve, int priority, bool displayToUser, string contractObjectiveGuid) {
+
+      string[] requiredTagsOnUnit = (objective.ContainsKey("RequiredTagsOnUnit")) ? ((JArray)objective["RequiredTagsOnUnit"]).ToObject<string[]>() : null;
+      int numberOfUnitsToDefend = (objective.ContainsKey("NumberOfUnitsToDefend")) ? ((int)objective["NumberOfUnitsToDefend"]) : 1;
+      int durationToDefend = (int)objective["DurationToDefend"];
+      string durationTypeStr = objective["DurationType"].ToString();
+      DurationType durationType = (DurationType)Enum.Parse(typeof(DurationType), durationTypeStr);
+      string progressFormat = (objective.ContainsKey("ProgressFormat")) ? objective["ProgressFormat"].ToString() : "";
+      string description = objective["Description"].ToString();
+
+      ObjectiveFactory.CreateDefendXUnitsObjective(guid, parent, contractObjectiveGuid, name, title, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDefend, durationToDefend, durationType);
     }
   }
 }
