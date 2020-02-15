@@ -293,6 +293,23 @@
   ],
   "Triggers": [
     {
+      "Name": "Trigger_Tag_Buildings_2b",
+      "TriggerOn": "OnEncounterBegin",
+      "Description": "Tag buildings on encounter begin for 2b",
+      "Conditional": {
+        "Type": "AlwaysTrueConditional"
+      },
+      "Results": [
+        {
+          "Type": "TagXUnitsInRegion",
+          "RegionGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
+          "UnitType": "Building",
+          "NumberOfUnits": 4,
+          "Tags": ["defend_building_3b"]
+        }
+      ]
+    },
+    {
       "Name": "Trigger_First_Dialogue",
       "TriggerOn": "OnObjectiveUpdated",
       "Description": "Show the dialogue at the first base",

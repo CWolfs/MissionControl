@@ -40,6 +40,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "Dialogue": BuildDialogueGameLogicResult(result); break;
         case "SetState": BuildSetStateResult(result); break;
         case "SetStateAtRandom": BuildSetStateAtRandomResult(result); break;
+        case "TagXUnitsInRegion": BuildTagXUnitsInRegion(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -47,7 +48,7 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     private void BuildExecuteGameLogicResult(JObject resultObject) {
-      Main.LogDebug("[BuildExecuteGameLogicResult] Building ExecuteGameLogic result");
+      Main.LogDebug("[BuildExecuteGameLogicResult] Building 'ExecuteGameLogic' result");
       string chunkGuid = (resultObject.ContainsKey("ChunkGuid")) ? resultObject["ChunkGuid"].ToString() : null;
       string encounterGuid = (resultObject.ContainsKey("EncounterGuid")) ? resultObject["EncounterGuid"].ToString() : null;
 
@@ -59,7 +60,7 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     private void BuildDialogueGameLogicResult(JObject resultObject) {
-      Main.LogDebug("[BuildDialogueGameLogicResult] Building Dialogue result");
+      Main.LogDebug("[BuildDialogueGameLogicResult] Building 'Dialogue' result");
       string dialogueGuid = (resultObject.ContainsKey("DialogueGuid")) ? resultObject["DialogueGuid"].ToString() : null;
       string dialogueSequenceGuid = (resultObject.ContainsKey("DialogueSequenceGuid")) ? resultObject["DialogueSequenceGuid"].ToString() : null;
       bool isInterrupt = (resultObject.ContainsKey("IsInterrupt")) ? (bool)resultObject["IsInterrupt"] : true;
@@ -80,7 +81,7 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     private void BuildSetStateResult(JObject resultObject) {
-      Main.LogDebug("[BuildSetStateResult] Building SetState result");
+      Main.LogDebug("[BuildSetStateResult] Building 'SetState' result");
       string encounterGuid = (resultObject.ContainsKey("EncounterGuid")) ? resultObject["EncounterGuid"].ToString() : null;
       string state = (resultObject.ContainsKey("State")) ? resultObject["State"].ToString() : null;
       EncounterObjectStatus stateType = (EncounterObjectStatus)Enum.Parse(typeof(EncounterObjectStatus), state);
@@ -97,7 +98,7 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     private void BuildSetStateAtRandomResult(JObject resultObject) {
-      Main.LogDebug("[BuildSetStateAtRandomResult] Building SetState result");
+      Main.LogDebug("[BuildSetStateAtRandomResult] Building 'SetStateAtRandom' result");
       List<string> encounterGuids = (resultObject.ContainsKey("EncounterGuids")) ? resultObject["EncounterGuids"].ToObject<List<string>>() : null;
       string state = (resultObject.ContainsKey("State")) ? resultObject["State"].ToString() : null;
       EncounterObjectStatus stateType = (EncounterObjectStatus)Enum.Parse(typeof(EncounterObjectStatus), state);
@@ -110,6 +111,26 @@ namespace MissionControl.ContractTypeBuilders {
         results.Add(result);
       } else {
         Main.Logger.LogError("[BuildSetStateAtRandomResult] You have not provided an 'EncounterGuids' to SetState on");
+      }
+    }
+
+    private void BuildTagXUnitsInRegion(JObject resultObject) {
+      Main.LogDebug("[BuildTagXUnitsInRegion] Building 'TagXUnitsInRegion' result");
+      string regionGuid = resultObject["RegionGuid"].ToString();
+      string unitType = resultObject["UnitType"].ToString();
+      int numberOfUnits = (int)resultObject["NumberOfUnits"];
+      string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
+
+      if (regionGuid != null) {
+        TagXUnitsInRegionResult result = ScriptableObject.CreateInstance<TagXUnitsInRegionResult>();
+        result.RegionGuid = regionGuid;
+        result.Type = unitType;
+        result.NumberOfUnits = numberOfUnits;
+        result.Tags = tags;
+
+        results.Add(result);
+      } else {
+        Main.Logger.LogError("[BuildTagXUnitsInRegion] You have not provided an 'RegionGuid' to BuildTagXUnitsInRegion on");
       }
     }
   }
