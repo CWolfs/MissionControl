@@ -301,7 +301,7 @@
       },
       "Results": [
         {
-          "Type": "TagXUnitsInRegion",
+          "Type": "TagUnitsInRegion",
           "RegionGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
           "UnitType": "Building",
           "NumberOfUnits": 4,

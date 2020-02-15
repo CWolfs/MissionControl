@@ -40,7 +40,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "Dialogue": BuildDialogueGameLogicResult(result); break;
         case "SetState": BuildSetStateResult(result); break;
         case "SetStateAtRandom": BuildSetStateAtRandomResult(result); break;
-        case "TagXUnitsInRegion": BuildTagXUnitsInRegion(result); break;
+        case "TagUnitsInRegion": BuildTagUnitsInRegion(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -114,15 +114,15 @@ namespace MissionControl.ContractTypeBuilders {
       }
     }
 
-    private void BuildTagXUnitsInRegion(JObject resultObject) {
-      Main.LogDebug("[BuildTagXUnitsInRegion] Building 'TagXUnitsInRegion' result");
+    private void BuildTagUnitsInRegion(JObject resultObject) {
+      Main.LogDebug("[BuildTagUnitsInRegion] Building 'TagXUnitsInRegion' result");
       string regionGuid = resultObject["RegionGuid"].ToString();
       string unitType = resultObject["UnitType"].ToString();
       int numberOfUnits = (int)resultObject["NumberOfUnits"];
       string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
 
       if (regionGuid != null) {
-        TagXUnitsInRegionResult result = ScriptableObject.CreateInstance<TagXUnitsInRegionResult>();
+        TagUnitsInRegionResult result = ScriptableObject.CreateInstance<TagUnitsInRegionResult>();
         result.RegionGuid = regionGuid;
         result.Type = unitType;
         result.NumberOfUnits = numberOfUnits;
@@ -130,7 +130,7 @@ namespace MissionControl.ContractTypeBuilders {
 
         results.Add(result);
       } else {
-        Main.Logger.LogError("[BuildTagXUnitsInRegion] You have not provided an 'RegionGuid' to BuildTagXUnitsInRegion on");
+        Main.Logger.LogError("[BuildTagUnitsInRegion] You have not provided an 'RegionGuid' to BuildTagUnitsInRegion on");
       }
     }
   }
