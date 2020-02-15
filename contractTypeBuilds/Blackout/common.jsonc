@@ -33,24 +33,6 @@
       ]
     },
     {
-      "Name": "Chunk_Overview",
-      "Type": "Chunk",
-      "SubType": "Container",
-      "Children": [
-        {
-          "Name": "Objective_Overview",
-          "Type": "Objective",
-          "SubType": "Generic",
-          "Guid": "68c23223-2a8a-4e1c-b34a-6985e419cf7c", // Must match the objective guid in the contract .json
-          "ContractObjectiveGuid": "73275787-720a-4c33-9f20-953b1bbf48bd", // Must match the contract guid in the contract .json
-          "Title": "Blackout Overview",
-          "Priority": 2,
-          "IsPrimaryObjective": true,
-          "Description": "The objective for the player to investigate the blackout"
-        }
-      ]
-    },
-    {
       "Name": "Chunk_Stage_1_Investigate",
       "Type": "Chunk",
       "SubType": "Container",
