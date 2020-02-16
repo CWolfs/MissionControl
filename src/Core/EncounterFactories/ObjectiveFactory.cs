@@ -199,5 +199,34 @@ namespace MissionControl.EncounterFactories {
 
       return defendXUnitsObjective;
     }
+
+    public static DefendXUnitsForeverObjective CreateDefendXUnitsForeverObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, int priority,
+      string progressFormat, string description, string[] requiredTagsOnUnit, int numberOfUnitsToDefend) {
+
+      GameObject defendXUnitsObjectiveGo = CreateGameObject(parent, objectName);
+
+      DefendXUnitsForeverObjective defendXUnitsObjective = defendXUnitsObjectiveGo.AddComponent<DefendXUnitsForeverObjective>();
+      defendXUnitsObjective.title = defendXUnitsObjectiveGo.name;
+      defendXUnitsObjective.encounterObjectGuid = objectiveGuid;
+      defendXUnitsObjective.requiredTagsOnUnit = new TagSet(requiredTagsOnUnit);
+
+      defendXUnitsObjective.numberOfUnitsToDefend = numberOfUnitsToDefend;
+
+      defendXUnitsObjective.title = title;
+      defendXUnitsObjective.showProgress = true;
+      defendXUnitsObjective.progressFormat = progressFormat;
+      defendXUnitsObjective.description = description;
+      defendXUnitsObjective.priority = priority;
+
+      defendXUnitsObjective.displayToUser = true;
+      defendXUnitsObjective.checkObjectiveFlag = false; // maybe true?
+      defendXUnitsObjective.useBeacon = false;
+      defendXUnitsObjective.markUnitsWith = ObjectiveMark.DefendTarget;
+      defendXUnitsObjective.enableObjectiveLogging = true;
+
+      AttachRequiredReferences(defendXUnitsObjective, contractObjectiveGuid);
+
+      return defendXUnitsObjective;
+    }
   }
 }

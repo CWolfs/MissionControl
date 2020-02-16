@@ -206,8 +206,6 @@
           "Priority": 1,
           "IsPrimaryObjective": true,
           "RequiredTagsOnUnit": ["defend_building_3b"],
-          "DurationToDefend": 10,
-          "DurationType": "Rounds",
           "ProgressFormat": "[numberOfUnitsToDefend] Must Survive, [numberOfUnitsToDefendRemaining] Remain",
           "Description": "The objective for the player to defend the buildings"
         }

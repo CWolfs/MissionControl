@@ -1,6 +1,9 @@
 using UnityEngine;
 
 using BattleTech;
+using BattleTech.UI;
+
+using Harmony;
 
 namespace MissionControl.Result {
   public class TagUnitsInRegionResult : EncounterResult {
@@ -40,12 +43,31 @@ namespace MissionControl.Result {
             Main.LogDebug($"[TagUnitsInRegionResult] Found building '{building.gameObject.name}' in region!");
             building.ParentBuilding.EncounterTags.UnionWith(Tags);
 
+            // TODO: Probably extract this out to another trigger resuilt
+            // TODO: Consider if I should go through all buildings on map load and set their 'isObjectiveTarget' to false (reset etc)
+            SetAsObjectiveTarget(building.parentCombatant);
+
             if (HasReachedUnitLimit()) break;
           }
         }
       } else {
         Main.LogDebug($"[TagUnitsInRegionResult] Tagging '{Type}' Not Yet Supported");
       }
+    }
+
+    private void SetAsObjectiveTarget(ICombatant combatant) {
+      Building building = combatant as Building;
+
+      if (building != null) {
+        ObstructionGameLogic obstructionGameLogic = building.GetComponent<ObstructionGameLogic>();
+        obstructionGameLogic.isObjectiveTarget = true;
+      }
+
+      AccessTools.Field(typeof(BattleTech.Building), "isObjectiveTarget").SetValue(combatant, true);
+
+      CombatHUDInWorldElementMgr inworldElementManager = GameObject.Find("uixPrfPanl_HUD(Clone)").GetComponent<CombatHUDInWorldElementMgr>();
+      AccessTools.Method(typeof(CombatHUDInWorldElementMgr), "AddTickMark").Invoke(inworldElementManager, new object[] { combatant });
+      AccessTools.Method(typeof(CombatHUDInWorldElementMgr), "AddInWorldActorElements").Invoke(inworldElementManager, new object[] { combatant });
     }
 
     private bool HasReachedUnitLimit() {
