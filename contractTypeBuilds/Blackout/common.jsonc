@@ -275,9 +275,9 @@
   ],
   "Triggers": [
     {
-      "Name": "Trigger_Tag_Buildings_2b",
+      "Name": "Trigger_Tag_Buildings_3b",
       "TriggerOn": "OnEncounterBegin",
-      "Description": "Tag buildings on encounter begin for 2b",
+      "Description": "Tag buildings on encounter begin for 3b",
       "Conditional": {
         "Type": "AlwaysTrueConditional"
       },
@@ -287,6 +287,11 @@
           "RegionGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
           "UnitType": "Building",
           "NumberOfUnits": 4,
+          "Tags": ["defend_building_3b"]
+        },
+        {
+          "Type": "SetTeamByTag",
+          "Team": "Employer",
           "Tags": ["defend_building_3b"]
         }
       ]

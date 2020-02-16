@@ -41,6 +41,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetState": BuildSetStateResult(result); break;
         case "SetStateAtRandom": BuildSetStateAtRandomResult(result); break;
         case "TagUnitsInRegion": BuildTagUnitsInRegion(result); break;
+        case "SetTeamByTag": BuildSetTeamByTag(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -132,6 +133,18 @@ namespace MissionControl.ContractTypeBuilders {
       } else {
         Main.Logger.LogError("[BuildTagUnitsInRegion] You have not provided an 'RegionGuid' to BuildTagUnitsInRegion on");
       }
+    }
+
+    private void BuildSetTeamByTag(JObject resultObject) {
+      Main.LogDebug("[BuildSetTeamByTag] Building 'SetTeamByTag' result");
+      string team = resultObject["Team"].ToString();
+      string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
+
+      SetTeamByTagResult result = ScriptableObject.CreateInstance<SetTeamByTagResult>();
+      result.Team = team;
+      result.Tags = tags;
+
+      results.Add(result);
     }
   }
 }
