@@ -121,7 +121,7 @@ namespace MissionControl.ContractTypeBuilders {
       Main.LogDebug("[BuildTagUnitsInRegion] Building 'TagXUnitsInRegion' result");
       string regionGuid = resultObject["RegionGuid"].ToString();
       string unitType = resultObject["UnitType"].ToString();
-      int numberOfUnits = (int)resultObject["NumberOfUnits"];
+      int numberOfUnits = resultObject.ContainsKey("NumberOfUnits") ? (int)resultObject["NumberOfUnits"] : 0;
       string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
 
       if (regionGuid != null) {
@@ -167,7 +167,7 @@ namespace MissionControl.ContractTypeBuilders {
       Main.LogDebug("[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Building 'SetUnitsInRegionToBeTaggedObjectiveTargets' result");
       string regionGuid = resultObject["RegionGuid"].ToString();
       string unitType = resultObject["UnitType"].ToString();
-      int numberOfUnits = (int)resultObject["NumberOfUnits"];
+      int numberOfUnits = resultObject.ContainsKey("NumberOfUnits") ? (int)resultObject["NumberOfUnits"] : 0;
       string team = resultObject["Team"].ToString();
       bool isObjectiveTarget = (bool)resultObject["IsObjectiveTarget"];
       string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
