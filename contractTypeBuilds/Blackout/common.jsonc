@@ -291,6 +291,11 @@
           "Type": "SetTeamByTag",
           "Team": "Employer",
           "Tags": ["defend_building_3b"]
+        },
+        {
+          "Type": "SetIsObjectiveTargetByTag",
+          "IsObjectiveTarget": true,
+          "Tags": ["defend_building_3b"]
         }
       ]
     },

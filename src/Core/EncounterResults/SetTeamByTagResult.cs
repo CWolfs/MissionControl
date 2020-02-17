@@ -10,6 +10,7 @@ namespace MissionControl.Result {
   public class SetTeamByTagResult : EncounterResult {
     public string Team { get; set; }
     public string[] Tags { get; set; }
+    public string[] ApplyTags { get; set; }
 
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
       Main.LogDebug($"[SetTeamByTagResult] Setting Team '{Team}' with tags '{String.Concat(Tags)}'");
@@ -20,6 +21,10 @@ namespace MissionControl.Result {
 
         Team newTeam = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(TeamUtils.GetTeamGuid(Team));
         combatant.AddToTeam(newTeam);
+
+        if (ApplyTags != null) {
+          combatant.EncounterTags.AddRange(ApplyTags);
+        }
       }
     }
   }

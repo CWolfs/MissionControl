@@ -42,6 +42,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetStateAtRandom": BuildSetStateAtRandomResult(result); break;
         case "TagUnitsInRegion": BuildTagUnitsInRegion(result); break;
         case "SetTeamByTag": BuildSetTeamByTag(result); break;
+        case "SetIsObjectiveTargetByTag": BuildSetIsObjectiveTargetByTag(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -139,9 +140,23 @@ namespace MissionControl.ContractTypeBuilders {
       Main.LogDebug("[BuildSetTeamByTag] Building 'SetTeamByTag' result");
       string team = resultObject["Team"].ToString();
       string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
+      string[] applyTags = resultObject.ContainsKey("ApplyTags") ? ((JArray)resultObject["Tags"]).ToObject<string[]>() : null;
 
       SetTeamByTagResult result = ScriptableObject.CreateInstance<SetTeamByTagResult>();
       result.Team = team;
+      result.Tags = tags;
+      if (applyTags != null) result.ApplyTags = applyTags;
+
+      results.Add(result);
+    }
+
+    private void BuildSetIsObjectiveTargetByTag(JObject resultObject) {
+      Main.LogDebug("[BuildSetIsObjectiveTargetByTag] Building 'SetIsObjectiveTargetByTag' result");
+      bool isObjectiveTarget = (bool)resultObject["IsObjectiveTarget"];
+      string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
+
+      SetIsObjectiveTargetByTagResult result = ScriptableObject.CreateInstance<SetIsObjectiveTargetByTagResult>();
+      result.IsObjectiveTarget = isObjectiveTarget;
       result.Tags = tags;
 
       results.Add(result);
