@@ -1,14 +1,12 @@
 using UnityEngine;
 
-using System;
-using System.Linq;
 using System.Collections.Generic;
 
 using BattleTech;
 using BattleTech.Data;
 using BattleTech.Framework;
 
-using MissionControl.Rules;
+using Harmony;
 
 namespace MissionControl.EncounterFactories {
   public class EncounterLayerFactory {
@@ -39,6 +37,20 @@ namespace MissionControl.EncounterFactories {
           if (regionGuidList != null) regionGuidList.Clear();
         }
       }
+
+      // Reset all buildings
+      /*
+      // TODO: Figure out why this crashes. No time to look into it right now.
+      BuildingRepresentation[] buildingsInMap = GameObject.Find("GAME").GetComponentsInChildren<BuildingRepresentation>();
+      foreach (BuildingRepresentation building in buildingsInMap) {
+        AccessTools.Field(typeof(BattleTech.Building), "isObjectiveTarget").SetValue(building.ParentBuilding, false);
+        ObstructionGameLogic obstructionGameLogic = building.GetComponent<ObstructionGameLogic>();
+
+        if (obstructionGameLogic != null) {
+          obstructionGameLogic.isObjectiveTarget = false;
+        }
+      }
+      */
 
       CreateContractObjectives(encounterLayerGo);
 

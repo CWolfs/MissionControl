@@ -43,6 +43,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "TagUnitsInRegion": BuildTagUnitsInRegion(result); break;
         case "SetTeamByTag": BuildSetTeamByTag(result); break;
         case "SetIsObjectiveTargetByTag": BuildSetIsObjectiveTargetByTag(result); break;
+        case "SetUnitsInRegionToBeTaggedObjectives": BuildSetUnitsInRegionToBeTaggedObjectives(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -160,6 +161,30 @@ namespace MissionControl.ContractTypeBuilders {
       result.Tags = tags;
 
       results.Add(result);
+    }
+
+    private void BuildSetUnitsInRegionToBeTaggedObjectives(JObject resultObject) {
+      Main.LogDebug("[BuildSetUnitsInRegionToBeTaggedObjectives] Building 'SetUnitsInRegionToBeTaggedObjectives' result");
+      string regionGuid = resultObject["RegionGuid"].ToString();
+      string unitType = resultObject["UnitType"].ToString();
+      int numberOfUnits = (int)resultObject["NumberOfUnits"];
+      string team = resultObject["Team"].ToString();
+      bool isObjectiveTarget = (bool)resultObject["IsObjectiveTarget"];
+      string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
+
+      if (regionGuid != null) {
+        SetUnitsInRegionToBeTaggedObjectivesResult result = ScriptableObject.CreateInstance<SetUnitsInRegionToBeTaggedObjectivesResult>();
+        result.RegionGuid = regionGuid;
+        result.Type = unitType;
+        result.NumberOfUnits = numberOfUnits;
+        result.Team = team;
+        result.IsObjectiveTarget = isObjectiveTarget;
+        result.Tags = tags;
+
+        results.Add(result);
+      } else {
+        Main.Logger.LogError("[BuildSetUnitsInRegionToBeTaggedObjectives] You have not provided an 'RegionGuid' to BuildTagUnitsInRegion on");
+      }
     }
   }
 }
