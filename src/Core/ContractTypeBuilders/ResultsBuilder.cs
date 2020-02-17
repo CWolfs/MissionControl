@@ -44,6 +44,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetTeamByTag": BuildSetTeamByTag(result); break;
         case "SetIsObjectiveTargetByTag": BuildSetIsObjectiveTargetByTag(result); break;
         case "SetUnitsInRegionToBeTaggedObjectiveTargets": BuildSetUnitsInRegionToBeTaggedObjectiveTargetsResult(result); break;
+        case "CompleteObjective": BuildCompleteObjectiveResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -183,7 +184,26 @@ namespace MissionControl.ContractTypeBuilders {
 
         results.Add(result);
       } else {
-        Main.Logger.LogError("[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] You have not provided an 'RegionGuid' to BuildTagUnitsInRegion on");
+        Main.Logger.LogError("[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] You have not provided an 'RegionGuid' to TagUnitsInRegion on");
+      }
+    }
+
+    private void BuildCompleteObjectiveResult(JObject resultObject) {
+      Main.LogDebug("[BuildCompleteObjectiveResult] Building 'CompleteObjectiveResult' result");
+      string objectiveGuid = resultObject["ObjectiveGuid"].ToString();
+      string completionTypeStr = (resultObject.ContainsKey("CompletionType")) ? resultObject["CompletionType"].ToString() : "Succeed";
+      CompleteObjectiveType completionType = (CompleteObjectiveType)Enum.Parse(typeof(CompleteObjectiveType), completionTypeStr);
+
+      if (objectiveGuid != null) {
+        CompleteObjectiveResult result = ScriptableObject.CreateInstance<CompleteObjectiveResult>();
+        ObjectiveRef objectiveRef = new ObjectiveRef();
+        objectiveRef.EncounterObjectGuid = objectiveGuid;
+        result.objectiveRef = objectiveRef;
+        result.completeObjectiveType = completionType;
+
+        results.Add(result);
+      } else {
+        Main.Logger.LogError("[BuildCompleteObjectiveResult] You have not provided an 'ObjectiveGuid' to CompleteObjectiveResult on");
       }
     }
   }
