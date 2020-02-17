@@ -6,7 +6,7 @@ using BattleTech.UI;
 using Harmony;
 
 namespace MissionControl.Result {
-  public class SetUnitsInRegionToBeTaggedObjectivesResult : EncounterResult {
+  public class SetUnitsInRegionToBeTaggedObjectiveTargetsResult : EncounterResult {
     public string RegionGuid { get; set; }
     public int NumberOfUnits { get; set; } = 0;
     public string Type { get; set; }
@@ -21,17 +21,17 @@ namespace MissionControl.Result {
     }
 
     private void TagUnitsInRegion() {
-      Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectivesResult] Tagging '{NumberOfUnits}' '{Type}' in region '{RegionGuid}'");
+      Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Tagging '{NumberOfUnits}' '{Type}' in region '{RegionGuid}'");
       RegionGameLogic regionGameLogic = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<RegionGameLogic>(RegionGuid);
 
       if (regionGameLogic == null) {
-        Main.Logger.LogError($"[SetUnitsInRegionToBeTaggedObjectivesResult] Region Not Found for Guid '{RegionGuid}'");
+        Main.Logger.LogError($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Region Not Found for Guid '{RegionGuid}'");
         return;
       }
 
       if (Type == "Building") {
         BuildingRepresentation[] buildingsInMap = GameObject.Find("GAME").GetComponentsInChildren<BuildingRepresentation>();
-        Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectivesResult] Collected '{buildingsInMap.Length}' buildings to check.");
+        Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Collected '{buildingsInMap.Length}' buildings to check.");
 
         if (NumberOfUnits > 0) {
           buildingsInMap.Shuffle();
@@ -40,7 +40,7 @@ namespace MissionControl.Result {
         foreach (BuildingRepresentation building in buildingsInMap) {
           bool isBuildingInRegion = RegionUtil.PointInRegion(UnityGameInstance.BattleTechGame.Combat, building.transform.position, RegionGuid);
           if (isBuildingInRegion) {
-            Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectivesResult] Found building '{building.gameObject.name}' in region!");
+            Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Found building '{building.gameObject.name}' in region!");
             building.ParentBuilding.EncounterTags.UnionWith(Tags);
 
             SetTeam(building.ParentBuilding);
@@ -50,7 +50,7 @@ namespace MissionControl.Result {
           }
         }
       } else {
-        Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectivesResult] Tagging '{Type}' Not Yet Supported");
+        Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Tagging '{Type}' Not Yet Supported");
       }
     }
 
@@ -66,7 +66,7 @@ namespace MissionControl.Result {
     }
 
     private void SetTeam(ICombatant combatant) {
-      Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectivesResult] Setting Team '{Team}' for '{combatant.GameRep.name} - {combatant.DisplayName}'");
+      Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Setting Team '{Team}' for '{combatant.GameRep.name} - {combatant.DisplayName}'");
       combatant.RemoveFromTeam();
 
       Team newTeam = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(TeamUtils.GetTeamGuid(Team));
@@ -74,7 +74,7 @@ namespace MissionControl.Result {
     }
 
     private void SetIsTargetObjective(ICombatant combatant) {
-      Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectivesResult] Setting IsTargetObjective '{IsObjectiveTarget}' for '{combatant.GameRep.name} - {combatant.DisplayName}'");
+      Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Setting IsTargetObjective '{IsObjectiveTarget}' for '{combatant.GameRep.name} - {combatant.DisplayName}'");
       ObstructionGameLogic obstructionGameLogic = combatant.GameRep.GetComponent<ObstructionGameLogic>();
       obstructionGameLogic.isObjectiveTarget = true;
 

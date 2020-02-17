@@ -43,7 +43,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "TagUnitsInRegion": BuildTagUnitsInRegion(result); break;
         case "SetTeamByTag": BuildSetTeamByTag(result); break;
         case "SetIsObjectiveTargetByTag": BuildSetIsObjectiveTargetByTag(result); break;
-        case "SetUnitsInRegionToBeTaggedObjectives": BuildSetUnitsInRegionToBeTaggedObjectives(result); break;
+        case "SetUnitsInRegionToBeTaggedObjectiveTargets": BuildSetUnitsInRegionToBeTaggedObjectiveTargetsResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -163,8 +163,8 @@ namespace MissionControl.ContractTypeBuilders {
       results.Add(result);
     }
 
-    private void BuildSetUnitsInRegionToBeTaggedObjectives(JObject resultObject) {
-      Main.LogDebug("[BuildSetUnitsInRegionToBeTaggedObjectives] Building 'SetUnitsInRegionToBeTaggedObjectives' result");
+    private void BuildSetUnitsInRegionToBeTaggedObjectiveTargetsResult(JObject resultObject) {
+      Main.LogDebug("[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Building 'SetUnitsInRegionToBeTaggedObjectiveTargets' result");
       string regionGuid = resultObject["RegionGuid"].ToString();
       string unitType = resultObject["UnitType"].ToString();
       int numberOfUnits = (int)resultObject["NumberOfUnits"];
@@ -173,7 +173,7 @@ namespace MissionControl.ContractTypeBuilders {
       string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
 
       if (regionGuid != null) {
-        SetUnitsInRegionToBeTaggedObjectivesResult result = ScriptableObject.CreateInstance<SetUnitsInRegionToBeTaggedObjectivesResult>();
+        SetUnitsInRegionToBeTaggedObjectiveTargetsResult result = ScriptableObject.CreateInstance<SetUnitsInRegionToBeTaggedObjectiveTargetsResult>();
         result.RegionGuid = regionGuid;
         result.Type = unitType;
         result.NumberOfUnits = numberOfUnits;
@@ -183,7 +183,7 @@ namespace MissionControl.ContractTypeBuilders {
 
         results.Add(result);
       } else {
-        Main.Logger.LogError("[BuildSetUnitsInRegionToBeTaggedObjectives] You have not provided an 'RegionGuid' to BuildTagUnitsInRegion on");
+        Main.Logger.LogError("[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] You have not provided an 'RegionGuid' to BuildTagUnitsInRegion on");
       }
     }
   }
