@@ -102,6 +102,13 @@
   "buildingList": [],
   "chunkList": [
     {
+      "name": "Chunk_Bravo_Base_Turrets",
+      "encounterChunk": {
+        "EncounterObjectGuid": "70088858-545d-4ca1-8d68-ce0736ae648b"
+      },
+      "enableChunkFromContract": true
+    },
+    {
       "name": "Chunk_SwapEmployerAndTarget",
       "encounterChunk": {
         "EncounterObjectGuid": "71e9b8ae-28c8-4b9f-a933-c21b692aab2b"

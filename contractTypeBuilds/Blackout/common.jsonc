@@ -37,6 +37,7 @@
       "Type": "Chunk",
       "SubType": "Lance",
       "ControlledByContract": true,
+      "Guid": "70088858-545d-4ca1-8d68-ce0736ae648b",
       "Children": [
         {
           "Name": "Spawner_Bravo_Turrets",
