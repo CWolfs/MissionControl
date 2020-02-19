@@ -61,5 +61,14 @@ namespace MissionControl.EncounterFactories {
 
       return swapPlacementChunkLogic;
     }
+
+    public static LanceChunkGameLogic CreateLanceChunk(string name = "Chunk_Lance", Transform parent = null) {
+      GameObject lanceChunkGo = CreateGameObjectWithParent(name, parent);
+
+      LanceChunkGameLogic lanceChunkLogic = lanceChunkGo.AddComponent<LanceChunkGameLogic>();
+      lanceChunkLogic.encounterObjectName = name;
+
+      return lanceChunkLogic;
+    }
   }
 }

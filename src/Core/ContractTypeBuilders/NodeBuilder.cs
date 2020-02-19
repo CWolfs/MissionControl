@@ -5,8 +5,8 @@ using Newtonsoft.Json.Linq;
 namespace MissionControl.ContractTypeBuilders {
   public abstract class NodeBuilder {
     public void SetPosition(GameObject target, JObject position) {
-      string type = position["Type"].ToString();
-      JObject value = (JObject)position["Value"];
+      string type = position.ContainsKey("Type") ? position["Type"].ToString() : "Local";
+      JObject value = position.ContainsKey("Value") ? (JObject)position["Value"] : position;
 
       if (type == "World") {
         Vector3 worldPosition = new Vector3((float)value["x"], (float)value["y"], (float)value["z"]);
@@ -14,16 +14,19 @@ namespace MissionControl.ContractTypeBuilders {
         target.transform.position = worldPosition;
       } else if (type == "Local") {
         Vector3 localPosition = new Vector3((float)value["x"], (float)value["y"], (float)value["z"]);
-        localPosition = localPosition.GetClosestHexLerpedPointOnGrid();
-        target.transform.position = localPosition;
+        target.transform.localPosition = localPosition;
+        Vector3 worldPosition = target.transform.position;
+        worldPosition = worldPosition.GetClosestHexLerpedPointOnGrid();
+        worldPosition.y += localPosition.y;
+        target.transform.position = worldPosition;
       } else if (type == "SpawnProfile") {
         // TODO: Allow for spawners to be used
       }
     }
 
     public void SetRotation(GameObject target, JObject rotation) {
-      string type = rotation["Type"].ToString();
-      JObject value = (JObject)rotation["Value"];
+      string type = rotation.ContainsKey("Type") ? rotation["Type"].ToString() : "Local";
+      JObject value = rotation.ContainsKey("Value") ? (JObject)rotation["Value"] : rotation;
       Vector3 eulerRotation = new Vector3((float)value["x"], (float)value["y"], (float)value["z"]);
 
       if (type == "World") {

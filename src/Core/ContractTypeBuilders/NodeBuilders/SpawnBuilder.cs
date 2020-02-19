@@ -23,6 +23,8 @@ namespace MissionControl.ContractTypeBuilders {
     private string guid;
     private int spawnPoints;
     private List<string> spawnPointGuids;
+    private JObject spawnPointPositions;
+    private JObject spawnPointRotations;
     private string spawnType;
     private JArray aiOrdersArray;
     private List<AIOrderBox> orders;
@@ -37,6 +39,8 @@ namespace MissionControl.ContractTypeBuilders {
       this.guid = spawner["Guid"].ToString();
       this.spawnPoints = (int)spawner["SpawnPoints"];
       this.spawnPointGuids = spawner["SpawnPointGuids"].ToObject<List<string>>();
+      this.spawnPointPositions = spawner.ContainsKey("SpawnPointPositions") ? (JObject)spawner["SpawnPointPositions"] : null;
+      this.spawnPointRotations = spawner.ContainsKey("SpawnPointRotations") ? (JObject)spawner["SpawnPointRotations"] : null;
       this.spawnType = spawner["SpawnType"].ToString();
       this.position = spawner.ContainsKey("Position") ? (JObject)spawner["Position"] : null;
       this.rotation = spawner.ContainsKey("Rotation") ? (JObject)spawner["Rotation"] : null;
@@ -58,43 +62,58 @@ namespace MissionControl.ContractTypeBuilders {
         default: Main.LogDebug($"[SpawnBuilder.{contractTypeBuilder.ContractTypeKey}] No support for spawnType '{spawnType}'. Check for spelling mistakes."); break;
       }
 
+      LanceSpawnerGameLogic spawnerGameLogic = null;
+
       string teamId = EncounterRules.PLAYER_TEAM_ID;
       switch (team) {
         case "Player1": {
           teamId = EncounterRules.PLAYER_TEAM_ID;
-          PlayerLanceSpawnerGameLogic playerLanceSpawnerGameLogic = LanceSpawnerFactory.CreatePlayerLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids, true);
-          if (position != null) SetPosition(playerLanceSpawnerGameLogic.gameObject, position);
-          if (rotation != null) SetRotation(playerLanceSpawnerGameLogic.gameObject, rotation);
+          spawnerGameLogic = LanceSpawnerFactory.CreatePlayerLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids, true);
           break;
         }
         case "Target": {
           teamId = EncounterRules.TARGET_TEAM_ID;
-          LanceSpawnerGameLogic lanceSpawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
-          if (position != null) SetPosition(lanceSpawnerGameLogic.gameObject, position);
-          if (rotation != null) SetRotation(lanceSpawnerGameLogic.gameObject, rotation);
-          if (orders != null) lanceSpawnerGameLogic.aiOrderList.contentsBox = orders;
-          lanceSpawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
+          spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
+          spawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
+          if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
           break;
         }
         case "TargetAlly": {
           teamId = EncounterRules.TARGETS_ALLY_TEAM_ID;
-          LanceSpawnerGameLogic lanceSpawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
-          if (position != null) SetPosition(lanceSpawnerGameLogic.gameObject, position);
-          if (rotation != null) SetRotation(lanceSpawnerGameLogic.gameObject, rotation);
-          if (orders != null) lanceSpawnerGameLogic.aiOrderList.contentsBox = orders;
-          lanceSpawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
+          spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
+          spawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
+          if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
           break;
         }
         case "Employer": {
           teamId = EncounterRules.EMPLOYER_TEAM_ID;
-          LanceSpawnerGameLogic lanceSpawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
-          if (position != null) SetPosition(lanceSpawnerGameLogic.gameObject, position);
-          if (rotation != null) SetRotation(lanceSpawnerGameLogic.gameObject, rotation);
-          if (orders != null) lanceSpawnerGameLogic.aiOrderList.contentsBox = orders;
-          lanceSpawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
+          spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
+          spawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
+          if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
           break;
         }
-        default: Main.LogDebug($"[SpawnBuilder.{contractTypeBuilder.ContractTypeKey}] No support for team '{team}'. Check for spelling mistakes."); break;
+        default: Main.Logger.LogError($"[SpawnBuilder.{contractTypeBuilder.ContractTypeKey}] No support for team '{team}'. Check for spelling mistakes."); break;
+      }
+
+      if (position != null) SetPosition(spawnerGameLogic.gameObject, position);
+      if (rotation != null) SetRotation(spawnerGameLogic.gameObject, rotation);
+      if (spawnPointPositions != null) SetSpawnPointPositions(spawnerGameLogic);
+      if (spawnPointRotations != null) SetSpawnPointRotations(spawnerGameLogic);
+    }
+
+    private void SetSpawnPointPositions(LanceSpawnerGameLogic spawnerGameLogic) {
+      UnitSpawnPointGameLogic[] unitSpawnPoints = spawnerGameLogic.unitSpawnPointGameLogicList;
+      foreach (UnitSpawnPointGameLogic spawnPoint in unitSpawnPoints) {
+        JObject position = spawnPointPositions.ContainsKey(spawnPoint.encounterObjectGuid) ? (JObject)spawnPointPositions[spawnPoint.encounterObjectGuid] : null;
+        if (position != null) SetPosition(spawnPoint.gameObject, position);
+      }
+    }
+
+    private void SetSpawnPointRotations(LanceSpawnerGameLogic spawnerGameLogic) {
+      UnitSpawnPointGameLogic[] unitSpawnPoints = spawnerGameLogic.unitSpawnPointGameLogicList;
+      foreach (UnitSpawnPointGameLogic spawnPoint in unitSpawnPoints) {
+        JObject rotation = spawnPointPositions.ContainsKey(spawnPoint.encounterObjectGuid) ? (JObject)spawnPointPositions[spawnPoint.encounterObjectGuid] : null;
+        if (rotation != null) SetRotation(spawnPoint.gameObject, rotation);
       }
     }
   }

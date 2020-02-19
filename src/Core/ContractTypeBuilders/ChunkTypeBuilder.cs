@@ -42,6 +42,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "Dialogue": return BuildDialogueChunk();
         case "Placement": return BuildPlacementChunk();
         case "Container": return BuildEmptyChunk();
+        case "Lance": return BuildLanceChunk();
         default: break;
       }
 
@@ -96,6 +97,13 @@ namespace MissionControl.ContractTypeBuilders {
       EmptyCustomChunkGameLogic emptyChunk = ChunkFactory.CreateEmptyCustomChunk(this.name, contractTypeBuilder.EncounterLayerGo.transform);
       SetupChunk(emptyChunk);
       return emptyChunk.gameObject;
+    }
+
+    private GameObject BuildLanceChunk() {
+      Main.LogDebug($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] Building 'BuildLanceChunk' (Container) Chunk");
+      LanceChunkGameLogic lanceChunk = ChunkFactory.CreateLanceChunk(this.name, contractTypeBuilder.EncounterLayerGo.transform);
+      SetupChunk(lanceChunk);
+      return lanceChunk.gameObject;
     }
   }
 }
