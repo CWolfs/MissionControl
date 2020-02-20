@@ -66,7 +66,8 @@ namespace MissionControl.ContractTypeBuilders {
 
     private void BuildTeamData(JObject teamData) {
       Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Team Data for '{teamData["Team"]}'");
-      bool shareVisionWithAllies = (teamData.ContainsKey("ShareVisionWithAllies")) ? (bool)teamData["ShareVisionWithAllies"] : true;
+      TeamDataBuilder teamDataBuilder = new TeamDataBuilder(this, teamData);
+      teamDataBuilder.Build();
     }
 
     private void BuildChunk(JObject chunk) {

@@ -1,5 +1,8 @@
 using UnityEngine;
 
+using System.Collections.Generic;
+
+
 using BattleTech;
 using BattleTech.UI;
 
@@ -71,6 +74,18 @@ namespace MissionControl.Result {
 
       Team newTeam = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(TeamUtils.GetTeamGuid(Team));
       combatant.AddToTeam(newTeam);
+
+      /*
+      // Dumped this here for a visibility test after OnEncounterBegin
+      Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Units in team are: '{newTeam.units.Count}'");
+      newTeam.units.ForEach(unit => {
+        Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Hiding unit '{unit.DisplayName}'");
+        unit.OnPlayerVisibilityChanged(VisibilityLevel.None);
+      });
+
+      List<ICombatant> allLivingCombatants = UnityGameInstance.BattleTechGame.Combat.GetAllLivingCombatants();
+      AccessTools.Method(typeof(TurnDirector), "RebuildVisCaches").Invoke(UnityGameInstance.BattleTechGame.Combat.TurnDirector, new object[] { allLivingCombatants });
+      */
     }
 
     private void SetIsTargetObjective(ICombatant combatant) {

@@ -456,7 +456,7 @@
       },
       "Results": [
         {
-          "Type": "SetTeamAlliedSharedVision",
+          "Type": "SetTeamShareVisionWithAlliesResult",
           "Team": "Employer",
           "ShareVision": true
         }
