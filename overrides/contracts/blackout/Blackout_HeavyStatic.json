@@ -195,7 +195,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "The loss of that position will come at a bad time for {TEAM_TAR.FactionDef.ShortName}. No good news for us either.",
+          "words": "The loss of that position will come at a bad time for {TEAM_EMP.FactionDef.ShortName}. No good news for us either.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -334,7 +334,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "Commander! Are we glad to see you! {TEAM_TAR.FactionDef.Demonym} forward base {TGT_SYSTEM.name}-Alpha.",
+          "words": "Commander! Are we glad to see you! {TEAM_EMP.FactionDef.Demonym} forward base {TGT_SYSTEM.name}-Alpha.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -592,7 +592,7 @@
         "name": "Turrets",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_turret"],
+          "items": ["lance_type_turret", "lance_bracket_high"],
           "tagSetSourceFile": "Tags/LanceTags"
         },
         "lanceExcludedTagSet": {
@@ -676,39 +676,6 @@
           {
             "unitSpawnPoint": {
               "EncounterObjectGuid": "23e3c6ad-31e3-459b-9f0c-a7f5614e4662"
-            },
-            "customUnitName": "",
-            "customHeraldryDefId": "",
-            "unitType": "Turret",
-            "unitDefId": "turretDef_InheritLance",
-            "unitTagSet": {
-              "items": [],
-              "tagSetSourceFile": ""
-            },
-            "unitExcludedTagSet": {
-              "items": [],
-              "tagSetSourceFile": "Tags/UnitTags"
-            },
-            "spawnEffectTags": {
-              "items": [],
-              "tagSetSourceFile": "Tags/SpawnEffectTags"
-            },
-            "pilotDefId": "pilot_d5_turret",
-            "pilotTagSet": {
-              "items": [],
-              "tagSetSourceFile": ""
-            },
-            "pilotExcludedTagSet": {
-              "items": [],
-              "tagSetSourceFile": "Tags/PilotTags"
-            },
-            "selectedUnitType": "UNDEFINED",
-            "selectedUnitDefId": null,
-            "selectedPilotDefId": null
-          },
-          {
-            "unitSpawnPoint": {
-              "EncounterObjectGuid": "3b6c4676-2501-4e40-bb93-c0bd34cce689"
             },
             "customUnitName": "",
             "customHeraldryDefId": "",

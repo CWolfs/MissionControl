@@ -5,6 +5,7 @@ using BattleTech;
 using BattleTech.Framework;
 
 using MissionControl.Trigger;
+using MissionControl.Messages;
 
 using Newtonsoft.Json.Linq;
 
@@ -41,7 +42,14 @@ namespace MissionControl.ContractTypeBuilders {
         Main.Logger.LogError("[GenericTriggerBuilder] Generic Triggers require 'Results'");
       }
 
-      triggerMessageType = (MessageCenterMessageType)Enum.Parse(typeof(MessageCenterMessageType), this.triggerOn);
+      if (!Enum.TryParse(this.triggerOn, out triggerMessageType)) {
+        MessageTypes messageType;
+        if (!Enum.TryParse(this.triggerOn, out messageType)) {
+          Main.Logger.LogError("[GenericTriggerBuilder] Invalid 'TriggerOn' provided.");
+        } else {
+          triggerMessageType = (MessageCenterMessageType)messageType;
+        }
+      }
     }
 
     public override void Build() {

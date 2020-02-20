@@ -29,6 +29,7 @@ namespace MissionControl.ContractTypeBuilders {
     private JArray aiOrdersArray;
     private List<AIOrderBox> orders;
     private bool alertLanceOnSpawn;
+    private int defaultDetectionRange;
 
     public SpawnBuilder(ContractTypeBuilder contractTypeBuilder, GameObject parent, JObject spawner) {
       this.contractTypeBuilder = contractTypeBuilder;
@@ -46,6 +47,8 @@ namespace MissionControl.ContractTypeBuilders {
       this.rotation = spawner.ContainsKey("Rotation") ? (JObject)spawner["Rotation"] : null;
       this.aiOrdersArray = spawner.ContainsKey("AI") ? (JArray)spawner["AI"] : null;
       this.alertLanceOnSpawn = spawner.ContainsKey("AlertLanceOnSpawn") ? (bool)spawner["AlertLanceOnSpawn"] : false;
+      this.defaultDetectionRange = spawner.ContainsKey("DefaultDetectionRange") ? (int)spawner["DefaultDetectionRange"] : 0;
+
 
       if (this.aiOrdersArray != null) {
         AiOrderBuilder orderBuilder = new AiOrderBuilder(contractTypeBuilder, aiOrdersArray, name);
@@ -95,10 +98,11 @@ namespace MissionControl.ContractTypeBuilders {
         default: Main.Logger.LogError($"[SpawnBuilder.{contractTypeBuilder.ContractTypeKey}] No support for team '{team}'. Check for spelling mistakes."); break;
       }
 
-      if (position != null) SetPosition(spawnerGameLogic.gameObject, position);
-      if (rotation != null) SetRotation(spawnerGameLogic.gameObject, rotation);
-      if (spawnPointPositions != null) SetSpawnPointPositions(spawnerGameLogic);
-      if (spawnPointRotations != null) SetSpawnPointRotations(spawnerGameLogic);
+      if (this.position != null) SetPosition(spawnerGameLogic.gameObject, this.position);
+      if (this.rotation != null) SetRotation(spawnerGameLogic.gameObject, this.rotation);
+      if (this.spawnPointPositions != null) SetSpawnPointPositions(spawnerGameLogic);
+      if (this.spawnPointRotations != null) SetSpawnPointRotations(spawnerGameLogic);
+      if (this.defaultDetectionRange > 0) SetDefaultDetectionRange(spawnerGameLogic, this.defaultDetectionRange);
     }
 
     private void SetSpawnPointPositions(LanceSpawnerGameLogic spawnerGameLogic) {
@@ -114,6 +118,13 @@ namespace MissionControl.ContractTypeBuilders {
       foreach (UnitSpawnPointGameLogic spawnPoint in unitSpawnPoints) {
         JObject rotation = spawnPointPositions.ContainsKey(spawnPoint.encounterObjectGuid) ? (JObject)spawnPointPositions[spawnPoint.encounterObjectGuid] : null;
         if (rotation != null) SetRotation(spawnPoint.gameObject, rotation);
+      }
+    }
+
+    private void SetDefaultDetectionRange(LanceSpawnerGameLogic spawnerGameLogic, int defaultDetectionRange) {
+      UnitSpawnPointGameLogic[] unitSpawnPoints = spawnerGameLogic.unitSpawnPointGameLogicList;
+      foreach (UnitSpawnPointGameLogic spawnPoint in unitSpawnPoints) {
+        spawnPoint.defaultDetectionRange = defaultDetectionRange;
       }
     }
   }

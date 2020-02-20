@@ -29,8 +29,7 @@
         "SpawnPointPositions": {
           "38538181-1208-4cd1-bad9-7469f2cb9478": { "x": -109, "y": 5, "z": 22 }, // 'y' acts as an offset for height on top of ground hex height
           "6552d0c2-b705-49b8-a4f8-5205e537db05": { "x": -12, "y": 0, "z": 104 },
-          "23e3c6ad-31e3-459b-9f0c-a7f5614e4662": { "x": -41, "y": 0, "z": -87 },
-          "3b6c4676-2501-4e40-bb93-c0bd34cce689": { "x": 0, "y": 0, "z": 0 }
+          "23e3c6ad-31e3-459b-9f0c-a7f5614e4662": { "x": -120, "y": 3, "z": -203 }
         }
       }
     },

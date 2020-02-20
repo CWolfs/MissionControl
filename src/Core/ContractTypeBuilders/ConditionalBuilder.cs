@@ -7,6 +7,8 @@ using Newtonsoft.Json.Linq;
 using BattleTech;
 using BattleTech.Framework;
 
+using MissionControl.Conditional;
+
 namespace MissionControl.ContractTypeBuilders {
   public class ConditionalBuilder {
     private ContractTypeBuilder contractTypeBuilder;
@@ -23,6 +25,7 @@ namespace MissionControl.ContractTypeBuilders {
       switch (type) {
         case "AlwaysTrueConditional": return BuildAlwaysTrueConditional(conditionalObject);
         case "ObjectiveStatusConditional": return BuildObjectiveStatusConditional(conditionalObject);
+        case "EncounterObjectMatchesStateConditional": return BuildEncounterObjectMatchesStateConditional(conditionalObject);
         default: break;
       }
 
@@ -37,7 +40,7 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     private DesignConditional BuildObjectiveStatusConditional(JObject conditionalObject) {
-      Main.LogDebug("[BuildAlwaysTrueConditional] Building 'ObjectiveStatusConditional' conditional");
+      Main.LogDebug("[BuildObjectiveStatusConditional] Building 'ObjectiveStatusConditional' conditional");
       string guid = conditionalObject["Guid"].ToString();
       string status = conditionalObject["Status"].ToString();
       ObjectiveStatusEvaluationType statusType = (ObjectiveStatusEvaluationType)Enum.Parse(typeof(ObjectiveStatusEvaluationType), status);
@@ -48,6 +51,19 @@ namespace MissionControl.ContractTypeBuilders {
 
       conditional.objective = objectiveRef;
       conditional.objectiveStatus = statusType;
+
+      return conditional;
+    }
+
+    private DesignConditional BuildEncounterObjectMatchesStateConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildEncounterObjectMatchesStateConditional] Building 'EncounterObjectMatchesStateConditional' conditional");
+      string guid = conditionalObject["Guid"].ToString();
+      string status = conditionalObject["Status"].ToString();
+      EncounterObjectStatus statusType = (EncounterObjectStatus)Enum.Parse(typeof(EncounterObjectStatus), status);
+      EncounterObjectMatchesStateConditional conditional = ScriptableObject.CreateInstance<EncounterObjectMatchesStateConditional>();
+
+      conditional.EncounterGuid = guid;
+      conditional.State = statusType;
 
       return conditional;
     }

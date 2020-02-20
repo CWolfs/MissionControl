@@ -12,6 +12,7 @@ namespace MissionControl.ContractTypeBuilders {
     public GameObject EncounterLayerGo { get; set; }
     public string ContractTypeKey { get; set; } = "UNSET";
 
+    private const string TEAMS_ID = "Teams";
     private const string CHUNKS_ID = "Chunks";
     private const string TRIGGERS_ID = "Triggers";
 
@@ -24,6 +25,7 @@ namespace MissionControl.ContractTypeBuilders {
     public bool Build() {
       Main.LogDebug($"[ContractTypeBuild] Building '{ContractTypeKey}'");
 
+      BuildTeamsData();
       BuildChunks();
       BuildTriggers();
 
@@ -32,10 +34,20 @@ namespace MissionControl.ContractTypeBuilders {
       return true;
     }
 
+    private void BuildTeamsData() {
+      if (ContractTypeBuild.ContainsKey(TEAMS_ID)) {
+        JArray teamsData = (JArray)ContractTypeBuild[TEAMS_ID];
+        Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] There are '{teamsData.Count}' team data entries defined.");
+        foreach (JObject teamData in teamsData.Children<JObject>()) {
+          BuildTeamData(teamData);
+        }
+      }
+    }
+
     private void BuildChunks() {
       if (ContractTypeBuild.ContainsKey(CHUNKS_ID)) {
         JArray chunksArray = (JArray)ContractTypeBuild[CHUNKS_ID];
-        Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] There are '{chunksArray.Count} chunk(s) defined.'");
+        Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] There are '{chunksArray.Count}' chunk(s) defined.");
         foreach (JObject chunk in chunksArray.Children<JObject>()) {
           BuildChunk(chunk);
         }
@@ -45,11 +57,16 @@ namespace MissionControl.ContractTypeBuilders {
     private void BuildTriggers() {
       if (ContractTypeBuild.ContainsKey(TRIGGERS_ID)) {
         JArray triggersArray = (JArray)ContractTypeBuild[TRIGGERS_ID];
-        Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] There are '{triggersArray.Count} trigger(s) defined.'");
+        Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] There are '{triggersArray.Count}' trigger(s) defined.");
         foreach (JObject trigger in triggersArray.Children<JObject>()) {
           BuildTrigger(trigger);
         }
       }
+    }
+
+    private void BuildTeamData(JObject teamData) {
+      Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Team Data for '{teamData["Team"]}'");
+      bool shareVisionWithAllies = (teamData.ContainsKey("ShareVisionWithAllies")) ? (bool)teamData["ShareVisionWithAllies"] : true;
     }
 
     private void BuildChunk(JObject chunk) {
@@ -142,10 +159,6 @@ namespace MissionControl.ContractTypeBuilders {
       } else {
         Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] No valid trigger was built for '{type}'");
       }
-    }
-
-    private void BuildGenericTrigger() {
-
     }
 
     private void Validate() {
