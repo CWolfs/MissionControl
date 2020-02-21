@@ -197,6 +197,17 @@
           "Type": "Dialogue",
           "SubType": "Simple",
           "Guid": "f404adfd-7613-4fc3-ae55-f025ac6d8213"
+        },
+        {
+          "Name": "Objective_DestroyLance",
+          "Type": "Objective",
+          "SubType": "DestroyLance",
+          "Guid": "a96a7b04-85cf-4052-8ceb-1063b273c87f", // Must match the objective guid in the contract .json
+          "ContractObjectiveGuid": "73275787-720a-4c33-9f20-953b1bbf48bd", // Must match the contract guid in the contract .json
+          "Title": "Destroy the turret lance",
+          "Priority": 1,
+          "IsPrimaryObjective": true,
+          "LanceToDestroyGuid": "223fd528-c333-4367-883c-a817acf24360"
         }
       ]
     },
@@ -479,7 +490,7 @@
         {
           "Type": "SetStateAtRandom",
           "EncounterGuids": [
-            "bf661bb2-67dd-475b-9f56-45be07b0d181", // Chunk_Stage_1a_Signs_Of_Attack
+            // "bf661bb2-67dd-475b-9f56-45be07b0d181", // Chunk_Stage_1a_Signs_Of_Attack
             "0d288b40-fb4e-4118-996f-d65c070d140f" // Chunk_Stage_1b_Trap
           ],
           "State": "Active"

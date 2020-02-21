@@ -75,6 +75,18 @@
     },
     {
       "objective": {
+        "EncounterObjectGuid": "a96a7b04-85cf-4052-8ceb-1063b273c87f"
+      },
+      "title": "Survive the trap",
+      "description": "Survive the turret trap in alpha base",
+      "isPrimary": true,
+      "OnSuccessResults": [],
+      "OnFailureResults": [],
+      "OnSuccessDialogueGUID": null,
+      "OnFailureDialogueGUID": null
+    },
+    {
+      "objective": {
         "EncounterObjectGuid": "b8e02f26-f664-4314-a003-67737fef719d"
       },
       "title": "Follow the Trail",
