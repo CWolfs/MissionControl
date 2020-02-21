@@ -110,6 +110,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       switch (type) {
         case "Dialogue": nodeBuilder = new DialogueActivatorBuilder(this, parent, activator); break;
+        case "SetChunkStateAtRandom": nodeBuilder = new SetChunkStateAtRandomActivatorBuilder(this, parent, activator); break;
         default: break;
       }
 

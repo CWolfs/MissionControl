@@ -102,6 +102,13 @@
   "buildingList": [],
   "chunkList": [
     {
+      "name": "Chunk_Alpha_Base_Turrets",
+      "encounterChunk": {
+        "EncounterObjectGuid": "d43befbd-b9ed-4fcc-8f92-e4fc2c9f405d"
+      },
+      "enableChunkFromContract": true
+    },
+    {
       "name": "Chunk_Bravo_Base_Turrets",
       "encounterChunk": {
         "EncounterObjectGuid": "70088858-545d-4ca1-8d68-ce0736ae648b"
@@ -232,6 +239,31 @@
           "audioName": "NONE",
           "cameraFocusGuid": "e7e9f35b-7ed8-404e-9dae-69be61de2dd3",
           "cameraDistance": "Close",
+          "cameraHeight": "Default",
+          "revealRadius": -1
+        }
+      ]
+    },
+    {
+      "dialogue": {
+        "EncounterObjectGuid": "f404adfd-7613-4fc3-ae55-f025ac6d8213"
+      },
+      "name": "Dialogue_First_Point_Of_Interest_Trap",
+      "overrideDialogueBucketId": "",
+      "dialogueContent": [
+        {
+          "words": "What's this?! The turrets are activating. Incoming fire, Commander!",
+          "wordsColor": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          },
+          "selectedCastDefId": "castDef_DariusDefault",
+          "emote": "Default",
+          "audioName": "NONE",
+          "cameraFocusGuid": "e7e9f35b-7ed8-404e-9dae-69be61de2dd3",
+          "cameraDistance": "Medium",
           "cameraHeight": "Default",
           "revealRadius": -1
         }
@@ -895,7 +927,164 @@
     "teamName": "Neutral to All",
     "faction": "INVALID_UNSET",
     "teamLeaderCastDefId": "castDef_TeamLeader_Current",
-    "lanceOverrideList": []
+    "lanceOverrideList": [
+      {
+        "lanceSpawner": {
+          "EncounterObjectGuid": "223fd528-c333-4367-883c-a817acf24360"
+        },
+        "name": "Turrets",
+        "lanceDefId": "Tagged",
+        "lanceTagSet": {
+          "items": ["lance_type_turret", "lance_bracket_low"],
+          "tagSetSourceFile": "Tags/LanceTags"
+        },
+        "lanceExcludedTagSet": {
+          "items": [],
+          "tagSetSourceFile": "Tags/LanceTags"
+        },
+        "spawnEffectTags": {
+          "items": [],
+          "tagSetSourceFile": "Tags/SpawnEffectTags"
+        },
+        "lanceDifficultyAdjustment": 0,
+        "selectedLanceDefId": null,
+        "selectedLanceDifficulty": 0,
+        "unitSpawnPointOverrideList": [
+          {
+            "unitSpawnPoint": {
+              "EncounterObjectGuid": "6826832c-83d5-4287-b349-33008dc1fac5"
+            },
+            "customUnitName": "",
+            "customHeraldryDefId": "",
+            "unitType": "Turret",
+            "unitDefId": "turretDef_InheritLance",
+            "unitTagSet": {
+              "items": [],
+              "tagSetSourceFile": ""
+            },
+            "unitExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "Tags/UnitTags"
+            },
+            "spawnEffectTags": {
+              "items": [],
+              "tagSetSourceFile": "Tags/SpawnEffectTags"
+            },
+            "pilotDefId": "pilot_d5_turret",
+            "pilotTagSet": {
+              "items": [],
+              "tagSetSourceFile": ""
+            },
+            "pilotExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "Tags/PilotTags"
+            },
+            "selectedUnitType": "UNDEFINED",
+            "selectedUnitDefId": null,
+            "selectedPilotDefId": null
+          },
+          {
+            "unitSpawnPoint": {
+              "EncounterObjectGuid": "0329e03f-9d9c-4a5d-99df-ccdb6afe2bb5"
+            },
+            "customUnitName": "",
+            "customHeraldryDefId": "",
+            "unitType": "Turret",
+            "unitDefId": "turretDef_InheritLance",
+            "unitTagSet": {
+              "items": [],
+              "tagSetSourceFile": ""
+            },
+            "unitExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "Tags/UnitTags"
+            },
+            "spawnEffectTags": {
+              "items": [],
+              "tagSetSourceFile": "Tags/SpawnEffectTags"
+            },
+            "pilotDefId": "pilot_d5_turret",
+            "pilotTagSet": {
+              "items": [],
+              "tagSetSourceFile": ""
+            },
+            "pilotExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "Tags/PilotTags"
+            },
+            "selectedUnitType": "UNDEFINED",
+            "selectedUnitDefId": null,
+            "selectedPilotDefId": null
+          },
+          {
+            "unitSpawnPoint": {
+              "EncounterObjectGuid": "e76ef06a-bd08-4c83-85f3-d8863acb3956"
+            },
+            "customUnitName": "",
+            "customHeraldryDefId": "",
+            "unitType": "Turret",
+            "unitDefId": "turretDef_InheritLance",
+            "unitTagSet": {
+              "items": [],
+              "tagSetSourceFile": ""
+            },
+            "unitExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "Tags/UnitTags"
+            },
+            "spawnEffectTags": {
+              "items": [],
+              "tagSetSourceFile": "Tags/SpawnEffectTags"
+            },
+            "pilotDefId": "pilot_d5_turret",
+            "pilotTagSet": {
+              "items": [],
+              "tagSetSourceFile": ""
+            },
+            "pilotExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "Tags/PilotTags"
+            },
+            "selectedUnitType": "UNDEFINED",
+            "selectedUnitDefId": null,
+            "selectedPilotDefId": null
+          },
+          {
+            "unitSpawnPoint": {
+              "EncounterObjectGuid": "0044f994-2b5b-4185-a7d6-dc3f50f561ba"
+            },
+            "customUnitName": "",
+            "customHeraldryDefId": "",
+            "unitType": "Turret",
+            "unitDefId": "turretDef_InheritLance",
+            "unitTagSet": {
+              "items": [],
+              "tagSetSourceFile": ""
+            },
+            "unitExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "Tags/UnitTags"
+            },
+            "spawnEffectTags": {
+              "items": [],
+              "tagSetSourceFile": "Tags/SpawnEffectTags"
+            },
+            "pilotDefId": "pilot_d5_turret",
+            "pilotTagSet": {
+              "items": [],
+              "tagSetSourceFile": ""
+            },
+            "pilotExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "Tags/PilotTags"
+            },
+            "selectedUnitType": "UNDEFINED",
+            "selectedUnitDefId": null,
+            "selectedPilotDefId": null
+          }
+        ]
+      }
+    ]
   },
   "hostileToAllTeam": {
     "encounterLayerData": {

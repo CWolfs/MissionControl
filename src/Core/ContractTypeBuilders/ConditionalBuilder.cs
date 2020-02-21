@@ -41,10 +41,10 @@ namespace MissionControl.ContractTypeBuilders {
         case "AlwaysTrueConditional": BuildAlwaysTrueConditional(conditionalObject); break;
         case "ObjectiveStatusConditional": BuildObjectiveStatusConditional(conditionalObject); break;
         case "EncounterObjectMatchesStateConditional": BuildEncounterObjectMatchesStateConditional(conditionalObject); break;
-        default: break;
+        default:
+          Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] No valid conditional was built for '{type}'");
+          break;
       }
-
-      Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] No valid conditional was built for '{type}'");
     }
 
     private void BuildAlwaysTrueConditional(JObject conditionalObject) {

@@ -34,6 +34,29 @@
       }
     },
     {
+      "Path": "Chunks[?(@.Name == 'Chunk_Alpha_Base_Turrets')].Children[?(@.Name == 'Spawner_Alpha_Turrets')]",
+      "Action": "ObjectMerge",
+      "Value": {
+        "Name": "Spawner_Alpha_Turrets",
+        "Position": {
+          "Type": "World",
+          "Value": { "x": -320, "y": 0, "z": 260 }
+        },
+        "SpawnPointPositions": {
+          "6826832c-83d5-4287-b349-33008dc1fac5": { "x": 71.9, "y": 5, "z": 82.5 }, // 'y' acts as an offset for height on top of ground hex height
+          "0329e03f-9d9c-4a5d-99df-ccdb6afe2bb5": { "x": -48, "y": 5, "z": 83 },
+          "e76ef06a-bd08-4c83-85f3-d8863acb3956": { "x": -48.3, "y": 5, "z": -124.5 },
+          "0044f994-2b5b-4185-a7d6-dc3f50f561ba": { "x": 72, "y": 5, "z": -124.8 }
+        },
+        "SpawnPointRotations": {
+          "6826832c-83d5-4287-b349-33008dc1fac5": { "x": 0, "y": 90, "z": 0 }, // 'y' acts as an offset for height on top of ground hex height
+          "0329e03f-9d9c-4a5d-99df-ccdb6afe2bb5": { "x": 0, "y": 0, "z": 0 },
+          "e76ef06a-bd08-4c83-85f3-d8863acb3956": { "x": 0, "y": 90, "z": 0 },
+          "0044f994-2b5b-4185-a7d6-dc3f50f561ba": { "x": 0, "y": 180, "z": 0 }
+        }
+      }
+    },
+    {
       "Path": "Chunks[?(@.Name == 'Chunk_EncounterBoundary')].Children[?(@.Name == 'EncounterBoundaryRect')]",
       "Action": "ObjectMerge",
       "Value": {

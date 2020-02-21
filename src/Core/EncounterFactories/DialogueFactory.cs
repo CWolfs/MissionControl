@@ -8,7 +8,7 @@ using BattleTech;
 using BattleTech.Framework;
 
 using MissionControl.RuntimeCast;
-using MissionControl.LogicComponents.Dialogue;
+using MissionControl.LogicComponents.Activators;
 
 namespace MissionControl.EncounterFactories {
   public class DialogueFactory {

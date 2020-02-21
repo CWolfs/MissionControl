@@ -95,6 +95,20 @@ namespace MissionControl.ContractTypeBuilders {
           if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
           break;
         }
+        case "NeutralToAll": {
+          teamId = EncounterRules.NEUTRAL_TO_ALL_TEAM_ID;
+          spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
+          spawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
+          if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
+          break;
+        }
+        case "HostileToAll": {
+          teamId = EncounterRules.HOSTILE_TO_ALL_TEAM_ID;
+          spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
+          spawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
+          if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
+          break;
+        }
         default: Main.Logger.LogError($"[SpawnBuilder.{contractTypeBuilder.ContractTypeKey}] No support for team '{team}'. Check for spelling mistakes."); break;
       }
 

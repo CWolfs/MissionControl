@@ -1,8 +1,12 @@
 using UnityEngine;
 
+using System;
+using System.Collections.Generic;
+
 using BattleTech;
 using BattleTech.Designed;
 
+using MissionControl.LogicComponents.Activators;
 using MissionControl.LogicComponents.Placers;
 
 namespace MissionControl.EncounterFactories {
@@ -19,6 +23,14 @@ namespace MissionControl.EncounterFactories {
       GameObject destroyWholeLanceChunkGo = CreateGameObjectWithParent(name, parent);
 
       return destroyWholeLanceChunkGo.AddComponent<DestroyWholeLanceChunk>();
+    }
+
+    public static SetChunkStateAtRandomActivator CreateSetChunkStateAtRandomActivator(GameObject parent, List<string> guids, EncounterObjectStatus state) {
+      SetChunkStateAtRandomActivator setChunkStateAtRandomActivator = parent.AddComponent<SetChunkStateAtRandomActivator>();
+      setChunkStateAtRandomActivator.encounterObjectGuid = Guid.NewGuid().ToString();
+      setChunkStateAtRandomActivator.ChunkGuids = guids;
+      setChunkStateAtRandomActivator.State = state;
+      return setChunkStateAtRandomActivator;
     }
 
     public static EmptyCustomChunkGameLogic CreateEmptyCustomChunk(string name, Transform parent = null) {

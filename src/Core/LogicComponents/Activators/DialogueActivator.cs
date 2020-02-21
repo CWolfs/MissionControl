@@ -1,14 +1,12 @@
 using UnityEngine;
 
 using BattleTech;
-using BattleTech.Designed;
-using BattleTech.Framework;
 
 using HBS.Util;
 
 using MissionControl.Data;
 
-namespace MissionControl.LogicComponents.Dialogue {
+namespace MissionControl.LogicComponents.Activators {
   public class DialogueActivator : EncounterObjectGameLogic, ExecutableGameLogic {
 
     [SerializeField]
