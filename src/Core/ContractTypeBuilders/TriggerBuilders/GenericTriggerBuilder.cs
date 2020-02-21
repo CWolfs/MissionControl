@@ -19,7 +19,9 @@ namespace MissionControl.ContractTypeBuilders {
     private MessageCenterMessageType triggerMessageType;
     private string description;
 
-    private DesignConditional conditional;
+    private string conditionalEvaluationString;
+    private LogicEvaluation conditionalEvaluation;
+    private GenericCompoundConditional conditional;
     private List<DesignResult> results;
 
     public GenericTriggerBuilder(ContractTypeBuilder contractTypeBuilder, JObject trigger, string name) {
@@ -30,9 +32,13 @@ namespace MissionControl.ContractTypeBuilders {
       this.triggerOn = trigger["TriggerOn"].ToString();
       this.description = (trigger.ContainsKey("Description")) ? trigger["Description"].ToString() : "";
 
-      if (trigger.ContainsKey("Conditional")) {
-        ConditionalBuilder conditionalBuilder = new ConditionalBuilder(contractTypeBuilder, (JObject)trigger["Conditional"]);
+      this.conditionalEvaluationString = (trigger.ContainsKey("SucceedOn")) ? trigger["SucceedOn"].ToString() : "All";
+      this.conditionalEvaluation = (LogicEvaluation)Enum.Parse(typeof(LogicEvaluation), conditionalEvaluationString);
+
+      if (trigger.ContainsKey("Conditionals")) {
+        ConditionalBuilder conditionalBuilder = new ConditionalBuilder(contractTypeBuilder, (JArray)trigger["Conditionals"]);
         this.conditional = conditionalBuilder.Build();
+        this.conditional.whichMustBeTrue = this.conditionalEvaluation;
       }
 
       if (trigger.ContainsKey("Results")) {

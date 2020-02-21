@@ -323,9 +323,11 @@
       "Name": "Trigger_Tag_Buildings_3b",
       "TriggerOn": "OnEncounterBegin",
       "Description": "Tag buildings on encounter begin for 3b",
-      "Conditional": {
-        "Type": "AlwaysTrueConditional"
-      },
+      "Conditionals": [
+        {
+          "Type": "AlwaysTrueConditional"
+        }
+      ],
       "Results": [
         {
           "Type": "SetUnitsInRegionToBeTaggedObjectiveTargets",
@@ -362,11 +364,13 @@
       "Name": "Trigger_First_Dialogue",
       "TriggerOn": "OnObjectiveUpdated",
       "Description": "Show the dialogue at the first base",
-      "Conditional": {
-        "Type": "ObjectiveStatusConditional",
-        "Guid": "786166e2-22ea-45c1-9786-68df31958bd8",
-        "Status": "Success"
-      },
+      "Conditionals": [
+        {
+          "Type": "ObjectiveStatusConditional",
+          "Guid": "786166e2-22ea-45c1-9786-68df31958bd8",
+          "Status": "Success"
+        }
+      ],
       "Results": [
         {
           "Type": "Dialogue",
@@ -378,11 +382,13 @@
       "Name": "Trigger_Disable_Region_1",
       "TriggerOn": "OnObjectiveUpdated",
       "Description": "Disable the first region on first objective complete",
-      "Conditional": {
-        "Type": "ObjectiveStatusConditional",
-        "Guid": "786166e2-22ea-45c1-9786-68df31958bd8",
-        "Status": "Success"
-      },
+      "Conditionals": [
+        {
+          "Type": "ObjectiveStatusConditional",
+          "Guid": "786166e2-22ea-45c1-9786-68df31958bd8",
+          "Status": "Success"
+        }
+      ],
       "Results": [
         {
           "Type": "SetState",
@@ -395,11 +401,13 @@
       "Name": "Trigger_Enable_Chunk_2",
       "TriggerOn": "OnObjectiveUpdated",
       "Description": "Enable second objective on first objective complete",
-      "Conditional": {
-        "Type": "ObjectiveStatusConditional",
-        "Guid": "786166e2-22ea-45c1-9786-68df31958bd8",
-        "Status": "Success"
-      },
+      "Conditionals": [
+        {
+          "Type": "ObjectiveStatusConditional",
+          "Guid": "786166e2-22ea-45c1-9786-68df31958bd8",
+          "Status": "Success"
+        }
+      ],
       "Results": [
         {
           "Type": "SetState",
@@ -412,11 +420,13 @@
       "Name": "Trigger_Disable_Region_2",
       "TriggerOn": "OnObjectiveUpdated",
       "Description": "Disable the second region on second objective complete",
-      "Conditional": {
-        "Type": "ObjectiveStatusConditional",
-        "Guid": "b8e02f26-f664-4314-a003-67737fef719d",
-        "Status": "Success"
-      },
+      "Conditionals": [
+        {
+          "Type": "ObjectiveStatusConditional",
+          "Guid": "b8e02f26-f664-4314-a003-67737fef719d",
+          "Status": "Success"
+        }
+      ],
       "Results": [
         {
           "Type": "SetState",
@@ -429,11 +439,13 @@
       "Name": "Trigger_Enable_Chunk_3x",
       "TriggerOn": "OnObjectiveUpdated",
       "Description": "Enable third objective on second objective complete",
-      "Conditional": {
-        "Type": "ObjectiveStatusConditional",
-        "Guid": "b8e02f26-f664-4314-a003-67737fef719d",
-        "Status": "Success"
-      },
+      "Conditionals": [
+        {
+          "Type": "ObjectiveStatusConditional",
+          "Guid": "b8e02f26-f664-4314-a003-67737fef719d",
+          "Status": "Success"
+        }
+      ],
       "Results": [
         {
           "Type": "SetStateAtRandom",
@@ -449,11 +461,13 @@
       "Name": "Trigger_Share_Employer_Vision",
       "TriggerOn": "OnEncounterStateChanged",
       "Description": "Enable shared vision with Employer once the 3b bravo base is discovered",
-      "Conditional": {
-        "Type": "EncounterObjectMatchesStateConditional",
-        "Guid": "df31d9e4-762f-4556-bc49-ce8dc1659c0a",
-        "Status": "Active"
-      },
+      "Conditionals": [
+        {
+          "Type": "EncounterObjectMatchesStateConditional",
+          "Guid": "df31d9e4-762f-4556-bc49-ce8dc1659c0a",
+          "Status": "Active"
+        }
+      ],
       "Results": [
         {
           "Type": "SetTeamShareVisionWithAlliesResult",
@@ -467,11 +481,11 @@
       "Name": "Trigger_Second_Dialogue",
       "TriggerOn": "OnObjectiveUpdated",
       "Description": "Show the dialogue at the second base",
-      "Conditional": {
+      "Conditionals": [{
         "Type": "ObjectiveStatusConditional",
         "Guid": "b8e02f26-f664-4314-a003-67737fef719d",
         "Status": "Success"
-      },
+      }],
       "Results": [
         {
           "Type": "Dialogue",
@@ -485,11 +499,11 @@
       "Name": "Trigger_SwapEmployerAndTargetFaction",
       "TriggerOn": "OnObjectiveUpdated",
       "Description": "Swap Employer And Target Faction on OnObjectiveUpdated",
-      "Conditional": {
+      "Conditionals": [{
         "Type": "ObjectiveStatusConditional",
         "Guid": "786166e2-22ea-45c1-9786-68df31958bd8",
         "Status": "Success"
-      },
+      }],
       "Results": [
         {
           "Type": "ExecuteGameLogic",

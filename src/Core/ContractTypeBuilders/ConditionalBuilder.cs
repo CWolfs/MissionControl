@@ -1,6 +1,7 @@
 using UnityEngine;
 
 using System;
+using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
 
@@ -12,34 +13,47 @@ using MissionControl.Conditional;
 namespace MissionControl.ContractTypeBuilders {
   public class ConditionalBuilder {
     private ContractTypeBuilder contractTypeBuilder;
-    private JObject conditionalObject;
+    private JArray conditionalsObject;
+    private GenericCompoundConditional conditionals;
+    private List<EncounterConditionalBox> conditionalList;
 
-    public ConditionalBuilder(ContractTypeBuilder contractTypeBuilder, JObject conditionalObject) {
+    public ConditionalBuilder(ContractTypeBuilder contractTypeBuilder, JArray conditionalsObject) {
       this.contractTypeBuilder = contractTypeBuilder;
-      this.conditionalObject = conditionalObject;
+      this.conditionalsObject = conditionalsObject;
     }
 
-    public DesignConditional Build() {
+    public GenericCompoundConditional Build() {
+      conditionalList = new List<EncounterConditionalBox>();
+      conditionals = ScriptableObject.CreateInstance<GenericCompoundConditional>();
+
+      foreach (JObject conditionalObject in conditionalsObject.Children<JObject>()) {
+        BuildConditional(conditionalObject);
+      }
+
+      conditionals.conditionalList = conditionalList.ToArray();
+      return conditionals;
+    }
+
+    private void BuildConditional(JObject conditionalObject) {
       string type = conditionalObject["Type"].ToString();
 
       switch (type) {
-        case "AlwaysTrueConditional": return BuildAlwaysTrueConditional(conditionalObject);
-        case "ObjectiveStatusConditional": return BuildObjectiveStatusConditional(conditionalObject);
-        case "EncounterObjectMatchesStateConditional": return BuildEncounterObjectMatchesStateConditional(conditionalObject);
+        case "AlwaysTrueConditional": BuildAlwaysTrueConditional(conditionalObject); break;
+        case "ObjectiveStatusConditional": BuildObjectiveStatusConditional(conditionalObject); break;
+        case "EncounterObjectMatchesStateConditional": BuildEncounterObjectMatchesStateConditional(conditionalObject); break;
         default: break;
       }
 
       Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] No valid conditional was built for '{type}'");
-
-      return null;
     }
 
-    private DesignConditional BuildAlwaysTrueConditional(JObject conditionalObject) {
+    private void BuildAlwaysTrueConditional(JObject conditionalObject) {
       Main.LogDebug("[BuildAlwaysTrueConditional] Building 'AlwaysTrueConditional' conditional");
-      return ScriptableObject.CreateInstance<AlwaysTrueConditional>();
+      AlwaysTrueConditional conditional = ScriptableObject.CreateInstance<AlwaysTrueConditional>();
+      conditionalList.Add(new EncounterConditionalBox(conditional));
     }
 
-    private DesignConditional BuildObjectiveStatusConditional(JObject conditionalObject) {
+    private void BuildObjectiveStatusConditional(JObject conditionalObject) {
       Main.LogDebug("[BuildObjectiveStatusConditional] Building 'ObjectiveStatusConditional' conditional");
       string guid = conditionalObject["Guid"].ToString();
       string status = conditionalObject["Status"].ToString();
@@ -52,10 +66,10 @@ namespace MissionControl.ContractTypeBuilders {
       conditional.objective = objectiveRef;
       conditional.objectiveStatus = statusType;
 
-      return conditional;
+      conditionalList.Add(new EncounterConditionalBox(conditional));
     }
 
-    private DesignConditional BuildEncounterObjectMatchesStateConditional(JObject conditionalObject) {
+    private void BuildEncounterObjectMatchesStateConditional(JObject conditionalObject) {
       Main.LogDebug("[BuildEncounterObjectMatchesStateConditional] Building 'EncounterObjectMatchesStateConditional' conditional");
       string guid = conditionalObject["Guid"].ToString();
       string status = conditionalObject["Status"].ToString();
@@ -65,7 +79,7 @@ namespace MissionControl.ContractTypeBuilders {
       conditional.EncounterGuid = guid;
       conditional.State = statusType;
 
-      return conditional;
+      conditionalList.Add(new EncounterConditionalBox(conditional));
     }
   }
 }
