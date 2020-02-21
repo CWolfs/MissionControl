@@ -1,12 +1,6 @@
 {
   "Key": "Blackout", // Links to the ContractType Name
   "ContractObjective": [{}],
-  "Teams": [
-    {
-      "Team": "Employer",
-      "ShareVisionWithAllies": false
-    }
-  ],
   "Chunks": [
     {
       "Name": "Chunk_PlayerLance",
@@ -459,22 +453,6 @@
           "Type": "SetTeamShareVisionWithAlliesResult",
           "Team": "Employer",
           "ShareVision": true
-        }
-      ]
-    },
-    {
-      "Name": "Trigger_Complete_Defend_Objective_On_Lance_Destroyed_3b",
-      "TriggerOn": "OnObjectiveUpdated",
-      "Description": "Complete the defend base objective if the enemy lance is destroyed",
-      "Conditional": {
-        "Type": "ObjectiveStatusConditional",
-        "Guid": "a0b9c5b2-c594-4c5a-be1d-028a51c51519",
-        "Status": "Success"
-      },
-      "Results": [
-        {
-          "Type": "CompleteObjective",
-          "ObjectiveGuid": "67b973aa-d770-4be7-bfee-36b516bc4699"
         }
       ]
     }
