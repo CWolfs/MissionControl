@@ -3,6 +3,8 @@ using UnityEngine;
 using BattleTech;
 using BattleTech.Designed;
 
+using HBS.Collections;
+
 using System;
 using System.Collections.Generic;
 
@@ -30,6 +32,7 @@ namespace MissionControl.ContractTypeBuilders {
     private List<AIOrderBox> orders;
     private bool alertLanceOnSpawn;
     private int defaultDetectionRange;
+    private List<string> tags;
 
     public SpawnBuilder(ContractTypeBuilder contractTypeBuilder, GameObject parent, JObject spawner) {
       this.contractTypeBuilder = contractTypeBuilder;
@@ -48,7 +51,7 @@ namespace MissionControl.ContractTypeBuilders {
       this.aiOrdersArray = spawner.ContainsKey("AI") ? (JArray)spawner["AI"] : null;
       this.alertLanceOnSpawn = spawner.ContainsKey("AlertLanceOnSpawn") ? (bool)spawner["AlertLanceOnSpawn"] : false;
       this.defaultDetectionRange = spawner.ContainsKey("DefaultDetectionRange") ? (int)spawner["DefaultDetectionRange"] : 0;
-
+      this.tags = spawner.ContainsKey("Tags") ? spawner["Tags"].ToObject<List<string>>() : null;
 
       if (this.aiOrdersArray != null) {
         AiOrderBuilder orderBuilder = new AiOrderBuilder(contractTypeBuilder, aiOrdersArray, name);
@@ -117,6 +120,7 @@ namespace MissionControl.ContractTypeBuilders {
       if (this.spawnPointPositions != null) SetSpawnPointPositions(spawnerGameLogic);
       if (this.spawnPointRotations != null) SetSpawnPointRotations(spawnerGameLogic);
       if (this.defaultDetectionRange > 0) SetDefaultDetectionRange(spawnerGameLogic, this.defaultDetectionRange);
+      if (this.tags != null) spawnerGameLogic.encounterTags.AddRange(this.tags);
     }
 
     private void SetSpawnPointPositions(LanceSpawnerGameLogic spawnerGameLogic) {

@@ -16,6 +16,8 @@ namespace MissionControl.Result {
       Main.LogDebug($"[SetTeamByTagResult] Setting Team '{Team}' with tags '{String.Concat(Tags)}'");
       List<ICombatant> combatants = ObjectiveGameLogic.GetTaggedCombatants(UnityGameInstance.BattleTechGame.Combat, new TagSet(Tags));
 
+      Main.LogDebug($"[SetTeamByTagResult] Found'{combatants.Count}' combatants");
+
       foreach (ICombatant combatant in combatants) {
         combatant.RemoveFromTeam();
 
