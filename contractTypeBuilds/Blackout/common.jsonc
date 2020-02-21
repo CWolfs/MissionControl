@@ -223,6 +223,11 @@
               "Type": "MagicKnowledgeByTag",
               "Action": "Add",
               "Tags": ["Player 1"]
+            },
+            {
+              "Type": "PrioritiseTaggedUnit",
+              "Tags": ["defend_building_3b"],
+              "Priority": 1
             }
           ],
           "AlertLanceOnSpawn": true
@@ -332,6 +337,7 @@
           "Tags": ["defend_building_3b"]
         }
         /*,
+        // Keep this here until I can add it to the documentation
         {
           "Type": "TagUnitsInRegion",
           "RegionGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",

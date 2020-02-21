@@ -41,6 +41,7 @@ namespace MissionControl.ContractTypeBuilders {
       switch (type) {
         case "StayInsideRegion": BuildStayInsideRegionOrder(order); break;
         case "MagicKnowledgeByTag": BuildMagicKnowledgeByTag(order); break;
+        case "PrioritiseTaggedUnit": BuildPrioritiseTaggedUnit(order); break;
         default:
           Main.Logger.LogError($"[AiOrderBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -64,6 +65,19 @@ namespace MissionControl.ContractTypeBuilders {
       AddMagicKnowledgeByTagAIOrder order = ScriptableObject.CreateInstance<AddMagicKnowledgeByTagAIOrder>();
       order.TargetTagSet = new TagSet(tags.ToObject<List<string>>());
       order.AddMagicKnowledge = (action == "Add") ? true : false;
+      order.MustMatchAllTags = mustMatchAllTags;
+
+      orders.Add(new EncounterAIOrderBox(order));
+    }
+
+    private void BuildPrioritiseTaggedUnit(JObject orderObj) {
+      JArray tags = (JArray)orderObj["Tags"];
+      int priority = (int)orderObj["Priority"];
+      bool mustMatchAllTags = (orderObj.ContainsKey("MustMatchAll")) ? (bool)orderObj["MustMatchAll"] : false;
+
+      TaggedUnitTargetPriorityAIOrder order = ScriptableObject.CreateInstance<TaggedUnitTargetPriorityAIOrder>();
+      order.TargetTagSet = new TagSet(tags.ToObject<List<string>>());
+      order.Priority = priority;
       order.MustMatchAllTags = mustMatchAllTags;
 
       orders.Add(new EncounterAIOrderBox(order));
