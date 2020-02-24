@@ -283,6 +283,31 @@
     },
     {
       "dialogue": {
+        "EncounterObjectGuid": "399d54e8-522a-4576-b01f-14d705dc9d6b"
+      },
+      "name": "Dialogue_Post_2b",
+      "overrideDialogueBucketId": "",
+      "dialogueContent": [
+        {
+          "words": "Is everything ok down there, Commander? Looks like those turrets were hacked. Something is definitely not right here.",
+          "wordsColor": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          },
+          "selectedCastDefId": "castDef_DariusDefault",
+          "emote": "Default",
+          "audioName": "NONE",
+          "cameraFocusGuid": "e7e9f35b-7ed8-404e-9dae-69be61de2dd3",
+          "cameraDistance": "Medium",
+          "cameraHeight": "Default",
+          "revealRadius": -1
+        }
+      ]
+    },
+    {
+      "dialogue": {
         "EncounterObjectGuid": "4ef16b5e-1486-4399-8835-b81026b22cac"
       },
       "name": "Dialogue_Second_Point_Of_Interest_3a",
@@ -365,7 +390,7 @@
           "audioName": "NONE",
           "cameraFocusGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
           "cameraDistance": "Far",
-          "cameraHeight": "Default",
+          "cameraHeight": "High",
           "revealRadius": -1
         }
       ]

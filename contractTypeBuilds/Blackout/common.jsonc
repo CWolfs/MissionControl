@@ -213,6 +213,27 @@
       ]
     },
     {
+      "Name": "Chunk_Stage_Post_1b",
+      "Type": "Chunk",
+      "SubType": "Container",
+      "Guid": "54df6131-7229-4b62-a4c7-00b1c543312c",
+      "StartingStatus": "Inactive",
+      "OnActiveExecute": [
+        {
+          "Type": "Dialogue",
+          "EncounterGuid": "399d54e8-522a-4576-b01f-14d705dc9d6b"
+        }
+      ],
+      "Children": [
+        {
+          "Name": "Dialogue_Post_2b",
+          "Type": "Dialogue",
+          "SubType": "Simple",
+          "Guid": "399d54e8-522a-4576-b01f-14d705dc9d6b"
+        }
+      ]
+    },
+    {
       "Name": "Chunk_Stage_2_Follow_The_Trail",
       "Type": "Chunk",
       "SubType": "Container",
@@ -416,6 +437,7 @@
     }
   ],
   "Triggers": [
+    /* General Triggers */
     {
       "Name": "Trigger_Tag_Buildings_3b",
       "TriggerOn": "OnEncounterBegin",
@@ -457,6 +479,7 @@
         */
       ]
     },
+    /* Stage 1 Triggers */
     {
       "Name": "Trigger_Disable_Region_1",
       "TriggerOn": "OnObjectiveUpdated",
@@ -476,8 +499,9 @@
         }
       ]
     },
+    /* Stage 1x - General Triggers */
     {
-      "Name": "Trigger_Enable_Chunk_2",
+      "Name": "Trigger_Enable_Chunk_1x",
       "TriggerOn": "OnObjectiveUpdated",
       "Description": "Enable second objective on first objective complete",
       "Conditionals": [
@@ -517,6 +541,46 @@
         }
       ]
     },
+    /* Stage 1b Triggers */
+    {
+      "Name": "Trigger_1b_Trap_Team_Swap",
+      "TriggerOn": "OnEncounterStateChanged",
+      "Description": "Swap team of turrets in trap",
+      "Conditionals": [
+        {
+          "Type": "EncounterObjectMatchesStateConditional",
+          "Guid": "0d288b40-fb4e-4118-996f-d65c070d140f",
+          "Status": "Active"
+        }
+      ],
+      "Results": [
+        {
+          "Type": "SetTeamByTag",
+          "Team": "Target",
+          "Tags": ["destroy_turrets_1b"]
+        }
+      ]
+    },
+    {
+      "Name": "Trigger_Enable_Chunk_Post_1b",
+      "TriggerOn": "OnObjectiveUpdated",
+      "Description": "Enable next objective after 1b complete",
+      "Conditionals": [
+        {
+          "Type": "ObjectiveStatusConditional",
+          "Guid": "a96a7b04-85cf-4052-8ceb-1063b273c87f",
+          "Status": "Success"
+        }
+      ],
+      "Results": [
+        {
+          "Type": "SetStateAtRandom",
+          "EncounterGuids": ["54df6131-7229-4b62-a4c7-00b1c543312c"],
+          "State": "Active"
+        }
+      ]
+    },
+    /* Stage 3x Triggers */
     {
       "Name": "Trigger_Enable_Chunk_3x",
       "TriggerOn": "OnObjectiveUpdated",
@@ -536,25 +600,6 @@
             "df31d9e4-762f-4556-bc49-ce8dc1659c0a"
           ],
           "State": "Active"
-        }
-      ]
-    },
-    {
-      "Name": "Trigger_1b_Trap_Team_Swap",
-      "TriggerOn": "OnEncounterStateChanged",
-      "Description": "Swap team of turrets in trap",
-      "Conditionals": [
-        {
-          "Type": "EncounterObjectMatchesStateConditional",
-          "Guid": "0d288b40-fb4e-4118-996f-d65c070d140f",
-          "Status": "Active"
-        }
-      ],
-      "Results": [
-        {
-          "Type": "SetTeamByTag",
-          "Team": "Target",
-          "Tags": ["destroy_turrets_1b"]
         }
       ]
     }
