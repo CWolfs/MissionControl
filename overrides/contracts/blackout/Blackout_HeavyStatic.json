@@ -301,7 +301,7 @@
           "audioName": "NONE",
           "cameraFocusGuid": "e7e9f35b-7ed8-404e-9dae-69be61de2dd3",
           "cameraDistance": "Medium",
-          "cameraHeight": "Default",
+          "cameraHeight": "High",
           "revealRadius": -1
         }
       ]
@@ -390,7 +390,7 @@
           "audioName": "NONE",
           "cameraFocusGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
           "cameraDistance": "Far",
-          "cameraHeight": "High",
+          "cameraHeight": "Default",
           "revealRadius": -1
         }
       ]
@@ -447,7 +447,7 @@
           "audioName": "NONE",
           "cameraFocusGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
           "cameraDistance": "Far",
-          "cameraHeight": "Default",
+          "cameraHeight": "High",
           "revealRadius": -1
         }
       ]
