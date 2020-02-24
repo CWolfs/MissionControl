@@ -283,6 +283,47 @@
     },
     {
       "dialogue": {
+        "EncounterObjectGuid": "47c75ee8-8af6-46a8-98a3-418f754616c5"
+      },
+      "name": "Dialogue_First_Point_Of_Interest_Ambush",
+      "overrideDialogueBucketId": "",
+      "dialogueContent": [
+        {
+          "words": "We were told to expect interference. Time to shut you out.",
+          "wordsColor": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          },
+          "selectedCastDefId": "castDef_SE06_KarosasCaptainDefault",
+          "emote": "Default",
+          "audioName": "NONE",
+          "cameraFocusGuid": "e7e9f35b-7ed8-404e-9dae-69be61de2dd3",
+          "cameraDistance": "Far",
+          "cameraHeight": "Default",
+          "revealRadius": -1
+        },
+        {
+          "words": "This isn't good, Commander. You're surrounded!",
+          "wordsColor": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          },
+          "selectedCastDefId": "castDef_DariusDefault",
+          "emote": "Default",
+          "audioName": "NONE",
+          "cameraFocusGuid": "e7e9f35b-7ed8-404e-9dae-69be61de2dd3",
+          "cameraDistance": "Far",
+          "cameraHeight": "Default",
+          "revealRadius": -1
+        }
+      ]
+    },
+    {
+      "dialogue": {
         "EncounterObjectGuid": "399d54e8-522a-4576-b01f-14d705dc9d6b"
       },
       "name": "Dialogue_Post_2b",
@@ -792,7 +833,7 @@
         "lanceSpawner": {
           "EncounterObjectGuid": "f426f0dc-969d-477d-81a9-d02f9e1eff79"
         },
-        "name": "Lance_Enemy_Ambushers",
+        "name": "Lance_Enemy_OpposingForce",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
           "items": ["lance_type_dynamic", "lance_type_light"],
@@ -912,6 +953,162 @@
           {
             "unitSpawnPoint": {
               "EncounterObjectGuid": "0cf6442f-d67d-41e3-a658-c5e9f564cf9e"
+            },
+            "customUnitName": null,
+            "customHeraldryDefId": "",
+            "unitType": "Mech",
+            "unitDefId": "mechDef_InheritLance",
+            "unitTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/UnitTags"
+            },
+            "unitExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/UnitTags"
+            },
+            "spawnEffectTags": {
+              "items": [],
+              "tagSetSourceFile": "tags/SpawnEffectTags"
+            },
+            "pilotDefId": "pilotDef_InheritLance",
+            "pilotTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/PilotTags"
+            },
+            "pilotExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/PilotTags"
+            },
+            "selectedUnitType": "UNDEFINED",
+            "selectedUnitDefId": "",
+            "selectedPilotDefId": ""
+          }
+        ]
+      },
+      {
+        "lanceSpawner": {
+          "EncounterObjectGuid": "b60da416-495c-474d-8b58-1678966835df"
+        },
+        "name": "Lance_Enemy_Ambushers",
+        "lanceDefId": "Tagged",
+        "lanceTagSet": {
+          "items": ["lance_type_dynamic", "lance_type_light"],
+          "tagSetSourceFile": "tags/LanceTags"
+        },
+        "lanceExcludedTagSet": {
+          "items": [],
+          "tagSetSourceFile": "tags/LanceTags"
+        },
+        "spawnEffectTags": {
+          "items": [],
+          "tagSetSourceFile": "tags/SpawnEffectTags"
+        },
+        "lanceDifficultyAdjustment": 2,
+        "selectedLanceDefId": "",
+        "selectedLanceDifficulty": 0,
+        "unitSpawnPointOverrideList": [
+          {
+            "unitSpawnPoint": {
+              "EncounterObjectGuid": "9405bf60-db6c-4ae9-95b0-3c26a6e9fd88"
+            },
+            "customUnitName": null,
+            "customHeraldryDefId": "",
+            "unitType": "Mech",
+            "unitDefId": "mechDef_InheritLance",
+            "unitTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/UnitTags"
+            },
+            "unitExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/UnitTags"
+            },
+            "spawnEffectTags": {
+              "items": [],
+              "tagSetSourceFile": "tags/SpawnEffectTags"
+            },
+            "pilotDefId": "pilotDef_InheritLance",
+            "pilotTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/PilotTags"
+            },
+            "pilotExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/PilotTags"
+            },
+            "selectedUnitType": "UNDEFINED",
+            "selectedUnitDefId": "",
+            "selectedPilotDefId": ""
+          },
+          {
+            "unitSpawnPoint": {
+              "EncounterObjectGuid": "8f1a8422-917c-47c4-ada9-01eaa94499ee"
+            },
+            "customUnitName": null,
+            "customHeraldryDefId": "",
+            "unitType": "Mech",
+            "unitDefId": "mechDef_InheritLance",
+            "unitTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/UnitTags"
+            },
+            "unitExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/UnitTags"
+            },
+            "spawnEffectTags": {
+              "items": [],
+              "tagSetSourceFile": "tags/SpawnEffectTags"
+            },
+            "pilotDefId": "pilotDef_InheritLance",
+            "pilotTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/PilotTags"
+            },
+            "pilotExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/PilotTags"
+            },
+            "selectedUnitType": "UNDEFINED",
+            "selectedUnitDefId": "",
+            "selectedPilotDefId": ""
+          },
+          {
+            "unitSpawnPoint": {
+              "EncounterObjectGuid": "ea0eef6e-1fd0-4a2e-8e26-8692d6a935d4"
+            },
+            "customUnitName": null,
+            "customHeraldryDefId": "",
+            "unitType": "Mech",
+            "unitDefId": "mechDef_InheritLance",
+            "unitTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/UnitTags"
+            },
+            "unitExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/UnitTags"
+            },
+            "spawnEffectTags": {
+              "items": [],
+              "tagSetSourceFile": "tags/SpawnEffectTags"
+            },
+            "pilotDefId": "pilotDef_InheritLance",
+            "pilotTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/PilotTags"
+            },
+            "pilotExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/PilotTags"
+            },
+            "selectedUnitType": "UNDEFINED",
+            "selectedUnitDefId": "",
+            "selectedPilotDefId": ""
+          },
+          {
+            "unitSpawnPoint": {
+              "EncounterObjectGuid": "413f1124-f7e0-476c-b826-3432078d259f"
             },
             "customUnitName": null,
             "customHeraldryDefId": "",

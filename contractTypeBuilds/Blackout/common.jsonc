@@ -213,6 +213,69 @@
       ]
     },
     {
+      "Name": "Chunk_Stage_1c_Ambush",
+      "Type": "Chunk",
+      "SubType": "Container",
+      "Guid": "9cdc19ff-5b22-402b-aca5-d593a6f3b69c",
+      "StartingStatus": "Inactive",
+      "OnActiveExecute": [
+        {
+          "Type": "Dialogue",
+          "EncounterGuid": "47c75ee8-8af6-46a8-98a3-418f754616c5"
+        }
+      ],
+      "Children": [
+        {
+          "Name": "Dialogue_First_Point_Of_Interest_Ambush",
+          "Type": "Dialogue",
+          "SubType": "Simple",
+          "Guid": "47c75ee8-8af6-46a8-98a3-418f754616c5"
+        },
+        {
+          "Name": "Lance_Enemy_AmbushingForce",
+          "Type": "Spawner",
+          "SubType": "SimpleSpawner",
+          "Position": {
+            "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
+            "Value": { "x": 0, "y": 0, "z": 0 }
+          },
+          "Rotation": {
+            "Type": "World", // World, Local
+            "Value": { "x": 0, "y": 0, "z": 0 }
+          },
+          "Team": "Target",
+          "Guid": "b60da416-495c-474d-8b58-1678966835df", // Must match the spawner guids in the contract .json
+          "SpawnPoints": 4,
+          "SpawnPointGuids": [
+            "9405bf60-db6c-4ae9-95b0-3c26a6e9fd88",
+            "8f1a8422-917c-47c4-ada9-01eaa94499ee",
+            "ea0eef6e-1fd0-4a2e-8e26-8692d6a935d4",
+            "413f1124-f7e0-476c-b826-3432078d259f"
+          ], // Must match the unit spawn guids in the contract .json
+          "SpawnType": "Instant", // Leopard, DropPod, Instant
+          "AI": [
+            {
+              "Type": "MagicKnowledgeByTag",
+              "Action": "Add",
+              "Tags": ["Player 1"]
+            }
+          ],
+          "AlertLanceOnSpawn": true
+        },
+        {
+          "Name": "Objective_DestroyLance",
+          "Type": "Objective",
+          "SubType": "DestroyLance",
+          "Guid": "c0ab94b1-933f-4f6e-9482-f35d459c3d14", // Must match the objective guid in the contract .json
+          "ContractObjectiveGuid": "73275787-720a-4c33-9f20-953b1bbf48bd", // Must match the contract guid in the contract .json
+          "Title": "Destroy the ambushing lance",
+          "Priority": 1,
+          "IsPrimaryObjective": true,
+          "LanceToDestroyGuid": "b60da416-495c-474d-8b58-1678966835df"
+        }
+      ]
+    },
+    {
       "Name": "Chunk_Stage_Post_1b",
       "Type": "Chunk",
       "SubType": "Container",
@@ -516,7 +579,8 @@
           "Type": "SetStateAtRandom",
           "EncounterGuids": [
             // "bf661bb2-67dd-475b-9f56-45be07b0d181", // Chunk_Stage_1a_Signs_Of_Attack
-            "0d288b40-fb4e-4118-996f-d65c070d140f" // Chunk_Stage_1b_Trap
+            // "0d288b40-fb4e-4118-996f-d65c070d140f" // Chunk_Stage_1b_Trap,
+            "9cdc19ff-5b22-402b-aca5-d593a6f3b69c" // Chunk_Stage_1c_Ambush
           ],
           "State": "Active"
         }
@@ -556,7 +620,7 @@
       "Results": [
         {
           "Type": "SetState",
-          "EncounterGuids": "54df6131-7229-4b62-a4c7-00b1c543312c",
+          "EncounterGuid": "54df6131-7229-4b62-a4c7-00b1c543312c",
           "State": "Active"
         }
       ]

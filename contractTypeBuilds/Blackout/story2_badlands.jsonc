@@ -70,6 +70,21 @@
       }
     },
     {
+      "Path": "Chunks[?(@.Name == 'Chunk_Stage_1c_Ambush')].Children[?(@.Name == 'Lance_Enemy_AmbushingForce')]",
+      "Action": "ObjectMerge",
+      "Value": {
+        "Name": "Lance_Enemy_AmbushingForce",
+        "Position": {
+          "Type": "World",
+          "Value": { "x": -360, "y": 140, "z": 350 }
+        },
+        "Rotation": {
+          "Type": "World",
+          "Value": { "x": 0, "y": 90, "z": 0 }
+        }
+      }
+    },
+    {
       "Path": "Chunks[?(@.Name == 'Chunk_Stage_3b_Incoming_Attack')].Children[?(@.Name == 'Lance_Enemy_OpposingForce')]",
       "Action": "ObjectMerge",
       "Value": {
