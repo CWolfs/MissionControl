@@ -555,8 +555,8 @@
       ],
       "Results": [
         {
-          "Type": "SetStateAtRandom",
-          "EncounterGuids": ["54df6131-7229-4b62-a4c7-00b1c543312c"],
+          "Type": "SetState",
+          "EncounterGuids": "54df6131-7229-4b62-a4c7-00b1c543312c",
           "State": "Active"
         }
       ]
