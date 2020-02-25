@@ -161,6 +161,7 @@
       "SubType": "Container",
       "Guid": "bf661bb2-67dd-475b-9f56-45be07b0d181",
       "StartingStatus": "Inactive",
+      "ControlledByContract": true,
       "OnActiveExecute": [
         {
           "Type": "Dialogue",
@@ -186,6 +187,7 @@
       "SubType": "Container",
       "Guid": "0d288b40-fb4e-4118-996f-d65c070d140f",
       "StartingStatus": "Inactive",
+      "ControlledByContract": true,
       "OnActiveExecute": [
         {
           "Type": "Dialogue",
@@ -218,6 +220,7 @@
       "SubType": "Container",
       "Guid": "9cdc19ff-5b22-402b-aca5-d593a6f3b69c",
       "StartingStatus": "Inactive",
+      "ControlledByContract": true,
       "OnActiveExecute": [
         {
           "Type": "Dialogue",
@@ -578,8 +581,8 @@
         {
           "Type": "SetStateAtRandom",
           "EncounterGuids": [
-            // "bf661bb2-67dd-475b-9f56-45be07b0d181", // Chunk_Stage_1a_Signs_Of_Attack
-            // "0d288b40-fb4e-4118-996f-d65c070d140f" // Chunk_Stage_1b_Trap,
+            "bf661bb2-67dd-475b-9f56-45be07b0d181", // Chunk_Stage_1a_Signs_Of_Attack
+            "0d288b40-fb4e-4118-996f-d65c070d140f", // Chunk_Stage_1b_Trap,
             "9cdc19ff-5b22-402b-aca5-d593a6f3b69c" // Chunk_Stage_1c_Ambush
           ],
           "State": "Active"
