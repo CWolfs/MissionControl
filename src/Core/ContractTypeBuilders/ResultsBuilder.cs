@@ -45,6 +45,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetIsObjectiveTargetByTag": BuildSetIsObjectiveTargetByTag(result); break;
         case "SetUnitsInRegionToBeTaggedObjectiveTargets": BuildSetUnitsInRegionToBeTaggedObjectiveTargetsResult(result); break;
         case "CompleteObjective": BuildCompleteObjectiveResult(result); break;
+        case "SetTemporaryUnitPhaseInitiativeByTag": BuildSetTemporaryUnitPhaseInitiativeByTagResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -205,6 +206,18 @@ namespace MissionControl.ContractTypeBuilders {
       } else {
         Main.Logger.LogError("[BuildCompleteObjectiveResult] You have not provided an 'ObjectiveGuid' to CompleteObjectiveResult on");
       }
+    }
+
+    private void BuildSetTemporaryUnitPhaseInitiativeByTagResult(JObject resultObject) {
+      Main.LogDebug("[BuildSetTemporaryUnitPhaseInitiativeByTagResult] Building 'SetTemporaryUnitPhaseInitiativeByTagResult' result");
+      int initiative = (int)resultObject["Initiative"];
+      string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
+
+      SetTemporaryUnitPhaseInitiativeByTagResult result = ScriptableObject.CreateInstance<SetTemporaryUnitPhaseInitiativeByTagResult>();
+      result.Initiative = initiative;
+      result.Tags = tags;
+
+      results.Add(result);
     }
   }
 }

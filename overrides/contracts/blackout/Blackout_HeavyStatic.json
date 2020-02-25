@@ -132,7 +132,7 @@
       "encounterChunk": {
         "EncounterObjectGuid": "bf661bb2-67dd-475b-9f56-45be07b0d181"
       },
-      "enableChunkFromContract": true,
+      "enableChunkFromContract": false,
       "controlledByContractChunkGroupList": ["Inactive"]
     },
     {
@@ -140,14 +140,16 @@
       "encounterChunk": {
         "EncounterObjectGuid": "0d288b40-fb4e-4118-996f-d65c070d140f"
       },
-      "enableChunkFromContract": false
+      "enableChunkFromContract": true,
+      "controlledByContractChunkGroupList": ["Inactive"]
     },
     {
       "name": "Chunk_Stage_1c_Ambush",
       "encounterChunk": {
         "EncounterObjectGuid": "9cdc19ff-5b22-402b-aca5-d593a6f3b69c"
       },
-      "enableChunkFromContract": false
+      "enableChunkFromContract": false,
+      "controlledByContractChunkGroupList": ["Inactive"]
     },
     {
       "name": "Chunk_SwapEmployerAndTarget",

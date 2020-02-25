@@ -255,7 +255,7 @@
             "ea0eef6e-1fd0-4a2e-8e26-8692d6a935d4",
             "413f1124-f7e0-476c-b826-3432078d259f"
           ], // Must match the unit spawn guids in the contract .json
-          "SpawnType": "Instant", // Leopard, DropPod, Instant
+          "SpawnType": "DropPod", // Leopard, DropPod, Instant
           "AI": [
             {
               "Type": "MagicKnowledgeByTag",
@@ -606,6 +606,11 @@
           "Type": "SetTeamByTag",
           "Team": "Target",
           "Tags": ["destroy_turrets_1b"]
+        },
+        {
+          "Type": "SetTemporaryUnitPhaseInitiativeByTag",
+          "Initiative": 1, // between 1 (earlier) and 6 (later)
+          "Tags": ["destroy_turrets_1b"]
         }
       ]
     },
@@ -628,6 +633,28 @@
         }
       ]
     },
+    /* Stage 1c Triggers */
+    /*
+    {
+      "Name": "Trigger_Ambusher_Initative_Boost",
+      "TriggerOn": "OnLanceSpawned",
+      "Description": "Place spawnin",
+      "Conditionals": [
+        {
+          "Type": "ObjectiveStatusConditional",
+          "Guid": "a96a7b04-85cf-4052-8ceb-1063b273c87f",
+          "Status": "Success"
+        }
+      ],
+      "Results": [
+        {
+          "Type": "SetState",
+          "EncounterGuid": "54df6131-7229-4b62-a4c7-00b1c543312c",
+          "State": "Active"
+        }
+      ]
+    },
+    */
     /* Stage 2 Triggers */
     {
       "Name": "Trigger_Disable_Region_2",
