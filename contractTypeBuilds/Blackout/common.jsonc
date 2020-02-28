@@ -603,9 +603,9 @@
       ],
       "Results": [
         {
-          "Type": "SetTeamByTag",
+          "Type": "SetTeamByLanceSpawnerGuid",
           "Team": "Target",
-          "Tags": ["destroy_turrets_1b"]
+          "LanceSpawnerGuid": "223fd528-c333-4367-883c-a817acf24360" // Spawner_Alpha_Turrets
         },
         {
           "Type": "SetTemporaryUnitPhaseInitiativeByTag",

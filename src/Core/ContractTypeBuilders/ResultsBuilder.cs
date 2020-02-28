@@ -42,6 +42,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetStateAtRandom": BuildSetStateAtRandomResult(result); break;
         case "TagUnitsInRegion": BuildTagUnitsInRegion(result); break;
         case "SetTeamByTag": BuildSetTeamByTag(result); break;
+        case "SetTeamByLanceSpawnerGuid": BuildSetTeamByLanceSpawnerGuid(result); break;
         case "SetIsObjectiveTargetByTag": BuildSetIsObjectiveTargetByTag(result); break;
         case "SetUnitsInRegionToBeTaggedObjectiveTargets": BuildSetUnitsInRegionToBeTaggedObjectiveTargetsResult(result); break;
         case "CompleteObjective": BuildCompleteObjectiveResult(result); break;
@@ -143,11 +144,29 @@ namespace MissionControl.ContractTypeBuilders {
       Main.LogDebug("[BuildSetTeamByTag] Building 'SetTeamByTag' result");
       string team = resultObject["Team"].ToString();
       string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
+      bool alertLance = resultObject.ContainsKey("AlertLance") ? (bool)resultObject["AlertLance"] : true;
       string[] applyTags = resultObject.ContainsKey("ApplyTags") ? ((JArray)resultObject["Tags"]).ToObject<string[]>() : null;
 
       SetTeamByTagResult result = ScriptableObject.CreateInstance<SetTeamByTagResult>();
       result.Team = team;
       result.Tags = tags;
+      result.AlertLance = alertLance;
+      if (applyTags != null) result.ApplyTags = applyTags;
+
+      results.Add(result);
+    }
+
+    private void BuildSetTeamByLanceSpawnerGuid(JObject resultObject) {
+      Main.LogDebug("[BuildSetTeamByLanceSpawnerGuid] Building 'SetTeamByLanceSpawnerGuid' result");
+      string team = resultObject["Team"].ToString();
+      string lanceSpawnerGuid = resultObject["LanceSpawnerGuid"].ToString();
+      bool alertLance = resultObject.ContainsKey("AlertLance") ? (bool)resultObject["AlertLance"] : true;
+      string[] applyTags = resultObject.ContainsKey("ApplyTags") ? ((JArray)resultObject["Tags"]).ToObject<string[]>() : null;
+
+      SetTeamByLanceSpawnerGuid result = ScriptableObject.CreateInstance<SetTeamByLanceSpawnerGuid>();
+      result.Team = team;
+      result.LanceSpawnerGuid = lanceSpawnerGuid;
+      result.AlertLance = alertLance;
       if (applyTags != null) result.ApplyTags = applyTags;
 
       results.Add(result);
