@@ -611,6 +611,11 @@
           "Type": "SetTemporaryUnitPhaseInitiativeByTag",
           "Initiative": 1, // between 1 (earlier) and 6 (later)
           "Tags": ["destroy_turrets_1b"]
+        },
+        {
+          "Type": "SetLanceEvasionTicksByTag", // Prevent evasion helping them in a trap
+          "Amount": 0,
+          "Tags": ["Player 1"]
         }
       ]
     },

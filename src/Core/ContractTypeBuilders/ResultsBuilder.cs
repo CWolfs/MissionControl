@@ -47,6 +47,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetUnitsInRegionToBeTaggedObjectiveTargets": BuildSetUnitsInRegionToBeTaggedObjectiveTargetsResult(result); break;
         case "CompleteObjective": BuildCompleteObjectiveResult(result); break;
         case "SetTemporaryUnitPhaseInitiativeByTag": BuildSetTemporaryUnitPhaseInitiativeByTagResult(result); break;
+        case "SetLanceEvasionTicksByTag": BuildSetLanceEvasionTicksByTagResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -234,6 +235,18 @@ namespace MissionControl.ContractTypeBuilders {
 
       SetTemporaryUnitPhaseInitiativeByTagResult result = ScriptableObject.CreateInstance<SetTemporaryUnitPhaseInitiativeByTagResult>();
       result.Initiative = initiative;
+      result.Tags = tags;
+
+      results.Add(result);
+    }
+
+    private void BuildSetLanceEvasionTicksByTagResult(JObject resultObject) {
+      Main.LogDebug("[BuildSetLanceEvasionTicksByTagResult] Building 'SetLanceEvasionTicksByTagResult' result");
+      int amount = (int)resultObject["Amount"];
+      string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
+
+      SetLanceEvasionTicksByTagResult result = ScriptableObject.CreateInstance<SetLanceEvasionTicksByTagResult>();
+      result.Amount = amount;
       result.Tags = tags;
 
       results.Add(result);
