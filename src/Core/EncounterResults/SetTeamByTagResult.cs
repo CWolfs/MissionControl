@@ -20,13 +20,14 @@ namespace MissionControl.Result {
       Main.LogDebug($"[SetTeamByTagResult] Setting Team '{Team}' with tags '{String.Concat(Tags)}'");
       List<ICombatant> combatants = ObjectiveGameLogic.GetTaggedCombatants(UnityGameInstance.BattleTechGame.Combat, new TagSet(Tags));
 
-      Main.LogDebug($"[SetTeamByTagResult] Found'{combatants.Count}' combatants");
+      Main.LogDebug($"[SetTeamByTagResult] Found '{combatants.Count}' combatants");
       Team newTeam = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(TeamUtils.GetTeamGuid(Team));
       Lance newLance = new Lance(newTeam);
       newLance.team = newTeam;
 
       foreach (ICombatant combatant in combatants) {
         if (combatant is AbstractActor) {
+          /*
           AbstractActor actor = combatant as AbstractActor;
 
           actor.lance.RemoveUnitGUID(actor.GUID);
@@ -39,6 +40,8 @@ namespace MissionControl.Result {
           newLance.team.AddUnit(actor);
 
           actor.team.lances.Add(newLance);
+          */
+          Main.Logger.LogError($"[SetTeamByTagResult] Using this result with AbstractActors isn't supported yet");
         } else {
           combatant.RemoveFromTeam();
           combatant.AddToTeam(newTeam);
