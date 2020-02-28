@@ -20,8 +20,11 @@ namespace MissionControl.Result {
       foreach (ICombatant combatant in combatants) {
         AbstractActor actor = combatant as AbstractActor;
         if (actor != null) {
-          // actor.Initiative = Initiative;
-          actor.StatCollection.Set<int>("PhaseModifier", -10);
+          int oldInitiative = actor.Initiative;
+          int initiativeDiff = Initiative - oldInitiative;
+          actor.Initiative = Initiative;
+          UnityGameInstance.BattleTechGame.Combat.MessageCenter.PublishMessage(new ActorPhaseInfoChanged(actor.GUID));
+          actor.StatCollection.Set<int>(AbstractActorConstants.STAT_PHASEMOD, initiativeDiff);
         }
       }
     }
