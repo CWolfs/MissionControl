@@ -97,7 +97,7 @@
             "Type": "World",
             "Value": { "x": 0, "y": 0, "z": 0 }
           },
-          "Team": "Employer",
+          "Team": "NeutralToAll",
           "Guid": "98fc619a-28f5-4a29-ae7f-5f42576cd0bc",
           "SpawnPoints": 3,
           "SpawnPointGuids": [
@@ -288,6 +288,10 @@
         {
           "Type": "Dialogue",
           "EncounterGuid": "399d54e8-522a-4576-b01f-14d705dc9d6b"
+        },
+        {
+          "Type": "SetChunkStateAtRandom",
+          "ChunkGuids": ["c27a41c7-ae4d-4a97-90be-3e710fe31e22"]
         }
       ],
       "Children": [
@@ -504,47 +508,7 @@
   ],
   "Triggers": [
     /* General Triggers */
-    {
-      "Name": "Trigger_Tag_Buildings_3b",
-      "TriggerOn": "OnEncounterBegin",
-      "Description": "Tag buildings on encounter begin for 3b",
-      "Conditionals": [
-        {
-          "Type": "AlwaysTrueConditional"
-        }
-      ],
-      "Results": [
-        {
-          "Type": "SetUnitsInRegionToBeTaggedObjectiveTargets",
-          "RegionGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
-          "UnitType": "Building",
-          "NumberOfUnits": 4,
-          "Team": "Employer",
-          "IsObjectiveTarget": true,
-          "Tags": ["defend_building_3b"]
-        }
-        /*,
-        // Keep this here until I can add it to the documentation
-        {
-          "Type": "TagUnitsInRegion",
-          "RegionGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
-          "UnitType": "Building",
-          "NumberOfUnits": 4,
-          "Tags": ["defend_building_3b"]
-        },
-        {
-          "Type": "SetTeamByTag",
-          "Team": "Employer",
-          "Tags": ["defend_building_3b"]
-        },
-        {
-          "Type": "SetIsObjectiveTargetByTag",
-          "IsObjectiveTarget": true,
-          "Tags": ["defend_building_3b"]
-        }
-        */
-      ]
-    },
+
     /* Stage 1 Triggers */
     {
       "Name": "Trigger_Disable_Region_1",
@@ -700,6 +664,87 @@
             "df31d9e4-762f-4556-bc49-ce8dc1659c0a"
           ],
           "State": "Active"
+        }
+      ]
+    },
+    {
+      "Name": "Trigger_3x_Turret_Team_Swap",
+      "TriggerOn": "OnEncounterStateChanged",
+      "Description": "Change the turrets to the employer. This is to prevent the turrets being visible through fog of war earlier in the contract",
+      "Conditionals": [
+        {
+          "Type": "EncounterObjectMatchesStateConditional",
+          "Guid": "df31d9e4-762f-4556-bc49-ce8dc1659c0a",
+          "Status": "Active"
+        }
+      ],
+      "Results": [
+        {
+          "Type": "SetTeamByLanceSpawnerGuid",
+          "Team": "Employer",
+          "LanceSpawnerGuid": "98fc619a-28f5-4a29-ae7f-5f42576cd0bc", // Spawner_Bravo_Turrets
+          "AlertLance": false
+        }
+      ]
+    },
+    {
+      "Name": "Trigger_Tag_Buildings_3b",
+      "TriggerOn": "OnEncounterStateChanged",
+      "Description": "Tag buildings on chunk active for 3b",
+      "Conditionals": [
+        {
+          "Type": "EncounterObjectMatchesStateConditional",
+          "Guid": "df31d9e4-762f-4556-bc49-ce8dc1659c0a",
+          "Status": "Active"
+        }
+      ],
+      "Results": [
+        {
+          "Type": "SetUnitsInRegionToBeTaggedObjectiveTargets",
+          "RegionGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
+          "UnitType": "Building",
+          "NumberOfUnits": 4,
+          "Team": "Employer",
+          "IsObjectiveTarget": true,
+          "Tags": ["defend_building_3b"]
+        }
+        /*,
+        // Keep this here until I can add it to the documentation
+        {
+          "Type": "TagUnitsInRegion",
+          "RegionGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
+          "UnitType": "Building",
+          "NumberOfUnits": 4,
+          "Tags": ["defend_building_3b"]
+        },
+        {
+          "Type": "SetTeamByTag",
+          "Team": "Employer",
+          "Tags": ["defend_building_3b"]
+        },
+        {
+          "Type": "SetIsObjectiveTargetByTag",
+          "IsObjectiveTarget": true,
+          "Tags": ["defend_building_3b"]
+        }
+        */
+      ]
+    },
+    {
+      "Name": "Trigger_Complete_Objective_Defend_3b",
+      "TriggerOn": "OnObjectiveUpdated",
+      "Description": "Complete the defend objective",
+      "Conditionals": [
+        {
+          "Type": "ObjectiveStatusConditional",
+          "Guid": "a0b9c5b2-c594-4c5a-be1d-028a51c51519",
+          "Status": "Success"
+        }
+      ],
+      "Results": [
+        {
+          "Type": "CompleteObjective",
+          "ObjectiveGuid": "67b973aa-d770-4be7-bfee-36b516bc4699"
         }
       ]
     }
