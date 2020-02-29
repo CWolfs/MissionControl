@@ -5,6 +5,9 @@ using Harmony;
 using BattleTech;
 
 namespace MissionControl.Patches {
+  /**
+  * This fixes a bug where the particle effect end position was set wrong in vanilla BT
+  */
   [HarmonyPatch(typeof(UnitSpawnPointGameLogic), "LoadDropPodPrefabs")]
   public class UnitSpawnPointGameLogicLoadDropPodPrefabsPatch {
     private static Vector3 offscreenDropPodPosition = new Vector3(10000f, 10000f, 10000f);

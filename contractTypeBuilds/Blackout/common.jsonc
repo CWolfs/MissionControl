@@ -53,7 +53,7 @@
           },
           "Team": "NeutralToAll",
           "Guid": "223fd528-c333-4367-883c-a817acf24360",
-          "Tags": ["destroy_turrets_1b"],
+          "Tags": ["turrets_1b"],
           "SpawnPoints": 4,
           "SpawnPointGuids": [
             "6826832c-83d5-4287-b349-33008dc1fac5",
@@ -300,6 +300,31 @@
           "Type": "Dialogue",
           "SubType": "Simple",
           "Guid": "399d54e8-522a-4576-b01f-14d705dc9d6b"
+        }
+      ]
+    },
+    {
+      "Name": "Chunk_Stage_Post_1c",
+      "Type": "Chunk",
+      "SubType": "Container",
+      "Guid": "e497f57f-6a84-4e2e-9243-1211c0840fef",
+      "StartingStatus": "Inactive",
+      "OnActiveExecute": [
+        {
+          "Type": "Dialogue",
+          "EncounterGuid": "e090fbc3-13e3-4829-9093-1000b4e50dbd"
+        },
+        {
+          "Type": "SetChunkStateAtRandom",
+          "ChunkGuids": ["c27a41c7-ae4d-4a97-90be-3e710fe31e22"]
+        }
+      ],
+      "Children": [
+        {
+          "Name": "Dialogue_Post_1c",
+          "Type": "Dialogue",
+          "SubType": "Simple",
+          "Guid": "e090fbc3-13e3-4829-9093-1000b4e50dbd"
         }
       ]
     },
@@ -574,7 +599,7 @@
         {
           "Type": "SetTemporaryUnitPhaseInitiativeByTag",
           "Initiative": 1, // between 1 (earlier) and 6 (later)
-          "Tags": ["destroy_turrets_1b"]
+          "Tags": ["turrets_1b"]
         },
         {
           "Type": "SetLanceEvasionTicksByTag", // Prevent evasion helping them in a trap
@@ -603,6 +628,49 @@
       ]
     },
     /* Stage 1c Triggers */
+    {
+      "Name": "Trigger_1c_Turret_Activation",
+      "TriggerOn": "OnEncounterStateChanged",
+      "Description": "Activate employer turrets at 1c",
+      "Conditionals": [
+        {
+          "Type": "EncounterObjectMatchesStateConditional",
+          "Guid": "9cdc19ff-5b22-402b-aca5-d593a6f3b69c",
+          "Status": "Active"
+        }
+      ],
+      "Results": [
+        {
+          "Type": "SetTeamByLanceSpawnerGuid",
+          "Team": "Employer",
+          "LanceSpawnerGuid": "223fd528-c333-4367-883c-a817acf24360" // Spawner_Alpha_Turrets
+        },
+        {
+          "Type": "SetTemporaryUnitPhaseInitiativeByTag",
+          "Initiative": 1, // between 1 (earlier) and 6 (later)
+          "Tags": ["turrets_1b"]
+        }
+      ]
+    },
+    {
+      "Name": "Trigger_Emable_Chunk_Post_1c",
+      "TriggerOn": "OnObjectiveUpdated",
+      "Description": "Complete the destroy lance objective",
+      "Conditionals": [
+        {
+          "Type": "ObjectiveStatusConditional",
+          "Guid": "c0ab94b1-933f-4f6e-9482-f35d459c3d14",
+          "Status": "Success"
+        }
+      ],
+      "Results": [
+        {
+          "Type": "SetState",
+          "EncounterGuid": "e497f57f-6a84-4e2e-9243-1211c0840fef",
+          "State": "Active"
+        }
+      ]
+    },
     /*
     {
       "Name": "Trigger_Ambusher_Initative_Boost",
