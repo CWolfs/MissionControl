@@ -132,7 +132,7 @@
       "encounterChunk": {
         "EncounterObjectGuid": "bf661bb2-67dd-475b-9f56-45be07b0d181"
       },
-      "enableChunkFromContract": false,
+      "enableChunkFromContract": true,
       "controlledByContractChunkGroupList": ["Inactive"]
     },
     {
