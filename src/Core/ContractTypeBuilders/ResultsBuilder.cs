@@ -48,6 +48,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "CompleteObjective": BuildCompleteObjectiveResult(result); break;
         case "SetTemporaryUnitPhaseInitiativeByTag": BuildSetTemporaryUnitPhaseInitiativeByTagResult(result); break;
         case "SetLanceEvasionTicksByTag": BuildSetLanceEvasionTicksByTagResult(result); break;
+        case "CameraFocus": BuildCameraFocusResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -248,6 +249,33 @@ namespace MissionControl.ContractTypeBuilders {
       SetLanceEvasionTicksByTagResult result = ScriptableObject.CreateInstance<SetLanceEvasionTicksByTagResult>();
       result.Amount = amount;
       result.Tags = tags;
+
+      results.Add(result);
+    }
+
+    private void BuildCameraFocusResult(JObject resultObject) {
+      Main.LogDebug("[BuildCameraFocusResult] Building 'CameraFocus' result");
+      string guid = resultObject["EncounterGuid"].ToString();
+      string distanceStr = resultObject.ContainsKey("Distance") ? resultObject["Distance"].ToString() : "Medium";
+      string heightStr = resultObject.ContainsKey("Height") ? resultObject["Height"].ToString() : "Default";
+      float focusTime = resultObject.ContainsKey("FocusTime") ? (float)resultObject["FocusTime"] : -1;
+      float focusRadius = resultObject.ContainsKey("FocusRadius") ? (float)resultObject["FocusRadius"] : -1;
+      bool isInterrupt = resultObject.ContainsKey("IsInterrupt") ? (bool)resultObject["IsInterrupt"] : true;
+
+      DialogCameraDistance distance = (DialogCameraDistance)Enum.Parse(typeof(DialogCameraDistance), distanceStr);
+      DialogCameraHeight height = (DialogCameraHeight)Enum.Parse(typeof(DialogCameraHeight), heightStr);
+
+      CameraResult result = ScriptableObject.CreateInstance<CameraResult>();
+
+      EncounterObjectRef encounterObjectRef = new EncounterObjectRef();
+      encounterObjectRef.EncounterObjectGuid = guid;
+
+      result.cameraFocus = encounterObjectRef;
+      result.cameraDistance = distance;
+      result.cameraHeight = height;
+      result.cameraFocusTime = focusTime;
+      result.cameraFocusRadius = focusRadius;
+      result.isInterrupt = isInterrupt;
 
       results.Add(result);
     }

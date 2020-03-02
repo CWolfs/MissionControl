@@ -795,6 +795,12 @@
           "Type": "SetState",
           "EncounterGuid": "38a28d0b-4688-41b5-a9e8-825a55c38c93",
           "State": "Active"
+        },
+        {
+          "Type": "CameraFocus",
+          "EncounterGuid": "f5714221-5fc6-41e5-a369-c8aa2b6d1bcf", // Lance_Enemy_OccupyingForce
+          "Distance": "Close", // Close, Medium, Far
+          "Height": "Default" // Low, Default, High
         }
       ]
     },
