@@ -134,7 +134,7 @@ namespace MissionControl.ContractTypeBuilders {
     private void SetSpawnPointRotations(LanceSpawnerGameLogic spawnerGameLogic) {
       UnitSpawnPointGameLogic[] unitSpawnPoints = spawnerGameLogic.unitSpawnPointGameLogicList;
       foreach (UnitSpawnPointGameLogic spawnPoint in unitSpawnPoints) {
-        JObject rotation = spawnPointPositions.ContainsKey(spawnPoint.encounterObjectGuid) ? (JObject)spawnPointPositions[spawnPoint.encounterObjectGuid] : null;
+        JObject rotation = spawnPointRotations.ContainsKey(spawnPoint.encounterObjectGuid) ? (JObject)spawnPointRotations[spawnPoint.encounterObjectGuid] : null;
         if (rotation != null) SetRotation(spawnPoint.gameObject, rotation);
       }
     }
