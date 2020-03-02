@@ -50,6 +50,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetLanceEvasionTicksByTag": BuildSetLanceEvasionTicksByTagResult(result); break;
         case "CameraFocus": BuildCameraFocusResult(result); break;
         case "DestroyBuildingsAtLanceSpawns": BuildDestroyBuildingsAtLanceSpawnsResult(result); break;
+        case "Delay": BuildDelayResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -289,6 +290,21 @@ namespace MissionControl.ContractTypeBuilders {
       DestroyBuildingsAtLanceSpawnsResult result = ScriptableObject.CreateInstance<DestroyBuildingsAtLanceSpawnsResult>();
       result.LanceSpawnerGuid = guid;
       result.Radius = radius;
+
+      results.Add(result);
+    }
+
+    private void BuildDelayResult(JObject resultObject) {
+      Main.LogDebug("[BuildDelayResult] Building 'Delay' result");
+      float time = (float)resultObject["Time"];
+      JArray childResultsArray = (JArray)resultObject["Results"];
+      List<DesignResult> createdChildResults = new List<DesignResult>();
+      ResultsBuilder childResultsBuilder = new ResultsBuilder(this.contractTypeBuilder, childResultsArray);
+      createdChildResults = childResultsBuilder.Build();
+
+      DelayResult result = ScriptableObject.CreateInstance<DelayResult>();
+      result.Time = time;
+      result.Results = createdChildResults;
 
       results.Add(result);
     }
