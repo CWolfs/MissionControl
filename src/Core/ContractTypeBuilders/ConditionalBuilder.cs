@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 
 using BattleTech;
 using BattleTech.Framework;
+using BattleTech.Designed;
 
 using MissionControl.Conditional;
 
@@ -41,6 +42,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "AlwaysTrueConditional": BuildAlwaysTrueConditional(conditionalObject); break;
         case "ObjectiveStatusConditional": BuildObjectiveStatusConditional(conditionalObject); break;
         case "EncounterObjectMatchesStateConditional": BuildEncounterObjectMatchesStateConditional(conditionalObject); break;
+        case "DialogueMatchesConditional": BuildDialogueMatchesConditional(conditionalObject); break;
         default:
           Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] No valid conditional was built for '{type}'");
           break;
@@ -78,6 +80,19 @@ namespace MissionControl.ContractTypeBuilders {
 
       conditional.EncounterGuid = guid;
       conditional.State = statusType;
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildDialogueMatchesConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildDialogueMatchesConditional] Building 'DialogueMatchesConditional' conditional");
+      string guid = conditionalObject["DialogueGuid"].ToString();
+      DialogueMatchesConditional conditional = ScriptableObject.CreateInstance<DialogueMatchesConditional>();
+
+      DialogueRef dialogueRef = new DialogueRef();
+      dialogueRef.EncounterObjectGuid = guid;
+
+      conditional.dialogue = dialogueRef;
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }

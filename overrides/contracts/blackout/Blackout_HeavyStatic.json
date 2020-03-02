@@ -1066,7 +1066,7 @@
         "lanceSpawner": {
           "EncounterObjectGuid": "f5714221-5fc6-41e5-a369-c8aa2b6d1bcf"
         },
-        "name": "Lance_Enemy_OpposingForce",
+        "name": "Lance_Enemy_OccupyingForce",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
           "items": ["lance_type_dynamic", "lance_type_light"],

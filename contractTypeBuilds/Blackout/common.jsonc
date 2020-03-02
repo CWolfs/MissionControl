@@ -383,9 +383,18 @@
           "Type": "Dialogue",
           "SubType": "Simple",
           "Guid": "4ef16b5e-1486-4399-8835-b81026b22cac" // Must match the dialogue guid in the contract .json
-        },
+        }
+      ]
+    },
+    {
+      "Name": "Chunk_Stage_Post_3a",
+      "Type": "Chunk",
+      "SubType": "Container",
+      "Guid": "38a28d0b-4688-41b5-a9e8-825a55c38c93",
+      "StartingStatus": "Inactive",
+      "Children": [
         {
-          "Name": "Lance_Enemy_OpposingForce",
+          "Name": "Lance_Enemy_OccupyingForce",
           "Type": "Spawner",
           "SubType": "SimpleSpawner",
           "Position": {
@@ -770,6 +779,26 @@
         }
       ]
     },
+    /* Stage 3a Triggers */
+    {
+      "Name": "Trigger_Activate_Post_3a",
+      "TriggerOn": "OnDialogueComplete",
+      "Description": "Activate Post 3a Chunk",
+      "Conditionals": [
+        {
+          "Type": "DialogueMatchesConditional",
+          "DialogueGuid": "4ef16b5e-1486-4399-8835-b81026b22cac"
+        }
+      ],
+      "Results": [
+        {
+          "Type": "SetState",
+          "EncounterGuid": "38a28d0b-4688-41b5-a9e8-825a55c38c93",
+          "State": "Active"
+        }
+      ]
+    },
+    /* Stage 3b Triggers */
     {
       "Name": "Trigger_3x_Turret_Team_Swap",
       "TriggerOn": "OnEncounterStateChanged",

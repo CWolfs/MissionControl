@@ -91,10 +91,10 @@
       }
     },
     {
-      "Path": "Chunks[?(@.Name == 'Chunk_Stage_3a_Trap')].Children[?(@.Name == 'Lance_Enemy_OpposingForce')]",
+      "Path": "Chunks[?(@.Name == 'Chunk_Stage_Post_3a')].Children[?(@.Name == 'Lance_Enemy_OccupyingForce')]",
       "Action": "ObjectMerge",
       "Value": {
-        "Name": "Lance_Enemy_OpposingForce",
+        "Name": "Lance_Enemy_OccupyingForce",
         "Position": {
           "Type": "World",
           "Value": { "x": 180, "y": 0, "z": -300 }
