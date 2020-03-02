@@ -49,6 +49,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetTemporaryUnitPhaseInitiativeByTag": BuildSetTemporaryUnitPhaseInitiativeByTagResult(result); break;
         case "SetLanceEvasionTicksByTag": BuildSetLanceEvasionTicksByTagResult(result); break;
         case "CameraFocus": BuildCameraFocusResult(result); break;
+        case "DestroyBuildingsAtLanceSpawns": BuildDestroyBuildingsAtLanceSpawnsResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -187,7 +188,7 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     private void BuildSetUnitsInRegionToBeTaggedObjectiveTargetsResult(JObject resultObject) {
-      Main.LogDebug("[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Building 'SetUnitsInRegionToBeTaggedObjectiveTargets' result");
+      Main.LogDebug("[BuildSetUnitsInRegionToBeTaggedObjectiveTargetsResult] Building 'SetUnitsInRegionToBeTaggedObjectiveTargets' result");
       string regionGuid = resultObject["RegionGuid"].ToString();
       string unitType = resultObject["UnitType"].ToString();
       int numberOfUnits = resultObject.ContainsKey("NumberOfUnits") ? (int)resultObject["NumberOfUnits"] : 0;
@@ -276,6 +277,18 @@ namespace MissionControl.ContractTypeBuilders {
       result.cameraFocusTime = focusTime;
       result.cameraFocusRadius = focusRadius;
       result.isInterrupt = isInterrupt;
+
+      results.Add(result);
+    }
+
+    private void BuildDestroyBuildingsAtLanceSpawnsResult(JObject resultObject) {
+      Main.LogDebug("[BuildDestroyBuildingsAtLanceSpawnsResult] Building 'DestroyBuildingsAtLanceSpawns' result");
+      string guid = resultObject["LanceSpawnerGuid"].ToString();
+      float radius = resultObject.ContainsKey("Radius") ? (float)resultObject["Radius"] : 24;
+
+      DestroyBuildingsAtLanceSpawnsResult result = ScriptableObject.CreateInstance<DestroyBuildingsAtLanceSpawnsResult>();
+      result.LanceSpawnerGuid = guid;
+      result.Radius = radius;
 
       results.Add(result);
     }

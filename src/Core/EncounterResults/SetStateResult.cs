@@ -1,14 +1,5 @@
-using UnityEngine;
-
 using BattleTech;
 
-using MissionControl.LogicComponents;
-
-/**
-	This result will execute a game logic that supports 'ExecutableGameLogic' interface
-    - If ChunkGuid is provided it will scan all children on that chunk and execute _any_ ExecutableGameLogic
-    - If EncounterGuid is provided it will try to find that EncounterObject and execute any ExecutableGameLogic on that object
-*/
 namespace MissionControl.Result {
   public class SetStateResult : EncounterResult {
     public string EncounterGuid { get; set; }
