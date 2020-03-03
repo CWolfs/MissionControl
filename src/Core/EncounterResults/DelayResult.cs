@@ -18,7 +18,7 @@ namespace MissionControl.Result {
     private bool completed = false;
 
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
-      Main.LogDebug("[DelayResult] Delaying results for '{Time}' seconds");
+      Main.LogDebug($"[DelayResult] Delaying results for '{Time}' seconds, '{Rounds}' rounds and/or '{Phases}' phases");
 
       SubscribeToMessages(true);
       if (IsTimeControlled()) MissionControl.Instance.EncounterLayerParent.StartCoroutine(DelayResultsWithTime());
