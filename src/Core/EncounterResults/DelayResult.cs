@@ -8,6 +8,7 @@ using BattleTech.Framework;
 
 namespace MissionControl.Result {
   public class DelayResult : EncounterResult {
+    public string Name { get; set; } = "Unnamed Delay Result";
     public float Time { get; set; } = -1;
     public int Rounds { get; set; } = -1;
     public int Phases { get; set; } = -1;
@@ -18,7 +19,7 @@ namespace MissionControl.Result {
     private bool completed = false;
 
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
-      Main.LogDebug($"[DelayResult] Delaying results for '{Time}' seconds, '{Rounds}' rounds and/or '{Phases}' phases");
+      Main.LogDebug($"[DelayResult] Delaying '{Name}' results for '{Time}' seconds, '{Rounds}' rounds and/or '{Phases}' phases");
 
       SubscribeToMessages(true);
       if (IsTimeControlled()) MissionControl.Instance.EncounterLayerParent.StartCoroutine(DelayResultsWithTime());
@@ -31,19 +32,20 @@ namespace MissionControl.Result {
 
     IEnumerator DelayResultsWithTime() {
       yield return new WaitForSeconds(Time);
+      Main.LogDebug("[DelayResult] Triggering '{Name}' with DelayResultsWithTime");
       TriggerResults();
     }
 
     private bool IsTimeControlled() {
-      return Time > -1 ? true : false;
+      return Time > 0 ? true : false;
     }
 
     private bool IsRoundControlled() {
-      return Rounds > -1 ? true : false;
+      return Rounds > 0 ? true : false;
     }
 
     private bool IsPhaseControlled() {
-      return Phases > -1 ? true : false;
+      return Phases > 0 ? true : false;
     }
 
     private void OnRoundBegin(MessageCenterMessage message) {
@@ -51,6 +53,7 @@ namespace MissionControl.Result {
       roundCount++;
 
       if (roundCount >= Rounds) {
+        Main.LogDebug($"[DelayResult] Triggering '{Name}' with OnRoundBegin");
         TriggerResults();
       }
     }
@@ -60,6 +63,7 @@ namespace MissionControl.Result {
       phaseCount++;
 
       if (phaseCount >= Phases) {
+        Main.LogDebug($"[DelayResult] Triggering '{Name}' with OnPhaseBegin");
         TriggerResults();
       }
     }
@@ -70,12 +74,12 @@ namespace MissionControl.Result {
       SubscribeToMessages(false);
 
       if (Results != null) {
-        Main.LogDebug("[DelayResult] Triggering delayed results");
+        Main.LogDebug($"[DelayResult] Triggering '{Name}' delayed results");
         foreach (DesignResult result in Results) {
           result.Trigger(null, null);
         }
       } else {
-        Main.Logger.LogError("[DelayResult] Results list is null. This is a serious issue with the contract builder. Check your custom contract type build file for errors.");
+        Main.Logger.LogError($"[DelayResult] Results list is null. This is a serious issue with the contract builder. Check your custom contract type build file for errors.");
       }
     }
   }

@@ -296,6 +296,7 @@ namespace MissionControl.ContractTypeBuilders {
 
     private void BuildDelayResult(JObject resultObject) {
       Main.LogDebug("[BuildDelayResult] Building 'Delay' result");
+      string name = resultObject.ContainsKey("Name") ? resultObject["Name"].ToString() : "Unnamed Delay Result";
       float time = resultObject.ContainsKey("Time") ? (float)resultObject["Time"] : -1;
       int rounds = resultObject.ContainsKey("Rounds") ? (int)resultObject["Rounds"] : -1;
       int phases = resultObject.ContainsKey("Phases") ? (int)resultObject["Phases"] : -1;
@@ -305,6 +306,7 @@ namespace MissionControl.ContractTypeBuilders {
       createdChildResults = childResultsBuilder.Build();
 
       DelayResult result = ScriptableObject.CreateInstance<DelayResult>();
+      result.Name = name;
       result.Time = time;
       result.Rounds = rounds;
       result.Phases = phases;
