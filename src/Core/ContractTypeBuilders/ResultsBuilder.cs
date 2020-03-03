@@ -296,7 +296,9 @@ namespace MissionControl.ContractTypeBuilders {
 
     private void BuildDelayResult(JObject resultObject) {
       Main.LogDebug("[BuildDelayResult] Building 'Delay' result");
-      float time = (float)resultObject["Time"];
+      float time = resultObject.ContainsKey("Time") ? (float)resultObject["Time"] : -1;
+      int rounds = resultObject.ContainsKey("Rounds") ? (int)resultObject["Rounds"] : -1;
+      int phases = resultObject.ContainsKey("Phases") ? (int)resultObject["Phases"] : -1;
       JArray childResultsArray = (JArray)resultObject["Results"];
       List<DesignResult> createdChildResults = new List<DesignResult>();
       ResultsBuilder childResultsBuilder = new ResultsBuilder(this.contractTypeBuilder, childResultsArray);
@@ -304,6 +306,8 @@ namespace MissionControl.ContractTypeBuilders {
 
       DelayResult result = ScriptableObject.CreateInstance<DelayResult>();
       result.Time = time;
+      result.Rounds = rounds;
+      result.Phases = phases;
       result.Results = createdChildResults;
 
       results.Add(result);
