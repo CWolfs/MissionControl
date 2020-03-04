@@ -41,6 +41,7 @@ namespace MissionControl.ContractTypeBuilders {
       switch (type) {
         case "AlwaysTrueConditional": BuildAlwaysTrueConditional(conditionalObject); break;
         case "ObjectiveStatusConditional": BuildObjectiveStatusConditional(conditionalObject); break;
+        case "ObjectiveStatusesConditional": BuildObjectStatusesConditional(conditionalObject); break;
         case "EncounterObjectMatchesStateConditional": BuildEncounterObjectMatchesStateConditional(conditionalObject); break;
         case "DialogueMatchesConditional": BuildDialogueMatchesConditional(conditionalObject); break;
         default:
@@ -67,6 +68,26 @@ namespace MissionControl.ContractTypeBuilders {
 
       conditional.objective = objectiveRef;
       conditional.objectiveStatus = statusType;
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildObjectStatusesConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildObjectStatusesConditional] Building 'ObjectStatusesConditional' conditional");
+      bool notInContractObjectivesAreSuccesses = conditionalObject.ContainsKey("NotInContractObjectivesAreSuccesses") ? (bool)conditionalObject["NotInContractObjectivesAreSuccesses"] : true;
+      JArray statusesArray = (JArray)conditionalObject["Statuses"];
+      Dictionary<string, ObjectiveStatusEvaluationType> statuses = new Dictionary<string, ObjectiveStatusEvaluationType>();
+
+      foreach (JObject status in statusesArray.Children<JObject>()) {
+        string childGuid = status["Guid"].ToString();
+        string childStatus = status["Status"].ToString();
+        ObjectiveStatusEvaluationType childStatusType = (ObjectiveStatusEvaluationType)Enum.Parse(typeof(ObjectiveStatusEvaluationType), childStatus);
+        statuses.Add(childGuid, childStatusType);
+      }
+
+      ObjectiveStatusesConditional conditional = ScriptableObject.CreateInstance<ObjectiveStatusesConditional>();
+      conditional.NotInContractObjectivesAreSuccesses = notInContractObjectivesAreSuccesses;
+      conditional.Statuses = statuses;
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }

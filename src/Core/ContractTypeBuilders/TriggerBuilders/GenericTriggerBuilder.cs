@@ -1,11 +1,15 @@
+using UnityEngine;
+
 using System;
 using System.Collections.Generic;
 
 using BattleTech;
 using BattleTech.Framework;
+using BattleTech.Designed;
 
 using MissionControl.Trigger;
 using MissionControl.Messages;
+using MissionControl.Conditional;
 
 using Newtonsoft.Json.Linq;
 
@@ -56,6 +60,14 @@ namespace MissionControl.ContractTypeBuilders {
           triggerMessageType = (MessageCenterMessageType)messageType;
         }
       }
+    }
+
+    public GenericTriggerBuilder(ContractTypeBuilder contractTypeBuilder, string name, MessageCenterMessageType triggerMessageType, GenericCompoundConditional conditional, string description, List<DesignResult> results) {
+      this.name = name;
+      this.triggerMessageType = triggerMessageType;
+      this.conditional = conditional;
+      this.description = description;
+      this.results = results;
     }
 
     public override void Build() {

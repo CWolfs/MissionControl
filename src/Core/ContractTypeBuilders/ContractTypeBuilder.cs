@@ -1,8 +1,14 @@
 using UnityEngine;
 
 using System;
+using System.Collections.Generic;
 
 using BattleTech;
+using BattleTech.Framework;
+
+using MissionControl.Messages;
+using MissionControl.Result;
+using MissionControl.Conditional;
 
 using Newtonsoft.Json.Linq;
 
@@ -76,6 +82,7 @@ namespace MissionControl.ContractTypeBuilders {
       string type = chunk["Type"].ToString();
       string subType = chunk["SubType"].ToString();
       string status = (chunk.ContainsKey("StartingStatus")) ? chunk["StartingStatus"].ToString() : null;
+      List<string> conflictsWith = chunk.ContainsKey("ConflictsWith") ? ((JArray)chunk["ConflictsWith"]).ToObject<List<string>>() : null;
       JArray onActiveExecute = (chunk.ContainsKey("OnActiveExecute")) ? (JArray)chunk["OnActiveExecute"] : null;
       bool controlledByContract = (chunk.ContainsKey("ControlledByContract")) ? (bool)chunk["ControlledByContract"] : false;
       string guid = (chunk.ContainsKey("Guid")) ? chunk["Guid"].ToString() : null;
@@ -88,6 +95,27 @@ namespace MissionControl.ContractTypeBuilders {
       GameObject chunkGo = chunkTypeBuilder.Build();
       if (chunkGo == null) {
         Main.Logger.LogError("[ContractTypeBuild.{ContractTypeKey}] Chunk creation failed. GameObject is null");
+      }
+
+      if (conflictsWith != null) {
+        Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] There are '{conflictsWith.Count} conflicting chunk(s) defined on chunk '{name}'");
+        foreach (string chunkGuid in conflictsWith) {
+          GenericCompoundConditional genericCompoundConditional = ScriptableObject.CreateInstance<GenericCompoundConditional>();
+          EncounterObjectStatus statusType = EncounterObjectStatus.Active;
+          EncounterObjectMatchesStateConditional conditional = ScriptableObject.CreateInstance<EncounterObjectMatchesStateConditional>();
+          conditional.EncounterGuid = guid;
+          conditional.State = statusType;
+          List<EncounterConditionalBox> conditionalBoxList = new List<EncounterConditionalBox>() { new EncounterConditionalBox(conditional) };
+          genericCompoundConditional.conditionalList = conditionalBoxList.ToArray();
+
+          SetChunkObjectivesAsPrimary result = ScriptableObject.CreateInstance<SetChunkObjectivesAsPrimary>();
+          result.EncounterGuid = chunkGuid;
+          result.Primary = false;
+
+          GenericTriggerBuilder genericTrigger = new GenericTriggerBuilder(this, "ConflictAvoidanceTrigger", (MessageCenterMessageType)MessageTypes.OnEncounterStateChanged,
+            genericCompoundConditional, "Avoids a conflicting chunk's objectives by making them secondary", new List<DesignResult>() { result });
+          genericTrigger.Build();
+        }
       }
 
       if (onActiveExecute != null) {
