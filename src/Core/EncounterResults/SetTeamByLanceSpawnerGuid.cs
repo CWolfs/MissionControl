@@ -1,13 +1,16 @@
+using UnityEngine;
+
 using BattleTech;
-using BattleTech.Framework;
 
 using HBS;
-using HBS.Collections;
 
 using FogOfWar;
 
-using System;
+using BattleTech.UI;
+
 using System.Collections.Generic;
+
+using Harmony;
 
 namespace MissionControl.Result {
   public class SetTeamByLanceSpawnerGuid : EncounterResult {
@@ -43,6 +46,13 @@ namespace MissionControl.Result {
 
         if (ApplyTags != null) {
           actor.EncounterTags.AddRange(ApplyTags);
+        }
+
+        CombatHUDInWorldElementMgr inworldElementManager = GameObject.Find("uixPrfPanl_HUD(Clone)").GetComponent<CombatHUDInWorldElementMgr>();
+        if (oldTeam.GUID == TeamUtils.NEUTRAL_TO_ALL_TEAM_ID) {
+          AccessTools.Method(typeof(CombatHUDInWorldElementMgr), "AddInWorldActorElements").Invoke(inworldElementManager, new object[] { actor });
+        } else if (newTeam.GUID == TeamUtils.NEUTRAL_TO_ALL_TEAM_ID) {
+          AccessTools.Method(typeof(CombatHUDInWorldElementMgr), "RemoveInWorldUI").Invoke(inworldElementManager, new object[] { actor.GUID });
         }
 
         CombatantSwitchedTeams message = new CombatantSwitchedTeams(actor.GUID, newTeam.GUID);
