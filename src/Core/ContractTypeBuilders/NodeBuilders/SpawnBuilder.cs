@@ -70,43 +70,43 @@ namespace MissionControl.ContractTypeBuilders {
 
       LanceSpawnerGameLogic spawnerGameLogic = null;
 
-      string teamId = EncounterRules.PLAYER_TEAM_ID;
+      string teamId = TeamUtils.PLAYER_TEAM_ID;
       switch (team) {
         case "Player1": {
-          teamId = EncounterRules.PLAYER_TEAM_ID;
+          teamId = TeamUtils.PLAYER_TEAM_ID;
           spawnerGameLogic = LanceSpawnerFactory.CreatePlayerLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids, true);
           break;
         }
         case "Target": {
-          teamId = EncounterRules.TARGET_TEAM_ID;
+          teamId = TeamUtils.TARGET_TEAM_ID;
           spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
           spawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
           if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
           break;
         }
         case "TargetAlly": {
-          teamId = EncounterRules.TARGETS_ALLY_TEAM_ID;
+          teamId = TeamUtils.TARGETS_ALLY_TEAM_ID;
           spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
           spawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
           if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
           break;
         }
         case "Employer": {
-          teamId = EncounterRules.EMPLOYER_TEAM_ID;
+          teamId = TeamUtils.EMPLOYER_TEAM_ID;
           spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
           spawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
           if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
           break;
         }
         case "NeutralToAll": {
-          teamId = EncounterRules.NEUTRAL_TO_ALL_TEAM_ID;
+          teamId = TeamUtils.NEUTRAL_TO_ALL_TEAM_ID;
           spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
           spawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
           if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
           break;
         }
         case "HostileToAll": {
-          teamId = EncounterRules.HOSTILE_TO_ALL_TEAM_ID;
+          teamId = TeamUtils.HOSTILE_TO_ALL_TEAM_ID;
           spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
           spawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
           if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
