@@ -33,6 +33,53 @@
       ]
     },
     {
+      "Name": "Chunk_Optional_Initial_Enemy",
+      "Type": "Chunk",
+      "SubType": "Lance",
+      "ControlledByContract": true,
+      "Guid": "3b47894e-2d25-4599-9b47-620ab8fcfa62",
+      "Children": [
+        {
+          "Name": "Spawner_Enemy_RoamingForce",
+          "Type": "Spawner",
+          "SubType": "SimpleSpawner",
+          "Position": {
+            "Type": "World",
+            "Value": { "x": 0, "y": 0, "z": 0 }
+          },
+          "Rotation": {
+            "Type": "World",
+            "Value": { "x": 0, "y": 0, "z": 0 }
+          },
+          "Team": "Target",
+          "Guid": "c13c63a1-95ba-460a-af07-4096cfc6ff06",
+          "SpawnPoints": 4,
+          "SpawnPointGuids": [
+            "2407c766-aa2e-440b-8118-a70b1a4679ed",
+            "625aa0ff-2c5b-48a4-becb-621c1bbaccd3",
+            "b4762c72-7e10-4d20-82db-42e233be0bae",
+            "fc68ef8d-829a-4663-9340-6b1a1b7a7e0c"
+          ], // Must match the unit spawn guids in the contract .json
+          "SpawnType": "Instant",
+          "DefaultDetectionRange": 200,
+          "AlertLance": false
+        }
+        /*
+        {
+          "Name": "Objective_DestroyLance",
+          "Type": "Objective",
+          "SubType": "DestroyLance",
+          "Guid": "9ca557ef-7ce8-44a2-9934-b4b2aafb36b5", // Must match the objective guid in the contract .json
+          "ContractObjectiveGuid": "73275787-720a-4c33-9f20-953b1bbf48bd", // Must match the contract guid in the contract .json
+          "Title": "Destroy the roaming lance",
+          "Priority": 1,
+          "IsPrimaryObjective": true,
+          "LanceToDestroyGuid": "c13c63a1-95ba-460a-af07-4096cfc6ff06"
+        }
+        */
+      ]
+    },
+    {
       "Name": "Chunk_Alpha_Base_Turrets",
       "Type": "Chunk",
       "SubType": "Lance",
