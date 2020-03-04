@@ -140,6 +140,10 @@
       "SubType": "Container",
       "Guid": "bf661bb2-67dd-475b-9f56-45be07b0d181",
       "StartingStatus": "Inactive",
+      "ConflictsWith": [
+        "0d288b40-fb4e-4118-996f-d65c070d140f", // Chunk_Stage_1b_Trap
+        "9cdc19ff-5b22-402b-aca5-d593a6f3b69c" // Chunk_Stage_1c_Ambush
+      ],
       "ControlledByContract": true,
       "OnActiveExecute": [
         {
@@ -166,6 +170,10 @@
       "SubType": "Container",
       "Guid": "0d288b40-fb4e-4118-996f-d65c070d140f",
       "StartingStatus": "Inactive",
+      "ConflictsWith": [
+        "bf661bb2-67dd-475b-9f56-45be07b0d181", // Chunk_Stage_1a_Signs_Of_Attack
+        "9cdc19ff-5b22-402b-aca5-d593a6f3b69c" // Chunk_Stage_1c_Ambush
+      ],
       "ControlledByContract": true,
       "OnActiveExecute": [
         {
@@ -199,6 +207,10 @@
       "SubType": "Container",
       "Guid": "9cdc19ff-5b22-402b-aca5-d593a6f3b69c",
       "StartingStatus": "Inactive",
+      "ConflictsWith": [
+        "bf661bb2-67dd-475b-9f56-45be07b0d181", // Chunk_Stage_1a_Signs_Of_Attack
+        "0d288b40-fb4e-4118-996f-d65c070d140f" // Chunk_Stage_1b_Trap
+      ],
       "ControlledByContract": true,
       "OnActiveExecute": [
         {
@@ -348,6 +360,7 @@
       "Name": "Chunk_Stage_3a_Trap",
       "Type": "Chunk",
       "SubType": "Container",
+      "ControlledByContract": true,
       "Guid": "716aec95-e204-4033-8d56-8f659a30c51c",
       "StartingStatus": "Inactive",
       "OnActiveExecute": [
@@ -469,6 +482,7 @@
       "Name": "Chunk_Stage_3b_Incoming_Attack",
       "Type": "Chunk",
       "SubType": "Container",
+      "ControlledByContract": true,
       "Guid": "df31d9e4-762f-4556-bc49-ce8dc1659c0a",
       "StartingStatus": "Inactive",
       "ConflictsWith": ["38a28d0b-4688-41b5-a9e8-825a55c38c93"], // Chunk_Stage_Post_3a
@@ -808,8 +822,8 @@
         {
           "Type": "SetStateAtRandom",
           "EncounterGuids": [
-            "716aec95-e204-4033-8d56-8f659a30c51c" // , // Chunk_Stage_3a_Trap
-            // "df31d9e4-762f-4556-bc49-ce8dc1659c0a" // Chunk_Stage_3b_Incoming_Attack
+            "716aec95-e204-4033-8d56-8f659a30c51c", // , // Chunk_Stage_3a_Trap
+            "df31d9e4-762f-4556-bc49-ce8dc1659c0a" // Chunk_Stage_3b_Incoming_Attack
           ],
           "State": "Active"
         }

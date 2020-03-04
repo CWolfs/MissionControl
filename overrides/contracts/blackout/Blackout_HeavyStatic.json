@@ -164,7 +164,7 @@
       "encounterChunk": {
         "EncounterObjectGuid": "0d288b40-fb4e-4118-996f-d65c070d140f"
       },
-      "enableChunkFromContract": false,
+      "enableChunkFromContract": true,
       "controlledByContractChunkGroupList": ["Inactive"]
     },
     {
@@ -172,7 +172,15 @@
       "encounterChunk": {
         "EncounterObjectGuid": "9cdc19ff-5b22-402b-aca5-d593a6f3b69c"
       },
-      "enableChunkFromContract": false,
+      "enableChunkFromContract": true,
+      "controlledByContractChunkGroupList": ["Inactive"]
+    },
+    {
+      "name": "Chunk_Stage_3a_Trap",
+      "encounterChunk": {
+        "EncounterObjectGuid": "716aec95-e204-4033-8d56-8f659a30c51c"
+      },
+      "enableChunkFromContract": true,
       "controlledByContractChunkGroupList": ["Inactive"]
     },
     {
@@ -180,7 +188,7 @@
       "encounterChunk": {
         "EncounterObjectGuid": "1fdeca88-c2d9-46af-b443-cf95aae707b6"
       },
-      "enableChunkFromContract": true,
+      "enableChunkFromContract": false,
       "controlledByContractChunkGroupList": ["Inactive"]
     },
     {
@@ -188,7 +196,15 @@
       "encounterChunk": {
         "EncounterObjectGuid": "832ae497-f3d3-467f-b4da-8e95a3d757b0"
       },
-      "enableChunkFromContract": false,
+      "enableChunkFromContract": true,
+      "controlledByContractChunkGroupList": ["Inactive"]
+    },
+    {
+      "name": "Chunk_Stage_3b_Incoming_Attack",
+      "encounterChunk": {
+        "EncounterObjectGuid": "df31d9e4-762f-4556-bc49-ce8dc1659c0a"
+      },
+      "enableChunkFromContract": true,
       "controlledByContractChunkGroupList": ["Inactive"]
     }
   ],
