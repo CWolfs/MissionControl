@@ -285,7 +285,7 @@ namespace MissionControl.ContractTypeBuilders {
     private void BuildDestroyBuildingsAtLanceSpawnsResult(JObject resultObject) {
       Main.LogDebug("[BuildDestroyBuildingsAtLanceSpawnsResult] Building 'DestroyBuildingsAtLanceSpawns' result");
       string guid = resultObject["LanceSpawnerGuid"].ToString();
-      float radius = resultObject.ContainsKey("Radius") ? (float)resultObject["Radius"] : 24;
+      float radius = resultObject.ContainsKey("Radius") ? (float)resultObject["Radius"] : 48;
 
       DestroyBuildingsAtLanceSpawnsResult result = ScriptableObject.CreateInstance<DestroyBuildingsAtLanceSpawnsResult>();
       result.LanceSpawnerGuid = guid;
