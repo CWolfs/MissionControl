@@ -1,9 +1,6 @@
-using UnityEngine;
-
 using BattleTech;
-using BattleTech.UI;
 
-using Harmony;
+using System.Collections.Generic;
 
 namespace MissionControl.Result {
   public class TagUnitsInRegionResult : EncounterResult {
@@ -28,8 +25,8 @@ namespace MissionControl.Result {
       }
 
       if (Type == "Building") {
-        BuildingRepresentation[] buildingsInMap = GameObject.Find("GAME").GetComponentsInChildren<BuildingRepresentation>();
-        Main.LogDebug($"[TagUnitsInRegionResult] Collected '{buildingsInMap.Length}' buildings to check.");
+        List<BuildingRepresentation> buildingsInMap = GameObjextExtensions.GetBuildingsInMap();
+        Main.LogDebug($"[TagUnitsInRegionResult] Collected '{buildingsInMap.Count}' buildings to check.");
 
         if (NumberOfUnits > 0) {
           buildingsInMap.Shuffle();

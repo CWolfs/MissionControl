@@ -2,6 +2,8 @@ using UnityEngine;
 
 using BattleTech;
 
+using System.Collections.Generic;
+
 namespace MissionControl.Result {
   public class DestroyBuildingsAtLanceSpawnsResult : EncounterResult {
     public string LanceSpawnerGuid { get; set; }
@@ -13,10 +15,10 @@ namespace MissionControl.Result {
       LanceSpawnerGameLogic lanceSpawnerGameLogic = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<LanceSpawnerGameLogic>(LanceSpawnerGuid);
       UnitSpawnPointGameLogic[] unitSpawns = lanceSpawnerGameLogic.GetComponentsInChildren<UnitSpawnPointGameLogic>();
 
-      BuildingRepresentation[] buildingsInMap = GameObject.Find("GAME").GetComponentsInChildren<BuildingRepresentation>();
-      Main.LogDebug($"[TagUnitsInRegionResult] Collected '{buildingsInMap.Length}' buildings to check.");
+      List<BuildingRepresentation> buildingsInMap = GameObjextExtensions.GetBuildingsInMap();
+      Main.LogDebug($"[TagUnitsInRegionResult] Collected '{buildingsInMap.Count}' buildings to check.");
 
-      DestroyBuildingsUnderLanceSpawns(unitSpawns, buildingsInMap, Radius);
+      DestroyBuildingsUnderLanceSpawns(unitSpawns, buildingsInMap.ToArray(), Radius);
     }
 
     private void DestroyBuildingsUnderLanceSpawns(UnitSpawnPointGameLogic[] unitSpawns, BuildingRepresentation[] buildings, float radius) {

@@ -33,8 +33,8 @@ namespace MissionControl.Result {
       }
 
       if (Type == "Building") {
-        BuildingRepresentation[] buildingsInMap = GameObject.Find("GAME").GetComponentsInChildren<BuildingRepresentation>();
-        Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Collected '{buildingsInMap.Length}' buildings to check.");
+        List<BuildingRepresentation> buildingsInMap = GameObjextExtensions.GetBuildingsInMap();
+        Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Collected '{buildingsInMap.Count}' buildings to check.");
 
         if (NumberOfUnits > 0) {
           buildingsInMap.Shuffle();

@@ -93,9 +93,9 @@
           "Value": { "x": -450, "y": 0, "z": -370 }
         },
         "SpawnPointPositions": {
-          "38538181-1208-4cd1-bad9-7469f2cb9478": { "x": -100, "y": 5, "z": 230 }, // 'y' acts as an offset for height on top of ground hex height
-          "6552d0c2-b705-49b8-a4f8-5205e537db05": { "x": 0, "y": 0, "z": 90 },
-          "23e3c6ad-31e3-459b-9f0c-a7f5614e4662": { "x": 0, "y": 3, "z": -100 }
+          "38538181-1208-4cd1-bad9-7469f2cb9478": { "x": 97, "y": 5, "z": 239 }, // 'y' acts as an offset for height on top of ground hex height
+          "6552d0c2-b705-49b8-a4f8-5205e537db05": { "x": 132, "y": 0, "z": -111 },
+          "23e3c6ad-31e3-459b-9f0c-a7f5614e4662": { "x": -97.5, "y": 3, "z": -125 }
         }
       }
     },
@@ -145,9 +145,9 @@
         "Name": "Region_Follow_The_Trail",
         "Position": {
           "Type": "World",
-          "Value": { "x": -450, "y": 0, "z": -370 }
+          "Value": { "x": -475, "y": 0, "z": -340 }
         },
-        "Radius": 140
+        "Radius": 170
       }
     },
     {
@@ -157,7 +157,7 @@
         "Name": "Lance_Enemy_OccupyingForce",
         "Position": {
           "Type": "World",
-          "Value": { "x": -700, "y": 0, "z": 200 }
+          "Value": { "x": -450, "y": 0, "z": -370 }
         },
         "Rotation": {
           "Type": "World",
