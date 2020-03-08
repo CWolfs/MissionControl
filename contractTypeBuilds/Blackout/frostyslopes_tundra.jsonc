@@ -8,6 +8,10 @@
       "Value": {
         "Plots": [
           {
+            "Name": "Roadside Facility",
+            "Variant": "plotVariant_facilityLrgFactoriesTower"
+          },
+          {
             "Name": "Valley Fort",
             "Variant": "plotVariant_facilitySmlBarracks"
           }
