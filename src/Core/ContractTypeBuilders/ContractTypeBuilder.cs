@@ -19,6 +19,7 @@ namespace MissionControl.ContractTypeBuilders {
     public string ContractTypeKey { get; set; } = "UNSET";
 
     private const string TEAMS_ID = "Teams";
+    private const string PLOTS_ID = "Plots";
     private const string CHUNKS_ID = "Chunks";
     private const string TRIGGERS_ID = "Triggers";
 
@@ -32,6 +33,7 @@ namespace MissionControl.ContractTypeBuilders {
       Main.LogDebug($"[ContractTypeBuild] Building '{ContractTypeKey}'");
 
       BuildTeamsData();
+      BuildPlotsData();
       BuildChunks();
       BuildTriggers();
 
@@ -46,6 +48,18 @@ namespace MissionControl.ContractTypeBuilders {
         Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] There are '{teamsData.Count}' team data entries defined.");
         foreach (JObject teamData in teamsData.Children<JObject>()) {
           BuildTeamData(teamData);
+        }
+      }
+    }
+
+    private void BuildPlotsData() {
+      if (ContractTypeBuild.ContainsKey(PLOTS_ID)) {
+        JArray plotsData = (JArray)ContractTypeBuild[PLOTS_ID];
+        PlotOverride plotOverride = MissionControl.Instance.EncounterLayerData.GetComponent<PlotOverride>();
+        Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] There are '{plotsData.Count}' plot data entries defined.");
+
+        foreach (JObject plotData in plotsData.Children<JObject>()) {
+          BuildPlotData(plotOverride, plotData);
         }
       }
     }
@@ -74,6 +88,19 @@ namespace MissionControl.ContractTypeBuilders {
       Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Team Data for '{teamData["Team"]}'");
       TeamDataBuilder teamDataBuilder = new TeamDataBuilder(this, teamData);
       teamDataBuilder.Build();
+    }
+
+    private void BuildPlotData(PlotOverride plotOverride, JObject plotData) {
+      string plotName = plotData["Name"].ToString();
+      string plotVariant = plotData.ContainsKey("Variant") ? plotData["Variant"].ToString() : "Default";
+      if (plotVariant == "None") plotVariant = "Default";
+
+      Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Plot Data for '{plotName}:{plotVariant}'");
+
+      plotOverride.plotOverrideEntryList.Add(new PlotOverrideEntry() {
+        plotName = plotName,
+        plotVariant = plotVariant
+      });
     }
 
     private void BuildChunk(JObject chunk) {
