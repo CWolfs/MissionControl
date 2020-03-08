@@ -46,15 +46,15 @@
         "Name": "Spawner_PlayerLance",
         "Position": {
           "Type": "World",
-          "Value": { "x": 650, "y": 0, "z": 410 }
+          "Value": { "x": -600, "y": 0, "z": 370 }
         },
         "Rotation": {
           "Type": "World",
-          "Value": { "x": 0, "y": 270, "z": 0 }
+          "Value": { "x": 0, "y": 70, "z": 0 }
         },
         "SpawnPointPositions": {
-          "ec9d2280-ca9a-4d90-8a20-963d8a4c0a39": { "x": 0, "y": 0, "z": 0 }, // 'y' acts as an offset for height on top of ground hex height
-          "5df48a48-1840-49b0-84e9-126847053afa": { "x": 48, "y": 0, "z": 0 },
+          "ec9d2280-ca9a-4d90-8a20-963d8a4c0a39": { "x": 48, "y": 0, "z": 0 }, // 'y' acts as an offset for height on top of ground hex height
+          "5df48a48-1840-49b0-84e9-126847053afa": { "x": 0, "y": 0, "z": 0 },
           "a55fc76c-c955-4b61-bb64-2608c9beb9f5": { "x": 96, "y": 0, "z": 0 },
           "0f10a383-7325-4726-b2c4-a0ef416e4b27": { "x": 48, "y": 0, "z": -48 }
         }
@@ -67,19 +67,19 @@
         "Name": "Spawner_Alpha_Turredts",
         "Position": {
           "Type": "World",
-          "Value": { "x": 80, "y": 0, "z": 650 }
+          "Value": { "x": -460, "y": 0, "z": 440 }
         },
         "SpawnPointPositions": {
-          "6826832c-83d5-4287-b349-33008dc1fac5": { "x": 71.9, "y": 1, "z": 82.5 }, // 'y' acts as an offset for height on top of ground hex height
-          "0329e03f-9d9c-4a5d-99df-ccdb6afe2bb5": { "x": 300, "y": 1, "z": 120 },
-          "e76ef06a-bd08-4c83-85f3-d8863acb3956": { "x": -100, "y": 0, "z": -120 },
-          "0044f994-2b5b-4185-a7d6-dc3f50f561ba": { "x": 130, "y": 1, "z": -155 }
+          "6826832c-83d5-4287-b349-33008dc1fac5": { "x": -10, "y": 2, "z": 100 }, // 'y' acts as an offset for height on top of ground hex height
+          "0329e03f-9d9c-4a5d-99df-ccdb6afe2bb5": { "x": 100, "y": 1, "z": 40 },
+          "e76ef06a-bd08-4c83-85f3-d8863acb3956": { "x": -160, "y": 0, "z": -10 },
+          "0044f994-2b5b-4185-a7d6-dc3f50f561ba": { "x": 50, "y": 1, "z": -180 }
         },
         "SpawnPointRotations": {
           "6826832c-83d5-4287-b349-33008dc1fac5": { "x": 0, "y": 90, "z": 0 },
           "0329e03f-9d9c-4a5d-99df-ccdb6afe2bb5": { "x": 0, "y": 0, "z": 0 },
           "e76ef06a-bd08-4c83-85f3-d8863acb3956": { "x": 0, "y": 90, "z": 0 },
-          "0044f994-2b5b-4185-a7d6-dc3f50f561ba": { "x": 0, "y": 180, "z": 0 }
+          "0044f994-2b5b-4185-a7d6-dc3f50f561ba": { "x": 0, "y": 0, "z": 0 }
         }
       }
     },
@@ -90,7 +90,7 @@
         "Name": "Spawner_Bravo_Turrets",
         "Position": {
           "Type": "World",
-          "Value": { "x": -700, "y": 0, "z": 200 }
+          "Value": { "x": -450, "y": 0, "z": -370 }
         },
         "SpawnPointPositions": {
           "38538181-1208-4cd1-bad9-7469f2cb9478": { "x": -100, "y": 5, "z": 230 }, // 'y' acts as an offset for height on top of ground hex height
@@ -106,8 +106,9 @@
         "Name": "Region_Investigate_Blackout",
         "Position": {
           "Type": "World",
-          "Value": { "x": 150, "y": 0, "z": 600 }
-        }
+          "Value": { "x": -460, "y": 0, "z": 440 }
+        },
+        "Radius": 110
       }
     },
     {
@@ -117,7 +118,7 @@
         "Name": "Lance_Enemy_AmbushingForce",
         "Position": {
           "Type": "World",
-          "Value": { "x": 150, "y": 0, "z": 600 }
+          "Value": { "x": -460, "y": 0, "z": 440 }
         },
         "Rotation": {
           "Type": "World",
@@ -144,8 +145,9 @@
         "Name": "Region_Follow_The_Trail",
         "Position": {
           "Type": "World",
-          "Value": { "x": -700, "y": 0, "z": 200 }
-        }
+          "Value": { "x": -450, "y": 0, "z": -370 }
+        },
+        "Radius": 140
       }
     },
     {
