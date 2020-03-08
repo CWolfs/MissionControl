@@ -8,12 +8,12 @@
       "Value": {
         "Plots": [
           {
-            "Name": "Roadside Facility",
-            "Variant": "plotVariant_facilityLrgFactoriesTower"
+            "Name": "Cresttop Structures",
+            "Variant": "plotVariant_facilityMedTowerWarehouse"
           },
           {
             "Name": "Valley Fort",
-            "Variant": "plotVariant_facilitySmlBarracks"
+            "Variant": "plotVariant_facilityLrgMilitaryAirControlBase"
           }
         ]
       }
@@ -203,10 +203,10 @@
         "Name": "EncounterBoundaryRect",
         "Position": {
           "Type": "World",
-          "Value": { "x": -50, "y": 0, "z": 450 }
+          "Value": { "x": -450, "y": 0, "z": 50 }
         },
-        "Width": 1836,
-        "Length": 1624
+        "Width": 1024,
+        "Length": 1948
       }
     }
   ]
