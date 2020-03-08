@@ -25,6 +25,7 @@ namespace MissionControl.ContractTypeBuilders {
     private string guid;
     private int spawnPoints;
     private List<string> spawnPointGuids;
+    private bool preciseSpawnPoints;
     private JObject spawnPointPositions;
     private JObject spawnPointRotations;
     private string spawnType;
@@ -43,6 +44,7 @@ namespace MissionControl.ContractTypeBuilders {
       this.guid = spawner["Guid"].ToString();
       this.spawnPoints = (int)spawner["SpawnPoints"];
       this.spawnPointGuids = spawner["SpawnPointGuids"].ToObject<List<string>>();
+      this.preciseSpawnPoints = spawner.ContainsKey("PreciseSpawnPoints") ? (bool)spawner["PreciseSpawnPoints"] : false;
       this.spawnPointPositions = spawner.ContainsKey("SpawnPointPositions") ? (JObject)spawner["SpawnPointPositions"] : null;
       this.spawnPointRotations = spawner.ContainsKey("SpawnPointRotations") ? (JObject)spawner["SpawnPointRotations"] : null;
       this.spawnType = spawner["SpawnType"].ToString();
@@ -127,7 +129,7 @@ namespace MissionControl.ContractTypeBuilders {
       UnitSpawnPointGameLogic[] unitSpawnPoints = spawnerGameLogic.unitSpawnPointGameLogicList;
       foreach (UnitSpawnPointGameLogic spawnPoint in unitSpawnPoints) {
         JObject position = spawnPointPositions.ContainsKey(spawnPoint.encounterObjectGuid) ? (JObject)spawnPointPositions[spawnPoint.encounterObjectGuid] : null;
-        if (position != null) SetPosition(spawnPoint.gameObject, position);
+        if (position != null) SetPosition(spawnPoint.gameObject, position, this.preciseSpawnPoints);
       }
     }
 

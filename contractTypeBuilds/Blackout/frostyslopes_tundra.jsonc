@@ -25,17 +25,17 @@
         "Name": "Spawner_Enemy_RoamingForce",
         "Position": {
           "Type": "World",
-          "Value": { "x": -700, "y": 0, "z": 800 }
+          "Value": { "x": -900, "y": 0, "z": -100 }
         },
         "Rotation": {
           "Type": "World",
           "Value": { "x": 0, "y": 0, "z": 0 }
         },
         "SpawnPointPositions": {
-          "9405bf60-db6c-4ae9-95b0-3c26a6e9fd88": { "x": 0, "y": 0, "z": 0 }, // 'y' acts as an offset for height on top of ground hex height
-          "8f1a8422-917c-47c4-ada9-01eaa94499ee": { "x": 0, "y": 0, "z": 0 },
-          "ea0eef6e-1fd0-4a2e-8e26-8692d6a935d4": { "x": 0, "y": 0, "z": 0 },
-          "413f1124-f7e0-476c-b826-3432078d259f": { "x": 0, "y": 0, "z": 0 }
+          "2407c766-aa2e-440b-8118-a70b1a4679ed": { "x": 0, "y": 0, "z": 0 }, // 'y' acts as an offset for height on top of ground hex height
+          "625aa0ff-2c5b-48a4-becb-621c1bbaccd3": { "x": 0, "y": 0, "z": 24 },
+          "b4762c72-7e10-4d20-82db-42e233be0bae": { "x": 0, "y": 0, "z": 48 },
+          "fc68ef8d-829a-4663-9340-6b1a1b7a7e0c": { "x": 0, "y": 0, "z": 72 }
         }
       }
     },
@@ -92,10 +92,11 @@
           "Type": "World",
           "Value": { "x": -450, "y": 0, "z": -370 }
         },
+        "PreciseSpawnPoints": true,
         "SpawnPointPositions": {
-          "38538181-1208-4cd1-bad9-7469f2cb9478": { "x": 97, "y": 5, "z": 239 }, // 'y' acts as an offset for height on top of ground hex height
-          "6552d0c2-b705-49b8-a4f8-5205e537db05": { "x": 132, "y": 0, "z": -111 },
-          "23e3c6ad-31e3-459b-9f0c-a7f5614e4662": { "x": -97.5, "y": 3, "z": -125 }
+          "38538181-1208-4cd1-bad9-7469f2cb9478": { "x": 96.5, "y": 14, "z": 239 }, // 'y' acts as an offset for height on top of ground hex height
+          "6552d0c2-b705-49b8-a4f8-5205e537db05": { "x": 132.5, "y": 14, "z": -111 },
+          "23e3c6ad-31e3-459b-9f0c-a7f5614e4662": { "x": -97, "y": 15, "z": -125 }
         }
       }
     },
@@ -184,17 +185,23 @@
         "Name": "Lance_Enemy_OpposingForce",
         "Position": {
           "Type": "World",
-          "Value": { "x": -650, "y": 0, "z": -250 }
+          "Value": { "x": 50, "y": 0, "z": -250 }
         },
         "Rotation": {
           "Type": "World",
           "Value": { "x": 0, "y": 90, "z": 0 }
         },
+        "SpawnPointPositions": {
+          "6cd3107e-0f9d-4809-ab8c-fb30faf4cd80": { "x": 48, "y": 0, "z": 0 }, // 'y' acts as an offset for height on top of ground hex height
+          "14c58a13-96a6-4f91-a1e5-47b5d02b81d1": { "x": 0, "y": 0, "z": 0 },
+          "92ea4a9a-0ea5-4445-b8ba-89a167e478de": { "x": 96, "y": 0, "z": 0 },
+          "0cf6442f-d67d-41e3-a658-c5e9f564cf9e": { "x": 48, "y": 0, "z": -48 }
+        },
         "SpawnPointRotations": {
-          "6cd3107e-0f9d-4809-ab8c-fb30faf4cd80": { "x": 0, "y": 270, "z": 0 },
-          "14c58a13-96a6-4f91-a1e5-47b5d02b81d1": { "x": 0, "y": 270, "z": 0 },
-          "92ea4a9a-0ea5-4445-b8ba-89a167e478de": { "x": 0, "y": 270, "z": 0 },
-          "0cf6442f-d67d-41e3-a658-c5e9f564cf9e": { "x": 0, "y": 270, "z": 0 }
+          "6cd3107e-0f9d-4809-ab8c-fb30faf4cd80": { "x": 0, "y": 180, "z": 0 },
+          "14c58a13-96a6-4f91-a1e5-47b5d02b81d1": { "x": 0, "y": 180, "z": 0 },
+          "92ea4a9a-0ea5-4445-b8ba-89a167e478de": { "x": 0, "y": 180, "z": 0 },
+          "0cf6442f-d67d-41e3-a658-c5e9f564cf9e": { "x": 0, "y": 180, "z": 0 }
         }
       }
     },

@@ -14,12 +14,6 @@
         "Rotation": {
           "Type": "World",
           "Value": { "x": 0, "y": 0, "z": 0 }
-        },
-        "SpawnPointPositions": {
-          "9405bf60-db6c-4ae9-95b0-3c26a6e9fd88": { "x": 0, "y": 0, "z": 0 }, // 'y' acts as an offset for height on top of ground hex height
-          "8f1a8422-917c-47c4-ada9-01eaa94499ee": { "x": 0, "y": 0, "z": 0 },
-          "ea0eef6e-1fd0-4a2e-8e26-8692d6a935d4": { "x": 0, "y": 0, "z": 0 },
-          "413f1124-f7e0-476c-b826-3432078d259f": { "x": 0, "y": 0, "z": 0 }
         }
       }
     },
