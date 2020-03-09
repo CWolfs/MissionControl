@@ -316,7 +316,7 @@ namespace MissionControl {
           return null;
         }
 
-        JObject commonBuild = contractTypeMapBuilds["common"];
+        JObject commonBuild = (JObject)contractTypeMapBuilds["common"].DeepClone();
 
         if (!contractTypeMapBuilds.ContainsKey(encounterLayerId)) {
           Main.Logger.LogWarning($"[GetAvailableCustomContractTypeBuilds] No map specific build for '{contractTypeName}' and '{encounterLayerId}'. Using only the common build.");
