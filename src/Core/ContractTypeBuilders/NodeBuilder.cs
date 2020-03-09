@@ -46,6 +46,10 @@ namespace MissionControl.ContractTypeBuilders {
       }
     }
 
+    public void SetMountOnPosition(GameObject target, string mountTargetPath) {
+      MissionControl.Instance.QueuedBuildingMounts.Add(new object[] { target, mountTargetPath });
+    }
+
     public abstract void Build();
   }
 }

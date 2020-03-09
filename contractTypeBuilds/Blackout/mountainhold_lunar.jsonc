@@ -73,11 +73,11 @@
           "Type": "World",
           "Value": { "x": -700, "y": 0, "z": 160 }
         },
-        "SpawnPointPositions": {
-          "6826832c-83d5-4287-b349-33008dc1fac5": { "x": -10, "y": 3, "z": 100 }, // 'y' acts as an offset for height on top of ground hex height
-          "0329e03f-9d9c-4a5d-99df-ccdb6afe2bb5": { "x": 110, "y": 23.5, "z": 50 },
-          "e76ef06a-bd08-4c83-85f3-d8863acb3956": { "x": -160, "y": 1, "z": -10 },
-          "0044f994-2b5b-4185-a7d6-dc3f50f561ba": { "x": 50, "y": 2, "z": -180 }
+        "MountOn": {
+          "6826832c-83d5-4287-b349-33008dc1fac5": "PlotParent/Plot1/plotVariant_facilityLrgMilitaryBunkers/envPrfFndn_turretTowerMount",
+          "0329e03f-9d9c-4a5d-99df-ccdb6afe2bb5": "PlotParent/Plot1/plotVariant_facilityLrgMilitaryBunkers/envPrfFndn_turretTowerMount (1)",
+          "e76ef06a-bd08-4c83-85f3-d8863acb3956": "PlotParent/Plot1/plotVariant_facilityLrgMilitaryBunkers/envPrfFndn_turretTowerMount (2)",
+          "0044f994-2b5b-4185-a7d6-dc3f50f561ba": "PlotParent/Plot1/plotVariant_facilityLrgMilitaryBunkers/envPrfFndn_turretTowerMount (3)"
         },
         "SpawnPointRotations": {
           "6826832c-83d5-4287-b349-33008dc1fac5": { "x": 0, "y": 90, "z": 0 },
@@ -94,13 +94,12 @@
         "Name": "Spawner_Bravo_Turrets",
         "Position": {
           "Type": "World",
-          "Value": { "x": -450, "y": 0, "z": -370 }
+          "Value": { "x": 20, "y": 0, "z": 125 }
         },
-        "PreciseSpawnPoints": true,
         "SpawnPointPositions": {
-          "38538181-1208-4cd1-bad9-7469f2cb9478": { "x": 96.5, "y": 14, "z": 239 }, // 'y' acts as an offset for height on top of ground hex height
-          "6552d0c2-b705-49b8-a4f8-5205e537db05": { "x": 132.5, "y": 14, "z": -111 },
-          "23e3c6ad-31e3-459b-9f0c-a7f5614e4662": { "x": -97, "y": 15, "z": -125 }
+          "38538181-1208-4cd1-bad9-7469f2cb9478": { "x": 96.5, "y": 0, "z": 239 }, // 'y' acts as an offset for height on top of ground hex height
+          "6552d0c2-b705-49b8-a4f8-5205e537db05": { "x": 132.5, "y": 0, "z": -111 },
+          "23e3c6ad-31e3-459b-9f0c-a7f5614e4662": { "x": -97, "y": 0, "z": -125 }
         }
       }
     },
@@ -150,7 +149,7 @@
         "Name": "Region_Follow_The_Trail",
         "Position": {
           "Type": "World",
-          "Value": { "x": -475, "y": 0, "z": -340 }
+          "Value": { "x": 20, "y": 0, "z": 125 }
         },
         "Radius": 170
       }
@@ -162,7 +161,7 @@
         "Name": "Lance_Enemy_OccupyingForce",
         "Position": {
           "Type": "World",
-          "Value": { "x": -450, "y": 0, "z": -370 }
+          "Value": { "x": 20, "y": 0, "z": 125 }
         },
         "Rotation": {
           "Type": "World",

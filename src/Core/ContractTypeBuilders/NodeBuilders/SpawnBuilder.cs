@@ -26,6 +26,7 @@ namespace MissionControl.ContractTypeBuilders {
     private int spawnPoints;
     private List<string> spawnPointGuids;
     private bool preciseSpawnPoints;
+    private JObject mountOnTargets;
     private JObject spawnPointPositions;
     private JObject spawnPointRotations;
     private string spawnType;
@@ -45,6 +46,7 @@ namespace MissionControl.ContractTypeBuilders {
       this.spawnPoints = (int)spawner["SpawnPoints"];
       this.spawnPointGuids = spawner["SpawnPointGuids"].ToObject<List<string>>();
       this.preciseSpawnPoints = spawner.ContainsKey("PreciseSpawnPoints") ? (bool)spawner["PreciseSpawnPoints"] : false;
+      this.mountOnTargets = spawner.ContainsKey("MountOn") ? (JObject)spawner["MountOn"] : null;
       this.spawnPointPositions = spawner.ContainsKey("SpawnPointPositions") ? (JObject)spawner["SpawnPointPositions"] : null;
       this.spawnPointRotations = spawner.ContainsKey("SpawnPointRotations") ? (JObject)spawner["SpawnPointRotations"] : null;
       this.spawnType = spawner["SpawnType"].ToString();
@@ -119,10 +121,19 @@ namespace MissionControl.ContractTypeBuilders {
 
       if (this.position != null) SetPosition(spawnerGameLogic.gameObject, this.position);
       if (this.rotation != null) SetRotation(spawnerGameLogic.gameObject, this.rotation);
+      if (this.mountOnTargets != null) SetMountOnPositions(spawnerGameLogic, this.mountOnTargets);
       if (this.spawnPointPositions != null) SetSpawnPointPositions(spawnerGameLogic);
       if (this.spawnPointRotations != null) SetSpawnPointRotations(spawnerGameLogic);
       if (this.defaultDetectionRange > 0) SetDefaultDetectionRange(spawnerGameLogic, this.defaultDetectionRange);
       if (this.tags != null) spawnerGameLogic.encounterTags.AddRange(this.tags);
+    }
+
+    private void SetMountOnPositions(LanceSpawnerGameLogic spawnerGameLogic, JObject mountOnTargets) {
+      UnitSpawnPointGameLogic[] unitSpawnPoints = spawnerGameLogic.unitSpawnPointGameLogicList;
+      foreach (UnitSpawnPointGameLogic spawnPoint in unitSpawnPoints) {
+        string targetPath = mountOnTargets.ContainsKey(spawnPoint.encounterObjectGuid) ? mountOnTargets[spawnPoint.encounterObjectGuid].ToString() : null;
+        if (targetPath != null) SetMountOnPosition(spawnPoint.gameObject, targetPath);
+      }
     }
 
     private void SetSpawnPointPositions(LanceSpawnerGameLogic spawnerGameLogic) {
