@@ -900,7 +900,7 @@
         },
         {
           "Type": "Delay",
-          "Time": 1,
+          "Time": 2,
           "Results": [
             {
               "Type": "SetState",
