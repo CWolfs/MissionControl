@@ -177,7 +177,7 @@
             "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
             "Value": { "x": -320, "y": 0, "z": 260 }
           },
-          "Radius": 140
+          "Radius": 160
         }
       ]
     },
@@ -399,7 +399,7 @@
             "Type": "World", // World, Local, SpawnProfile (Anywhere, AtBoundary, AtTarget, NearTarget)
             "Value": { "x": 180, "y": 0, "z": -300 }
           },
-          "Radius": 300
+          "Radius": 200
         }
       ]
     },

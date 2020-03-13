@@ -38,21 +38,6 @@ namespace MissionControl.EncounterFactories {
         }
       }
 
-      // Reset all buildings
-      /*
-      // TODO: Figure out why this crashes. No time to look into it right now.
-      // BuildingRepresentation[] buildingsInMap = GameObject.Find("GAME").GetComponentsInChildren<BuildingRepresentation>();
-      List<BuildingRepresentation> buildingsInMap = GameObjextExtensions.GetBuildingsInMap();
-      foreach (BuildingRepresentation building in buildingsInMap) {
-        AccessTools.Field(typeof(BattleTech.Building), "isObjectiveTarget").SetValue(building.ParentBuilding, false);
-        ObstructionGameLogic obstructionGameLogic = building.GetComponent<ObstructionGameLogic>();
-
-        if (obstructionGameLogic != null) {
-          obstructionGameLogic.isObjectiveTarget = false;
-        }
-      }
-      */
-
       CreateContractObjectives(encounterLayerGo);
 
       encounterLayerGo.AddComponent<PlotOverride>();

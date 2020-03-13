@@ -11,6 +11,7 @@ namespace MissionControl.Patches {
         Main.LogDebug($"[CombatHUDInWorldElementMgrAddInWorldActorElementsPatch.Prefix] Disabling InWorldActorElements for NeutralToAll - {combatant.DisplayName}");
         return false;
       }
+
       return true;
     }
   }

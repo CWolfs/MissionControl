@@ -53,7 +53,7 @@ namespace MissionControl.Result {
           }
         }
       } else {
-        Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Tagging '{Type}' Not Yet Supported");
+        Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Tagging '{Type}' Not Yet Supported. Use 'TagUnitsInRegion'");
       }
     }
 
@@ -70,10 +70,15 @@ namespace MissionControl.Result {
 
     private void SetTeam(ICombatant combatant) {
       Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Setting Team '{Team}' for '{combatant.GameRep.name} - {combatant.DisplayName}'");
-      combatant.RemoveFromTeam();
-
+      Team oldTeam = combatant.team;
       Team newTeam = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(TeamUtils.GetTeamGuid(Team));
-      combatant.AddToTeam(newTeam);
+
+      if (Type == "Building") {
+        oldTeam.RemoveBuilding((BattleTech.Building)combatant);
+        newTeam.AddCombatant(combatant);
+      } else {
+        Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Setting Team '{Type}' Not Yet Supported. Use 'SetTeamByLanceSpawnerGuid'");
+      }
 
       /*
       // Dumped this here for a visibility test after OnEncounterBegin
@@ -89,17 +94,27 @@ namespace MissionControl.Result {
     }
 
     private void SetIsTargetObjective(ICombatant combatant) {
-      Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Setting IsTargetObjective '{IsObjectiveTarget}' for '{combatant.GameRep.name} - {combatant.DisplayName}'");
+      Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Setting isObjectiveTarget '{IsObjectiveTarget}' for '{combatant.GameRep.name} - {combatant.DisplayName}'");
       ObstructionGameLogic obstructionGameLogic = combatant.GameRep.GetComponent<ObstructionGameLogic>();
       obstructionGameLogic.isObjectiveTarget = true;
 
       if (Type == "Building") {
-        AccessTools.Field(typeof(BattleTech.Building), "isObjectiveTarget").SetValue(combatant, true);
+        BattleTech.Building building = combatant as BattleTech.Building;
+        AccessTools.Field(typeof(BattleTech.Building), "isObjectiveTarget").SetValue(building, true);
+        building.BuildingRep.IsTargetable = true;
       }
 
       CombatHUDInWorldElementMgr inworldElementManager = GameObject.Find("uixPrfPanl_HUD(Clone)").GetComponent<CombatHUDInWorldElementMgr>();
       AccessTools.Method(typeof(CombatHUDInWorldElementMgr), "AddTickMark").Invoke(inworldElementManager, new object[] { combatant });
       AccessTools.Method(typeof(CombatHUDInWorldElementMgr), "AddInWorldActorElements").Invoke(inworldElementManager, new object[] { combatant });
+
+      if (Type == "Building") {
+        CombatHUDNumFlagHex numFlagEx = inworldElementManager.GetNumFlagForCombatant(combatant);
+        CombatHUDFloatieStackActor floatie = inworldElementManager.GetFloatieStackForCombatant(combatant);
+
+        numFlagEx.anchorPosition = CombatHUDInWorldScalingActorInfo.AnchorPosition.Feet;
+        floatie.anchorPosition = CombatHUDInWorldScalingActorInfo.AnchorPosition.Feet;
+      }
     }
   }
 }

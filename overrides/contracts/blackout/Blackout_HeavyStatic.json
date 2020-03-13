@@ -73,20 +73,6 @@
       "OnSuccessDialogueGUID": null,
       "OnFailureDialogueGUID": null
     },
-    /*
-    {
-      "objective": {
-        "EncounterObjectGuid": "9ca557ef-7ce8-44a2-9934-b4b2aafb36b5"
-      },
-      "title": "Destroy roaming lance",
-      "description": "Destroy the lance that is roaming",
-      "isPrimary": true,
-      "OnSuccessResults": [],
-      "OnFailureResults": [],
-      "OnSuccessDialogueGUID": null,
-      "OnFailureDialogueGUID": null
-    },
-    */
     {
       "objective": {
         "EncounterObjectGuid": "a96a7b04-85cf-4052-8ceb-1063b273c87f"
@@ -156,7 +142,7 @@
       "encounterChunk": {
         "EncounterObjectGuid": "3b47894e-2d25-4599-9b47-620ab8fcfa62"
       },
-      "enableChunkFromContract": true
+      "enableChunkFromContract": false
     },
     {
       "name": "Chunk_Alpha_Base_Turrets",
