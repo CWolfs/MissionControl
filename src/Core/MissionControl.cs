@@ -45,6 +45,7 @@ namespace MissionControl {
     // Only populated for custom contract types
     public EncounterLayer_MDD EncounterLayerMDD { get; private set; }
     public bool IsCustomContractType { get; set; } = false;
+    public List<object[]> QueuedBuildingMounts { get; set; } = new List<object[]>();
 
     public HexGrid HexGrid { get; private set; }
 

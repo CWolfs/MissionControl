@@ -16,7 +16,7 @@ namespace MissionControl.Patches {
       Main.Logger.Log($"[EncounterLayerParentFirstTimeInitializationPatch Prefix] Patching FirstTimeInitialization");
       MissionControl EncounterManager = MissionControl.Instance;
       if (EncounterManager.IsContractValid) {
-        UnityGameInstance.BattleTechGame.MessageCenter.PublishMessage(new BeforeSceneManipulation());
+        UnityGameInstance.BattleTechGame.MessageCenter.PublishMessage(new BeforeSceneManipulationMessage());
         EncounterManager.RunEncounterRules(LogicBlock.LogicType.SCENE_MANIPULATION);
       }
     }

@@ -1,9 +1,9 @@
 using BattleTech;
 
 namespace MissionControl.Messages {
-  public class BeforeSceneManipulation : EncounterObjectMessage {
+  public class BeforeSceneManipulationMessage : EncounterObjectMessage {
 
-    public BeforeSceneManipulation() : base() { }
+    public BeforeSceneManipulationMessage() : base() { }
 
     public override MessageCenterMessageType MessageType {
       get {

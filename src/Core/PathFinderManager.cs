@@ -170,9 +170,6 @@ namespace MissionControl {
         return false;
       }
 
-      // List<Vector3> path = DynamicLongRangePathfinder.GetPathToDestination(position, float.MaxValue, pathfindingActor, true, pathFindingZoneRadius);
-      // List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(position, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
-
       Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Path count is: '{path.Count}', Current position is: '{position}'");
 
       // GUARD: Against deep water and other impassables that have slipped through
@@ -199,28 +196,6 @@ namespace MissionControl {
           Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Does not have two valid neighbours");
         }
       }
-
-      /* // Failed attempt to improve spawn checks
-      List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(validityPosition, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
-      if (path != null && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
-        if (path.Count > 4) { // very strong pathfinding location
-          return true;
-        } else {
-          Main.Logger.Log($"[PFM] Spawn point is valid due to proximity but is not strong enough success for pathing. Attempting to confirm.");
-          CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-          List<Vector3> pointsAroundPosition = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(position, 3, 5);
-
-          foreach (Vector3 point in pointsAroundPosition) {
-            List<Vector3> secondaryPath = DynamicLongRangePathfinder.GetDynamicPathToDestination(point, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, 2); 
-            if (path != null && path.Count > 2) {
-              Main.Logger.Log($"[PFM] Spawn point is valid. It is close to the validation point but can be moved away from. Success.");
-              return true;
-            }
-          }
-        }
-      }
-      */
-
 
       Main.LogDebug($"-------- END [PFM.IsSpawnValid] [{identifier}] END --------");
       Main.LogDebug($"");
@@ -313,7 +288,7 @@ namespace MissionControl {
     public void Reset() {
       UnsubscribePathfinders();
 
-      if (pathFinderMech.GameRep != null) {
+      if (pathFinderMech != null && pathFinderMech.GameRep != null) {
         GameObject pathFinderGo = pathFinderMech.GameRep.gameObject;
         GameObject blipUnknownGo = pathFinderMech.GameRep.BlipObjectUnknown.gameObject;
         GameObject blipIdentified = pathFinderMech.GameRep.BlipObjectIdentified.gameObject;
@@ -322,7 +297,7 @@ namespace MissionControl {
         if (blipIdentified) GameObject.Destroy(blipIdentified);
       }
 
-      if (pathFinderVehicle.GameRep != null) {
+      if (pathFinderVehicle != null && pathFinderVehicle.GameRep != null) {
         GameObject pathFinderVehicleGo = pathFinderVehicle.GameRep.gameObject;
         GameObject vehicleBlipUnknownGo = pathFinderVehicle.GameRep.BlipObjectUnknown.gameObject;
         GameObject vehicleBlipIdentified = pathFinderVehicle.GameRep.BlipObjectIdentified.gameObject;
@@ -340,8 +315,8 @@ namespace MissionControl {
     }
 
     private void UnsubscribePathfinders() {
-      AccessTools.Method(typeof(Mech), "SubscribeMessages").Invoke(pathFinderMech, new object[] { false });
-      AccessTools.Method(typeof(AbstractActor), "SubscribeMessages").Invoke(pathFinderVehicle, new object[] { false });
+      if (pathFinderMech != null) AccessTools.Method(typeof(AbstractActor), "SubscribeMessages").Invoke(pathFinderMech, new object[] { false });
+      if (pathFinderVehicle != null) AccessTools.Method(typeof(AbstractActor), "SubscribeMessages").Invoke(pathFinderVehicle, new object[] { false });
     }
   }
 }

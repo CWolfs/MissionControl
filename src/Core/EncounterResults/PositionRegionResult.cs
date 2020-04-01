@@ -15,7 +15,6 @@ using MissionControl.Utils;
 namespace MissionControl.Result {
   public class PositionRegionResult : EncounterResult {
     public string RegionName { get; set; } = "";
-    private static float REGION_RADIUS = 70.71068f;
 
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
       Main.LogDebug("[PositionRegion] Positioning Region...");
@@ -37,7 +36,8 @@ namespace MissionControl.Result {
       // GameObjextExtensions.CreateDebugPoint("DEBUGCenterofTeamMassGizmo", centerOfTeamMass, Color.red);
       // GameObjextExtensions.CreateDebugPoint("DEBUGDynamicWithdrawCenter", regionGo.transform.position, Color.blue);
 
-      RegenerateRegion(regionGo);
+      RegionGameLogic regionGameLogic = regionGo.GetComponent<RegionGameLogic>();
+      regionGameLogic.Regenerate();
     }
 
     private Vector3 GetCenterOfTeamMass(Team team, bool avoidEnemies) {
@@ -48,36 +48,6 @@ namespace MissionControl.Result {
       if (avoidEnemies) avoidTeamActors = combatState.AllEnemies;
 
       return SceneUtils.CalculateCentroidOfActors(teamActors, avoidTeamActors);
-    }
-
-    private void RegenerateRegion(GameObject regionGo) {
-      CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-      RegionGameLogic regionGameLogic = regionGo.GetComponent<RegionGameLogic>();
-      List<Vector3> meshPoints = new List<Vector3>();
-
-      // Get all region points and fix the y height
-      foreach (Transform t in regionGo.transform) {
-        if (t.gameObject.name.StartsWith("RegionPoint")) {
-          Vector3 position = t.position;
-          float height = combatState.MapMetaData.GetLerpedHeightAt(position);
-          Vector3 fixedHeightPosition = new Vector3(position.x, height, position.z);
-          t.position = fixedHeightPosition;
-          meshPoints.Add(t.localPosition);
-        }
-      }
-
-      // Create new mesh from points and set to collider and mesh filter
-      MeshCollider collider = regionGo.GetComponent<MeshCollider>();
-      MeshFilter mf = regionGo.GetComponent<MeshFilter>();
-      Mesh mesh = MeshTools.CreateHexigon(REGION_RADIUS, meshPoints);
-      collider.sharedMesh = mesh;
-      mf.mesh = mesh;
-
-      List<MapEncounterLayerDataCell> cells = SceneUtils.GetMapEncounterLayerDataCellsWithinCollider(regionGo);
-      for (int i = 0; i < cells.Count; i++) {
-        MapEncounterLayerDataCell cell = cells[i];
-        cell.AddRegion(regionGameLogic);
-      }
     }
   }
 }

@@ -1,4 +1,5 @@
 using UnityEngine;
+
 using System.Collections;
 using System.Collections.Generic;
 
@@ -49,5 +50,30 @@ public static class GameObjextExtensions {
     mat.color = colour;
     debugPoint.GetComponent<Renderer>().sharedMaterial = mat;
     return debugPoint;
+  }
+
+  // TODO: Cache this
+  public static List<BuildingRepresentation> GetBuildingsInMap() {
+    List<BuildingRepresentation> buildings = new List<BuildingRepresentation>();
+    BuildingRepresentation[] buildingsUnderGameObject = GameObject.Find("GAME").GetComponentsInChildren<BuildingRepresentation>();
+    BuildingRepresentation[] buildingsUnderPlots = GameObject.Find("PlotParent").GetComponentsInChildren<BuildingRepresentation>();
+
+    buildings.AddRange(buildingsUnderGameObject);
+    buildings.AddRange(buildingsUnderPlots);
+
+    return buildings;
+  }
+
+  public static List<GameObject> GetActivePlots() {
+    List<GameObject> activePlots = new List<GameObject>();
+
+    GameObject plotParentGo = GameObject.Find("PlotParent");
+    foreach (Transform plot in plotParentGo.transform) {
+      foreach (Transform plotVariant in plot) {
+        if (plotVariant.gameObject.activeSelf) activePlots.Add(plotVariant.gameObject);
+      }
+    }
+
+    return activePlots;
   }
 }
