@@ -13,7 +13,7 @@
   "goodFaithStatementOverride": null,
   "shortDescription": "We recently lost contact with one of our forward bases in the {TGT_SYSTEM.name} system. We've heard rumours of {TEAM_TAR.FactionDef.Demonym} activity near here so it might be related. We need you to go in and investigate for us.",
   "longDescription": "Forward base is a little misleading, Commander. I've heard rumours it's more a spy station. Let's go find out what's going on.",
-  "salvagePotential": 2,
+  "salvagePotential": 8,
   "requirementList": [
     {
       "Scope": "StarSystem",
