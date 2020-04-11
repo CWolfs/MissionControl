@@ -51,6 +51,12 @@ namespace MissionControl {
       PilotDef pilotDef = null;
       combatState.DataManager.PilotDefs.TryGet("pilot_default", out pilotDef);
       Mech mech = new Mech(mechDef, pilotDef, new TagSet(), uniqueId, combatState, spawnerId, heraldryDef);
+
+      string teamId = TeamUtils.GetTeamGuid("NeutralToAll");
+      Team team = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(teamId);
+      AccessTools.Field(typeof(AbstractActor), "_team").SetValue(mech, team);
+      AccessTools.Field(typeof(AbstractActor), "_teamId").SetValue(mech, teamId);
+
       return mech;
     }
 
@@ -69,6 +75,12 @@ namespace MissionControl {
       PilotDef pilotDef = null;
       combatState.DataManager.PilotDefs.TryGet("pilot_default", out pilotDef);
       Vehicle vehicle = new Vehicle(vehicleDef, pilotDef, new TagSet(), uniqueId, combatState, spawnerId, heraldryDef);
+
+      string teamId = TeamUtils.GetTeamGuid("NeutralToAll");
+      Team team = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(teamId);
+      AccessTools.Field(typeof(AbstractActor), "_team").SetValue(vehicle, team);
+      AccessTools.Field(typeof(AbstractActor), "_teamId").SetValue(vehicle, teamId);
+
       return vehicle;
     }
 
@@ -305,6 +317,9 @@ namespace MissionControl {
         if (vehicleBlipUnknownGo) GameObject.Destroy(vehicleBlipUnknownGo);
         if (vehicleBlipIdentified) GameObject.Destroy(vehicleBlipIdentified);
       }
+
+      AccessTools.Field(typeof(AbstractActor), "_team").SetValue(pathFinderVehicle, null);
+      AccessTools.Field(typeof(AbstractActor), "_teamId").SetValue(pathFinderVehicle, null);
 
       estimatesOfBadPathfings.Clear();
     }
