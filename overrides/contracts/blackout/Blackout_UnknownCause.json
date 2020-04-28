@@ -1,8 +1,8 @@
 {
-  "ID": "Blackout_HeavyStatic",
-  "contractName": "Heavy Static",
+  "ID": "Blackout_UnknownCause",
+  "contractName": "Unknown Cause",
   "contractDisplayStyle": "BaseCampaignNormal",
-  "difficulty": 8,
+  "difficulty": 5,
   "difficultyUIModifier": 0,
   "weight": 1,
   "scope": "STANDARD",
@@ -11,9 +11,9 @@
   "missionSuccessStatementOverride": null,
   "badFaithStatementOverride": null,
   "goodFaithStatementOverride": null,
-  "shortDescription": "We recently lost contact with one of our forward bases in the {TGT_SYSTEM.name} system. We've heard rumours of {TEAM_TAR.FactionDef.Demonym} activity near here so it might be related. We need you to go in and investigate for us.",
-  "longDescription": "Forward base is a little misleading, Commander. I've heard rumours it's more a spy station. Let's go find out what's going on.",
-  "salvagePotential": 20,
+  "shortDescription": "One of our bio research stations has gone dark in the {TGT_SYSTEM.name} system. We've not sure why but {TEAM_TAR.FactionDef.Demonym} affiliated groups have been asking about purchasing some specific supplies we also use in that system. Investigate and find out what's going on.",
+  "longDescription": "Bio research station? We better be careful here, Commander. I don't fancy catching a new type of cold, if you know what I mean?",
+  "salvagePotential": 16,
   "requirementList": [
     {
       "Scope": "StarSystem",
@@ -50,7 +50,7 @@
       "contractObjective": {
         "EncounterObjectGuid": "73275787-720a-4c33-9f20-953b1bbf48bd"
       },
-      "title": "Investigate the Blackout",
+      "title": "Investigate the Biolab",
       "description": "",
       "isPrimary": true,
       "forPlayer": "Player1",
@@ -65,7 +65,7 @@
       "objective": {
         "EncounterObjectGuid": "786166e2-22ea-45c1-9786-68df31958bd8"
       },
-      "title": "Investigate the Blackout",
+      "title": "Investigate the Biolab",
       "description": "",
       "isPrimary": true,
       "OnSuccessResults": [],
@@ -77,8 +77,8 @@
       "objective": {
         "EncounterObjectGuid": "a96a7b04-85cf-4052-8ceb-1063b273c87f"
       },
-      "title": "Survive the trap",
-      "description": "Survive the turret trap in alpha base",
+      "title": "Survive the bioscan",
+      "description": "Survive the bioscan in alpha base",
       "isPrimary": true,
       "OnSuccessResults": [],
       "OnFailureResults": [],
@@ -89,8 +89,8 @@
       "objective": {
         "EncounterObjectGuid": "b8e02f26-f664-4314-a003-67737fef719d"
       },
-      "title": "Follow the Trail",
-      "description": "Follow the trail to the next base",
+      "title": "Head to the Biolab complex",
+      "description": "Head to the biolab in the next base",
       "isPrimary": true,
       "OnSuccessResults": [],
       "OnFailureResults": [],
@@ -250,7 +250,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "We've received very little intel on this situation. We just know they went dark and we assume jamming is involved. Careful out there, Commander.",
+          "words": "We've been informed there's two main bases for the Biolab. Let's head to the first one and scout it out. And... try not to take any deep breaths out there, Commander.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -275,7 +275,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "Great job, Commander! They always say you can't judge these types of contracts.",
+          "words": "Good job there, Commander. Let's hope that {TEAM_TAR.FactionDef.Demonym} crew weren't right about that virus.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -300,7 +300,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "The loss of that position will come at a bad time for {TEAM_EMP.FactionDef.ShortName}. No good news for us either.",
+          "words": "This virus will be a problem now, Commander. Let's get you back.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -325,7 +325,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "Strange. There looks like there's been fighting here but it was a least a few weeks ago. Let's look up on ahead. Maybe we'll find something at the other base.",
+          "words": "There are a few dead bodies scattered around the base here, Commander. I hate to say it but maybe there's something going on with this biolab. Let's check the biolab complex.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -350,7 +350,23 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "What's this?! The turrets are activating. Incoming fire, Commander!",
+          "words": "*** DETECTED UNKNOWN FORCE *** ... *** VIRUS BREACH DETECTED *** .... *** ACTIVATING DEVICE NETWORK ***",
+          "wordsColor": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          },
+          "selectedCastDefId": "castDef_SE01_CommVoice01",
+          "emote": "Default",
+          "audioName": "NONE",
+          "cameraFocusGuid": "e7e9f35b-7ed8-404e-9dae-69be61de2dd3",
+          "cameraDistance": "Medium",
+          "cameraHeight": "Default",
+          "revealRadius": -1
+        },
+        {
+          "words": "What out, Commander! Turrets coming online!",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -375,7 +391,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "We were told to expect interference. Time to shut you out.",
+          "words": "We knew your damned experiments here would ruin us, {TEAM_EMP.FactionDef.Demonym}. Now you've released that virus and killed us all. At least we'll take you with us first.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -391,7 +407,7 @@
           "revealRadius": -1
         },
         {
-          "words": "This isn't good, Commander. You're surrounded!",
+          "words": "Virus? Commander, incoming hostiles!",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -407,14 +423,14 @@
           "revealRadius": -1
         },
         {
-          "words": "Hey! That base's automated turrets are spinning up. Lucky us!",
+          "words": "*** DETECTED UNKNOWN FORCE *** ... *** VIRUS DETECTED *** .... *** ACTIVATING DEVICE NETWORK ***",
           "wordsColor": {
             "r": 1,
             "g": 1,
             "b": 1,
             "a": 1
           },
-          "selectedCastDefId": "castDef_DariusDefault",
+          "selectedCastDefId": "castDef_SE01_CommVoice01",
           "emote": "Default",
           "audioName": "NONE",
           "cameraFocusGuid": "e7e9f35b-7ed8-404e-9dae-69be61de2dd3",
@@ -432,7 +448,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "Is everything ok down there, Commander? Looks like those turrets were hacked. Something is definitely not right here. Let's move on to the next base.",
+          "words": "What was all that about a virus? To be on the safe side I wouldn't leave your mechs whilst you're down there. Let's move to the biolab complex to figure this out.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -457,7 +473,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "How did these guys get the jump on us? We've been getting too much bad intel. This is now officially a hot zone. Let's continue our investigation. Expect more OpFor, Commander.",
+          "words": "A {TEAM_TAR.FactionDef.Demonym} attack? Virus? What the hell is going on here? Let's get this over with fast.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -482,14 +498,14 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "Unidentified BattleMech lance. Declare yourself. You are violating a {TEAM_EMP.FactionDef.Demonym} militarised zone",
+          "words": "Unidentified BattleMech lance. This base has been put under quarantine by {TEAM_TAR.FactionDef.ShortName}. Leave this area now.",
           "wordsColor": {
             "r": 1,
             "g": 1,
             "b": 1,
             "a": 1
           },
-          "selectedCastDefId": "castDef_SE06_KarosasCaptainDefault",
+          "selectedCastDefId": "castDef_TeamLeader_Hostile",
           "emote": "Default",
           "audioName": "NONE",
           "cameraFocusGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
@@ -498,7 +514,7 @@
           "revealRadius": -1
         },
         {
-          "words": "{TEAM_EMP.FactionDef.Demonym} radio operator. We are {COMPANY.CompanyName} and have been hired to check the sit rep here. You've been out of contact for weeks. Everything ok here?",
+          "words": "{TEAM_TAR.FactionDef.Demonym} radio operator. You have illegally taken over this {TEAM_EMP.FactionDef.Demonym} base. Leave or be forced out.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -514,39 +530,7 @@
           "revealRadius": -1
         },
         {
-          "words": "Everythings fi..***STATIC***",
-          "wordsColor": {
-            "r": 1,
-            "g": 1,
-            "b": 1,
-            "a": 1
-          },
-          "selectedCastDefId": "castDef_SE06_KarosasCaptainDefault",
-          "emote": "Default",
-          "audioName": "NONE",
-          "cameraFocusGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
-          "cameraDistance": "Close",
-          "cameraHeight": "Default",
-          "revealRadius": -1
-        },
-        {
-          "words": "Commander! It's a trap! Watch ou...***STATIC***",
-          "wordsColor": {
-            "r": 1,
-            "g": 1,
-            "b": 1,
-            "a": 1
-          },
-          "selectedCastDefId": "castDef_TeamLeader_Employer",
-          "emote": "Default",
-          "audioName": "NONE",
-          "cameraFocusGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
-          "cameraDistance": "Medium",
-          "cameraHeight": "Default",
-          "revealRadius": -1
-        },
-        {
-          "words": "Damn it! Gun them down now!",
+          "words": "You leave us no choice. Contain and control those Mercs!",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -571,39 +555,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "It's me again, Commander! I'm going to try and activate the turrets... ***BANG***",
-          "wordsColor": {
-            "r": 1,
-            "g": 1,
-            "b": 1,
-            "a": 1
-          },
-          "selectedCastDefId": "castDef_TeamLeader_Employer",
-          "emote": "Default",
-          "audioName": "NONE",
-          "cameraFocusGuid": "98fc619a-28f5-4a29-ae7f-5f42576cd0bc",
-          "cameraDistance": "Medium",
-          "cameraHeight": "Default",
-          "revealRadius": -1
-        },
-        {
-          "words": "That sorts you out. Thanks for unlocking those turrets for us.",
-          "wordsColor": {
-            "r": 1,
-            "g": 1,
-            "b": 1,
-            "a": 1
-          },
-          "selectedCastDefId": "castDef_TeamLeader_Hostile",
-          "emote": "Default",
-          "audioName": "NONE",
-          "cameraFocusGuid": "98fc619a-28f5-4a29-ae7f-5f42576cd0bc",
-          "cameraDistance": "Medium",
-          "cameraHeight": "Default",
-          "revealRadius": -1
-        },
-        {
-          "words": "Commander, this isn't good. Watch out for those base defenses!",
+          "words": "Watch out, Commander! Base defenses are coming online!",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -628,14 +580,14 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "It's me again, Commander! I've managed to activate our base defenses. Locked them all shortly before we lost control. Give them hell!",
+          "words": "*** DETECTED OCCUPYING FORCE *** ... *** VIRUS DETECTED ON OCCUPYING UNITS *** .... *** ACTIVATING DEVICE NETWORK ***",
           "wordsColor": {
             "r": 1,
             "g": 1,
             "b": 1,
             "a": 1
           },
-          "selectedCastDefId": "castDef_TeamLeader_Employer",
+          "selectedCastDefId": "castDef_SE01_CommVoice01",
           "emote": "Default",
           "audioName": "NONE",
           "cameraFocusGuid": "98fc619a-28f5-4a29-ae7f-5f42576cd0bc",
@@ -653,7 +605,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "Commander! Are we glad to see you! {TEAM_EMP.FactionDef.Demonym} forward base {TGT_SYSTEM.name}-Alpha.",
+          "words": "Commander! Are we glad to see you! {TEAM_EMP.FactionDef.Demonym} Biolab {TGT_SYSTEM.name}-Delta.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -669,7 +621,7 @@
           "revealRadius": -1
         },
         {
-          "words": "We've been holding off assaults on our position for the past few weeks. We've fallen back to this base but we can't hold out for much longer.",
+          "words": "We had a containment breach on one of our projects. Nothing serious I assure you and we have it under control. However, it looks like we've pushed the {TEAM_TAR.FactionDef.Demonym} watchers too far. They're determined to wipe us out!",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -1045,7 +997,7 @@
         "name": "Lance_Enemy_RoamingForce",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_dynamic", "lance_type_light"],
+          "items": ["lance_type_dynamic", "lance_type_heavy"],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "lanceExcludedTagSet": {
@@ -1201,7 +1153,7 @@
         "name": "Lance_Enemy_OpposingForce",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_dynamic", "lance_type_heavy"],
+          "items": ["lance_type_dynamic", "lance_type_assault"],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "lanceExcludedTagSet": {
@@ -1352,168 +1304,12 @@
       },
       {
         "lanceSpawner": {
-          "EncounterObjectGuid": "f5714221-5fc6-41e5-a369-c8aa2b6d1bcf"
-        },
-        "name": "Lance_Enemy_OccupyingForce",
-        "lanceDefId": "Tagged",
-        "lanceTagSet": {
-          "items": ["lance_type_dynamic", "lance_type_heavy"],
-          "tagSetSourceFile": "tags/LanceTags"
-        },
-        "lanceExcludedTagSet": {
-          "items": [],
-          "tagSetSourceFile": "tags/LanceTags"
-        },
-        "spawnEffectTags": {
-          "items": [],
-          "tagSetSourceFile": "tags/SpawnEffectTags"
-        },
-        "lanceDifficultyAdjustment": 2,
-        "selectedLanceDefId": "",
-        "selectedLanceDifficulty": 0,
-        "unitSpawnPointOverrideList": [
-          {
-            "unitSpawnPoint": {
-              "EncounterObjectGuid": "ec9b2fd0-15a0-488c-8190-64cea5cce242"
-            },
-            "customUnitName": null,
-            "customHeraldryDefId": "",
-            "unitType": "Mech",
-            "unitDefId": "mechDef_InheritLance",
-            "unitTagSet": {
-              "items": [],
-              "tagSetSourceFile": "tags/UnitTags"
-            },
-            "unitExcludedTagSet": {
-              "items": [],
-              "tagSetSourceFile": "tags/UnitTags"
-            },
-            "spawnEffectTags": {
-              "items": [],
-              "tagSetSourceFile": "tags/SpawnEffectTags"
-            },
-            "pilotDefId": "pilotDef_InheritLance",
-            "pilotTagSet": {
-              "items": [],
-              "tagSetSourceFile": "tags/PilotTags"
-            },
-            "pilotExcludedTagSet": {
-              "items": [],
-              "tagSetSourceFile": "tags/PilotTags"
-            },
-            "selectedUnitType": "UNDEFINED",
-            "selectedUnitDefId": "",
-            "selectedPilotDefId": ""
-          },
-          {
-            "unitSpawnPoint": {
-              "EncounterObjectGuid": "993b100b-dc76-44c2-85ac-e50beb0dc9ed"
-            },
-            "customUnitName": null,
-            "customHeraldryDefId": "",
-            "unitType": "Mech",
-            "unitDefId": "mechDef_InheritLance",
-            "unitTagSet": {
-              "items": [],
-              "tagSetSourceFile": "tags/UnitTags"
-            },
-            "unitExcludedTagSet": {
-              "items": [],
-              "tagSetSourceFile": "tags/UnitTags"
-            },
-            "spawnEffectTags": {
-              "items": [],
-              "tagSetSourceFile": "tags/SpawnEffectTags"
-            },
-            "pilotDefId": "pilotDef_InheritLance",
-            "pilotTagSet": {
-              "items": [],
-              "tagSetSourceFile": "tags/PilotTags"
-            },
-            "pilotExcludedTagSet": {
-              "items": [],
-              "tagSetSourceFile": "tags/PilotTags"
-            },
-            "selectedUnitType": "UNDEFINED",
-            "selectedUnitDefId": "",
-            "selectedPilotDefId": ""
-          },
-          {
-            "unitSpawnPoint": {
-              "EncounterObjectGuid": "55a83021-479e-4ff2-8104-46fd21c2ce22"
-            },
-            "customUnitName": null,
-            "customHeraldryDefId": "",
-            "unitType": "Mech",
-            "unitDefId": "mechDef_InheritLance",
-            "unitTagSet": {
-              "items": [],
-              "tagSetSourceFile": "tags/UnitTags"
-            },
-            "unitExcludedTagSet": {
-              "items": [],
-              "tagSetSourceFile": "tags/UnitTags"
-            },
-            "spawnEffectTags": {
-              "items": [],
-              "tagSetSourceFile": "tags/SpawnEffectTags"
-            },
-            "pilotDefId": "pilotDef_InheritLance",
-            "pilotTagSet": {
-              "items": [],
-              "tagSetSourceFile": "tags/PilotTags"
-            },
-            "pilotExcludedTagSet": {
-              "items": [],
-              "tagSetSourceFile": "tags/PilotTags"
-            },
-            "selectedUnitType": "UNDEFINED",
-            "selectedUnitDefId": "",
-            "selectedPilotDefId": ""
-          },
-          {
-            "unitSpawnPoint": {
-              "EncounterObjectGuid": "8f8e3dbe-2e1b-4808-a362-fd4f7d6f9eb2"
-            },
-            "customUnitName": null,
-            "customHeraldryDefId": "",
-            "unitType": "Mech",
-            "unitDefId": "mechDef_InheritLance",
-            "unitTagSet": {
-              "items": [],
-              "tagSetSourceFile": "tags/UnitTags"
-            },
-            "unitExcludedTagSet": {
-              "items": [],
-              "tagSetSourceFile": "tags/UnitTags"
-            },
-            "spawnEffectTags": {
-              "items": [],
-              "tagSetSourceFile": "tags/SpawnEffectTags"
-            },
-            "pilotDefId": "pilotDef_InheritLance",
-            "pilotTagSet": {
-              "items": [],
-              "tagSetSourceFile": "tags/PilotTags"
-            },
-            "pilotExcludedTagSet": {
-              "items": [],
-              "tagSetSourceFile": "tags/PilotTags"
-            },
-            "selectedUnitType": "UNDEFINED",
-            "selectedUnitDefId": "",
-            "selectedPilotDefId": ""
-          }
-        ]
-      },
-      {
-        "lanceSpawner": {
           "EncounterObjectGuid": "b60da416-495c-474d-8b58-1678966835df"
         },
         "name": "Lance_Enemy_Ambushers",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_dynamic", "lance_type_medium"],
+          "items": ["lance_type_dynamic", "lance_type_heavy"],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "lanceExcludedTagSet": {

@@ -1,8 +1,8 @@
 {
-  "ID": "Blackout_HeavyStatic",
-  "contractName": "Heavy Static",
+  "ID": "Blackout_DugInDeep",
+  "contractName": "Dug in Deep",
   "contractDisplayStyle": "BaseCampaignNormal",
-  "difficulty": 8,
+  "difficulty": 2,
   "difficultyUIModifier": 0,
   "weight": 1,
   "scope": "STANDARD",
@@ -11,9 +11,9 @@
   "missionSuccessStatementOverride": null,
   "badFaithStatementOverride": null,
   "goodFaithStatementOverride": null,
-  "shortDescription": "We recently lost contact with one of our forward bases in the {TGT_SYSTEM.name} system. We've heard rumours of {TEAM_TAR.FactionDef.Demonym} activity near here so it might be related. We need you to go in and investigate for us.",
-  "longDescription": "Forward base is a little misleading, Commander. I've heard rumours it's more a spy station. Let's go find out what's going on.",
-  "salvagePotential": 20,
+  "shortDescription": "Last week radio coms with a strategic outpost was interrupted mid datastream to one of the remote relays and we've been unable to reestablish contact. Our other units are all tied up so we need you to make contact and get a sitrep.",
+  "longDescription": "Interrupted mid-stream? Not much does that, Commander. We better be ready for anything down there.",
+  "salvagePotential": 8,
   "requirementList": [
     {
       "Scope": "StarSystem",
@@ -50,7 +50,7 @@
       "contractObjective": {
         "EncounterObjectGuid": "73275787-720a-4c33-9f20-953b1bbf48bd"
       },
-      "title": "Investigate the Blackout",
+      "title": "Establish SitRep",
       "description": "",
       "isPrimary": true,
       "forPlayer": "Player1",
@@ -65,7 +65,7 @@
       "objective": {
         "EncounterObjectGuid": "786166e2-22ea-45c1-9786-68df31958bd8"
       },
-      "title": "Investigate the Blackout",
+      "title": "Establish SitRep",
       "description": "",
       "isPrimary": true,
       "OnSuccessResults": [],
@@ -77,8 +77,8 @@
       "objective": {
         "EncounterObjectGuid": "a96a7b04-85cf-4052-8ceb-1063b273c87f"
       },
-      "title": "Survive the trap",
-      "description": "Survive the turret trap in alpha base",
+      "title": "Survive the defenses",
+      "description": "Survive the turrets in alpha base",
       "isPrimary": true,
       "OnSuccessResults": [],
       "OnFailureResults": [],
@@ -89,8 +89,8 @@
       "objective": {
         "EncounterObjectGuid": "b8e02f26-f664-4314-a003-67737fef719d"
       },
-      "title": "Follow the Trail",
-      "description": "Follow the trail to the next base",
+      "title": "Link up with the main compound",
+      "description": "Link up with the main compound",
       "isPrimary": true,
       "OnSuccessResults": [],
       "OnFailureResults": [],
@@ -103,18 +103,6 @@
       },
       "title": "Destroy invading lance",
       "description": "Destroy the lance that is invading",
-      "isPrimary": true,
-      "OnSuccessResults": [],
-      "OnFailureResults": [],
-      "OnSuccessDialogueGUID": null,
-      "OnFailureDialogueGUID": null
-    },
-    {
-      "objective": {
-        "EncounterObjectGuid": "bfa3d339-c304-4fba-87db-ac725acb4c10"
-      },
-      "title": "Destroy occupying lance",
-      "description": "Destroy the lance that is occuping the base",
       "isPrimary": true,
       "OnSuccessResults": [],
       "OnFailureResults": [],
@@ -183,30 +171,6 @@
       "controlledByContractChunkGroupList": ["Inactive"]
     },
     {
-      "name": "Chunk_Stage_3a_Trap",
-      "encounterChunk": {
-        "EncounterObjectGuid": "716aec95-e204-4033-8d56-8f659a30c51c"
-      },
-      "enableChunkFromContract": true,
-      "controlledByContractChunkGroupList": ["Inactive"]
-    },
-    {
-      "name": "Chunk_Stage_Post_3a_Enemy_Turrets",
-      "encounterChunk": {
-        "EncounterObjectGuid": "1fdeca88-c2d9-46af-b443-cf95aae707b6"
-      },
-      "enableChunkFromContract": true,
-      "controlledByContractChunkGroupList": ["Inactive"]
-    },
-    {
-      "name": "Chunk_Stage_Post_3a_Friendly_Turrets",
-      "encounterChunk": {
-        "EncounterObjectGuid": "832ae497-f3d3-467f-b4da-8e95a3d757b0"
-      },
-      "enableChunkFromContract": true,
-      "controlledByContractChunkGroupList": ["Inactive"]
-    },
-    {
       "name": "Chunk_Stage_3b_Incoming_Attack",
       "encounterChunk": {
         "EncounterObjectGuid": "df31d9e4-762f-4556-bc49-ce8dc1659c0a"
@@ -250,7 +214,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "We've received very little intel on this situation. We just know they went dark and we assume jamming is involved. Careful out there, Commander.",
+          "words": "Landing site secure. Let's do what we agreed, Commander. Scout out that data relay and take it from there. Good luck.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -275,7 +239,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "Great job, Commander! They always say you can't judge these types of contracts.",
+          "words": "Great job, Commander! Now they can re-establish their data relay.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -300,7 +264,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "The loss of that position will come at a bad time for {TEAM_EMP.FactionDef.ShortName}. No good news for us either.",
+          "words": "The loss of that data cache and relay station is bad news for {TEAM_EMP.FactionDef.ShortName}. Let's figure out our next step.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -325,7 +289,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "Strange. There looks like there's been fighting here but it was a least a few weeks ago. Let's look up on ahead. Maybe we'll find something at the other base.",
+          "words": "No wonder the data steam cut off. This place has been slagged. Maybe there's more we can find out in the main compound.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -350,7 +314,23 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "What's this?! The turrets are activating. Incoming fire, Commander!",
+          "words": "*** DETECTED INCOMING FORCES OF UNKNOWN ORIGIN ****  ...  *** RED ALERT STATUS ***",
+          "wordsColor": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          },
+          "selectedCastDefId": "castDef_SE01_CommVoice01",
+          "emote": "Default",
+          "audioName": "NONE",
+          "cameraFocusGuid": "e7e9f35b-7ed8-404e-9dae-69be61de2dd3",
+          "cameraDistance": "Medium",
+          "cameraHeight": "Default",
+          "revealRadius": -1
+        },
+        {
+          "words": "Red alert status for unknown forces? They've got their defenses fully primed. What's going on?!",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -375,7 +355,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "We were told to expect interference. Time to shut you out.",
+          "words": "A lance of mechs?! We were told to expect minor resistance. Shit... Lance! Engage!",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -391,7 +371,7 @@
           "revealRadius": -1
         },
         {
-          "words": "This isn't good, Commander. You're surrounded!",
+          "words": "Looks like we've walked into a full assault, Commander. Contacts are hostile and incoming.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -407,7 +387,7 @@
           "revealRadius": -1
         },
         {
-          "words": "Hey! That base's automated turrets are spinning up. Lucky us!",
+          "words": "At least this data relay has some kind of turret defenses. They're booting up now.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -457,7 +437,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "How did these guys get the jump on us? We've been getting too much bad intel. This is now officially a hot zone. Let's continue our investigation. Expect more OpFor, Commander.",
+          "words": "We either came at the right time or the worst time. Good job on dispatching that assault. I fear that's not the last of them though. Expect more OpFor, Commander.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -476,184 +456,13 @@
     },
     {
       "dialogue": {
-        "EncounterObjectGuid": "4ef16b5e-1486-4399-8835-b81026b22cac"
-      },
-      "name": "Dialogue_Second_Point_Of_Interest_3a",
-      "overrideDialogueBucketId": "",
-      "dialogueContent": [
-        {
-          "words": "Unidentified BattleMech lance. Declare yourself. You are violating a {TEAM_EMP.FactionDef.Demonym} militarised zone",
-          "wordsColor": {
-            "r": 1,
-            "g": 1,
-            "b": 1,
-            "a": 1
-          },
-          "selectedCastDefId": "castDef_SE06_KarosasCaptainDefault",
-          "emote": "Default",
-          "audioName": "NONE",
-          "cameraFocusGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
-          "cameraDistance": "Close",
-          "cameraHeight": "Default",
-          "revealRadius": -1
-        },
-        {
-          "words": "{TEAM_EMP.FactionDef.Demonym} radio operator. We are {COMPANY.CompanyName} and have been hired to check the sit rep here. You've been out of contact for weeks. Everything ok here?",
-          "wordsColor": {
-            "r": 1,
-            "g": 1,
-            "b": 1,
-            "a": 1
-          },
-          "selectedCastDefId": "castDef_DariusDefault",
-          "emote": "Default",
-          "audioName": "NONE",
-          "cameraFocusGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
-          "cameraDistance": "Close",
-          "cameraHeight": "Default",
-          "revealRadius": -1
-        },
-        {
-          "words": "Everythings fi..***STATIC***",
-          "wordsColor": {
-            "r": 1,
-            "g": 1,
-            "b": 1,
-            "a": 1
-          },
-          "selectedCastDefId": "castDef_SE06_KarosasCaptainDefault",
-          "emote": "Default",
-          "audioName": "NONE",
-          "cameraFocusGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
-          "cameraDistance": "Close",
-          "cameraHeight": "Default",
-          "revealRadius": -1
-        },
-        {
-          "words": "Commander! It's a trap! Watch ou...***STATIC***",
-          "wordsColor": {
-            "r": 1,
-            "g": 1,
-            "b": 1,
-            "a": 1
-          },
-          "selectedCastDefId": "castDef_TeamLeader_Employer",
-          "emote": "Default",
-          "audioName": "NONE",
-          "cameraFocusGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
-          "cameraDistance": "Medium",
-          "cameraHeight": "Default",
-          "revealRadius": -1
-        },
-        {
-          "words": "Damn it! Gun them down now!",
-          "wordsColor": {
-            "r": 1,
-            "g": 1,
-            "b": 1,
-            "a": 1
-          },
-          "selectedCastDefId": "castDef_TeamLeader_Hostile",
-          "emote": "Default",
-          "audioName": "NONE",
-          "cameraFocusGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
-          "cameraDistance": "Medium",
-          "cameraHeight": "Default",
-          "revealRadius": -1
-        }
-      ]
-    },
-    {
-      "dialogue": {
-        "EncounterObjectGuid": "5b3c49fe-d2a6-46ba-b0b7-21a43fd254a9"
-      },
-      "name": "Dialogue_3a_Enemy_Turrets_Activating",
-      "overrideDialogueBucketId": "",
-      "dialogueContent": [
-        {
-          "words": "It's me again, Commander! I'm going to try and activate the turrets... ***BANG***",
-          "wordsColor": {
-            "r": 1,
-            "g": 1,
-            "b": 1,
-            "a": 1
-          },
-          "selectedCastDefId": "castDef_TeamLeader_Employer",
-          "emote": "Default",
-          "audioName": "NONE",
-          "cameraFocusGuid": "98fc619a-28f5-4a29-ae7f-5f42576cd0bc",
-          "cameraDistance": "Medium",
-          "cameraHeight": "Default",
-          "revealRadius": -1
-        },
-        {
-          "words": "That sorts you out. Thanks for unlocking those turrets for us.",
-          "wordsColor": {
-            "r": 1,
-            "g": 1,
-            "b": 1,
-            "a": 1
-          },
-          "selectedCastDefId": "castDef_TeamLeader_Hostile",
-          "emote": "Default",
-          "audioName": "NONE",
-          "cameraFocusGuid": "98fc619a-28f5-4a29-ae7f-5f42576cd0bc",
-          "cameraDistance": "Medium",
-          "cameraHeight": "Default",
-          "revealRadius": -1
-        },
-        {
-          "words": "Commander, this isn't good. Watch out for those base defenses!",
-          "wordsColor": {
-            "r": 1,
-            "g": 1,
-            "b": 1,
-            "a": 1
-          },
-          "selectedCastDefId": "castDef_DariusDefault",
-          "emote": "Default",
-          "audioName": "NONE",
-          "cameraFocusGuid": "98fc619a-28f5-4a29-ae7f-5f42576cd0bc",
-          "cameraDistance": "Medium",
-          "cameraHeight": "Default",
-          "revealRadius": -1
-        }
-      ]
-    },
-    {
-      "dialogue": {
-        "EncounterObjectGuid": "ebfc6319-b365-478d-af8c-cfa8a38ad1e4"
-      },
-      "name": "Dialogue_3a_Employer_Turrets_Activating",
-      "overrideDialogueBucketId": "",
-      "dialogueContent": [
-        {
-          "words": "It's me again, Commander! I've managed to activate our base defenses. Locked them all shortly before we lost control. Give them hell!",
-          "wordsColor": {
-            "r": 1,
-            "g": 1,
-            "b": 1,
-            "a": 1
-          },
-          "selectedCastDefId": "castDef_TeamLeader_Employer",
-          "emote": "Default",
-          "audioName": "NONE",
-          "cameraFocusGuid": "98fc619a-28f5-4a29-ae7f-5f42576cd0bc",
-          "cameraDistance": "Medium",
-          "cameraHeight": "Default",
-          "revealRadius": -1
-        }
-      ]
-    },
-    {
-      "dialogue": {
         "EncounterObjectGuid": "d530f8a5-ce14-4af8-8da3-2020dab6def1"
       },
       "name": "Dialogue_Second_Point_Of_Interest_3b",
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "Commander! Are we glad to see you! {TEAM_EMP.FactionDef.Demonym} forward base {TGT_SYSTEM.name}-Alpha.",
+          "words": "{COMPANY.CompanyName}! We just watched you waste that invading lance. What a sight for sore eyes. Welcome to the frontlines!",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -669,7 +478,23 @@
           "revealRadius": -1
         },
         {
-          "words": "We've been holding off assaults on our position for the past few weeks. We've fallen back to this base but we can't hold out for much longer.",
+          "words": "Frontlines? Lucky us. We've been sent by {TEAM_EMP.FactionDef.ShortName} to aid and assist. How are you all doing in there? What's the sitrep?",
+          "wordsColor": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          },
+          "selectedCastDefId": "castDef_DariusDefault",
+          "emote": "Default",
+          "audioName": "NONE",
+          "cameraFocusGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
+          "cameraDistance": "Close",
+          "cameraHeight": "Default",
+          "revealRadius": -1
+        },
+        {
+          "words": "We first noticed our data streams were being interrupted then had the odd scout probe our defenses. You arrived right on time for the main event it seems.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -1201,7 +1026,7 @@
         "name": "Lance_Enemy_OpposingForce",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_dynamic", "lance_type_heavy"],
+          "items": ["lance_type_dynamic", "lance_type_light"],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "lanceExcludedTagSet": {
@@ -1357,7 +1182,7 @@
         "name": "Lance_Enemy_OccupyingForce",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_dynamic", "lance_type_heavy"],
+          "items": ["lance_type_dynamic", "lance_type_light"],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "lanceExcludedTagSet": {
@@ -1513,7 +1338,7 @@
         "name": "Lance_Enemy_Ambushers",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_dynamic", "lance_type_medium"],
+          "items": ["lance_type_dynamic", "lance_type_light"],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "lanceExcludedTagSet": {
