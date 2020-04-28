@@ -46,6 +46,12 @@ namespace MissionControl.Logic {
           continue;
         }
 
+        if (Main.Settings.ExtendedLances.GetSkipWhenExcludeTagsContain().Count > 0 && lanceOverride.lanceExcludedTagSet.ContainsAny(Main.Settings.ExtendedLances.GetSkipWhenExcludeTagsContain())) {
+          Main.LogDebug($"[IncreaseLanceMembers] [{teamOverride.faction}] Lance contains an exclude tag set in 'GetSkipWhenExcludeTagsContain'. Skipping '{lanceOverride.name}'");
+          lancesToSkip.Add(lanceOverride.GUID);
+          continue;
+        }
+
         // GUARD: If an AdditionalLance lance config has been set to 'supportAutofill' false, then don't autofill
         if (lanceOverride is MLanceOverride) {
           MLanceOverride mLanceOverride = (MLanceOverride)lanceOverride;
