@@ -21,12 +21,19 @@ namespace MissionControl.Config {
     [JsonProperty("SkipWhenTaggedWithAll")]
     public List<string> SkipWhenTaggedWithAll { get; set; } = new List<string>();
 
+    [JsonProperty("SkipWhenExcludeTagsContain")]
+    public List<string> SkipWhenExcludeTagsContain { get; set; } = new List<string>();
+
     public TagSet GetSkipWhenTaggedWithAny() {
       return new TagSet(SkipWhenTaggedWithAny);
     }
 
     public TagSet GetSkipWhenTaggedWithAll() {
       return new TagSet(SkipWhenTaggedWithAll);
+    }
+
+    public TagSet GetSkipWhenExcludeTagsContain() {
+      return new TagSet(SkipWhenExcludeTagsContain);
     }
 
     public int GetFactionLanceSize(string factionKey) {

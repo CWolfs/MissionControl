@@ -49,6 +49,7 @@
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel", "Blackout"],
     "SkipWhenTaggedWithAny": ["lance_type_solo"],
     "SkipWhenTaggedWithAll": [],
+    "SkipWhenExcludeTagsContain": ["no_extended_lance"],
     "LanceSizes": {
       "5": [],
       "6": []
