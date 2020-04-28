@@ -8,17 +8,12 @@ using Newtonsoft.Json.Linq;
 
 using BattleTech;
 using BattleTech.Data;
-using BattleTech.Designed;
-using BattleTech.Framework;
 
 using HBS.Data;
 
 using MissionControl.Data;
-using MissionControl.Logic;
 using MissionControl.Messages;
 using MissionControl.Utils;
-
-using Harmony;
 
 namespace MissionControl {
   public class DataManager {
@@ -92,6 +87,18 @@ namespace MissionControl {
           }
         }
       }
+    }
+
+    public List<string> GetCustomContractTypes() {
+      List<string> customContractTypeNames = new List<string>();
+      MetadataDatabase mdd = MetadataDatabase.Instance;
+      List<ContractType_MDD> contractTypes = mdd.GetCustomContractTypes();
+
+      foreach (ContractType_MDD contractType in contractTypes) {
+        customContractTypeNames.Add(contractType.Name);
+      }
+
+      return customContractTypeNames;
     }
 
     private void LoadCustomContractTypes() {
