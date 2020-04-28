@@ -50,7 +50,7 @@
       "contractObjective": {
         "EncounterObjectGuid": "73275787-720a-4c33-9f20-953b1bbf48bd"
       },
-      "title": "Investigate the Blackout",
+      "title": "Establish SitRep",
       "description": "",
       "isPrimary": true,
       "forPlayer": "Player1",
@@ -65,7 +65,7 @@
       "objective": {
         "EncounterObjectGuid": "786166e2-22ea-45c1-9786-68df31958bd8"
       },
-      "title": "Investigate the Blackout",
+      "title": "Establish SitRep",
       "description": "",
       "isPrimary": true,
       "OnSuccessResults": [],
@@ -77,8 +77,8 @@
       "objective": {
         "EncounterObjectGuid": "a96a7b04-85cf-4052-8ceb-1063b273c87f"
       },
-      "title": "Survive the trap",
-      "description": "Survive the turret trap in alpha base",
+      "title": "Survive the defenses",
+      "description": "Survive the turrets in alpha base",
       "isPrimary": true,
       "OnSuccessResults": [],
       "OnFailureResults": [],
@@ -89,8 +89,8 @@
       "objective": {
         "EncounterObjectGuid": "b8e02f26-f664-4314-a003-67737fef719d"
       },
-      "title": "Follow the Trail",
-      "description": "Follow the trail to the next base",
+      "title": "Link up with the main compound",
+      "description": "Link up with the main compound",
       "isPrimary": true,
       "OnSuccessResults": [],
       "OnFailureResults": [],
@@ -103,18 +103,6 @@
       },
       "title": "Destroy invading lance",
       "description": "Destroy the lance that is invading",
-      "isPrimary": true,
-      "OnSuccessResults": [],
-      "OnFailureResults": [],
-      "OnSuccessDialogueGUID": null,
-      "OnFailureDialogueGUID": null
-    },
-    {
-      "objective": {
-        "EncounterObjectGuid": "bfa3d339-c304-4fba-87db-ac725acb4c10"
-      },
-      "title": "Destroy occupying lance",
-      "description": "Destroy the lance that is occuping the base",
       "isPrimary": true,
       "OnSuccessResults": [],
       "OnFailureResults": [],
@@ -226,7 +214,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "Landing site secure. Let's do what we agreed, Commander. Sout out that data relay and take it from there. Good luck.",
+          "words": "Landing site secure. Let's do what we agreed, Commander. Scout out that data relay and take it from there. Good luck.",
           "wordsColor": {
             "r": 1,
             "g": 1,
