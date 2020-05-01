@@ -51,7 +51,14 @@
           "Guid": "f426f0dc-969d-477d-81a9-d02f9e1eff79", // Must match the spawner guids in the contract .json
           "SpawnPoints": 1,
           "SpawnPointGuids": ["6cd3107e-0f9d-4809-ab8c-fb30faf4cd80"], // Must match the unit spawn guids in the contract .json
-          "SpawnType": "Instant" // Leopard, DropPod, Instant
+          "SpawnType": "Instant", // Leopard, DropPod, Instant
+          "AI": [
+            {
+              "Type": "MagicKnowledgeByTag",
+              "Action": "Add",
+              "Tags": ["Player 1"]
+            }
+          ]
         },
         {
           "Name": "Objective_DestroyLance",
