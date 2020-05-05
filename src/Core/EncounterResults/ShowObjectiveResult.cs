@@ -1,19 +1,8 @@
-using UnityEngine;
-
 using BattleTech;
 using BattleTech.Framework;
 
-using System.Linq;
-using System.Collections.Generic;
-
-using MissionControl.Utils;
-
 using Harmony;
 
-/**
-	This result will reposition a region within a min and max threshold. 
-	It will also recreate the Mesh to match the terrain for triggering the region correctly
-*/
 namespace MissionControl.Result {
   public class ShowObjectiveResult : EncounterResult {
     public string ObjectiveGuid { get; set; }
