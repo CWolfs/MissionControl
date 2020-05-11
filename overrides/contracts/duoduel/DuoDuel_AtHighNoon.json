@@ -347,7 +347,7 @@
         "lanceSpawner": {
           "EncounterObjectGuid": "f426f0dc-969d-477d-81a9-d02f9e1eff79"
         },
-        "name": "Lance_Enemy_Guards",
+        "name": "Lance_Enemy",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
           "items": ["lance_type_dynamic", "lance_type_light"],
