@@ -12,7 +12,7 @@
   "badFaithStatementOverride": null,
   "goodFaithStatementOverride": null,
   "shortDescription": "We have a BattleTech causing us trouble in {TGT_SYSTEM.name} who refuses to backdown until you, Commander, show up and fight him in a duel. They call themselves Killbox. I don't know what their problem is with you but we'll pay you to get here and just deal with them. It's causing us a headache.",
-  "longDescription": "'Killbox? Haven't heard that name for a long time. Do you think they're still upset after all these years?",
+  "longDescription": "'Killbox? Haven't heard that name for a long time. Do you think she's still upset after all these years?",
   "salvagePotential": 3,
   "requirementList": [
     {
@@ -105,7 +105,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "Last time we saw Killbox they were stuck on that moon, Commander. Not sure how they got off it. Guess it doesn't matter now. Good luck!",
+          "words": "Last time we saw Killbox she was stuck on that moon, Commander. Not sure how they got off it. Guess it doesn't matter now. Good luck!",
           "wordsColor": {
             "r": 1,
             "g": 1,
