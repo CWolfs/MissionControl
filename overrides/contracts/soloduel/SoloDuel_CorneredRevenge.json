@@ -11,8 +11,8 @@
   "missionSuccessStatementOverride": null,
   "badFaithStatementOverride": null,
   "goodFaithStatementOverride": null,
-  "shortDescription": "We have a BattleTech causing us trouble in {TGT_SYSTEM.name} who refuses to backdown until you, Commander, show up and fight him in a duel. They call themselves Killbox. I don't know what their problem is with you but we'll pay you to get here and just deal with them. It's causing us a headache.",
-  "longDescription": "'Killbox? Haven't heard that name for a long time. Do you think she's still upset after all these years?",
+  "shortDescription": "We have a BattleTech causing us trouble in {TGT_SYSTEM.name} who refuses to backdown until you, Commander, show up and fight them in a duel. They call themselves Killbox. I don't know what their problem is with you but we'll pay you to get here and just deal with them. It's causing us a headache.",
+  "longDescription": "'Killbox'? Haven't heard that name for a long time. Do you think she's still upset after all these years?",
   "salvagePotential": 3,
   "requirementList": [
     {
@@ -180,7 +180,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "Never thought you'd see me again, Comamnder? You wouldn't if it wasn't for {TEAM_TAR.FactionDef.ShortName} helping me off that forsaken moon. Unlike last time - let's finish this once and for all!",
+          "words": "Never thought you'd see me again, Commander? You wouldn't if it wasn't for {TEAM_TAR.FactionDef.ShortName} helping me off that forsaken moon. I can't forgive you for what you did. Now... unlike last time - let's finish this once and for all!",
           "wordsColor": {
             "r": 1,
             "g": 1,

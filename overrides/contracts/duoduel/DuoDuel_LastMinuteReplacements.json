@@ -12,7 +12,7 @@
   "badFaithStatementOverride": null,
   "goodFaithStatementOverride": null,
   "shortDescription": "We're in a bit of trouble. Two of our pilots challenged two long standing {TEAM_TAR.FactionDef.Demonym} duelists to a fight. Only now our pilots are nowhere to be found. Can you step in and take their spots please? Of course, you'd have to pretend to be our pilots.",
-  "longDescription": "So, pick up the mess AND give away the credit. What a raw deal. At least the MRB knows the deal.",
+  "longDescription": "So, pick up the mess AND give away the credit. What a raw situation. At least the MRB knows the deal.",
   "salvagePotential": 4,
   "requirementList": [
     {
@@ -155,7 +155,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "Let's get you out of here, Commander. Couldn't be helped.",
+          "words": "Let's get you out of here, Commander. It couldn't be helped.",
           "wordsColor": {
             "r": 1,
             "g": 1,
