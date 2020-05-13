@@ -132,7 +132,7 @@ namespace MissionControl.Logic {
       return SceneUtils.IsWithinBoundedDistanceOfTarget(origin, target, minDistance, maxDistance);
     }
 
-    public bool IsWithinBoundedDistanceOfTarget(Vector3 origin, Vector3 target, float minDistance) {
+    public bool IsBeyondBoundedDistanceOfTarget(Vector3 origin, Vector3 target, float minDistance) {
       Vector3 vectorToTarget = target - origin;
       vectorToTarget.y = 0;
       float distance = vectorToTarget.magnitude;

@@ -93,7 +93,7 @@ namespace MissionControl.Logic {
 
       if (useOrientationTarget) RotateToTarget(lance, orientationTarget);
 
-      if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(newSpawnPosition, validOrientationTargetPosition, minimumDistance)) {
+      if (!useMiniumDistance || IsBeyondBoundedDistanceOfTarget(newSpawnPosition, validOrientationTargetPosition, minimumDistance)) {
         List<GameObject> invalidLanceSpawns = GetInvalidLanceMemberSpawns(lance, validOrientationTargetPosition);
 
         if (invalidLanceSpawns.Count > 0) {

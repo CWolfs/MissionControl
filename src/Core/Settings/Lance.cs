@@ -42,7 +42,7 @@ namespace MissionControl.Config {
         if (EliteLances.Overrides.ContainsKey("ChanceToSpawn")) {
           rawChanceToSpawn = float.Parse(EliteLances.Overrides["ChanceToSpawn"]);
         } else {
-          Main.Logger.LogWarning("[SelectNumberOfAdditionalLances] [{TeamType}] Elite lances should be selected but no elite 'ChanceToSpawn' provided. Falling back to defaults.");
+          Main.Logger.LogWarning($"[SelectNumberOfAdditionalLances] [{TeamType}] Elite lances should be selected but no elite 'ChanceToSpawn' provided. Falling back to defaults.");
         }
       }
 
@@ -66,7 +66,7 @@ namespace MissionControl.Config {
         if (EliteLances.Overrides.ContainsKey("Max")) {
           resolvedMax = int.Parse(EliteLances.Overrides["Max"]);
         } else {
-          Main.Logger.LogWarning("[SelectNumberOfAdditionalLances] [{TeamType}] Elite lances should be selected but no elite 'Max' provided. Falling back to defaults.");
+          Main.Logger.LogWarning($"[SelectNumberOfAdditionalLances] [{TeamType}] Elite lances should be selected but no elite 'Max' provided. Falling back to defaults.");
         }
       }
 

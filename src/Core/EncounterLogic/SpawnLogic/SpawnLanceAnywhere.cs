@@ -81,7 +81,7 @@ namespace MissionControl.Logic {
 
       if (useOrientationTarget) RotateToTarget(lance, orientationTarget);
 
-      if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(newPosition, validOrientationTargetPosition, minimumDistance)) {
+      if (!useMiniumDistance || IsBeyondBoundedDistanceOfTarget(newPosition, validOrientationTargetPosition, minimumDistance)) {
         if (!AreLanceMemberSpawnsValid(lance, validOrientationTargetPosition)) {
           CheckAttempts();
           Run(payload);
