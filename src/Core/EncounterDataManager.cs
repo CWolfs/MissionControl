@@ -75,7 +75,7 @@ namespace MissionControl {
     }
 
     public void GenerateEncounterLayerBuildingData() {
-      Main.Logger.LogError($"[EncounterDataManager.GenerateEncounterLayerBuildingData] Generating building data");
+      Main.Logger.LogDebug($"[EncounterDataManager.GenerateEncounterLayerBuildingData] Generating building data");
       Terrain terrain = Terrain.activeTerrain;
       float terrainZSize = terrain.terrainData.size.z;
       float terrainXSize = terrain.terrainData.size.x;
