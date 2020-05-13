@@ -85,6 +85,9 @@ namespace MissionControl {
 
       AddEncounter("ThreeWayBattle", typeof(BattlePlusEncounterRules));
 
+      // Custom Contract Types
+      AddEncounter("Blackout", typeof(BlackoutEncounterRules));
+
       // Skirmish
       if (Main.Settings.DebugSkirmishMode) AddEncounter("ArenaSkirmish", typeof(DebugArenaSkirmishEncounterRules));
     }
