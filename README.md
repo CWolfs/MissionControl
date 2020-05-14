@@ -31,7 +31,7 @@ Richard Griffiths (CWolf)
 
 ## Contributors
 
-- @17783 / Spectre (Added better friendly lance portraits)
+- [@17783](https://github.com/17783) / Spectre (Added better friendly lance portraits)
 
 ## Special Thanks
 
