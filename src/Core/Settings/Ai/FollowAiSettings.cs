@@ -4,6 +4,9 @@ using Newtonsoft.Json;
 
 namespace MissionControl.Config {
   public class FollowAiSettings {
+    [JsonProperty("Pathfinding")]
+    public string Pathfinding { get; set; } = "Alternative"; // Original, Alternative
+
     [JsonProperty("Target")]
     public string Target { get; set; } = "HeaviestMech";    // HeaviestMech, FirstLanceMember
 
