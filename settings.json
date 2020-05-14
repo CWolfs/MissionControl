@@ -41,7 +41,9 @@
       "GlobalAllyChanceToSpawn": 0.8,
       "EnemySpawnInfluencePerHalfSkull": 0.1,
       "AllySpawnInfluencePerHalfSkull": -0.1
-    }
+    },
+    "DisableAllies": false,
+    "DisableEnemies": false
   },
   "ExtendedLances": {
     "Enable": true,
