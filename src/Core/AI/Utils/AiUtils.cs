@@ -1,5 +1,6 @@
 using UnityEngine;
 
+using System.Linq;
 using System.Collections.Generic;
 
 using BattleTech;
@@ -19,7 +20,7 @@ namespace MissionControl.AI {
 
     public static bool HasFollowLanceTarget(AbstractActor unit) {
       if (unit == null) return false;
-  
+
       BehaviorVariableValue value = AiManager.Instance.GetBehaviourVariableValue(unit, MoveToFollowLanceNode.FOLLOW_LANCE_TARGET_GUID_KEY);
       if (value != null) {
         string lanceGuid = value.StringVal;
@@ -32,9 +33,20 @@ namespace MissionControl.AI {
     }
 
     public static AbstractActor GetClosestDetectedEnemy(AbstractActor focusedUnit, Lance allyLance) {
+      string teamGuid = focusedUnit.lance.team.GUID;
+
       List<AbstractActor> detectedEnemyUnits = new List<AbstractActor>();
       detectedEnemyUnits.AddRange(focusedUnit.lance.team.GetDetectedEnemyUnits());
       detectedEnemyUnits.AddRange(allyLance.team.GetDetectedEnemyUnits());
+
+      detectedEnemyUnits.RemoveAll(potentialEnemy => {
+        if (!UnityGameInstance.BattleTechGame.Combat.HostilityMatrix.IsEnemy(teamGuid, potentialEnemy.team.GUID)) {
+          Main.Logger.Log($"[GetClosestDetectedEnemy] Removing potential enemy Unit '{potentialEnemy.DisplayName}' because it's not an enemy.");
+          return true;
+        }
+
+        return false;
+      });
 
       float num = -1f;
       AbstractActor closestActor = null;
@@ -52,9 +64,20 @@ namespace MissionControl.AI {
     }
 
     public static AbstractActor GetClosestVisibleEnemy(AbstractActor focusedUnit, Lance allyLance) {
+      string teamGuid = focusedUnit.lance.team.GUID;
+
       List<AbstractActor> visibleEnemyUnits = new List<AbstractActor>();
       visibleEnemyUnits.AddRange(focusedUnit.lance.team.GetVisibleEnemyUnits());
       visibleEnemyUnits.AddRange(allyLance.team.GetVisibleEnemyUnits());
+
+      visibleEnemyUnits.RemoveAll(potentialEnemy => {
+        if (!UnityGameInstance.BattleTechGame.Combat.HostilityMatrix.IsEnemy(teamGuid, potentialEnemy.team.GUID)) {
+          Main.Logger.Log($"[GetClosestVisibleEnemy] Removing potential enemy Unit '{potentialEnemy.DisplayName}' because it's not an enemy.");
+          return true;
+        }
+
+        return false;
+      });
 
       float num = -1f;
       AbstractActor closestActor = null;
