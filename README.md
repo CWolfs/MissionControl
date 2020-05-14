@@ -12,7 +12,7 @@ For the latest information and documentation visit [Mission Control Website](htt
 
 ## Roadmap
 
-For a glimpse into the future of Mission Control check out the milestones, for example [v0.5.0](https://github.com/CWolfs/MissionControl/milestone/7), and the [issues section](https://github.com/CWolfs/MissionControl/issues).
+For a glimpse into the future of Mission Control check out the milestones [milestones](https://github.com/CWolfs/MissionControl/milestones) and the [issues section](https://github.com/CWolfs/MissionControl/issues).
 
 ## Feedback
 
