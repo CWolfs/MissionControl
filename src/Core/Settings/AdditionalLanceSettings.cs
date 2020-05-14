@@ -44,5 +44,21 @@ namespace MissionControl.Config {
 
     [JsonProperty("DropWeightInfluence")]
     public DropWeightInfluenceSettings DropWeightInfluenceSettings { get; set; } = new DropWeightInfluenceSettings();
+
+    [JsonProperty("DisableAllies")]
+    public bool DisableAllies { get; set; } = false;
+
+    [JsonProperty("DisableEnemies")]
+    public bool DisableEnemies { get; set; } = false;
+
+    public bool IsTeamDisabled(string teamType) {
+      if (teamType.ToLower() == "enemy") {
+        return DisableEnemies;
+      } else if (teamType.ToLower() == "allies") {
+        return DisableAllies;
+      }
+
+      return false;
+    }
   }
 }
