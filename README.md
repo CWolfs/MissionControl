@@ -2,7 +2,7 @@
 
 A HBS BattleTech mod that provides a framework for runtime modifications of the contracts and encounters. This includes custom contract types, reuse of story maps, varying the encounter specifics such as spawn locations, lance numbers, map boundary size and objectives.
 
-This works only for the generic contract types (e.g. Battle, Rescue etc) as it would break the balance for vanilla story missions.
+This can be optionally used with flashpoints, story contract and even to make custom story contracts too!
 
 ![Additional Lances](./docs/gh-images/mission-control.jpg)
 
