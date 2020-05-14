@@ -18,6 +18,10 @@ For a glimpse into the future of Mission Control check out the milestones [miles
 
 All feedback is welcome in the [issues section](https://github.com/CWolfs/MissionControl/issues) and in the [Mission Control Discord](https://discord.gg/22raTJh).
 
+## Support
+
+If you like what you see and want to support my development, consider supporting my [Patreon](https://www.patreon.com/cwolfs).
+
 ## Author
 
 Richard Griffiths (CWolf)
