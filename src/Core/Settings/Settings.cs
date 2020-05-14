@@ -53,5 +53,8 @@ namespace MissionControl.Config {
 
     [JsonProperty("AI")]
     public AiSettings AiSettings { get; set; } = new AiSettings();
+
+    [JsonProperty("Spawners")]
+    public SpawnerSettings Spawners { get; set; } = new SpawnerSettings();
   }
 }

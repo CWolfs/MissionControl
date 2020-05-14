@@ -5,11 +5,11 @@
   "DisableIfFlashpointContract": true,
   "RandomSpawns": {
     "Enable": true,
-    "ExcludeContractTypes": ["SoloDuel", "DuoDuel", "Blackout"]
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"]
   },
   "HotDrop": {
     "Enable": true,
-    "ExcludeContractTypes": ["SoloDuel", "DuoDuel", "Blackout"],
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "GuardOnHotDrop": false,
     "EvasionPipsOnHotDrop": 6,
     "IncludeEnemies": true,
@@ -18,7 +18,7 @@
   },
   "AdditionalLances": {
     "Enable": true,
-    "ExcludeContractTypes": ["SoloDuel", "DuoDuel", "Blackout"],
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "IsPrimaryObjectiveIn": ["SimpleBattle", "ThreeWayBattle"],
     "HideObjective": true,
     "ShowObjectiveOnLanceDetected": true,
@@ -46,7 +46,7 @@
   "ExtendedLances": {
     "Enable": true,
     "Autofill": true,
-    "ExcludeContractTypes": ["SoloDuel", "DuoDuel", "Blackout"],
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "SkipWhenTaggedWithAny": ["lance_type_solo"],
     "SkipWhenTaggedWithAll": [],
     "SkipWhenExcludeTagsContain": ["no_extended_lance"],
@@ -57,7 +57,7 @@
   },
   "ExtendedBoundaries": {
     "Enable": true,
-    "ExcludeContractTypes": ["SoloDuel", "DuoDuel", "Blackout"],
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "IncreaseBoundarySizeByPercentage": 0.3,
     "Overrides": [
       {
@@ -88,17 +88,24 @@
   },
   "DynamicWithdraw": {
     "Enable": true,
-    "ExcludeContractTypes": ["SoloDuel", "DuoDuel", "Blackout"],
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "MinDistanceForZone": 50,
     "MaxDistanceForZone": 400,
     "DisorderlyWithdrawalCompatibility": false
   },
   "AI": {
     "FollowPlayer": {
+      "Pathfinding": "Alternative",
       "Target": "HeaviestMech",
       "StopWhen": "OnEnemyDetected",
       "MaxDistanceFromTargetBeforeSprinting": 120,
       "TargetZoneRadius": 120
+    }
+  },
+  "Spawners": {
+    "SpawnLanceAtEdgeBoundary": {
+      "MinBuffer": 100,
+      "MaxBuffer": 200
     }
   }
 }
