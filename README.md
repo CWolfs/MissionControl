@@ -18,6 +18,17 @@ For a glimpse into the future of Mission Control check out the milestones, for e
 
 All feedback is welcome in the [issues section](https://github.com/CWolfs/MissionControl/issues).
 
+## Author
+
+Richard Griffiths (CWolf)
+
+- [Twitter](https://twitter.com/CWolf)
+- [LinkedIn](https://www.linkedin.com/in/richard-griffiths-436b7a19/)
+
+## Contributors
+
+- @17783 / Spectre (Added better friendly lance portraits)
+
 ## Special Thanks
 
 I wouldn't have completed such an ambitious mod without the support and help of the modding community. Sorry if I miss anyone out as so many people have helped in their own way. In no particular order,
@@ -32,10 +43,3 @@ I wouldn't have completed such an ambitious mod without the support and help of 
 - gnivler
 - TekGnosis
 - ...and everyone in the modder channels at Mission Control, RT and BATTLETECHGAME discord who helped in lots of different ways!
-
-## Author
-
-Richard Griffiths (CWolf)
-
-- [Twitter](https://twitter.com/CWolf)
-- [LinkedIn](https://www.linkedin.com/in/richard-griffiths-436b7a19/)
