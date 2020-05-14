@@ -132,12 +132,21 @@ namespace MissionControl.Logic {
       return SceneUtils.IsWithinBoundedDistanceOfTarget(origin, target, minDistance, maxDistance);
     }
 
-    public bool IsBeyondBoundedDistanceOfTarget(Vector3 origin, Vector3 target, float minDistance) {
+    public bool IsBeyondBoundedDistanceOfTarget(Vector3 origin, Vector3 target, float mustBeBeyondDistance) {
       Vector3 vectorToTarget = target - origin;
       vectorToTarget.y = 0;
       float distance = vectorToTarget.magnitude;
-      if (distance >= minDistance) return true;
-      Main.LogDebugWarning($"[IsWithinBoundedDistanceOfTarget] Distance is '{distance}' and so not beyond bounds of '{minDistance}'. Getting new random position");
+      if (distance >= mustBeBeyondDistance) return true;
+      Main.LogDebugWarning($"[IsWithinBoundedDistanceOfTarget] Distance is '{distance}' and is within bounds of '{mustBeBeyondDistance}'. Check failure. Getting new random position");
+      return false;
+    }
+
+    public bool IsWithinBoundedDistanceOfTarget(Vector3 origin, Vector3 target, float mustBeWithinDistance) {
+      Vector3 vectorToTarget = target - origin;
+      vectorToTarget.y = 0;
+      float distance = vectorToTarget.magnitude;
+      if (distance <= mustBeWithinDistance) return true;
+      Main.LogDebugWarning($"[IsWithinBoundedDistanceOfTarget] Distance is '{distance}' and is beyond bounds of '{mustBeWithinDistance}'. Check failure. Getting new random position");
       return false;
     }
 

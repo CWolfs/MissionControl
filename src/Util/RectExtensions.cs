@@ -7,20 +7,20 @@ using MissionControl.Utils;
 public static class RectExtensions {
   public enum RectEdge { ANY = -1, MIN_X = 0, MAX_X = 1, MIN_Z = 2, MAX_Z = 3 }
 
-	public static RectEdgePosition CalculateRandomXZEdge(this Rect rect, RectEdge edge) {
+  public static RectEdgePosition CalculateRandomXZEdge(this Rect rect, RectEdge edge) {
     float x = 0f;
     float y = 0f;
     float z = 0f;
     float width = rect.width;
     float height = rect.height;
-    float buffer = UnityEngine.Random.Range(50f, 150f);
+    float buffer = UnityEngine.Random.Range(Main.Settings.Spawners.SpawnLanceAtBoundary.MinBuffer, Main.Settings.Spawners.SpawnLanceAtBoundary.MaxBuffer);
     float halfBoundaryXWidth = width / 2f;
     float halfBoundaryZWidth = height / 2f;
     float minHalfBoundaryXWidth = (halfBoundaryXWidth * -1f) + buffer;
     float maxHalfBoundaryXWidth = halfBoundaryXWidth - buffer;
     float minHalfBoundaryZWidth = (halfBoundaryZWidth * -1f) + buffer;
     float maxHalfBoundaryZWidth = halfBoundaryZWidth - buffer;
-  
+
     // Randomly select an edge
     RectEdge recEdge = (edge == RectEdge.ANY) ? (RectEdge)UnityEngine.Random.Range(0, 4) : edge;
     switch (recEdge) {
@@ -72,7 +72,7 @@ public static class RectExtensions {
       area.y = Mathf.Min(y1, y2);
       area.width = Mathf.Max(0.0f, x1 - x2);
       area.height = Mathf.Max(0.0f, y1 - y2);
-      
+
       return true;
     }
 
@@ -108,6 +108,6 @@ public static class RectExtensions {
 
     return new Vector3(Random.Range(xMin, xMax),
                         0,
-                        Random.Range(zMin, zMax));  
+                        Random.Range(zMin, zMax));
   }
 }

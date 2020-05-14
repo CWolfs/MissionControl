@@ -17,8 +17,8 @@ namespace MissionControl.Logic {
 
     private GameObject lance;
     private GameObject orientationTarget;
-    private bool useMiniumDistance = false;
-    private float minimumDistance = 400f;
+    private bool useMustBeBeyondDistance = false;
+    private float mustBeBeyondDistance = 400f;
     private bool clusterUnits = false;
 
     private int AttemptCountMax { get; set; } = 5;
@@ -35,12 +35,12 @@ namespace MissionControl.Logic {
       this.clusterUnits = clusterUnits;
     }
 
-    public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, float minimumDistance, bool clusterUnits = false) : base(encounterRules) {
+    public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, float mustBeBeyondDistance, bool clusterUnits = false) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.useOrientationTarget = true;
       this.orientationTargetKey = orientationTargetKey;
-      this.useMiniumDistance = true;
-      this.minimumDistance = minimumDistance;
+      this.useMustBeBeyondDistance = true;
+      this.mustBeBeyondDistance = mustBeBeyondDistance;
       this.clusterUnits = clusterUnits;
     }
 
@@ -81,7 +81,7 @@ namespace MissionControl.Logic {
 
       if (useOrientationTarget) RotateToTarget(lance, orientationTarget);
 
-      if (!useMiniumDistance || IsBeyondBoundedDistanceOfTarget(newPosition, validOrientationTargetPosition, minimumDistance)) {
+      if (!useMustBeBeyondDistance || IsBeyondBoundedDistanceOfTarget(newPosition, validOrientationTargetPosition, mustBeBeyondDistance)) {
         if (!AreLanceMemberSpawnsValid(lance, validOrientationTargetPosition)) {
           CheckAttempts();
           Run(payload);
@@ -102,9 +102,9 @@ namespace MissionControl.Logic {
 
       if (AttemptCount > AttemptCountMax) {
         AttemptCount = 0;
-        Main.LogDebug($"[SpawnLanceAnywhere] Cannot find a suitable lance spawn within the boundaries of {minimumDistance}. Widening search");
-        minimumDistance -= 50f;
-        if (minimumDistance <= 10) minimumDistance = 10;
+        Main.LogDebug($"[SpawnLanceAnywhere] Cannot find a suitable lance spawn within the boundaries of {mustBeBeyondDistance}. Widening search");
+        mustBeBeyondDistance -= 50f;
+        if (mustBeBeyondDistance <= 10) mustBeBeyondDistance = 10;
       }
     }
 
