@@ -18,9 +18,9 @@ namespace MissionControl.Logic {
     private bool useOrientationTarget = false;
     private GameObject orientationTarget;
     private RectExtensions.RectEdge edge = RectExtensions.RectEdge.ANY;
+
     private WithinOrBeyondDistanceType distanceCheckType = WithinOrBeyondDistanceType.NONE;
     private float distanceCheck = 400f;
-
     private float mustBeWithinDistance = 400f;
     private float mustBeBeyondDistance = 400f;
 
@@ -41,12 +41,12 @@ namespace MissionControl.Logic {
       this.clusterUnits = clusterUnits;
     }
 
-    public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, float checkDistance, bool clusterUnits = false) : base(encounterRules) {
+    public SpawnLanceAtEdgeOfBoundary(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, float mustBeBeyondDistance, bool clusterUnits = false) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.useOrientationTarget = true;
       this.orientationTargetKey = orientationTargetKey;
       this.distanceCheckType = WithinOrBeyondDistanceType.MUST_BE_BEYOND;
-      this.distanceCheck = checkDistance;
+      this.distanceCheck = mustBeBeyondDistance;
       this.clusterUnits = clusterUnits;
     }
 

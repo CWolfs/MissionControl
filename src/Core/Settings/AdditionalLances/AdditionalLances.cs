@@ -132,7 +132,10 @@ namespace MissionControl.Config {
       }
 
       if (useExclude) {
+        Main.Logger.Log($"[AdditionalLances.GetValidContractTypes] Valid contracts are '{string.Join(", ", validContracts.ToArray())}'");
+        Main.Logger.Log($"[AdditionalLances.GetValidContractTypes] Going to exclude '{string.Join(", ", ExcludeContractTypes.ToArray())}'");
         validContracts = validContracts.Except(ExcludeContractTypes).ToList();
+        Main.Logger.Log($"[AdditionalLances.GetValidContractTypes] After exclude contracts are '{string.Join(", ", validContracts.ToArray())}'");
       }
 
       if (teamType.ToLower() == "enemy") {

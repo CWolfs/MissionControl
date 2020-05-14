@@ -9,7 +9,7 @@ using MissionControl.Messages;
 namespace MissionControl.Logic {
   public class AddTargetLanceWithDestroyObjectiveBatch {
     public AddTargetLanceWithDestroyObjectiveBatch(EncounterRules encounterRules, string orientationTargetKey,
-      SpawnLogic.LookDirection lookDirection, float minDistance, float maxDistance, string objectiveName, int priority,
+      SpawnLogic.LookDirection lookDirection, float mustBeBeyondDistance, float mustBeWithinDistance, string objectiveName, int priority,
       bool isPrimaryObjective, bool displayToUser, bool showObjectiveOnLanceDetected) {
 
       int numberOfUnitsInLance = 4;
@@ -24,7 +24,7 @@ namespace MissionControl.Logic {
       encounterRules.EncounterLogic.Add(new AddDestroyWholeUnitChunk(encounterRules, targetTeamGuid, lanceGuid, unitGuids,
          spawnerName, objectiveGuid, objectiveName, priority, isPrimaryObjective, displayToUser));
       encounterRules.EncounterLogic.Add(new SpawnLanceMembersAroundTarget(encounterRules, spawnerName, orientationTargetKey,
-        SpawnLogic.LookDirection.AWAY_FROM_TARGET, minDistance, maxDistance));
+        SpawnLogic.LookDirection.AWAY_FROM_TARGET, mustBeBeyondDistance, mustBeWithinDistance));
 
       if (showObjectiveOnLanceDetected) {
         encounterRules.EncounterLogic.Add(new ShowObjectiveTrigger(MessageCenterMessageType.OnLanceDetected, lanceGuid, objectiveGuid, false));

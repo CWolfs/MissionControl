@@ -9,7 +9,7 @@ namespace MissionControl.Rules {
     public override void Build() {
       Main.Logger.Log("[BlackoutEncounterRules] Setting up rule object references");
       BuildRandomSpawns();
-      BuildAdditionalLances("RoamingForce", SpawnLogic.LookDirection.AWAY_FROM_TARGET,
+      BuildAdditionalLances("SpawnerPlayerLance", SpawnLogic.LookDirection.TOWARDS_TARGET, 600f, 1000f,
         "SpawnerPlayerLance", SpawnLogic.LookDirection.AWAY_FROM_TARGET, 25f, 100f);
     }
 
@@ -18,6 +18,7 @@ namespace MissionControl.Rules {
 
       Main.Logger.Log("[BlackoutEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "FirstRegion", 200f, 800f));
+      EncounterLogic.Add(new SpawnLanceAnywhere(this, "RoamingForce", "SpawnerPlayerLance", 500f, 1000f));
     }
 
     public override void LinkObjectReferences(string mapName) {
