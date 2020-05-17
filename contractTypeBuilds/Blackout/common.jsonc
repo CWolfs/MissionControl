@@ -654,7 +654,8 @@
           "Guid": "d3d33d95-9ed7-4686-b9eb-954ebe51cc02" // Must match the dialogue guid in the contract .json
         }
       ]
-    },
+    }
+    /*,
     {
       "Name": "Chunk_SwapEmployerAndTarget",
       "Type": "Chunk",
@@ -671,6 +672,7 @@
         }
       ]
     }
+    */
   ],
   "Triggers": [
     /* General Triggers */
