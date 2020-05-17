@@ -20,6 +20,9 @@
     "Enable": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "IsPrimaryObjectiveIn": ["SimpleBattle", "ThreeWayBattle"],
+    "HideObjective": true,
+    "ShowObjectiveOnLanceDetected": true,
+    "AlwaysDisplayHiddenObjectiveIfPrimary": false,
     "UseElites": true,
     "UseDialogue": true,
     "SkullValueMatters": true,
@@ -31,12 +34,24 @@
       "Limited": false,
       "LimitedToUnder": 300
     },
-    "MatchAllyLanceCountToEnemy": false
+    "MatchAllyLanceCountToEnemy": false,
+    "DropWeightInfluence": {
+      "Enable": false,
+      "GlobalEnemyChanceToSpawn": 0.05,
+      "GlobalAllyChanceToSpawn": 0.8,
+      "EnemySpawnInfluencePerHalfSkull": 0.1,
+      "AllySpawnInfluencePerHalfSkull": -0.1
+    },
+    "DisableAllies": false,
+    "DisableEnemies": false
   },
   "ExtendedLances": {
     "Enable": true,
     "Autofill": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
+    "SkipWhenTaggedWithAny": ["lance_type_solo"],
+    "SkipWhenTaggedWithAll": [],
+    "SkipWhenExcludeTagsContain": ["no_extended_lance"],
     "LanceSizes": {
       "5": [],
       "6": []
@@ -65,6 +80,11 @@
       {
         "ContractTypeName": "FireMission",
         "IncreaseBoundarySizeByPercentage": 0.5
+      },
+      {
+        "MapId": "mapGeneral_desertDam_aDes",
+        "ContractTypeName": "SimpleBattle",
+        "IncreaseBoundarySizeByPercentage": 0.55
       }
     ]
   },
@@ -77,10 +97,17 @@
   },
   "AI": {
     "FollowPlayer": {
+      "Pathfinding": "Alternative",
       "Target": "HeaviestMech",
       "StopWhen": "OnEnemyDetected",
       "MaxDistanceFromTargetBeforeSprinting": 120,
       "TargetZoneRadius": 120
+    }
+  },
+  "Spawners": {
+    "SpawnLanceAtEdgeBoundary": {
+      "MinBuffer": 100,
+      "MaxBuffer": 200
     }
   }
 }

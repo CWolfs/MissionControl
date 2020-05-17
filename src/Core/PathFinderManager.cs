@@ -51,6 +51,12 @@ namespace MissionControl {
       PilotDef pilotDef = null;
       combatState.DataManager.PilotDefs.TryGet("pilot_default", out pilotDef);
       Mech mech = new Mech(mechDef, pilotDef, new TagSet(), uniqueId, combatState, spawnerId, heraldryDef);
+
+      string teamId = TeamUtils.GetTeamGuid("NeutralToAll");
+      Team team = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(teamId);
+      AccessTools.Field(typeof(AbstractActor), "_team").SetValue(mech, team);
+      AccessTools.Field(typeof(AbstractActor), "_teamId").SetValue(mech, teamId);
+
       return mech;
     }
 
@@ -69,6 +75,12 @@ namespace MissionControl {
       PilotDef pilotDef = null;
       combatState.DataManager.PilotDefs.TryGet("pilot_default", out pilotDef);
       Vehicle vehicle = new Vehicle(vehicleDef, pilotDef, new TagSet(), uniqueId, combatState, spawnerId, heraldryDef);
+
+      string teamId = TeamUtils.GetTeamGuid("NeutralToAll");
+      Team team = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(teamId);
+      AccessTools.Field(typeof(AbstractActor), "_team").SetValue(vehicle, team);
+      AccessTools.Field(typeof(AbstractActor), "_teamId").SetValue(vehicle, teamId);
+
       return vehicle;
     }
 
@@ -170,9 +182,6 @@ namespace MissionControl {
         return false;
       }
 
-      // List<Vector3> path = DynamicLongRangePathfinder.GetPathToDestination(position, float.MaxValue, pathfindingActor, true, pathFindingZoneRadius);
-      // List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(position, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
-
       Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Path count is: '{path.Count}', Current position is: '{position}'");
 
       // GUARD: Against deep water and other impassables that have slipped through
@@ -199,28 +208,6 @@ namespace MissionControl {
           Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Does not have two valid neighbours");
         }
       }
-
-      /* // Failed attempt to improve spawn checks
-      List<Vector3> path = DynamicLongRangePathfinder.GetDynamicPathToDestination(validityPosition, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
-      if (path != null && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
-        if (path.Count > 4) { // very strong pathfinding location
-          return true;
-        } else {
-          Main.Logger.Log($"[PFM] Spawn point is valid due to proximity but is not strong enough success for pathing. Attempting to confirm.");
-          CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-          List<Vector3> pointsAroundPosition = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(position, 3, 5);
-
-          foreach (Vector3 point in pointsAroundPosition) {
-            List<Vector3> secondaryPath = DynamicLongRangePathfinder.GetDynamicPathToDestination(point, float.MaxValue, pathfindingActor, true, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, 2); 
-            if (path != null && path.Count > 2) {
-              Main.Logger.Log($"[PFM] Spawn point is valid. It is close to the validation point but can be moved away from. Success.");
-              return true;
-            }
-          }
-        }
-      }
-      */
-
 
       Main.LogDebug($"-------- END [PFM.IsSpawnValid] [{identifier}] END --------");
       Main.LogDebug($"");
@@ -311,7 +298,9 @@ namespace MissionControl {
     }
 
     public void Reset() {
-      if (pathFinderMech.GameRep != null) {
+      UnsubscribePathfinders();
+
+      if (pathFinderMech != null && pathFinderMech.GameRep != null) {
         GameObject pathFinderGo = pathFinderMech.GameRep.gameObject;
         GameObject blipUnknownGo = pathFinderMech.GameRep.BlipObjectUnknown.gameObject;
         GameObject blipIdentified = pathFinderMech.GameRep.BlipObjectIdentified.gameObject;
@@ -320,7 +309,7 @@ namespace MissionControl {
         if (blipIdentified) GameObject.Destroy(blipIdentified);
       }
 
-      if (pathFinderVehicle.GameRep != null) {
+      if (pathFinderVehicle != null && pathFinderVehicle.GameRep != null) {
         GameObject pathFinderVehicleGo = pathFinderVehicle.GameRep.gameObject;
         GameObject vehicleBlipUnknownGo = pathFinderVehicle.GameRep.BlipObjectUnknown.gameObject;
         GameObject vehicleBlipIdentified = pathFinderVehicle.GameRep.BlipObjectIdentified.gameObject;
@@ -329,13 +318,20 @@ namespace MissionControl {
         if (vehicleBlipIdentified) GameObject.Destroy(vehicleBlipIdentified);
       }
 
+      // AccessTools.Field(typeof(AbstractActor), "_team").SetValue(pathFinderVehicle, null);
+      // AccessTools.Field(typeof(AbstractActor), "_teamId").SetValue(pathFinderVehicle, null);
+
       estimatesOfBadPathfings.Clear();
     }
 
     public void FullReset() {
-      Reset();
       pathFinderMech = null;
       pathFinderVehicle = null;
+    }
+
+    private void UnsubscribePathfinders() {
+      if (pathFinderMech != null) AccessTools.Method(typeof(AbstractActor), "SubscribeMessages").Invoke(pathFinderMech, new object[] { false });
+      if (pathFinderVehicle != null) AccessTools.Method(typeof(AbstractActor), "SubscribeMessages").Invoke(pathFinderVehicle, new object[] { false });
     }
   }
 }

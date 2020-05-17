@@ -2,7 +2,7 @@
 
 A HBS BattleTech mod that provides a framework for runtime modifications of the contracts and encounters. This includes custom contract types, reuse of story maps, varying the encounter specifics such as spawn locations, lance numbers, map boundary size and objectives.
 
-This works only for the generic contract types (e.g. Battle, Rescue etc) as it would break the balance for vanilla story missions.
+This can be optionally used with flashpoints, story contract and even to make custom story contracts too!
 
 ![Additional Lances](./docs/gh-images/mission-control.jpg)
 
@@ -12,11 +12,26 @@ For the latest information and documentation visit [Mission Control Website](htt
 
 ## Roadmap
 
-For a glimpse into the future of Mission Control check out the milestones, for example [v0.5.0](https://github.com/CWolfs/MissionControl/milestone/7), and the [issues section](https://github.com/CWolfs/MissionControl/issues).
+For a glimpse into the future of Mission Control check out the milestones [milestones](https://github.com/CWolfs/MissionControl/milestones) and the [issues section](https://github.com/CWolfs/MissionControl/issues).
 
-## Feedback
+## Feedback & Community
 
-All feedback is welcome in the [issues section](https://github.com/CWolfs/MissionControl/issues).
+All feedback is welcome in the [issues section](https://github.com/CWolfs/MissionControl/issues) and in the [Mission Control Discord](https://discord.gg/22raTJh).
+
+## Support
+
+If you like what you see and want to support my development, consider supporting my [Patreon](https://www.patreon.com/cwolfs).
+
+## Author
+
+Richard Griffiths (CWolf)
+
+- [Twitter](https://twitter.com/CWolf)
+- [LinkedIn](https://www.linkedin.com/in/richard-griffiths-436b7a19/)
+
+## Contributors
+
+- [@17783](https://github.com/17783) / Spectre (Added better friendly lance portraits)
 
 ## Special Thanks
 
@@ -32,10 +47,3 @@ I wouldn't have completed such an ambitious mod without the support and help of 
 - gnivler
 - TekGnosis
 - ...and everyone in the modder channels at Mission Control, RT and BATTLETECHGAME discord who helped in lots of different ways!
-
-## Author
-
-Richard Griffiths (CWolf)
-
-- [Twitter](https://twitter.com/CWolf)
-- [LinkedIn](https://www.linkedin.com/in/richard-griffiths-436b7a19/)

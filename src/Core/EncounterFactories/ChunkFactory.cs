@@ -1,8 +1,12 @@
 using UnityEngine;
 
+using System;
+using System.Collections.Generic;
+
 using BattleTech;
 using BattleTech.Designed;
 
+using MissionControl.LogicComponents.Activators;
 using MissionControl.LogicComponents.Placers;
 
 namespace MissionControl.EncounterFactories {
@@ -16,21 +20,26 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static DestroyWholeLanceChunk CreateDestroyWholeLanceChunk(string name = "Chunk_DestroyWholeLance", Transform parent = null) {
-      GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
       GameObject destroyWholeLanceChunkGo = CreateGameObjectWithParent(name, parent);
 
       return destroyWholeLanceChunkGo.AddComponent<DestroyWholeLanceChunk>();
     }
 
+    public static SetChunkStateAtRandomActivator CreateSetChunkStateAtRandomActivator(GameObject parent, List<string> guids, EncounterObjectStatus state) {
+      SetChunkStateAtRandomActivator setChunkStateAtRandomActivator = parent.AddComponent<SetChunkStateAtRandomActivator>();
+      setChunkStateAtRandomActivator.encounterObjectGuid = Guid.NewGuid().ToString();
+      setChunkStateAtRandomActivator.ChunkGuids = guids;
+      setChunkStateAtRandomActivator.State = state;
+      return setChunkStateAtRandomActivator;
+    }
+
     public static EmptyCustomChunkGameLogic CreateEmptyCustomChunk(string name, Transform parent = null) {
-      GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
       GameObject emptyCustomChunk = CreateGameObjectWithParent(name, parent);
 
       return emptyCustomChunk.AddComponent<EmptyCustomChunkGameLogic>();
     }
 
     public static DialogueChunkGameLogic CreateDialogueChunk(string name, Transform parent = null) {
-      GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
       GameObject dialogChunk = CreateGameObjectWithParent(name, parent);
 
       DialogueChunkGameLogic dialogueChunkGameLogic = dialogChunk.AddComponent<DialogueChunkGameLogic>();
@@ -39,7 +48,6 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static PlayerLanceChunkGameLogic CreatePlayerLanceChunk(string name = "Chunk_PlayerLance", Transform parent = null) {
-      GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
       GameObject playerLanceChunk = CreateGameObjectWithParent(name, parent);
 
       PlayerLanceChunkGameLogic playerLanceChunkGameLogic = playerLanceChunk.AddComponent<PlayerLanceChunkGameLogic>();
@@ -49,7 +57,6 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static EncounterBoundaryChunkGameLogic CreateEncounterBondaryChunk(string name = "Chunk_EncounterBoundary", Transform parent = null) {
-      GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
       GameObject encounterBoundaryChunkGo = CreateGameObjectWithParent(name, parent);
 
       EncounterBoundaryChunkGameLogic encounterBoundaryChunkLogic = encounterBoundaryChunkGo.AddComponent<EncounterBoundaryChunkGameLogic>();
@@ -59,13 +66,21 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static SwapPlacementChunkLogic CreateSwapPlacementChunk(string name = "Chunk_SwapPlacement", Transform parent = null) {
-      GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
       GameObject swapPlacementChunkGo = CreateGameObjectWithParent(name, parent);
 
       SwapPlacementChunkLogic swapPlacementChunkLogic = swapPlacementChunkGo.AddComponent<SwapPlacementChunkLogic>();
       swapPlacementChunkLogic.encounterObjectName = name;
 
       return swapPlacementChunkLogic;
+    }
+
+    public static LanceChunkGameLogic CreateLanceChunk(string name = "Chunk_Lance", Transform parent = null) {
+      GameObject lanceChunkGo = CreateGameObjectWithParent(name, parent);
+
+      LanceChunkGameLogic lanceChunkLogic = lanceChunkGo.AddComponent<LanceChunkGameLogic>();
+      lanceChunkLogic.encounterObjectName = name;
+
+      return lanceChunkLogic;
     }
   }
 }

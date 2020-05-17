@@ -163,7 +163,11 @@ namespace MissionControl.Rules {
       GameObject plotsParentGo = GameObject.Find("PlotParent");
       GameObject closestPlot = null;
 
-      closestPlot = CheckAllPlotsForValidPlot(plotsParentGo, origin, "PlotVariant");
+      closestPlot = CheckAllPlotsForValidPlot(plotsParentGo, origin, "plotVariant_");
+
+      if (closestPlot == null) {
+        closestPlot = CheckAllPlotsForValidPlot(plotsParentGo, origin, "PlotVariant");
+      }
 
       // If no plot is found, select on a secondary fallback
       if (closestPlot == null) {
@@ -214,7 +218,13 @@ namespace MissionControl.Rules {
     }
 
     protected void BuildAdditionalLances(string enemyOrientationTargetKey, SpawnLogic.LookDirection enemyLookDirection,
-      string allyOrientationKey, SpawnLogic.LookDirection allyLookDirection, float minAllyDistance, float maxAllyDistance) {
+      string allyOrientationKey, SpawnLogic.LookDirection allyLookDirection, float mustBeBeyondDistance, float mustBeWithinDistance) {
+
+      BuildAdditionalLances(enemyOrientationTargetKey, enemyLookDirection, 100f, 400f, allyOrientationKey, allyLookDirection, mustBeBeyondDistance, mustBeWithinDistance);
+    }
+
+    protected void BuildAdditionalLances(string enemyOrientationTargetKey, SpawnLogic.LookDirection enemyLookDirection, float mustBeBeyondDistanceOfTarget, float mustBeWithinDistanceOfTarget,
+      string allyOrientationKey, SpawnLogic.LookDirection allyLookDirection, float mustBeBeyondDistance, float mustBeWithinDistance) {
 
       Main.Logger.Log($"[{this.GetType().Name}] Building additional lance rules");
 
@@ -222,21 +232,29 @@ namespace MissionControl.Rules {
 
       if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
         bool isPrimaryObjective = MissionControl.Instance.CurrentContractType.In(Main.Settings.AdditionalLanceSettings.IsPrimaryObjectiveIn.ToArray());
+        bool displayToUser = !Main.Settings.AdditionalLanceSettings.HideObjective;
+
+        if (Main.Settings.AdditionalLanceSettings.AlwaysDisplayHiddenObjectiveIfPrimary) {
+          displayToUser = (isPrimaryObjective) ? true : displayToUser;
+        }
+
         Main.Logger.Log($"[{this.GetType().Name}] Additional Lances will be primary objectives? {isPrimaryObjective}");
         FactionDef faction = MissionControl.Instance.GetFactionFromTeamType("enemy");
 
         numberOfAdditionalEnemyLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances(faction, "enemy");
         if (Main.Settings.DebugMode && (Main.Settings.Debug.AdditionalLancesEnemyLanceCount > -1)) numberOfAdditionalEnemyLances = Main.Settings.Debug.AdditionalLancesEnemyLanceCount;
 
+        bool showObjectiveOnLanceDetected = Main.Settings.AdditionalLanceSettings.ShowObjectiveOnLanceDetected;
+
         int objectivePriority = -10;
 
         for (int i = 0; i < numberOfAdditionalEnemyLances; i++) {
           if (MissionControl.Instance.CurrentContractType == "ArenaSkirmish") {
-            new AddPlayer2LanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, 50f, 200f,
-              $"Destroy Enemy Support Lance {i + 1}", objectivePriority--, isPrimaryObjective);
+            new AddPlayer2LanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
+              $"Destroy Enemy Support Lance {i + 1}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected);
           } else {
-            new AddTargetLanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, 50f, 200f,
-              $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i + 1}", objectivePriority--, isPrimaryObjective);
+            new AddTargetLanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
+              $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i + 1}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected);
           }
         }
       }
@@ -252,7 +270,7 @@ namespace MissionControl.Rules {
         }
 
         for (int i = 0; i < numberOfAdditionalAllyLances; i++) {
-          new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, minAllyDistance, maxAllyDistance);
+          new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, mustBeBeyondDistance, mustBeWithinDistance);
         }
       }
     }

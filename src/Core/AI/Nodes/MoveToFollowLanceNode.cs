@@ -41,9 +41,11 @@ namespace MissionControl.AI {
       if (Main.Settings.AiSettings.FollowAiSettings.StopWhen == "OnEnemyVisible") {
         Main.LogDebug($"[MoveToFollowLanceNode] Looking for closest visible enemy.");
         closestEnemy = AiUtils.GetClosestVisibleEnemy(this.unit, targetLance);
+        if (closestEnemy != null) Main.LogDebug($"[MoveToFollowLanceNode] Closest visible enemy is: '{closestEnemy.DisplayName}'");
       } else { // OnEnemyDetected
         Main.LogDebug($"[MoveToFollowLanceNode] Looking for closest detected enemy.");
         closestEnemy = AiUtils.GetClosestDetectedEnemy(this.unit, targetLance);
+        if (closestEnemy != null) Main.LogDebug($"[MoveToFollowLanceNode] Closest detected enemy is: '{closestEnemy.DisplayName}'");
       }
 
       if (closestEnemy != null) {
@@ -116,17 +118,59 @@ namespace MissionControl.AI {
         Main.LogDebug($"[MoveToFollowLanceNode] ...and I am NOT inside that zone.");
       }
 
-      this.unit.Pathing.UpdateAIPath(targetDestination, lookDirection, moveType);
-      targetDestination = this.unit.Pathing.ResultDestination;
-      float maxCost = this.unit.Pathing.MaxCost;
-      PathNodeGrid currentGrid = this.unit.Pathing.CurrentGrid;
-      Vector3 targetActorPosition = targetActor.CurrentPosition;
+      Vector3 lookPosition = targetDestination;
 
-      // This method seems to get called all the time - this is meant to be a last resort method I think. I wonder why the other AI pathfinding methods don't work?
-      if ((currentGrid.GetValidPathNodeAt(targetDestination, maxCost) == null || (targetDestination - targetActor.CurrentPosition).magnitude > 1f) && this.unit.Combat.EncounterLayerData.inclineMeshData != null) {
-        float maxSlope = Mathf.Tan(0.0174532924f * AIUtil.GetMaxSteepnessForAllLance(this.unit));
-        List<AbstractActor> lanceUnits = AIUtil.GetLanceUnits(this.unit.Combat, this.unit.LanceId);
-        targetDestination = this.unit.Combat.EncounterLayerData.inclineMeshData.GetDestination(this.unit.CurrentPosition, targetDestination, maxCost, maxSlope, this.unit, shouldSprint, lanceUnits, this.unit.Pathing.CurrentGrid, out targetActorPosition);
+      if (Main.Settings.AiSettings.FollowAiSettings.Pathfinding == "Alternative") {
+        Main.LogDebug($"[MoveToFollowLanceNode] Using 'Alternative' pathfinding");
+        this.unit.Pathing.UpdateAIPath(targetDestination, targetDestination, moveType);
+        Vector3 resultDestination = this.unit.Pathing.ResultDestination;
+        float maxCost = this.unit.Pathing.MaxCost;
+        PathNodeGrid currentGrid = this.unit.Pathing.CurrentGrid;
+
+        float floatVal = 10f;
+
+        if (currentGrid.GetValidPathNodeAt(resultDestination, maxCost) == null || (resultDestination - targetDestination).magnitude > floatVal) {
+          List<AbstractActor> lanceUnits = AIUtil.GetLanceUnits(this.unit.Combat, this.unit.LanceId);
+          List<Vector3> dynamicPathToDestination = DynamicLongRangePathfinder.GetDynamicPathToDestination(targetDestination, maxCost, this.unit, shouldSprint, lanceUnits, currentGrid, 0f);
+
+          if (dynamicPathToDestination == null || dynamicPathToDestination.Count == 0) {
+            return new BehaviorTreeResults(BehaviorNodeState.Failure);
+          }
+
+          resultDestination = dynamicPathToDestination[dynamicPathToDestination.Count - 1];
+          Vector2 a = new Vector2(targetDestination.x, targetDestination.z);
+          float num2 = float.MaxValue;
+          Vector3? vector4 = null;
+          for (int j = 0; j < dynamicPathToDestination.Count; j++) {
+            Vector3 vector5 = dynamicPathToDestination[j];
+
+            if (RoutingUtils.IsUnitInsideRadiusOfPoint(this.unit, vector5, followLanceZoneRadius)) {
+              float sqrMagnitude = (a - new Vector2(vector5.x, vector5.z)).sqrMagnitude;
+              if (sqrMagnitude < num2) {
+                num2 = sqrMagnitude;
+                vector4 = new Vector3?(vector5);
+              }
+            }
+          }
+
+          if (vector4 != null) {
+            resultDestination = vector4.Value;
+          }
+        }
+      } else {
+        Main.LogDebug($"[MoveToFollowLanceNode] Using 'Original' pathfinding");
+        this.unit.Pathing.UpdateAIPath(targetDestination, lookDirection, moveType);
+        targetDestination = this.unit.Pathing.ResultDestination;
+        float maxCost = this.unit.Pathing.MaxCost;
+        PathNodeGrid currentGrid = this.unit.Pathing.CurrentGrid;
+        Vector3 targetActorPosition = targetActor.CurrentPosition;
+
+        // This method seems to get called all the time - this is meant to be a last resort method I think. I wonder why the other AI pathfinding methods don't work?
+        if ((currentGrid.GetValidPathNodeAt(targetDestination, maxCost) == null || (targetDestination - targetActor.CurrentPosition).magnitude > 1f) && this.unit.Combat.EncounterLayerData.inclineMeshData != null) {
+          float maxSlope = Mathf.Tan(0.0174532924f * AIUtil.GetMaxSteepnessForAllLance(this.unit));
+          List<AbstractActor> lanceUnits = AIUtil.GetLanceUnits(this.unit.Combat, this.unit.LanceId);
+          targetDestination = this.unit.Combat.EncounterLayerData.inclineMeshData.GetDestination(this.unit.CurrentPosition, targetDestination, maxCost, maxSlope, this.unit, shouldSprint, lanceUnits, this.unit.Pathing.CurrentGrid, out targetActorPosition);
+        }
       }
 
       Vector3 currentPosition = this.unit.CurrentPosition;
@@ -137,14 +181,14 @@ namespace MissionControl.AI {
         targetDestination.x,
         targetDestination.y,
         targetDestination.z,
-        targetActorPosition.x,
-        targetActorPosition.y,
-        targetActorPosition.z
+        lookPosition.x,
+        lookPosition.y,
+        lookPosition.z
       }), "AI.DecisionMaking");
 
       // TODO: Factor in jump mechs
       return new BehaviorTreeResults(BehaviorNodeState.Success) {
-        orderInfo = new MovementOrderInfo(targetDestination, targetActorPosition) {
+        orderInfo = new MovementOrderInfo(targetDestination, lookPosition) {
           IsSprinting = shouldSprint
         },
         debugOrderString = string.Format("{0} moving toward destination: {1} dest: {2}", this.name, targetDestination, targetActor.CurrentPosition)

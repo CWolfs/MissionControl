@@ -10,7 +10,7 @@ using MissionControl.Logic;
 namespace MissionControl.Trigger {
   public class EndCombatTrigger : EncounterTrigger {
     public enum EndCombatType { SUCCESS, FAILURE, RETREAT };
-    
+
     private MessageCenterMessageType onMessage;
     private string objectiveGuid;
     private DesignConditional conditional;
@@ -20,7 +20,7 @@ namespace MissionControl.Trigger {
       this.onMessage = onMessage;
       this.objectiveGuid = objectiveGuid;
       this.type = type;
-      
+
       ObjectiveStatusConditional objectiveStatusConditional = ScriptableObject.CreateInstance<ObjectiveStatusConditional>();
       objectiveStatusConditional.objective.EncounterObjectGuid = objectiveGuid;
       objectiveStatusConditional.objectiveStatus = ObjectiveStatusEvaluationType.Success;
@@ -35,7 +35,7 @@ namespace MissionControl.Trigger {
     }
 
     public override void Run(RunPayload payload) {
-      Main.LogDebug("[EndCombatTrigger] Running trigger");
+      Main.LogDebug("[EndCombatTrigger] Setting up trigger");
       EncounterLayerData encounterData = MissionControl.Instance.EncounterLayerData;
       SmartTriggerResponse trigger = new SmartTriggerResponse();
       trigger.inputMessage = onMessage;
@@ -47,7 +47,7 @@ namespace MissionControl.Trigger {
         result = ScriptableObject.CreateInstance<EndCombatRetreatResult>();
       } else {
         // Fallback to the only end combat we currently have - Retreat
-        result = ScriptableObject.CreateInstance<EndCombatRetreatResult>(); 
+        result = ScriptableObject.CreateInstance<EndCombatRetreatResult>();
       }
 
       trigger.resultList.contentsBox.Add(new EncounterResultBox(result));

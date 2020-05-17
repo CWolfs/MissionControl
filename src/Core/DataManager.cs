@@ -1,23 +1,19 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Globalization;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using BattleTech;
 using BattleTech.Data;
-using BattleTech.Designed;
-using BattleTech.Framework;
 
 using HBS.Data;
 
 using MissionControl.Data;
-using MissionControl.Logic;
 using MissionControl.Messages;
 using MissionControl.Utils;
-
-using Harmony;
 
 namespace MissionControl {
   public class DataManager {
@@ -39,10 +35,15 @@ namespace MissionControl {
     private Dictionary<string, List<string>> Ranks = new Dictionary<string, List<string>>();      // e.g. <FactionName, [list of ranks]>
     private Dictionary<string, List<string>> Portraits = new Dictionary<string, List<string>>();  // e.g. <Male, [list of male portraits]
 
-    public Dictionary<string, JObject> AvailableCustomContractTypeBuilds { get; set; } = new Dictionary<string, JObject>();
+    public Dictionary<string, Dictionary<string, JObject>> AvailableCustomContractTypeBuilds { get; set; } = new Dictionary<string, Dictionary<string, JObject>>();
     private Dictionary<string, List<ContractTypeValue>> AvailableCustomContractTypes = new Dictionary<string, List<ContractTypeValue>>();
 
     private Dictionary<string, Dictionary<string, List<string>>> Dialogue = new Dictionary<string, Dictionary<string, List<string>>>();
+
+    JsonSerializerSettings serialiserSettings = new JsonSerializerSettings() {
+      TypeNameHandling = TypeNameHandling.All,
+      Culture = CultureInfo.InvariantCulture
+    };
 
     private DataManager() { }
 
@@ -63,13 +64,41 @@ namespace MissionControl {
     }
 
     private void LoadCustomContractTypeBuilds() {
-      foreach (string file in Directory.GetFiles($"{ModDirectory}/contractTypeBuilds/", "*.json*", SearchOption.AllDirectories)) {
-        string contractTypeBuildSource = File.ReadAllText(file);
-        JObject contractTypeBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildSource);
-        Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type build '{contractTypeBuild["Key"]}'");
+      foreach (string directory in Directory.GetDirectories($"{ModDirectory}/contractTypeBuilds/")) {
+        string contractTypeBuildCommonSource = File.ReadAllText($"{directory}/common.jsonc");
+        JObject contractTypeCommonBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildCommonSource, serialiserSettings);
+        string contractTypeName = (string)contractTypeCommonBuild["Key"];
+        Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type build '{contractTypeName}'");
 
-        AvailableCustomContractTypeBuilds.Add(contractTypeBuild["Key"].ToString(), contractTypeBuild);
+        Dictionary<string, JObject> contractTypeMapBuilds = new Dictionary<string, JObject>();
+        AvailableCustomContractTypeBuilds.Add(contractTypeCommonBuild["Key"].ToString(), contractTypeMapBuilds);
+
+        foreach (string file in Directory.GetFiles(directory, "*.json*", SearchOption.AllDirectories)) {
+          string contractTypeBuildMapSource = File.ReadAllText(file);
+          JObject contractTypeMapBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildMapSource, serialiserSettings);
+          string fileName = Path.GetFileNameWithoutExtension(file.Substring(file.LastIndexOf("\\")));
+
+          if (fileName == "common" || contractTypeMapBuild.ContainsKey("EncounterLayerId")) {
+            string encounterLayerId = (fileName == "common") ? fileName : (string)contractTypeMapBuild["EncounterLayerId"];
+            Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type map build '{contractTypeName}/{fileName}' with encounterLayerId '{encounterLayerId}'");
+            contractTypeMapBuilds.Add(encounterLayerId, contractTypeMapBuild);
+          } else {
+            Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Unable to load contract type map build file '{fileName}' for contract type '{contractTypeName}' because no 'EncounterLayerId' exists");
+          }
+        }
       }
+    }
+
+    public List<string> GetCustomContractTypes() {
+      List<string> customContractTypeNames = new List<string>();
+      MetadataDatabase mdd = MetadataDatabase.Instance;
+      List<ContractType_MDD> contractTypes = mdd.GetCustomContractTypes();
+
+      foreach (ContractType_MDD contractType in contractTypes) {
+        customContractTypeNames.Add(contractType.Name);
+      }
+
+      return customContractTypeNames;
     }
 
     private void LoadCustomContractTypes() {
@@ -93,9 +122,9 @@ namespace MissionControl {
 
     private void LoadEncounterLayers(string name) {
       foreach (string file in Directory.GetFiles($"{ModDirectory}/overrides/encounterLayers/{name.ToLower()}", "*.json", SearchOption.AllDirectories)) {
-        Main.LogDebug($"[DataManager.LoadCustomContractTypes] Loading '{file}' custom encounter layer");
+        Main.LogDebug($"[DataManager.LoadCustomContractTypes] Loading '{file.Substring(file.LastIndexOf('\\') + 1)}' custom encounter layer");
         string encounterLayer = File.ReadAllText(file);
-        EncounterLayer encounterLayerData = JsonConvert.DeserializeObject<EncounterLayer>(encounterLayer);
+        EncounterLayer encounterLayerData = JsonConvert.DeserializeObject<EncounterLayer>(encounterLayer, serialiserSettings);
 
         MetadataDatabase.Instance.InsertOrUpdateEncounterLayer(encounterLayerData);
       }
@@ -104,7 +133,7 @@ namespace MissionControl {
     private void LoadLanceOverrides() {
       foreach (string file in Directory.GetFiles($"{ModDirectory}/lances", "*.json", SearchOption.AllDirectories)) {
         string lanceData = File.ReadAllText(file);
-        MLanceOverrideData lanceOverrideData = JsonConvert.DeserializeObject<MLanceOverrideData>(lanceData);
+        MLanceOverrideData lanceOverrideData = JsonConvert.DeserializeObject<MLanceOverrideData>(lanceData, serialiserSettings);
 
         if (lanceOverrideData.LanceKey != null) {
           LanceOverrides.Add(lanceOverrideData.LanceKey, new MLanceOverride(lanceOverrideData));
@@ -192,7 +221,7 @@ namespace MissionControl {
 
     private void LoadCastFirstNames() {
       string firstNameJson = File.ReadAllText($"{ModDirectory}/cast/FirstNames.json");
-      MCastFirstNames firstNames = JsonConvert.DeserializeObject<MCastFirstNames>(firstNameJson);
+      MCastFirstNames firstNames = JsonConvert.DeserializeObject<MCastFirstNames>(firstNameJson, serialiserSettings);
       this.FirstNames.Add("All", firstNames.All);
       this.FirstNames.Add("Male", firstNames.Male);
       this.FirstNames.Add("Female", firstNames.Female);
@@ -200,17 +229,17 @@ namespace MissionControl {
 
     private void LoadCastLastNames() {
       string lastNameJson = File.ReadAllText($"{ModDirectory}/cast/LastNames.json");
-      this.LastNames = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(lastNameJson);
+      this.LastNames = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(lastNameJson, serialiserSettings);
     }
 
     private void LoadCastRanks() {
       string rankJson = File.ReadAllText($"{ModDirectory}/cast/Ranks.json");
-      this.Ranks = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(rankJson);
+      this.Ranks = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(rankJson, serialiserSettings);
     }
 
     private void LoadPortraits() {
       string portraitJson = File.ReadAllText($"{ModDirectory}/cast/Portraits.json");
-      this.Portraits = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(portraitJson);
+      this.Portraits = JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(portraitJson, serialiserSettings);
     }
 
     public string GetRandomGender() {
@@ -266,7 +295,7 @@ namespace MissionControl {
 
     public void LoadDialogueData() {
       string allyDropJson = File.ReadAllText($"{ModDirectory}/dialogue/AllyDrop.json");
-      Dialogue.Add("AllyDrop", JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(allyDropJson));
+      Dialogue.Add("AllyDrop", JsonConvert.DeserializeObject<Dictionary<string, List<string>>>(allyDropJson, serialiserSettings));
     }
 
     public string GetRandomDialogue(string type, string contractType, string contractSubType) {
@@ -283,6 +312,64 @@ namespace MissionControl {
       }
 
       return "Let's get them, Commander!";
+    }
+
+    public JObject GetAvailableCustomContractTypeBuilds(string contractTypeName, string encounterLayerId) {
+      if (AvailableCustomContractTypeBuilds.ContainsKey(contractTypeName)) {
+        Dictionary<string, JObject> contractTypeMapBuilds = AvailableCustomContractTypeBuilds[contractTypeName];
+
+        if (!contractTypeMapBuilds.ContainsKey("common")) {
+          Main.Logger.LogError($"[GetAvailableCustomContractTypeBuilds] No common.json for '{contractTypeName}'. It's mandatory for custom contract types.");
+          return null;
+        }
+
+        JObject commonBuild = (JObject)contractTypeMapBuilds["common"].DeepClone();
+
+        if (!contractTypeMapBuilds.ContainsKey(encounterLayerId)) {
+          Main.Logger.LogWarning($"[GetAvailableCustomContractTypeBuilds] No map specific build for '{contractTypeName}' and '{encounterLayerId}'. Using only the common build.");
+        } else {
+          JObject mapBuild = contractTypeMapBuilds[encounterLayerId];
+
+          Main.LogDebug($"[GetAvailableCustomContractTypeBuilds] Merging common build for '{contractTypeName}' with map build '{encounterLayerId}'");
+
+          JArray overridesArray = (JArray)mapBuild["Overrides"];
+          if (overridesArray == null) {
+            Main.Logger.LogError($"[GetAvailableCustomContractTypeBuilds] No overrides found in contract type map build file for contract type '{contractTypeName}' with encounterLayerId '{encounterLayerId}'");
+            return null;
+          }
+
+          foreach (JObject ovr in overridesArray.Children<JObject>()) {
+            string path = (string)ovr["Path"];
+            string action = (string)ovr["Action"];
+            JToken value = ovr["Value"];
+
+            JToken token = commonBuild.SelectToken(path);
+            if (token == null) {
+              Main.Logger.LogError($"[GetAvailableCustomContractTypeBuilds] No match found for path '{path}'");
+              return null;
+            }
+
+            if (action == "Replace") {
+              Main.LogDebug($"[GetAvailableCustomContractTypeBuilds] Replacing value for path '{path}'");
+              token.Replace(value);
+            } else if (action == "Remove") {
+              Main.LogDebug($"[GetAvailableCustomContractTypeBuilds] Removing value for path '{path}'");
+              token.Remove();
+            } else if (action == "ObjectMerge") {
+              Main.LogDebug($"[GetAvailableCustomContractTypeBuilds] Object merging value for path '{path}'");
+              JObject objTarget = (JObject)token;
+              JObject objValue = (JObject)value;
+
+              objTarget.Merge(objValue);
+            }
+          }
+        }
+
+        return commonBuild;
+      } else {
+        Main.Logger.LogError($"[GetAvailableCustomContractTypeBuilds] Requested custom contract type for '{contractTypeName}' and encounterLayerId '{encounterLayerId}' has no custom contract type loaded.");
+      }
+      return null;
     }
 
     public void Reset() {

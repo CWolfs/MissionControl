@@ -11,6 +11,9 @@ using MissionControl.Rules;
 
 namespace MissionControl.Logic {
   public abstract class SpawnLanceLogic : SpawnLogic {
+    public enum WithinOrBeyondDistanceType {
+      NONE, MUST_BE_WITHIN, MUST_BE_BEYOND, BOTH
+    };
     protected float minDistanceToSpawnFromInvalidSpawn = 10f;
 
     public SpawnLanceLogic(EncounterRules encounterRules) : base(encounterRules) { }

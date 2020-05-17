@@ -38,9 +38,14 @@ namespace MissionControl {
     public GameObject EncounterLayerGameObject { get; private set; }
     public EncounterLayerData EncounterLayerData { get; private set; }
 
+    public int PlayerLanceDropDifficultyValue { get; set; }
+    public float PlayerLanceDropSkullRating { get; set; }
+    public float PlayerLanceDropTonnage { get; set; }
+
     // Only populated for custom contract types
     public EncounterLayer_MDD EncounterLayerMDD { get; private set; }
     public bool IsCustomContractType { get; set; } = false;
+    public List<object[]> QueuedBuildingMounts { get; set; } = new List<object[]>();
 
     public HexGrid HexGrid { get; private set; }
 
@@ -80,6 +85,9 @@ namespace MissionControl {
 
       AddEncounter("ThreeWayBattle", typeof(BattlePlusEncounterRules));
 
+      // Custom Contract Types
+      AddEncounter("Blackout", typeof(BlackoutEncounterRules));
+
       // Skirmish
       if (Main.Settings.DebugSkirmishMode) AddEncounter("ArenaSkirmish", typeof(DebugArenaSkirmishEncounterRules));
     }
@@ -98,7 +106,11 @@ namespace MissionControl {
     }
 
     public List<string> GetAllContractTypes() {
-      return new List<string>(AvailableEncounters.Keys);
+      List<string> contractTypesWithSpecificEncounterRules = new List<string>(AvailableEncounters.Keys);
+      List<string> customContractTypes = DataManager.Instance.GetCustomContractTypes();
+
+      List<string> contractTypes = contractTypesWithSpecificEncounterRules.Union(customContractTypes).ToList();
+      return contractTypes;
     }
 
     public void InitSceneData() {
@@ -141,7 +153,7 @@ namespace MissionControl {
       string contractTypeName = CurrentContract.ContractTypeValue.Name;
 
       if (DataManager.Instance.AvailableCustomContractTypeBuilds.ContainsKey(contractTypeName)) {
-        JObject contractTypeBuild = DataManager.Instance.AvailableCustomContractTypeBuilds[contractTypeName];
+        JObject contractTypeBuild = DataManager.Instance.GetAvailableCustomContractTypeBuilds(contractTypeName, EncounterLayerMDD.EncounterLayerID);
         ContractTypeBuilder contractTypeBuilder = new ContractTypeBuilder(encounterLayerGo, contractTypeBuild);
         contractTypeBuilder.Build();
       } else {
@@ -150,10 +162,13 @@ namespace MissionControl {
     }
 
     public void SetContract(Contract contract) {
-      Main.Logger.Log($"[MissionControl] Setting contract '{contract.Name}'");
+      Main.Logger.Log($"[MissionControl] Setting contract '{contract.Name}' for contract type '{contract.ContractTypeValue.Name}'");
       CurrentContract = contract;
 
       if (AllowMissionControl()) {
+        Main.Logger.Log($"[MissionControl] Player drop difficulty: '{PlayerLanceDropDifficultyValue}' (Skull value '{PlayerLanceDropSkullRating}')");
+        Main.Logger.Log($"[MissionControl] Player drop tonnage: '{PlayerLanceDropTonnage}' tons");
+
         IsMCLoadingFinished = false;
         SetActiveAdditionalLances(contract);
         Main.Logger.Log($"[MissionControl] Contract map is '{contract.mapName}'");
@@ -187,11 +202,11 @@ namespace MissionControl {
       if (Main.Settings.AdditionalLanceSettings.SkullValueMatters) {
         if (!IsSkirmish(contract) || (IsSkirmish(contract) && !Main.Settings.AdditionalLanceSettings.UseGeneralProfileForSkirmish)) {
           int difficulty = contract.Override.finalDifficulty;
-          Main.LogDebug($"[MissionControl] Difficulty '{difficulty}' (Skull value '{(float)difficulty / 2f}')");
+          Main.LogDebug($"[MissionControl] Contract difficulty '{difficulty}' (Skull value '{(float)difficulty / 2f}')");
           if (Main.Settings.AdditionalLanceSettings.BasedOnVisibleSkullValue) {
             difficulty = contract.Override.GetUIDifficulty();
           }
-          Main.LogDebug($"[MissionControl] Visible Difficulty '{contract.Override.GetUIDifficulty()}' (Skull value '{(float)contract.Override.GetUIDifficulty() / 2f}')");
+          Main.LogDebug($"[MissionControl] Visible Contract difficulty '{contract.Override.GetUIDifficulty()}' (Skull value '{(float)contract.Override.GetUIDifficulty() / 2f}')");
 
           if (Main.Settings.AdditionalLances.ContainsKey(difficulty)) {
             Main.Logger.Log($"[MissionControl] Using AdditionalLances for difficulty '{difficulty}' (Skull value '{(float)difficulty / 2f}')");
@@ -295,8 +310,10 @@ namespace MissionControl {
 
     public bool AreAdditionalLancesAllowed(string teamType) {
       if (Main.Settings.AdditionalLanceSettings.Enable) {
-        bool areLancesAllowed = !(this.CurrentContract.IsFlashpointContract && Main.Settings.AdditionalLanceSettings.DisableIfFlashpointContract);
-        if (areLancesAllowed) areLancesAllowed = Main.Settings.ExtendedLances.GetValidContractTypes().Contains(CurrentContractType);
+
+        bool areLancesAllowed = !Main.Settings.AdditionalLanceSettings.IsTeamDisabled(teamType);
+        if (areLancesAllowed) areLancesAllowed = !(this.CurrentContract.IsFlashpointContract && Main.Settings.AdditionalLanceSettings.DisableIfFlashpointContract);
+        if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.GetValidContractTypes().Contains(CurrentContractType);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.DisableWhenMaxTonnage.AreLancesAllowed((int)this.CurrentContract.Override.lanceMaxTonnage);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.ActiveAdditionalLances.GetValidContractTypes(teamType).Contains(CurrentContractType);
 

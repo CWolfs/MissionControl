@@ -45,7 +45,7 @@ namespace MissionControl.Trigger {
     }
 
     public override void Run(RunPayload payload) {
-      Main.LogDebug("[DialogTrigger] Running trigger");
+      Main.LogDebug("[DialogTrigger] Setting up trigger");
       EncounterLayerData encounterData = MissionControl.Instance.EncounterLayerData;
       SmartTriggerResponse triggerDialogue = new SmartTriggerResponse();
       triggerDialogue.inputMessage = onMessage;

@@ -1,11 +1,5 @@
-using UnityEngine;
-
 using System;
 using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-
-using MissionControl;
 
 public static class StringExtensions {
   public static string Capitalise(this string originalString) {
@@ -14,6 +8,6 @@ public static class StringExtensions {
   }
 
   public static bool In(this string originalString, params string[] comparisonStrings) {
-    return comparisonStrings.Contains(originalString); 
+    return comparisonStrings.Contains(originalString);
   }
 }

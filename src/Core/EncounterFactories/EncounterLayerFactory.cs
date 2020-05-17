@@ -1,14 +1,12 @@
 using UnityEngine;
 
-using System;
-using System.Linq;
 using System.Collections.Generic;
 
 using BattleTech;
 using BattleTech.Data;
 using BattleTech.Framework;
 
-using MissionControl.Rules;
+using Harmony;
 
 namespace MissionControl.EncounterFactories {
   public class EncounterLayerFactory {
@@ -31,6 +29,14 @@ namespace MissionControl.EncounterFactories {
       encounterLayer.mapEncounterLayerDataCells = mockLayer.mapEncounterLayerDataCells;
       encounterLayer.inclineMeshData = mockLayer.inclineMeshData;
       MonoBehaviour.Destroy(mockLayer);
+
+      // Clear out all old regions from copied encounter layer data
+      for (int j = 0; j < encounterLayer.mapEncounterLayerDataCells.GetLength(1); j++) {
+        for (int k = 0; k < encounterLayer.mapEncounterLayerDataCells.GetLength(0); k++) {
+          List<string> regionGuidList = encounterLayer.mapEncounterLayerDataCells[j, k].regionGuidList;
+          if (regionGuidList != null) regionGuidList.Clear();
+        }
+      }
 
       CreateContractObjectives(encounterLayerGo);
 

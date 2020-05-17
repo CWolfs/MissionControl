@@ -16,15 +16,17 @@ namespace MissionControl.ContractTypeBuilders {
     private string name;
     private string type;
     private string subType;
+    private EncounterObjectStatus? startingStatus;
     private bool controlledByContract;
     private string guid;
     private JObject position;
     private JArray children;
 
-    public ChunkTypeBuilder(ContractTypeBuilder contractTypeBuilder, string name, string type, string subType, bool controlledByContract, string guid, JObject position, JArray children) {
+    public ChunkTypeBuilder(ContractTypeBuilder contractTypeBuilder, string name, string type, string subType, EncounterObjectStatus? startingStatus, bool controlledByContract, string guid, JObject position, JArray children) {
       this.contractTypeBuilder = contractTypeBuilder;
       this.name = name;
       this.type = type;
+      this.startingStatus = startingStatus;
       this.controlledByContract = controlledByContract;
       this.subType = subType;
       this.guid = (guid == null) ? Guid.NewGuid().ToString() : guid;
@@ -39,51 +41,69 @@ namespace MissionControl.ContractTypeBuilders {
         case "EncounterBoundary": return BuildEncounterBoundary();
         case "Dialogue": return BuildDialogueChunk();
         case "Placement": return BuildPlacementChunk();
+        case "Container": return BuildEmptyChunk();
+        case "Lance": return BuildLanceChunk();
         default: break;
       }
+
+      Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] No valid chunk was built for '{type}'");
+
       return null;
     }
 
-    // TODO: If the below methods continue to be the same then I should extract them out into a generics method
+    private void SetupChunk(EncounterChunkGameLogic chunkGameLogic) {
+      chunkGameLogic.encounterObjectGuid = this.guid;
+      if (this.startingStatus != null) chunkGameLogic.startingStatus = (EncounterObjectStatus)this.startingStatus;
+      if (controlledByContract) chunkGameLogic.startingStatus = EncounterObjectStatus.ControlledByContract;
+    }
 
     private GameObject BuildPlayerLanceChunk() {
       Main.LogDebug($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] Building 'PlayerLance' Chunk");
       PlayerLanceChunkGameLogic playerLanceChunkGameLogic = ChunkFactory.CreatePlayerLanceChunk(this.name, contractTypeBuilder.EncounterLayerGo.transform);
-      playerLanceChunkGameLogic.encounterObjectGuid = this.guid;
-      if (controlledByContract) playerLanceChunkGameLogic.startingStatus = EncounterObjectStatus.ControlledByContract;
+      SetupChunk(playerLanceChunkGameLogic);
       return playerLanceChunkGameLogic.gameObject;
     }
 
     private GameObject BuildDestroyWholeLanceChunk() {
       Main.LogDebug($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] Building 'DestroyWholeLance' Chunk");
       DestroyWholeLanceChunk destroyWholeLanceChunkGameLogic = ChunkFactory.CreateDestroyWholeLanceChunk(this.name, contractTypeBuilder.EncounterLayerGo.transform);
-      destroyWholeLanceChunkGameLogic.encounterObjectGuid = this.guid;
-      if (controlledByContract) destroyWholeLanceChunkGameLogic.startingStatus = EncounterObjectStatus.ControlledByContract;
+      SetupChunk(destroyWholeLanceChunkGameLogic);
       return destroyWholeLanceChunkGameLogic.gameObject;
     }
 
     private GameObject BuildEncounterBoundary() {
       Main.LogDebug($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] Building 'BuildEncounterBoundary' Chunk");
       EncounterBoundaryChunkGameLogic encounterBoundaryChunkLogic = ChunkFactory.CreateEncounterBondaryChunk(this.name, contractTypeBuilder.EncounterLayerGo.transform);
-      encounterBoundaryChunkLogic.encounterObjectGuid = this.guid;
-      if (controlledByContract) encounterBoundaryChunkLogic.startingStatus = EncounterObjectStatus.ControlledByContract;
+      SetupChunk(encounterBoundaryChunkLogic);
       return encounterBoundaryChunkLogic.gameObject;
     }
 
     private GameObject BuildDialogueChunk() {
       Main.LogDebug($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] Building 'BuildDialogueChunk' Chunk");
       DialogueChunkGameLogic dialogueChunk = ChunkFactory.CreateDialogueChunk(this.name, contractTypeBuilder.EncounterLayerGo.transform);
-      dialogueChunk.encounterObjectGuid = this.guid;
-      if (controlledByContract) dialogueChunk.startingStatus = EncounterObjectStatus.ControlledByContract;
+      SetupChunk(dialogueChunk);
       return dialogueChunk.gameObject;
     }
 
     private GameObject BuildPlacementChunk() {
       Main.LogDebug($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] Building 'BuildPlacementChunk' Chunk");
       SwapPlacementChunkLogic swapPlacementChunk = ChunkFactory.CreateSwapPlacementChunk(this.name, contractTypeBuilder.EncounterLayerGo.transform);
-      swapPlacementChunk.encounterObjectGuid = this.guid;
-      if (controlledByContract) swapPlacementChunk.startingStatus = EncounterObjectStatus.ControlledByContract;
+      SetupChunk(swapPlacementChunk);
       return swapPlacementChunk.gameObject;
+    }
+
+    private GameObject BuildEmptyChunk() {
+      Main.LogDebug($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] Building 'BuildEmptyChunk' (Container) Chunk");
+      EmptyCustomChunkGameLogic emptyChunk = ChunkFactory.CreateEmptyCustomChunk(this.name, contractTypeBuilder.EncounterLayerGo.transform);
+      SetupChunk(emptyChunk);
+      return emptyChunk.gameObject;
+    }
+
+    private GameObject BuildLanceChunk() {
+      Main.LogDebug($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] Building 'BuildLanceChunk' (Container) Chunk");
+      LanceChunkGameLogic lanceChunk = ChunkFactory.CreateLanceChunk(this.name, contractTypeBuilder.EncounterLayerGo.transform);
+      SetupChunk(lanceChunk);
+      return lanceChunk.gameObject;
     }
   }
 }

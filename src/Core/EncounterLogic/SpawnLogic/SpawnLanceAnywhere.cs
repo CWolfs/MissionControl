@@ -14,11 +14,14 @@ namespace MissionControl.Logic {
     private string lanceKey = "";
     private bool useOrientationTarget = false;
     private string orientationTargetKey = "";
-
     private GameObject lance;
     private GameObject orientationTarget;
-    private bool useMiniumDistance = false;
-    private float minimumDistance = 400f;
+
+    private WithinOrBeyondDistanceType distanceCheckType = WithinOrBeyondDistanceType.NONE;
+    private float distanceCheck = 400f;
+    private float mustBeWithinDistance = 400f;
+    private float mustBeBeyondDistance = 400f;
+
     private bool clusterUnits = false;
 
     private int AttemptCountMax { get; set; } = 5;
@@ -35,12 +38,23 @@ namespace MissionControl.Logic {
       this.clusterUnits = clusterUnits;
     }
 
-    public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, float minimumDistance, bool clusterUnits = false) : base(encounterRules) {
+    public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, float mustBeBeyondDistance, bool clusterUnits = false) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.useOrientationTarget = true;
       this.orientationTargetKey = orientationTargetKey;
-      this.useMiniumDistance = true;
-      this.minimumDistance = minimumDistance;
+      this.distanceCheckType = WithinOrBeyondDistanceType.MUST_BE_BEYOND;
+      this.distanceCheck = mustBeBeyondDistance;
+      this.clusterUnits = clusterUnits;
+    }
+
+    public SpawnLanceAnywhere(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, float mustBeBeyondDistance, float mustBeWithinDistance, bool clusterUnits = false) : base(encounterRules) {
+      this.lanceKey = lanceKey;
+      this.useOrientationTarget = true;
+      this.orientationTargetKey = orientationTargetKey;
+      this.distanceCheckType = WithinOrBeyondDistanceType.BOTH;
+      this.mustBeBeyondDistance = mustBeBeyondDistance;
+      this.mustBeWithinDistance = mustBeWithinDistance;
+      this.distanceCheck = mustBeBeyondDistance;
       this.clusterUnits = clusterUnits;
     }
 
@@ -69,7 +83,7 @@ namespace MissionControl.Logic {
         Main.LogDebug($"[SpawnLanceAnywhere] Finished clustering lance '{lance.name}'");
       }
 
-      if (TotalAttemptCount >= TotalAttemptMax) {
+      if (TotalAttemptCount > TotalAttemptMax) {
         HandleFallback(payload, this.lanceKey, this.orientationTargetKey);
         return;
       }
@@ -81,7 +95,7 @@ namespace MissionControl.Logic {
 
       if (useOrientationTarget) RotateToTarget(lance, orientationTarget);
 
-      if (!useMiniumDistance || IsWithinBoundedDistanceOfTarget(newPosition, validOrientationTargetPosition, minimumDistance)) {
+      if (IsDistanceSetupValid(newPosition)) {
         if (!AreLanceMemberSpawnsValid(lance, validOrientationTargetPosition)) {
           CheckAttempts();
           Run(payload);
@@ -96,15 +110,36 @@ namespace MissionControl.Logic {
       }
     }
 
+
+    public bool IsDistanceSetupValid(Vector3 newSpawnPosition) {
+      if (distanceCheckType == WithinOrBeyondDistanceType.NONE) return true;
+
+      switch (distanceCheckType) {
+        case WithinOrBeyondDistanceType.NONE: return true;
+        case WithinOrBeyondDistanceType.MUST_BE_WITHIN: {
+          return IsWithinBoundedDistanceOfTarget(newSpawnPosition, validOrientationTargetPosition, distanceCheck);
+        }
+        case WithinOrBeyondDistanceType.MUST_BE_BEYOND: {
+          return IsBeyondBoundedDistanceOfTarget(newSpawnPosition, validOrientationTargetPosition, distanceCheck);
+        }
+        case WithinOrBeyondDistanceType.BOTH: {
+          bool success = IsWithinBoundedDistanceOfTarget(newSpawnPosition, validOrientationTargetPosition, mustBeWithinDistance);
+          if (success) success = IsBeyondBoundedDistanceOfTarget(newSpawnPosition, validOrientationTargetPosition, mustBeBeyondDistance);
+          return success;
+        }
+        default: return false;
+      }
+    }
+
     private void CheckAttempts() {
       AttemptCount++;
       TotalAttemptCount++;
 
       if (AttemptCount > AttemptCountMax) {
         AttemptCount = 0;
-        Main.LogDebug($"[SpawnLanceAnywhere] Cannot find a suitable lance spawn within the boundaries of {minimumDistance}. Widening search");
-        minimumDistance -= 50f;
-        if (minimumDistance <= 10) minimumDistance = 10;
+        Main.LogDebug($"[SpawnLanceAnywhere] Cannot find a suitable lance spawn within the boundaries of {mustBeBeyondDistance}. Widening search");
+        mustBeBeyondDistance -= 50f;
+        if (mustBeBeyondDistance <= 10) mustBeBeyondDistance = 10;
       }
     }
 

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Globalization;
 
 using System.Collections.Generic;
 
@@ -71,7 +72,8 @@ namespace MissionControl {
     private static void LoadSettings(string modDirectory) {
       Logger.Log("Loading MissionControl settings");
       JsonSerializerSettings serialiserSettings = new JsonSerializerSettings() {
-        TypeNameHandling = TypeNameHandling.All
+        TypeNameHandling = TypeNameHandling.All,
+        Culture = CultureInfo.InvariantCulture
       };
 
       string settingsJsonString = File.ReadAllText($"{modDirectory}/settings.json");
@@ -84,13 +86,13 @@ namespace MissionControl {
 
       string alPath = $"{modDirectory}/config/AdditionalLances/";
       string additionalLancesJsonString = File.ReadAllText($"{alPath}General.json");
-      Settings.AdditionalLances[0] = JsonConvert.DeserializeObject<AdditionalLances>(additionalLancesJsonString);
+      Settings.AdditionalLances[0] = JsonConvert.DeserializeObject<AdditionalLances>(additionalLancesJsonString, serialiserSettings);
 
       string difficultyFileName = "Difficulty";
       for (int i = 1; i <= 10; i++) {
         if (File.Exists($"{alPath}{difficultyFileName}{i}.json")) {
           string skullAdditionalLanceJsonString = File.ReadAllText($"{alPath}{difficultyFileName}{i}.json");
-          Settings.AdditionalLances[i] = JsonConvert.DeserializeObject<AdditionalLances>(skullAdditionalLanceJsonString);
+          Settings.AdditionalLances[i] = JsonConvert.DeserializeObject<AdditionalLances>(skullAdditionalLanceJsonString, serialiserSettings);
         }
       }
     }
