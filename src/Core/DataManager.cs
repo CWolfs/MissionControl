@@ -76,7 +76,7 @@ namespace MissionControl {
         foreach (string file in Directory.GetFiles(directory, "*.json*", SearchOption.AllDirectories)) {
           string contractTypeBuildMapSource = File.ReadAllText(file);
           JObject contractTypeMapBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildMapSource, serialiserSettings);
-          string fileName = Path.GetFileNameWithoutExtension(file.Substring(file.LastIndexOf("\\")));
+          string fileName = Path.GetFileNameWithoutExtension(file.Substring(file.LastIndexOf("/")));
 
           if (fileName == "common" || contractTypeMapBuild.ContainsKey("EncounterLayerId")) {
             string encounterLayerId = (fileName == "common") ? fileName : (string)contractTypeMapBuild["EncounterLayerId"];
@@ -122,7 +122,7 @@ namespace MissionControl {
 
     private void LoadEncounterLayers(string name) {
       foreach (string file in Directory.GetFiles($"{ModDirectory}/overrides/encounterLayers/{name.ToLower()}", "*.json", SearchOption.AllDirectories)) {
-        Main.LogDebug($"[DataManager.LoadCustomContractTypes] Loading '{file.Substring(file.LastIndexOf('\\') + 1)}' custom encounter layer");
+        Main.LogDebug($"[DataManager.LoadCustomContractTypes] Loading '{file.Substring(file.LastIndexOf('/') + 1)}' custom encounter layer");
         string encounterLayer = File.ReadAllText(file);
         EncounterLayer encounterLayerData = JsonConvert.DeserializeObject<EncounterLayer>(encounterLayer, serialiserSettings);
 
