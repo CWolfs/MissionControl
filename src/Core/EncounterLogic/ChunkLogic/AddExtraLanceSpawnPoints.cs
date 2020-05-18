@@ -67,8 +67,6 @@ namespace MissionControl.Logic {
           continue;
         }
 
-        ApplyDifficultyMod(teamOverride, lanceOverride);
-
         if ((numberOfUnitsInLance < factionLanceSize) && numberOfUnitsInLance > 0) {
           // This is usually from a 'tagged' lance being selected which has less lance members than the faction lance size
           if (Main.Settings.ExtendedLances.Autofill) {
@@ -154,14 +152,6 @@ namespace MissionControl.Logic {
       }
     }
 
-    private void ApplyDifficultyMod(TeamOverride teamOverride, LanceOverride lanceOverride) {
-      int previousAjustedDifficulty = lanceOverride.lanceDifficultyAdjustment;
-      int updatedLanceDifficultyAdjustment = Main.Settings.ExtendedLances.GetFactionLanceDifficulty(teamOverride.faction, lanceOverride);
 
-      if (previousAjustedDifficulty != updatedLanceDifficultyAdjustment) {
-        Main.Logger.Log($"[AddExtraLanceSpawnPoints.ApplyDifficultyMod] [Faction:{teamOverride.faction}] Changing lance '{lanceOverride.name}' adjusted difficulty from '{lanceOverride.lanceDifficultyAdjustment}' to '{updatedLanceDifficultyAdjustment}'");
-        lanceOverride.lanceDifficultyAdjustment = updatedLanceDifficultyAdjustment;
-      }
-    }
   }
 }

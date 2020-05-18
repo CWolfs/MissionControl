@@ -66,6 +66,8 @@ namespace MissionControl.Logic {
         bool isLanceTagged = lanceOverride.lanceDefId == "Tagged" || lanceOverride.lanceDefId == "UseLance";
         bool AreAnyLanceUnitsTagged = AreAnyLanceMembersTagged(lanceOverride);
 
+        ApplyDifficultyMod(teamOverride, lanceOverride);
+
         // If tagged, then a lance is selected from the 'data/lance' folder. If we need to increase size we do it later for this usecase.
         // If not, we want to add a new lance member if the vanilla lance size isn't large enough
         //  - If the lance members are 'tagged', then we'll copy any of the tagged units as a base
@@ -84,6 +86,16 @@ namespace MissionControl.Logic {
     private bool AreAnyLanceMembersTagged(LanceOverride lanceOverride) {
       UnitSpawnPointOverride unitSpawnOverrides = lanceOverride.GetAnyTaggedLanceMember();
       return (unitSpawnOverrides != null);
+    }
+
+    private void ApplyDifficultyMod(TeamOverride teamOverride, LanceOverride lanceOverride) {
+      int previousAjustedDifficulty = lanceOverride.lanceDifficultyAdjustment;
+      int updatedLanceDifficultyAdjustment = Main.Settings.ExtendedLances.GetFactionLanceDifficulty(teamOverride.faction, lanceOverride);
+
+      if (previousAjustedDifficulty != updatedLanceDifficultyAdjustment) {
+        Main.Logger.Log($"[AddExtraLanceMembers.ApplyDifficultyMod] [Faction:{teamOverride.faction}] Changing lance '{lanceOverride.name}' adjusted difficulty from '{lanceOverride.lanceDifficultyAdjustment}' to '{updatedLanceDifficultyAdjustment}'");
+        lanceOverride.lanceDifficultyAdjustment = updatedLanceDifficultyAdjustment;
+      }
     }
   }
 }
