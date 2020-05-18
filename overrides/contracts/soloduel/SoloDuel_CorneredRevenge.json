@@ -317,7 +317,7 @@
         "name": "Lance_Enemy_Champion",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_solo"],
+          "items": ["lance_type_heavy", "lance_type_dynamic"],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "lanceExcludedTagSet": {
