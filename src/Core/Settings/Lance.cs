@@ -49,12 +49,22 @@ namespace MissionControl.Config {
       // Use a different calculation approach instead then. Not supporting skirmish with this feature.
       if (!MissionControl.Instance.IsSkirmish() && dropWeightSettings.Enable) {
         Main.LogDebug($"[SelectNumberOfAdditionalLances] [{TeamType}] Using Drop Weight Settings");
-        float spawnInfluenceModifier = MissionControl.Instance.PlayerLanceDropDifficultyValue *
-          ((TeamType == "Enemy") ? dropWeightSettings.EnemySpawnInfluencePerHalfSkull : dropWeightSettings.AllySpawnInfluencePerHalfSkull);
+        int contractDifficulty = MissionControl.Instance.CurrentContract.Override.finalDifficulty;
+        int playerLanceDropDifficulty = MissionControl.Instance.PlayerLanceDropDifficultyValue;
+        int difficultyDifference = playerLanceDropDifficulty - contractDifficulty;
 
-        rawChanceToSpawn = ((TeamType == "Enemy") ? dropWeightSettings.GlobalEnemyChanceToSpawn : dropWeightSettings.GlobalAllyChanceToSpawn) + spawnInfluenceModifier;
+        if (difficultyDifference > 0) { // Player is sending a stronger lance than the contract difficulty requires. Add more influence to AL enemy lances spawning.
+          float spawnInfluenceModifier = difficultyDifference *
+            ((TeamType == "Enemy") ? dropWeightSettings.EnemySpawnInfluencePerHalfSkullAbove : dropWeightSettings.AllySpawnInfluencePerHalfSkullAbove);
 
-        Main.LogDebug($"[SelectNumberOfAdditionalLances] [{TeamType}] Drop Weight spawn influence modifier: '{spawnInfluenceModifier}'");
+          rawChanceToSpawn = rawChanceToSpawn + spawnInfluenceModifier;
+        } else if (difficultyDifference < 0) { // Player is sending a weaker lance than the contract difficulty requires. Add more influence to AL ally lances spawning.
+          float spawnInfluenceModifier = difficultyDifference *
+            ((TeamType == "Enemy") ? dropWeightSettings.EnemySpawnInfluencePerHalfSkullBelow : dropWeightSettings.AllySpawnInfluencePerHalfSkullBelow);
+
+          rawChanceToSpawn = rawChanceToSpawn + spawnInfluenceModifier;
+        }
+
         Main.LogDebug($"[SelectNumberOfAdditionalLances] [{TeamType}] Drop weight raw chance to spawn: '{rawChanceToSpawn}'");
       }
 
