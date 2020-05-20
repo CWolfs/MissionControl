@@ -12,7 +12,7 @@ namespace MissionControl.Result {
     int processedUnitCount = 0;
 
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
-      Main.LogDebug($"[TagUnitsInRegionResult] Tagging '{NumberOfUnits}' '{Type}' in region '{RegionGuid}'");
+      Main.LogDebug($"[TagUnitsInRegionResult] Tagging '{NumberOfUnits}' '{Type}' in region '{RegionGuid}' with tags '{string.Join(",", Tags)}'");
       TagUnitsInRegion();
     }
 

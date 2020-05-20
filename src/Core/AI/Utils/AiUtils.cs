@@ -41,7 +41,7 @@ namespace MissionControl.AI {
 
       detectedEnemyUnits.RemoveAll(potentialEnemy => {
         if (!UnityGameInstance.BattleTechGame.Combat.HostilityMatrix.IsEnemy(teamGuid, potentialEnemy.team.GUID)) {
-          Main.Logger.Log($"[GetClosestDetectedEnemy] Removing potential enemy Unit '{potentialEnemy.DisplayName}' because it's not an enemy.");
+          // Main.Logger.Log($"[GetClosestDetectedEnemy] Removing potential enemy Unit '{potentialEnemy.DisplayName}' because it's not an enemy.");
           return true;
         }
 

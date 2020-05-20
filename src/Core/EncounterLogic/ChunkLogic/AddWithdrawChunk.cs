@@ -52,7 +52,7 @@ namespace MissionControl.Logic {
           0,
           0,
           useDropship,
-          new string[] { "player_unit" },
+          new string[] { MissionControl.Instance.IsCustomContractType ? "Player 1" : "player_unit" },
           new string[] { "opposing_unit" }
         );
 

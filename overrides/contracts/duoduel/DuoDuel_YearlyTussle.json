@@ -350,11 +350,11 @@
         "name": "Lance_Duelists",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_dynamic", "lance_type_heavy"],
+          "items": ["lance_type_heavy", "lance_type_mech"],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "lanceExcludedTagSet": {
-          "items": ["lance_type_vehicle"],
+          "items": [],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "spawnEffectTags": {

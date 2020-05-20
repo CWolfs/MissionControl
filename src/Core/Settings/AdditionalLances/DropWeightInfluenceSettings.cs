@@ -7,16 +7,16 @@ namespace MissionControl.Config {
     [JsonProperty("Enable")]
     public bool Enable { get; set; } = false;
 
-    [JsonProperty("GlobalEnemyChanceToSpawn")]
-    public float GlobalEnemyChanceToSpawn { get; set; } = 0.3f;
+    [JsonProperty("EnemySpawnInfluencePerHalfSkullAbove")]
+    public float EnemySpawnInfluencePerHalfSkullAbove { get; set; } = 0.1f;
 
-    [JsonProperty("GlobalAllyChanceToSpawn")]
-    public float GlobalAllyChanceToSpawn { get; set; } = 0.5f;
+    [JsonProperty("AllySpawnInfluencePerHalfSkullAbove")]
+    public float AllySpawnInfluencePerHalfSkullAbove { get; set; } = -0.1f;
 
-    [JsonProperty("EnemySpawnInfluencePerHalfSkull")]
-    public float EnemySpawnInfluencePerHalfSkull { get; set; } = 0.1f;
+    [JsonProperty("EnemySpawnInfluencePerHalfSkullBelow")]
+    public float EnemySpawnInfluencePerHalfSkullBelow { get; set; } = 0.1f;
 
-    [JsonProperty("AllySpawnInfluencePerHalfSkull")]
-    public float AllySpawnInfluencePerHalfSkull { get; set; } = -0.1f;
+    [JsonProperty("AllySpawnInfluencePerHalfSkullBelow")]
+    public float AllySpawnInfluencePerHalfSkullBelow { get; set; } = -0.1f;
   }
 }

@@ -308,11 +308,11 @@
         "name": "Lance_Enemy_Champion",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_solo"],
+          "items": ["lance_type_assault", "lance_type_mech"],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "lanceExcludedTagSet": {
-          "items": ["lance_type_vehicle"],
+          "items": [],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "spawnEffectTags": {
