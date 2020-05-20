@@ -75,10 +75,13 @@ namespace MissionControl.ContractTypeBuilders {
       int priority = (int)orderObj["Priority"];
       bool mustMatchAllTags = (orderObj.ContainsKey("MustMatchAll")) ? (bool)orderObj["MustMatchAll"] : false;
 
+      List<string> tagsList = tags.ToObject<List<string>>();
+
       TaggedUnitTargetPriorityAIOrder order = ScriptableObject.CreateInstance<TaggedUnitTargetPriorityAIOrder>();
-      order.TargetTagSet = new TagSet(tags.ToObject<List<string>>());
+      order.TargetTagSet = new TagSet(tagsList);
       order.Priority = priority;
       order.MustMatchAllTags = mustMatchAllTags;
+      order.name = string.Join(",", tagsList);
 
       orders.Add(new EncounterAIOrderBox(order));
     }
