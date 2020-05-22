@@ -14,5 +14,10 @@ public static class EncounterChunkGameLogicExtensions {
       MissionControl.Main.LogDebug($"[SetInactiveContractControlledObjectivesNotRequired] Setting '{objectiveGameLogic.gameObject.name}' {setting}");
       AccessTools.Field(typeof(ObjectiveGameLogic), "primary").SetValue(objectiveGameLogic, flag);
     }
+
+    ContractObjectiveGameLogic[] contractGameLogics = encounterChunkGameLogic.GetComponentsInChildren<ContractObjectiveGameLogic>();
+    foreach (ContractObjectiveGameLogic contractObjective in contractGameLogics) {
+      contractObjective.QueueCheckContractObjective();
+    }
   }
 }
