@@ -19,7 +19,7 @@
   "AdditionalLances": {
     "Enable": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
-    "IsPrimaryObjectiveIn": ["SimpleBattle", "ThreeWayBattle"],
+    "IsPrimaryObjectiveIn": ["SimpleBattle", "CaptureBase"],
     "HideObjective": true,
     "ShowObjectiveOnLanceDetected": true,
     "AlwaysDisplayHiddenObjectiveIfPrimary": false,
