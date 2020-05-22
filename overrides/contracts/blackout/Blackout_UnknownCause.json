@@ -863,7 +863,7 @@
         "name": "Turrets",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_turret", "lance_bracket_low"],
+          "items": ["lance_type_turret"],
           "tagSetSourceFile": "Tags/LanceTags"
         },
         "lanceExcludedTagSet": {
@@ -997,7 +997,7 @@
         "name": "Lance_Enemy_RoamingForce",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_dynamic", "lance_type_heavy"],
+          "items": ["lance_type_dynamic"],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "lanceExcludedTagSet": {
@@ -1153,7 +1153,7 @@
         "name": "Lance_Enemy_OpposingForce",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_dynamic", "lance_type_assault"],
+          "items": ["lance_type_dynamic"],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "lanceExcludedTagSet": {
@@ -1309,7 +1309,7 @@
         "name": "Lance_Enemy_OccupyingForce",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_dynamic", "lance_type_medium"],
+          "items": ["lance_type_dynamic"],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "lanceExcludedTagSet": {
@@ -1465,7 +1465,7 @@
         "name": "Lance_Enemy_Ambushers",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_dynamic", "lance_type_heavy"],
+          "items": ["lance_type_dynamic"],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "lanceExcludedTagSet": {
@@ -1642,7 +1642,7 @@
         "name": "Turrets",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_turret", "lance_bracket_low"],
+          "items": ["lance_type_turret"],
           "tagSetSourceFile": "Tags/LanceTags"
         },
         "lanceExcludedTagSet": {
