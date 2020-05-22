@@ -114,7 +114,7 @@
         "EncounterObjectGuid": "bfa3d339-c304-4fba-87db-ac725acb4c10"
       },
       "title": "Destroy occupying lance",
-      "description": "Destroy the lance that is occuping the base",
+      "description": "Destroy the lance that is occupying the base",
       "isPrimary": true,
       "OnSuccessResults": [],
       "OnFailureResults": [],

@@ -114,7 +114,7 @@
         "EncounterObjectGuid": "bfa3d339-c304-4fba-87db-ac725acb4c10"
       },
       "title": "Destroy occupying lance",
-      "description": "Destroy the lance that is occuping the base",
+      "description": "Destroy the lance that is occupying the base",
       "isPrimary": true,
       "OnSuccessResults": [],
       "OnFailureResults": [],
@@ -482,7 +482,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "Unidentified BattleMech lance. Declare yourself. You are violating a {TEAM_EMP.FactionDef.Demonym} militarised zone",
+          "words": "Unidentified BattleMech lance. Declare yourself. You are violating a {TEAM_EMP.FactionDef.Demonym} militarized zone",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -514,7 +514,7 @@
           "revealRadius": -1
         },
         {
-          "words": "Everythings fi..***STATIC***",
+          "words": "Everything's fi..***STATIC***",
           "wordsColor": {
             "r": 1,
             "g": 1,
