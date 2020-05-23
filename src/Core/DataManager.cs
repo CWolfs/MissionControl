@@ -1,7 +1,10 @@
+using UnityEngine;
+
 using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Globalization;
+using System.Collections;
+using System.Collections.Generic;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -102,6 +105,11 @@ namespace MissionControl {
     }
 
     private void LoadCustomContractTypes() {
+      UnityGameInstance.Instance.StartCoroutine(WriteMDDToDisk());
+    }
+
+    IEnumerator WriteMDDToDisk() {
+      yield return new WaitForSeconds(2);
       MetadataDatabase mdd = MetadataDatabase.Instance;
       List<ContractType_MDD> contractTypes = mdd.GetCustomContractTypes();
       Main.LogDebug($"[DataManager.LoadCustomContractTypes] Loading '{contractTypes.Count}' custom contract type(s)");
