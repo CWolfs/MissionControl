@@ -60,6 +60,8 @@ namespace MissionControl {
     }
 
     public void LoadDeferredDefs() {
+      Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
       LoadVehicleDefs();
       LoadPilotDefs();
       LoadCustomContractTypeBuilds();
