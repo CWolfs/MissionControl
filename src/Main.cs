@@ -45,8 +45,6 @@ namespace MissionControl {
     // Entry point into the mod, specified in the `mod.json`
     public static void Init(string modDirectory, string modSettings) {
       try {
-        Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
-
         InitLogger(modDirectory);
         LoadSettings(modDirectory);
         LoadData(modDirectory);
