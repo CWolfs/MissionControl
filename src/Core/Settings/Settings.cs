@@ -10,6 +10,9 @@ namespace MissionControl.Config {
     [JsonProperty("Debug")]
     public DebugSettings Debug { get; set; } = new DebugSettings();
 
+    [JsonProperty("ContractTypeLoaderWait")]
+    public int ContractTypeLoaderWait { get; set; } = 1000;
+
     [JsonProperty("VersionCheck")]
     public bool VersionCheck { get; set; } = true;
 

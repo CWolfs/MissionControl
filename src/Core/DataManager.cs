@@ -1,7 +1,11 @@
+using UnityEngine;
+
 using System;
 using System.IO;
-using System.Collections.Generic;
+using System.Threading;
 using System.Globalization;
+using System.Collections;
+using System.Collections.Generic;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -102,9 +106,21 @@ namespace MissionControl {
     }
 
     private void LoadCustomContractTypes() {
+      new Thread(new ThreadStart(this.WriteMDDToDisk)).Start();
+      UnityGameInstance.Instance.StartCoroutine(ReportOnLoadedCustomContractType());
+    }
+
+    IEnumerator ReportOnLoadedCustomContractType() {
+      yield return new WaitForSeconds(5); // A largish amount of time to ensure contract types have been saved by then
       MetadataDatabase mdd = MetadataDatabase.Instance;
       List<ContractType_MDD> contractTypes = mdd.GetCustomContractTypes();
-      Main.LogDebug($"[DataManager.LoadCustomContractTypes] Loading '{contractTypes.Count}' custom contract type(s)");
+      Main.LogDebug($"[DataManager.LoadCustomContractTypes] Loaded '{contractTypes.Count}' custom contract type(s)");
+    }
+
+    private void WriteMDDToDisk() {
+      Thread.Sleep(Main.Settings.ContractTypeLoaderWait);
+      MetadataDatabase mdd = MetadataDatabase.Instance;
+      List<ContractType_MDD> contractTypes = mdd.GetCustomContractTypes();
       foreach (ContractType_MDD contractType in contractTypes) {
         AddContractType(mdd, contractType);
         LoadEncounterLayers(contractType.Name);
