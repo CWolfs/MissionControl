@@ -164,7 +164,8 @@
           "LanceToUseRegionGuid": "76b654a6-4f2c-4a6f-86e6-d4cf868335fe", // Player lance GUID
           "ProgressFormat": "with [unitsOccupyingSoFar]/[numberOfUnitsToOccupy] unit(s)",
           "Description": "The objective for the player to investigate the blackout",
-          "RequiredTagsOnUnit": ["Player 1"]
+          "RequiredTagsOnUnit": ["Player 1"],
+          "NumberOfUnitsToOccupy": 1
         },
         {
           "Name": "Region_Investigate_Blackout",
