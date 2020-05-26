@@ -482,7 +482,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "Unidentified BattleMech lance. Declare yourself. You are violating a {TEAM_EMP.FactionDef.Demonym} militarized zone",
+          "words": "Unidentified BattleMech lance. Declare yourself. You are violating a {TEAM_EMP.FactionDef.Demonym} militarised zone",
           "wordsColor": {
             "r": 1,
             "g": 1,
