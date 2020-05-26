@@ -10,7 +10,8 @@ namespace MissionControl.Patches {
   public class AbstractActorOnRecomputePathingPatch {
     public static bool Prefix(AbstractActor __instance) {
       // Main.LogDebug($"[OnRecomputePathing] Actor is: {__instance.DisplayName}");
-      if (MissionControl.Instance.IsMCLoadingFinished && __instance.GUID.EndsWith(".9999999999")) {
+      if (MissionControl.Instance.IsMCLoadingFinished && (__instance.GUID.EndsWith(".9999999999") || __instance.GUID.EndsWith(".9999999998"))) {
+        // Main.LogDebug($"[OnRecomputePathing] Blocking Actor");
         return false;
       }
       return true;

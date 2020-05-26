@@ -307,9 +307,6 @@ namespace MissionControl {
         if (vehicleBlipIdentified) GameObject.Destroy(vehicleBlipIdentified);
       }
 
-      // AccessTools.Field(typeof(AbstractActor), "_team").SetValue(pathFinderVehicle, null);
-      // AccessTools.Field(typeof(AbstractActor), "_teamId").SetValue(pathFinderVehicle, null);
-
       estimatesOfBadPathfings.Clear();
     }
 
