@@ -20,6 +20,7 @@
     "Enable": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "IsPrimaryObjectiveIn": ["SimpleBattle", "CaptureBase"],
+    "ExcludeFromAutocomplete": ["DefendBase", "FireMission"],
     "HideObjective": true,
     "ShowObjectiveOnLanceDetected": true,
     "AlwaysDisplayHiddenObjectiveIfPrimary": false,
