@@ -23,6 +23,7 @@ namespace MissionControl.Logic {
       encounterRules.EncounterLogic.Add(new AddLanceToTargetTeam(lanceGuid, unitGuids));
       encounterRules.EncounterLogic.Add(new AddDestroyWholeUnitChunk(encounterRules, targetTeamGuid, lanceGuid, unitGuids,
          spawnerName, objectiveGuid, objectiveName, priority, isPrimaryObjective, displayToUser));
+      encounterRules.EncounterLogic.Add(new AddObjectiveToAutocompleteTrigger(objectiveGuid));
       encounterRules.EncounterLogic.Add(new SpawnLanceMembersAroundTarget(encounterRules, spawnerName, orientationTargetKey,
         SpawnLogic.LookDirection.AWAY_FROM_TARGET, mustBeBeyondDistance, mustBeWithinDistance));
 
