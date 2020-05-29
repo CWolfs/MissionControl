@@ -165,7 +165,7 @@
           "ProgressFormat": "with [unitsOccupyingSoFar]/[numberOfUnitsToOccupy] unit(s)",
           "Description": "The objective for the player to investigate the blackout",
           "RequiredTagsOnUnit": ["Player 1"],
-          "NumberOfUnitsToOccupy": 1
+          "NumberOfUnitsToOccupy": 2
         },
         {
           "Name": "Region_Investigate_Blackout",
