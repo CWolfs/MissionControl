@@ -921,7 +921,17 @@
         {
           "Type": "Delay",
           "Name": "Activate 3a Turrets",
-          "Rounds": 3,
+          "Rounds": 2,
+          "SkipIf": {
+            "TriggerOn": "OnObjectiveUpdated",
+            "Conditionals": [
+              {
+                "Type": "ObjectiveStatusConditional",
+                "Guid": "bfa3d339-c304-4fba-87db-ac725acb4c10", // Chunk_Stage_Post_3a Destroy Invading Lance
+                "Status": "Success"
+              }
+            ]
+          },
           "Results": [
             {
               "Type": "SetStateAtRandom",
@@ -930,6 +940,15 @@
                 "832ae497-f3d3-467f-b4da-8e95a3d757b0" // Chunk_Stage_Post_3a_Friendly_Turrets
               ],
               "State": "Active"
+            }
+          ],
+          "ResultsIfSkipped": [
+            {
+              "Type": "IgnoreChunks",
+              "EncounterGuids": [
+                "1fdeca88-c2d9-46af-b443-cf95aae707b6", // Chunk_Stage_Post_3a_Enemy_Turrets
+                "832ae497-f3d3-467f-b4da-8e95a3d757b0" // Chunk_Stage_Post_3a_Friendly_Turrets
+              ]
             }
           ]
         }

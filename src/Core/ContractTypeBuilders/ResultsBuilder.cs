@@ -51,6 +51,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "CameraFocus": BuildCameraFocusResult(result); break;
         case "DestroyBuildingsAtLanceSpawns": BuildDestroyBuildingsAtLanceSpawnsResult(result); break;
         case "Delay": BuildDelayResult(result); break;
+        case "IgnoreChunks": BuildIgnoreChunksResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -300,10 +301,21 @@ namespace MissionControl.ContractTypeBuilders {
       float time = resultObject.ContainsKey("Time") ? (float)resultObject["Time"] : -1;
       int rounds = resultObject.ContainsKey("Rounds") ? (int)resultObject["Rounds"] : -1;
       int phases = resultObject.ContainsKey("Phases") ? (int)resultObject["Phases"] : -1;
+      JObject skipIfTrigger = resultObject.ContainsKey("SkipIf") ? (JObject)resultObject["SkipIf"] : null;
+      List<DesignConditional> childSkipIfConditionals = new List<DesignConditional>();
+
       JArray childResultsArray = (JArray)resultObject["Results"];
+      JArray childResultsIfSkippedArray = resultObject.ContainsKey("ResultsIfSkipped") ? (JArray)resultObject["ResultsIfSkipped"] : null;
+
       List<DesignResult> createdChildResults = new List<DesignResult>();
       ResultsBuilder childResultsBuilder = new ResultsBuilder(this.contractTypeBuilder, childResultsArray);
       createdChildResults = childResultsBuilder.Build();
+
+      List<DesignResult> createdChildResultsIfSkipped = new List<DesignResult>();
+      if (childResultsIfSkippedArray != null) {
+        ResultsBuilder childResultsIfSkippedBuilder = new ResultsBuilder(this.contractTypeBuilder, childResultsIfSkippedArray);
+        createdChildResultsIfSkipped = childResultsIfSkippedBuilder.Build();
+      }
 
       DelayResult result = ScriptableObject.CreateInstance<DelayResult>();
       result.Name = name;
@@ -311,8 +323,31 @@ namespace MissionControl.ContractTypeBuilders {
       result.Rounds = rounds;
       result.Phases = phases;
       result.Results = createdChildResults;
+      result.ResultsIfSkipped = createdChildResultsIfSkipped;
 
       results.Add(result);
+
+      if (skipIfTrigger != null) {
+        GenericTriggerBuilder genericTrigger = new GenericTriggerBuilder(this.contractTypeBuilder, skipIfTrigger, "DelaySkipIfTrigger");
+        ActivateDelaySkipResultsResult triggerResult = ScriptableObject.CreateInstance<ActivateDelaySkipResultsResult>();
+        triggerResult.DelayResult = result;
+        genericTrigger.Results = new List<DesignResult>() { triggerResult };
+        genericTrigger.Build();
+      }
+    }
+
+    private void BuildIgnoreChunksResult(JObject resultObject) {
+      Main.LogDebug("[BuildIgnoreChunksResult] Building 'IgnoreChunks' result");
+      List<string> encounterGuids = (resultObject.ContainsKey("EncounterGuids")) ? resultObject["EncounterGuids"].ToObject<List<string>>() : null;
+
+      if (encounterGuids != null) {
+        IgnoreChunksResult result = ScriptableObject.CreateInstance<IgnoreChunksResult>();
+        result.EncounterGuids = encounterGuids;
+
+        results.Add(result);
+      } else {
+        Main.Logger.LogError("[BuildIgnoreChunksResult] You have not provided an 'EncounterGuids' to Ignore");
+      }
     }
   }
 }
