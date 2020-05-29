@@ -26,7 +26,7 @@ namespace MissionControl.ContractTypeBuilders {
     private string conditionalEvaluationString;
     private LogicEvaluation conditionalEvaluation;
     private GenericCompoundConditional conditional;
-    private List<DesignResult> results;
+    public List<DesignResult> Results { get; set; }
 
     public GenericTriggerBuilder(ContractTypeBuilder contractTypeBuilder, JObject trigger, string name) {
       this.contractTypeBuilder = contractTypeBuilder;
@@ -47,9 +47,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       if (trigger.ContainsKey("Results")) {
         ResultsBuilder resultsBuilder = new ResultsBuilder(contractTypeBuilder, (JArray)trigger["Results"]);
-        this.results = resultsBuilder.Build();
-      } else {
-        Main.Logger.LogError("[GenericTriggerBuilder] Generic Triggers require 'Results'");
+        this.Results = resultsBuilder.Build();
       }
 
       if (!Enum.TryParse(this.triggerOn, out triggerMessageType)) {
@@ -67,13 +65,18 @@ namespace MissionControl.ContractTypeBuilders {
       this.triggerMessageType = triggerMessageType;
       this.conditional = conditional;
       this.description = description;
-      this.results = results;
+      this.Results = results;
     }
 
     public override void Build() {
       Main.LogDebug("[GenericTriggerBuilder] Building 'Generic' trigger");
-      GenericTrigger genericTrigger = new GenericTrigger(this.name, this.description, this.triggerMessageType, this.conditional, results);
-      genericTrigger.Run(null);
+
+      if (this.Results == null) {
+        Main.Logger.LogError("[GenericTriggerBuilder] Generic Triggers require 'Results'");
+      } else {
+        GenericTrigger genericTrigger = new GenericTrigger(this.name, this.description, this.triggerMessageType, this.conditional, Results);
+        genericTrigger.Run(null);
+      }
     }
   }
 }

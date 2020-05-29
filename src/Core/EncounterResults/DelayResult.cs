@@ -12,7 +12,6 @@ namespace MissionControl.Result {
     public float Time { get; set; } = -1;
     public int Rounds { get; set; } = -1;
     public int Phases { get; set; } = -1;
-    public List<DesignConditional> SkipIf { get; set; }
     public List<DesignResult> Results { get; set; }
     public List<DesignResult> ResultsIfSkipped { get; set; }
     private int roundCount = 0;
@@ -24,21 +23,11 @@ namespace MissionControl.Result {
 
       SubscribeToMessages(true);
       if (IsTimeControlled()) MissionControl.Instance.EncounterLayerParent.StartCoroutine(DelayResultsWithTime());
-
-      if (SkipIf != null) {
-        SubscribeToSkipConditions(true);
-      }
     }
 
     public void SubscribeToMessages(bool subscribe) {
       if (IsRoundControlled()) UnityGameInstance.BattleTechGame.MessageCenter.Subscribe(MessageCenterMessageType.OnRoundBegin, new ReceiveMessageCenterMessage(this.OnRoundBegin), subscribe);
       if (IsPhaseControlled()) UnityGameInstance.BattleTechGame.MessageCenter.Subscribe(MessageCenterMessageType.OnPhaseBegin, new ReceiveMessageCenterMessage(this.OnPhaseBegin), subscribe);
-    }
-
-    private void SubscribeToSkipConditions(bool subscribe) {
-      foreach (DesignConditional conditional in SkipIf) {
-
-      }
     }
 
     IEnumerator DelayResultsWithTime() {
@@ -98,6 +87,15 @@ namespace MissionControl.Result {
       if (completed) return;
       completed = true;
       SubscribeToMessages(false);
+
+      if (ResultsIfSkipped != null) {
+        Main.LogDebug($"[DelayResult] Triggering '{Name}' skip results");
+        foreach (DesignResult result in ResultsIfSkipped) {
+          result.Trigger(null, null);
+        }
+      } else {
+        Main.Logger.LogDebug($"[DelayResult] Skip Results list is null. This means you've set up a 'SkipIf' trigger but with no results. This can be expected.");
+      }
     }
   }
 }
