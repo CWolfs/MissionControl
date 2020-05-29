@@ -403,7 +403,7 @@
           "audioName": "NONE",
           "cameraFocusGuid": "e7e9f35b-7ed8-404e-9dae-69be61de2dd3",
           "cameraDistance": "Far",
-          "cameraHeight": "High",
+          "cameraHeight": "Default",
           "revealRadius": -1
         },
         {
