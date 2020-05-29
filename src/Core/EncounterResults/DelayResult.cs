@@ -12,8 +12,9 @@ namespace MissionControl.Result {
     public float Time { get; set; } = -1;
     public int Rounds { get; set; } = -1;
     public int Phases { get; set; } = -1;
+    public List<DesignConditional> SkipIf { get; set; }
     public List<DesignResult> Results { get; set; }
-
+    public List<DesignResult> ResultsIfSkipped { get; set; }
     private int roundCount = 0;
     private int phaseCount = 0;
     private bool completed = false;
@@ -23,11 +24,21 @@ namespace MissionControl.Result {
 
       SubscribeToMessages(true);
       if (IsTimeControlled()) MissionControl.Instance.EncounterLayerParent.StartCoroutine(DelayResultsWithTime());
+
+      if (SkipIf != null) {
+        SubscribeToSkipConditions(true);
+      }
     }
 
     public void SubscribeToMessages(bool subscribe) {
       if (IsRoundControlled()) UnityGameInstance.BattleTechGame.MessageCenter.Subscribe(MessageCenterMessageType.OnRoundBegin, new ReceiveMessageCenterMessage(this.OnRoundBegin), subscribe);
       if (IsPhaseControlled()) UnityGameInstance.BattleTechGame.MessageCenter.Subscribe(MessageCenterMessageType.OnPhaseBegin, new ReceiveMessageCenterMessage(this.OnPhaseBegin), subscribe);
+    }
+
+    private void SubscribeToSkipConditions(bool subscribe) {
+      foreach (DesignConditional conditional in SkipIf) {
+
+      }
     }
 
     IEnumerator DelayResultsWithTime() {
@@ -81,6 +92,12 @@ namespace MissionControl.Result {
       } else {
         Main.Logger.LogError($"[DelayResult] Results list is null. This is a serious issue with the contract builder. Check your custom contract type build file for errors.");
       }
+    }
+
+    public void TriggerResultsIfSkipped() {
+      if (completed) return;
+      completed = true;
+      SubscribeToMessages(false);
     }
   }
 }

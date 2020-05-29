@@ -300,7 +300,9 @@ namespace MissionControl.ContractTypeBuilders {
       float time = resultObject.ContainsKey("Time") ? (float)resultObject["Time"] : -1;
       int rounds = resultObject.ContainsKey("Rounds") ? (int)resultObject["Rounds"] : -1;
       int phases = resultObject.ContainsKey("Phases") ? (int)resultObject["Phases"] : -1;
+      JArray skipIf = resultObject.ContainsKey("SkipIf") ? (JArray)resultObject["SkipIf"] : null;
       JArray childResultsArray = (JArray)resultObject["Results"];
+      JArray childResultsIfSkippedArray = resultObject.ContainsKey("ResultsIfSkipped") ? (JArray)resultObject["ResultsIfSkipped"] : null;
       List<DesignResult> createdChildResults = new List<DesignResult>();
       ResultsBuilder childResultsBuilder = new ResultsBuilder(this.contractTypeBuilder, childResultsArray);
       createdChildResults = childResultsBuilder.Build();

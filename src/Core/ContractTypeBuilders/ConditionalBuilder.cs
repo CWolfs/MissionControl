@@ -1,6 +1,7 @@
 using UnityEngine;
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using Newtonsoft.Json.Linq;
@@ -35,8 +36,19 @@ namespace MissionControl.ContractTypeBuilders {
       return conditionals;
     }
 
+    public List<DesignConditional> BuildAsDesignConditionals() {
+      conditionalList = new List<EncounterConditionalBox>();
+
+      foreach (JObject conditionalObject in conditionalsObject.Children<JObject>()) {
+        BuildConditional(conditionalObject);
+      }
+
+      return conditionalList.Select(conditional => conditional.CargoVTwo).ToList();
+    }
+
     private void BuildConditional(JObject conditionalObject) {
       string type = conditionalObject["Type"].ToString();
+      string contractTypeKey = (this.contractTypeBuilder != null) ? contractTypeBuilder.ContractTypeKey : "Result";
 
       switch (type) {
         case "AlwaysTrueConditional": BuildAlwaysTrueConditional(conditionalObject); break;
@@ -45,7 +57,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "EncounterObjectMatchesStateConditional": BuildEncounterObjectMatchesStateConditional(conditionalObject); break;
         case "DialogueMatchesConditional": BuildDialogueMatchesConditional(conditionalObject); break;
         default:
-          Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeBuilder.ContractTypeKey}] No valid conditional was built for '{type}'");
+          Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeKey}] No valid conditional was built for '{type}'");
           break;
       }
     }
