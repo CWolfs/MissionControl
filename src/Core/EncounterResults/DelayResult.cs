@@ -13,7 +13,7 @@ namespace MissionControl.Result {
     public int Rounds { get; set; } = -1;
     public int Phases { get; set; } = -1;
     public List<DesignResult> Results { get; set; }
-
+    public List<DesignResult> ResultsIfSkipped { get; set; }
     private int roundCount = 0;
     private int phaseCount = 0;
     private bool completed = false;
@@ -80,6 +80,21 @@ namespace MissionControl.Result {
         }
       } else {
         Main.Logger.LogError($"[DelayResult] Results list is null. This is a serious issue with the contract builder. Check your custom contract type build file for errors.");
+      }
+    }
+
+    public void TriggerResultsIfSkipped() {
+      if (completed) return;
+      completed = true;
+      SubscribeToMessages(false);
+
+      if (ResultsIfSkipped != null) {
+        Main.LogDebug($"[DelayResult] Triggering '{Name}' skip results");
+        foreach (DesignResult result in ResultsIfSkipped) {
+          result.Trigger(null, null);
+        }
+      } else {
+        Main.Logger.LogDebug($"[DelayResult] Skip Results list is null. This means you've set up a 'SkipIf' trigger but with no results. This can be expected.");
       }
     }
   }

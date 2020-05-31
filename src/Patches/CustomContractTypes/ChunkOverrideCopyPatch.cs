@@ -10,7 +10,7 @@ namespace MissionControl.Patches {
   [HarmonyPatch(typeof(ChunkOverride), "Copy")]
   public class ChunkOverrideCopyPatch {
     static bool Prefix(ChunkOverride __instance, ref ChunkOverride __result) {
-      Main.LogDebug($"[ChunkOverrideCopyPatch.Prefix] Running ChunkOverrideCopyPatch - {__instance.name}");
+      // Main.LogDebug($"[ChunkOverrideCopyPatch.Prefix] Running ChunkOverrideCopyPatch - {__instance.name}");
       __result = new ChunkOverride {
         name = __instance.name,
         encounterChunk = new EncounterChunkRef(__instance.encounterChunk),

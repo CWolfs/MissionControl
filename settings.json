@@ -19,7 +19,8 @@
   "AdditionalLances": {
     "Enable": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
-    "IsPrimaryObjectiveIn": ["SimpleBattle", "ThreeWayBattle"],
+    "IsPrimaryObjectiveIn": ["SimpleBattle", "CaptureBase"],
+    "ExcludeFromAutocomplete": ["DefendBase", "FireMission"],
     "HideObjective": true,
     "ShowObjectiveOnLanceDetected": true,
     "AlwaysDisplayHiddenObjectiveIfPrimary": false,
@@ -92,7 +93,7 @@
     "Enable": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "MinDistanceForZone": 50,
-    "MaxDistanceForZone": 400,
+    "MaxDistanceForZone": 288,
     "DisorderlyWithdrawalCompatibility": false
   },
   "AI": {
@@ -101,7 +102,9 @@
       "Target": "HeaviestMech",
       "StopWhen": "OnEnemyDetected",
       "MaxDistanceFromTargetBeforeSprinting": 120,
-      "TargetZoneRadius": 120
+      "TargetZoneRadius": 120,
+      "TimeToWaitForPathfinding": 60,
+      "TicksToWaitForPathfinding": 20
     }
   },
   "Spawners": {

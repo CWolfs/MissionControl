@@ -18,5 +18,11 @@ namespace MissionControl.Config {
 
     [JsonProperty("TargetZoneRadius")]
     public float TargetZoneRadius { get; set; } = 120;
+
+    [JsonProperty("TimeToWaitForPathfinding")]
+    public float TimeToWaitForPathfinding { get; set; } = 60;
+
+    [JsonProperty("TicksToWaitForPathfinding")]
+    public int TicksToWaitForPathfinding { get; set; } = 20;
   }
 }

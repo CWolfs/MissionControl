@@ -5,12 +5,10 @@
       "label": "build",
       "type": "process",
       "command": "dotnet",
-      "args": [
-        "build",
-        "D:/Modding/Battletech/MissionControl/src/MissionControl.csproj"
-      ],
+      "args": ["build", "D:/Modding/Battletech/MissionControl/src/MissionControl.csproj"],
       "problemMatcher": "$msCompile"
     },
+    /*
     {
       "label": "copy",
       "type": "shell",
@@ -29,6 +27,7 @@
         "'C:/Users/Rich/Documents/my games/BattleTech/mods/HBS/MissionControl'"
       ]
     },
+    */
     {
       "label": "copy (assets)",
       "type": "shell",

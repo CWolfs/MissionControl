@@ -19,12 +19,13 @@ namespace MissionControl.Rules {
       Main.Logger.Log("[BlackoutEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "FirstRegion", 200f, 800f));
       EncounterLogic.Add(new SpawnLanceAnywhere(this, "RoamingForce", "SpawnerPlayerLance", 500f, 1000f));
-      EncounterLogic.Add(new SpawnLanceAroundTarget(this, "Lance_Enemy_OpposingForce", "Region_Follow_The_Trail", SpawnLogic.LookDirection.TOWARDS_TARGET, 400f, 600f, true));
+      EncounterLogic.Add(new SpawnLanceAroundTarget(this, "LanceEnemyOpposingForce", "Region_Follow_The_Trail", SpawnLogic.LookDirection.TOWARDS_TARGET, 200f, 400f, true));
     }
 
     public override void LinkObjectReferences(string mapName) {
       ObjectLookup["FirstRegion"] = EncounterLayerData.gameObject.FindRecursive("Region_Investigate_Blackout");
       ObjectLookup["RoamingForce"] = EncounterLayerData.gameObject.FindRecursive("Spawner_Enemy_RoamingForce");
+      ObjectLookup["LanceEnemyOpposingForce"] = EncounterLayerData.gameObject.FindRecursive("Lance_Enemy_OpposingForce");
     }
   }
 }

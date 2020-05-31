@@ -91,6 +91,28 @@ namespace MissionControl.Logic {
       return invalidLanceSpawns;
     }
 
+    public bool IsObjectSpawnValid(GameObject spawnPoint, Vector3 checkTarget) {
+      CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+      EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
+      Vector3 checkTargetPosition = checkTarget.GetClosestHexLerpedPointOnGrid();
+
+      Vector3 spawnPointPosition = GetClosestValidPathFindingHex(spawnPoint, spawnPoint.transform.position, $"IsObjectSpawnInvalid.{spawnPoint.name}", Vector3.zero, 2);
+      Main.LogDebug($"[SpawnLanceLogic.IsObjectSpawnInvalid] Object spawn point's closest hex lerped point on grid for '{spawnPoint.name}' is '{spawnPointPosition}'");
+
+      if (!encounterLayerData.IsInEncounterBounds(spawnPointPosition)) {
+        Main.LogDebugWarning("[SpawnLanceLogic.IsObjectSpawnInvalid] Object spawn is outside of the boundary. Select a new object spawn point.");
+        return false;
+      }
+
+      if (!PathFinderManager.Instance.IsSpawnValid(spawnPoint, spawnPointPosition, checkTargetPosition, UnitType.Mech, spawnPoint.name)) {
+        Main.LogDebugWarning($"[SpawnLanceLogic.IsObjectSpawnInvalid] Object spawn '{spawnPoint.name}' path to check target '{checkTarget}' is blocked. Select a new object spawn point");
+        return false;
+      }
+
+      spawnPoint.transform.position = spawnPointPosition;
+      return true;
+    }
+
     protected bool IsPointTooCloseToOtherPointsClosestPointOnGrid(Vector3 point, List<GameObject> points) {
       List<Vector3> vectorPoints = new List<Vector3>();
       for (int i = 0; i < points.Count; i++) {

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 using BattleTech;
 using BattleTech.Data;
+using BattleTech.Framework;
 
 using MissionControl.Data;
 using MissionControl.Logic;
@@ -55,6 +56,11 @@ namespace MissionControl {
     private Dictionary<string, List<Type>> AvailableEncounters = new Dictionary<string, List<Type>>();
 
     public Dictionary<ContractStats, object> ContractStats = new Dictionary<ContractStats, object>();
+
+    // Used at Contract generation
+    public StarSystem System { get; set; }
+    public Dictionary<int, List<ContractOverride>> PotentialContracts { get; set; } = new Dictionary<int, List<ContractOverride>>();
+    // End
 
     private MissionControl() {
       LoadEncounterRules();

@@ -9,6 +9,9 @@ namespace MissionControl.Config {
     [JsonProperty("IsPrimaryObjectiveIn")]
     public List<string> IsPrimaryObjectiveIn { get; set; } = new List<string>() { "SimpleBattle" };
 
+    [JsonProperty("ExcludeFromAutocomplete")]
+    public List<string> ExcludeFromAutocomplete { get; set; } = new List<string>();
+
     [JsonProperty("HideObjective")]
     public bool HideObjective { get; set; } = true;
 

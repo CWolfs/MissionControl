@@ -8,7 +8,7 @@ namespace MissionControl.Patches {
   [HarmonyPatch(typeof(LanceSpawnerGameLogic), "OnUnitSpawnComplete")]
   public class LanceSpawnerGameLogicOnUnitSpawnCompletePatch {
     static void Prefix(LanceSpawnerGameLogic __instance) {
-      Main.LogDebug($"[LanceSpawnerGameLogicOnUnitSpawnCompletePatch] Patching Prefix");
+      // Main.LogDebug($"[LanceSpawnerGameLogicOnUnitSpawnCompletePatch] Patching Prefix");
       if (HasLanceSpawnCompleted(__instance)) {
         LanceSpawnedMessage lanceSpawnedMessage = new LanceSpawnedMessage(__instance.encounterObjectGuid, __instance.LanceGuid);
         EncounterLayerParent.EnqueueLoadAwareMessage(lanceSpawnedMessage);

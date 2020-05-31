@@ -114,7 +114,7 @@
         "EncounterObjectGuid": "bfa3d339-c304-4fba-87db-ac725acb4c10"
       },
       "title": "Destroy occupying lance",
-      "description": "Destroy the lance that is occuping the base",
+      "description": "Destroy the lance that is occupying the base",
       "isPrimary": true,
       "OnSuccessResults": [],
       "OnFailureResults": [],
@@ -514,7 +514,7 @@
           "revealRadius": -1
         },
         {
-          "words": "Everythings fi..***STATIC***",
+          "words": "Everything's fi..***STATIC***",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -911,7 +911,7 @@
         "name": "Turrets",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_turret", "lance_bracket_low"],
+          "items": ["lance_type_turret"],
           "tagSetSourceFile": "Tags/LanceTags"
         },
         "lanceExcludedTagSet": {
@@ -1045,7 +1045,7 @@
         "name": "Lance_Enemy_RoamingForce",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_dynamic", "lance_type_light"],
+          "items": ["lance_type_dynamic_difficulty"],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "lanceExcludedTagSet": {
@@ -1201,7 +1201,7 @@
         "name": "Lance_Enemy_OpposingForce",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_dynamic", "lance_type_heavy"],
+          "items": ["lance_type_dynamic_difficulty"],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "lanceExcludedTagSet": {
@@ -1357,7 +1357,7 @@
         "name": "Lance_Enemy_OccupyingForce",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_dynamic", "lance_type_heavy"],
+          "items": ["lance_type_dynamic_difficulty"],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "lanceExcludedTagSet": {
@@ -1513,7 +1513,7 @@
         "name": "Lance_Enemy_Ambushers",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_dynamic", "lance_type_medium"],
+          "items": ["lance_type_dynamic_difficulty"],
           "tagSetSourceFile": "tags/LanceTags"
         },
         "lanceExcludedTagSet": {
@@ -1690,7 +1690,7 @@
         "name": "Turrets",
         "lanceDefId": "Tagged",
         "lanceTagSet": {
-          "items": ["lance_type_turret", "lance_bracket_low"],
+          "items": ["lance_type_turret"],
           "tagSetSourceFile": "Tags/LanceTags"
         },
         "lanceExcludedTagSet": {

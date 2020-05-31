@@ -19,11 +19,13 @@ namespace MissionControl.Rules {
       Main.Logger.Log("[AssassinateEncounterRules] Building spawns rules");
       EncounterLogic.Add(new SpawnLanceAtEdgeOfBoundary(this, "SpawnerPlayerLance", "AssassinateSpawn"));
       EncounterLogic.Add(new SpawnLanceAnywhere(this, "AssassinateSpawn", "SpawnerPlayerLance", 400, true));
+      EncounterLogic.Add(new SpawnObjectAnywhere(this, "TargetEscapeZone", "AssassinateSpawn", 480));
       EncounterLogic.Add(new LookAtTarget(this, "SpawnerPlayerLance", "AssassinateSpawn", true));
     }
 
     public override void LinkObjectReferences(string mapName) {
       ObjectLookup["AssassinateSpawn"] = EncounterLayerData.gameObject.FindRecursive("Lance_Enemy_AssassinationTarget");
+      ObjectLookup["TargetEscapeZone"] = EncounterLayerData.gameObject.FindRecursive("Region_TargetEscapeZone");
     }
   }
 }
