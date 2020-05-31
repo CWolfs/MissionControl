@@ -5,7 +5,7 @@ using Harmony;
 using BattleTech;
 
 namespace MissionControl.AI {
-  public class FollowLanceBranchBuilder  : BehaviourTreeBranchBuilder {
+  public class FollowLanceBranchBuilder : BehaviourTreeBranchBuilder {
     private BehaviorTree tree;
     private AbstractActor unit;
 
@@ -31,10 +31,12 @@ namespace MissionControl.AI {
         tree.unit, "Log Node", BehaviorNodeState.Success);
 
       HasFollowLanceTargetNode hasFollowLanceTarget = new HasFollowLanceTargetNode("hasFollowLanceTarget0000", tree, tree.unit);
+      BlockUntilPathfindingReadyNode blockUntilPathfindingReady = new BlockUntilPathfindingReadyNode("blockUntilPathfindingReady1001", tree, tree.unit);
       MoveToFollowLanceNode moveToFollowLance = new MoveToFollowLanceNode("moveToFollowLance0000", tree, tree.unit, false);
 
       root.AddChild(debugLogToContent1);
       root.AddChild(hasFollowLanceTarget);
+      root.AddChild(blockUntilPathfindingReady);
       root.AddChild(moveToFollowLance);
     }
   }
