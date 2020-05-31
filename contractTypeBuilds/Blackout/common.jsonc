@@ -919,6 +919,11 @@
           ]
         },
         {
+          /*
+            If the 'Destroy Invading Lance' objective is completed before the turrets activate
+            Then immediately activate the enemy turret event for Phase 2 OR just end the game.
+            There's no need to have friendly turrets activate then.
+          */
           "Type": "Delay",
           "Name": "Activate 3a Turrets",
           "Rounds": 2,
@@ -944,10 +949,20 @@
           ],
           "ResultsIfSkipped": [
             {
-              "Type": "IgnoreChunks",
-              "EncounterGuids": [
-                "1fdeca88-c2d9-46af-b443-cf95aae707b6", // Chunk_Stage_Post_3a_Enemy_Turrets
-                "832ae497-f3d3-467f-b4da-8e95a3d757b0" // Chunk_Stage_Post_3a_Friendly_Turrets
+              "Type": "TriggerResultAtRandom",
+              "Results": [
+                {
+                  "Type": "SetState",
+                  "EncounterGuid": "1fdeca88-c2d9-46af-b443-cf95aae707b6", // Chunk_Stage_Post_3a_Enemy_Turrets
+                  "State": "Active"
+                },
+                {
+                  "Type": "IgnoreChunks",
+                  "EncounterGuids": [
+                    "1fdeca88-c2d9-46af-b443-cf95aae707b6" // Chunk_Stage_Post_3a_Enemy_Turrets
+                    // "832ae497-f3d3-467f-b4da-8e95a3d757b0" // Chunk_Stage_Post_3a_Friendly_Turrets
+                  ]
+                }
               ]
             }
           ]

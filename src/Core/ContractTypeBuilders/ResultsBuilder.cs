@@ -52,6 +52,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "DestroyBuildingsAtLanceSpawns": BuildDestroyBuildingsAtLanceSpawnsResult(result); break;
         case "Delay": BuildDelayResult(result); break;
         case "IgnoreChunks": BuildIgnoreChunksResult(result); break;
+        case "TriggerResultAtRandom": BuildTriggerResultAtRandomResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -348,6 +349,20 @@ namespace MissionControl.ContractTypeBuilders {
       } else {
         Main.Logger.LogError("[BuildIgnoreChunksResult] You have not provided an 'EncounterGuids' to Ignore");
       }
+    }
+
+    private void BuildTriggerResultAtRandomResult(JObject resultObject) {
+      Main.LogDebug("[BuildTriggerResultAtRandomResult] Building 'TriggerResultAtRandom' result");
+      JArray childResultsArray = (JArray)resultObject["Results"];
+
+      List<DesignResult> createdChildResults = new List<DesignResult>();
+      ResultsBuilder childResultsBuilder = new ResultsBuilder(this.contractTypeBuilder, childResultsArray);
+      createdChildResults = childResultsBuilder.Build();
+
+      TriggerResultAtRandomResult result = ScriptableObject.CreateInstance<TriggerResultAtRandomResult>();
+      result.Results = createdChildResults;
+
+      results.Add(result);
     }
   }
 }
