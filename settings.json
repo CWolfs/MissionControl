@@ -102,7 +102,9 @@
       "Target": "HeaviestMech",
       "StopWhen": "OnEnemyDetected",
       "MaxDistanceFromTargetBeforeSprinting": 120,
-      "TargetZoneRadius": 120
+      "TargetZoneRadius": 120,
+      "TimeToWaitForPathfinding": 60,
+      "TicksToWaitForPathfinding": 20
     }
   },
   "Spawners": {
