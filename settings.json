@@ -93,7 +93,7 @@
     "Enable": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "MinDistanceForZone": 50,
-    "MaxDistanceForZone": 400,
+    "MaxDistanceForZone": 288,
     "DisorderlyWithdrawalCompatibility": false
   },
   "AI": {
