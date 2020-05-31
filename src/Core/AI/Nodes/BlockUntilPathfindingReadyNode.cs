@@ -6,8 +6,8 @@ namespace MissionControl.AI {
   public class BlockUntilPathfindingReadyNode : LeafBehaviorNode {
     private float startTime;
     private int tickCount;
-    private const float TIME_TO_WAIT_FOR_PATHFINDING = 60f;
-    private const int TICKS_TO_WAIT_FOR_PATHFINDING = 20;
+    private float TIME_TO_WAIT_FOR_PATHFINDING = Main.Settings.AiSettings.FollowAiSettings.TimeToWaitForPathfinding; // Seconds
+    private int TICKS_TO_WAIT_FOR_PATHFINDING = Main.Settings.AiSettings.FollowAiSettings.TicksToWaitForPathfinding;
 
     public BlockUntilPathfindingReadyNode(string name, BehaviorTree tree, AbstractActor unit) : base(name, tree, unit) { }
 
