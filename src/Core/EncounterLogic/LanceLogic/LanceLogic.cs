@@ -21,8 +21,8 @@ namespace MissionControl.Logic {
       FactionDef faction = MissionControl.Instance.GetFactionFromTeamType(teamType);
       string factionName = (faction == null) ? "UNKNOWN" : faction.Name;
       int factionRep = (MissionControl.Instance.IsSkirmish()) ? 0 : UnityGameInstance.Instance.Game.Simulation.GetRawReputation(faction.FactionValue);
-      int mrbRating = UnityGameInstance.Instance.Game.Simulation.GetRawReputation(FactionEnumeration.GetMercenaryReviewBoardFactionValue());
-      int mrbLevel = UnityGameInstance.Instance.Game.Simulation.GetCurrentMRBLevel();
+      int mrbRating = (MissionControl.Instance.IsSkirmish()) ? 0 : UnityGameInstance.Instance.Game.Simulation.GetRawReputation(FactionEnumeration.GetMercenaryReviewBoardFactionValue());
+      int mrbLevel = (MissionControl.Instance.IsSkirmish()) ? 0 : UnityGameInstance.Instance.Game.Simulation.GetCurrentMRBLevel();
       bool useElites = MissionControl.Instance.ShouldUseElites(faction, teamType);
       Config.Lance activeAdditionalLance = Main.Settings.ActiveAdditionalLances.GetActiveAdditionalLanceByTeamType(teamType);
       List<string> lancePoolKeys = Main.Settings.ActiveAdditionalLances.GetLancePoolKeys(teamType, biome, contractType, factionName, factionRep, mrbLevel, mrbRating);
