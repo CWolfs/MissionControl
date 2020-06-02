@@ -6,6 +6,7 @@ using BattleTech.Framework;
 
 using System.Linq;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(SimGameState), "FilterActiveMaps")]
@@ -44,8 +45,12 @@ namespace MissionControl.Patches {
     }
 
     private static void FilterOnMapsWithEncountersWithValidContractRequirements(SimGameState simGameState, WeightedList<MapAndEncounters> activeMaps, List<Contract> currentContracts) {
-      List<int> indexesToRemove = new List<int>();
+      List<MapAndEncounters> mapsToRemove = new List<MapAndEncounters>();
+
       StarSystem system = MissionControl.Instance.System;
+      var validParticipants = AccessTools.Method(typeof(SimGameState), "GetValidParticipants").Invoke(simGameState, new object[] { system });
+      MethodInfo GetValidFactionMethod = AccessTools.Method(typeof(SimGameState), "GetValidFaction");
+      MethodInfo DoesContractMeetRequirementsMethod = AccessTools.Method(typeof(SimGameState), "DoesContractMeetRequirements");
 
       for (int i = 0; i < activeMaps.Count; i++) {
         MapAndEncounters level = activeMaps[i];
@@ -58,11 +63,23 @@ namespace MissionControl.Patches {
           if (MissionControl.Instance.PotentialContracts.ContainsKey(contractTypeId)) {
             // If the contract overrides in the potential contracts by ContractTypeID has a `DoesContractMeetRequirements` sucess, mark remove = false
             List<ContractOverride> contractOverrides = MissionControl.Instance.PotentialContracts[contractTypeId];
-            foreach (ContractOverride contractOverride in contractOverrides) {
-              bool doesContractMeetReqs = (bool)AccessTools.Method(typeof(SimGameState), "DoesContractMeetRequirements").Invoke(simGameState, new object[] { system, level, contractOverride });
+            // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] '{contractTypeId}' - contractOverrides count is: {contractOverrides.Count}");
+            for (int j = contractOverrides.Count; j > 0; j--) {
+              ContractOverride contractOverride = contractOverrides[j - 1];
+              // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] '{contractTypeId}' - contractOverride is: {contractOverride.ID}");
+              // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] '{contractTypeId}' - validParticipants is: {validParticipants}");
+              bool doesContractHaveValidFactions = (bool)GetValidFactionMethod.Invoke(simGameState, new object[] { system, validParticipants, contractOverride.requirementList, null });
+              // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] '{contractTypeId}' - Contract '{contractOverride.ID}' has valid fations?: {doesContractHaveValidFactions}");
+              if (!doesContractHaveValidFactions) {
+                // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] '{contractTypeId}' - Removing Contract '{contractOverride.ID}' from potential list");
+                contractOverrides.RemoveAt(j - 1);
+                continue;
+              }
+
+              bool doesContractMeetReqs = (bool)DoesContractMeetRequirementsMethod.Invoke(simGameState, new object[] { system, level, contractOverride });
               if (doesContractMeetReqs) {
                 // At least one contract override meets the requirements to prevent the infinite spinner so ignore this logic now and continue to the next map/encounter combo
-                // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] Level '{level.Map.MapName}.{encounterLayerMDD.Name}' has at least one valid contract override");
+                // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] '{contractTypeId}' - Level '{level.Map.MapName}.{encounterLayerMDD.Name}' has at least one valid contract override");
                 removeMap = false;
                 break;
               }
@@ -71,19 +88,31 @@ namespace MissionControl.Patches {
         }
 
         if (removeMap) {
-          // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] Level '{level.Map.MapName}' had no encounters with anyvalid contract overrides. Removing map.");
-          indexesToRemove.Add(i);
+          // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] Level '{level.Map.MapName}' had no encounters with any valid contract overrides. Removing map.");
+          mapsToRemove.Add(level);
         }
       }
 
       // Remove maps that have no valid contracts due to failing requirements
-      foreach (int indexToRemove in indexesToRemove) {
-        activeMaps.RemoveAt(indexToRemove);
+      foreach (MapAndEncounters level in mapsToRemove) {
+        // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] Attempting to remove Level '{level.Map.MapName}'");
+        activeMaps.Remove(level);
       }
+
+      // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] There are '{activeMaps.Count}' active maps/encounter combos to use. These are:");
+      /*
+      for (int k = 0; k < activeMaps.Count; k++) {
+        MapAndEncounters level = activeMaps[k];
+        Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] - '{level.Map.MapName}' with '{level.Encounters.Length}' encounters");
+        foreach (EncounterLayer_MDD encounterLayerMDD in level.Encounters) {
+          Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements]   - Encounter '{encounterLayerMDD.Name}'");
+        }
+      }
+      */
 
       // If there are no more active maps, reset the biomes/maps list
       if (activeMaps.Count <= 0) {
-        // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] No valid map/encounter combinations. Clearing map discard pile.");
+        Main.Logger.LogWarning($"[FilterOnMapsWithEncountersWithValidContractRequirements] No valid map/encounter combinations. Clearing map discard pile. WARNING: MapEncounters unfiltered by MC being used. Potential for infinite loading issue. If you see this from an infinite load freeze - inform CWolf from Mission Control");
         List<string> mapDiscardPile = (List<string>)AccessTools.Field(typeof(SimGameState), "mapDiscardPile").GetValue(simGameState);
         mapDiscardPile.Clear();
 
