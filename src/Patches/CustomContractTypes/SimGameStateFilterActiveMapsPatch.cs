@@ -112,7 +112,7 @@ namespace MissionControl.Patches {
 
       // If there are no more active maps, reset the biomes/maps list
       if (activeMaps.Count <= 0) {
-        // Main.Logger.LogWarning($"[FilterOnMapsWithEncountersWithValidContractRequirements] No valid map/encounter combinations. Clearing map discard pile. WARNING: MapEncounters unfiltered by MC being used. Potential for infinite loading issue. If you see this from an infinite load freeze - inform CWolf from Mission Control");
+        Main.Logger.LogWarning($"[FilterOnMapsWithEncountersWithValidContractRequirements] No valid map/encounter combinations. Clearing map discard pile. WARNING: MapEncounters unfiltered by MC being used. Potential for infinite loading issue. If you see this from an infinite load freeze - inform CWolf from Mission Control");
         List<string> mapDiscardPile = (List<string>)AccessTools.Field(typeof(SimGameState), "mapDiscardPile").GetValue(simGameState);
         mapDiscardPile.Clear();
 
