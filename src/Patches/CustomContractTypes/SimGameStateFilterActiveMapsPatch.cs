@@ -103,6 +103,7 @@ namespace MissionControl.Patches {
       }
 
       // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] There are '{activeMaps.Count}' active maps/encounter combos to use. These are:");
+      /*
       for (int k = 0; k < activeMaps.Count; k++) {
         MapAndEncounters level = activeMaps[k];
         Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] - '{level.Map.MapName}' with '{level.Encounters.Length}' encounters");
@@ -110,10 +111,11 @@ namespace MissionControl.Patches {
           Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements]   - Encounter '{encounterLayerMDD.Name}'");
         }
       }
+      */
 
       // If there are no more active maps, reset the biomes/maps list
       if (activeMaps.Count <= 0) {
-        Main.Logger.LogWarning($"[FilterOnMapsWithEncountersWithValidContractRequirements] No valid map/encounter combinations. Clearing map discard pile. WARNING: MapEncounters unfiltered by MC being used. Potential for infinite loading issue. If you see this from an infinite load freeze - inform CWolf from Mission Control");
+        // Main.Logger.LogWarning($"[FilterOnMapsWithEncountersWithValidContractRequirements] No valid map/encounter combinations. Clearing map discard pile. WARNING: MapEncounters unfiltered by MC being used. Potential for infinite loading issue. If you see this from an infinite load freeze - inform CWolf from Mission Control");
         List<string> mapDiscardPile = (List<string>)AccessTools.Field(typeof(SimGameState), "mapDiscardPile").GetValue(simGameState);
         mapDiscardPile.Clear();
 
