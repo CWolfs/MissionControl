@@ -4,9 +4,7 @@ using BattleTech;
 using BattleTech.Data;
 using BattleTech.Framework;
 
-using System;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -47,7 +45,6 @@ namespace MissionControl.Patches {
     }
 
     private static void FilterOnMapsWithEncountersWithValidContractRequirements(SimGameState simGameState, WeightedList<MapAndEncounters> activeMaps, List<Contract> currentContracts) {
-      // List<int> mapIndexesToRemove = new List<int>();
       List<MapAndEncounters> mapsToRemove = new List<MapAndEncounters>();
 
       StarSystem system = MissionControl.Instance.System;
