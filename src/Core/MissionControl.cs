@@ -14,6 +14,7 @@ using MissionControl.Rules;
 using MissionControl.Utils;
 using MissionControl.EncounterFactories;
 using MissionControl.ContractTypeBuilders;
+using MissionControl.Patches;
 
 using Newtonsoft.Json.Linq;
 
@@ -52,6 +53,7 @@ namespace MissionControl {
 
     public bool IsContractValid { get; private set; } = false;
     public bool IsMCLoadingFinished { get; set; } = false;
+    public bool IsLoadingFromSave { get; set; } = false;
 
     private Dictionary<string, List<Type>> AvailableEncounters = new Dictionary<string, List<Type>>();
 
@@ -190,6 +192,7 @@ namespace MissionControl {
 
       ContractStats.Clear();
       ClearOldContractData();
+      ClearOldCaches();
     }
 
     private void ClearOldContractData() {
@@ -202,6 +205,12 @@ namespace MissionControl {
         CurrentContract.Override.employerTeam.lanceOverrideList =
           CurrentContract.Override.employerTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
       }
+    }
+
+    private void ClearOldCaches() {
+      Main.Logger.Log($"[MissionControl] Clearing old caches");
+
+      AssetBundleManagerGetAssetFromBundlePatch.ClearLookup();
     }
 
     public void SetActiveAdditionalLances(Contract contract) {
@@ -381,6 +390,7 @@ namespace MissionControl {
     }
 
     public bool AllowMissionControl() {
+      if (this.IsLoadingFromSave) return false;
       if (this.CurrentContract.IsStoryContract) return false;
       if (this.CurrentContract.IsRestorationContract) return false;
       if (!this.CurrentContract.IsFlashpointContract && !this.CurrentContract.IsFlashpointCampaignContract) return true;
