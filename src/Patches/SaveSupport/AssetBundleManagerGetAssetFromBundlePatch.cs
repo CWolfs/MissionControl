@@ -22,9 +22,9 @@ namespace MissionControl.Patches {
 
     public static void Postfix(AssetBundleManager __instance, string assetName, string bundleName, ref GameObject __result) {
       if (__result == null) {
-        Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Final stage of trying to load an asset bundle. Attempted to recovery before critical failure.");
+        // Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Final stage of trying to load an asset bundle. Attempted to recovery before critical failure.");
         if (lookup.ContainsKey(assetName)) {
-          Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Using cached GameObject for '{bundleName}.{assetName}'");
+          // Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Using cached GameObject for '{bundleName}.{assetName}'");
           __result = lookup[assetName];
           return;
         }
@@ -39,7 +39,7 @@ namespace MissionControl.Patches {
           lookup[assetName] = asset;
           __result = asset;
         } else {
-          Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Bundle is null for '{bundleName}'");
+          // Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Bundle is null for '{bundleName}'");
         }
       }
     }
