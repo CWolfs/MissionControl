@@ -10,12 +10,10 @@ using System.Collections.Generic;
 
 using BattleTech;
 using BattleTech.Assetbundles;
-using BattleTech.ModSupport;
 
 namespace MissionControl.Patches {
   [HarmonyPatch()]
   public class AssetBundleManagerGetAssetFromBundlePatch {
-    private static string ASSETBUNDLES_PATH => Path.Combine(Application.streamingAssetsPath, "data/assetbundles");
     private static Dictionary<string, GameObject> lookup = new Dictionary<string, GameObject>();
 
     public static MethodBase TargetMethod() {
@@ -31,10 +29,12 @@ namespace MissionControl.Patches {
           return;
         }
 
-        AssetBundle bundle = LoadAssetBundle(bundleName);
+        AssetBundleManager assetBundleManager = (AssetBundleManager)Traverse.Create(UnityGameInstance.BattleTechGame.DataManager).Property("AssetBundleManager").GetValue();
+        AssetBundle bundle = LoadAssetBundle(assetBundleManager, bundleName);
+
         if (bundle != null) {
           Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Force loaded bundle '{bundleName}'");
-          AddToLoadedBundles(assetName, bundleName, bundle);
+          AddToLoadedBundles(assetBundleManager, assetName, bundleName, bundle);
           GameObject asset = GetAssetFromBundle(assetName, bundle);
           lookup[assetName] = asset;
           __result = asset;
@@ -44,13 +44,12 @@ namespace MissionControl.Patches {
       }
     }
 
-    public static AssetBundle LoadAssetBundle(string assetBundleName) {
-      string assetBundlePath = AssetBundleNameToFilepath(assetBundleName);
+    public static AssetBundle LoadAssetBundle(AssetBundleManager assetBundleManager, string assetBundleName) {
+      string assetBundlePath = (string)AccessTools.Method(typeof(AssetBundleManager), "AssetBundleNameToFileURL").Invoke(assetBundleManager, new object[] { assetBundleName });
       return AssetBundle.LoadFromFile(assetBundlePath); // Purposely synchronous
     }
 
-    public static void AddToLoadedBundles(string assetName, string assetBundleName, AssetBundle assetBundle) {
-      AssetBundleManager assetBundleManager = (AssetBundleManager)Traverse.Create(UnityGameInstance.BattleTechGame.DataManager).Property("AssetBundleManager").GetValue();
+    public static void AddToLoadedBundles(AssetBundleManager assetBundleManager, string assetName, string assetBundleName, AssetBundle assetBundle) {
       Assembly assembly = AppDomain.CurrentDomain.GetAssemblies().First(
         a => (a.FullName.StartsWith("Assembly-CSharp") && !a.FullName.StartsWith("Assembly-CSharp-firstpass"))
       );
@@ -69,13 +68,6 @@ namespace MissionControl.Patches {
 
     public static GameObject GetAssetFromBundle(string assetName, AssetBundle assetBundle) {
       return assetBundle.LoadAsset<GameObject>(assetName);
-    }
-
-    private static string AssetBundleNameToFilepath(string assetBundleName) {
-      if (ModLoader.AreModsEnabled && ModLoader.ModAssetBundlePaths.ContainsKey(assetBundleName)) {
-        assetBundleName = ModLoader.ModAssetBundlePaths[assetBundleName];
-      }
-      return Path.Combine(ASSETBUNDLES_PATH, assetBundleName);
     }
 
     public static void ClearLookup() {
