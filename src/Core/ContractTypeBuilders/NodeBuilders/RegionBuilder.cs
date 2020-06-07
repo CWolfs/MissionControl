@@ -59,7 +59,7 @@ namespace MissionControl.ContractTypeBuilders {
     public void BuildNormal() {
       string regionGuid = objective["Guid"].ToString();
       string objectiveGuid = objective["ObjectiveGuid"].ToString();
-      float radius = objective.ContainsKey("Radius") ? (float)objective["Radius"] : (float)0;
+      float radius = objective.ContainsKey("Radius") ? (float)objective["Radius"] : (float)70;
 
       RegionGameLogic regionLogic = RegionFactory.CreateRegion(this.parent, regionGuid, objectiveGuid, this.name, regionDefId, radius);
       GameObject regionGo = regionLogic.gameObject;
