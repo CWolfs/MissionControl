@@ -35,7 +35,9 @@ namespace MissionControl.Patches {
         if (bundle != null) {
           Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Force loaded bundle '{bundleName}'");
           AddToLoadedBundles(assetName, bundleName, bundle);
-          __result = GetAssetFromBundle(assetName, bundle);
+          GameObject asset = GetAssetFromBundle(assetName, bundle);
+          lookup[assetName] = asset;
+          __result = asset;
         } else {
           Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Bundle is null for '{bundleName}'");
         }
