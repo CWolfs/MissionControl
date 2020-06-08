@@ -15,31 +15,46 @@ namespace MissionControl.Patches {
   [HarmonyPatch()]
   public class AssetBundleManagerGetAssetFromBundlePatch {
     private static Dictionary<string, GameObject> lookup = new Dictionary<string, GameObject>();
+    private static List<string> ignoreBundles = new List<string>() {
+      "vfx",
+      "weaponeffects",
+      "shaders"
+    };
 
     public static MethodBase TargetMethod() {
       return AccessTools.Method(typeof(AssetBundleManager), "GetAssetFromBundle").MakeGenericMethod(typeof(GameObject));
     }
 
+    private static bool IsIgnoredBundle(string bundleName) {
+      if (ignoreBundles.Contains(bundleName)) return true;
+      return false;
+    }
+
     public static void Postfix(AssetBundleManager __instance, string assetName, string bundleName, ref GameObject __result) {
-      if (__result == null) {
-        Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Final stage of trying to load an asset bundle. Attempted to recovery before critical failure.");
-        if (lookup.ContainsKey(assetName)) {
-          Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Using cached GameObject for '{bundleName}.{assetName}'");
-          __result = lookup[assetName];
-          return;
-        }
+      if (MissionControl.Instance.AllowMissionControl() && !IsIgnoredBundle(bundleName)) {
+        if (__result == null) {
+          Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Final stage of trying to load an asset bundle. Attempted to recovery before critical failure.");
+          if (lookup.ContainsKey(assetName)) {
+            Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Using cached GameObject for '{bundleName}.{assetName}'");
+            __result = lookup[assetName];
+            return;
+          }
 
-        AssetBundleManager assetBundleManager = (AssetBundleManager)Traverse.Create(UnityGameInstance.BattleTechGame.DataManager).Property("AssetBundleManager").GetValue();
-        AssetBundle bundle = LoadAssetBundle(assetBundleManager, bundleName);
+          AssetBundleManager assetBundleManager = (AssetBundleManager)Traverse.Create(UnityGameInstance.BattleTechGame.DataManager).Property("AssetBundleManager").GetValue();
+          AssetBundle bundle = LoadAssetBundle(assetBundleManager, bundleName);
 
-        if (bundle != null) {
-          Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Force loaded bundle '{bundleName}'");
-          AddToLoadedBundles(assetBundleManager, assetName, bundleName, bundle);
-          GameObject asset = GetAssetFromBundle(assetName, bundle);
-          lookup[assetName] = asset;
-          __result = asset;
-        } else {
-          Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Bundle is null for '{bundleName}'");
+          if (bundle != null) {
+            Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Force loaded bundle '{bundleName}'");
+            AddToLoadedBundles(assetBundleManager, assetName, bundleName, bundle);
+            GameObject asset = GetAssetFromBundle(assetName, bundle);
+            if (asset == null) {
+              Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Asset couldn't be loaded from bundle. Returning null.");
+            }
+            lookup[assetName] = asset;
+            __result = asset;
+          } else {
+            Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Bundle is null for '{bundleName}'");
+          }
         }
       }
     }
