@@ -28,7 +28,7 @@ namespace MissionControl {
       }
     }
 
-    public Contract CurrentContract { get; private set; }
+    public Contract CurrentContract { get; set; }
     public string ContractMapName { get; private set; }
     public string CurrentContractType { get; private set; } = "INVALID_UNSET";
     public ContractTypeValue CurrentContractTypeValue { get; private set; }
