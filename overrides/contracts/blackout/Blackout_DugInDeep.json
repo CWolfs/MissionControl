@@ -38,6 +38,7 @@
   "OnContractSuccessResults": [],
   "OnContractFailureResults": [],
   "encounterPlayStyle": "SinglePlayer",
+  "minNumberOfPlayerUnits": 2,
   "maxNumberOfPlayerUnits": 4,
   "lanceMinTonnage": -1,
   "lanceMaxTonnage": -1,
