@@ -1,6 +1,7 @@
 using UnityEngine;
 
 using System;
+using System.Collections.Generic;
 
 using BattleTech.Designed;
 using BattleTech.Framework;
@@ -70,6 +71,11 @@ namespace MissionControl.ContractTypeBuilders {
       LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
       lanceSpawnerRef.EncounterObjectGuid = lanceToDestroyGuid;
 
+      // Override this with anything provided in the method signature
+      Dictionary<string, float> rewards = new Dictionary<string, float>() {
+       { "ContractBonusRewardPct", 0.1f }
+      };
+
       DestroyLanceObjective objectiveLogic = ObjectiveFactory.CreateDestroyLanceObjective(
         guid,
         parent,
@@ -83,6 +89,7 @@ namespace MissionControl.ContractTypeBuilders {
         displayToUser,
         ObjectiveMark.AttackTarget,
         contractObjectiveGuid,
+        rewards,
         false // Don't create the objective override as it's provided by the contract json
       );
 
