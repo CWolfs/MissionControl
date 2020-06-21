@@ -1,6 +1,7 @@
 using UnityEngine;
 
 using System;
+using System.Collections.Generic;
 
 using BattleTech.Designed;
 using BattleTech.Framework;
@@ -65,6 +66,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       DestroyWholeLanceChunk destroyWholeLanceChunk = parent.GetComponent<DestroyWholeLanceChunk>();
       string lanceToDestroyGuid = objective["LanceToDestroyGuid"].ToString();
+      Dictionary<string, float> rewards = (objective.ContainsKey("Rewards")) ? objective["Rewards"].ToObject<Dictionary<string, float>>() : new Dictionary<string, float>();
       bool showProgress = true;
 
       LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
@@ -83,7 +85,8 @@ namespace MissionControl.ContractTypeBuilders {
         displayToUser,
         ObjectiveMark.AttackTarget,
         contractObjectiveGuid,
-        false // Don't create the objective override as it's provided by the contract json
+        rewards,
+        rewards.Count > 0
       );
 
       if (isPrimaryObjectve) {
