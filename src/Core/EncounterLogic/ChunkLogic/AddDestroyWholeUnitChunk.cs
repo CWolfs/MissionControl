@@ -76,7 +76,8 @@ namespace MissionControl.Logic {
         priority,
         displayToUser,
         ObjectiveMark.AttackTarget,
-        contractObjectiveGameLogicGuid
+        contractObjectiveGameLogicGuid,
+        Main.Settings.ActiveAdditionalLances.GetRewards()
       );
 
       if (isPrimary) {

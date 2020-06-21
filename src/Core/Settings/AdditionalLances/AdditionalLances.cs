@@ -35,12 +35,22 @@ namespace MissionControl.Config {
     }
 
     public float GetRewardValue(Dictionary<string, string> reward) {
-      if (reward.ContainsKey("Type")) {
+      if (reward.ContainsKey("Value")) {
         return float.Parse(reward["Value"], CultureInfo.InvariantCulture);
       } else {
         Main.LogDebugWarning("[AdditionalLances] You are setting 'RewardPerLance' but not setting 'Type'. Fix this!");
         return 0;
       }
+    }
+
+    public Dictionary<string, float> GetRewards() {
+      Dictionary<string, float> rewards = new Dictionary<string, float>();
+      foreach (Dictionary<string, string> reward in RewardsPerLance) {
+        string type = GetRewardType(reward);
+        float value = GetRewardValue(reward);
+        rewards.Add(type, value);
+      }
+      return rewards;
     }
 
     [JsonProperty("Player")]
