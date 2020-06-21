@@ -66,15 +66,11 @@ namespace MissionControl.ContractTypeBuilders {
 
       DestroyWholeLanceChunk destroyWholeLanceChunk = parent.GetComponent<DestroyWholeLanceChunk>();
       string lanceToDestroyGuid = objective["LanceToDestroyGuid"].ToString();
+      Dictionary<string, float> rewards = (objective.ContainsKey("Rewards")) ? objective["Rewards"].ToObject<Dictionary<string, float>>() : new Dictionary<string, float>();
       bool showProgress = true;
 
       LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
       lanceSpawnerRef.EncounterObjectGuid = lanceToDestroyGuid;
-
-      // Override this with anything provided in the method signature
-      Dictionary<string, float> rewards = new Dictionary<string, float>() {
-       { "ContractBonusRewardPct", 0.1f }
-      };
 
       DestroyLanceObjective objectiveLogic = ObjectiveFactory.CreateDestroyLanceObjective(
         guid,
@@ -90,7 +86,7 @@ namespace MissionControl.ContractTypeBuilders {
         ObjectiveMark.AttackTarget,
         contractObjectiveGuid,
         rewards,
-        false // Don't create the objective override as it's provided by the contract json
+        rewards.Count > 0
       );
 
       if (isPrimaryObjectve) {
