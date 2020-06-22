@@ -26,7 +26,7 @@ namespace MissionControl.Config {
     public bool DebugSkirmishMode { get; set; } = false;
 
     [JsonProperty("EnableForFlashpoints")]
-    public bool EnableForFlashpoints { get; set; } = true;
+    public bool EnableForFlashpoints { get; set; } = false;
 
     [JsonProperty("RandomSpawns")]
     public RandomSpawnsSettings RandomSpawns { get; set; } = new RandomSpawnsSettings();

@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace MissionControl.Config {
   public class AdditionalLanceSettings : AdvancedSettings {
+    [JsonProperty("EnableForFlashpoints")]
+    public bool EnableForFlashpoints { get; set; } = false;
+
     [JsonProperty("IsPrimaryObjectiveIn")]
     public List<string> IsPrimaryObjectiveIn { get; set; } = new List<string>() { "SimpleBattle" };
 
@@ -35,9 +38,6 @@ namespace MissionControl.Config {
 
     [JsonProperty("UseGeneralProfileForSkirmish")]
     public bool UseGeneralProfileForSkirmish { get; set; } = true;
-
-    [JsonProperty("EnableForFlashpoints")]
-    public bool EnableForFlashpoints { get; set; } = false;
 
     [JsonProperty("DisableWhenMaxTonnage")]
     public DisableWhenMaxTonnage DisableWhenMaxTonnage { get; set; } = new DisableWhenMaxTonnage();
