@@ -9,6 +9,8 @@ using BattleTech.Framework;
 using HBS.Collections;
 using HBS.Util;
 
+using fastJSON;
+
 using Harmony;
 
 namespace MissionControl.Data {
@@ -17,6 +19,7 @@ namespace MissionControl.Data {
     private Traverse baseCachedJsonField;
     private Traverse baseRehydratedField;
 
+    [JsonSerialized]
     public int minNumberOfPlayerUnits = -1;
 
     public MContractOverride() {
@@ -58,7 +61,10 @@ namespace MissionControl.Data {
 
     public new void FromJSON(string json) {
       baseCachedJsonField.SetValue(json);
-      Main.LogDebug($"[MContractOverride] json is: '{json}'");
+      // Main.LogDebug($"[MContractOverride] json is: '{json}'");
+      if (json.Contains("Blackout")) {
+        Main.LogDebug($"[MContractOverride] Blackout");
+      }
       JSONSerializationUtility.FromJSON(this, json, PartialRehydratePredicate);
       UpgradeToDataDrivenEnums();
       Main.LogDebug($"[MContractOverride] minNumberOfPlayerUnits is: '{minNumberOfPlayerUnits}'");
