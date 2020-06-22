@@ -36,8 +36,8 @@ namespace MissionControl.Config {
     [JsonProperty("UseGeneralProfileForSkirmish")]
     public bool UseGeneralProfileForSkirmish { get; set; } = true;
 
-    [JsonProperty("DisableIfFlashpointContract")]
-    public bool DisableIfFlashpointContract { get; set; } = true;
+    [JsonProperty("EnableForFlashpoints")]
+    public bool EnableForFlashpoints { get; set; } = false;
 
     [JsonProperty("DisableWhenMaxTonnage")]
     public DisableWhenMaxTonnage DisableWhenMaxTonnage { get; set; } = new DisableWhenMaxTonnage();

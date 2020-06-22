@@ -8,7 +8,7 @@ namespace MissionControl.Patches {
   [HarmonyPatch(typeof(TurnDirector), "OnFirstContact")]
   public class TurnDirectorOnFirstContactPatch {
     static void Postfix(TurnDirector __instance) {
-      if (MissionControl.Instance.AllowMissionControl() && Main.Settings.HotDrop.Enable) {
+      if (MissionControl.Instance.AllowMissionControl() && Main.Settings.HotDropProtection.Enable) {
         Main.LogDebug($"[TurnDirectorOnFirstContactPatch Postfix] Patching OnFirstContact");
         Main.LogDebug($"[TurnDirectorOnFirstContactPatch Postfix] Current round is '{__instance.CurrentRound}'");
         Main.LogDebug($"[TurnDirectorOnFirstContactPatch Postfix] DoAnyUnitsHaveContactWithEnemy '{__instance.DoAnyUnitsHaveContactWithEnemy}'");
@@ -26,22 +26,22 @@ namespace MissionControl.Patches {
       List<AbstractActor> focusedActors = new List<AbstractActor>();
       focusedActors.AddRange(allies);
 
-      if (!Main.Settings.HotDrop.IncludeAllyTurrets) {
+      if (!Main.Settings.HotDropProtection.IncludeAllyTurrets) {
         RemoveTurrets(allies);
       }
 
-      if (Main.Settings.HotDrop.IncludeEnemies) {
+      if (Main.Settings.HotDropProtection.IncludeEnemies) {
         List<AbstractActor> enemies = combatState.GetAllEnemiesOf(playerTeam);
 
-        if (!Main.Settings.HotDrop.IncludeEnemyTurrets) {
+        if (!Main.Settings.HotDropProtection.IncludeEnemyTurrets) {
           RemoveTurrets(enemies);
         }
 
         focusedActors.AddRange(enemies);
       }
 
-      if (Main.Settings.HotDrop.GuardOnHotDrop) BraceAll(focusedActors);
-      if (Main.Settings.HotDrop.EvasionPipsOnHotDrop > 0) AddEvasion(focusedActors, Main.Settings.HotDrop.EvasionPipsOnHotDrop);
+      if (Main.Settings.HotDropProtection.GuardOnHotDrop) BraceAll(focusedActors);
+      if (Main.Settings.HotDropProtection.EvasionPipsOnHotDrop > 0) AddEvasion(focusedActors, Main.Settings.HotDropProtection.EvasionPipsOnHotDrop);
     }
 
     private static void RemoveTurrets(List<AbstractActor> actors) {

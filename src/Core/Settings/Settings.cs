@@ -25,14 +25,14 @@ namespace MissionControl.Config {
     [JsonProperty("DebugSkirmishMode")]
     public bool DebugSkirmishMode { get; set; } = false;
 
-    [JsonProperty("DisableIfFlashpointContract")]
-    public bool DisableIfFlashpointContract { get; set; } = true;
+    [JsonProperty("EnableForFlashpoints")]
+    public bool EnableForFlashpoints { get; set; } = true;
 
     [JsonProperty("RandomSpawns")]
     public RandomSpawnsSettings RandomSpawns { get; set; } = new RandomSpawnsSettings();
 
-    [JsonProperty("HotDrop")]
-    public HotDrop HotDrop { get; set; } = new HotDrop();
+    [JsonProperty("HotDropProtection")]
+    public HotDrop HotDropProtection { get; set; } = new HotDrop();
 
     [JsonProperty("AdditionalLances")]
     public AdditionalLanceSettings AdditionalLanceSettings { get; set; } = new AdditionalLanceSettings();

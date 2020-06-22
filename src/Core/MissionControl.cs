@@ -327,7 +327,7 @@ namespace MissionControl {
       if (Main.Settings.AdditionalLanceSettings.Enable) {
 
         bool areLancesAllowed = !Main.Settings.AdditionalLanceSettings.IsTeamDisabled(teamType);
-        if (areLancesAllowed) areLancesAllowed = !(this.CurrentContract.IsFlashpointContract && Main.Settings.AdditionalLanceSettings.DisableIfFlashpointContract);
+        if (areLancesAllowed) areLancesAllowed = !(this.CurrentContract.IsFlashpointContract && !Main.Settings.AdditionalLanceSettings.EnableForFlashpoints);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.GetValidContractTypes().Contains(CurrentContractType);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.DisableWhenMaxTonnage.AreLancesAllowed((int)this.CurrentContract.Override.lanceMaxTonnage);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.ActiveAdditionalLances.GetValidContractTypes(teamType).Contains(CurrentContractType);
@@ -394,8 +394,14 @@ namespace MissionControl {
       if (this.CurrentContract.IsStoryContract) return false;
       if (this.CurrentContract.IsRestorationContract) return false;
       if (!this.CurrentContract.IsFlashpointContract && !this.CurrentContract.IsFlashpointCampaignContract) return true;
+
+      // Covers the main setting in the settings.json
+      if ((this.CurrentContract.IsFlashpointContract || this.CurrentContract.IsFlashpointCampaignContract)
+        && !Main.Settings.EnableForFlashpoints) return false;
+
+      // Covers any overrides
       return (this.CurrentContract.IsFlashpointContract || this.CurrentContract.IsFlashpointCampaignContract)
-        && !Main.Settings.AdditionalLanceSettings.DisableIfFlashpointContract;
+        && !Main.Settings.AdditionalLanceSettings.EnableForFlashpoints;
     }
 
     public bool IsDroppingCustomControlledPlayerLance() {
