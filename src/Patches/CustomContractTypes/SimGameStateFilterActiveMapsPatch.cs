@@ -15,6 +15,8 @@ namespace MissionControl.Patches {
       // Main.LogDebug($"[SimGameStateFilterActiveMapsPatch.Postfix] Running SimGameStateFilterActiveMapsPatch");
       FixActiveMapWeights(activeMaps);
       FilterOnMapsWithEncountersWithValidContractRequirements(__instance, activeMaps, currentContracts);
+
+      if (activeMaps.Count <= 0) HandleLackOfContractsSituation(__instance, activeMaps, currentContracts);
     }
 
     private static void FixActiveMapWeights(WeightedList<MapAndEncounters> activeMaps) {
@@ -109,18 +111,38 @@ namespace MissionControl.Patches {
         }
       }
       */
+    }
 
+    private static void HandleLackOfContractsSituation(SimGameState simGameState, WeightedList<MapAndEncounters> activeMaps, List<Contract> currentContracts) {
       // If there are no more active maps, reset the biomes/maps list
-      if (activeMaps.Count <= 0) {
-        Main.Logger.LogWarning($"[FilterOnMapsWithEncountersWithValidContractRequirements] No valid map/encounter combinations. Clearing map discard pile. WARNING: MapEncounters unfiltered by MC being used. Potential for infinite loading issue. If you see this from an infinite load freeze - inform CWolf from Mission Control");
-        List<string> mapDiscardPile = (List<string>)AccessTools.Field(typeof(SimGameState), "mapDiscardPile").GetValue(simGameState);
-        mapDiscardPile.Clear();
+      Main.Logger.LogWarning($"[FilterOnMapsWithEncountersWithValidContractRequirements] No valid map/encounter combinations. Handling lack of map/encounter situation.");
+      StarSystem system = MissionControl.Instance.System;
+      List<string> mapDiscardPile = (List<string>)AccessTools.Field(typeof(SimGameState), "mapDiscardPile").GetValue(simGameState);
+      mapDiscardPile.Clear();
 
-        WeightedList<MapAndEncounters> playableMaps = (WeightedList<MapAndEncounters>)AccessTools.Method(typeof(SimGameState), "GetSinglePlayerProceduralPlayableMaps").Invoke(null, new object[] { system });
-        IEnumerable<int> source = from map in playableMaps select map.Map.Weight;
-        WeightedList<MapAndEncounters> weightedList = new WeightedList<MapAndEncounters>(WeightedListType.WeightedRandom, playableMaps.ToList(), source.ToList<int>(), 0);
+      WeightedList<MapAndEncounters> playableMaps = (WeightedList<MapAndEncounters>)AccessTools.Method(typeof(SimGameState), "GetSinglePlayerProceduralPlayableMaps").Invoke(null, new object[] { system });
+      IEnumerable<int> source = from map in playableMaps select map.Map.Weight;
+      WeightedList<MapAndEncounters> weightedList = new WeightedList<MapAndEncounters>(WeightedListType.WeightedRandom, playableMaps.ToList(), source.ToList<int>(), 0);
 
-        activeMaps.AddRange(weightedList);
+      activeMaps.AddRange(weightedList);
+
+      Main.Logger.LogWarning($"[FilterOnMapsWithEncountersWithValidContractRequirements] Running fresh map list over post processing to ensure no contracts screen freezes");
+      HandleContractRepeats(simGameState, activeMaps);
+      FilterOnMapsWithEncountersWithValidContractRequirements(simGameState, activeMaps, currentContracts);
+      FixActiveMapWeights(activeMaps);
+    }
+
+    private static void HandleContractRepeats(SimGameState simGameState, WeightedList<MapAndEncounters> activeMaps) {
+      List<string> mapDiscardPile = (List<string>)AccessTools.Field(typeof(SimGameState), "mapDiscardPile").GetValue(simGameState);
+      MethodInfo DoesActiveFlashpointUseSameMapMethod = AccessTools.Method(typeof(SimGameState), "DoesActiveFlashpointUseSameMap");
+
+      for (int num = activeMaps.Count - 1; num >= 0; num--) {
+        Map_MDD map = activeMaps[num].Map;
+        bool doesActiveFlashpointUseSameMap = (bool)DoesActiveFlashpointUseSameMapMethod.Invoke(simGameState, new object[] { map.MapName });
+
+        if (mapDiscardPile.Contains(map.MapID) || doesActiveFlashpointUseSameMap) {
+          activeMaps.RemoveAt(num);
+        }
       }
     }
   }
