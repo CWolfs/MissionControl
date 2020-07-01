@@ -11,6 +11,7 @@ using BattleTech.Framework;
 
 using MissionControl.Logic;
 using MissionControl.Trigger;
+using MissionControl.Config;
 
 namespace MissionControl.Rules {
   public abstract class EncounterRules {
@@ -248,8 +249,8 @@ namespace MissionControl.Rules {
         if (Main.Settings.DebugMode && (Main.Settings.Debug.AdditionalLancesEnemyLanceCount > -1)) numberOfAdditionalEnemyLances = Main.Settings.Debug.AdditionalLancesEnemyLanceCount;
 
         // Allow Flashpoint contract settings overrides to force their respective setting
-        if (Main.Settings.ActiveFlashpointSettings.Has("AdditionalLances.EnemyLanceCountOverride")) {
-          numberOfAdditionalEnemyLances = Main.Settings.ActiveFlashpointSettings.GetInt("AdditionalLances.EnemyLanceCountOverride");
+        if (Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.AdditionalLances_EnemyLanceCountOverride)) {
+          numberOfAdditionalEnemyLances = Main.Settings.ActiveFlashpointSettings.GetInt(FlashpointSettingsOverrides.AdditionalLances_EnemyLanceCountOverride);
           Main.Logger.Log($"[{this.GetType().Name}] Using Flashpoint settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Enemy lance count will be '{numberOfAdditionalEnemyLances}'.");
         }
 
@@ -274,8 +275,8 @@ namespace MissionControl.Rules {
         int numberOfAdditionalAllyLances = Main.Settings.ActiveAdditionalLances.Allies.SelectNumberOfAdditionalLances(faction, "allies");
 
         // Allow Flashpoint contract settings overrides to force their respective setting
-        if (Main.Settings.ActiveFlashpointSettings.Has("AdditionalLances.AllyLanceCountOverride")) {
-          numberOfAdditionalAllyLances = Main.Settings.ActiveFlashpointSettings.GetInt("AdditionalLances.AllyLanceCountOverride");
+        if (Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.AdditionalLances_AllyLanceCountOverride)) {
+          numberOfAdditionalAllyLances = Main.Settings.ActiveFlashpointSettings.GetInt(FlashpointSettingsOverrides.AdditionalLances_AllyLanceCountOverride);
           Main.Logger.Log($"[{this.GetType().Name}] Using Flashpoint settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lance count will be '{numberOfAdditionalAllyLances}'.");
         } else if (Main.Settings.AdditionalLanceSettings.MatchAllyLanceCountToEnemy) {
           Main.Logger.LogDebug($"[{this.GetType().Name}] 'MatchAllyLanceCountToEnemy' is on. Ally lance count will be {numberOfAdditionalEnemyLances}");

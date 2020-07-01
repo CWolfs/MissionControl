@@ -15,6 +15,7 @@ using MissionControl.Utils;
 using MissionControl.EncounterFactories;
 using MissionControl.ContractTypeBuilders;
 using MissionControl.Patches;
+using MissionControl.Config;
 
 using Newtonsoft.Json.Linq;
 
@@ -336,7 +337,7 @@ namespace MissionControl {
 
     public bool AreAdditionalLancesAllowed(string teamType) {
       // Allow Flashpoint contract settings overrides to force their respective setting
-      bool areLancesAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has("AdditionalLances.Enable") && Main.Settings.ActiveFlashpointSettings.GetBool("AdditionalLances.Enable");
+      bool areLancesAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.AdditionalLances_Enable) && Main.Settings.ActiveFlashpointSettings.GetBool(FlashpointSettingsOverrides.AdditionalLances_Enable);
       if (areLancesAllowed) return true;
 
       if (Main.Settings.AdditionalLanceSettings.Enable) {
@@ -365,7 +366,7 @@ namespace MissionControl {
 
     public bool IsExtendedLancesAllowed() {
       // Allow Flashpoint contract settings overrides to force their respective setting
-      bool isExtendedLancesAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has("ExtendedLances.Enable") && Main.Settings.ActiveFlashpointSettings.GetBool("ExtendedLances.Enable");
+      bool isExtendedLancesAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.ExtendedLances_Enable) && Main.Settings.ActiveFlashpointSettings.GetBool(FlashpointSettingsOverrides.ExtendedLances_Enable);
       if (isExtendedLancesAllowed) return true;
 
       if (Main.Settings.ExtendedLances.Enable) {
@@ -378,7 +379,7 @@ namespace MissionControl {
 
     public bool IsRandomSpawnsAllowed() {
       // Allow Flashpoint contract settings overrides to force their respective setting
-      bool isRandomSpawnsAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has("RandomSpawns.Enable") && Main.Settings.ActiveFlashpointSettings.GetBool("RandomSpawns.Enable");
+      bool isRandomSpawnsAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.RandomSpawns_Enable) && Main.Settings.ActiveFlashpointSettings.GetBool(FlashpointSettingsOverrides.RandomSpawns_Enable);
       if (isRandomSpawnsAllowed) return true;
 
       if (Main.Settings.RandomSpawns.Enable) {
