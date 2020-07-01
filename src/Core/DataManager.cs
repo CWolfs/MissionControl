@@ -55,6 +55,7 @@ namespace MissionControl {
     public void Init(string modDirectory) {
       ModDirectory = modDirectory;
       LoadLanceOverrides();
+      LoadFlashpointContractConfigOverrides();
       LoadRuntimeCastData();
       LoadDialogueData();
       InjectMessageScopes();
@@ -74,6 +75,7 @@ namespace MissionControl {
       foreach (string file in Directory.GetFiles($"{ModDirectory}/Config/Flashpoints/", "*.json", SearchOption.AllDirectories)) {
         string rawSettingsOverride = File.ReadAllText(file);
         string fileName = Path.GetFileNameWithoutExtension(file.Substring(file.LastIndexOf("/")));
+        Main.LogDebug($"[DataManager.LoadFlashpointContractConfigOverrides] Loading flashpoint settings override for '{fileName}'");
         JObject settingsOverrides = JsonConvert.DeserializeObject<JObject>(rawSettingsOverride, serialiserSettings);
         Main.Settings.FlashpointSettingsOverrides[fileName] = new FlashpointSettingsOverrides() { Properties = settingsOverrides };
       }
@@ -84,7 +86,7 @@ namespace MissionControl {
         string contractTypeBuildCommonSource = File.ReadAllText($"{directory}/common.jsonc");
         JObject contractTypeCommonBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildCommonSource, serialiserSettings);
         string contractTypeName = (string)contractTypeCommonBuild["Key"];
-        Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type build '{contractTypeName}'");
+        Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loading contract type build '{contractTypeName}'");
 
         Dictionary<string, JObject> contractTypeMapBuilds = new Dictionary<string, JObject>();
         AvailableCustomContractTypeBuilds.Add(contractTypeCommonBuild["Key"].ToString(), contractTypeMapBuilds);

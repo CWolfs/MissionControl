@@ -179,7 +179,6 @@ namespace MissionControl {
 
         IsMCLoadingFinished = false;
         SetActiveAdditionalLances(contract);
-
         Main.Logger.Log($"[MissionControl] Contract map is '{contract.mapName}'");
         ContractMapName = contract.mapName;
         SetContractType(CurrentContract.ContractTypeValue);
@@ -238,6 +237,17 @@ namespace MissionControl {
       } else {
         Main.Logger.Log($"[MissionControl] Skull value doesn't matter for AdditionalLances. Using general config.");
         Main.Settings.ActiveAdditionalLances = Main.Settings.AdditionalLances[0];
+      }
+    }
+
+    public void SetFlashpointOverride() {
+      string contractId = CurrentContract.Override.ID;
+      if (Main.Settings.FlashpointSettingsOverrides.ContainsKey(contractId)) {
+        Main.Logger.Log($"[MissionControl] Setting a Flashpoint settings override for '{contractId}'.");
+        Main.Settings.ActiveFlashpointSettings = Main.Settings.FlashpointSettingsOverrides[contractId];
+      } else {
+        Main.Logger.Log($"[MissionControl] No Flashpoint settings override found for '{contractId}'.");
+        Main.Settings.ActiveFlashpointSettings = new Config.FlashpointSettingsOverrides();
       }
     }
 
@@ -325,8 +335,12 @@ namespace MissionControl {
     }
 
     public bool AreAdditionalLancesAllowed(string teamType) {
+      // Allow Flashpoint contract settings overrides to force their respective setting
+      bool areLancesAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has("AdditionalLances.Enable") && Main.Settings.ActiveFlashpointSettings.GetBool("AdditionalLances.Enable");
+      if (areLancesAllowed) return true;
+
       if (Main.Settings.AdditionalLanceSettings.Enable) {
-        bool areLancesAllowed = !Main.Settings.AdditionalLanceSettings.IsTeamDisabled(teamType);
+        areLancesAllowed = !Main.Settings.AdditionalLanceSettings.IsTeamDisabled(teamType);
         if (areLancesAllowed) areLancesAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.AdditionalLanceSettings.EnableForFlashpoints);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.GetValidContractTypes().Contains(CurrentContractType);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.DisableWhenMaxTonnage.AreLancesAllowed((int)this.CurrentContract.Override.lanceMaxTonnage);
@@ -350,8 +364,12 @@ namespace MissionControl {
     }
 
     public bool IsExtendedLancesAllowed() {
+      // Allow Flashpoint contract settings overrides to force their respective setting
+      bool isExtendedLancesAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has("ExtendedLances.Enable") && Main.Settings.ActiveFlashpointSettings.GetBool("ExtendedLances.Enable");
+      if (isExtendedLancesAllowed) return true;
+
       if (Main.Settings.ExtendedLances.Enable) {
-        bool isExtendedLancesAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.ExtendedLances.EnableForFlashpoints);
+        isExtendedLancesAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.ExtendedLances.EnableForFlashpoints);
         if (isExtendedLancesAllowed) isExtendedLancesAllowed = Main.Settings.ExtendedLances.GetValidContractTypes().Contains(CurrentContractType);
         return isExtendedLancesAllowed;
       }
@@ -359,8 +377,12 @@ namespace MissionControl {
     }
 
     public bool IsRandomSpawnsAllowed() {
+      // Allow Flashpoint contract settings overrides to force their respective setting
+      bool isRandomSpawnsAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has("RandomSpawns.Enable") && Main.Settings.ActiveFlashpointSettings.GetBool("RandomSpawns.Enable");
+      if (isRandomSpawnsAllowed) return true;
+
       if (Main.Settings.RandomSpawns.Enable) {
-        bool isRandomSpawnsAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.RandomSpawns.EnableForFlashpoints);
+        isRandomSpawnsAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.RandomSpawns.EnableForFlashpoints);
         if (isRandomSpawnsAllowed) isRandomSpawnsAllowed = Main.Settings.RandomSpawns.GetValidContractTypes().Contains(CurrentContractType);
         return isRandomSpawnsAllowed;
       }
@@ -408,8 +430,7 @@ namespace MissionControl {
       if (CurrentContract.IsStoryContract) return false;
       if (CurrentContract.IsRestorationContract) return false;
       if (!IsAnyFlashpointContract()) return true;
-
-      // Covers the main setting in the settings.json
+      if (IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Enabled) return true;
       if (IsAnyFlashpointContract() && !Main.Settings.EnableFlashpointOverrides) return false;
 
       return false;

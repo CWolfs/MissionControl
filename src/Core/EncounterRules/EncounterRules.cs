@@ -247,6 +247,12 @@ namespace MissionControl.Rules {
         numberOfAdditionalEnemyLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances(faction, "enemy");
         if (Main.Settings.DebugMode && (Main.Settings.Debug.AdditionalLancesEnemyLanceCount > -1)) numberOfAdditionalEnemyLances = Main.Settings.Debug.AdditionalLancesEnemyLanceCount;
 
+        // Allow Flashpoint contract settings overrides to force their respective setting
+        if (Main.Settings.ActiveFlashpointSettings.Has("AdditionalLances.EnemyLanceCountOverride")) {
+          numberOfAdditionalEnemyLances = Main.Settings.ActiveFlashpointSettings.GetInt("AdditionalLances.EnemyLanceCountOverride");
+          Main.Logger.Log($"[{this.GetType().Name}] Using Flashpoint settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Enemy lance count will be '{numberOfAdditionalEnemyLances}'.");
+        }
+
         bool showObjectiveOnLanceDetected = Main.Settings.AdditionalLanceSettings.ShowObjectiveOnLanceDetected;
 
         int objectivePriority = -10;
@@ -267,7 +273,11 @@ namespace MissionControl.Rules {
 
         int numberOfAdditionalAllyLances = Main.Settings.ActiveAdditionalLances.Allies.SelectNumberOfAdditionalLances(faction, "allies");
 
-        if (Main.Settings.AdditionalLanceSettings.MatchAllyLanceCountToEnemy) {
+        // Allow Flashpoint contract settings overrides to force their respective setting
+        if (Main.Settings.ActiveFlashpointSettings.Has("AdditionalLances.AllyLanceCountOverride")) {
+          numberOfAdditionalAllyLances = Main.Settings.ActiveFlashpointSettings.GetInt("AdditionalLances.AllyLanceCountOverride");
+          Main.Logger.Log($"[{this.GetType().Name}] Using Flashpoint settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lance count will be '{numberOfAdditionalAllyLances}'.");
+        } else if (Main.Settings.AdditionalLanceSettings.MatchAllyLanceCountToEnemy) {
           Main.Logger.LogDebug($"[{this.GetType().Name}] 'MatchAllyLanceCountToEnemy' is on. Ally lance count will be {numberOfAdditionalEnemyLances}");
           numberOfAdditionalAllyLances = numberOfAdditionalEnemyLances;
         }

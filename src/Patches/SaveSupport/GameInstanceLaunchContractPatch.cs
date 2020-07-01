@@ -10,6 +10,7 @@ namespace MissionControl.Patches {
   public class GameInstanceLaunchContractPatch {
     public static void Prefix(GameInstance __instance, Contract contract) {
       MissionControl.Instance.CurrentContract = contract;
+      MissionControl.Instance.SetFlashpointOverride();
     }
   }
 }
