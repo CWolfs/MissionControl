@@ -25,8 +25,8 @@ namespace MissionControl.Config {
     [JsonProperty("DebugSkirmishMode")]
     public bool DebugSkirmishMode { get; set; } = false;
 
-    [JsonProperty("EnableForFlashpoints")]
-    public bool EnableForFlashpoints { get; set; } = false;
+    [JsonProperty("EnableFlashpointOverrides")]
+    public bool EnableFlashpointOverrides { get; set; } = false;
 
     [JsonProperty("RandomSpawns")]
     public RandomSpawnsSettings RandomSpawns { get; set; } = new RandomSpawnsSettings();
@@ -59,5 +59,9 @@ namespace MissionControl.Config {
 
     [JsonProperty("Spawners")]
     public SpawnerSettings Spawners { get; set; } = new SpawnerSettings();
+
+    public Dictionary<string, FlashpointSettingsOverrides> FlashpointSettingsOverrides = new Dictionary<string, FlashpointSettingsOverrides>();
+
+    public FlashpointSettingsOverrides ActiveFlashpointSettings { get; set; }
   }
 }

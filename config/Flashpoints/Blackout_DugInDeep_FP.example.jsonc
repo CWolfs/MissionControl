@@ -1,0 +1,62 @@
+{
+  "ID": "Blackout_DugInDeep_FP",
+  "RandomSpawns": {
+    "Enable": true
+  },
+  "HotDropProtection": {
+    "Enable": true,
+    "GuardOnHotDrop": false,
+    "EvasionPipsOnHotDrop": 6,
+    "IncludeEnemies": true,
+    "IncludeAllyTurrets": false,
+    "IncludeEnemyTurrets": false
+  },
+  "AdditionalLances": {
+    "Enable": true,
+    "IsPrimaryObjectiveIn": false,
+    "ExcludeFromAutocomplete": false,
+    "HideObjective": true,
+    "ShowObjectiveOnLanceDetected": true,
+    "AlwaysDisplayHiddenObjectiveIfPrimary": false,
+    "UseElites": true,
+    "UseDialogue": true,
+    "DifficultyConfig": "Difficulty1.json",
+    "BasedOnVisibleSkullValue": true,
+    "DisableWhenMaxTonnage": {
+      "Enable": true,
+      "Limited": false,
+      "LimitedToUnder": 300
+    },
+    "MatchAllyLanceCountToEnemy": false,
+    "DropWeightInfluence": {
+      "Enable": false,
+      "EnemySpawnInfluencePerHalfSkullAbove": 0.1,
+      "AllySpawnInfluencePerHalfSkullAbove": -0.1,
+      "EnemySpawnInfluencePerHalfSkullBelow": 0.1,
+      "AllySpawnInfluencePerHalfSkullBelow": -0.1
+    },
+    "DisableAllies": false,
+    "DisableEnemies": false,
+    "EnemyLanceCountOverride": 2, // Overrides all other settings to force 2 lances for the enemies (-1 means do not used the override)
+    "AllyLanceCountOverride": -1 // Overrides all other settings for force X lances for ally (-1 means do not used the override)
+  },
+  "ExtendedLances": {
+    "Enable": true,
+    "Autofill": true,
+    "SkipWhenTaggedWithAny": ["lance_type_solo"],
+    "SkipWhenTaggedWithAll": [],
+    "SkipWhenExcludeTagsContain": ["no_extended_lance"],
+    "LanceSizes": {
+      "5": [],
+      "6": []
+    },
+    "EnemyLanceSizeOverride": 6, // Overrides all other settings to force 6 mechs for all enemy lances (-1 means do not used the override)
+    "AllyLanceSizeOverride": 5 // Overrides all other settings to force 6 mechs for all ally lances (-1 means do not used the override)
+  },
+  "DynamicWithdraw": {
+    "Enable": true,
+    "MinDistanceForZone": 50,
+    "MaxDistanceForZone": 288,
+    "DisorderlyWithdrawalCompatibility": false
+  }
+}

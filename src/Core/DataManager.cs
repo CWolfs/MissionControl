@@ -16,6 +16,7 @@ using BattleTech.Data;
 using HBS.Data;
 
 using MissionControl.Data;
+using MissionControl.Config;
 using MissionControl.Messages;
 using MissionControl.Utils;
 
@@ -67,6 +68,15 @@ namespace MissionControl {
       LoadCustomContractTypeBuilds();
       LoadCustomContractTypes();
       HasLoadedDeferredDefs = true;
+    }
+
+    private void LoadFlashpointContractConfigOverrides() {
+      foreach (string file in Directory.GetFiles($"{ModDirectory}/Config/Flashpoints/", "*.json", SearchOption.AllDirectories)) {
+        string rawSettingsOverride = File.ReadAllText(file);
+        string fileName = Path.GetFileNameWithoutExtension(file.Substring(file.LastIndexOf("/")));
+        JObject settingsOverrides = JsonConvert.DeserializeObject<JObject>(rawSettingsOverride, serialiserSettings);
+        Main.Settings.FlashpointSettingsOverrides[fileName] = new FlashpointSettingsOverrides() { Properties = settingsOverrides };
+      }
     }
 
     private void LoadCustomContractTypeBuilds() {
