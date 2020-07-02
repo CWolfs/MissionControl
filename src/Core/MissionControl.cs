@@ -342,7 +342,7 @@ namespace MissionControl {
 
       if (Main.Settings.AdditionalLanceSettings.Enable) {
         areLancesAllowed = !Main.Settings.AdditionalLanceSettings.IsTeamDisabled(teamType);
-        if (areLancesAllowed) areLancesAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.AdditionalLanceSettings.EnableForFlashpoints);
+        if (areLancesAllowed) areLancesAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.AdditionalLanceSettings.EnableForFlashpoints);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.GetValidContractTypes().Contains(CurrentContractType);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.DisableWhenMaxTonnage.AreLancesAllowed((int)this.CurrentContract.Override.lanceMaxTonnage);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.ActiveAdditionalLances.GetValidContractTypes(teamType).Contains(CurrentContractType);
@@ -357,7 +357,7 @@ namespace MissionControl {
 
     public bool IsExtendedBoundariesAllowed() {
       if (Main.Settings.ExtendedBoundaries.Enable) {
-        bool isExtendedBoundariesAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.ExtendedBoundaries.EnableForFlashpoints);
+        bool isExtendedBoundariesAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.ExtendedBoundaries.EnableForFlashpoints);
         if (isExtendedBoundariesAllowed) isExtendedBoundariesAllowed = Main.Settings.ExtendedBoundaries.GetValidContractTypes().Contains(CurrentContractType);
         return isExtendedBoundariesAllowed;
       }
@@ -370,7 +370,7 @@ namespace MissionControl {
       if (isExtendedLancesAllowed) return true;
 
       if (Main.Settings.ExtendedLances.Enable) {
-        isExtendedLancesAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.ExtendedLances.EnableForFlashpoints);
+        isExtendedLancesAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.ExtendedLances.EnableForFlashpoints);
         if (isExtendedLancesAllowed) isExtendedLancesAllowed = Main.Settings.ExtendedLances.GetValidContractTypes().Contains(CurrentContractType);
         return isExtendedLancesAllowed;
       }
@@ -383,7 +383,7 @@ namespace MissionControl {
       if (isRandomSpawnsAllowed) return true;
 
       if (Main.Settings.RandomSpawns.Enable) {
-        isRandomSpawnsAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.RandomSpawns.EnableForFlashpoints);
+        isRandomSpawnsAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.RandomSpawns.EnableForFlashpoints);
         if (isRandomSpawnsAllowed) isRandomSpawnsAllowed = Main.Settings.RandomSpawns.GetValidContractTypes().Contains(CurrentContractType);
         return isRandomSpawnsAllowed;
       }
@@ -391,7 +391,7 @@ namespace MissionControl {
     }
 
     public bool IsDynamicWithdrawAllowed() {
-      bool dynamicWithdrawAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.DynamicWithdraw.EnableForFlashpoints);
+      bool dynamicWithdrawAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.DynamicWithdraw.EnableForFlashpoints);
       if (dynamicWithdrawAllowed) dynamicWithdrawAllowed = Main.Settings.DynamicWithdraw.Enable && !MissionControl.Instance.IsSkirmish();
       return dynamicWithdrawAllowed;
     }

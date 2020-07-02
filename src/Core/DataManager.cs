@@ -72,7 +72,7 @@ namespace MissionControl {
     }
 
     private void LoadFlashpointContractConfigOverrides() {
-      foreach (string file in Directory.GetFiles($"{ModDirectory}/Config/Flashpoints/", "*.json", SearchOption.AllDirectories)) {
+      foreach (string file in Directory.GetFiles($"{ModDirectory}/config/Flashpoints/", "*.json", SearchOption.AllDirectories)) {
         string rawSettingsOverride = File.ReadAllText(file);
         string fileName = Path.GetFileNameWithoutExtension(file.Substring(file.LastIndexOf("/")));
         Main.LogDebug($"[DataManager.LoadFlashpointContractConfigOverrides] Loading flashpoint settings override for '{fileName}'");

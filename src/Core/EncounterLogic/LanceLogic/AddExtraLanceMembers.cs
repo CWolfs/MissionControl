@@ -26,6 +26,7 @@ namespace MissionControl.Logic {
 
       if (Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.ExtendedLances_AllyLanceSizeOverride)) {
         int lanceSizeOverride = Main.Settings.ActiveFlashpointSettings.GetInt(FlashpointSettingsOverrides.ExtendedLances_AllyLanceSizeOverride);
+        Main.Logger.Log($"[AddExtraLanceMembers] Using Flashpoint settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lance size will be '{lanceSizeOverride}'.");
         IncreaseLanceMembers(contractOverride, targetTeamOverride, lanceSizeOverride);
       } else {
         IncreaseLanceMembers(contractOverride, targetTeamOverride);
@@ -33,6 +34,7 @@ namespace MissionControl.Logic {
 
       if (Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.ExtendedLances_EnemyLanceSizeOverride)) {
         int lanceSizeOverride = Main.Settings.ActiveFlashpointSettings.GetInt(FlashpointSettingsOverrides.ExtendedLances_EnemyLanceSizeOverride);
+        Main.Logger.Log($"[AddExtraLanceMembers] Using Flashpoint settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Enemy lance size will be '{lanceSizeOverride}'.");
         IncreaseLanceMembers(contractOverride, employerTeamOverride, lanceSizeOverride);
       } else {
         IncreaseLanceMembers(contractOverride, employerTeamOverride);
@@ -41,7 +43,7 @@ namespace MissionControl.Logic {
 
     private void IncreaseLanceMembers(ContractOverride contractOverride, TeamOverride teamOverride, int lanceSizeOverride = -1) {
       List<LanceOverride> lanceOverrides = teamOverride.lanceOverrideList;
-      int factionLanceSize = lanceSizeOverride > -1 ? Main.Settings.ExtendedLances.GetFactionLanceSize(teamOverride.faction.ToString()) : lanceSizeOverride;
+      int factionLanceSize = lanceSizeOverride <= -1 ? Main.Settings.ExtendedLances.GetFactionLanceSize(teamOverride.faction.ToString()) : lanceSizeOverride;
       Main.LogDebug($"[IncreaseLanceMembers] Faction '{teamOverride.faction}' lance size is '{factionLanceSize}");
 
       foreach (LanceOverride lanceOverride in lanceOverrides) {
