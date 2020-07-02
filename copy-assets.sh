@@ -18,3 +18,4 @@ cp -r 'sprites/' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/
 cp -r 'mod.json' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
 cp -r 'settings.json' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
 cp -r 'src/bin/Debug/net471/MissionControl.dll' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
+cp -r 'src/bin/Debug/net471/MissionControl.pdb' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'

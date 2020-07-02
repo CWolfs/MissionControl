@@ -11,6 +11,7 @@ using BattleTech.Framework;
 
 using MissionControl.Logic;
 using MissionControl.Trigger;
+using MissionControl.Config;
 
 namespace MissionControl.Rules {
   public abstract class EncounterRules {
@@ -46,7 +47,7 @@ namespace MissionControl.Rules {
     public void ActivatePostFeatures() {
       if (Main.Settings.AdditionalPlayerMechs && MissionControl.Instance.IsDroppingCustomControlledPlayerLance()) new AddCustomPlayerMechsBatch(this);
       if (MissionControl.Instance.IsExtendedLancesAllowed()) new AddExtraLanceSpawnsForExtendedLancesBatch(this);
-      if (Main.Settings.DynamicWithdraw.Enable && !MissionControl.Instance.IsSkirmish()) new AddDynamicWithdrawBatch(this);
+      if (MissionControl.Instance.IsDynamicWithdrawAllowed()) new AddDynamicWithdrawBatch(this);
       BuildAi();
     }
 
@@ -247,6 +248,12 @@ namespace MissionControl.Rules {
         numberOfAdditionalEnemyLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances(faction, "enemy");
         if (Main.Settings.DebugMode && (Main.Settings.Debug.AdditionalLancesEnemyLanceCount > -1)) numberOfAdditionalEnemyLances = Main.Settings.Debug.AdditionalLancesEnemyLanceCount;
 
+        // Allow Flashpoint contract settings overrides to force their respective setting
+        if (Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.AdditionalLances_EnemyLanceCountOverride)) {
+          numberOfAdditionalEnemyLances = Main.Settings.ActiveFlashpointSettings.GetInt(FlashpointSettingsOverrides.AdditionalLances_EnemyLanceCountOverride);
+          Main.Logger.Log($"[{this.GetType().Name}] Using Flashpoint settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Enemy lance count will be '{numberOfAdditionalEnemyLances}'.");
+        }
+
         bool showObjectiveOnLanceDetected = Main.Settings.AdditionalLanceSettings.ShowObjectiveOnLanceDetected;
 
         int objectivePriority = -10;
@@ -267,7 +274,11 @@ namespace MissionControl.Rules {
 
         int numberOfAdditionalAllyLances = Main.Settings.ActiveAdditionalLances.Allies.SelectNumberOfAdditionalLances(faction, "allies");
 
-        if (Main.Settings.AdditionalLanceSettings.MatchAllyLanceCountToEnemy) {
+        // Allow Flashpoint contract settings overrides to force their respective setting
+        if (Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.AdditionalLances_AllyLanceCountOverride)) {
+          numberOfAdditionalAllyLances = Main.Settings.ActiveFlashpointSettings.GetInt(FlashpointSettingsOverrides.AdditionalLances_AllyLanceCountOverride);
+          Main.Logger.Log($"[{this.GetType().Name}] Using Flashpoint settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lance count will be '{numberOfAdditionalAllyLances}'.");
+        } else if (Main.Settings.AdditionalLanceSettings.MatchAllyLanceCountToEnemy) {
           Main.Logger.LogDebug($"[{this.GetType().Name}] 'MatchAllyLanceCountToEnemy' is on. Ally lance count will be {numberOfAdditionalEnemyLances}");
           numberOfAdditionalAllyLances = numberOfAdditionalEnemyLances;
         }
@@ -282,6 +293,13 @@ namespace MissionControl.Rules {
       string mapId = MissionControl.Instance.ContractMapName;
       string contractTypeName = MissionControl.Instance.CurrentContractType;
       float size = Main.Settings.ExtendedBoundaries.GetSizePercentage(mapId, contractTypeName);
+
+      // Allow Flashpoint contract settings overrides to force their respective setting
+      if (Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.ExtendedBoundaries_IncreaseBoundarySizeByPercentage)) {
+        size = Main.Settings.ActiveFlashpointSettings.GetInt(FlashpointSettingsOverrides.ExtendedBoundaries_IncreaseBoundarySizeByPercentage);
+        Main.Logger.Log($"[{this.GetType().Name}] Using Flashpoint settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. IncreaseBoundarySizeByPercentage will be '{size}'.");
+      }
+
       Main.Logger.Log($"[{this.GetType().Name}] Maximising Boundary Size for '{mapId}.{contractTypeName}' to '{size}'");
 
       this.EncounterLogic.Add(new MaximiseBoundarySize(this, size));

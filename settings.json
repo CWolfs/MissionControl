@@ -2,13 +2,15 @@
   "DebugMode": true,
   "VersionCheck": true,
   "DebugSkirmishMode": true,
-  "DisableIfFlashpointContract": true,
+  "EnableFlashpointOverrides": false,
   "RandomSpawns": {
     "Enable": true,
+    "EnableForFlashpoints": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"]
   },
-  "HotDrop": {
+  "HotDropProtection": {
     "Enable": true,
+    "EnableForFlashpoints": false,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "GuardOnHotDrop": false,
     "EvasionPipsOnHotDrop": 6,
@@ -18,6 +20,7 @@
   },
   "AdditionalLances": {
     "Enable": true,
+    "EnableForFlashpoints": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "IsPrimaryObjectiveIn": ["SimpleBattle", "CaptureBase"],
     "ExcludeFromAutocomplete": ["DefendBase", "FireMission"],
@@ -29,7 +32,6 @@
     "SkullValueMatters": true,
     "BasedOnVisibleSkullValue": true,
     "UseGeneralProfileForSkirmish": true,
-    "DisableIfFlashpointContract": true,
     "DisableWhenMaxTonnage": {
       "Enable": true,
       "Limited": false,
@@ -48,6 +50,7 @@
   },
   "ExtendedLances": {
     "Enable": true,
+    "EnableForFlashpoints": true,
     "Autofill": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "SkipWhenTaggedWithAny": ["lance_type_solo"],
@@ -60,6 +63,7 @@
   },
   "ExtendedBoundaries": {
     "Enable": true,
+    "EnableForFlashpoints": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "IncreaseBoundarySizeByPercentage": 0.3,
     "Overrides": [
@@ -91,6 +95,7 @@
   },
   "DynamicWithdraw": {
     "Enable": true,
+    "EnableForFlashpoints": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "MinDistanceForZone": 50,
     "MaxDistanceForZone": 288,
