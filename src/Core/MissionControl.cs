@@ -201,10 +201,15 @@ namespace MissionControl {
 
       // Clear old lance data
       if (CurrentContract != null) {
+        // Old Lances
         CurrentContract.Override.targetTeam.lanceOverrideList =
           CurrentContract.Override.targetTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
         CurrentContract.Override.employerTeam.lanceOverrideList =
           CurrentContract.Override.employerTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
+
+        // Old Objectives
+        CurrentContract.Override.contractObjectiveList =
+         CurrentContract.Override.contractObjectiveList.Where(contractObjective => !contractObjective.description.StartsWith("MC ")).ToList();
       }
     }
 
