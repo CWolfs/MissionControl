@@ -3,14 +3,24 @@
   "RandomSpawns": {
     "Enable": true
   },
+  "HotDropProtection": {
+    "Enable": true
+  },
   "AdditionalLances": {
     "Enable": true,
-    "EnemyLanceCountOverride": 2,
-    "AllyLanceCountOverride": 1
+    "EnemyLanceCount": 2,
+    "AllyLanceCount": 1
   },
   "ExtendedLances": {
     "Enable": true,
-    "EnemyLanceSizeOverride": 6,
-    "AllyLanceSizeOverride": 5
+    "EnemyLanceSize": 6,
+    "AllyLanceSize": 5
+  },
+  "ExtendedBoundaries": {
+    "Enable": true,
+    "IncreaseBoundarySizeByPercentage": 0.5
+  },
+  "DynamicWithdraw": {
+    "Enable": true
   }
 }

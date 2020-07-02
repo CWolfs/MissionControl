@@ -293,6 +293,13 @@ namespace MissionControl.Rules {
       string mapId = MissionControl.Instance.ContractMapName;
       string contractTypeName = MissionControl.Instance.CurrentContractType;
       float size = Main.Settings.ExtendedBoundaries.GetSizePercentage(mapId, contractTypeName);
+
+      // Allow Flashpoint contract settings overrides to force their respective setting
+      if (Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.ExtendedBoundaries_IncreaseBoundarySizeByPercentage)) {
+        size = Main.Settings.ActiveFlashpointSettings.GetInt(FlashpointSettingsOverrides.ExtendedBoundaries_IncreaseBoundarySizeByPercentage);
+        Main.Logger.Log($"[{this.GetType().Name}] Using Flashpoint settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. IncreaseBoundarySizeByPercentage will be '{size}'.");
+      }
+
       Main.Logger.Log($"[{this.GetType().Name}] Maximising Boundary Size for '{mapId}.{contractTypeName}' to '{size}'");
 
       this.EncounterLogic.Add(new MaximiseBoundarySize(this, size));

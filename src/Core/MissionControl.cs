@@ -356,8 +356,12 @@ namespace MissionControl {
     }
 
     public bool IsExtendedBoundariesAllowed() {
+      // Allow Flashpoint contract settings overrides to force their respective setting
+      bool isExtendedBoundariesAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.ExtendedBoundaries_Enable) && Main.Settings.ActiveFlashpointSettings.GetBool(FlashpointSettingsOverrides.ExtendedBoundaries_Enable);
+      if (isExtendedBoundariesAllowed) return true;
+
       if (Main.Settings.ExtendedBoundaries.Enable) {
-        bool isExtendedBoundariesAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.ExtendedBoundaries.EnableForFlashpoints);
+        isExtendedBoundariesAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.ExtendedBoundaries.EnableForFlashpoints);
         if (isExtendedBoundariesAllowed) isExtendedBoundariesAllowed = Main.Settings.ExtendedBoundaries.GetValidContractTypes().Contains(CurrentContractType);
         return isExtendedBoundariesAllowed;
       }
@@ -391,13 +395,28 @@ namespace MissionControl {
     }
 
     public bool IsDynamicWithdrawAllowed() {
-      bool dynamicWithdrawAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.DynamicWithdraw.EnableForFlashpoints);
-      if (dynamicWithdrawAllowed) dynamicWithdrawAllowed = Main.Settings.DynamicWithdraw.Enable && !MissionControl.Instance.IsSkirmish();
-      return dynamicWithdrawAllowed;
+      // Allow Flashpoint contract settings overrides to force their respective setting
+      bool isDynamicWithdrawAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.DynamicWithdraw_Enable) && Main.Settings.ActiveFlashpointSettings.GetBool(FlashpointSettingsOverrides.DynamicWithdraw_Enable);
+      if (isDynamicWithdrawAllowed) return true;
+
+      if (Main.Settings.DynamicWithdraw.Enable) {
+        isDynamicWithdrawAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.DynamicWithdraw.EnableForFlashpoints);
+        if (isDynamicWithdrawAllowed) isDynamicWithdrawAllowed = !MissionControl.Instance.IsSkirmish();
+        return isDynamicWithdrawAllowed;
+      }
+      return false;
     }
 
     public bool IsSkirmish(Contract contract) {
       return !contract.ContractTypeValue.IsSinglePlayerProcedural && contract.ContractTypeValue.IsSkirmish;
+    }
+
+    public bool IsHotDropProtectionAllowed() {
+      // Allow Flashpoint contract settings overrides to force their respective setting
+      bool isHotDropProtectionAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.HotDropProtection_Enable) && Main.Settings.ActiveFlashpointSettings.GetBool(FlashpointSettingsOverrides.HotDropProtection_Enable);
+      if (isHotDropProtectionAllowed) return true;
+
+      return Main.Settings.HotDropProtection.Enable;
     }
 
     public bool IsSkirmish() {
