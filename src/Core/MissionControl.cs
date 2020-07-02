@@ -419,6 +419,14 @@ namespace MissionControl {
       return Main.Settings.HotDropProtection.Enable;
     }
 
+    public bool AreAdditionalPlayerMechsAllowed() {
+      // Allow Flashpoint contract settings overrides to force their respective setting
+      bool areAdditionalPlayerMechsAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.AdditionalPlayerMechs_Enable) && Main.Settings.ActiveFlashpointSettings.GetBool(FlashpointSettingsOverrides.AdditionalPlayerMechs_Enable);
+      if (areAdditionalPlayerMechsAllowed) return true;
+
+      return Main.Settings.AdditionalPlayerMechs;
+    }
+
     public bool IsSkirmish() {
       if (CurrentContract != null) {
         return IsSkirmish(CurrentContract);
