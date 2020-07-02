@@ -424,7 +424,10 @@ namespace MissionControl {
       bool areAdditionalPlayerMechsAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.AdditionalPlayerMechs_Enable) && Main.Settings.ActiveFlashpointSettings.GetBool(FlashpointSettingsOverrides.AdditionalPlayerMechs_Enable);
       if (areAdditionalPlayerMechsAllowed) return true;
 
-      return Main.Settings.AdditionalPlayerMechs;
+      areAdditionalPlayerMechsAllowed = IsAnyFlashpointContract() && Main.Settings.EnableAdditionalPlayerMechsForFlashpoints;
+      if (areAdditionalPlayerMechsAllowed) areAdditionalPlayerMechsAllowed = Main.Settings.AdditionalPlayerMechs;
+
+      return areAdditionalPlayerMechsAllowed;
     }
 
     public bool IsSkirmish() {

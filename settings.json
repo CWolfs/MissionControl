@@ -3,6 +3,7 @@
   "VersionCheck": true,
   "DebugSkirmishMode": true,
   "EnableFlashpointOverrides": false,
+  "EnableAdditionalPlayerMechsForFlashpoints": false,
   "RandomSpawns": {
     "Enable": true,
     "EnableForFlashpoints": true,

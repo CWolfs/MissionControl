@@ -28,6 +28,9 @@ namespace MissionControl.Config {
     [JsonProperty("EnableFlashpointOverrides")]
     public bool EnableFlashpointOverrides { get; set; } = false;
 
+    [JsonProperty("EnableAdditionalPlayerMechsForFlashpoints")]
+    public bool EnableAdditionalPlayerMechsForFlashpoints { get; set; } = false;
+
     [JsonProperty("RandomSpawns")]
     public RandomSpawnsSettings RandomSpawns { get; set; } = new RandomSpawnsSettings();
 
