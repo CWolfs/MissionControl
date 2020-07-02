@@ -2,12 +2,12 @@
   "ID": "Blackout_DugInDeep_FP",
   "AdditionalLances": {
     "Enable": true,
-    "EnemyLanceCountOverride": 2,
-    "AllyLanceCountOverride": 1
+    "EnemyLanceCount": 2,
+    "AllyLanceCount": 1
   },
   "ExtendedLances": {
     "Enable": true,
-    "EnemyLanceSizeOverride": 6,
-    "AllyLanceSizeOverride": 7
+    "EnemyLanceSize": 6,
+    "AllyLanceSize": 7
   }
 }
