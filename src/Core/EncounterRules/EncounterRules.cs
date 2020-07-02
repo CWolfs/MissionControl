@@ -45,7 +45,7 @@ namespace MissionControl.Rules {
     }
 
     public void ActivatePostFeatures() {
-      if (MissionControl.Instance.IsAdditionalPlayerMechsAllowed() && MissionControl.Instance.IsDroppingCustomControlledPlayerLance()) new AddCustomPlayerMechsBatch(this);
+      if (MissionControl.Instance.AreAdditionalPlayerMechsAllowed() && MissionControl.Instance.IsDroppingCustomControlledPlayerLance()) new AddCustomPlayerMechsBatch(this);
       if (MissionControl.Instance.IsExtendedLancesAllowed()) new AddExtraLanceSpawnsForExtendedLancesBatch(this);
       if (MissionControl.Instance.IsDynamicWithdrawAllowed()) new AddDynamicWithdrawBatch(this);
       BuildAi();
