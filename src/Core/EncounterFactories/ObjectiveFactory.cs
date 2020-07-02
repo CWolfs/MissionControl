@@ -100,7 +100,7 @@ namespace MissionControl.EncounterFactories {
       if (createObjectiveOverride) {
         ObjectiveOverride objectiveOverride = new ObjectiveOverride(destroyLanceObjective);
         objectiveOverride.title = destroyLanceObjective.title;
-        objectiveOverride.description = destroyLanceObjective.description;
+        objectiveOverride.description = "MC" + destroyLanceObjective.description;  // Important and used for objective cleanup
         objectiveOverride.OnSuccessResults = destroyLanceObjective.OnSuccessResults;
         objectiveOverride.OnFailureResults = destroyLanceObjective.OnFailureResults;
         objectiveOverride.OnSuccessDialogueGUID = destroyLanceObjective.onSuccessDialogue.EncounterObjectGuid;
