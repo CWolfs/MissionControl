@@ -35,7 +35,7 @@ namespace MissionControl.Config {
     public RandomSpawnsSettings RandomSpawns { get; set; } = new RandomSpawnsSettings();
 
     [JsonProperty("HotDropProtection")]
-    public HotDrop HotDropProtection { get; set; } = new HotDrop();
+    public HotDropProtection HotDropProtection { get; set; } = new HotDropProtection();
 
     [JsonProperty("AdditionalLances")]
     public AdditionalLanceSettings AdditionalLanceSettings { get; set; } = new AdditionalLanceSettings();

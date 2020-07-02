@@ -54,6 +54,7 @@ namespace MissionControl {
 
     public void Init(string modDirectory) {
       ModDirectory = modDirectory;
+      LoadSettingsOverrides();
       LoadLanceOverrides();
       LoadFlashpointContractConfigOverrides();
       LoadRuntimeCastData();
@@ -79,6 +80,16 @@ namespace MissionControl {
         JObject settingsOverrides = JsonConvert.DeserializeObject<JObject>(rawSettingsOverride, serialiserSettings);
         Main.Settings.FlashpointSettingsOverrides[fileName] = new FlashpointSettingsOverrides() { Properties = settingsOverrides };
       }
+    }
+
+    private void LoadSettingsOverrides() {
+      Settings settings = Main.Settings;
+
+      SettingsOverride modpackSettingsOverrides = new SettingsOverride(Main.Path, "modpack");
+      modpackSettingsOverrides.LoadOverrides(settings);
+
+      SettingsOverride userSettingsOverrides = new SettingsOverride(Main.Path, "user");
+      userSettingsOverrides.LoadOverrides(settings);
     }
 
     private void LoadCustomContractTypeBuilds() {
