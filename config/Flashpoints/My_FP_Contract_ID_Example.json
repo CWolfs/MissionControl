@@ -1,0 +1,16 @@
+{
+  "ID": "My_FP_Contract_ID_Example",
+  "RandomSpawns": {
+    "Enable": true
+  },
+  "AdditionalLances": {
+    "Enable": true,
+    "EnemyLanceCountOverride": 2,
+    "AllyLanceCountOverride": 1
+  },
+  "ExtendedLances": {
+    "Enable": true,
+    "EnemyLanceSizeOverride": 6,
+    "AllyLanceSizeOverride": 5
+  }
+}
