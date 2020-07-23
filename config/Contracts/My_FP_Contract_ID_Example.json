@@ -22,5 +22,8 @@
   },
   "DynamicWithdraw": {
     "Enable": true
+  },
+  "AdditionalPlayerMechs": {
+    "Enable": true
   }
 }
