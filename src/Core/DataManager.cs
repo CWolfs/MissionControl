@@ -56,7 +56,7 @@ namespace MissionControl {
       ModDirectory = modDirectory;
       LoadSettingsOverrides();
       LoadLanceOverrides();
-      LoadFlashpointContractConfigOverrides();
+      LoadContractConfigOverrides();
       LoadRuntimeCastData();
       LoadDialogueData();
       InjectMessageScopes();
@@ -72,13 +72,26 @@ namespace MissionControl {
       HasLoadedDeferredDefs = true;
     }
 
-    private void LoadFlashpointContractConfigOverrides() {
-      foreach (string file in Directory.GetFiles($"{ModDirectory}/config/Flashpoints/", "*.json", SearchOption.AllDirectories)) {
+    private void LoadContractConfigOverrides() {
+      string contractsDirectory = $"{ModDirectory}/config/Contracts/";
+      string flashpointsDirectory = $"{ModDirectory}/config/Flashpoints/";
+
+      if (Directory.Exists(contractsDirectory)) {
+        LoadContractConfigOverridesByDirectory(contractsDirectory);
+      }
+
+      if (Directory.Exists(flashpointsDirectory)) {
+        LoadContractConfigOverridesByDirectory(flashpointsDirectory);
+      }
+    }
+
+    private void LoadContractConfigOverridesByDirectory(string directory) {
+      foreach (string file in Directory.GetFiles(directory, "*.json", SearchOption.AllDirectories)) {
         string rawSettingsOverride = File.ReadAllText(file);
         string fileName = Path.GetFileNameWithoutExtension(file.Substring(file.LastIndexOf("/")));
-        Main.LogDebug($"[DataManager.LoadFlashpointContractConfigOverrides] Loading flashpoint settings override for '{fileName}'");
+        Main.LogDebug($"[DataManager.LoadContractConfigOverrides] Loading contract (and flashpoint contract) settings override for '{fileName}'");
         JObject settingsOverrides = JsonConvert.DeserializeObject<JObject>(rawSettingsOverride, serialiserSettings);
-        Main.Settings.FlashpointSettingsOverrides[fileName] = new FlashpointSettingsOverrides() { Properties = settingsOverrides };
+        Main.Settings.ContractSettingsOverrides[fileName] = new ContractSettingsOverrides() { Properties = settingsOverrides };
       }
     }
 

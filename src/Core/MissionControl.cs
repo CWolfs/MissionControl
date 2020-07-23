@@ -248,12 +248,12 @@ namespace MissionControl {
 
     public void SetFlashpointOverride() {
       string contractId = CurrentContract.Override.ID;
-      if (Main.Settings.FlashpointSettingsOverrides.ContainsKey(contractId)) {
+      if (Main.Settings.ContractSettingsOverrides.ContainsKey(contractId)) {
         Main.Logger.Log($"[MissionControl] Setting a Flashpoint settings override for '{contractId}'.");
-        Main.Settings.ActiveFlashpointSettings = Main.Settings.FlashpointSettingsOverrides[contractId];
+        Main.Settings.ActiveContractSettings = Main.Settings.ContractSettingsOverrides[contractId];
       } else {
         Main.Logger.Log($"[MissionControl] No Flashpoint settings override found for '{contractId}'.");
-        Main.Settings.ActiveFlashpointSettings = new Config.FlashpointSettingsOverrides();
+        Main.Settings.ActiveContractSettings = new Config.ContractSettingsOverrides();
       }
     }
 
@@ -341,8 +341,8 @@ namespace MissionControl {
     }
 
     public bool AreAdditionalLancesAllowed(string teamType) {
-      // Allow Flashpoint contract settings overrides to force their respective setting
-      bool areLancesAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.AdditionalLances_Enable) && Main.Settings.ActiveFlashpointSettings.GetBool(FlashpointSettingsOverrides.AdditionalLances_Enable);
+      // Allow contract settings overrides to force their respective setting
+      bool areLancesAllowed = Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_Enable) && Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.AdditionalLances_Enable);
       if (areLancesAllowed) return true;
 
       if (Main.Settings.AdditionalLanceSettings.Enable) {
@@ -361,8 +361,8 @@ namespace MissionControl {
     }
 
     public bool IsExtendedBoundariesAllowed() {
-      // Allow Flashpoint contract settings overrides to force their respective setting
-      bool isExtendedBoundariesAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.ExtendedBoundaries_Enable) && Main.Settings.ActiveFlashpointSettings.GetBool(FlashpointSettingsOverrides.ExtendedBoundaries_Enable);
+      // Allow contract settings overrides to force their respective setting
+      bool isExtendedBoundariesAllowed = Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedBoundaries_Enable) && Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.ExtendedBoundaries_Enable);
       if (isExtendedBoundariesAllowed) return true;
 
       if (Main.Settings.ExtendedBoundaries.Enable) {
@@ -374,8 +374,8 @@ namespace MissionControl {
     }
 
     public bool IsExtendedLancesAllowed() {
-      // Allow Flashpoint contract settings overrides to force their respective setting
-      bool isExtendedLancesAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.ExtendedLances_Enable) && Main.Settings.ActiveFlashpointSettings.GetBool(FlashpointSettingsOverrides.ExtendedLances_Enable);
+      // Allow contract settings overrides to force their respective setting
+      bool isExtendedLancesAllowed = Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedLances_Enable) && Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.ExtendedLances_Enable);
       if (isExtendedLancesAllowed) return true;
 
       if (Main.Settings.ExtendedLances.Enable) {
@@ -387,8 +387,8 @@ namespace MissionControl {
     }
 
     public bool IsRandomSpawnsAllowed() {
-      // Allow Flashpoint contract settings overrides to force their respective setting
-      bool isRandomSpawnsAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.RandomSpawns_Enable) && Main.Settings.ActiveFlashpointSettings.GetBool(FlashpointSettingsOverrides.RandomSpawns_Enable);
+      // Allow contract settings overrides to force their respective setting
+      bool isRandomSpawnsAllowed = Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.RandomSpawns_Enable) && Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.RandomSpawns_Enable);
       if (isRandomSpawnsAllowed) return true;
 
       if (Main.Settings.RandomSpawns.Enable) {
@@ -400,8 +400,8 @@ namespace MissionControl {
     }
 
     public bool IsDynamicWithdrawAllowed() {
-      // Allow Flashpoint contract settings overrides to force their respective setting
-      bool isDynamicWithdrawAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.DynamicWithdraw_Enable) && Main.Settings.ActiveFlashpointSettings.GetBool(FlashpointSettingsOverrides.DynamicWithdraw_Enable);
+      // Allow contract settings overrides to force their respective setting
+      bool isDynamicWithdrawAllowed = Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.DynamicWithdraw_Enable) && Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.DynamicWithdraw_Enable);
       if (isDynamicWithdrawAllowed) return true;
 
       if (Main.Settings.DynamicWithdraw.Enable) {
@@ -417,16 +417,16 @@ namespace MissionControl {
     }
 
     public bool IsHotDropProtectionAllowed() {
-      // Allow Flashpoint contract settings overrides to force their respective setting
-      bool isHotDropProtectionAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.HotDropProtection_Enable) && Main.Settings.ActiveFlashpointSettings.GetBool(FlashpointSettingsOverrides.HotDropProtection_Enable);
+      // Allow contract settings overrides to force their respective setting
+      bool isHotDropProtectionAllowed = Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.HotDropProtection_Enable) && Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.HotDropProtection_Enable);
       if (isHotDropProtectionAllowed) return true;
 
       return Main.Settings.HotDropProtection.Enable;
     }
 
     public bool AreAdditionalPlayerMechsAllowed() {
-      // Allow Flashpoint contract settings overrides to force their respective setting
-      bool areAdditionalPlayerMechsAllowed = IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Has(FlashpointSettingsOverrides.AdditionalPlayerMechs_Enable) && Main.Settings.ActiveFlashpointSettings.GetBool(FlashpointSettingsOverrides.AdditionalPlayerMechs_Enable);
+      // Allow contract settings overrides to force their respective setting
+      bool areAdditionalPlayerMechsAllowed = Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalPlayerMechs_Enable) && Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.AdditionalPlayerMechs_Enable);
       if (areAdditionalPlayerMechsAllowed) return true;
 
       areAdditionalPlayerMechsAllowed = IsAnyFlashpointContract() && Main.Settings.EnableAdditionalPlayerMechsForFlashpoints;
@@ -466,7 +466,7 @@ namespace MissionControl {
       if (CurrentContract.IsStoryContract) return false;
       if (CurrentContract.IsRestorationContract) return false;
       if (!IsAnyFlashpointContract()) return true;
-      if (IsAnyFlashpointContract() && Main.Settings.ActiveFlashpointSettings.Enabled) return true;
+      if (IsAnyFlashpointContract() && Main.Settings.ActiveContractSettings.Enabled) return true;
       if (IsAnyFlashpointContract() && !Main.Settings.EnableFlashpointOverrides) return false;
 
       return false;

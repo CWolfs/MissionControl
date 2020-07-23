@@ -63,8 +63,8 @@ namespace MissionControl.Config {
     [JsonProperty("Spawners")]
     public SpawnerSettings Spawners { get; set; } = new SpawnerSettings();
 
-    public Dictionary<string, FlashpointSettingsOverrides> FlashpointSettingsOverrides = new Dictionary<string, FlashpointSettingsOverrides>();
+    public Dictionary<string, ContractSettingsOverrides> ContractSettingsOverrides = new Dictionary<string, ContractSettingsOverrides>();
 
-    public FlashpointSettingsOverrides ActiveFlashpointSettings { get; set; }
+    public ContractSettingsOverrides ActiveContractSettings { get; set; }
   }
 }
