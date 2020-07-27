@@ -16,6 +16,7 @@ using BattleTech.Data;
 using HBS.Data;
 
 using MissionControl.Data;
+using MissionControl.Config;
 using MissionControl.Messages;
 using MissionControl.Utils;
 
@@ -53,7 +54,9 @@ namespace MissionControl {
 
     public void Init(string modDirectory) {
       ModDirectory = modDirectory;
+      LoadSettingsOverrides();
       LoadLanceOverrides();
+      LoadContractConfigOverrides();
       LoadRuntimeCastData();
       LoadDialogueData();
       InjectMessageScopes();
@@ -69,12 +72,45 @@ namespace MissionControl {
       HasLoadedDeferredDefs = true;
     }
 
+    private void LoadContractConfigOverrides() {
+      string contractsDirectory = $"{ModDirectory}/config/Contracts/";
+      string flashpointsDirectory = $"{ModDirectory}/config/Flashpoints/";
+
+      if (Directory.Exists(contractsDirectory)) {
+        LoadContractConfigOverridesByDirectory(contractsDirectory);
+      }
+
+      if (Directory.Exists(flashpointsDirectory)) {
+        LoadContractConfigOverridesByDirectory(flashpointsDirectory);
+      }
+    }
+
+    private void LoadContractConfigOverridesByDirectory(string directory) {
+      foreach (string file in Directory.GetFiles(directory, "*.json", SearchOption.AllDirectories)) {
+        string rawSettingsOverride = File.ReadAllText(file);
+        string fileName = Path.GetFileNameWithoutExtension(file.Substring(file.LastIndexOf("/")));
+        Main.LogDebug($"[DataManager.LoadContractConfigOverrides] Loading contract (and flashpoint contract) settings override for '{fileName}'");
+        JObject settingsOverrides = JsonConvert.DeserializeObject<JObject>(rawSettingsOverride, serialiserSettings);
+        Main.Settings.ContractSettingsOverrides[fileName] = new ContractSettingsOverrides() { Properties = settingsOverrides };
+      }
+    }
+
+    private void LoadSettingsOverrides() {
+      Settings settings = Main.Settings;
+
+      SettingsOverride modpackSettingsOverrides = new SettingsOverride(Main.Path, "modpack");
+      modpackSettingsOverrides.LoadOverrides(settings);
+
+      SettingsOverride userSettingsOverrides = new SettingsOverride(Main.Path, "user");
+      userSettingsOverrides.LoadOverrides(settings);
+    }
+
     private void LoadCustomContractTypeBuilds() {
       foreach (string directory in Directory.GetDirectories($"{ModDirectory}/contractTypeBuilds/")) {
         string contractTypeBuildCommonSource = File.ReadAllText($"{directory}/common.jsonc");
         JObject contractTypeCommonBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildCommonSource, serialiserSettings);
         string contractTypeName = (string)contractTypeCommonBuild["Key"];
-        Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type build '{contractTypeName}'");
+        Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loading contract type build '{contractTypeName}'");
 
         Dictionary<string, JObject> contractTypeMapBuilds = new Dictionary<string, JObject>();
         AvailableCustomContractTypeBuilds.Add(contractTypeCommonBuild["Key"].ToString(), contractTypeMapBuilds);

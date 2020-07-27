@@ -44,7 +44,7 @@ namespace MissionControl.Logic {
 
       contractObjectiveOverride.isPrimary = isPrimary;
       contractObjectiveOverride.title = title;
-      contractObjectiveOverride.description = description;
+      contractObjectiveOverride.description = "MC" + description;  // Important and used for objective cleanup
       contractObjectiveOverride.objectiveGuids = ObjectiveGuids;
       contractObjectiveOverride.forPlayer = TeamController.Player1;
 

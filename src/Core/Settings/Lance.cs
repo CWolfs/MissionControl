@@ -1,5 +1,6 @@
 using UnityEngine;
 
+using System;
 using System.Collections.Generic;
 
 using Newtonsoft.Json;
@@ -51,7 +52,7 @@ namespace MissionControl.Config {
         Main.LogDebug($"[SelectNumberOfAdditionalLances] [{TeamType}] Using Drop Weight Settings");
         int contractDifficulty = MissionControl.Instance.CurrentContract.Override.finalDifficulty;
         int playerLanceDropDifficulty = MissionControl.Instance.PlayerLanceDropDifficultyValue;
-        int difficultyDifference = playerLanceDropDifficulty - contractDifficulty;
+        int difficultyDifference = Math.Abs(playerLanceDropDifficulty - contractDifficulty);
 
         if (difficultyDifference > 0) { // Player is sending a stronger lance than the contract difficulty requires. Add more influence to AL enemy lances spawning.
           float spawnInfluenceModifier = difficultyDifference *
@@ -86,7 +87,7 @@ namespace MissionControl.Config {
         lanceNumber++;
       }
 
-      Main.Logger.Log($"[SelectNumberOfAdditionalLances] [{TeamType}] '{lanceNumber}' Additional Lance will be added");
+      Main.Logger.Log($"[SelectNumberOfAdditionalLances] [{TeamType}] '{lanceNumber}' Additional Lance will be added, unless later overridden");
       return lanceNumber;
     }
   }

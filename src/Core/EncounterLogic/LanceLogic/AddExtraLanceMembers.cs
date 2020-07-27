@@ -5,6 +5,7 @@ using BattleTech.Framework;
 using HBS.Collections;
 
 using MissionControl.Data;
+using MissionControl.Config;
 
 namespace MissionControl.Logic {
   public class AddExtraLanceMembers : LanceLogic {
@@ -23,13 +24,26 @@ namespace MissionControl.Logic {
       TeamOverride targetTeamOverride = contractOverride.targetTeam;
       TeamOverride employerTeamOverride = contractOverride.employerTeam;
 
-      IncreaseLanceMembers(contractOverride, targetTeamOverride);
-      IncreaseLanceMembers(contractOverride, employerTeamOverride);
+      if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedLances_EnemyLanceSizeOverride)) {
+        int lanceSizeOverride = Main.Settings.ActiveContractSettings.GetInt(ContractSettingsOverrides.ExtendedLances_EnemyLanceSizeOverride);
+        Main.Logger.Log($"[AddExtraLanceMembers] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Enemy lance size will be '{lanceSizeOverride}'.");
+        IncreaseLanceMembers(contractOverride, targetTeamOverride, lanceSizeOverride);
+      } else {
+        IncreaseLanceMembers(contractOverride, targetTeamOverride);
+      }
+
+      if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedLances_AllyLanceSizeOverride)) {
+        int lanceSizeOverride = Main.Settings.ActiveContractSettings.GetInt(ContractSettingsOverrides.ExtendedLances_AllyLanceSizeOverride);
+        Main.Logger.Log($"[AddExtraLanceMembers] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lance size will be '{lanceSizeOverride}'.");
+        IncreaseLanceMembers(contractOverride, employerTeamOverride, lanceSizeOverride);
+      } else {
+        IncreaseLanceMembers(contractOverride, employerTeamOverride);
+      }
     }
 
-    private void IncreaseLanceMembers(ContractOverride contractOverride, TeamOverride teamOverride) {
+    private void IncreaseLanceMembers(ContractOverride contractOverride, TeamOverride teamOverride, int lanceSizeOverride = -1) {
       List<LanceOverride> lanceOverrides = teamOverride.lanceOverrideList;
-      int factionLanceSize = Main.Settings.ExtendedLances.GetFactionLanceSize(teamOverride.faction.ToString());
+      int factionLanceSize = lanceSizeOverride <= -1 ? Main.Settings.ExtendedLances.GetFactionLanceSize(teamOverride.faction.ToString()) : lanceSizeOverride;
       Main.LogDebug($"[IncreaseLanceMembers] Faction '{teamOverride.faction}' lance size is '{factionLanceSize}");
 
       foreach (LanceOverride lanceOverride in lanceOverrides) {

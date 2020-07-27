@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace MissionControl.Config {
-  public class HotDrop : AdvancedSettings {
+  public class HotDropProtection : AdvancedSettings {
     [JsonProperty("GuardOnHotDrop")]
     public bool GuardOnHotDrop { get; set; } = false;
 

@@ -1,6 +1,7 @@
 using UnityEngine;
 
 using System;
+using System.Collections.Generic;
 
 using BattleTech.Designed;
 using BattleTech.Framework;
@@ -65,6 +66,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       DestroyWholeLanceChunk destroyWholeLanceChunk = parent.GetComponent<DestroyWholeLanceChunk>();
       string lanceToDestroyGuid = objective["LanceToDestroyGuid"].ToString();
+      Dictionary<string, float> rewards = (objective.ContainsKey("Rewards")) ? objective["Rewards"].ToObject<Dictionary<string, float>>() : new Dictionary<string, float>();
       bool showProgress = true;
 
       LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
@@ -83,7 +85,8 @@ namespace MissionControl.ContractTypeBuilders {
         displayToUser,
         ObjectiveMark.AttackTarget,
         contractObjectiveGuid,
-        false // Don't create the objective override as it's provided by the contract json
+        rewards,
+        rewards.Count > 0
       );
 
       if (isPrimaryObjectve) {
@@ -138,7 +141,7 @@ namespace MissionControl.ContractTypeBuilders {
       string[] requiredTagsOnUnit = (objective.ContainsKey("RequiredTagsOnUnit")) ? ((JArray)objective["RequiredTagsOnUnit"]).ToObject<string[]>() : null;
       int numberOfUnitsToDefend = (objective.ContainsKey("NumberOfUnitsToDefend")) ? ((int)objective["NumberOfUnitsToDefend"]) : 1;
       int durationToDefend = (objective.ContainsKey("DurationToDefend")) ? (int)objective["DurationToDefend"] : 0;
-      string durationTypeStr = (objective.ContainsKey("DurationType")) ? objective["DurationType"].ToString() : null;
+      string durationTypeStr = (objective.ContainsKey("DurationType")) ? objective["DurationType"].ToString() : "Rounds";
       string progressFormat = (objective.ContainsKey("ProgressFormat")) ? objective["ProgressFormat"].ToString() : "";
       string description = objective["Description"].ToString();
 

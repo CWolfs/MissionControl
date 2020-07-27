@@ -25,14 +25,17 @@ namespace MissionControl.Config {
     [JsonProperty("DebugSkirmishMode")]
     public bool DebugSkirmishMode { get; set; } = false;
 
-    [JsonProperty("DisableIfFlashpointContract")]
-    public bool DisableIfFlashpointContract { get; set; } = true;
+    [JsonProperty("EnableFlashpointOverrides")]
+    public bool EnableFlashpointOverrides { get; set; } = false;
+
+    [JsonProperty("EnableAdditionalPlayerMechsForFlashpoints")]
+    public bool EnableAdditionalPlayerMechsForFlashpoints { get; set; } = false;
 
     [JsonProperty("RandomSpawns")]
     public RandomSpawnsSettings RandomSpawns { get; set; } = new RandomSpawnsSettings();
 
-    [JsonProperty("HotDrop")]
-    public HotDrop HotDrop { get; set; } = new HotDrop();
+    [JsonProperty("HotDropProtection")]
+    public HotDropProtection HotDropProtection { get; set; } = new HotDropProtection();
 
     [JsonProperty("AdditionalLances")]
     public AdditionalLanceSettings AdditionalLanceSettings { get; set; } = new AdditionalLanceSettings();
@@ -59,5 +62,9 @@ namespace MissionControl.Config {
 
     [JsonProperty("Spawners")]
     public SpawnerSettings Spawners { get; set; } = new SpawnerSettings();
+
+    public Dictionary<string, ContractSettingsOverrides> ContractSettingsOverrides = new Dictionary<string, ContractSettingsOverrides>();
+
+    public ContractSettingsOverrides ActiveContractSettings { get; set; }
   }
 }

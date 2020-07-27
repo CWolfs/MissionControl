@@ -53,7 +53,7 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static DestroyLanceObjective CreateDestroyLanceObjective(string objectiveGuid, GameObject parent, LanceSpawnerRef lanceToDestroy, string lanceGuid, string title, bool showProgress,
-      string progressFormat, string description, int priority, bool displayToUser, ObjectiveMark markUnitsWith, string contractObjectiveGameLogicGuid, bool createObjectiveOverride = true) {
+      string progressFormat, string description, int priority, bool displayToUser, ObjectiveMark markUnitsWith, string contractObjectiveGameLogicGuid, Dictionary<string, float> rewards, bool createObjectiveOverride = true) {
 
       // TODO: Probably want to split out these two main chunks into their own methods
       // OBJECTIVE OBJECTIVE GAME LOGIC
@@ -72,12 +72,8 @@ namespace MissionControl.EncounterFactories {
 
       // Rewards
       List<SimGameEventResult> onSuccessResults = new List<SimGameEventResult>();
-      List<Dictionary<string, string>> rewards = Main.Settings.ActiveAdditionalLances.RewardsPerLance;
-
-      foreach (Dictionary<string, string> reward in rewards) {
-        string type = Main.Settings.ActiveAdditionalLances.GetRewardType(reward);
-        float value = Main.Settings.ActiveAdditionalLances.GetRewardValue(reward);
-        onSuccessResults.Add(CreateRewardResult(type, value));
+      foreach (KeyValuePair<string, float> reward in rewards) {
+        onSuccessResults.Add(CreateRewardResult(reward.Key, reward.Value));
       }
 
       destroyLanceObjective.OnSuccessResults = onSuccessResults;
@@ -104,7 +100,7 @@ namespace MissionControl.EncounterFactories {
       if (createObjectiveOverride) {
         ObjectiveOverride objectiveOverride = new ObjectiveOverride(destroyLanceObjective);
         objectiveOverride.title = destroyLanceObjective.title;
-        objectiveOverride.description = destroyLanceObjective.description;
+        objectiveOverride.description = "MC" + destroyLanceObjective.description;  // Important and used for objective cleanup
         objectiveOverride.OnSuccessResults = destroyLanceObjective.OnSuccessResults;
         objectiveOverride.OnFailureResults = destroyLanceObjective.OnFailureResults;
         objectiveOverride.OnSuccessDialogueGUID = destroyLanceObjective.onSuccessDialogue.EncounterObjectGuid;

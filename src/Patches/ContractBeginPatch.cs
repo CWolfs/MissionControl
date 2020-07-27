@@ -1,8 +1,3 @@
-using UnityEngine;
-using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using Harmony;
 
 using BattleTech;
@@ -18,6 +13,7 @@ namespace MissionControl.Patches {
   public class ContractBeginPatch {
     public static void Prefix(Contract __instance) {
       if (!__instance.Accepted) return;
+      MissionControl.Instance.IsLoadingFromSave = UnityGameInstance.Instance.Game.Combat.IsLoadingFromSave;
 
       PathFinderManager.Instance.FullReset();
 
