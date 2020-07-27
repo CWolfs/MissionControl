@@ -11,7 +11,7 @@
   },
   "HotDropProtection": {
     "Enable": true,
-    "EnableForFlashpoints": false,
+    "EnableForFlashpoints": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "GuardOnHotDrop": false,
     "EvasionPipsOnHotDrop": 6,
