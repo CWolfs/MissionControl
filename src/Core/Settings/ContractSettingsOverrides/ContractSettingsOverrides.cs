@@ -1,7 +1,7 @@
 using Newtonsoft.Json.Linq;
 
 namespace MissionControl.Config {
-  public class FlashpointSettingsOverrides {
+  public class ContractSettingsOverrides {
     public static string AdditionalLances_Enable = "AdditionalLances.Enable";
     public static string AdditionalLances_AllyLanceCountOverride = "AdditionalLances.AllyLanceCount";
     public static string AdditionalLances_EnemyLanceCountOverride = "AdditionalLances.EnemyLanceCount";

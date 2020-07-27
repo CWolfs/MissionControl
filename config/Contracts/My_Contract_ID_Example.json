@@ -1,5 +1,5 @@
 {
-  "ID": "My_FP_Contract_ID_Example",
+  "ID": "My_Contract_ID_Example",
   "RandomSpawns": {
     "Enable": true
   },
@@ -21,6 +21,9 @@
     "IncreaseBoundarySizeByPercentage": 0.5
   },
   "DynamicWithdraw": {
+    "Enable": true
+  },
+  "AdditionalPlayerMechs": {
     "Enable": true
   }
 }

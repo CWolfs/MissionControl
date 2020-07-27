@@ -86,7 +86,7 @@ namespace MissionControl.Config {
         lanceNumber++;
       }
 
-      Main.Logger.Log($"[SelectNumberOfAdditionalLances] [{TeamType}] '{lanceNumber}' Additional Lance will be added");
+      Main.Logger.Log($"[SelectNumberOfAdditionalLances] [{TeamType}] '{lanceNumber}' Additional Lance will be added, unless later overridden");
       return lanceNumber;
     }
   }
