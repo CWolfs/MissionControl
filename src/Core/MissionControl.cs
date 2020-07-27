@@ -431,7 +431,7 @@ namespace MissionControl {
       bool areAdditionalPlayerMechsAllowed = Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalPlayerMechs_Enable) && Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.AdditionalPlayerMechs_Enable);
       if (areAdditionalPlayerMechsAllowed) return true;
 
-      areAdditionalPlayerMechsAllowed = IsAnyFlashpointContract() && Main.Settings.EnableAdditionalPlayerMechsForFlashpoints;
+      areAdditionalPlayerMechsAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableAdditionalPlayerMechsForFlashpoints);
       if (areAdditionalPlayerMechsAllowed) areAdditionalPlayerMechsAllowed = Main.Settings.AdditionalPlayerMechs;
 
       return areAdditionalPlayerMechsAllowed;
