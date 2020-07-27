@@ -248,7 +248,7 @@ namespace MissionControl.Rules {
         numberOfAdditionalEnemyLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances(faction, "enemy");
         if (Main.Settings.DebugMode && (Main.Settings.Debug.AdditionalLancesEnemyLanceCount > -1)) numberOfAdditionalEnemyLances = Main.Settings.Debug.AdditionalLancesEnemyLanceCount;
 
-        // Allow Flashpoint contract settings overrides to force their respective setting
+        // Allow contract-specific settings overrides to force their respective setting
         if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_EnemyLanceCountOverride)) {
           numberOfAdditionalEnemyLances = Main.Settings.ActiveContractSettings.GetInt(ContractSettingsOverrides.AdditionalLances_EnemyLanceCountOverride);
           Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Enemy lance count will be '{numberOfAdditionalEnemyLances}'.");
@@ -274,7 +274,7 @@ namespace MissionControl.Rules {
 
         int numberOfAdditionalAllyLances = Main.Settings.ActiveAdditionalLances.Allies.SelectNumberOfAdditionalLances(faction, "allies");
 
-        // Allow Flashpoint contract settings overrides to force their respective setting
+        // Allow contract-specific settings overrides to force their respective setting
         if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_AllyLanceCountOverride)) {
           numberOfAdditionalAllyLances = Main.Settings.ActiveContractSettings.GetInt(ContractSettingsOverrides.AdditionalLances_AllyLanceCountOverride);
           Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lance count will be '{numberOfAdditionalAllyLances}'.");
@@ -294,7 +294,7 @@ namespace MissionControl.Rules {
       string contractTypeName = MissionControl.Instance.CurrentContractType;
       float size = Main.Settings.ExtendedBoundaries.GetSizePercentage(mapId, contractTypeName);
 
-      // Allow Flashpoint contract settings overrides to force their respective setting
+      // Allow contract-specific settings overrides to force their respective setting
       if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedBoundaries_IncreaseBoundarySizeByPercentage)) {
         size = Main.Settings.ActiveContractSettings.GetInt(ContractSettingsOverrides.ExtendedBoundaries_IncreaseBoundarySizeByPercentage);
         Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. IncreaseBoundarySizeByPercentage will be '{size}'.");
