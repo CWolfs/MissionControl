@@ -28,7 +28,7 @@ namespace MissionControl.Logic {
 
         autoCompleteGameLogic.triggeringObjectiveList.Add(triggeringObjectiveStatus);
       } else {
-        Main.Logger.LogWarning($"[AddObjectiveToAutocompleteTrigger] Contract type '{MissionControl.Instance.CurrentContractType}' has no Autocomplete logic. Unable to add objective '{objectiveId}' to triggers");
+        Main.LogDebugWarning($"[AddObjectiveToAutocompleteTrigger] Contract type '{MissionControl.Instance.CurrentContractType}' has no Autocomplete logic. Unable to add objective '{objectiveId}' to triggers");
       }
     }
   }

@@ -7,7 +7,7 @@ namespace MissionControl.Patches {
   public class GameInstanceLaunchContractFromSavePatch {
     public static void Postfix(GameInstance __instance, CombatGameState combat) {
       MissionControl.Instance.CurrentContract = combat.ActiveContract;
-      MissionControl.Instance.SetFlashpointOverride();
+      MissionControl.Instance.SetContractSettingsOverride();
     }
   }
 }

@@ -246,13 +246,15 @@ namespace MissionControl {
       }
     }
 
-    public void SetFlashpointOverride() {
+    public void SetContractSettingsOverride() {
       string contractId = CurrentContract.Override.ID;
+      string type = IsAnyFlashpointContract() ? "flashpoint" : "contract";
+
       if (Main.Settings.ContractSettingsOverrides.ContainsKey(contractId)) {
-        Main.Logger.Log($"[MissionControl] Setting a Flashpoint settings override for '{contractId}'.");
+        Main.Logger.Log($"[MissionControl] Setting a {type} MC settings override for '{contractId}'.");
         Main.Settings.ActiveContractSettings = Main.Settings.ContractSettingsOverrides[contractId];
       } else {
-        Main.Logger.Log($"[MissionControl] No Flashpoint settings override found for '{contractId}'.");
+        Main.Logger.Log($"[MissionControl] No {type} MC settings override found for '{contractId}'.");
         Main.Settings.ActiveContractSettings = new Config.ContractSettingsOverrides();
       }
     }
