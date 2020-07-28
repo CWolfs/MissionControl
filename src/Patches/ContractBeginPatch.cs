@@ -13,8 +13,6 @@ namespace MissionControl.Patches {
   public class ContractBeginPatch {
     public static void Prefix(Contract __instance) {
       if (!__instance.Accepted) return;
-      MissionControl.Instance.IsLoadingFromSave = UnityGameInstance.Instance.Game.Combat.IsLoadingFromSave;
-
       PathFinderManager.Instance.FullReset();
 
       Main.Logger.Log($"[ContractBeginPatch Postfix] Patching Begin");
