@@ -31,7 +31,7 @@ namespace MissionControl.Patches {
     }
 
     public static void Postfix(AssetBundleManager __instance, string assetName, string bundleName, ref GameObject __result) {
-      if (MissionControl.Instance.AllowMissionControl() && !IsIgnoredBundle(bundleName)) {
+      if (MissionControl.Instance.IsLoadingFromSave && MissionControl.Instance.AllowMissionControl() && !IsIgnoredBundle(bundleName)) {
         if (__result == null) {
           Main.LogDebug($"[AssetBundleManagerGetAssetFromBundlePatch Postfix] Final stage of trying to load an asset bundle. Attempted to recovery before critical failure.");
           if (lookup.ContainsKey(assetName)) {

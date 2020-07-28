@@ -54,7 +54,12 @@ namespace MissionControl {
 
     public bool IsContractValid { get; private set; } = false;
     public bool IsMCLoadingFinished { get; set; } = false;
-    public bool IsLoadingFromSave { get => UnityGameInstance.Instance.Game.Combat.IsLoadingFromSave; }
+    public bool IsLoadingFromSave {
+      get {
+        if (UnityGameInstance.Instance.Game.Combat == null) return false;
+        return UnityGameInstance.Instance.Game.Combat.IsLoadingFromSave;
+      }
+    }
 
     private Dictionary<string, List<Type>> AvailableEncounters = new Dictionary<string, List<Type>>();
 
@@ -470,7 +475,6 @@ namespace MissionControl {
     public bool AllowMissionControl() {
       if (CurrentContract == null) return false;
 
-      if (IsLoadingFromSave) return false;
       if (CurrentContract.IsStoryContract) return false;
       if (CurrentContract.IsRestorationContract) return false;
       if (!IsAnyFlashpointContract()) return true;
