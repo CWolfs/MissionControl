@@ -10,11 +10,11 @@ namespace MissionControl.Logic {
     }
 
     public void Set(string key, List<string> keys) {
-      objectState.Add(key, keys);
+      objectState[key] = keys;
     }
 
     public void Set(string key, List<string[]> keys) {
-      objectState.Add(key, keys);
+      objectState[key] = keys;
     }
 
     public bool GetBool(string key) {
