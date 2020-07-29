@@ -54,7 +54,12 @@ namespace MissionControl {
 
     public bool IsContractValid { get; private set; } = false;
     public bool IsMCLoadingFinished { get; set; } = false;
-    public bool IsLoadingFromSave { get; set; } = false;
+    public bool IsLoadingFromSave {
+      get {
+        if (UnityGameInstance.Instance.Game.Combat == null) return false;
+        return UnityGameInstance.Instance.Game.Combat.IsLoadingFromSave;
+      }
+    }
 
     private Dictionary<string, List<Type>> AvailableEncounters = new Dictionary<string, List<Type>>();
 
@@ -247,14 +252,18 @@ namespace MissionControl {
     }
 
     public void SetContractSettingsOverride() {
-      string contractId = CurrentContract.Override.ID;
-      string type = IsAnyFlashpointContract() ? "flashpoint" : "contract";
+      if (!IsSkirmish(CurrentContract)) {
+        string contractId = CurrentContract.Override.ID;
+        string type = IsAnyFlashpointContract() ? "flashpoint" : "contract";
 
-      if (Main.Settings.ContractSettingsOverrides.ContainsKey(contractId)) {
-        Main.Logger.Log($"[MissionControl] Setting a {type} MC settings override for '{contractId}'.");
-        Main.Settings.ActiveContractSettings = Main.Settings.ContractSettingsOverrides[contractId];
+        if (Main.Settings.ContractSettingsOverrides.ContainsKey(contractId)) {
+          Main.Logger.Log($"[MissionControl] Setting a {type} MC settings override for '{contractId}'.");
+          Main.Settings.ActiveContractSettings = Main.Settings.ContractSettingsOverrides[contractId];
+        } else {
+          Main.Logger.Log($"[MissionControl] No {type} MC settings override found for '{contractId}'.");
+          Main.Settings.ActiveContractSettings = new Config.ContractSettingsOverrides();
+        }
       } else {
-        Main.Logger.Log($"[MissionControl] No {type} MC settings override found for '{contractId}'.");
         Main.Settings.ActiveContractSettings = new Config.ContractSettingsOverrides();
       }
     }
@@ -463,8 +472,13 @@ namespace MissionControl {
       return null;
     }
 
-    public bool AllowMissionControl() {
-      if (IsLoadingFromSave) return false;
+    public bool AllowMissionControl(bool SkipFromSaveCheck = false) {
+      if (CurrentContract == null) return false;
+
+      if (!SkipFromSaveCheck) {
+        if (IsLoadingFromSave) return false;
+      }
+
       if (CurrentContract.IsStoryContract) return false;
       if (CurrentContract.IsRestorationContract) return false;
       if (!IsAnyFlashpointContract()) return true;
