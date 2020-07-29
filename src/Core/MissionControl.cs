@@ -472,8 +472,12 @@ namespace MissionControl {
       return null;
     }
 
-    public bool AllowMissionControl() {
+    public bool AllowMissionControl(bool SkipFromSaveCheck = false) {
       if (CurrentContract == null) return false;
+
+      if (!SkipFromSaveCheck) {
+        if (IsLoadingFromSave) return false;
+      }
 
       if (CurrentContract.IsStoryContract) return false;
       if (CurrentContract.IsRestorationContract) return false;
