@@ -80,9 +80,9 @@ namespace MissionControl.Logic {
         GameObject objectGo = objectGos[i];
         string objectKey = objectKeys[i];
         string orientationTargetKey = orientationTargetKeys[i];
-        Main.Logger.Log($"[SpawnObjectsAroundTarget] Attemping for '{objectGo.name}' with key '{objectKey}'");
+        Main.Logger.LogDebug($"[SpawnObjectsAroundTarget] Attempting for '{objectGo.name}' with key '{objectKey}'");
         GameObject orientationTarget = orientationTargets[orientationTargetKey];
-        Main.Logger.Log($"[SpawnObjectsAroundTarget] Using orientation target key '{orientationTargetKey}' and Go name '{orientationTarget.transform.name}'");
+        Main.Logger.LogDebug($"[SpawnObjectsAroundTarget] Using orientation target key '{orientationTargetKey}' and Go name '{orientationTarget.transform.name}'");
 
         SaveSpawnPosition(objectGo);
 
