@@ -23,7 +23,6 @@ namespace MissionControl.ContractTypeBuilders {
     private JObject rotation;
     private string team;
     private string guid;
-    private int spawnPoints;
     private List<string> spawnPointGuids;
     private bool preciseSpawnPoints;
     private JObject mountOnTargets;
@@ -43,7 +42,6 @@ namespace MissionControl.ContractTypeBuilders {
       this.subType = spawner["SubType"].ToString();
       this.team = spawner["Team"].ToString();
       this.guid = spawner["Guid"].ToString();
-      this.spawnPoints = (int)spawner["SpawnPoints"];
       this.spawnPointGuids = spawner["SpawnPointGuids"].ToObject<List<string>>();
       this.preciseSpawnPoints = spawner.ContainsKey("PreciseSpawnPoints") ? (bool)spawner["PreciseSpawnPoints"] : false;
       this.mountOnTargets = spawner.ContainsKey("MountOn") ? (JObject)spawner["MountOn"] : null;
@@ -54,7 +52,7 @@ namespace MissionControl.ContractTypeBuilders {
       this.rotation = spawner.ContainsKey("Rotation") ? (JObject)spawner["Rotation"] : null;
       this.aiOrdersArray = spawner.ContainsKey("AI") ? (JArray)spawner["AI"] : null;
       this.alertLanceOnSpawn = spawner.ContainsKey("AlertLanceOnSpawn") ? (bool)spawner["AlertLanceOnSpawn"] : false;
-      this.defaultDetectionRange = spawner.ContainsKey("DefaultDetectionRange") ? (int)spawner["DefaultDetectionRange"] : 0;
+      this.defaultDetectionRange = spawner.ContainsKey("DefaultDetectionRange") ? (int)spawner["DefaultDetectionRange"] : 200;
       this.tags = spawner.ContainsKey("Tags") ? spawner["Tags"].ToObject<List<string>>() : null;
 
       if (this.aiOrdersArray != null) {
