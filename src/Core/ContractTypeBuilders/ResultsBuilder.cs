@@ -48,6 +48,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "CompleteObjective": BuildCompleteObjectiveResult(result); break;
         case "SetTemporaryUnitPhaseInitiativeByTag": BuildSetTemporaryUnitPhaseInitiativeByTagResult(result); break;
         case "SetLanceEvasionTicksByTag": BuildSetLanceEvasionTicksByTagResult(result); break;
+        case "ModifyLanceEvasionTicksByTag": BuildModifyLanceEvasionTicksByTagResult(result); break;
         case "CameraFocus": BuildCameraFocusResult(result); break;
         case "DestroyBuildingsAtLanceSpawns": BuildDestroyBuildingsAtLanceSpawnsResult(result); break;
         case "Delay": BuildDelayResult(result); break;
@@ -234,7 +235,7 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     private void BuildSetTemporaryUnitPhaseInitiativeByTagResult(JObject resultObject) {
-      Main.LogDebug("[BuildSetTemporaryUnitPhaseInitiativeByTagResult] Building 'SetTemporaryUnitPhaseInitiativeByTagResult' result");
+      Main.LogDebug("[BuildSetTemporaryUnitPhaseInitiativeByTagResult] Building 'SetTemporaryUnitPhaseInitiativeByTag' result");
       int initiative = (int)resultObject["Initiative"];
       string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
 
@@ -246,11 +247,23 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     private void BuildSetLanceEvasionTicksByTagResult(JObject resultObject) {
-      Main.LogDebug("[BuildSetLanceEvasionTicksByTagResult] Building 'SetLanceEvasionTicksByTagResult' result");
+      Main.LogDebug("[BuildSetLanceEvasionTicksByTagResult] Building 'SetLanceEvasionTicksByTag' result");
       int amount = (int)resultObject["Amount"];
       string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
 
       SetLanceEvasionTicksByTagResult result = ScriptableObject.CreateInstance<SetLanceEvasionTicksByTagResult>();
+      result.Amount = amount;
+      result.Tags = tags;
+
+      results.Add(result);
+    }
+
+    private void BuildModifyLanceEvasionTicksByTagResult(JObject resultObject) {
+      Main.LogDebug("[BuildModifyLanceEvasionTicksByTagResult] Building 'ModifyLanceEvasionTicksByTag' result");
+      int amount = (int)resultObject["Amount"];
+      string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
+
+      ModifyLanceEvasionTicksByTagResult result = ScriptableObject.CreateInstance<ModifyLanceEvasionTicksByTagResult>();
       result.Amount = amount;
       result.Tags = tags;
 
