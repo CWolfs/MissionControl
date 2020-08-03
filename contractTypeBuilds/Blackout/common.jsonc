@@ -753,7 +753,7 @@
         },
         {
           "Type": "ModifyLanceEvasionTicksByTag", // Reduce evasion to indicate a trap
-          "Amount": -2,
+          "Amount": -3,
           "Tags": ["Player 1"]
         }
       ]
