@@ -22,7 +22,7 @@ namespace MissionControl.LogicComponents.CombatStates {
 
     public override void OnEnterActive() {
       base.OnEnterActive();
-      Main.LogDebug($"[DisablePilotDeathGameLogic.OnEnterActive] OnEnterActive");
+      Main.LogDebug($"[DisablePilotDeathGameLogic.OnEnterActive] Activating");
       MissionControl.Instance.SetGameLogicData(DISABLE_PILOT_DEATH, "true");
       if (DisableInjuries) MissionControl.Instance.SetGameLogicData(DISABLE_PILOT_INJURY, "true");
     }

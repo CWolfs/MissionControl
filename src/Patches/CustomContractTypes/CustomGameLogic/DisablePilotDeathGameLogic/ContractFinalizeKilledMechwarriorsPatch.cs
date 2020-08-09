@@ -8,7 +8,6 @@ namespace MissionControl.Patches {
   [HarmonyPatch(typeof(Contract), "FinalizeKilledMechWarriors")]
   public class ContractFinalizeKilledMechwarriorsPatch {
     static bool Prefix(Contract __instance) {
-      Main.LogDebug($"[ContractFinalizeKilledMechwarriorsPatch.Prefix] DisablePilotDeathGameLogic - Running");
       string shouldDisablePilotDeath = MissionControl.Instance.GetGameLogicData(DisablePilotDeathGameLogic.DISABLE_PILOT_DEATH);
       if (UnityGameInstance.BattleTechGame.Combat != null) {
         if (shouldDisablePilotDeath != null && shouldDisablePilotDeath == "true") {
