@@ -50,6 +50,8 @@ namespace MissionControl {
     public bool IsCustomContractType { get; set; } = false;
     public List<object[]> QueuedBuildingMounts { get; set; } = new List<object[]>();
 
+    private Dictionary<string, string> CustomGameLogicData { get; set; } = new Dictionary<string, string>();
+
     public HexGrid HexGrid { get; private set; }
 
     public bool IsContractValid { get; private set; } = false;
@@ -222,6 +224,7 @@ namespace MissionControl {
       Main.Logger.Log($"[MissionControl] Clearing old caches");
 
       AssetBundleManagerGetAssetFromBundlePatch.ClearLookup();
+      CustomGameLogicData.Clear();  // This might need to be moved up higher in the load order
     }
 
     public void SetActiveAdditionalLances(Contract contract) {
@@ -507,6 +510,21 @@ namespace MissionControl {
       if (units.Length > 4) return true;
 
       return false;
+    }
+
+    public string GetGameLogicData(string key) {
+      if (CustomGameLogicData.ContainsKey(key)) {
+        return CustomGameLogicData[key];
+      }
+      return null;
+    }
+
+    public void SetGameLogicData(string key, string value) {
+      CustomGameLogicData[key] = value;
+    }
+
+    public void RemoveGameLogicData(string key) {
+      CustomGameLogicData.Remove(key);
     }
   }
 }

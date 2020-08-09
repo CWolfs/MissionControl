@@ -2,6 +2,11 @@ using UnityEngine;
 
 using Newtonsoft.Json.Linq;
 
+using System;
+
+using MissionControl.EncounterFactories;
+using MissionControl.LogicComponents.CombatStates;
+
 namespace MissionControl.ContractTypeBuilders {
   public class CombatStateBuilder : NodeBuilder {
     private ContractTypeBuilder contractTypeBuilder;
@@ -28,7 +33,9 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     private void BuildDisablePilotDeath() {
-      //SwapTeamFactionGameLogic swapFactionGameLogic = ContractEditFactory.CreateSwapFaction(this.parent, this.name, Guid.NewGuid().ToString(), teamGuid1, teamGuid2);
+      bool disableInjuries = state.ContainsKey("DisableInjuries") ? (bool)state["DisableInjuries"] : false;
+
+      DisablePilotDeathGameLogic disablePilotDeathGameLogic = CombatStateFactory.CreateDisablePilotDeath(this.parent, this.name, Guid.NewGuid().ToString(), disableInjuries);
     }
   }
 }
