@@ -28,7 +28,7 @@ namespace MissionControl.ContractTypeBuilders {
     public override void Build() {
       switch (subType) {
         case "SwapTeamFactions": BuildSwapFactions(); break;
-        default: Main.LogDebug($"[RegionBuilder.{contractTypeBuilder.ContractTypeKey}] No support for sub-type '{subType}'. Check for spelling mistakes."); break;
+        default: Main.LogDebug($"[ContractEditBuilder.{contractTypeBuilder.ContractTypeKey}] No support for sub-type '{subType}'. Check for spelling mistakes."); break;
       }
     }
 
