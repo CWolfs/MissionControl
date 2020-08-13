@@ -1,0 +1,88 @@
+{
+  "Key": "HoldTheLine", // Links to the ContractType Name
+  "Chunks": [
+    {
+      "Name": "Chunk_PlayerLance",
+      "Type": "Chunk",
+      "SubType": "PlayerLance",
+      "Children": [
+        {
+          "Name": "Spawner_PlayerLance",
+          "Type": "Spawner",
+          "SubType": "SimpleSpawner",
+          "Position": {
+            "Type": "World", // World, Local
+            "Value": { "x": 200, "y": 0, "z": 200 }
+          },
+          "Rotation": {
+            "Type": "World", // World, Local
+            "Value": { "x": 0, "y": 200, "z": 0 }
+          },
+          "Team": "Player1",
+          "Guid": "76b654a6-4f2c-4a6f-86e6-d4cf868335fe", // Must be this Guid and the contract .json must have this specific. It's hardcoded in BT for PlayerLance.
+          "SpawnPointGuids": [
+            "ec9d2280-ca9a-4d90-8a20-963d8a4c0a39",
+            "5df48a48-1840-49b0-84e9-126847053afa",
+            "a55fc76c-c955-4b61-bb64-2608c9beb9f5",
+            "0f10a383-7325-4726-b2c4-a0ef416e4b27"
+          ], // Must match the unit spawn guids in the contract .json
+          "SpawnType": "Instant" // Leopard, DropPod, Instant
+        }
+      ]
+    },
+    {
+      "Name": "Chunk_EncounterBoundary",
+      "Type": "Chunk",
+      "SubType": "EncounterBoundary",
+      "Children": [
+        {
+          "Name": "EncounterBoundaryRect",
+          "Type": "Region",
+          "SubType": "Boundary",
+          "Position": {
+            "Type": "World", // World, Local
+            "Value": { "x": 0, "y": 0, "z": 0 }
+          },
+          "Width": 1024,
+          "Length": 1024
+        }
+      ]
+    },
+    {
+      "Name": "Chunk_Stage_1_Move_To_AO",
+      "Type": "Chunk",
+      "SubType": "Container",
+      "Children": [
+        {
+          "Name": "Objective_Move_To_AO_Region",
+          "Type": "Objective",
+          "SubType": "OccupyRegion",
+          "Guid": "786166e2-22ea-45c1-9786-68df31958bd8", // Must match the objective guid in the contract .json
+          "ContractObjectiveGuid": "73275787-720a-4c33-9f20-953b1bbf48bd", // Must match the contract guid in the contract .json
+          "Title": "Move to AO",
+          "Priority": 1,
+          "IsPrimaryObjective": true,
+          "RegionGuid": "e7e9f35b-7ed8-404e-9dae-69be61de2dd3",
+          "LanceToUseRegionGuid": "76b654a6-4f2c-4a6f-86e6-d4cf868335fe", // Player lance GUID
+          "ProgressFormat": "with [unitsOccupyingSoFar]/[numberOfUnitsToOccupy] unit(s)",
+          "Description": "The objective for the player to investigate the blackout",
+          "RequiredTagsOnUnit": ["Player 1"],
+          "NumberOfUnitsToOccupy": 3
+        },
+        {
+          "Name": "Region_AO",
+          "Type": "Region",
+          "SubType": "Normal",
+          "Guid": "e7e9f35b-7ed8-404e-9dae-69be61de2dd3", // Must match the region guid in the contract .json
+          "ObjectiveGuid": "786166e2-22ea-45c1-9786-68df31958bd8", // Must match the objective guid in the build file to link to
+          "RegionDefId": "regionDef_TargetZone",
+          "Position": {
+            "Type": "World", // World, Local
+            "Value": { "x": -100, "y": 0, "z": -200 }
+          },
+          "Radius": 160
+        }
+      ]
+    }
+  ]
+}

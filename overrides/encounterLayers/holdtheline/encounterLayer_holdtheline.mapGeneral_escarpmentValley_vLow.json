@@ -1,0 +1,12 @@
+{
+  "EncounterLayerID": "mapGeneral_escarpmentValley_vLow.2c9d5194-86d7-402d-9134-a2eedfb86dff",
+  "MapID": "mapGeneral_escarpmentValley_vLow",
+  "Name": "encMC_HoldTheLine",
+  "FriendlyName": "Hold the Line",
+  "Description": "Player must prevent lances from reaching their destination",
+  "BattleValue": "0",
+  "ContractTypeID": "10003",
+  "EncounterLayerGUID": "2c9d5194-86d7-402d-9134-a2eedfb86dff",
+  "TagSetID": "mapGeneral_escarpmentValley_vLow.2c9d5194-86d7-402d-9134-a2eedfb86dff",
+  "IncludeInBuild": "1"
+}

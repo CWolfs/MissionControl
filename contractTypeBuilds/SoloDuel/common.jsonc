@@ -20,7 +20,6 @@
           },
           "Team": "Player1",
           "Guid": "76b654a6-4f2c-4a6f-86e6-d4cf868335fe", // Must be this Guid and the contract .json must have this specific. It's hardcoded in BT for PlayerLance.
-          "SpawnPoints": 1,
           "SpawnPointGuids": ["ec9d2280-ca9a-4d90-8a20-963d8a4c0a39"], // Must match the unit spawn guids in the contract .json
           "SpawnType": "Instant" // Leopard, DropPod, Instant
         }

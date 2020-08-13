@@ -1,0 +1,12 @@
+{
+  "EncounterLayerID": "mapArena_brokenGrotto_vLow.a3e06e57-7a7a-4ef5-acbb-4c4141847195",
+  "MapID": "mapArena_brokenGrotto_vLow",
+  "Name": "encMC_HoldTheLine",
+  "FriendlyName": "Hold the Line",
+  "Description": "Player must prevent lances from reaching their destination",
+  "BattleValue": "0",
+  "ContractTypeID": "10003",
+  "EncounterLayerGUID": "a3e06e57-7a7a-4ef5-acbb-4c4141847195",
+  "TagSetID": "mapArena_brokenGrotto_vLow.a3e06e57-7a7a-4ef5-acbb-4c4141847195",
+  "IncludeInBuild": "1"
+}
