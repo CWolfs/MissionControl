@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace MissionControl.Config {
   public class SettingsOverride {
-    public static string DebugMode = "DebudMode";
+    public static string DebugMode = "DebugMode";
     public static string VersionCheck = "VersionCheck";
     public static string DebugSkirmishMode = "DebugSkirmishMode";
     public static string EnableFlashpointOverrides = "EnableFlashpointOverrides";

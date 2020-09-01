@@ -50,6 +50,8 @@ namespace MissionControl {
     public bool IsCustomContractType { get; set; } = false;
     public List<object[]> QueuedBuildingMounts { get; set; } = new List<object[]>();
 
+    private Dictionary<string, string> CustomGameLogicData { get; set; } = new Dictionary<string, string>();
+
     public HexGrid HexGrid { get; private set; }
 
     public bool IsContractValid { get; private set; } = false;
@@ -222,6 +224,7 @@ namespace MissionControl {
       Main.Logger.Log($"[MissionControl] Clearing old caches");
 
       AssetBundleManagerGetAssetFromBundlePatch.ClearLookup();
+      CustomGameLogicData.Clear();  // This might need to be moved up higher in the load order
     }
 
     public void SetActiveAdditionalLances(Contract contract) {
@@ -353,11 +356,12 @@ namespace MissionControl {
 
     public bool AreAdditionalLancesAllowed(string teamType) {
       // Allow contract settings overrides to force their respective setting
-      bool areLancesAllowed = Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_Enable) && Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.AdditionalLances_Enable);
-      if (areLancesAllowed) return true;
+      if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_Enable)) {
+        return Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.AdditionalLances_Enable);
+      }
 
       if (Main.Settings.AdditionalLanceSettings.Enable) {
-        areLancesAllowed = !Main.Settings.AdditionalLanceSettings.IsTeamDisabled(teamType);
+        bool areLancesAllowed = !Main.Settings.AdditionalLanceSettings.IsTeamDisabled(teamType);
         if (areLancesAllowed) areLancesAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.AdditionalLanceSettings.EnableForFlashpoints);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.GetValidContractTypes().Contains(CurrentContractType);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.DisableWhenMaxTonnage.AreLancesAllowed((int)this.CurrentContract.Override.lanceMaxTonnage);
@@ -373,11 +377,12 @@ namespace MissionControl {
 
     public bool IsExtendedBoundariesAllowed() {
       // Allow contract settings overrides to force their respective setting
-      bool isExtendedBoundariesAllowed = Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedBoundaries_Enable) && Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.ExtendedBoundaries_Enable);
-      if (isExtendedBoundariesAllowed) return true;
+      if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedBoundaries_Enable)) {
+        return Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.ExtendedBoundaries_Enable);
+      }
 
       if (Main.Settings.ExtendedBoundaries.Enable) {
-        isExtendedBoundariesAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.ExtendedBoundaries.EnableForFlashpoints);
+        bool isExtendedBoundariesAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.ExtendedBoundaries.EnableForFlashpoints);
         if (isExtendedBoundariesAllowed) isExtendedBoundariesAllowed = Main.Settings.ExtendedBoundaries.GetValidContractTypes().Contains(CurrentContractType);
         return isExtendedBoundariesAllowed;
       }
@@ -386,11 +391,12 @@ namespace MissionControl {
 
     public bool IsExtendedLancesAllowed() {
       // Allow contract settings overrides to force their respective setting
-      bool isExtendedLancesAllowed = Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedLances_Enable) && Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.ExtendedLances_Enable);
-      if (isExtendedLancesAllowed) return true;
+      if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedLances_Enable)) {
+        return Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.ExtendedLances_Enable);
+      }
 
       if (Main.Settings.ExtendedLances.Enable) {
-        isExtendedLancesAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.ExtendedLances.EnableForFlashpoints);
+        bool isExtendedLancesAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.ExtendedLances.EnableForFlashpoints);
         if (isExtendedLancesAllowed) isExtendedLancesAllowed = Main.Settings.ExtendedLances.GetValidContractTypes().Contains(CurrentContractType);
         return isExtendedLancesAllowed;
       }
@@ -399,11 +405,12 @@ namespace MissionControl {
 
     public bool IsRandomSpawnsAllowed() {
       // Allow contract settings overrides to force their respective setting
-      bool isRandomSpawnsAllowed = Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.RandomSpawns_Enable) && Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.RandomSpawns_Enable);
-      if (isRandomSpawnsAllowed) return true;
+      if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.RandomSpawns_Enable)) {
+        return Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.RandomSpawns_Enable);
+      }
 
       if (Main.Settings.RandomSpawns.Enable) {
-        isRandomSpawnsAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.RandomSpawns.EnableForFlashpoints);
+        bool isRandomSpawnsAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.RandomSpawns.EnableForFlashpoints);
         if (isRandomSpawnsAllowed) isRandomSpawnsAllowed = Main.Settings.RandomSpawns.GetValidContractTypes().Contains(CurrentContractType);
         return isRandomSpawnsAllowed;
       }
@@ -412,11 +419,12 @@ namespace MissionControl {
 
     public bool IsDynamicWithdrawAllowed() {
       // Allow contract settings overrides to force their respective setting
-      bool isDynamicWithdrawAllowed = Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.DynamicWithdraw_Enable) && Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.DynamicWithdraw_Enable);
-      if (isDynamicWithdrawAllowed) return true;
+      if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.DynamicWithdraw_Enable)) {
+        return Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.DynamicWithdraw_Enable);
+      }
 
       if (Main.Settings.DynamicWithdraw.Enable) {
-        isDynamicWithdrawAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.DynamicWithdraw.EnableForFlashpoints);
+        bool isDynamicWithdrawAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.DynamicWithdraw.EnableForFlashpoints);
         if (isDynamicWithdrawAllowed) isDynamicWithdrawAllowed = !MissionControl.Instance.IsSkirmish();
         return isDynamicWithdrawAllowed;
       }
@@ -429,18 +437,24 @@ namespace MissionControl {
 
     public bool IsHotDropProtectionAllowed() {
       // Allow contract settings overrides to force their respective setting
-      bool isHotDropProtectionAllowed = Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.HotDropProtection_Enable) && Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.HotDropProtection_Enable);
-      if (isHotDropProtectionAllowed) return true;
+      if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.HotDropProtection_Enable)) {
+        return Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.HotDropProtection_Enable);
+      }
 
-      return Main.Settings.HotDropProtection.Enable;
+      if (Main.Settings.HotDropProtection.Enable) {
+        bool isHotDropProtectionAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.HotDropProtection.EnableForFlashpoints);
+        return isHotDropProtectionAllowed;
+      }
+      return false;
     }
 
     public bool AreAdditionalPlayerMechsAllowed() {
       // Allow contract settings overrides to force their respective setting
-      bool areAdditionalPlayerMechsAllowed = Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalPlayerMechs_Enable) && Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.AdditionalPlayerMechs_Enable);
-      if (areAdditionalPlayerMechsAllowed) return true;
+      if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalPlayerMechs_Enable)) {
+        return Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.AdditionalPlayerMechs_Enable);
+      }
 
-      areAdditionalPlayerMechsAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableAdditionalPlayerMechsForFlashpoints);
+      bool areAdditionalPlayerMechsAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableAdditionalPlayerMechsForFlashpoints);
       if (areAdditionalPlayerMechsAllowed) areAdditionalPlayerMechsAllowed = Main.Settings.AdditionalPlayerMechs;
 
       return areAdditionalPlayerMechsAllowed;
@@ -496,6 +510,21 @@ namespace MissionControl {
       if (units.Length > 4) return true;
 
       return false;
+    }
+
+    public string GetGameLogicData(string key) {
+      if (CustomGameLogicData.ContainsKey(key)) {
+        return CustomGameLogicData[key];
+      }
+      return null;
+    }
+
+    public void SetGameLogicData(string key, string value) {
+      CustomGameLogicData[key] = value;
+    }
+
+    public void RemoveGameLogicData(string key) {
+      CustomGameLogicData.Remove(key);
     }
   }
 }
