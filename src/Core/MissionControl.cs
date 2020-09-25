@@ -105,7 +105,11 @@ namespace MissionControl {
       AddEncounter("Blackout", typeof(BlackoutEncounterRules));
 
       // Skirmish
-      if (Main.Settings.DebugSkirmishMode) AddEncounter("ArenaSkirmish", typeof(DebugArenaSkirmishEncounterRules));
+      if (Main.Settings.DebugSkirmishMode) {
+        AddEncounter("ArenaSkirmish", typeof(DebugArenaSkirmishEncounterRules));
+      } else {
+        AddEncounter("ArenaSkirmish", typeof(ArenaSkirmishEncounterRules));
+      }
     }
 
     public void AddEncounter(string contractType, Type encounter) {
