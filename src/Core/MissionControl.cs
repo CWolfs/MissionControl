@@ -502,7 +502,7 @@ namespace MissionControl {
       if (!IsAnyFlashpointContract()) return true;
 
       if (IsAnyFlashpointContract() && Main.Settings.ActiveContractSettings.Enabled) return true;
-      if (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides) return true;
+      if (IsAnyFlashpointContract() && (Main.Settings.EnableFlashpointOverrides || Main.Settings.EnableAdditionalPlayerMechsForFlashpoints)) return true;
 
       return false;
     }
