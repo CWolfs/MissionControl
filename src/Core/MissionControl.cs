@@ -500,8 +500,9 @@ namespace MissionControl {
       if (CurrentContract.IsStoryContract) return false;
       if (CurrentContract.IsRestorationContract) return false;
       if (!IsAnyFlashpointContract()) return true;
+
       if (IsAnyFlashpointContract() && Main.Settings.ActiveContractSettings.Enabled) return true;
-      if (IsAnyFlashpointContract() && !Main.Settings.EnableFlashpointOverrides) return false;
+      if (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides) return true;
 
       return false;
     }
