@@ -4,6 +4,7 @@
   "DebugSkirmishMode": true,
   "EnableFlashpointOverrides": false,
   "EnableAdditionalPlayerMechsForFlashpoints": false,
+  "EnableAdditionalPlayerMechsForStory": false,
   "RandomSpawns": {
     "Enable": true,
     "EnableForFlashpoints": true,

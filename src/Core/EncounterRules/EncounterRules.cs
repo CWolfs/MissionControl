@@ -88,8 +88,8 @@ namespace MissionControl.Rules {
     private void RunSceneManipulationLogic(IEnumerable<LogicBlock> logicBlocks, RunPayload payload) {
       EncounterLayerGo = MissionControl.Instance.EncounterLayerGameObject;
       EncounterLayerData = MissionControl.Instance.EncounterLayerData;
-      ChunkPlayerLanceGo = EncounterLayerGo.transform.Find(GetPlayerLanceChunkName()).gameObject;
-      SpawnerPlayerLanceGo = ChunkPlayerLanceGo.transform.Find(GetPlayerLanceSpawnerName()).gameObject;
+      ChunkPlayerLanceGo = EncounterLayerGo.GetComponentInChildren<PlayerLanceChunkGameLogic>().gameObject;
+      SpawnerPlayerLanceGo = ChunkPlayerLanceGo.GetComponentInChildren<PlayerLanceSpawnerGameLogic>().gameObject;
       ObjectLookup["ChunkPlayerLance"] = ChunkPlayerLanceGo;
       ObjectLookup["SpawnerPlayerLance"] = SpawnerPlayerLanceGo;
 
@@ -190,32 +190,6 @@ namespace MissionControl.Rules {
 
       Main.Logger.Log($"[{this.GetType().Name}] Using plot name '{plot.name}'");
       return plot.name;
-    }
-
-    public static string GetPlayerLanceChunkName() {
-      string type = MissionControl.Instance.CurrentContract.ContractTypeValue.Name;
-
-      if (type == "ArenaSkirmish") {
-        return "MultiPlayerSkirmishChunk";
-      } else if ((type == "Story_1B_Retreat") || (type == "Story_2_ThreeYearsLater_Default")) {
-        return "Gen_PlayerLance";
-      }
-
-      return "Chunk_PlayerLance";
-    }
-
-    public static string GetPlayerLanceSpawnerName() {
-      string type = MissionControl.Instance.CurrentContract.ContractTypeValue.Name;
-
-      if (type == "ArenaSkirmish") {
-        return "Player1LanceSpawner";
-      } else if ((type == "Story_1B_Retreat") || (type == "FireMission") || (type == "AttackDefend")) {
-        return "PlayerLanceSpawner";
-      } else if (type == "ThreeWayBattle") {
-        return "PlayerLanceSpawner_Battle+";
-      }
-
-      return "Spawner_PlayerLance";
     }
 
     protected void BuildAdditionalLances(string enemyOrientationTargetKey, SpawnLogic.LookDirection enemyLookDirection,

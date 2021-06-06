@@ -1,11 +1,6 @@
 using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 
 using BattleTech;
-
-using MissionControl.Rules;
 
 namespace MissionControl.Logic {
   public abstract class ChunkLogic : LogicBlock {
@@ -33,8 +28,8 @@ namespace MissionControl.Logic {
 
     public GameObject GetPlayerSpawn() {
       GameObject encounterLayerGo = MissionControl.Instance.EncounterLayerGameObject;
-      GameObject chunkPlayerLanceGo = encounterLayerGo.transform.Find(EncounterRules.GetPlayerLanceChunkName()).gameObject;
-      GameObject spawnerPlayerLanceGo = chunkPlayerLanceGo.transform.Find(EncounterRules.GetPlayerLanceSpawnerName()).gameObject;
+      GameObject chunkPlayerLanceGo = encounterLayerGo.GetComponentInChildren<PlayerLanceChunkGameLogic>().gameObject;
+      GameObject spawnerPlayerLanceGo = chunkPlayerLanceGo.GetComponentInChildren<PlayerLanceSpawnerGameLogic>().gameObject;
       return spawnerPlayerLanceGo;
     }
 

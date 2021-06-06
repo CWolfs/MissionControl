@@ -458,7 +458,7 @@ namespace MissionControl {
         return Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.AdditionalPlayerMechs_Enable);
       }
 
-      bool areAdditionalPlayerMechsAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableAdditionalPlayerMechsForFlashpoints);
+      bool areAdditionalPlayerMechsAllowed = !IsAnyFlashpointContract() || (IsAnyFlashpointContract() && Main.Settings.EnableAdditionalPlayerMechsForFlashpoints || (IsAnyStoryContract() && Main.Settings.EnableAdditionalPlayerMechsForStory));
       if (areAdditionalPlayerMechsAllowed) areAdditionalPlayerMechsAllowed = Main.Settings.AdditionalPlayerMechs;
 
       return areAdditionalPlayerMechsAllowed;
@@ -473,6 +473,10 @@ namespace MissionControl {
 
     public bool IsAnyFlashpointContract() {
       return this.CurrentContract.IsFlashpointContract || this.CurrentContract.IsFlashpointCampaignContract;
+    }
+
+    public bool IsAnyStoryContract() {
+      return this.CurrentContract.IsStoryContract || CurrentContract.IsRestorationContract;
     }
 
     public bool ShouldUseElites(FactionDef faction, string teamType) {
@@ -497,8 +501,7 @@ namespace MissionControl {
         if (IsLoadingFromSave) return false;
       }
 
-      if (CurrentContract.IsStoryContract) return false;
-      if (CurrentContract.IsRestorationContract) return false;
+      if (IsAnyStoryContract() && !Main.Settings.EnableAdditionalPlayerMechsForStory) return false;
       if (!IsAnyFlashpointContract()) return true;
 
       if (IsAnyFlashpointContract() && Main.Settings.ActiveContractSettings.Enabled) return true;

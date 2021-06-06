@@ -12,6 +12,7 @@ namespace MissionControl.Config {
     public static string DebugSkirmishMode = "DebugSkirmishMode";
     public static string EnableFlashpointOverrides = "EnableFlashpointOverrides";
     public static string EnableAdditionalPlayerMechsForFlashpoints = "EnableAdditionalPlayerMechsForFlashpoints";
+    public static string EnableAdditionalPlayerMechsForStory = "EnableAdditionalPlayerMechsForStory";
 
     public static string RandomSpawns_Enable = "RandomSpawns.Enable";
     public static string RandomSpawns_EnableForFlashpoints = "RandomSpawns.EnableForFlashpoints";
@@ -175,6 +176,7 @@ namespace MissionControl.Config {
       if (Has(DebugSkirmishMode)) settings.DebugSkirmishMode = GetBool(DebugSkirmishMode);
       if (Has(EnableFlashpointOverrides)) settings.EnableFlashpointOverrides = GetBool(EnableFlashpointOverrides);
       if (Has(EnableAdditionalPlayerMechsForFlashpoints)) settings.EnableAdditionalPlayerMechsForFlashpoints = GetBool(EnableAdditionalPlayerMechsForFlashpoints);
+      if (Has(EnableAdditionalPlayerMechsForStory)) settings.EnableAdditionalPlayerMechsForStory = GetBool(EnableAdditionalPlayerMechsForStory);
     }
 
     private void LoadRandomSpawns(Settings settings) {
