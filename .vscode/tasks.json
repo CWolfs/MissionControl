@@ -5,13 +5,13 @@
       "label": "build",
       "type": "process",
       "command": "dotnet",
-      "args": ["build", "D:/Modding/Battletech/MissionControl/src/MissionControl.csproj"],
+      "args": ["build", "K:/Modding/Battletech/MissionControl/src/MissionControl.csproj"],
       "problemMatcher": "$msCompile"
     },
     {
       "label": "copy (assets)",
       "type": "shell",
-      "command": "./copy-assets.sh"
+      "command": "copy-assets.sh"
     }
   ]
 }
