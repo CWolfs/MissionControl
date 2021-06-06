@@ -31,6 +31,9 @@ namespace MissionControl.Config {
     [JsonProperty("EnableAdditionalPlayerMechsForFlashpoints")]
     public bool EnableAdditionalPlayerMechsForFlashpoints { get; set; } = false;
 
+    [JsonProperty("EnableAdditionalPlayerMechsForStory")]
+    public bool EnableAdditionalPlayerMechsForStory { get; set; } = false;
+
     [JsonProperty("RandomSpawns")]
     public RandomSpawnsSettings RandomSpawns { get; set; } = new RandomSpawnsSettings();
 
