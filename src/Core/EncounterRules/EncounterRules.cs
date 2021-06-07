@@ -85,11 +85,33 @@ namespace MissionControl.Rules {
       }
     }
 
+    public static GameObject GetPlayerLanceChunkGameObject(GameObject encounterLayerGo) {
+      string type = MissionControl.Instance.CurrentContract.ContractTypeValue.Name;
+
+      if (type == "ArenaSkirmish") {
+        return encounterLayerGo.transform.Find("MultiPlayerSkirmishChunk").gameObject;
+      }
+
+      return encounterLayerGo.GetComponentInChildren<PlayerLanceChunkGameLogic>().gameObject;
+    }
+
+    public static GameObject GetPlayerSpawnerGameObject(GameObject chunkPlayerLanceGo) {
+      string type = MissionControl.Instance.CurrentContract.ContractTypeValue.Name;
+
+      if (type == "ArenaSkirmish") {
+        return chunkPlayerLanceGo.transform.Find("Player1LanceSpawner").gameObject;
+      }
+
+      return chunkPlayerLanceGo.GetComponentInChildren<PlayerLanceSpawnerGameLogic>().gameObject;
+    }
+
     private void RunSceneManipulationLogic(IEnumerable<LogicBlock> logicBlocks, RunPayload payload) {
       EncounterLayerGo = MissionControl.Instance.EncounterLayerGameObject;
       EncounterLayerData = MissionControl.Instance.EncounterLayerData;
-      ChunkPlayerLanceGo = EncounterLayerGo.GetComponentInChildren<PlayerLanceChunkGameLogic>().gameObject;
-      SpawnerPlayerLanceGo = ChunkPlayerLanceGo.GetComponentInChildren<PlayerLanceSpawnerGameLogic>().gameObject;
+
+      ChunkPlayerLanceGo = GetPlayerLanceChunkGameObject(EncounterLayerGo);
+      SpawnerPlayerLanceGo =  GetPlayerSpawnerGameObject(ChunkPlayerLanceGo);
+
       ObjectLookup["ChunkPlayerLance"] = ChunkPlayerLanceGo;
       ObjectLookup["SpawnerPlayerLance"] = SpawnerPlayerLanceGo;
 

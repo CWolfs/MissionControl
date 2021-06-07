@@ -22,6 +22,9 @@ namespace MissionControl.Config {
     [JsonIgnore]
     public string GithubVersion { get; set; } = "0.0.0";
 
+    [JsonProperty("EnableSkirmishMode")]
+    public bool EnableSkirmishMode { get; set; } = true;
+
     [JsonProperty("DebugSkirmishMode")]
     public bool DebugSkirmishMode { get; set; } = false;
 

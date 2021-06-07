@@ -1,7 +1,8 @@
 {
   "DebugMode": true,
   "VersionCheck": true,
-  "DebugSkirmishMode": true,
+  "EnableSkirmishMode": true,
+  "DebugSkirmishMode": false,
   "EnableFlashpointOverrides": false,
   "EnableAdditionalPlayerMechsForFlashpoints": false,
   "EnableStoryOverrides": false,

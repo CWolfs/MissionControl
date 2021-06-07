@@ -9,6 +9,7 @@ namespace MissionControl.Config {
   public class SettingsOverride {
     public static string DebugMode = "DebugMode";
     public static string VersionCheck = "VersionCheck";
+    public static string EnableSkirmishMode = "EnableSkirmishMode";
     public static string DebugSkirmishMode = "DebugSkirmishMode";
     public static string EnableFlashpointOverrides = "EnableFlashpointOverrides";
     public static string EnableAdditionalPlayerMechsForFlashpoints = "EnableAdditionalPlayerMechsForFlashpoints";
@@ -180,6 +181,7 @@ namespace MissionControl.Config {
     private void LoadRoot(Settings settings) {
       if (Has(DebugMode)) settings.DebugMode = GetBool(DebugMode);
       if (Has(VersionCheck)) settings.VersionCheck = GetBool(VersionCheck);
+      if (Has(EnableSkirmishMode)) settings.EnableSkirmishMode = GetBool(EnableSkirmishMode);
       if (Has(DebugSkirmishMode)) settings.DebugSkirmishMode = GetBool(DebugSkirmishMode);
       if (Has(EnableFlashpointOverrides)) settings.EnableFlashpointOverrides = GetBool(EnableFlashpointOverrides);
       if (Has(EnableAdditionalPlayerMechsForFlashpoints)) settings.EnableAdditionalPlayerMechsForFlashpoints = GetBool(EnableAdditionalPlayerMechsForFlashpoints);
