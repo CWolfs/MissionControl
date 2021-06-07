@@ -107,7 +107,7 @@ namespace MissionControl {
       // Skirmish
       if (Main.Settings.DebugSkirmishMode) {
         AddEncounter("ArenaSkirmish", typeof(DebugArenaSkirmishEncounterRules));
-      } else {
+      } else if (Main.Settings.EnableSkirmishMode) {
         AddEncounter("ArenaSkirmish", typeof(ArenaSkirmishEncounterRules));
       }
     }

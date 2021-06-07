@@ -2,6 +2,8 @@ using UnityEngine;
 
 using BattleTech;
 
+using MissionControl.Rules;
+
 namespace MissionControl.Logic {
   public abstract class ChunkLogic : LogicBlock {
     public struct ProgressFormat {
@@ -28,8 +30,8 @@ namespace MissionControl.Logic {
 
     public GameObject GetPlayerSpawn() {
       GameObject encounterLayerGo = MissionControl.Instance.EncounterLayerGameObject;
-      GameObject chunkPlayerLanceGo = encounterLayerGo.GetComponentInChildren<PlayerLanceChunkGameLogic>().gameObject;
-      GameObject spawnerPlayerLanceGo = chunkPlayerLanceGo.GetComponentInChildren<PlayerLanceSpawnerGameLogic>().gameObject;
+      GameObject chunkPlayerLanceGo = EncounterRules.GetPlayerLanceChunkGameObject(encounterLayerGo);
+      GameObject spawnerPlayerLanceGo = EncounterRules.GetPlayerSpawnerGameObject(chunkPlayerLanceGo);
       return spawnerPlayerLanceGo;
     }
 
