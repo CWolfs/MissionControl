@@ -11,6 +11,9 @@ namespace MissionControl.Config {
     [JsonProperty("EnableForFlashpoints")]
     public bool EnableForFlashpoints { get; set; } = true;
 
+    [JsonProperty("EnableForStory")]
+    public bool EnableForStory { get; set; } = true;
+
     [JsonProperty("IncludeContractTypes")]
     public List<string> IncludeContractTypes { get; set; } = new List<string>();
 

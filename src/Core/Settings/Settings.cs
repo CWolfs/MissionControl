@@ -30,6 +30,9 @@ namespace MissionControl.Config {
 
     [JsonProperty("EnableAdditionalPlayerMechsForFlashpoints")]
     public bool EnableAdditionalPlayerMechsForFlashpoints { get; set; } = false;
+    
+    [JsonProperty("EnableStoryOverrides")]
+    public bool EnableStoryOverrides { get; set; } = false;
 
     [JsonProperty("EnableAdditionalPlayerMechsForStory")]
     public bool EnableAdditionalPlayerMechsForStory { get; set; } = false;
