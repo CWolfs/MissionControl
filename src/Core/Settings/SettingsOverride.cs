@@ -12,15 +12,18 @@ namespace MissionControl.Config {
     public static string DebugSkirmishMode = "DebugSkirmishMode";
     public static string EnableFlashpointOverrides = "EnableFlashpointOverrides";
     public static string EnableAdditionalPlayerMechsForFlashpoints = "EnableAdditionalPlayerMechsForFlashpoints";
+    public static string EnableStoryOverrides = "EnableStoryOverrides";
     public static string EnableAdditionalPlayerMechsForStory = "EnableAdditionalPlayerMechsForStory";
 
     public static string RandomSpawns_Enable = "RandomSpawns.Enable";
     public static string RandomSpawns_EnableForFlashpoints = "RandomSpawns.EnableForFlashpoints";
+    public static string RandomSpawns_EnableForStory = "RandomSpawns.EnableForStory";
     public static string RandomSpawns_IncludeContractTypes = "RandomSpawns.IncludeContractTypes";
     public static string RandomSpawns_ExcludeContractTypes = "RandomSpawns.ExcludeContractTypes";
 
     public static string HotDropProtection_Enable = "HotDropProtection.Enable";
     public static string HotDropProtection_EnableForFlashpoints = "HotDropProtection.EnableForFlashpoints";
+    public static string HotDropProtection_EnableForStory = "HotDropProtection.EnableForStory";
     public static string HotDropProtection_IncludeContractTypes = "HotDropProtection.IncludeContractTypes";
     public static string HotDropProtection_ExcludeContractTypes = "HotDropProtection.ExcludeContractTypes";
     public static string HotDropProtection_GuardOnHotDrop = "HotDropProtection.GuardOnHotDrop";
@@ -31,6 +34,7 @@ namespace MissionControl.Config {
 
     public static string AdditionalLances_Enable = "AdditionalLances.Enable";
     public static string AdditionalLances_EnableForFlashpoints = "AdditionalLances.EnableForFlashpoints";
+    public static string AdditionalLances_EnableForStory = "AdditionalLances.EnableForStory";
     public static string AdditionalLances_IncludeContractTypes = "AdditionalLances.IncludeContractTypes";
     public static string AdditionalLances_ExcludeContractTypes = "AdditionalLances.ExcludeContractTypes";
     public static string AdditionalLances_IsPrimaryObjectiveIn = "AdditionalLances.IsPrimaryObjectiveIn";
@@ -61,6 +65,7 @@ namespace MissionControl.Config {
 
     public static string ExtendedLances_Enable = "ExtendedLances.Enable";
     public static string ExtendedLances_EnableForFlashpoints = "ExtendedLances.EnableForFlashpoints";
+    public static string ExtendedLances_EnableForStory = "ExtendedLances.EnableForStory";
     public static string ExtendedLances_Autofill = "ExtendedLances.Autofill";
     public static string ExtendedLances_IncludeContractTypes = "ExtendedLances.IncludeContractTypes";
     public static string ExtendedLances_ExcludeContractTypes = "ExtendedLances.ExcludeContractTypes";
@@ -71,6 +76,7 @@ namespace MissionControl.Config {
 
     public static string ExtendedBoundaries_Enable = "ExtendedBoundaries.Enable";
     public static string ExtendedBoundaries_EnableForFlashpoints = "ExtendedBoundaries.EnableForFlashpoints";
+    public static string ExtendedBoundaries_EnableForStory = "ExtendedBoundaries.EnableForStory";
     public static string ExtendedBoundaries_IncludeContractTypes = "ExtendedBoundaries.IncludeContractTypes";
     public static string ExtendedBoundaries_ExcludeContractTypes = "ExtendedBoundaries.ExcludeContractTypes";
     public static string ExtendedBoundaries_IncreaseBoundarySizeByPercentage = "ExtendedBoundaries.IncreaseBoundarySizeByPercentage";
@@ -78,6 +84,7 @@ namespace MissionControl.Config {
 
     public static string DynamicWithdraw_Enable = "DynamicWithdraw.Enable";
     public static string DynamicWithdraw_EnableForFlashpoints = "DynamicWithdraw.EnableForFlashpoints";
+    public static string DynamicWithdraw_EnableForStory = "DynamicWithdraw.EnableForStory";
     public static string DynamicWithdraw_IncludeContractTypes = "DynamicWithdraw.IncludeContractTypes";
     public static string DynamicWithdraw_ExcludeContractTypes = "DynamicWithdraw.ExcludeContractTypes";
     public static string DynamicWithdraw_MinDistanceForZone = "DynamicWithdraw.MinDistanceForZone";
@@ -176,12 +183,14 @@ namespace MissionControl.Config {
       if (Has(DebugSkirmishMode)) settings.DebugSkirmishMode = GetBool(DebugSkirmishMode);
       if (Has(EnableFlashpointOverrides)) settings.EnableFlashpointOverrides = GetBool(EnableFlashpointOverrides);
       if (Has(EnableAdditionalPlayerMechsForFlashpoints)) settings.EnableAdditionalPlayerMechsForFlashpoints = GetBool(EnableAdditionalPlayerMechsForFlashpoints);
+      if (Has(EnableStoryOverrides)) settings.EnableStoryOverrides = GetBool(EnableStoryOverrides);
       if (Has(EnableAdditionalPlayerMechsForStory)) settings.EnableAdditionalPlayerMechsForStory = GetBool(EnableAdditionalPlayerMechsForStory);
     }
 
     private void LoadRandomSpawns(Settings settings) {
       if (Has(RandomSpawns_Enable)) settings.RandomSpawns.Enable = GetBool(RandomSpawns_Enable);
       if (Has(RandomSpawns_EnableForFlashpoints)) settings.RandomSpawns.EnableForFlashpoints = GetBool(RandomSpawns_EnableForFlashpoints);
+      if (Has(RandomSpawns_EnableForStory)) settings.RandomSpawns.EnableForStory = GetBool(RandomSpawns_EnableForStory);
       if (Has(RandomSpawns_IncludeContractTypes)) settings.RandomSpawns.IncludeContractTypes = GetStringList(RandomSpawns_IncludeContractTypes);
       if (Has(RandomSpawns_ExcludeContractTypes)) settings.RandomSpawns.ExcludeContractTypes = GetStringList(RandomSpawns_ExcludeContractTypes);
     }
@@ -189,6 +198,7 @@ namespace MissionControl.Config {
     private void LoadHotDropProtection(Settings settings) {
       if (Has(HotDropProtection_Enable)) settings.HotDropProtection.Enable = GetBool(HotDropProtection_Enable);
       if (Has(HotDropProtection_EnableForFlashpoints)) settings.HotDropProtection.EnableForFlashpoints = GetBool(HotDropProtection_EnableForFlashpoints);
+      if (Has(HotDropProtection_EnableForStory)) settings.HotDropProtection.EnableForStory = GetBool(HotDropProtection_EnableForStory);
       if (Has(HotDropProtection_IncludeContractTypes)) settings.HotDropProtection.IncludeContractTypes = GetStringList(HotDropProtection_IncludeContractTypes);
       if (Has(HotDropProtection_ExcludeContractTypes)) settings.HotDropProtection.ExcludeContractTypes = GetStringList(HotDropProtection_ExcludeContractTypes);
       if (Has(HotDropProtection_GuardOnHotDrop)) settings.HotDropProtection.GuardOnHotDrop = GetBool(HotDropProtection_GuardOnHotDrop);
@@ -201,6 +211,7 @@ namespace MissionControl.Config {
     private void LoadAdditionalLances(Settings settings) {
       if (Has(AdditionalLances_Enable)) settings.AdditionalLanceSettings.Enable = GetBool(AdditionalLances_Enable);
       if (Has(AdditionalLances_EnableForFlashpoints)) settings.AdditionalLanceSettings.EnableForFlashpoints = GetBool(AdditionalLances_EnableForFlashpoints);
+      if (Has(AdditionalLances_EnableForStory)) settings.AdditionalLanceSettings.EnableForStory = GetBool(AdditionalLances_EnableForStory);
       if (Has(AdditionalLances_IncludeContractTypes)) settings.AdditionalLanceSettings.IncludeContractTypes = GetStringList(AdditionalLances_IncludeContractTypes);
       if (Has(AdditionalLances_ExcludeContractTypes)) settings.AdditionalLanceSettings.ExcludeContractTypes = GetStringList(AdditionalLances_ExcludeContractTypes);
       if (Has(AdditionalLances_IsPrimaryObjectiveIn)) settings.AdditionalLanceSettings.IsPrimaryObjectiveIn = GetStringList(AdditionalLances_IsPrimaryObjectiveIn);
@@ -234,6 +245,7 @@ namespace MissionControl.Config {
     private void LoadExtendedLances(Settings settings) {
       if (Has(ExtendedLances_Enable)) settings.ExtendedLances.Enable = GetBool(ExtendedLances_Enable);
       if (Has(ExtendedLances_EnableForFlashpoints)) settings.ExtendedLances.EnableForFlashpoints = GetBool(ExtendedLances_EnableForFlashpoints);
+      if (Has(ExtendedLances_EnableForStory)) settings.ExtendedLances.EnableForStory = GetBool(ExtendedLances_EnableForStory);
       if (Has(ExtendedLances_Autofill)) settings.ExtendedLances.Autofill = GetBool(ExtendedLances_Autofill);
       if (Has(ExtendedLances_IncludeContractTypes)) settings.ExtendedLances.IncludeContractTypes = GetStringList(ExtendedLances_IncludeContractTypes);
       if (Has(ExtendedLances_ExcludeContractTypes)) settings.ExtendedLances.ExcludeContractTypes = GetStringList(ExtendedLances_ExcludeContractTypes);
@@ -251,6 +263,7 @@ namespace MissionControl.Config {
     private void LoadExtendedBoundaries(Settings settings) {
       if (Has(ExtendedBoundaries_Enable)) settings.ExtendedBoundaries.Enable = GetBool(ExtendedBoundaries_Enable);
       if (Has(ExtendedBoundaries_EnableForFlashpoints)) settings.ExtendedBoundaries.EnableForFlashpoints = GetBool(ExtendedBoundaries_EnableForFlashpoints);
+      if (Has(ExtendedBoundaries_EnableForStory)) settings.ExtendedBoundaries.EnableForStory = GetBool(ExtendedBoundaries_EnableForStory);
       if (Has(ExtendedBoundaries_IncludeContractTypes)) settings.ExtendedBoundaries.IncludeContractTypes = GetStringList(ExtendedBoundaries_IncludeContractTypes);
       if (Has(ExtendedBoundaries_ExcludeContractTypes)) settings.ExtendedBoundaries.ExcludeContractTypes = GetStringList(ExtendedBoundaries_ExcludeContractTypes);
       if (Has(ExtendedBoundaries_IncreaseBoundarySizeByPercentage)) settings.ExtendedBoundaries.IncreaseBoundarySizeByPercentage = GetFloat(ExtendedBoundaries_IncreaseBoundarySizeByPercentage);
@@ -265,6 +278,7 @@ namespace MissionControl.Config {
     public void LoadDynamicWithdraw(Settings settings) {
       if (Has(DynamicWithdraw_Enable)) settings.DynamicWithdraw.Enable = GetBool(DynamicWithdraw_Enable);
       if (Has(DynamicWithdraw_EnableForFlashpoints)) settings.DynamicWithdraw.EnableForFlashpoints = GetBool(DynamicWithdraw_EnableForFlashpoints);
+      if (Has(DynamicWithdraw_EnableForStory)) settings.DynamicWithdraw.EnableForStory = GetBool(DynamicWithdraw_EnableForStory);
       if (Has(DynamicWithdraw_IncludeContractTypes)) settings.DynamicWithdraw.IncludeContractTypes = GetStringList(DynamicWithdraw_IncludeContractTypes);
       if (Has(DynamicWithdraw_ExcludeContractTypes)) settings.DynamicWithdraw.ExcludeContractTypes = GetStringList(DynamicWithdraw_ExcludeContractTypes);
       if (Has(DynamicWithdraw_MinDistanceForZone)) settings.DynamicWithdraw.MinDistanceForZone = GetInt(DynamicWithdraw_MinDistanceForZone);
