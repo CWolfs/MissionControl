@@ -85,6 +85,29 @@ namespace MissionControl.Rules {
       }
     }
 
+    /* DEPRECATED IN MC 1.2.0 */
+    public static string GetPlayerLanceChunkName() {
+      Main.Logger.LogError($"[MC 1.2+ DEPRECATION] 'EncounterRules.GetPlayerLanceChunkName()' IS DEPRECATED. USE 'EncounterRules.GetPlayerLanceChunkGameObject(GameObject encounterLayerGo)' INSTEAD. IT WILL BE REMOVED IN A FUTURE UPDATE.");
+      Main.Logger.LogError($"[MC 1.2+ DEPRECATION] 'EncounterRules.GetPlayerLanceChunkName()' IS DEPRECATED. USE 'EncounterRules.GetPlayerLanceChunkGameObject(GameObject encounterLayerGo)' INSTEAD. IT WILL BE REMOVED IN A FUTURE UPDATE.");
+      Main.Logger.LogError($"[MC 1.2+ DEPRECATION] 'EncounterRules.GetPlayerLanceChunkName()' IS DEPRECATED. USE 'EncounterRules.GetPlayerLanceChunkGameObject(GameObject encounterLayerGo)' INSTEAD. IT WILL BE REMOVED IN A FUTURE UPDATE.");
+
+      GameObject encounterLayerGo = MissionControl.Instance.EncounterLayerGameObject;
+      GameObject chunkPlayerLanceGo = EncounterRules.GetPlayerLanceChunkGameObject(encounterLayerGo);
+      return chunkPlayerLanceGo.name;
+    }
+
+    /* DEPRECATED IN MC 1.2.0 */
+    public static string GetPlayerLanceSpawnerName() {
+      Main.Logger.LogError($"[MC 1.2+ DEPRECATION] 'EncounterRules.GetPlayerLanceSpawnerName()' IS DEPRECATED. USE 'EncounterRules.GetPlayerSpawnerGameObject(GameObject encounterLayerGo)' INSTEAD. IT WILL BE REMOVED IN A FUTURE UPDATE.");
+      Main.Logger.LogError($"[MC 1.2+ DEPRECATION] 'EncounterRules.GetPlayerLanceSpawnerName()' IS DEPRECATED. USE 'EncounterRules.GetPlayerSpawnerGameObject(GameObject encounterLayerGo)' INSTEAD. IT WILL BE REMOVED IN A FUTURE UPDATE.");
+      Main.Logger.LogError($"[MC 1.2+ DEPRECATION] 'EncounterRules.GetPlayerLanceSpawnerName()' IS DEPRECATED. USE 'EncounterRules.GetPlayerSpawnerGameObject(GameObject encounterLayerGo)' INSTEAD. IT WILL BE REMOVED IN A FUTURE UPDATE.");
+      
+      GameObject encounterLayerGo = MissionControl.Instance.EncounterLayerGameObject;
+      GameObject chunkPlayerLanceGo = EncounterRules.GetPlayerLanceChunkGameObject(encounterLayerGo);
+      GameObject SpawnerPlayerLanceGo =  GetPlayerSpawnerGameObject(chunkPlayerLanceGo);
+      return SpawnerPlayerLanceGo.name;
+    }
+
     public static GameObject GetPlayerLanceChunkGameObject(GameObject encounterLayerGo) {
       string type = MissionControl.Instance.CurrentContract.ContractTypeValue.Name;
 
