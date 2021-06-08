@@ -50,4 +50,7 @@ I wouldn't have completed such an ambitious mod without the support and help of 
 - GentlePayload
 - gnivler
 - TekGnosis
+- Pode
+- CatLady
+- RJPhoenix
 - ...and everyone in the modder channels at Mission Control, RT and BATTLETECHGAME discord who helped in lots of different ways!
