@@ -5,6 +5,7 @@
   "DebugSkirmishMode": false,
   "EnableFlashpointOverrides": false,
   "EnableAdditionalPlayerMechsForFlashpoints": false,
+  "NeverFailSimGameInFlashpoints": true,
   "EnableStoryOverrides": false,
   "EnableAdditionalPlayerMechsForStory": false,
   "RandomSpawns": {
