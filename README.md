@@ -34,6 +34,7 @@ Richard Griffiths (CWolf)
 - [@17783](https://github.com/17783) / Spectre (Added better friendly lance portraits)
 - [@NickAragua](https://github.com/NickAragua) (Fixed contract dialogue)
 - [@CargoVroom](https://github.com/CargoVroom) (Fixed contract dialogue, contract tags advice)
+- [@mcb5637](https://github.com/mcb5637) (Fixed story support get random position issue)
 
 ## Special Thanks
 
