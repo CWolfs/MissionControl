@@ -186,6 +186,9 @@ namespace MissionControl {
       CurrentContract = contract;
 
       if (AllowMissionControl()) {
+        Main.Logger.Log($"[MissionControl] Mission Control IS allowed to run. ");
+        if (IsAnyStoryContract()) Main.Logger.Log($"[MissionControl] Contract is a Story contract {(UnityGameInstance.BattleTechGame.Simulation.IsInFlashpoint ? "and it's being used in a Flashpoint." : "")}");
+        if (IsAnyFlashpointContract()) Main.Logger.Log($"[MissionControl] Contract is a Flashpoint contract.");
         Main.Logger.Log($"[MissionControl] Player drop difficulty: '{PlayerLanceDropDifficultyValue}' (Skull value '{PlayerLanceDropSkullRating}')");
         Main.Logger.Log($"[MissionControl] Player drop tonnage: '{PlayerLanceDropTonnage}' tons");
 
@@ -196,7 +199,7 @@ namespace MissionControl {
         SetContractType(CurrentContract.ContractTypeValue);
         AiManager.Instance.ResetCustomBehaviourVariableScopes();
       } else {
-        Main.Logger.Log($"[MissionControl] Mission Control is not allowed to run. Possibly a story mission or flashpoint contract.");
+        Main.Logger.Log($"[MissionControl] Mission Control is NOT allowed to run.");
         EncounterRules = null;
         EncounterRulesName = null;
         IsMCLoadingFinished = true;
@@ -300,7 +303,7 @@ namespace MissionControl {
 
         IsContractValid = true;
       } else {
-        Main.Logger.Log($"[MissionControl] Mission Control is not allowed to run. Possibly a story mission or flashpoint contract.");
+        Main.Logger.Log($"[MissionControl] Mission Control is NOT allowed to run.");
         EncounterRules = null;
         EncounterRulesName = null;
         IsMCLoadingFinished = true;
@@ -314,7 +317,7 @@ namespace MissionControl {
         EncounterRules.Build();
         EncounterRules.ActivatePostFeatures();
       } else {
-        Main.Logger.Log($"[MissionControl] Mission Control is not allowed to run. Possibly a story mission or flashpoint contract.");
+        Main.Logger.Log($"[MissionControl] Mission Control is NOT allowed to run.");
         EncounterRules = null;
         EncounterRulesName = null;
         IsMCLoadingFinished = true;
@@ -472,7 +475,7 @@ namespace MissionControl {
     }
 
     public bool IsAnyFlashpointContract() {
-      return this.CurrentContract.IsFlashpointContract || this.CurrentContract.IsFlashpointCampaignContract;
+      return this.CurrentContract.IsFlashpointContract || this.CurrentContract.IsFlashpointCampaignContract || UnityGameInstance.BattleTechGame.Simulation.IsInFlashpoint;
     }
 
     public bool IsAnyStoryContract() {
