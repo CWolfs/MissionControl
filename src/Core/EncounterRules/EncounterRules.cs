@@ -128,6 +128,10 @@ namespace MissionControl.Rules {
       return chunkPlayerLanceGo.GetComponentInChildren<PlayerLanceSpawnerGameLogic>().gameObject;
     }
 
+    public static GameObject GetAnyLanceSpawnerGameObject(GameObject encounterLayerGo) {
+      return encounterLayerGo.GetComponentInChildren<LanceSpawnerGameLogic>().gameObject;
+    }
+
     private void RunSceneManipulationLogic(IEnumerable<LogicBlock> logicBlocks, RunPayload payload) {
       EncounterLayerGo = MissionControl.Instance.EncounterLayerGameObject;
       EncounterLayerData = MissionControl.Instance.EncounterLayerData;
