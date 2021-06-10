@@ -149,12 +149,17 @@ namespace MissionControl.Logic {
         List<string[]> extraLanceKeys = (List<string[]>)state.GetObject("ExtraLanceSpawnKeys");
         for (int i = 0; i < extraLanceKeys.Count; i++) {
           string[] keys = extraLanceKeys[i];
-          string objectKey = keys[0];
-          string orientationObjectKey = keys[1];
 
-          objectKeys.Add(objectKey);
-          orientationTargetKeys.Add(orientationObjectKey);
-          keyLookup[objectKey] = orientationObjectKey;
+          if (keys != null && keys.Length > 0) {
+            string objectKey = keys[0];
+            string orientationObjectKey = keys[1];
+
+            objectKeys.Add(objectKey);
+            orientationTargetKeys.Add(orientationObjectKey);
+            keyLookup[objectKey] = orientationObjectKey;
+          } else {
+            Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] ExtraLanceSpawnKeys provides a first key set but the keyset is null or empty");
+          }
         }
       }
 

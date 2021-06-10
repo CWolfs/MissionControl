@@ -32,8 +32,8 @@ namespace MissionControl.Rules {
     }
 
     public override void LinkObjectReferences(string mapName) {
-      // TODO: Make this enemy lance lookup similar to the player lance lookup (checks various keys)
-      ObjectLookup["LanceEnemyOpposingForce"] = EncounterLayerData.gameObject.FindRecursive("Lance_Enemy_OpposingForce");
+      // Due to the variable nature of spawners on the map - grab any lance spawner available (always going to be one) and use that as the OpFor
+      ObjectLookup["LanceEnemyOpposingForce"] = GetAnyLanceSpawnerGameObject(MissionControl.Instance.EncounterLayerGameObject);
     }
   }
 }
