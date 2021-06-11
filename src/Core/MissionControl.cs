@@ -188,7 +188,7 @@ namespace MissionControl {
 
       if (AllowMissionControl()) {
         Main.Logger.Log($"[MissionControl] Mission Control IS allowed to run. ");
-        if (IsAnyStoryContract()) Main.Logger.Log($"[MissionControl] Contract is a Story contract {(IsInActiveFlashpointContract()? "and it's being used in a Flashpoint." : "")}");
+        if (IsAnyStoryContract()) Main.Logger.Log($"[MissionControl] Contract is a Story contract {(IsInActiveFlashpointContract() ? "and it's being used in a Flashpoint." : "")}");
         if (IsAnyFlashpointContract()) Main.Logger.Log($"[MissionControl] Contract is a Flashpoint contract.");
         Main.Logger.Log($"[MissionControl] Player drop difficulty: '{PlayerLanceDropDifficultyValue}' (Skull value '{PlayerLanceDropSkullRating}')");
         Main.Logger.Log($"[MissionControl] Player drop tonnage: '{PlayerLanceDropTonnage}' tons");
@@ -370,7 +370,7 @@ namespace MissionControl {
 
       if (Main.Settings.AdditionalLanceSettings.Enable) {
         bool areLancesAllowed = !Main.Settings.AdditionalLanceSettings.IsTeamDisabled(teamType);
-        if (areLancesAllowed) areLancesAllowed = (!IsAnyFlashpointContract() && !IsAnyStoryContract())|| (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.AdditionalLanceSettings.EnableForFlashpoints || (IsAnyStoryContract() && Main.Settings.EnableStoryOverrides && Main.Settings.AdditionalLanceSettings.EnableForStory));
+        if (areLancesAllowed) areLancesAllowed = (!IsAnyFlashpointContract() && !IsAnyStoryContract()) || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.AdditionalLanceSettings.EnableForFlashpoints || (IsAnyStoryContract() && Main.Settings.EnableStoryOverrides && Main.Settings.AdditionalLanceSettings.EnableForStory));
         if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.GetValidContractTypes().Contains(CurrentContractType);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.AdditionalLanceSettings.DisableWhenMaxTonnage.AreLancesAllowed((int)this.CurrentContract.Override.lanceMaxTonnage);
         if (areLancesAllowed) areLancesAllowed = Main.Settings.ActiveAdditionalLances.GetValidContractTypes(teamType).Contains(CurrentContractType);
@@ -480,6 +480,8 @@ namespace MissionControl {
     }
 
     public bool IsInActiveFlashpointContract() {
+      if (IsSkirmish()) return false;
+
       return UnityGameInstance.BattleTechGame.Simulation.ActiveFlashpoint?.ActiveContract.encounterObjectGuid == this.CurrentContract.encounterObjectGuid;
     }
 
@@ -511,7 +513,7 @@ namespace MissionControl {
 
       // Allow for story contracts that have overrides or player lances allowed
       if (IsAnyStoryContract() && (Main.Settings.EnableStoryOverrides || Main.Settings.EnableAdditionalPlayerMechsForStory)) return true;
-      
+
       // Allow for flashpoints contracts that manually override flashpoints - even if flashpoint settings are off
       if (IsAnyFlashpointContract() && Main.Settings.ActiveContractSettings.Enabled) return true;
 
