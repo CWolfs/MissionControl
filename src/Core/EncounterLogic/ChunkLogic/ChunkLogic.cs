@@ -1,7 +1,4 @@
 using UnityEngine;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 
 using BattleTech;
 
@@ -33,8 +30,8 @@ namespace MissionControl.Logic {
 
     public GameObject GetPlayerSpawn() {
       GameObject encounterLayerGo = MissionControl.Instance.EncounterLayerGameObject;
-      GameObject chunkPlayerLanceGo = encounterLayerGo.transform.Find(EncounterRules.GetPlayerLanceChunkName()).gameObject;
-      GameObject spawnerPlayerLanceGo = chunkPlayerLanceGo.transform.Find(EncounterRules.GetPlayerLanceSpawnerName()).gameObject;
+      GameObject chunkPlayerLanceGo = EncounterRules.GetPlayerLanceChunkGameObject(encounterLayerGo);
+      GameObject spawnerPlayerLanceGo = EncounterRules.GetPlayerSpawnerGameObject(chunkPlayerLanceGo);
       return spawnerPlayerLanceGo;
     }
 

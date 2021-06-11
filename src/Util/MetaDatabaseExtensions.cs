@@ -14,6 +14,10 @@ public static class MetaDatabaseExtensions {
     return mdd.Query<ContractType_MDD>("SELECT * FROM ContractType WHERE ContractTypeID >= 10000").ToList<ContractType_MDD>();
   }
 
+  public static List<ContractType_MDD> GetStoryContractTypes(this MetadataDatabase mdd) {
+    return mdd.Query<ContractType_MDD>("SELECT * FROM ContractType WHERE IsStory = 1 OR IsRestoration = 1").ToList<ContractType_MDD>();
+  }
+
   public static EncounterLayer_MDD InsertOrUpdateEncounterLayer(this MetadataDatabase mdd, EncounterLayer encounterLayer) {
     mdd.Execute("INSERT OR REPLACE INTO EncounterLayer (EncounterLayerID, MapID, Name, FriendlyName, Description, BattleValue, ContractTypeID, EncounterLayerGUID, TagSetID, IncludeInBuild) values(@EncounterLayerID, @MapID, @Name, @FriendlyName, @Description, @BattleValue, @ContractTypeID, @EncounterLayerGUID, @TagSetID, @IncludeInBuild)", new {
       EncounterLayerID = encounterLayer.EncounterLayerId,

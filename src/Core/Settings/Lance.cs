@@ -52,15 +52,16 @@ namespace MissionControl.Config {
         Main.LogDebug($"[SelectNumberOfAdditionalLances] [{TeamType}] Using Drop Weight Settings");
         int contractDifficulty = MissionControl.Instance.CurrentContract.Override.finalDifficulty;
         int playerLanceDropDifficulty = MissionControl.Instance.PlayerLanceDropDifficultyValue;
-        int difficultyDifference = Math.Abs(playerLanceDropDifficulty - contractDifficulty);
+        int difficultyDifference = playerLanceDropDifficulty - contractDifficulty;
+        int absDifficultyDifference = Math.Abs(playerLanceDropDifficulty - contractDifficulty);
 
         if (difficultyDifference > 0) { // Player is sending a stronger lance than the contract difficulty requires. Add more influence to AL enemy lances spawning.
-          float spawnInfluenceModifier = difficultyDifference *
+          float spawnInfluenceModifier = absDifficultyDifference *
             ((TeamType == "Enemy") ? dropWeightSettings.EnemySpawnInfluencePerHalfSkullAbove : dropWeightSettings.AllySpawnInfluencePerHalfSkullAbove);
 
           rawChanceToSpawn = rawChanceToSpawn + spawnInfluenceModifier;
         } else if (difficultyDifference < 0) { // Player is sending a weaker lance than the contract difficulty requires. Add more influence to AL ally lances spawning.
-          float spawnInfluenceModifier = difficultyDifference *
+          float spawnInfluenceModifier = absDifficultyDifference *
             ((TeamType == "Enemy") ? dropWeightSettings.EnemySpawnInfluencePerHalfSkullBelow : dropWeightSettings.AllySpawnInfluencePerHalfSkullBelow);
 
           rawChanceToSpawn = rawChanceToSpawn + spawnInfluenceModifier;

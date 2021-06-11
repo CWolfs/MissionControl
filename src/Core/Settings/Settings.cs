@@ -22,6 +22,9 @@ namespace MissionControl.Config {
     [JsonIgnore]
     public string GithubVersion { get; set; } = "0.0.0";
 
+    [JsonProperty("EnableSkirmishMode")]
+    public bool EnableSkirmishMode { get; set; } = true;
+
     [JsonProperty("DebugSkirmishMode")]
     public bool DebugSkirmishMode { get; set; } = false;
 
@@ -30,6 +33,15 @@ namespace MissionControl.Config {
 
     [JsonProperty("EnableAdditionalPlayerMechsForFlashpoints")]
     public bool EnableAdditionalPlayerMechsForFlashpoints { get; set; } = false;
+
+    [JsonProperty("NeverFailSimGameInFlashpoints")]
+    public bool NeverFailSimGameInFlashpoints { get; set; } = true;
+    
+    [JsonProperty("EnableStoryOverrides")]
+    public bool EnableStoryOverrides { get; set; } = false;
+
+    [JsonProperty("EnableAdditionalPlayerMechsForStory")]
+    public bool EnableAdditionalPlayerMechsForStory { get; set; } = false;
 
     [JsonProperty("RandomSpawns")]
     public RandomSpawnsSettings RandomSpawns { get; set; } = new RandomSpawnsSettings();

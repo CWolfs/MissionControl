@@ -85,11 +85,60 @@ namespace MissionControl.Rules {
       }
     }
 
+    /* DEPRECATED IN MC 1.2.0 */
+    public static string GetPlayerLanceChunkName() {
+      Main.Logger.LogWarning($"[MC 1.2+ DEPRECATION] 'EncounterRules.GetPlayerLanceChunkName()' IS DEPRECATED. USE 'EncounterRules.GetPlayerLanceChunkGameObject(GameObject encounterLayerGo)' INSTEAD. IT WILL BE REMOVED IN A FUTURE UPDATE.");
+      Main.Logger.LogWarning($"[MC 1.2+ DEPRECATION] 'EncounterRules.GetPlayerLanceChunkName()' IS DEPRECATED. USE 'EncounterRules.GetPlayerLanceChunkGameObject(GameObject encounterLayerGo)' INSTEAD. IT WILL BE REMOVED IN A FUTURE UPDATE.");
+      Main.Logger.LogWarning($"[MC 1.2+ DEPRECATION] 'EncounterRules.GetPlayerLanceChunkName()' IS DEPRECATED. USE 'EncounterRules.GetPlayerLanceChunkGameObject(GameObject encounterLayerGo)' INSTEAD. IT WILL BE REMOVED IN A FUTURE UPDATE.");
+
+      GameObject encounterLayerGo = MissionControl.Instance.EncounterLayerGameObject;
+      GameObject chunkPlayerLanceGo = EncounterRules.GetPlayerLanceChunkGameObject(encounterLayerGo);
+      return chunkPlayerLanceGo.name;
+    }
+
+    /* DEPRECATED IN MC 1.2.0 */
+    public static string GetPlayerLanceSpawnerName() {
+      Main.Logger.LogWarning($"[MC 1.2+ DEPRECATION] 'EncounterRules.GetPlayerLanceSpawnerName()' IS DEPRECATED. USE 'EncounterRules.GetPlayerSpawnerGameObject(GameObject encounterLayerGo)' INSTEAD. IT WILL BE REMOVED IN A FUTURE UPDATE.");
+      Main.Logger.LogWarning($"[MC 1.2+ DEPRECATION] 'EncounterRules.GetPlayerLanceSpawnerName()' IS DEPRECATED. USE 'EncounterRules.GetPlayerSpawnerGameObject(GameObject encounterLayerGo)' INSTEAD. IT WILL BE REMOVED IN A FUTURE UPDATE.");
+      Main.Logger.LogWarning($"[MC 1.2+ DEPRECATION] 'EncounterRules.GetPlayerLanceSpawnerName()' IS DEPRECATED. USE 'EncounterRules.GetPlayerSpawnerGameObject(GameObject encounterLayerGo)' INSTEAD. IT WILL BE REMOVED IN A FUTURE UPDATE.");
+      
+      GameObject encounterLayerGo = MissionControl.Instance.EncounterLayerGameObject;
+      GameObject chunkPlayerLanceGo = EncounterRules.GetPlayerLanceChunkGameObject(encounterLayerGo);
+      GameObject SpawnerPlayerLanceGo =  GetPlayerSpawnerGameObject(chunkPlayerLanceGo);
+      return SpawnerPlayerLanceGo.name;
+    }
+
+    public static GameObject GetPlayerLanceChunkGameObject(GameObject encounterLayerGo) {
+      string type = MissionControl.Instance.CurrentContract.ContractTypeValue.Name;
+
+      if (type == "ArenaSkirmish") {
+        return encounterLayerGo.transform.Find("MultiPlayerSkirmishChunk").gameObject;
+      }
+
+      return encounterLayerGo.GetComponentInChildren<PlayerLanceChunkGameLogic>().gameObject;
+    }
+
+    public static GameObject GetPlayerSpawnerGameObject(GameObject chunkPlayerLanceGo) {
+      string type = MissionControl.Instance.CurrentContract.ContractTypeValue.Name;
+
+      if (type == "ArenaSkirmish") {
+        return chunkPlayerLanceGo.transform.Find("Player1LanceSpawner").gameObject;
+      }
+
+      return chunkPlayerLanceGo.GetComponentInChildren<PlayerLanceSpawnerGameLogic>().gameObject;
+    }
+
+    public static GameObject GetAnyLanceSpawnerGameObject(GameObject encounterLayerGo) {
+      return encounterLayerGo.GetComponentInChildren<LanceSpawnerGameLogic>().gameObject;
+    }
+
     private void RunSceneManipulationLogic(IEnumerable<LogicBlock> logicBlocks, RunPayload payload) {
       EncounterLayerGo = MissionControl.Instance.EncounterLayerGameObject;
       EncounterLayerData = MissionControl.Instance.EncounterLayerData;
-      ChunkPlayerLanceGo = EncounterLayerGo.transform.Find(GetPlayerLanceChunkName()).gameObject;
-      SpawnerPlayerLanceGo = ChunkPlayerLanceGo.transform.Find(GetPlayerLanceSpawnerName()).gameObject;
+
+      ChunkPlayerLanceGo = GetPlayerLanceChunkGameObject(EncounterLayerGo);
+      SpawnerPlayerLanceGo =  GetPlayerSpawnerGameObject(ChunkPlayerLanceGo);
+
       ObjectLookup["ChunkPlayerLance"] = ChunkPlayerLanceGo;
       ObjectLookup["SpawnerPlayerLance"] = SpawnerPlayerLanceGo;
 
@@ -190,32 +239,6 @@ namespace MissionControl.Rules {
 
       Main.Logger.Log($"[{this.GetType().Name}] Using plot name '{plot.name}'");
       return plot.name;
-    }
-
-    public static string GetPlayerLanceChunkName() {
-      string type = MissionControl.Instance.CurrentContract.ContractTypeValue.Name;
-
-      if (type == "ArenaSkirmish") {
-        return "MultiPlayerSkirmishChunk";
-      } else if ((type == "Story_1B_Retreat") || (type == "Story_2_ThreeYearsLater_Default")) {
-        return "Gen_PlayerLance";
-      }
-
-      return "Chunk_PlayerLance";
-    }
-
-    public static string GetPlayerLanceSpawnerName() {
-      string type = MissionControl.Instance.CurrentContract.ContractTypeValue.Name;
-
-      if (type == "ArenaSkirmish") {
-        return "Player1LanceSpawner";
-      } else if ((type == "Story_1B_Retreat") || (type == "FireMission") || (type == "AttackDefend")) {
-        return "PlayerLanceSpawner";
-      } else if (type == "ThreeWayBattle") {
-        return "PlayerLanceSpawner_Battle+";
-      }
-
-      return "Spawner_PlayerLance";
     }
 
     protected void BuildAdditionalLances(string enemyOrientationTargetKey, SpawnLogic.LookDirection enemyLookDirection,

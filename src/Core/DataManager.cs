@@ -143,6 +143,19 @@ namespace MissionControl {
       return customContractTypeNames;
     }
 
+
+    public List<string> GetStoryContractTypes() {
+      List<string> storyContractTypeNames = new List<string>();
+      MetadataDatabase mdd = MetadataDatabase.Instance;
+      List<ContractType_MDD> contractTypes = mdd.GetStoryContractTypes();
+
+      foreach (ContractType_MDD contractType in contractTypes) {
+        storyContractTypeNames.Add(contractType.Name);
+      }
+
+      return storyContractTypeNames;
+    }
+
     private void LoadCustomContractTypes() {
       new Thread(new ThreadStart(this.WriteMDDToDisk)).Start();
       UnityGameInstance.Instance.StartCoroutine(ReportOnLoadedCustomContractType());

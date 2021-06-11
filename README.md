@@ -34,6 +34,8 @@ Richard Griffiths (CWolf)
 - [@17783](https://github.com/17783) / Spectre (Added better friendly lance portraits)
 - [@NickAragua](https://github.com/NickAragua) (Fixed contract dialogue)
 - [@CargoVroom](https://github.com/CargoVroom) (Fixed contract dialogue, contract tags advice)
+- [@Haree78](https://github.com/Haree78) (Fixed rare infinite loading issue)
+- [@mcb5637](https://github.com/mcb5637) (Fixed story support get random position issue)
 
 ## Special Thanks
 
@@ -48,4 +50,7 @@ I wouldn't have completed such an ambitious mod without the support and help of 
 - GentlePayload
 - gnivler
 - TekGnosis
+- Pode
+- CatLady
+- RJPhoenix
 - ...and everyone in the modder channels at Mission Control, RT and BATTLETECHGAME discord who helped in lots of different ways!

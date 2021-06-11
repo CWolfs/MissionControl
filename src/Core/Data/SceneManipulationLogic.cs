@@ -118,7 +118,10 @@ namespace MissionControl.Logic {
 
     public Vector3 GetRandomPositionWithinBounds() {
       MissionControl EncounterManager = MissionControl.Instance;
-      GameObject chunkBoundaryRect = EncounterManager.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary").gameObject;
+      GameObject chunkBoundaryRect = MissionControl.Instance.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary")?.gameObject;
+      if (chunkBoundaryRect == null) {
+        chunkBoundaryRect = MissionControl.Instance.EncounterLayerGameObject.transform.Find("Gen_EncounterBoundary").gameObject;
+      }
       GameObject boundary = chunkBoundaryRect.transform.Find("EncounterBoundaryRect").gameObject;
       EncounterBoundaryChunkGameLogic chunkBoundary = chunkBoundaryRect.GetComponent<EncounterBoundaryChunkGameLogic>();
       EncounterBoundaryRectGameLogic boundaryLogic = boundary.GetComponent<EncounterBoundaryRectGameLogic>();
