@@ -128,5 +128,11 @@
       "MinBuffer": 100,
       "MaxBuffer": 200
     }
+  },
+  "Misc": {
+    "LanceSelectionDivergenceOverride": {
+      "Enable": true,
+      "Divergence": 20
+    }
   }
 }
