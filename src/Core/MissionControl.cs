@@ -267,6 +267,8 @@ namespace MissionControl {
         string contractId = CurrentContract.Override.ID;
         string type = IsAnyFlashpointContract() ? "flashpoint" : "contract";
 
+        if (contractId == null || contractId == "") Main.Logger.LogError($"[MissionControl] [SetContractSettingsOverride] 'contractId' is null or empty string. This indicates a badly created or corrupt contract override.");
+
         if (Main.Settings.ContractSettingsOverrides.ContainsKey(contractId)) {
           Main.Logger.Log($"[MissionControl] Setting a {type} MC settings override for '{contractId}'.");
           Main.Settings.ActiveContractSettings = Main.Settings.ContractSettingsOverrides[contractId];
