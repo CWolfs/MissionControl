@@ -8,7 +8,7 @@ namespace MissionControl.Config {
     public string Pathfinding { get; set; } = "Alternative"; // Original, Alternative
 
     [JsonProperty("Target")]
-    public string Target { get; set; } = "HeaviestMech";    // HeaviestMech, FirstLanceMember
+    public string Target { get; set; } = "HeaviestMech";    // HeaviestMech, LanceOrder
 
     [JsonProperty("StopWhen")]
     public string StopWhen { get; set; } = "OnEnemyDetected";    // OnEnemyDetected, OnEnemyVisible, WhenNotNeeded

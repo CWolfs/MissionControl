@@ -36,7 +36,7 @@ namespace MissionControl.Config {
 
     [JsonProperty("NeverFailSimGameInFlashpoints")]
     public bool NeverFailSimGameInFlashpoints { get; set; } = true;
-    
+
     [JsonProperty("EnableStoryOverrides")]
     public bool EnableStoryOverrides { get; set; } = false;
 
@@ -74,6 +74,9 @@ namespace MissionControl.Config {
 
     [JsonProperty("Spawners")]
     public SpawnerSettings Spawners { get; set; } = new SpawnerSettings();
+
+    [JsonProperty("Misc")]
+    public MiscSettings Misc { get; set; } = new MiscSettings();
 
     public Dictionary<string, ContractSettingsOverrides> ContractSettingsOverrides = new Dictionary<string, ContractSettingsOverrides>();
 

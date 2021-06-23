@@ -267,6 +267,8 @@ namespace MissionControl {
         string contractId = CurrentContract.Override.ID;
         string type = IsAnyFlashpointContract() ? "flashpoint" : "contract";
 
+        if (contractId == null || contractId == "") Main.Logger.LogError($"[MissionControl] [SetContractSettingsOverride] 'contractId' is null or empty string. This indicates a badly created or corrupt contract override.");
+
         if (Main.Settings.ContractSettingsOverrides.ContainsKey(contractId)) {
           Main.Logger.Log($"[MissionControl] Setting a {type} MC settings override for '{contractId}'.");
           Main.Settings.ActiveContractSettings = Main.Settings.ContractSettingsOverrides[contractId];
@@ -481,8 +483,13 @@ namespace MissionControl {
 
     public bool IsInActiveFlashpointContract() {
       if (IsSkirmish()) return false;
+      if (CurrentContract == null) {
+        Main.Logger.LogError("[IsInActiveFlashpointContract] MC's CurrentContract is null. This is a possible mod conflict or a cascade error causing the CurrentContract never to be assigned in MC.");
+        return false;
+      }
 
-      return UnityGameInstance.BattleTechGame.Simulation.ActiveFlashpoint?.ActiveContract.encounterObjectGuid == this.CurrentContract.encounterObjectGuid;
+      Flashpoint activeFlashpoint = UnityGameInstance.BattleTechGame.Simulation.ActiveFlashpoint;
+      return activeFlashpoint?.ActiveContract?.encounterObjectGuid == this.CurrentContract.encounterObjectGuid;
     }
 
     public bool IsAnyStoryContract() {
