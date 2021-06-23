@@ -489,10 +489,6 @@ namespace MissionControl {
       }
 
       Flashpoint activeFlashpoint = UnityGameInstance.BattleTechGame.Simulation.ActiveFlashpoint;
-      if (activeFlashpoint != null && activeFlashpoint.ActiveContract == null) {
-        Main.Logger.LogWarning("[IsInActiveFlashpointContract] Simulation.ActiveFlashpoint is present but there is no ActiveContract within that Flashpoint. This may be harmless or a cause of other errors causing problems. Not MC related.");
-      }
-
       return activeFlashpoint?.ActiveContract?.encounterObjectGuid == this.CurrentContract.encounterObjectGuid;
     }
 
