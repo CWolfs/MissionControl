@@ -483,8 +483,17 @@ namespace MissionControl {
 
     public bool IsInActiveFlashpointContract() {
       if (IsSkirmish()) return false;
+      if (CurrentContract == null) {
+        Main.Logger.LogError("[IsInActiveFlashpointContract] MC's CurrentContract is null. This is a possible mod conflict or a cascade error causing the CurrentContract never to be assigned in MC.");
+        return false;
+      }
 
-      return UnityGameInstance.BattleTechGame.Simulation.ActiveFlashpoint?.ActiveContract.encounterObjectGuid == this.CurrentContract.encounterObjectGuid;
+      Flashpoint activeFlashpoint = UnityGameInstance.BattleTechGame.Simulation.ActiveFlashpoint;
+      if (activeFlashpoint != null && activeFlashpoint.ActiveContract == null) {
+        Main.Logger.LogWarning("[IsInActiveFlashpointContract] Simulation.ActiveFlashpoint is present but there is no ActiveContract within that Flashpoint. This may be harmless or a cause of other errors causing problems. Not MC related.");
+      }
+
+      return activeFlashpoint?.ActiveContract?.encounterObjectGuid == this.CurrentContract.encounterObjectGuid;
     }
 
     public bool IsAnyStoryContract() {
