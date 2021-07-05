@@ -107,26 +107,30 @@ namespace MissionControl {
 
     private void LoadCustomContractTypeBuilds() {
       foreach (string directory in Directory.GetDirectories($"{ModDirectory}/contractTypeBuilds/")) {
-        string contractTypeBuildCommonSource = File.ReadAllText($"{directory}/common.jsonc");
-        JObject contractTypeCommonBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildCommonSource, serialiserSettings);
-        string contractTypeName = (string)contractTypeCommonBuild["Key"];
-        Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loading contract type build '{contractTypeName}'");
+        if (File.Exists($"{directory}/common.jsonc")) {
+          string contractTypeBuildCommonSource = File.ReadAllText($"{directory}/common.jsonc");
+          JObject contractTypeCommonBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildCommonSource, serialiserSettings);
+          string contractTypeName = (string)contractTypeCommonBuild["Key"];
+          Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loading contract type build '{contractTypeName}'");
 
-        Dictionary<string, JObject> contractTypeMapBuilds = new Dictionary<string, JObject>();
-        AvailableCustomContractTypeBuilds.Add(contractTypeCommonBuild["Key"].ToString(), contractTypeMapBuilds);
+          Dictionary<string, JObject> contractTypeMapBuilds = new Dictionary<string, JObject>();
+          AvailableCustomContractTypeBuilds.Add(contractTypeCommonBuild["Key"].ToString(), contractTypeMapBuilds);
 
-        foreach (string file in Directory.GetFiles(directory, "*.json*", SearchOption.AllDirectories)) {
-          string contractTypeBuildMapSource = File.ReadAllText(file);
-          JObject contractTypeMapBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildMapSource, serialiserSettings);
-          string fileName = Path.GetFileNameWithoutExtension(file.Substring(file.LastIndexOf("/")));
+          foreach (string file in Directory.GetFiles(directory, "*.json*", SearchOption.AllDirectories)) {
+            string contractTypeBuildMapSource = File.ReadAllText(file);
+            JObject contractTypeMapBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildMapSource, serialiserSettings);
+            string fileName = Path.GetFileNameWithoutExtension(file.Substring(file.LastIndexOf("/")));
 
-          if (fileName == "common" || contractTypeMapBuild.ContainsKey("EncounterLayerId")) {
-            string encounterLayerId = (fileName == "common") ? fileName : (string)contractTypeMapBuild["EncounterLayerId"];
-            Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type map build '{contractTypeName}/{fileName}' with encounterLayerId '{encounterLayerId}'");
-            contractTypeMapBuilds.Add(encounterLayerId, contractTypeMapBuild);
-          } else {
-            Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Unable to load contract type map build file '{fileName}' for contract type '{contractTypeName}' because no 'EncounterLayerId' exists");
+            if (fileName == "common" || contractTypeMapBuild.ContainsKey("EncounterLayerId")) {
+              string encounterLayerId = (fileName == "common") ? fileName : (string)contractTypeMapBuild["EncounterLayerId"];
+              Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type map build '{contractTypeName}/{fileName}' with encounterLayerId '{encounterLayerId}'");
+              contractTypeMapBuilds.Add(encounterLayerId, contractTypeMapBuild);
+            } else {
+              Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Unable to load contract type map build file '{fileName}' for contract type '{contractTypeName}' because no 'EncounterLayerId' exists");
+            }
           }
+        } else {
+          Main.Logger.LogWarning($"[DataManager.LoadCustomContractTypeBuilds] Directory exists for contract type but no common.jsonc exists. Probably bad data or WIP contract type build - {directory}");
         }
       }
     }
