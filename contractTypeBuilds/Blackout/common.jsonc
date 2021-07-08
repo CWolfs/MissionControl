@@ -803,7 +803,7 @@
       ]
     },
     {
-      "Name": "Trigger_Emable_Chunk_Post_1c",
+      "Name": "Trigger_Enable_Chunk_Post_1c",
       "TriggerOn": "OnObjectiveUpdated",
       "Description": "Complete the destroy lance objective",
       "Conditionals": [
