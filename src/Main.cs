@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 using System.Net;
-using System.Threading;
+using System.Linq;
 using System.Globalization;
 
 using System.Collections.Generic;
@@ -90,11 +90,13 @@ namespace MissionControl {
       Settings.AdditionalLances[0] = JsonConvert.DeserializeObject<AdditionalLances>(additionalLancesJsonString, serialiserSettings);
 
       string difficultyFileName = "Difficulty";
-      for (int i = 1; i <= 10; i++) {
-        if (File.Exists($"{alPath}{difficultyFileName}{i}.json")) {
-          string skullAdditionalLanceJsonString = File.ReadAllText($"{alPath}{difficultyFileName}{i}.json");
-          Settings.AdditionalLances[i] = JsonConvert.DeserializeObject<AdditionalLances>(skullAdditionalLanceJsonString, serialiserSettings);
-        }
+      var filePaths = Directory.GetFiles(alPath).Where(filePath => System.IO.Path.GetFileNameWithoutExtension(filePath).StartsWith(difficultyFileName));
+
+      foreach (string filePath in filePaths) {
+        string fileName = System.IO.Path.GetFileNameWithoutExtension(filePath);
+        int difficultyLevel = int.Parse(fileName.Replace(difficultyFileName, ""));
+        string additionalLanceJsonString = File.ReadAllText(filePath);
+        Settings.AdditionalLances[difficultyLevel] = JsonConvert.DeserializeObject<AdditionalLances>(additionalLanceJsonString, serialiserSettings);
       }
     }
 
