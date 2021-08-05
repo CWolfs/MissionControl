@@ -60,6 +60,8 @@ namespace MissionControl.Config {
     public static string AdditionalLances_MatchAllyLanceCountToEnemy = "AdditionalLances.MatchAllyLanceCountToEnemy";
 
     public static string AdditionalLances_DropWeightInfluence_Enable = "AdditionalLances.DropWeightInfluence.Enable";
+    public static string AdditionalLances_DropWeightInfluence_EnemySpawnInfluenceMax = "AdditionalLances.DropWeightInfluence.EnemySpawnInfluenceMax";
+    public static string AdditionalLances_DropWeightInfluence_AllySpawnInfluenceMax = "AdditionalLances.DropWeightInfluence.AllySpawnInfluenceMax";
     public static string AdditionalLances_DropWeightInfluence_EnemySpawnInfluencePerHalfSkullAbove = "AdditionalLances.DropWeightInfluence.EnemySpawnInfluencePerHalfSkullAbove";
     public static string AdditionalLances_DropWeightInfluence_AllySpawnInfluencePerHalfSkullAbove = "AdditionalLances.DropWeightInfluence.AllySpawnInfluencePerHalfSkullAbove";
     public static string AdditionalLances_DropWeightInfluence_EnemySpawnInfluencePerHalfSkullBelow = "AdditionalLances.DropWeightInfluence.EnemySpawnInfluencePerHalfSkullBelow";
@@ -247,6 +249,8 @@ namespace MissionControl.Config {
       if (Has(AdditionalLances_MatchAllyLanceCountToEnemy)) settings.AdditionalLanceSettings.MatchAllyLanceCountToEnemy = GetBool(AdditionalLances_MatchAllyLanceCountToEnemy);
 
       if (Has(AdditionalLances_DropWeightInfluence_Enable)) settings.AdditionalLanceSettings.DropWeightInfluenceSettings.Enable = GetBool(AdditionalLances_DropWeightInfluence_Enable);
+      if (Has(AdditionalLances_DropWeightInfluence_EnemySpawnInfluenceMax)) settings.AdditionalLanceSettings.DropWeightInfluenceSettings.EnemySpawnInfluenceMax = GetFloat(AdditionalLances_DropWeightInfluence_EnemySpawnInfluenceMax);
+      if (Has(AdditionalLances_DropWeightInfluence_AllySpawnInfluenceMax)) settings.AdditionalLanceSettings.DropWeightInfluenceSettings.AllySpawnInfluenceMax = GetFloat(AdditionalLances_DropWeightInfluence_AllySpawnInfluenceMax);
       if (Has(AdditionalLances_DropWeightInfluence_EnemySpawnInfluencePerHalfSkullAbove)) settings.AdditionalLanceSettings.DropWeightInfluenceSettings.EnemySpawnInfluencePerHalfSkullAbove = GetFloat(AdditionalLances_DropWeightInfluence_EnemySpawnInfluencePerHalfSkullAbove);
       if (Has(AdditionalLances_DropWeightInfluence_AllySpawnInfluencePerHalfSkullAbove)) settings.AdditionalLanceSettings.DropWeightInfluenceSettings.AllySpawnInfluencePerHalfSkullAbove = GetFloat(AdditionalLances_DropWeightInfluence_AllySpawnInfluencePerHalfSkullAbove);
       if (Has(AdditionalLances_DropWeightInfluence_EnemySpawnInfluencePerHalfSkullBelow)) settings.AdditionalLanceSettings.DropWeightInfluenceSettings.EnemySpawnInfluencePerHalfSkullBelow = GetFloat(AdditionalLances_DropWeightInfluence_EnemySpawnInfluencePerHalfSkullBelow);
