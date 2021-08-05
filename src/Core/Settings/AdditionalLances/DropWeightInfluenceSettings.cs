@@ -32,7 +32,7 @@ namespace MissionControl.Config {
         return AllySpawnInfluenceMax;
       }
 
-      Main.Logger.LogError("[GetSpawnInfluenceMax] Team '{team}' is invalid. Must be 'Enemy' or 'Allies'. Returning 0.9");
+      Main.Logger.LogError($"[GetSpawnInfluenceMax] Team '{team}' is invalid. Must be 'Enemy' or 'Allies'. Returning 0.9");
       return 0.9f;
     }
   }
