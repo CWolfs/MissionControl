@@ -278,12 +278,13 @@ namespace MissionControl.Rules {
 
         if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_EnemyLancesOverride)) {
           manuallySpecifiedLances = Main.Settings.ActiveContractSettings.GetList<string>(ContractSettingsOverrides.AdditionalLances_EnemyLancesOverride);
+          Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Enemy lances will be '{string.Join(",", manuallySpecifiedLances)}'.");
         }
 
         bool showObjectiveOnLanceDetected = Main.Settings.AdditionalLanceSettings.ShowObjectiveOnLanceDetected;
         int objectivePriority = -10;
 
-        for (int i = 0; i < numberOfAdditionalEnemyLances; i++) {
+        for (int i = 1; i <= numberOfAdditionalEnemyLances; i++) {
           if (MissionControl.Instance.CurrentContractType == "ArenaSkirmish") {
             new AddPlayer2LanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
               $"Destroy Enemy Support Lance {i + 1}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete);
@@ -291,6 +292,7 @@ namespace MissionControl.Rules {
             if (manuallySpecifiedLances.Count >= i) {
               string lanceKey = manuallySpecifiedLances[i - 1];
               MLanceOverride lanceOverride = DataManager.Instance.GetLanceOverride(lanceKey);
+              Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Enemy lance will be '{lanceOverride.LanceKey}'.");
               new AddTargetLanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
                 $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i + 1}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete, lanceOverride);
             } else {
@@ -318,12 +320,14 @@ namespace MissionControl.Rules {
 
         if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_AllyLancesOverride)) {
           manuallySpecifiedLances = Main.Settings.ActiveContractSettings.GetList<string>(ContractSettingsOverrides.AdditionalLances_AllyLancesOverride);
+          Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lances will be '{string.Join(",", manuallySpecifiedLances)}'.");
         }
 
         for (int i = 1; i <= numberOfAdditionalAllyLances; i++) {
           if (manuallySpecifiedLances.Count >= i) {
             string lanceKey = manuallySpecifiedLances[i - 1];
             MLanceOverride lanceOverride = DataManager.Instance.GetLanceOverride(lanceKey);
+            // Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lance will be '{lanceOverride.LanceKey}'.");
             new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, mustBeBeyondDistance, mustBeWithinDistance, lanceOverride);
           } else {
             new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, mustBeBeyondDistance, mustBeWithinDistance);
