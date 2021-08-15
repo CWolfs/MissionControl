@@ -28,6 +28,7 @@ namespace MissionControl.Data {
     }
 
     public MLanceOverride(LanceDef lanceDef) {
+      this.LanceKey = lanceDef.Description.Id;
       this.lanceDefId = lanceDef.Description.Id;
       this.lanceTagSet = lanceDef.LanceTags;
 
@@ -48,6 +49,7 @@ namespace MissionControl.Data {
     }
 
     public MLanceOverride(LanceOverride lanceOverride) {
+      this.LanceKey = lanceOverride.lanceDefId;
       this.lanceDefId = lanceOverride.lanceDefId;
       this.lanceTagSet = new TagSet(lanceOverride.lanceTagSet);
       this.lanceExcludedTagSet = new TagSet(lanceOverride.lanceExcludedTagSet);
@@ -59,6 +61,7 @@ namespace MissionControl.Data {
     public MLanceOverride(string lanceDefId, TagSet lanceTagSet, TagSet lanceExcludedTagSet, TagSet spawnEffectTags,
       int lanceDifficultyAdjustment, List<UnitSpawnPointOverride> unitSpawnOverrides) {
 
+      this.LanceKey = lanceDefId;
       this.lanceDefId = lanceDefId;
       this.lanceTagSet = lanceTagSet;
       this.lanceExcludedTagSet = lanceExcludedTagSet;

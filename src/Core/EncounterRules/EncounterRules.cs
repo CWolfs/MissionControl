@@ -1,14 +1,12 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 using System;
 using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 
 using BattleTech;
-using BattleTech.Framework;
 
+using MissionControl.Data;
 using MissionControl.Logic;
 using MissionControl.Trigger;
 using MissionControl.Config;
@@ -101,10 +99,10 @@ namespace MissionControl.Rules {
       Main.Logger.LogWarning($"[MC 1.2+ DEPRECATION] 'EncounterRules.GetPlayerLanceSpawnerName()' IS DEPRECATED. USE 'EncounterRules.GetPlayerSpawnerGameObject(GameObject encounterLayerGo)' INSTEAD. IT WILL BE REMOVED IN A FUTURE UPDATE.");
       Main.Logger.LogWarning($"[MC 1.2+ DEPRECATION] 'EncounterRules.GetPlayerLanceSpawnerName()' IS DEPRECATED. USE 'EncounterRules.GetPlayerSpawnerGameObject(GameObject encounterLayerGo)' INSTEAD. IT WILL BE REMOVED IN A FUTURE UPDATE.");
       Main.Logger.LogWarning($"[MC 1.2+ DEPRECATION] 'EncounterRules.GetPlayerLanceSpawnerName()' IS DEPRECATED. USE 'EncounterRules.GetPlayerSpawnerGameObject(GameObject encounterLayerGo)' INSTEAD. IT WILL BE REMOVED IN A FUTURE UPDATE.");
-      
+
       GameObject encounterLayerGo = MissionControl.Instance.EncounterLayerGameObject;
       GameObject chunkPlayerLanceGo = EncounterRules.GetPlayerLanceChunkGameObject(encounterLayerGo);
-      GameObject SpawnerPlayerLanceGo =  GetPlayerSpawnerGameObject(chunkPlayerLanceGo);
+      GameObject SpawnerPlayerLanceGo = GetPlayerSpawnerGameObject(chunkPlayerLanceGo);
       return SpawnerPlayerLanceGo.name;
     }
 
@@ -137,7 +135,7 @@ namespace MissionControl.Rules {
       EncounterLayerData = MissionControl.Instance.EncounterLayerData;
 
       ChunkPlayerLanceGo = GetPlayerLanceChunkGameObject(EncounterLayerGo);
-      SpawnerPlayerLanceGo =  GetPlayerSpawnerGameObject(ChunkPlayerLanceGo);
+      SpawnerPlayerLanceGo = GetPlayerSpawnerGameObject(ChunkPlayerLanceGo);
 
       ObjectLookup["ChunkPlayerLance"] = ChunkPlayerLanceGo;
       ObjectLookup["SpawnerPlayerLance"] = SpawnerPlayerLanceGo;
@@ -255,6 +253,7 @@ namespace MissionControl.Rules {
       int numberOfAdditionalEnemyLances = 0;
 
       if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
+        List<string> manuallySpecifiedLances = new List<string>();
         bool isPrimaryObjective = MissionControl.Instance.CurrentContractType.In(Main.Settings.AdditionalLanceSettings.IsPrimaryObjectiveIn.ToArray());
         bool displayToUser = !Main.Settings.AdditionalLanceSettings.HideObjective;
         bool excludeFromAutocomplete = MissionControl.Instance.CurrentContractType.In(Main.Settings.AdditionalLanceSettings.ExcludeFromAutocomplete.ToArray());
@@ -277,22 +276,35 @@ namespace MissionControl.Rules {
           Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Enemy lance count will be '{numberOfAdditionalEnemyLances}'.");
         }
 
-        bool showObjectiveOnLanceDetected = Main.Settings.AdditionalLanceSettings.ShowObjectiveOnLanceDetected;
+        if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_EnemyLancesOverride)) {
+          manuallySpecifiedLances = Main.Settings.ActiveContractSettings.GetList<string>(ContractSettingsOverrides.AdditionalLances_EnemyLancesOverride);
+          Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Enemy lances will be '{string.Join(",", manuallySpecifiedLances)}'.");
+        }
 
+        bool showObjectiveOnLanceDetected = Main.Settings.AdditionalLanceSettings.ShowObjectiveOnLanceDetected;
         int objectivePriority = -10;
 
-        for (int i = 0; i < numberOfAdditionalEnemyLances; i++) {
+        for (int i = 1; i <= numberOfAdditionalEnemyLances; i++) {
           if (MissionControl.Instance.CurrentContractType == "ArenaSkirmish") {
             new AddPlayer2LanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
               $"Destroy Enemy Support Lance {i + 1}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete);
           } else {
-            new AddTargetLanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
-              $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i + 1}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete);
+            if (manuallySpecifiedLances.Count >= i) {
+              string lanceKey = manuallySpecifiedLances[i - 1];
+              MLanceOverride lanceOverride = DataManager.Instance.GetLanceOverride(lanceKey);
+              Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Enemy lance will be '{lanceOverride.LanceKey}'.");
+              new AddTargetLanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
+                $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i + 1}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete, lanceOverride);
+            } else {
+              new AddTargetLanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
+                $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i + 1}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete);
+            }
           }
         }
       }
 
       if (MissionControl.Instance.AreAdditionalLancesAllowed("allies")) {
+        List<string> manuallySpecifiedLances = new List<string>();
         FactionDef faction = MissionControl.Instance.GetFactionFromTeamType("allies");
 
         int numberOfAdditionalAllyLances = Main.Settings.ActiveAdditionalLances.Allies.SelectNumberOfAdditionalLances(faction, "allies");
@@ -306,8 +318,20 @@ namespace MissionControl.Rules {
           numberOfAdditionalAllyLances = numberOfAdditionalEnemyLances;
         }
 
-        for (int i = 0; i < numberOfAdditionalAllyLances; i++) {
-          new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, mustBeBeyondDistance, mustBeWithinDistance);
+        if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_AllyLancesOverride)) {
+          manuallySpecifiedLances = Main.Settings.ActiveContractSettings.GetList<string>(ContractSettingsOverrides.AdditionalLances_AllyLancesOverride);
+          Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lances will be '{string.Join(",", manuallySpecifiedLances)}'.");
+        }
+
+        for (int i = 1; i <= numberOfAdditionalAllyLances; i++) {
+          if (manuallySpecifiedLances.Count >= i) {
+            string lanceKey = manuallySpecifiedLances[i - 1];
+            MLanceOverride lanceOverride = DataManager.Instance.GetLanceOverride(lanceKey);
+            // Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lance will be '{lanceOverride.LanceKey}'.");
+            new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, mustBeBeyondDistance, mustBeWithinDistance, lanceOverride);
+          } else {
+            new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, mustBeBeyondDistance, mustBeWithinDistance);
+          }
         }
       }
     }
