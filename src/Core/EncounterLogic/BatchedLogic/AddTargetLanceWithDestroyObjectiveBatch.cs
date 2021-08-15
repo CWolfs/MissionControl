@@ -1,16 +1,15 @@
-using UnityEngine;
 using System;
 using System.Collections.Generic;
 
+using MissionControl.Data;
 using MissionControl.Rules;
 using MissionControl.Trigger;
-using MissionControl.Messages;
 
 namespace MissionControl.Logic {
   public class AddTargetLanceWithDestroyObjectiveBatch {
     public AddTargetLanceWithDestroyObjectiveBatch(EncounterRules encounterRules, string orientationTargetKey,
       SpawnLogic.LookDirection lookDirection, float mustBeBeyondDistance, float mustBeWithinDistance, string objectiveName, int priority,
-      bool isPrimaryObjective, bool displayToUser, bool showObjectiveOnLanceDetected, bool excludeFromAutocomplete) {
+      bool isPrimaryObjective, bool displayToUser, bool showObjectiveOnLanceDetected, bool excludeFromAutocomplete, MLanceOverride manuallySpecifiedLance = null) {
 
       int numberOfUnitsInLance = 4;
       string lanceGuid = Guid.NewGuid().ToString();
@@ -20,7 +19,7 @@ namespace MissionControl.Logic {
       string targetTeamGuid = EncounterRules.TARGET_TEAM_ID;
       string spawnerName = $"Lance_Enemy_OpposingForce_{lanceGuid}";
 
-      encounterRules.EncounterLogic.Add(new AddLanceToTargetTeam(lanceGuid, unitGuids));
+      encounterRules.EncounterLogic.Add(new AddLanceToTargetTeam(lanceGuid, unitGuids, manuallySpecifiedLance));
       encounterRules.EncounterLogic.Add(new AddDestroyWholeUnitChunk(encounterRules, targetTeamGuid, lanceGuid, unitGuids,
          spawnerName, objectiveGuid, objectiveName, priority, isPrimaryObjective, displayToUser));
       if (!excludeFromAutocomplete) encounterRules.EncounterLogic.Add(new AddObjectiveToAutocompleteTrigger(objectiveGuid));

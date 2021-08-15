@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 using Newtonsoft.Json.Linq;
 
 namespace MissionControl.Config {
@@ -5,6 +7,8 @@ namespace MissionControl.Config {
     public static string AdditionalLances_Enable = "AdditionalLances.Enable";
     public static string AdditionalLances_AllyLanceCountOverride = "AdditionalLances.AllyLanceCount";
     public static string AdditionalLances_EnemyLanceCountOverride = "AdditionalLances.EnemyLanceCount";
+    public static string AdditionalLances_AllyLancesOverride = "AdditionalLances.AllyLances";
+    public static string AdditionalLances_EnemyLancesOverride = "AdditionalLances.EnemyLances";
 
     public static string ExtendedLances_Enable = "ExtendedLances.Enable";
     public static string ExtendedLances_AllyLanceSizeOverride = "ExtendedLances.AllyLanceSize";
@@ -40,6 +44,11 @@ namespace MissionControl.Config {
     public int GetInt(string path) {
       JToken token = Properties.SelectToken(path);
       return (int)token;
+    }
+
+    public List<T> GetList<T>(string path) {
+      JToken token = Properties.SelectToken(path);
+      return token.ToObject<List<T>>();
     }
   }
 }
