@@ -289,7 +289,7 @@ namespace MissionControl.Rules {
               $"Destroy Enemy Support Lance {i + 1}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete);
           } else {
             if (manuallySpecifiedLances.Count >= i) {
-              string lanceKey = manuallySpecifiedLances[i];
+              string lanceKey = manuallySpecifiedLances[i - 1];
               MLanceOverride lanceOverride = DataManager.Instance.GetLanceOverride(lanceKey);
               new AddTargetLanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
                 $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i + 1}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete, lanceOverride);
@@ -322,7 +322,7 @@ namespace MissionControl.Rules {
 
         for (int i = 1; i <= numberOfAdditionalAllyLances; i++) {
           if (manuallySpecifiedLances.Count >= i) {
-            string lanceKey = manuallySpecifiedLances[i];
+            string lanceKey = manuallySpecifiedLances[i - 1];
             MLanceOverride lanceOverride = DataManager.Instance.GetLanceOverride(lanceKey);
             new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, mustBeBeyondDistance, mustBeWithinDistance, lanceOverride);
           } else {
