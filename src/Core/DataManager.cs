@@ -271,6 +271,7 @@ namespace MissionControl {
         return lanceOverride;
       }
 
+      Main.Logger.LogError($"[GetLanceOverride] No MC Lance or LanceDef found with key '{key}'. This is a case sensitive search.'");
       return null;
     }
 

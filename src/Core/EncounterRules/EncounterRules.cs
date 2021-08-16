@@ -320,7 +320,7 @@ namespace MissionControl.Rules {
 
         if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_AllyLancesOverride)) {
           manuallySpecifiedLances = Main.Settings.ActiveContractSettings.GetList<string>(ContractSettingsOverrides.AdditionalLances_AllyLancesOverride);
-          Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lances will be '{string.Join(",", manuallySpecifiedLances)}'.");
+          Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lances provided are '{string.Join(",", manuallySpecifiedLances)}'.");
         }
 
         for (int i = 1; i <= numberOfAdditionalAllyLances; i++) {
