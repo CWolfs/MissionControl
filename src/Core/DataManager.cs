@@ -267,8 +267,19 @@ namespace MissionControl {
       if (lanceDef != null) {
         MLanceOverride lanceOverride = new MLanceOverride(lanceDef);
         LanceOverrides.Add(lanceOverride.lanceDefId, lanceOverride);
-        Main.Logger.Log($"[GetLanceOverride] Found a lance def for '{key}', creating and caching a lance override for it. Using defaults of 'adjustedDifficulty - 0' and no 'spawnEffectTags'");
+        Main.Logger.Log($"[GetLanceOverride] Found a lance def for '{key}', creating and caching a lance override for it. Using defaults of 'adjustedDifficulty' of '0' and no 'spawnEffectTags'");
         return lanceOverride;
+      } else {
+        Main.Logger.Log($"[GetLanceOverride] No loaded LanceDef was found for '{key}'. Attempting to load the LanceDef.");
+        lanceDef = BattleTechResourceLoader.LoadDefFromId<LanceDef>(key, BattleTechResourceType.LanceDef);
+        DataManager.Instance.RequestResourcesAndProcess(BattleTechResourceType.LanceDef, key);
+
+        if (lanceDef != null) {
+          MLanceOverride lanceOverride = new MLanceOverride(lanceDef);
+          LanceOverrides.Add(lanceOverride.lanceDefId, lanceOverride);
+          Main.Logger.Log($"[GetLanceOverride] Load succeeded. Found a lance def for '{key}', creating and caching a lance override for it. Using defaults of 'adjustedDifficulty' of '0' and no 'spawnEffectTags'");
+          return lanceOverride;
+        }
       }
 
       Main.Logger.LogError($"[GetLanceOverride] No MC Lance or LanceDef found with key '{key}'. This is a case sensitive search.'");
