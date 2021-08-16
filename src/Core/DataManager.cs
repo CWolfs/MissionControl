@@ -231,7 +231,7 @@ namespace MissionControl {
           }
           */
         } else {
-          Main.Logger.LogError($"[DataManager] Json format is wrong. Read the documentation on the lance override format.");
+          Main.Logger.LogError($"[DataManager] Json format is wrong for file '{file}'. Read the documentation on the lance override format.");
         }
       }
     }
