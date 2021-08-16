@@ -115,7 +115,7 @@ namespace MissionControl.Patches {
 
     private static void HandleLackOfContractsSituation(SimGameState simGameState, WeightedList<MapAndEncounters> activeMaps, List<Contract> currentContracts) {
       // If there are no more active maps, reset the biomes/maps list
-      Main.Logger.LogWarning($"[FilterOnMapsWithEncountersWithValidContractRequirements] No valid map/encounter combinations. Handling lack of map/encounter situation.");
+      Main.Logger.LogWarning($"[FilterOnMapsWithEncountersWithValidContractRequirements][{MissionControl.Instance.CurrentContract.Name}] No valid map/encounter combinations. Handling lack of map/encounter situation.");
       StarSystem system = MissionControl.Instance.System;
       List<string> mapDiscardPile = (List<string>)AccessTools.Field(typeof(SimGameState), "mapDiscardPile").GetValue(simGameState);
       mapDiscardPile.Clear();
@@ -126,7 +126,7 @@ namespace MissionControl.Patches {
 
       activeMaps.AddRange(weightedList);
 
-      Main.Logger.LogWarning($"[FilterOnMapsWithEncountersWithValidContractRequirements] Running fresh map list over post processing to ensure no contracts screen freezes");
+      Main.Logger.LogWarning($"[FilterOnMapsWithEncountersWithValidContractRequirements][{MissionControl.Instance.CurrentContract.Name}] Running fresh map list over post processing to ensure no contracts screen freezes");
       HandleContractRepeats(simGameState, activeMaps);
       FilterOnMapsWithEncountersWithValidContractRequirements(simGameState, activeMaps, currentContracts);
       FixActiveMapWeights(activeMaps);
