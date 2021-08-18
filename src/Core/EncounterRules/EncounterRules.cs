@@ -292,7 +292,7 @@ namespace MissionControl.Rules {
             if (manuallySpecifiedLances.Count >= i) {
               string lanceKey = manuallySpecifiedLances[i - 1];
               MLanceOverride lanceOverride = DataManager.Instance.GetLanceOverride(lanceKey);
-              Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Enemy lance will be '{lanceOverride.LanceKey}'.");
+              Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Resolved Enemy lance will be '{lanceOverride.LanceKey}'.");
               new AddTargetLanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
                 $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i + 1}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete, lanceOverride);
             } else {
@@ -327,7 +327,7 @@ namespace MissionControl.Rules {
           if (manuallySpecifiedLances.Count >= i) {
             string lanceKey = manuallySpecifiedLances[i - 1];
             MLanceOverride lanceOverride = DataManager.Instance.GetLanceOverride(lanceKey);
-            // Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lance will be '{lanceOverride.LanceKey}'.");
+            Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Resolved Ally lance will be '{lanceOverride.LanceKey}'.");
             new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, mustBeBeyondDistance, mustBeWithinDistance, lanceOverride);
           } else {
             new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, mustBeBeyondDistance, mustBeWithinDistance);

@@ -259,7 +259,7 @@ namespace MissionControl {
 
       if (LanceOverrides.ContainsKey(key)) {
         Main.Logger.Log($"[GetLanceOverride] Found a lance override for '{key}'");
-        return LanceOverrides[key];
+        return LanceOverrides[key].Copy();
       }
 
       LanceDef lanceDef = null;
@@ -268,7 +268,7 @@ namespace MissionControl {
         MLanceOverride lanceOverride = new MLanceOverride(lanceDef);
         LanceOverrides.Add(lanceOverride.lanceDefId, lanceOverride);
         Main.Logger.Log($"[GetLanceOverride] Found a lance def for '{key}', creating and caching a lance override for it. Using defaults of 'adjustedDifficulty' of '0' and no 'spawnEffectTags'");
-        return lanceOverride;
+        return lanceOverride.Copy();
       } else {
         Main.Logger.Log($"[GetLanceOverride] No loaded LanceDef was found for '{key}'. Attempting to load the LanceDef.");
         lanceDef = BattleTechResourceLoader.LoadDefFromId<LanceDef>(key, BattleTechResourceType.LanceDef);
@@ -278,7 +278,7 @@ namespace MissionControl {
           MLanceOverride lanceOverride = new MLanceOverride(lanceDef);
           LanceOverrides.Add(lanceOverride.lanceDefId, lanceOverride);
           Main.Logger.Log($"[GetLanceOverride] Load succeeded. Found a lance def for '{key}', creating and caching a lance override for it. Using defaults of 'adjustedDifficulty' of '0' and no 'spawnEffectTags'");
-          return lanceOverride;
+          return lanceOverride.Copy();
         }
       }
 

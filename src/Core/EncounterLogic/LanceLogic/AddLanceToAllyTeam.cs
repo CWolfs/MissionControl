@@ -22,7 +22,7 @@ namespace MissionControl.Logic {
       TeamOverride teamOverride = contractOverride.employerTeam;
       TeamOverride targetTeamOverride = contractOverride.targetTeam;
 
-      LanceOverride lanceOverride = (manuallySpecifiedLance == null) ? SelectAppropriateLanceOverride("allies").Copy() : manuallySpecifiedLance;
+      LanceOverride lanceOverride = (manuallySpecifiedLance == null) ? SelectAppropriateLanceOverride("allies").Copy() : manuallySpecifiedLance.Copy();
       lanceOverride.name = $"Lance_Ally_Force_{lanceGuid}";
 
       if (unitGuids.Count > 4) {
