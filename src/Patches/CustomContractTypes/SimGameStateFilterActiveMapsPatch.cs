@@ -61,19 +61,27 @@ namespace MissionControl.Patches {
         foreach (EncounterLayer_MDD encounterLayerMDD in level.Encounters) {
           int contractTypeId = (int)encounterLayerMDD.ContractTypeRow.ContractTypeID;
 
+          Main.LogDebug($"");
+          Main.LogDebug($"-----");
+          Main.LogDebug($"");
+
           // If the encounter ContractTypeID exists in the potential contracts list, continue
           if (MissionControl.Instance.PotentialContracts.ContainsKey(contractTypeId)) {
-            // If the contract overrides in the potential contracts by ContractTypeID has a `DoesContractMeetRequirements` sucess, mark remove = false
+            Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] Contract Type '{encounterLayerMDD.ContractTypeRow.Name}' is within potential contracts.");
+
+            // If the contract overrides in the potential contracts by ContractTypeID has a `DoesContractMeetRequirements` success, mark remove = false
             List<ContractOverride> contractOverrides = MissionControl.Instance.PotentialContracts[contractTypeId];
-            // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] '{contractTypeId}' - contractOverrides count is: {contractOverrides.Count}");
+            Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] Contract Type '{encounterLayerMDD.ContractTypeRow.Name}' - There are '{contractOverrides.Count}' ContractOverrides (contracts)");
             for (int j = contractOverrides.Count; j > 0; j--) {
               ContractOverride contractOverride = contractOverrides[j - 1];
-              // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] '{contractTypeId}' - contractOverride is: {contractOverride.ID}");
-              // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] '{contractTypeId}' - validParticipants is: {validParticipants}");
+              Main.LogDebug("");
+              Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] Contract Type '{encounterLayerMDD.ContractTypeRow.Name}' - ContractOverride is: {contractOverride.ID}");
+              Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] Contract Type '{encounterLayerMDD.ContractTypeRow.Name}' - ValidParticipants is: {validParticipants}. Cannot extract factions/participants due to BT intern restrictions.");
+
               bool doesContractHaveValidFactions = (bool)GetValidFactionMethod.Invoke(simGameState, new object[] { system, validParticipants, contractOverride.requirementList, null });
-              // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] '{contractTypeId}' - Contract '{contractOverride.ID}' has valid fations?: {doesContractHaveValidFactions}");
+              Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] Contract Type '{encounterLayerMDD.ContractTypeRow.Name}' - Contract '{contractOverride.ID}' has valid fations?: {doesContractHaveValidFactions}");
               if (!doesContractHaveValidFactions) {
-                // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] '{contractTypeId}' - Removing Contract '{contractOverride.ID}' from potential list");
+                Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] Contract Type '{encounterLayerMDD.ContractTypeRow.Name}' - Removing Contract '{contractOverride.ID}' from potential list due to not having any valid factions/participants on the contract.");
                 contractOverrides.RemoveAt(j - 1);
                 continue;
               }
@@ -81,36 +89,36 @@ namespace MissionControl.Patches {
               bool doesContractMeetReqs = (bool)DoesContractMeetRequirementsMethod.Invoke(simGameState, new object[] { system, level, contractOverride });
               if (doesContractMeetReqs) {
                 // At least one contract override meets the requirements to prevent the infinite spinner so ignore this logic now and continue to the next map/encounter combo
-                // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] '{contractTypeId}' - Level '{level.Map.MapName}.{encounterLayerMDD.Name}' has at least one valid contract override");
+                Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] Contract Type '{encounterLayerMDD.ContractTypeRow.Name}' - Contract '{contractOverride.ID}' meets requirements with level '{level.Map.MapName}.{encounterLayerMDD.Name}' and has at least one valid contract override. Will keep as a possible 'active map' for selection on.");
                 removeMap = false;
                 break;
               }
             }
+          } else {
+            Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] Contract Type '{encounterLayerMDD.ContractTypeRow.Name}' - Doesn't exist in the potential contracts.");
           }
         }
 
         if (removeMap) {
-          // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] Level '{level.Map.MapName}' had no encounters with any valid contract overrides. Removing map.");
+          Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] Level '{level.Map.MapName}' had no encounters with any valid contract overrides. Removing map.");
           mapsToRemove.Add(level);
         }
       }
 
       // Remove maps that have no valid contracts due to failing requirements
       foreach (MapAndEncounters level in mapsToRemove) {
-        // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] Attempting to remove Level '{level.Map.MapName}'");
+        Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] Attempting to remove Level '{level.Map.MapName}'");
         activeMaps.Remove(level);
       }
 
-      // Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] There are '{activeMaps.Count}' active maps/encounter combos to use. These are:");
-      /*
+      Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] There are '{activeMaps.Count}' active maps/encounter combos to use. These are:");
       for (int k = 0; k < activeMaps.Count; k++) {
         MapAndEncounters level = activeMaps[k];
-        Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] - '{level.Map.MapName}' with '{level.Encounters.Length}' encounters");
+        Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] '{level.Map.MapName}' with '{level.Encounters.Length}' encounters");
         foreach (EncounterLayer_MDD encounterLayerMDD in level.Encounters) {
-          Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements]   - Encounter '{encounterLayerMDD.Name}'");
+          Main.LogDebug($"[FilterOnMapsWithEncountersWithValidContractRequirements] Encounter '{encounterLayerMDD.Name}'");
         }
       }
-      */
     }
 
     private static void HandleLackOfContractsSituation(SimGameState simGameState, WeightedList<MapAndEncounters> activeMaps, List<Contract> currentContracts) {
