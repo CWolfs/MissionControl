@@ -8,10 +8,8 @@ using BattleTech.Designed;
 
 public static class SceneUtils {
   public static Vector3 GetRandomPositionWithinBounds(Vector3 target, float maxDistance) {
-    GameObject chunkBoundaryRect = MissionControl.MissionControl.Instance.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary").gameObject;
-    GameObject boundary = chunkBoundaryRect.transform.Find("EncounterBoundaryRect").gameObject;
-    EncounterBoundaryChunkGameLogic chunkBoundary = chunkBoundaryRect.GetComponent<EncounterBoundaryChunkGameLogic>();
-    EncounterBoundaryRectGameLogic boundaryLogic = boundary.GetComponent<EncounterBoundaryRectGameLogic>();
+    EncounterBoundaryChunkGameLogic chunkBoundary = MissionControl.MissionControl.Instance.EncounterLayerGameObject.GetComponentInChildren<EncounterBoundaryChunkGameLogic>();
+    EncounterBoundaryRectGameLogic boundaryLogic = chunkBoundary.GetComponentInChildren<EncounterBoundaryRectGameLogic>();
     Rect boundaryRec = chunkBoundary.GetEncounterBoundaryRectBounds();
 
     Vector3 randomRecPosition = boundaryRec.GetRandomPositionFromTarget(target, maxDistance);

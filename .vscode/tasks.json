@@ -11,7 +11,7 @@
     {
       "label": "copy (assets)",
       "type": "shell",
-      "command": "copy-assets.sh"
+      "command": "./copy-assets.sh"
     }
   ]
 }

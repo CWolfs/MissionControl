@@ -61,17 +61,22 @@ namespace MissionControl {
         Main.LogDebug($"[EncounterDataManager.SetMountOnPositions] Target '{mountTargetPath}' found with '{go.name}'");
       }
 
-      Vector3 pos = go.transform.position;
-      Collider col = go.GetComponentInChildren<Collider>();
+      GameObject copyGo = GameObject.Instantiate(go);
+      copyGo.transform.position = go.transform.position;
+      Vector3 pos = copyGo.transform.position;
+      Collider col = copyGo.GetComponentInChildren<Collider>();
+      Vector4 colliderPos = col.transform.position;
 
-      RaycastHit[] hits = Physics.RaycastAll(new Vector3(pos.x, pos.y + 500f, pos.z), go.transform.TransformDirection(Vector3.down), 1000f);
+      RaycastHit[] hits = Physics.RaycastAll(new Vector3(colliderPos.x, colliderPos.y + 500f, colliderPos.z), go.transform.TransformDirection(Vector3.down), 1000f);
       foreach (RaycastHit hit1 in hits) {
         if (hit1.collider.gameObject.name == col.gameObject.name) {
           pos.y = hit1.point.y;
+          break;
         }
       }
 
       target.transform.position = pos;
+      GameObject.Destroy(copyGo);
     }
 
     public void GenerateEncounterLayerBuildingData() {

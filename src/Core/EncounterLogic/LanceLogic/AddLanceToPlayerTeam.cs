@@ -1,14 +1,6 @@
-using UnityEngine;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 
-using BattleTech;
-using BattleTech.Designed;
 using BattleTech.Framework;
-
-using MissionControl.Rules;
-using MissionControl.Utils;
 
 namespace MissionControl.Logic {
   public class AddLanceToPlayerTeam : LanceLogic {
@@ -46,7 +38,7 @@ namespace MissionControl.Logic {
           unitSpawnRef.EncounterObjectGuid = unitGuid;
           lanceOverride.unitSpawnPointOverrideList[i].unitSpawnPoint = unitSpawnRef;
         }
-        
+
         LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
         lanceSpawnerRef.EncounterObjectGuid = lanceGuid;
         lanceOverride.lanceSpawner = lanceSpawnerRef;

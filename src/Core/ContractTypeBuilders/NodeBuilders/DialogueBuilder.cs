@@ -5,6 +5,7 @@ using System;
 using MissionControl.Trigger;
 using MissionControl.Rules;
 using MissionControl.EncounterFactories;
+using MissionControl.Messages;
 
 using Newtonsoft.Json.Linq;
 
@@ -42,9 +43,18 @@ namespace MissionControl.ContractTypeBuilders {
     private void BuildSimpleDialogue() {
       DialogueFactory.CreateDialogLogic(this.parent, this.name, this.guid, this.showOnlyOnce);
 
+      MessageCenterMessageType messageType;
       if (this.trigger != null) {
-        MessageCenterMessageType triggerMessageType = (MessageCenterMessageType)Enum.Parse(typeof(MessageCenterMessageType), this.trigger);
-        DialogTrigger dialogueTrigger = new DialogTrigger(triggerMessageType, this.guid);
+        if (!Enum.TryParse(this.trigger, out messageType)) {
+          MessageTypes customMessageType;
+          if (!Enum.TryParse(this.trigger, out customMessageType)) {
+            Main.Logger.LogError("[DialogueBuilder] Invalid 'Trigger' provided.");
+          } else {
+            messageType = (MessageCenterMessageType)customMessageType;
+          }
+        }
+
+        DialogTrigger dialogueTrigger = new DialogTrigger(messageType, this.guid);
         dialogueTrigger.Run();
       }
     }

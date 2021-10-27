@@ -103,11 +103,9 @@ namespace MissionControl.Logic {
       Init();
 
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-      MissionControl EncounterManager = MissionControl.Instance;
-      GameObject chunkBoundaryRect = EncounterManager.EncounterLayerGameObject.transform.Find("Chunk_EncounterBoundary").gameObject;
-      GameObject boundary = chunkBoundaryRect.transform.Find("EncounterBoundaryRect").gameObject;
-      EncounterBoundaryChunkGameLogic chunkBoundary = chunkBoundaryRect.GetComponent<EncounterBoundaryChunkGameLogic>();
-      EncounterBoundaryRectGameLogic boundaryLogic = boundary.GetComponent<EncounterBoundaryRectGameLogic>();
+      EncounterBoundaryChunkGameLogic chunkBoundary = MissionControl.Instance.EncounterLayerGameObject.GetComponentInChildren<EncounterBoundaryChunkGameLogic>();
+      EncounterBoundaryRectGameLogic boundaryLogic = chunkBoundary.GetComponentInChildren<EncounterBoundaryRectGameLogic>();
+      GameObject boundary = boundaryLogic.gameObject;
       Rect boundaryRec = chunkBoundary.GetEncounterBoundaryRectBounds();
       Rect usableBounds = boundaryRec.GenerateUsableBoundary();
 

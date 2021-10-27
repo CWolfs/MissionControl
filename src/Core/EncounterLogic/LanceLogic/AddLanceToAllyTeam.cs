@@ -1,23 +1,19 @@
-using UnityEngine;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 
-using BattleTech;
-using BattleTech.Designed;
 using BattleTech.Framework;
 
-using MissionControl.Rules;
-using MissionControl.Utils;
+using MissionControl.Data;
 
 namespace MissionControl.Logic {
   public class AddLanceToAllyTeam : LanceLogic {
     private string lanceGuid;
     private List<string> unitGuids;
+    private MLanceOverride manuallySpecifiedLance;
 
-    public AddLanceToAllyTeam(string lanceGuid, List<string> unitGuids) {
+    public AddLanceToAllyTeam(string lanceGuid, List<string> unitGuids, MLanceOverride manuallySpecifiedLance = null) {
       this.lanceGuid = lanceGuid;
       this.unitGuids = unitGuids;
+      this.manuallySpecifiedLance = manuallySpecifiedLance;
     }
 
     public override void Run(RunPayload payload) {
@@ -26,7 +22,7 @@ namespace MissionControl.Logic {
       TeamOverride teamOverride = contractOverride.employerTeam;
       TeamOverride targetTeamOverride = contractOverride.targetTeam;
 
-      LanceOverride lanceOverride = SelectAppropriateLanceOverride("allies").Copy();
+      LanceOverride lanceOverride = (manuallySpecifiedLance == null) ? SelectAppropriateLanceOverride("allies").Copy() : manuallySpecifiedLance.Copy();
       lanceOverride.name = $"Lance_Ally_Force_{lanceGuid}";
 
       if (unitGuids.Count > 4) {
@@ -42,7 +38,7 @@ namespace MissionControl.Logic {
         unitSpawnRef.EncounterObjectGuid = unitGuid;
         lanceOverride.unitSpawnPointOverrideList[i].unitSpawnPoint = unitSpawnRef;
       }
-      
+
       LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
       lanceSpawnerRef.EncounterObjectGuid = lanceGuid;
       lanceOverride.lanceSpawner = lanceSpawnerRef;

@@ -9,7 +9,9 @@
   "AdditionalLances": {
     "Enable": true,
     "EnemyLanceCount": 2,
-    "AllyLanceCount": 1
+    "EnemyLances": ["Damaged_Assault_Battle_Lance", "lancedef_vehicle_d10_dynamic_convoy"],
+    "AllyLanceCount": 1,
+    "AllyLances": ["Generic_Light_Battle_Lance"]
   },
   "ExtendedLances": {
     "Enable": true,

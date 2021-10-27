@@ -107,26 +107,30 @@ namespace MissionControl {
 
     private void LoadCustomContractTypeBuilds() {
       foreach (string directory in Directory.GetDirectories($"{ModDirectory}/contractTypeBuilds/")) {
-        string contractTypeBuildCommonSource = File.ReadAllText($"{directory}/common.jsonc");
-        JObject contractTypeCommonBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildCommonSource, serialiserSettings);
-        string contractTypeName = (string)contractTypeCommonBuild["Key"];
-        Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loading contract type build '{contractTypeName}'");
+        if (File.Exists($"{directory}/common.jsonc")) {
+          string contractTypeBuildCommonSource = File.ReadAllText($"{directory}/common.jsonc");
+          JObject contractTypeCommonBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildCommonSource, serialiserSettings);
+          string contractTypeName = (string)contractTypeCommonBuild["Key"];
+          Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loading contract type build '{contractTypeName}'");
 
-        Dictionary<string, JObject> contractTypeMapBuilds = new Dictionary<string, JObject>();
-        AvailableCustomContractTypeBuilds.Add(contractTypeCommonBuild["Key"].ToString(), contractTypeMapBuilds);
+          Dictionary<string, JObject> contractTypeMapBuilds = new Dictionary<string, JObject>();
+          AvailableCustomContractTypeBuilds.Add(contractTypeCommonBuild["Key"].ToString(), contractTypeMapBuilds);
 
-        foreach (string file in Directory.GetFiles(directory, "*.json*", SearchOption.AllDirectories)) {
-          string contractTypeBuildMapSource = File.ReadAllText(file);
-          JObject contractTypeMapBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildMapSource, serialiserSettings);
-          string fileName = Path.GetFileNameWithoutExtension(file.Substring(file.LastIndexOf("/")));
+          foreach (string file in Directory.GetFiles(directory, "*.json*", SearchOption.AllDirectories)) {
+            string contractTypeBuildMapSource = File.ReadAllText(file);
+            JObject contractTypeMapBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildMapSource, serialiserSettings);
+            string fileName = Path.GetFileNameWithoutExtension(file.Substring(file.LastIndexOf("/")));
 
-          if (fileName == "common" || contractTypeMapBuild.ContainsKey("EncounterLayerId")) {
-            string encounterLayerId = (fileName == "common") ? fileName : (string)contractTypeMapBuild["EncounterLayerId"];
-            Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type map build '{contractTypeName}/{fileName}' with encounterLayerId '{encounterLayerId}'");
-            contractTypeMapBuilds.Add(encounterLayerId, contractTypeMapBuild);
-          } else {
-            Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Unable to load contract type map build file '{fileName}' for contract type '{contractTypeName}' because no 'EncounterLayerId' exists");
+            if (fileName == "common" || contractTypeMapBuild.ContainsKey("EncounterLayerId")) {
+              string encounterLayerId = (fileName == "common") ? fileName : (string)contractTypeMapBuild["EncounterLayerId"];
+              Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type map build '{contractTypeName}/{fileName}' with encounterLayerId '{encounterLayerId}'");
+              contractTypeMapBuilds.Add(encounterLayerId, contractTypeMapBuild);
+            } else {
+              Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Unable to load contract type map build file '{fileName}' for contract type '{contractTypeName}' because no 'EncounterLayerId' exists");
+            }
           }
+        } else {
+          Main.Logger.LogWarning($"[DataManager.LoadCustomContractTypeBuilds] Directory exists for contract type but no common.jsonc exists. Probably bad data or WIP contract type build - {directory}");
         }
       }
     }
@@ -227,7 +231,7 @@ namespace MissionControl {
           }
           */
         } else {
-          Main.Logger.LogError($"[DataManager] Json format is wrong. Read the documentation on the lance override format.");
+          Main.Logger.LogError($"[DataManager] Json format is wrong for file '{file}'. Read the documentation on the lance override format.");
         }
       }
     }
@@ -255,7 +259,7 @@ namespace MissionControl {
 
       if (LanceOverrides.ContainsKey(key)) {
         Main.Logger.Log($"[GetLanceOverride] Found a lance override for '{key}'");
-        return LanceOverrides[key];
+        return LanceOverrides[key].Copy();
       }
 
       LanceDef lanceDef = null;
@@ -263,10 +267,22 @@ namespace MissionControl {
       if (lanceDef != null) {
         MLanceOverride lanceOverride = new MLanceOverride(lanceDef);
         LanceOverrides.Add(lanceOverride.lanceDefId, lanceOverride);
-        Main.Logger.Log($"[GetLanceOverride] Found a lance def for '{key}', creating and caching a lance override for it. Using defaults of 'adjustedDifficulty - 0' and no 'spawnEffectTags'");
-        return lanceOverride;
+        Main.Logger.Log($"[GetLanceOverride] Found a lance def for '{key}', creating and caching a lance override for it. Using defaults of 'adjustedDifficulty' of '0' and no 'spawnEffectTags'");
+        return lanceOverride.Copy();
+      } else {
+        Main.Logger.Log($"[GetLanceOverride] No loaded LanceDef was found for '{key}'. Attempting to load the LanceDef.");
+        lanceDef = BattleTechResourceLoader.LoadDefFromId<LanceDef>(key, BattleTechResourceType.LanceDef);
+        DataManager.Instance.RequestResourcesAndProcess(BattleTechResourceType.LanceDef, key);
+
+        if (lanceDef != null) {
+          MLanceOverride lanceOverride = new MLanceOverride(lanceDef);
+          LanceOverrides.Add(lanceOverride.lanceDefId, lanceOverride);
+          Main.Logger.Log($"[GetLanceOverride] Load succeeded. Found a lance def for '{key}', creating and caching a lance override for it. Using defaults of 'adjustedDifficulty' of '0' and no 'spawnEffectTags'");
+          return lanceOverride.Copy();
+        }
       }
 
+      Main.Logger.LogError($"[GetLanceOverride] No MC Lance or LanceDef found with key '{key}'. This is a case sensitive search.'");
       return null;
     }
 

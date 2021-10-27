@@ -59,10 +59,24 @@ namespace MissionControl.Config {
           float spawnInfluenceModifier = absDifficultyDifference *
             ((TeamType == "Enemy") ? dropWeightSettings.EnemySpawnInfluencePerHalfSkullAbove : dropWeightSettings.AllySpawnInfluencePerHalfSkullAbove);
 
+          if (Math.Abs(spawnInfluenceModifier) > dropWeightSettings.GetSpawnInfluenceMax(TeamType)) {
+            spawnInfluenceModifier = (TeamType == "Enemy") ? dropWeightSettings.GetSpawnInfluenceMax(TeamType) : dropWeightSettings.GetSpawnInfluenceMax(TeamType) * -1;
+            Main.LogDebug($"[SelectNumberOfAdditionalLances] [{TeamType}] Calculated '{TeamType}' drop weight influence is above SpawnInfluenceMax. Clamping to: '{spawnInfluenceModifier}'");
+          }
+
+          Main.LogDebug($"[SelectNumberOfAdditionalLances] [{TeamType}] SpawnInfluenceModifier is: '{spawnInfluenceModifier}'");
+
           rawChanceToSpawn = rawChanceToSpawn + spawnInfluenceModifier;
         } else if (difficultyDifference < 0) { // Player is sending a weaker lance than the contract difficulty requires. Add more influence to AL ally lances spawning.
           float spawnInfluenceModifier = absDifficultyDifference *
             ((TeamType == "Enemy") ? dropWeightSettings.EnemySpawnInfluencePerHalfSkullBelow : dropWeightSettings.AllySpawnInfluencePerHalfSkullBelow);
+
+          if (Math.Abs(spawnInfluenceModifier) > dropWeightSettings.GetSpawnInfluenceMax(TeamType)) {
+            spawnInfluenceModifier = (TeamType == "Enemy") ? dropWeightSettings.GetSpawnInfluenceMax(TeamType) * -1 : dropWeightSettings.GetSpawnInfluenceMax(TeamType);
+            Main.LogDebug($"[SelectNumberOfAdditionalLances] [{TeamType}] Calculated '{TeamType}' drop weight influence is above SpawnInfluenceMax. Clamping to: '{spawnInfluenceModifier}'");
+          }
+
+          Main.LogDebug($"[SelectNumberOfAdditionalLances] [{TeamType}] SpawnInfluenceModifier is: '{spawnInfluenceModifier}''");
 
           rawChanceToSpawn = rawChanceToSpawn + spawnInfluenceModifier;
         }
