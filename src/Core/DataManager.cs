@@ -71,7 +71,7 @@ namespace MissionControl {
       Main.LogDebug($"[DataManager.LoadDeferredDefs] Loading Deferred Defs");
       Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-      LoadVehicleDefs();
+      // LoadVehicleDefs();
       LoadPilotDefs();
       LoadCustomContractTypeBuilds();
       LoadCustomContractTypes();
@@ -294,9 +294,9 @@ namespace MissionControl {
       return null;
     }
 
-    public void LoadVehicleDefs() {
-      RequestResourcesAndProcess(BattleTechResourceType.VehicleDef, "vehicledef_DEMOLISHER");
-    }
+    // public void LoadVehicleDefs() {
+    // RequestResourcesAndProcess(BattleTechResourceType.VehicleDef, "vehicledef_DEMOLISHER");
+    // }
 
     public void LoadPilotDefs() {
       RequestResourcesAndProcess(BattleTechResourceType.PilotDef, UnitSpawnPointGameLogic.PilotDef_Default);
