@@ -472,7 +472,7 @@ namespace MissionControl {
         Main.LogDebug($"[RequestResourcesAndProcess] Finished load request for {resourceId}");
       }, filterByOwnership);
       loadRequest.AddBlindLoadRequest(resourceType, resourceId);
-      loadRequest.ProcessRequests(1000u);
+      loadRequest.ProcessRequests();
     }
 
     public DateTime? GetSimGameCurrentDate() {
