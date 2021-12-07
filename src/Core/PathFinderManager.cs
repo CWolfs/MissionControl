@@ -23,7 +23,7 @@ namespace MissionControl {
     private static float MAX_SLOPE_FOR_PATHFINDING = 39f;
 
     private Mech pathFinderMech;
-    private Vehicle pathFinderVehicle;
+    // private Vehicle pathFinderVehicle;
 
     private Dictionary<string, float> estimatesOfBadPathfings = new Dictionary<string, float>();
 
@@ -33,7 +33,7 @@ namespace MissionControl {
 
     public void Init() {
       pathFinderMech = CreatePathFinderMech();
-      pathFinderVehicle = CreatePathFindingVehicle();
+      // pathFinderVehicle = CreatePathFindingVehicle();
     }
 
     private Mech CreatePathFinderMech() {
@@ -54,6 +54,7 @@ namespace MissionControl {
       return mech;
     }
 
+    /*
     private Vehicle CreatePathFindingVehicle() {
       GameInstance game = UnityGameInstance.BattleTechGame;
       CombatGameState combatState = game.Combat;
@@ -72,6 +73,7 @@ namespace MissionControl {
 
       return vehicle;
     }
+    */
 
     public void RequestPathFinderMech() {
       Main.LogDebug("[PFM] Requesting path finder mech");
@@ -79,17 +81,19 @@ namespace MissionControl {
       DataManager.Instance.RequestResourcesAndProcess(BattleTechResourceType.Prefab, pathFinderMech.MechDef.Chassis.PrefabIdentifier);
     }
 
+    /*
     public void RequestPathFinderVehicle() {
       Main.LogDebug("[PFM] Requesting path finder vehicle");
       if (pathFinderVehicle == null) Init();
       DataManager.Instance.RequestResourcesAndProcess(BattleTechResourceType.Prefab, pathFinderVehicle.VehicleDef.Chassis.PrefabIdentifier);
     }
+    */
 
     private AbstractActor GetPathFindingActor(UnitType type) {
       if (type == UnitType.Mech) {
         return pathFinderMech;
-      } else if (type == UnitType.Vehicle) {
-        return pathFinderVehicle;
+        // } else if (type == UnitType.Vehicle) {
+        //   return pathFinderVehicle;
       }
 
       return null;
@@ -298,26 +302,26 @@ namespace MissionControl {
         if (blipIdentified) GameObject.Destroy(blipIdentified);
       }
 
-      if (pathFinderVehicle != null && pathFinderVehicle.GameRep != null) {
-        GameObject pathFinderVehicleGo = pathFinderVehicle.GameRep.gameObject;
-        GameObject vehicleBlipUnknownGo = pathFinderVehicle.GameRep.BlipObjectUnknown.gameObject;
-        GameObject vehicleBlipIdentified = pathFinderVehicle.GameRep.BlipObjectIdentified.gameObject;
-        if (pathFinderVehicleGo) GameObject.Destroy(pathFinderVehicleGo);
-        if (vehicleBlipUnknownGo) GameObject.Destroy(vehicleBlipUnknownGo);
-        if (vehicleBlipIdentified) GameObject.Destroy(vehicleBlipIdentified);
-      }
+      // if (pathFinderVehicle != null && pathFinderVehicle.GameRep != null) {
+      //   GameObject pathFinderVehicleGo = pathFinderVehicle.GameRep.gameObject;
+      //   GameObject vehicleBlipUnknownGo = pathFinderVehicle.GameRep.BlipObjectUnknown.gameObject;
+      //   GameObject vehicleBlipIdentified = pathFinderVehicle.GameRep.BlipObjectIdentified.gameObject;
+      //   if (pathFinderVehicleGo) GameObject.Destroy(pathFinderVehicleGo);
+      //   if (vehicleBlipUnknownGo) GameObject.Destroy(vehicleBlipUnknownGo);
+      //   if (vehicleBlipIdentified) GameObject.Destroy(vehicleBlipIdentified);
+      // }
 
       estimatesOfBadPathfings.Clear();
     }
 
     public void FullReset() {
       pathFinderMech = null;
-      pathFinderVehicle = null;
+      // pathFinderVehicle = null;
     }
 
     private void UnsubscribePathfinders() {
       if (pathFinderMech != null) AccessTools.Method(typeof(AbstractActor), "SubscribeMessages").Invoke(pathFinderMech, new object[] { false });
-      if (pathFinderVehicle != null) AccessTools.Method(typeof(AbstractActor), "SubscribeMessages").Invoke(pathFinderVehicle, new object[] { false });
+      /// if (pathFinderVehicle != null) AccessTools.Method(typeof(AbstractActor), "SubscribeMessages").Invoke(pathFinderVehicle, new object[] { false });
     }
   }
 }

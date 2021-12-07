@@ -16,7 +16,7 @@ namespace MissionControl.Patches {
       }
 
       if (!DataManager.Instance.HasLoadedDeferredDefs) {
-        DataManager.Instance.LoadDeferredDefs();
+        DataManager.Instance.SubscribeDeferredDefs();
       }
 
       if (Main.Settings.VersionCheck) {

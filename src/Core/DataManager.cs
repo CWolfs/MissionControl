@@ -62,14 +62,22 @@ namespace MissionControl {
       InjectMessageScopes();
     }
 
-    public void LoadDeferredDefs() {
+    public void SubscribeDeferredDefs() {
+      Main.LogDebug($"[DataManager.SubscribeDeferredDefs] Subscribing for Deferred Defs after DataManager loading has completed");
+      UnityGameInstance.BattleTechGame.MessageCenter.AddFiniteSubscriber(MessageCenterMessageType.DataManagerLoadCompleteMessage, LoadDeferredDefs);
+    }
+
+    private bool LoadDeferredDefs(MessageCenterMessage message) {
+      Main.LogDebug($"[DataManager.LoadDeferredDefs] Loading Deferred Defs");
       Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-      LoadVehicleDefs();
+      // LoadVehicleDefs();
       LoadPilotDefs();
       LoadCustomContractTypeBuilds();
       LoadCustomContractTypes();
       HasLoadedDeferredDefs = true;
+
+      return true;
     }
 
     private void LoadContractConfigOverrides() {
@@ -286,9 +294,9 @@ namespace MissionControl {
       return null;
     }
 
-    public void LoadVehicleDefs() {
-      RequestResourcesAndProcess(BattleTechResourceType.VehicleDef, "vehicledef_DEMOLISHER");
-    }
+    // public void LoadVehicleDefs() {
+    // RequestResourcesAndProcess(BattleTechResourceType.VehicleDef, "vehicledef_DEMOLISHER");
+    // }
 
     public void LoadPilotDefs() {
       RequestResourcesAndProcess(BattleTechResourceType.PilotDef, UnitSpawnPointGameLogic.PilotDef_Default);
