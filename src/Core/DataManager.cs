@@ -73,14 +73,20 @@ namespace MissionControl {
     public void SubscribeDeferredDefs() {
       if (UnityGameInstance.BattleTechGame.DataManager.IsLoading) {
         Main.LogDebug($"[DataManager.SubscribeDeferredDefs] DataManager is currently loading. Subscribing for Deferred Defs after DataManager loading has completed");
-        UnityGameInstance.BattleTechGame.MessageCenter.AddFiniteSubscriber(MessageCenterMessageType.DataManagerLoadCompleteMessage, LoadDeferredDefs);
+        UnityGameInstance.BattleTechGame.MessageCenter.AddFiniteSubscriber(
+            MessageCenterMessageType.DataManagerLoadCompleteMessage,
+            _ => {
+              SubscribeDeferredDefs();
+              return true;
+            }
+        );
       } else {
         Main.LogDebug($"[DataManager.SubscribeDeferredDefs] DataManager is NOT currently loading. Loading MC deferred defs.");
-        LoadDeferredDefs(null);
+        LoadDeferredDefs();
       }
     }
 
-    private bool LoadDeferredDefs(MessageCenterMessage message) {
+    private bool LoadDeferredDefs() {
       Main.LogDebug($"[DataManager.LoadDeferredDefs] Loading Deferred Defs");
       Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
