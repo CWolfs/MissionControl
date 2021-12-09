@@ -10,11 +10,13 @@
   "DLL": "MissionControl.dll",
   "DLLEntryPoint": "MissionControl.Main.Init",
 
+  "CustomResourceTypes": ["EncounterLayer"],
+
   "Manifest": [
     { "Type": "SimGameStatDescDef", "Path": "overrides/simGameStatDesc" },
     { "Type": "ContractOverride", "Path": "overrides/contracts" },
-    { "Type": "CastDef", "Path": "overrides/cast" }
-    // { "Type": "EncounterLayer", "Path": "overrides/encounterLayers" } // Uncomment (and remove this comment) for ModTek v2
+    { "Type": "CastDef", "Path": "overrides/cast" },
+    { "Type": "EncounterLayer", "Path": "overrides/encounterLayers" }
   ],
 
   "DataAddendumEntries": [
