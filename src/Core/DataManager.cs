@@ -2,6 +2,8 @@ using UnityEngine;
 
 using System;
 using System.IO;
+using System.Reflection;
+using System.Linq;
 using System.Threading;
 using System.Globalization;
 using System.Collections;
@@ -29,6 +31,9 @@ namespace MissionControl {
         return instance;
       }
     }
+
+    private string ModTekVersion { get; set; }
+    private bool IsModTekVersion1 { get; set; } = true;
 
     public bool HasLoadedDeferredDefs { get; private set; } = false;
     public string ModDirectory { get; private set; }
@@ -60,16 +65,51 @@ namespace MissionControl {
       LoadRuntimeCastData();
       LoadDialogueData();
       InjectMessageScopes();
+
+      ModTekVersion = GetAssemblyByName("ModTek").GetName().Version.ToString();
+      IsModTekVersion1 = ModTekVersion.Substring(0, 1) == "1" || ModTekVersion.Substring(0, 1) == "0";
     }
 
-    public void LoadDeferredDefs() {
+    public void SubscribeDeferredDefs() {
+      if (UnityGameInstance.BattleTechGame.DataManager.IsLoading) {
+        Main.LogDebug($"[DataManager.SubscribeDeferredDefs] DataManager is currently loading. Subscribing for Deferred Defs after DataManager loading has completed");
+        UnityGameInstance.BattleTechGame.MessageCenter.AddFiniteSubscriber(
+            MessageCenterMessageType.DataManagerLoadCompleteMessage,
+            _ => {
+              SubscribeDeferredDefs();
+              return true;
+            }
+        );
+      } else {
+        Main.LogDebug($"[DataManager.SubscribeDeferredDefs] DataManager is NOT currently loading. Loading MC deferred defs.");
+        LoadDeferredDefs();
+      }
+    }
+
+    private bool LoadDeferredDefs() {
+      Main.LogDebug($"[DataManager.LoadDeferredDefs] Loading Deferred Defs");
       Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
-      LoadVehicleDefs();
+      // LoadVehicleDefs();
       LoadPilotDefs();
       LoadCustomContractTypeBuilds();
-      LoadCustomContractTypes();
+
+      if (IsModTekVersion1) {
+        Main.LogDebug($"[DataManager.SubscribeDeferredDefs] ModTek v1 version so loading EncounterLayers manually.");
+        LoadCustomContractTypesV1();
+      } else {
+        Main.LogDebug($"[DataManager.SubscribeDeferredDefs] ModTek v2 version so EncounterLayers already loaded by ModTek.");
+        LoadCustomContractTypes();
+      }
+
       HasLoadedDeferredDefs = true;
+
+      return true;
+    }
+
+    private Assembly GetAssemblyByName(string name) {
+      return AppDomain.CurrentDomain.GetAssemblies().
+             SingleOrDefault(assembly => assembly.GetName().Name == name);
     }
 
     private void LoadContractConfigOverrides() {
@@ -160,27 +200,17 @@ namespace MissionControl {
       return storyContractTypeNames;
     }
 
+    // *********************
+    // ***** MODTEK V2 *****
+    // *********************
     private void LoadCustomContractTypes() {
-      new Thread(new ThreadStart(this.WriteMDDToDisk)).Start();
-      UnityGameInstance.Instance.StartCoroutine(ReportOnLoadedCustomContractType());
-    }
-
-    IEnumerator ReportOnLoadedCustomContractType() {
-      yield return new WaitForSeconds(5); // A largish amount of time to ensure contract types have been saved by then
       MetadataDatabase mdd = MetadataDatabase.Instance;
       List<ContractType_MDD> contractTypes = mdd.GetCustomContractTypes();
       Main.LogDebug($"[DataManager.LoadCustomContractTypes] Loaded '{contractTypes.Count}' custom contract type(s)");
-    }
 
-    private void WriteMDDToDisk() {
-      Thread.Sleep(Main.Settings.ContractTypeLoaderWait);
-      MetadataDatabase mdd = MetadataDatabase.Instance;
-      List<ContractType_MDD> contractTypes = mdd.GetCustomContractTypes();
       foreach (ContractType_MDD contractType in contractTypes) {
         AddContractType(mdd, contractType);
-        LoadEncounterLayers(contractType.Name);
       }
-      MetadataDatabase.Instance.WriteInMemoryDBToDisk();
     }
 
     private void AddContractType(MetadataDatabase mdd, ContractType_MDD contractTypeMDD) {
@@ -191,7 +221,33 @@ namespace MissionControl {
       AvailableCustomContractTypes[contractTypeValue.Name].Add(contractTypeValue);
     }
 
-    private void LoadEncounterLayers(string name) {
+    // *********************
+    // ***** MODTEK V1 *****
+    // *********************
+    private void LoadCustomContractTypesV1() {
+      new Thread(new ThreadStart(this.WriteMDDToDiskV1)).Start();
+      UnityGameInstance.Instance.StartCoroutine(ReportOnLoadedCustomContractTypeV1());
+    }
+
+    IEnumerator ReportOnLoadedCustomContractTypeV1() {
+      yield return new WaitForSeconds(5); // A largish amount of time to ensure contract types have been saved by then
+      MetadataDatabase mdd = MetadataDatabase.Instance;
+      List<ContractType_MDD> contractTypes = mdd.GetCustomContractTypes();
+      Main.LogDebug($"[DataManager.LoadCustomContractTypes] Loaded '{contractTypes.Count}' custom contract type(s)");
+    }
+
+    private void WriteMDDToDiskV1() {
+      Thread.Sleep(Main.Settings.ContractTypeLoaderWait);
+      MetadataDatabase mdd = MetadataDatabase.Instance;
+      List<ContractType_MDD> contractTypes = mdd.GetCustomContractTypes();
+      foreach (ContractType_MDD contractType in contractTypes) {
+        AddContractType(mdd, contractType);
+        LoadEncounterLayersV1(contractType.Name);
+      }
+      MetadataDatabase.Instance.WriteInMemoryDBToDisk();
+    }
+
+    private void LoadEncounterLayersV1(string name) {
       foreach (string file in Directory.GetFiles($"{ModDirectory}/overrides/encounterLayers/{name.ToLower()}", "*.json", SearchOption.AllDirectories)) {
         Main.LogDebug($"[DataManager.LoadCustomContractTypes] Loading '{file.Substring(file.LastIndexOf('/') + 1)}' custom encounter layer");
         string encounterLayer = File.ReadAllText(file);
@@ -200,6 +256,8 @@ namespace MissionControl {
         MetadataDatabase.Instance.InsertOrUpdateEncounterLayer(encounterLayerData);
       }
     }
+
+    // *********************
 
     private void LoadLanceOverrides() {
       foreach (string file in Directory.GetFiles($"{ModDirectory}/lances", "*.json", SearchOption.AllDirectories)) {
@@ -286,9 +344,9 @@ namespace MissionControl {
       return null;
     }
 
-    public void LoadVehicleDefs() {
-      RequestResourcesAndProcess(BattleTechResourceType.VehicleDef, "vehicledef_DEMOLISHER");
-    }
+    // public void LoadVehicleDefs() {
+    // RequestResourcesAndProcess(BattleTechResourceType.VehicleDef, "vehicledef_DEMOLISHER");
+    // }
 
     public void LoadPilotDefs() {
       RequestResourcesAndProcess(BattleTechResourceType.PilotDef, UnitSpawnPointGameLogic.PilotDef_Default);
@@ -464,7 +522,7 @@ namespace MissionControl {
         Main.LogDebug($"[RequestResourcesAndProcess] Finished load request for {resourceId}");
       }, filterByOwnership);
       loadRequest.AddBlindLoadRequest(resourceType, resourceId);
-      loadRequest.ProcessRequests(1000u);
+      loadRequest.ProcessRequests();
     }
 
     public DateTime? GetSimGameCurrentDate() {
