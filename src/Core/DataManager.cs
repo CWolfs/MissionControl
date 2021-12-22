@@ -91,6 +91,7 @@ namespace MissionControl {
       Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
       // LoadVehicleDefs();
+      LoadMechDefs();
       LoadPilotDefs();
       LoadCustomContractTypeBuilds();
 
@@ -348,6 +349,10 @@ namespace MissionControl {
     // RequestResourcesAndProcess(BattleTechResourceType.VehicleDef, "vehicledef_DEMOLISHER");
     // }
 
+    public void LoadMechDefs() {
+      RequestResourcesAndProcess(BattleTechResourceType.MechDef, "mechdef_spider_SDR-5V");
+    }
+
     public void LoadPilotDefs() {
       RequestResourcesAndProcess(BattleTechResourceType.PilotDef, UnitSpawnPointGameLogic.PilotDef_Default);
     }
@@ -522,7 +527,10 @@ namespace MissionControl {
         Main.LogDebug($"[RequestResourcesAndProcess] Finished load request for {resourceId}");
       }, filterByOwnership);
       loadRequest.AddBlindLoadRequest(resourceType, resourceId);
-      loadRequest.ProcessRequests();
+
+      // Without 1000u this does not work for my usecase
+      // Data loading has been updated for the Main Menu loads so it no longer should cause deadlocks
+      loadRequest.ProcessRequests(1000u);
     }
 
     public DateTime? GetSimGameCurrentDate() {
