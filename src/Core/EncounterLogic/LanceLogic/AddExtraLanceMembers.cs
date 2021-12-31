@@ -89,7 +89,14 @@ namespace MissionControl.Logic {
         if (numberOfUnitsInLance < factionLanceSize) {
           if (!isLanceTagged && AreAnyLanceUnitsTagged) {
             Main.LogDebug($"[IncreaseLanceMembers] [{teamOverride.faction}] Override manual lance '{lanceOverride.name}' size is '{numberOfUnitsInLance}' but '{factionLanceSize}' is required. Adding more units to lance.");
-            lanceOverride.unitSpawnPointOverrideList.Add(lanceOverride.GetAnyTaggedLanceMember().DeepCopy());
+            for (int i = numberOfUnitsInLance; i < factionLanceSize; i++) {
+              Main.LogDebug($"[IncreaseLanceMembers] [{teamOverride.faction}] Adding unit {i + 1}");
+              UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetAnyTaggedLanceMember();
+              if (originalUnitSpawnPointOverride == null) originalUnitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0];
+              UnitSpawnPointOverride unitSpawnPointOverride = originalUnitSpawnPointOverride.DeepCopy();
+              unitSpawnPointOverride.customUnitName = "";
+              lanceOverride.unitSpawnPointOverrideList.Add(unitSpawnPointOverride);
+            }
           } else if (!isLanceTagged && !AreAnyLanceUnitsTagged) {
             Main.Logger.LogWarning($"[AddExtraLanceMembers] [{teamOverride.faction}] The contract '{contractOverride.ID}' for the team '{teamOverride.teamName}' has a manual lance and manual unit setup but it does not specify the right number of lance members. When manually setting lances they should match the Mission Control ExtendedLance lance member count. For this lance you should probably have exactly '{factionLanceSize}' but only '{numberOfUnitsInLance}' are set.");
           }
