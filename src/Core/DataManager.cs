@@ -71,22 +71,31 @@ namespace MissionControl {
     }
 
     public void SubscribeDeferredDefs() {
-      if (UnityGameInstance.BattleTechGame.DataManager.IsLoading) {
-        Main.LogDebug($"[DataManager.SubscribeDeferredDefs] DataManager is currently loading. Subscribing for Deferred Defs after DataManager loading has completed");
+      RunActionWhenDataManagerIsOrBecomesIdle(LoadDeferredDefs);
+    }
+
+    private void RunActionWhenDataManagerIsOrBecomesIdle(Action action, Action stillLoadingAction = null) {
+      var dataManager = UnityGameInstance.BattleTechGame.DataManager;
+      if (dataManager.IsLoading) {
+        Main.LogDebug($"[DataManager.RunActionWhenDataManagerIsOrBecomesIdle] DataManager IS currently loading. Deferring load.");
+        stillLoadingAction?.Invoke();
         UnityGameInstance.BattleTechGame.MessageCenter.AddFiniteSubscriber(
             MessageCenterMessageType.DataManagerLoadCompleteMessage,
             _ => {
-              SubscribeDeferredDefs();
+              if (dataManager.IsLoading) {
+                stillLoadingAction?.Invoke();
+                return false;
+              }
+              action();
               return true;
             }
         );
       } else {
-        Main.LogDebug($"[DataManager.SubscribeDeferredDefs] DataManager is NOT currently loading. Loading MC deferred defs.");
-        LoadDeferredDefs();
+        action();
       }
     }
 
-    private bool LoadDeferredDefs() {
+    private void LoadDeferredDefs() {
       Main.LogDebug($"[DataManager.LoadDeferredDefs] Loading Deferred Defs");
       Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
@@ -104,8 +113,6 @@ namespace MissionControl {
       }
 
       HasLoadedDeferredDefs = true;
-
-      return true;
     }
 
     private Assembly GetAssemblyByName(string name) {
