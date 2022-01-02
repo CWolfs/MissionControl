@@ -64,6 +64,11 @@ namespace MissionControl.Logic {
       for (int i = 0; i < lanceOverrides.Count; i++) {
         LanceOverride lanceOverride = lanceOverrides[i];
         bool isManualLance = lanceOverride.lanceDefId == "Manual";
+        // At this point the number of units in a lance should be the expected amount.
+        // The unitSpawnPointOverrides will be up to the EL limit set. They will be either:
+        //  - Empty
+        //  - Filled resolved units
+        //  - 'Tagged', 'UseLance' or 'Manual' slots
         int numberOfUnitsInLance = lanceOverride.unitSpawnPointOverrideList.Count;
 
         if (lancesToSkip.Contains(lanceOverride.GUID)) {
@@ -81,25 +86,44 @@ namespace MissionControl.Logic {
           continue;
         }
 
-        if ((numberOfUnitsInLance < factionLanceSize) && numberOfUnitsInLance > 0) {
-          // This is usually from a 'tagged' lance being selected which has less lance members than the faction lance size
-          if (Main.Settings.ExtendedLances.Autofill) {
-            Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Populated lance '{lanceOverride.name}' has fewer units than the faction requires. Autofilling the missing units");
-
-            // GUARD: If an AdditionalLance lance config has been set to 'supportAutoFill' false, then don't autofill
-            if (lanceOverride is MLanceOverride) {
-              MLanceOverride mLanceOverride = (MLanceOverride)lanceOverride;
-              if (!mLanceOverride.SupportAutofill) {
-                Main.LogDebug($"[AddExtraLanceSpawnPoints] Lance Override '{mLanceOverride.GUID}' has 'autofill' explicitly turned off in MC lance '{mLanceOverride.LanceKey}'");
-                continue;
-              }
+        if (Main.Settings.ExtendedLances.Autofill) {
+          // GUARD: If an AdditionalLance lance config has been set to 'supportAutoFill' false, then don't autofill
+          if (lanceOverride is MLanceOverride) {
+            MLanceOverride mLanceOverride = (MLanceOverride)lanceOverride;
+            if (!mLanceOverride.SupportAutofill) {
+              Main.LogDebug($"[AddExtraLanceSpawnPoints] Lance Override '{mLanceOverride.GUID}' has 'autofill' explicitly turned off in MC lance '{mLanceOverride.LanceKey}'");
+              continue;
             }
-
-            AddNewLanceMembers(contractOverride, teamOverride, lanceOverride, numberOfUnitsInLance, factionLanceSize);
-          } else {
-            Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Populated lance '{lanceOverride.name}' has fewer units than the faction requires. Allowing as a valid setup as 'Autofill' is false");
           }
+
+          List<int> unresolvedIndexes = lanceOverride.GetUnresolvedUnitIndexes();
+          Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected '{unresolvedIndexes.Count} unresolved unit spawn overrides. Will resolve them before building spawn points.'");
+          foreach (int index in unresolvedIndexes) {
+            ReplaceUnresolvedUnitOverride(lanceOverride, index);
+          }
+        } else {
+          Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Populated lance '{lanceOverride.name}' has fewer units than the faction requires. Allowing as a valid setup as 'Autofill' is false");
         }
+
+        // if ((numberOfUnitsInLance < factionLanceSize) && numberOfUnitsInLance > 0) {
+        //   // This is usually from a 'tagged' lance being selected which has less lance members than the faction lance size
+        //   if (Main.Settings.ExtendedLances.Autofill) {
+        //     Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Populated lance '{lanceOverride.name}' has fewer units than the faction requires. Autofilling the missing units");
+
+        //     // GUARD: If an AdditionalLance lance config has been set to 'supportAutoFill' false, then don't autofill
+        //     if (lanceOverride is MLanceOverride) {
+        //       MLanceOverride mLanceOverride = (MLanceOverride)lanceOverride;
+        //       if (!mLanceOverride.SupportAutofill) {
+        //         Main.LogDebug($"[AddExtraLanceSpawnPoints] Lance Override '{mLanceOverride.GUID}' has 'autofill' explicitly turned off in MC lance '{mLanceOverride.LanceKey}'");
+        //         continue;
+        //       }
+        //     }
+
+        //     AddNewLanceMembers(contractOverride, teamOverride, lanceOverride, numberOfUnitsInLance, factionLanceSize);
+        //   } else {
+        //     Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Populated lance '{lanceOverride.name}' has fewer units than the faction requires. Allowing as a valid setup as 'Autofill' is false");
+        //   }
+        // }
 
         LanceSpawnerGameLogic lanceSpawner = lanceSpawners.Find(spawner => spawner.GUID == lanceOverride.lanceSpawner.EncounterObjectGuid);
         if (lanceSpawner != null) {
@@ -153,17 +177,28 @@ namespace MissionControl.Logic {
       }
     }
 
-    private void AddNewLanceMembers(ContractOverride contractOverride, TeamOverride teamOverride, LanceOverride lanceOverride, int numberOfUnitsInLance, int factionLanceSize) {
-      for (int i = numberOfUnitsInLance; i < factionLanceSize; i++) {
-        UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetAnyTaggedLanceMember();
-        if (originalUnitSpawnPointOverride == null) originalUnitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0];
-        UnitSpawnPointOverride unitSpawnPointOverride = originalUnitSpawnPointOverride.DeepCopy();
-        unitSpawnPointOverride.customUnitName = "";
-        TagSet companyTags = new TagSet(UnityGameInstance.BattleTechGame.Simulation.CompanyTags);
+    private void ReplaceUnresolvedUnitOverride(LanceOverride lanceOverride, int index) {
+      UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetAnyTaggedLanceMember();
+      if (originalUnitSpawnPointOverride == null) originalUnitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0];
+      UnitSpawnPointOverride unitSpawnPointOverride = originalUnitSpawnPointOverride.DeepCopy();
+      unitSpawnPointOverride.customUnitName = "";
+      TagSet companyTags = new TagSet(UnityGameInstance.BattleTechGame.Simulation.CompanyTags);
 
-        unitSpawnPointOverride.GenerateUnit(MetadataDatabase.Instance, UnityGameInstance.Instance.Game.DataManager, lanceOverride.selectedLanceDifficulty, lanceOverride.name, null, i, DataManager.Instance.GetSimGameCurrentDate(), companyTags);
-        lanceOverride.unitSpawnPointOverrideList.Add(unitSpawnPointOverride);
-      }
+      unitSpawnPointOverride.GenerateUnit(MetadataDatabase.Instance, UnityGameInstance.Instance.Game.DataManager, lanceOverride.selectedLanceDifficulty, lanceOverride.name, null, index, DataManager.Instance.GetSimGameCurrentDate(), companyTags);
+      lanceOverride.unitSpawnPointOverrideList[index] = unitSpawnPointOverride;
     }
+
+    // private void AddNewLanceMembers(ContractOverride contractOverride, TeamOverride teamOverride, LanceOverride lanceOverride, int numberOfUnitsInLance, int factionLanceSize) {
+    //   for (int i = numberOfUnitsInLance; i < factionLanceSize; i++) {
+    //     UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetAnyTaggedLanceMember();
+    //     if (originalUnitSpawnPointOverride == null) originalUnitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0];
+    //     UnitSpawnPointOverride unitSpawnPointOverride = originalUnitSpawnPointOverride.DeepCopy();
+    //     unitSpawnPointOverride.customUnitName = "";
+    //     TagSet companyTags = new TagSet(UnityGameInstance.BattleTechGame.Simulation.CompanyTags);
+
+    //     unitSpawnPointOverride.GenerateUnit(MetadataDatabase.Instance, UnityGameInstance.Instance.Game.DataManager, lanceOverride.selectedLanceDifficulty, lanceOverride.name, null, i, DataManager.Instance.GetSimGameCurrentDate(), companyTags);
+    //     lanceOverride.unitSpawnPointOverrideList.Add(unitSpawnPointOverride);
+    //   }
+    // }
   }
 }
