@@ -68,6 +68,10 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       if (!GetObjectReferences()) return;
+      if (shouldGracefullyStopSpawnLogic) {
+        Main.Logger.LogDebug("[SpawnLanceAnywhere] Gracefully stopping spawn.");
+        return;
+      }
 
       SaveSpawnPositions(lance);
       Main.Logger.Log($"[SpawnLanceAnywhere] Attemping for '{lance.name}'");

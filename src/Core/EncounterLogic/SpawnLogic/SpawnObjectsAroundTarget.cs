@@ -75,6 +75,10 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       if (!GetObjectReferences()) return;
+      if (shouldGracefullyStopSpawnLogic) {
+        Main.Logger.LogDebug("[SpawnObjectsAroundTarget] Gracefully stopping spawn.");
+        return;
+      }
 
       for (int i = 0; i < objectGos.Count; i++) {
         GameObject objectGo = objectGos[i];

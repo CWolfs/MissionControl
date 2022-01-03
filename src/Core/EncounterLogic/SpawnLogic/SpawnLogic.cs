@@ -13,13 +13,29 @@ using MissionControl.Utils;
 namespace MissionControl.Logic {
   public abstract class SpawnLogic : SceneManipulationLogic {
 
+    public float MAX_SECONDS_FOR_SPAWN_LOGIC = 30;
+    public float START_TIME_FOR_SPAWN_LOGIC = 0;
+    protected bool shouldGracefullyStopSpawnLogic = false;
+
     private int ADJACENT_NODE_LIMITED = 20;
     private List<Vector3> checkedAdjacentPoints = new List<Vector3>();
     private int BAILOUT_MAX = 2;
     private int bailoutCount = 0;
     private Vector3 originalOrigin = Vector3.zero;
 
-    public SpawnLogic(EncounterRules encounterRules) : base(encounterRules) { }
+    public SpawnLogic(EncounterRules encounterRules) : base(encounterRules) {
+      START_TIME_FOR_SPAWN_LOGIC = Time.realtimeSinceStartup;
+    }
+
+    private void CheckSpawnLogicTimeBudget() {
+      Main.LogDebug($"[CheckSpawnLogicTimeBudget] Checking spawn logic time budget");
+
+      float timeUsed = Time.realtimeSinceStartup - START_TIME_FOR_SPAWN_LOGIC;
+      if (MAX_SECONDS_FOR_SPAWN_LOGIC < timeUsed) {
+        Main.LogDebug($"[CheckSpawnLogicTimeBudget] Spawn budget of '${MAX_SECONDS_FOR_SPAWN_LOGIC}' seconds exceeded. Gracefully attempting to stop spawn logic and using a fallback.");
+        shouldGracefullyStopSpawnLogic = true;
+      }
+    }
 
     protected bool IsSpawnValid(GameObject spawnPoint, GameObject checkTarget) {
       return IsSpawnValid(spawnPoint, checkTarget.transform.position.GetClosestHexLerpedPointOnGrid());
@@ -30,6 +46,8 @@ namespace MissionControl.Logic {
     }
 
     public Vector3 GetClosestValidPathFindingHex(GameObject originGo, Vector3 origin, string identifier, Vector3 pathfindingTarget, int radius = 3) {
+      CheckSpawnLogicTimeBudget();
+
       Main.LogDebug($"[GetClosestValidPathFindingHex] About to process with origin '{origin}'");
       if (originalOrigin == Vector3.zero) originalOrigin = origin;
 
