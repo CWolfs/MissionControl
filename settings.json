@@ -57,7 +57,7 @@
       "AllySpawnInfluencePerHalfSkullBelow": 0.1
     },
     "DisableAllies": false,
-    "DisableEnemies": false,
+    "DisableEnemies": false
   },
   "ExtendedLances": {
     "Enable": true,
