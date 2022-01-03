@@ -2,8 +2,6 @@ using System.Collections.Generic;
 
 using Newtonsoft.Json;
 
-using System.Linq;
-
 namespace MissionControl.Config {
   public class AdditionalLanceSettings : AdvancedSettings {
     [JsonProperty("IsPrimaryObjectiveIn")]

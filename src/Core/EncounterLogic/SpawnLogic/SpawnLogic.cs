@@ -12,8 +12,6 @@ using MissionControl.Utils;
 
 namespace MissionControl.Logic {
   public abstract class SpawnLogic : SceneManipulationLogic {
-
-    public float MAX_SECONDS_FOR_SPAWN_LOGIC = 30;
     public float START_TIME_FOR_SPAWN_LOGIC = 0;
     protected bool shouldGracefullyStopSpawnLogic = false;
 
@@ -28,11 +26,12 @@ namespace MissionControl.Logic {
     }
 
     private void CheckSpawnLogicTimeBudget() {
+      int maxSecondsUntilTimeout = Main.Settings.RandomSpawns.TimeoutIn;
       Main.LogDebug($"[CheckSpawnLogicTimeBudget] Checking spawn logic time budget");
 
       float timeUsed = Time.realtimeSinceStartup - START_TIME_FOR_SPAWN_LOGIC;
-      if (MAX_SECONDS_FOR_SPAWN_LOGIC < timeUsed) {
-        Main.LogDebug($"[CheckSpawnLogicTimeBudget] Spawn budget of '${MAX_SECONDS_FOR_SPAWN_LOGIC}' seconds exceeded. Gracefully attempting to stop spawn logic and using a fallback.");
+      if (maxSecondsUntilTimeout < timeUsed) {
+        Main.LogDebug($"[CheckSpawnLogicTimeBudget] Spawn budget of '${maxSecondsUntilTimeout}' seconds exceeded. Gracefully attempting to stop spawn logic and using a fallback.");
         shouldGracefullyStopSpawnLogic = true;
       }
     }

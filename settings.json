@@ -12,7 +12,8 @@
     "Enable": true,
     "EnableForFlashpoints": true,
     "EnableForStory": false,
-    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"]
+    "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
+    "TimeoutIn": 30
   },
   "HotDropProtection": {
     "Enable": true,
@@ -56,7 +57,7 @@
       "AllySpawnInfluencePerHalfSkullBelow": 0.1
     },
     "DisableAllies": false,
-    "DisableEnemies": false
+    "DisableEnemies": false,
   },
   "ExtendedLances": {
     "Enable": true,
