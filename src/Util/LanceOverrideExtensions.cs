@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 using MissionControl;
 
+using Harmony;
+
+using BattleTech;
 using BattleTech.Framework;
 
 public static class LanceOverrideExtensions {
@@ -38,9 +41,15 @@ public static class LanceOverrideExtensions {
   public static List<int> GetUnresolvedUnitIndexes(this LanceOverride lanceOverride) {
     List<int> unresolvedUnitIndexes = new List<int>();
 
-    for (int i = 0; i < lanceOverride.unitSpawnPointOverrideList.Count; i++) {
-      UnitSpawnPointOverride unitOverride = lanceOverride.unitSpawnPointOverrideList[i];
-      if (unitOverride.IsUnresolved()) unresolvedUnitIndexes.Add(i);
+    // if (MissionControl.Main.Settings.ExtendedLances.) 
+    // TODO: Expose to a setting to give the option of the old behaviour or the new 'from the lancedef size onward'
+    LanceDef loadedLanceDef = (LanceDef)AccessTools.Field(typeof(LanceOverride), "loadedLanceDef").GetValue(lanceOverride);
+
+    if (lanceOverride.unitSpawnPointOverrideList.Count > loadedLanceDef.LanceUnits.Length) {
+      for (int i = loadedLanceDef.LanceUnits.Length; i < lanceOverride.unitSpawnPointOverrideList.Count; i++) {
+        UnitSpawnPointOverride unitOverride = lanceOverride.unitSpawnPointOverrideList[i];
+        if (unitOverride.IsUnresolved()) unresolvedUnitIndexes.Add(i);
+      }
     }
 
     return unresolvedUnitIndexes;

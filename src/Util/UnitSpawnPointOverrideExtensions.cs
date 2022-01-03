@@ -16,10 +16,8 @@ public static class UnitSpawnPointOverrideExtensions {
   }
 
   public static bool IsUnresolved(this UnitSpawnPointOverride unitSpawnPointOverride) {
-    if ((unitSpawnPointOverride.unitDefId == "Tagged") || (unitSpawnPointOverride.unitDefId == "UseLance") ||
-    (unitSpawnPointOverride.unitDefId == "mechDef_InheritLance") || (unitSpawnPointOverride.unitDefId == "vehicleDef_InheritLance") ||
-    (unitSpawnPointOverride.unitDefId == "mechDef_None") || (unitSpawnPointOverride.unitDefId == "vehicleDef_None") ||
-    (unitSpawnPointOverride.unitDefId == "null") || (unitSpawnPointOverride.unitDefId == "")) return true;
+    Main.LogDebug($"[UnitSpawnPointOverrideExtensions.IsUnresolved] unitSpawnPointOverride unitDefId is: {unitSpawnPointOverride.unitDefId} and selectedUnitId {unitSpawnPointOverride.selectedUnitDefId}");
+    if (unitSpawnPointOverride.selectedUnitDefId == "mechDef_None") return true;
     return false;
   }
 }
