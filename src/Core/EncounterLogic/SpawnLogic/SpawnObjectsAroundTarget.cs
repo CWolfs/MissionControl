@@ -167,13 +167,23 @@ namespace MissionControl.Logic {
               string orientationObjectKey = keys[1];
 
               // Check if the key object and orientation object really exist
-              GameObject objectKeyGO = GameObject.Find(objectKey);
+              if (objectKey == null || objectKey == "") {
+                Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] GameObject has a null or empty object key. This is unexpected.");
+                continue;
+              }
+
+              GameObject objectKeyGO = GameObject.Find(objectKey.Substring(objectKey.IndexOf(".") + 1));
               if (objectKeyGO == null) {
                 Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] GameObject with key '{objectKey}' was not found. This is unexpected.");
                 continue;
               }
 
-              GameObject orientationObjectKeyGO = GameObject.Find(orientationObjectKey);
+              if (orientationObjectKey == null || orientationObjectKey == "") {
+                Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] GameObject has a null or empty orientation object key. This is unexpected.");
+                continue;
+              }
+
+              GameObject orientationObjectKeyGO = GameObject.Find(orientationObjectKey.Substring(orientationObjectKey.IndexOf(".") + 1));
               if (orientationObjectKeyGO == null) {
                 Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] GameObject for orientation target with key '{orientationObjectKeyGO}' was not found. This is unexpected.");
                 continue;
