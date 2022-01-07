@@ -109,6 +109,13 @@ namespace MissionControl.Logic {
           if (numberOfUnitsInLance > unitSpawnPoints.Count) {
             Main.Logger.Log($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected lance '{lanceOverride.name}' has more units than lance spawn points. Creating new lance spawns to accommodate.");
             string spawnerName = lanceSpawner.gameObject.name;
+
+            // GUARD: A spawner must always have at least one unit spawn
+            if (unitSpawnPoints.Count < 0) {
+              Main.Logger.LogError($"[AddExtraLanceSpawnPoints] There are no unit spawn GameObjects found for lance '${lanceSpawner.gameObject.name}. A spawner should have at least one unit spawn.'");
+              return;
+            }
+
             GameObject orientationUnit = unitSpawnPoints[0].gameObject;
             string orientationKey = $"{spawnerName}.{orientationUnit.name}";
             encounterRules.ObjectLookup[orientationKey] = orientationUnit;
