@@ -111,7 +111,7 @@ namespace MissionControl.Logic {
             string spawnerName = lanceSpawner.gameObject.name;
 
             // GUARD: A spawner must always have at least one unit spawn
-            if (unitSpawnPoints.Count < 0) {
+            if (unitSpawnPoints.Count <= 0) {
               Main.Logger.LogError($"[AddExtraLanceSpawnPoints] There are no unit spawn GameObjects found for lance '${lanceSpawner.gameObject.name}. A spawner should have at least one unit spawn.'");
               return;
             }

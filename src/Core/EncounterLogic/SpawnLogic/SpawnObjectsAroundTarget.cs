@@ -179,7 +179,6 @@ namespace MissionControl.Logic {
                 continue;
               }
 
-
               objectKeys.Add(objectKey);
               orientationTargetKeys.Add(orientationObjectKey);
               keyLookup[objectKey] = orientationObjectKey;
