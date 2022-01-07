@@ -62,6 +62,7 @@
     "Enable": true,
     "EnableForFlashpoints": true,
     "EnableForStory": false,
+    "Mode": "Deep",
     "Autofill": true,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "SkipWhenTaggedWithAny": ["lance_type_solo"],

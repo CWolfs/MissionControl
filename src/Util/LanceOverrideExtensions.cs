@@ -39,16 +39,25 @@ public static class LanceOverrideExtensions {
   }
 
   public static List<int> GetUnresolvedUnitIndexes(this LanceOverride lanceOverride) {
+    Debug.Log($"[ExtendedLances.GetUnresolvedUnitIndexes] Running in mode ${MissionControl.Main.Settings.ExtendedLances.Mode}");
     List<int> unresolvedUnitIndexes = new List<int>();
 
-    // if (MissionControl.Main.Settings.ExtendedLances.) 
-    // TODO: Expose to a setting to give the option of the old behaviour or the new 'from the lancedef size onward'
-    LanceDef loadedLanceDef = (LanceDef)AccessTools.Field(typeof(LanceOverride), "loadedLanceDef").GetValue(lanceOverride);
+    if (MissionControl.Main.Settings.ExtendedLances.Mode == "Shallow") {
+      if (lanceOverride.unitSpawnPointOverrideList.Count > 4) {
+        for (int i = 4; i < lanceOverride.unitSpawnPointOverrideList.Count; i++) {
+          UnitSpawnPointOverride unitOverride = lanceOverride.unitSpawnPointOverrideList[i];
+          if (unitOverride.IsUnresolved()) unresolvedUnitIndexes.Add(i);
+        }
+      }
+    } else {
+      LanceDef loadedLanceDef = (LanceDef)AccessTools.Field(typeof(LanceOverride), "loadedLanceDef").GetValue(lanceOverride);
+      if (loadedLanceDef == null) return unresolvedUnitIndexes;
 
-    if (lanceOverride.unitSpawnPointOverrideList.Count > loadedLanceDef.LanceUnits.Length) {
-      for (int i = loadedLanceDef.LanceUnits.Length; i < lanceOverride.unitSpawnPointOverrideList.Count; i++) {
-        UnitSpawnPointOverride unitOverride = lanceOverride.unitSpawnPointOverrideList[i];
-        if (unitOverride.IsUnresolved()) unresolvedUnitIndexes.Add(i);
+      if (lanceOverride.unitSpawnPointOverrideList.Count > loadedLanceDef.LanceUnits.Length) {
+        for (int i = loadedLanceDef.LanceUnits.Length; i < lanceOverride.unitSpawnPointOverrideList.Count; i++) {
+          UnitSpawnPointOverride unitOverride = lanceOverride.unitSpawnPointOverrideList[i];
+          if (unitOverride.IsUnresolved()) unresolvedUnitIndexes.Add(i);
+        }
       }
     }
 

@@ -176,7 +176,7 @@ namespace MissionControl.Logic {
       TagSet companyTags = new TagSet(UnityGameInstance.BattleTechGame.Simulation.CompanyTags);
 
       Main.LogDebug($"[AddExtraLanceSpawnPoints.ReplaceUnresolvedUnitOverride] Generating unresolved unit '{index + 1}'");
-      unitSpawnPointOverride.GenerateUnit(MetadataDatabase.Instance, UnityGameInstance.Instance.Game.DataManager, lanceOverride.selectedLanceDifficulty, lanceOverride.name, loadedLanceDef.Description.Id, index, DataManager.Instance.GetSimGameCurrentDate(), companyTags);
+      unitSpawnPointOverride.GenerateUnit(MetadataDatabase.Instance, UnityGameInstance.Instance.Game.DataManager, lanceOverride.selectedLanceDifficulty, lanceOverride.name, loadedLanceDef == null ? null : loadedLanceDef.Description.Id, index, DataManager.Instance.GetSimGameCurrentDate(), companyTags);
       lanceOverride.unitSpawnPointOverrideList[index] = unitSpawnPointOverride;
     }
   }
