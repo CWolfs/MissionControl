@@ -48,6 +48,9 @@ namespace MissionControl.Logic {
       Main.LogDebug($"[AddExtraLanceMembers] Faction '{teamOverride.faction}' lance size is '{factionLanceSize}");
 
       foreach (LanceOverride lanceOverride in lanceOverrides) {
+        // Store original LanceOverride unitOverride count for later logic
+        this.state.Set($"LANCE_ORIGINAL_UNIT_OVERRIDE_COUNT_{lanceOverride.GUID}", lanceOverride.unitSpawnPointOverrideList.Count);
+
         Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] Checking lance '{lanceOverride.name}'...");
         if (Main.Settings.ExtendedLances.GetSkipWhenTaggedWithAny().Count > 0 && lanceOverride.lanceTagSet.ContainsAny(Main.Settings.ExtendedLances.GetSkipWhenTaggedWithAny())) {
           Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] Lance contains a tag set in 'SkipWhenTaggedWithAny'. Skipping '{lanceOverride.name}'");
