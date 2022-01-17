@@ -39,10 +39,10 @@ public static class LanceOverrideExtensions {
   }
 
   public static List<int> GetUnresolvedUnitIndexes(this LanceOverride lanceOverride) {
-    Debug.Log($"[ExtendedLances.GetUnresolvedUnitIndexes] Running in mode ${MissionControl.Main.Settings.ExtendedLances.Mode}");
+    Debug.Log($"[ExtendedLances.GetUnresolvedUnitIndexes] Running with Autofill Type ${MissionControl.Main.Settings.ExtendedLances.AutofillType}");
     List<int> unresolvedUnitIndexes = new List<int>();
 
-    if (MissionControl.Main.Settings.ExtendedLances.Mode == "Shallow") {
+    if (MissionControl.Main.Settings.ExtendedLances.AutofillType == "RespectEmpty") {
       if (lanceOverride.unitSpawnPointOverrideList.Count > 4) {
         for (int i = 4; i < lanceOverride.unitSpawnPointOverrideList.Count; i++) {
           UnitSpawnPointOverride unitOverride = lanceOverride.unitSpawnPointOverrideList[i];

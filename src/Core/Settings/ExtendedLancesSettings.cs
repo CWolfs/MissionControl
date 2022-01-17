@@ -9,11 +9,11 @@ using Newtonsoft.Json;
 
 namespace MissionControl.Config {
   public class ExtendedLancesSettings : AdvancedSettings {
-    [JsonProperty("Mode")]
-    public string Mode { get; set; } = "Deep";  // Shallow, Deep
-
     [JsonProperty("Autofill")]
     public bool Autofill { get; set; } = true;
+
+    [JsonProperty("AutofillType")]
+    public string AutofillType { get; set; } = "RespectEmpty";  // RespectEmpty, FillEmpty
 
     [JsonProperty("LanceSizes")]
     public Dictionary<string, List<ExtendedLance>> LanceSizes { get; set; } = new Dictionary<string, List<ExtendedLance>>();
