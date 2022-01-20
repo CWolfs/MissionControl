@@ -342,6 +342,10 @@ namespace MissionControl {
             EncounterRules.Run(LogicBlock.LogicType.ENCOUNTER_MANIPULATION, payload);
             break;
           }
+          case LogicBlock.LogicType.REQUEST_LANCE_COMPLETE: {
+            EncounterRules.Run(LogicBlock.LogicType.REQUEST_LANCE_COMPLETE, payload);
+            break;
+          }
           case LogicBlock.LogicType.SCENE_MANIPULATION: {
             EncounterRules.Run(LogicBlock.LogicType.SCENE_MANIPULATION, payload);
             break;
