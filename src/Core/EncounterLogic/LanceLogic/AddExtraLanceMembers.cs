@@ -67,14 +67,14 @@ namespace MissionControl.Logic {
     // Checks if the LanceOverride lance unit count should be used to override the Faction lance unit count
     // It does this by checking a set tag. If it's present then it will be forced.
     private bool IsLanceOverrideForced(LanceOverride lanceOverride) {
-      if (lanceOverride.lanceTagSet.Contains("mc_force_extended_lances")) return true;  // TODO: Expose the tag to be defined in the settings.json
+      if (lanceOverride.lanceTagSet.Contains(Main.Settings.ExtendedLances.ForceLanceOverrideSizeWithTag)) return true;
       return false;
     }
 
     private void IncreaseLanceMembers(ContractOverride contractOverride, TeamOverride teamOverride, int lanceSizeOverride = -1) {
       List<LanceOverride> lanceOverrides = teamOverride.lanceOverrideList;
       int factionLanceSize = lanceSizeOverride <= -1 ? Main.Settings.ExtendedLances.GetFactionLanceSize(teamOverride.faction.ToString()) : lanceSizeOverride;
-      Main.LogDebug($"[AddExtraLanceMembers] Faction '{teamOverride.faction}' lance size is '{factionLanceSize}");
+      Main.LogDebug($"[AddExtraLanceMembers] Faction '{teamOverride.faction}' lance size is '{factionLanceSize}'");
 
       foreach (LanceOverride lanceOverride in lanceOverrides) {
         int lanceSize = factionLanceSize;
@@ -88,8 +88,8 @@ namespace MissionControl.Logic {
         if (CheckForLanceOverrideSkips(teamOverride, lanceOverride)) continue;
 
         if (IsLanceOverrideForced(lanceOverride)) {
-          Main.LogDebug($"[AddExtraLanceMembers] Force overriding lance override '{lanceOverride.name}' from faction size of '{factionLanceSize}' to '{lanceOverride.unitSpawnPointOverrideList.Count}");
-          factionLanceSize = lanceOverride.unitSpawnPointOverrideList.Count;
+          Main.LogDebug($"[AddExtraLanceMembers] Force overriding lance override '{lanceOverride.name}' from faction size of '{lanceSize}' to '{numberOfUnitsInLance}'");
+          lanceSize = numberOfUnitsInLance;
         }
 
         // TODO: EL v2: Move this possibly to AddSpawnPoints logic
@@ -112,9 +112,9 @@ namespace MissionControl.Logic {
         // If the lance is: 'Manual', 'Tagged', 'UseLance', or a direct lance reference
         //    - If 'Autofill' is off: we populate with empty slots but we leave the actual resolved filling for later in the life cycle (AddExtraLanceSpawnPoints handles it).
         //    - If 'Autofill' is on: we make copies of any of the tagged unitSpawnPointOverrides in the lance to fill up the slots required
-        if (numberOfUnitsInLance < factionLanceSize) {
+        if (numberOfUnitsInLance < lanceSize) {
           if (Main.Settings.ExtendedLances.Autofill) {
-            for (int i = numberOfUnitsInLance; i < factionLanceSize; i++) {
+            for (int i = numberOfUnitsInLance; i < lanceSize; i++) {
               UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetAnyTaggedLanceMember();
               if (originalUnitSpawnPointOverride == null) {
                 originalUnitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0];
@@ -132,7 +132,7 @@ namespace MissionControl.Logic {
           } else {
             UnitSpawnPointOverride emptyUnitSpawnPointOverride = new UnitSpawnPointOverride();
 
-            for (int i = numberOfUnitsInLance; i < factionLanceSize; i++) {
+            for (int i = numberOfUnitsInLance; i < lanceSize; i++) {
               Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] Non-autofill mode. Expanding lance size for position {i + 1} with a placeholder empty unit override.");
               lanceOverride.unitSpawnPointOverrideList.Add(emptyUnitSpawnPointOverride.DeepCopy());
             }

@@ -27,6 +27,12 @@ namespace MissionControl.Config {
     [JsonProperty("SkipWhenExcludeTagsContain")]
     public List<string> SkipWhenExcludeTagsContain { get; set; } = new List<string>();
 
+    [JsonProperty("ForceLanceOverrideSizeWithTag")]
+    public string ForceLanceOverrideSizeWithTag { get; set; } = "mc_force_extended_lance";
+
+    [JsonProperty("ForceLanceDefSizeWithTag")]
+    public string ForceLanceDefSizeWithTag { get; set; } = "mc_force_extended_lance";
+
     public TagSet GetSkipWhenTaggedWithAny() {
       return new TagSet(SkipWhenTaggedWithAny);
     }

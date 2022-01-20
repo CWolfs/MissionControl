@@ -64,10 +64,13 @@
     "EnableForStory": false,
     "Mode": "Deep",
     "Autofill": true,
+    "AutofillType": "RespectEmpty",
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "SkipWhenTaggedWithAny": ["lance_type_solo"],
     "SkipWhenTaggedWithAll": [],
-    "SkipWhenExcludeTagsContain": ["no_extended_lance"],
+    "SkipWhenExcludeTagsContain": ["mc_no_extended_lance"],
+    "ForceLanceOverrideSizeWithTag": "mc_force_extended_lance",
+    "ForceLanceDefSizeWithTag": "mc_force_extended_lance",
     "LanceSizes": {
       "5": [],
       "6": []
