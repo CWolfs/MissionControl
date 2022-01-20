@@ -67,7 +67,7 @@ namespace MissionControl.Logic {
     // Checks if the LanceOverride lance unit count should be used to override the Faction lance unit count
     // It does this by checking a set tag. If it's present then it will be forced.
     private bool IsLanceOverrideForced(LanceOverride lanceOverride) {
-      if (lanceOverride.lanceTagSet.Contains(Main.Settings.ExtendedLances.ForceLanceOverrideSizeWithTag)) return true;
+      if (lanceOverride.lanceTagSet.GetTagSetSourceFile().Contains(Main.Settings.ExtendedLances.ForceLanceOverrideSizeWithTag)) return true;
       return false;
     }
 

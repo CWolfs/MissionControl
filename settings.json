@@ -62,7 +62,6 @@
     "Enable": true,
     "EnableForFlashpoints": true,
     "EnableForStory": false,
-    "Mode": "Deep",
     "Autofill": true,
     "AutofillType": "RespectEmpty",
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
