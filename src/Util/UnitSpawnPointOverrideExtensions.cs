@@ -16,7 +16,7 @@ public static class UnitSpawnPointOverrideExtensions {
   }
 
   public static bool IsUnresolved(this UnitSpawnPointOverride unitSpawnPointOverride) {
-    Main.LogDebug($"[UnitSpawnPointOverrideExtensions.IsUnresolved] unitSpawnPointOverride unitDefId is: {unitSpawnPointOverride.unitDefId} and selectedUnitId {unitSpawnPointOverride.selectedUnitDefId}");
+    // Main.LogDebug($"[UnitSpawnPointOverrideExtensions.IsUnresolved] unitSpawnPointOverride unitDefId is: {unitSpawnPointOverride.unitDefId} and selectedUnitId {unitSpawnPointOverride.selectedUnitDefId}");
     if (unitSpawnPointOverride.selectedUnitDefId == "mechDef_None") return true;
     return false;
   }

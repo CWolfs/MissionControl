@@ -19,7 +19,7 @@ namespace MissionControl.Logic {
       ContractOverride contractOverride = ((ContractAndLanceOverridePayload)payload).ContractOverride;
       LanceOverride lanceOverride = ((ContractAndLanceOverridePayload)payload).LanceOverride;
       bool isManualLance = lanceOverride.lanceDefId == "Manual";
-      int lanceSize = lanceOverride.unitSpawnPointOverrideList.Count;
+      int currentLanceSize = lanceOverride.unitSpawnPointOverrideList.Count;
 
       TeamOverride teamOverride = contractOverride.GetTeamOverrideLanceBelongsTo(lanceOverride.GUID);
       Main.Logger.Log($"[AddExtraLanceMembersIndividualSecondPass] Team Override for lance '{lanceOverride.name} - {lanceOverride.GUID}' is: {teamOverride.teamName}");
@@ -41,8 +41,27 @@ namespace MissionControl.Logic {
 
         // Check for LanceDef tags to force LanceDef to override the EL lance unit count
         if (IsLanceDefForced(loadedLanceDef)) {
-          Main.LogDebug($"[AddExtraLanceMembers] Force overriding lance def '{lanceOverride.name}' from faction size of '{lanceSize}' to '{loadedLanceDef.LanceUnits.Length}'");
-          lanceSize = loadedLanceDef.LanceUnits.Length;
+          this.state.Set($"LANCE_DEF_FORCED_{lanceOverride.GUID}", true);
+
+          int newLanceSize = loadedLanceDef.LanceUnits.Length;
+          Main.LogDebug($"[AddExtraLanceMembersIndividualSecondPass] Force overriding lance def '{lanceOverride.name}' from faction size of '{currentLanceSize}' to '{newLanceSize}'");
+
+          if (newLanceSize < currentLanceSize) {
+            // Remove UnitOverrides. Last to First. This is because the override in the LanceDef has fewer units that the EL faction size, or forced Contract Override size
+            for (int i = currentLanceSize - 1; i >= newLanceSize; i--) {
+              Main.LogDebug($"[AddExtraLanceMembersIndividualSecondPass] Removing UnitOverride '{i}' from LanceOverride");
+              lanceOverride.unitSpawnPointOverrideList.RemoveAt(i);
+            }
+          } else if (newLanceSize > currentLanceSize) {
+            // Add UnitOverrides. This is because the override in the LanceDef has more units that the EL faction size, or forced Contract Override size
+            // This allows the LanceOverride to allocated the correct LanceDef units to the right UnitOverride slots
+            UnitSpawnPointOverride emptyUnitSpawnPointOverride = new UnitSpawnPointOverride();
+
+            for (int i = currentLanceSize; i < newLanceSize; i++) {
+              Main.LogDebug($"[AddExtraLanceMembersIndividualSecondPass] Adding UnitOverride '{i}' to LanceOverride");
+              lanceOverride.unitSpawnPointOverrideList.Add(emptyUnitSpawnPointOverride.DeepCopy());
+            }
+          }
         }
       }
     }
@@ -51,10 +70,10 @@ namespace MissionControl.Logic {
     // It does this by checking a set tag. If it's present then it will be forced.
     private bool IsLanceDefForced(LanceDef lanceDef) {
       if (lanceDef.LanceTags.GetTagSetSourceFile().Contains(Main.Settings.ExtendedLances.ForceLanceDefSizeWithTag)) {
-        Main.LogDebug($"[AddExtraLanceMembers] TagSetSourceFile '{lanceDef.LanceTags.GetTagSetSourceFile()}' contains tag '{Main.Settings.ExtendedLances.ForceLanceDefSizeWithTag}'");
+        Main.LogDebug($"[AddExtraLanceMembersIndividualSecondPass] TagSetSourceFile '{lanceDef.LanceTags.GetTagSetSourceFile()}' contains tag '{Main.Settings.ExtendedLances.ForceLanceDefSizeWithTag}'");
         return true;
       } else {
-        Main.LogDebug($"[AddExtraLanceMembers] TagSetSourceFile '{lanceDef.LanceTags.GetTagSetSourceFile()}' DOES NOT contain tag '{Main.Settings.ExtendedLances.ForceLanceDefSizeWithTag}'");
+        Main.LogDebug($"[AddExtraLanceMembersIndividualSecondPass] TagSetSourceFile '{lanceDef.LanceTags.GetTagSetSourceFile()}' DOES NOT contain tag '{Main.Settings.ExtendedLances.ForceLanceDefSizeWithTag}'");
       }
       return false;
     }

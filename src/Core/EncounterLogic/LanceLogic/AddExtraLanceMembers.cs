@@ -77,67 +77,70 @@ namespace MissionControl.Logic {
       Main.LogDebug($"[AddExtraLanceMembers] Faction '{teamOverride.faction}' lance size is '{factionLanceSize}'");
 
       foreach (LanceOverride lanceOverride in lanceOverrides) {
-        int lanceSize = factionLanceSize;
-        int numberOfUnitsInLance = lanceOverride.unitSpawnPointOverrideList.Count;
+        int intendedLanceSize = factionLanceSize;
+        int numberOfUnitsInLanceOverride = lanceOverride.unitSpawnPointOverrideList.Count;
+        bool mLanceOverrideSkipAutofill = false;
+
+        if (lanceOverride is MLanceOverride) {
+          MLanceOverride mLanceOverride = (MLanceOverride)lanceOverride;
+          if (!mLanceOverride.SupportAutofill) Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] [Lance {lanceOverride.GUID}] Lance is an MC defined Lance. It is defined to not support autofilling.");
+          mLanceOverrideSkipAutofill = !mLanceOverride.SupportAutofill;
+        }
 
         // Store original LanceOverride unitOverride count for later logic
-        Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] [Lance {lanceOverride.GUID}] Saving original LanceOverride UnitOverrideList count of '{numberOfUnitsInLance}'");
-        this.state.Set($"LANCE_ORIGINAL_UNIT_OVERRIDE_COUNT_{lanceOverride.GUID}", numberOfUnitsInLance);
+        Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] [Lance {lanceOverride.GUID}] Saving original LanceOverride UnitOverrideList count of '{numberOfUnitsInLanceOverride}'");
+        this.state.Set($"LANCE_ORIGINAL_UNIT_OVERRIDE_COUNT_{lanceOverride.GUID}", numberOfUnitsInLanceOverride);
 
         // If any lance should be skipped, check and skip
         if (CheckForLanceOverrideSkips(teamOverride, lanceOverride)) continue;
 
         if (IsLanceOverrideForced(lanceOverride)) {
-          Main.LogDebug($"[AddExtraLanceMembers] Force overriding lance override '{lanceOverride.name}' from faction size of '{lanceSize}' to '{numberOfUnitsInLance}'");
-          lanceSize = numberOfUnitsInLance;
+          Main.LogDebug($"[AddExtraLanceMembers] Force overriding lance override '{lanceOverride.name}' from faction size of '{intendedLanceSize}' to '{numberOfUnitsInLanceOverride}'");
+          this.state.Set($"LANCE_OVERRIDE_FORCED_{lanceOverride.GUID}", true);
+          intendedLanceSize = numberOfUnitsInLanceOverride;
         }
 
-        // TODO: EL v2: Move this possibly to AddSpawnPoints logic
-        // // GUARD: If an AdditionalLance lance config has been set to 'supportAutofill' false, then don't autofill
-        // if (lanceOverride is MLanceOverride) {
-        //   MLanceOverride mLanceOverride = (MLanceOverride)lanceOverride;
-        //   if (!mLanceOverride.SupportAutofill) {
-        //     Main.LogDebug($"[AddExtraLanceMembers] LanceOverride '{mLanceOverride.GUID}' has 'supportAutofill' explicitly set to 'false' in MC lance '{mLanceOverride.LanceKey}'. Will not autofill.");
-        //     lancesToSkip.Add(mLanceOverride.GUID);
-        //     continue;
-        //   }
-        // }
-
         ApplyDifficultyMod(teamOverride, lanceOverride);
-
-        bool isManualLance = lanceOverride.lanceDefId == "Manual";
-        bool AreAnyLanceUnitsTagged = AreAnyLanceMembersTagged(lanceOverride);
 
         // To support LanceDefs that have more than four units in them we need to populate the ContractOverride to contain empty unitSpawnPointOverrides
         // If the lance is: 'Manual', 'Tagged', 'UseLance', or a direct lance reference
         //    - If 'Autofill' is off: we populate with empty slots but we leave the actual resolved filling for later in the life cycle (AddExtraLanceSpawnPoints handles it).
         //    - If 'Autofill' is on: we make copies of any of the tagged unitSpawnPointOverrides in the lance to fill up the slots required
-        if (numberOfUnitsInLance < lanceSize) {
-          if (Main.Settings.ExtendedLances.Autofill) {
-            for (int i = numberOfUnitsInLance; i < lanceSize; i++) {
-              UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetAnyTaggedLanceMember();
-              if (originalUnitSpawnPointOverride == null) {
-                originalUnitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0];
-                Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] Autofill mode. Adding unit {i + 1} by duplicating the first unit of the lance.");
-              } else {
-                Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] Autofill mode. Adding unit {i + 1} by duplicating a 'Tagged' or 'Use Lance' lance member.");
-              }
-              UnitSpawnPointOverride unitSpawnPointOverride = originalUnitSpawnPointOverride.DeepCopy();
-              unitSpawnPointOverride.customUnitName = "";
-
-              Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] Using unitDefId '{unitSpawnPointOverride.unitDefId}' as a base");
-
-              lanceOverride.unitSpawnPointOverrideList.Add(unitSpawnPointOverride);
-            }
+        if (numberOfUnitsInLanceOverride < intendedLanceSize) {
+          if (Main.Settings.ExtendedLances.Autofill && !mLanceOverrideSkipAutofill) {
+            AutofillWithTaggedOrFirstUnitOverrideSlots(teamOverride, lanceOverride, numberOfUnitsInLanceOverride, intendedLanceSize);
           } else {
-            UnitSpawnPointOverride emptyUnitSpawnPointOverride = new UnitSpawnPointOverride();
-
-            for (int i = numberOfUnitsInLance; i < lanceSize; i++) {
-              Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] Non-autofill mode. Expanding lance size for position {i + 1} with a placeholder empty unit override.");
-              lanceOverride.unitSpawnPointOverrideList.Add(emptyUnitSpawnPointOverride.DeepCopy());
-            }
+            AutofillWithEmptyUnitOverrideSlots(teamOverride, lanceOverride, numberOfUnitsInLanceOverride, intendedLanceSize);
           }
         }
+      }
+    }
+
+    private void AutofillWithTaggedOrFirstUnitOverrideSlots(TeamOverride teamOverride, LanceOverride lanceOverride, int numberOfUnitsInLanceOverride, int intendedLanceSize) {
+      for (int i = numberOfUnitsInLanceOverride; i < intendedLanceSize; i++) {
+        UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetAnyTaggedLanceMember();
+
+        if (originalUnitSpawnPointOverride == null) {
+          originalUnitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0];
+          Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] Autofill mode. Adding unit {i + 1} by duplicating the first unit of the lance.");
+        } else {
+          Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] Autofill mode. Adding unit {i + 1} by duplicating a 'Tagged' or 'Use Lance' lance member.");
+        }
+
+        UnitSpawnPointOverride unitSpawnPointOverride = originalUnitSpawnPointOverride.DeepCopy();
+        unitSpawnPointOverride.customUnitName = "";
+        Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] Using unitDefId '{unitSpawnPointOverride.unitDefId}' as a base");
+
+        lanceOverride.unitSpawnPointOverrideList.Add(unitSpawnPointOverride);
+      }
+    }
+
+    private void AutofillWithEmptyUnitOverrideSlots(TeamOverride teamOverride, LanceOverride lanceOverride, int numberOfUnitsInLanceOverride, int intendedLanceSize) {
+      UnitSpawnPointOverride emptyUnitSpawnPointOverride = new UnitSpawnPointOverride();
+
+      for (int i = numberOfUnitsInLanceOverride; i < intendedLanceSize; i++) {
+        Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] Non-autofill mode. Expanding lance size for position {i + 1} with a placeholder empty unit override.");
+        lanceOverride.unitSpawnPointOverrideList.Add(emptyUnitSpawnPointOverride.DeepCopy());
       }
     }
 
