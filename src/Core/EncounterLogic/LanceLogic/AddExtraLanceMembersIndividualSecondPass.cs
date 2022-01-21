@@ -19,6 +19,7 @@ namespace MissionControl.Logic {
       ContractOverride contractOverride = ((ContractAndLanceOverridePayload)payload).ContractOverride;
       LanceOverride lanceOverride = ((ContractAndLanceOverridePayload)payload).LanceOverride;
       bool isManualLance = lanceOverride.lanceDefId == "Manual";
+      int lanceSize = lanceOverride.unitSpawnPointOverrideList.Count;
 
       TeamOverride teamOverride = contractOverride.GetTeamOverrideLanceBelongsTo(lanceOverride.GUID);
       Main.Logger.Log($"[AddExtraLanceMembersIndividualSecondPass] Team Override for lance '{lanceOverride.name} - {lanceOverride.GUID}' is: {teamOverride.teamName}");
@@ -28,18 +29,34 @@ namespace MissionControl.Logic {
       // Check first pass LanceOverride skips and check LanceDef skips in this second pass, if one exists, and check tags for skipping or override
       if (!isManualLance) {
         LanceDef loadedLanceDef = (LanceDef)AccessTools.Field(typeof(LanceOverride), "loadedLanceDef").GetValue(lanceOverride);
+        Main.Logger.Log($"[AddExtraLanceMembersIndividualSecondPass] Loaded LanceDef is '{loadedLanceDef.Description.Id}'");
+
         bool skip = CheckForLanceOverrideSkips(lanceOverride, teamOverride, lanceOverride.GUID);
         if (!skip) skip = CheckForLanceDefSkips(loadedLanceDef, teamOverride, lanceOverride.GUID);
 
         if (skip) return;
-      }
 
-      Main.Logger.Log($"[AddExtraLanceMembersIndividualSecondPass] No Skips Detected. Processing second pass.");
 
-      // Check for LanceDef tags to force LanceDef to override the EL lance unit count
-      if (!isManualLance) {
-        // No manual changes here as first pass sets them
+        Main.Logger.Log($"[AddExtraLanceMembersIndividualSecondPass] No Skips Detected. Processing second pass.");
+
+        // Check for LanceDef tags to force LanceDef to override the EL lance unit count
+        if (IsLanceDefForced(loadedLanceDef)) {
+          Main.LogDebug($"[AddExtraLanceMembers] Force overriding lance def '{lanceOverride.name}' from faction size of '{lanceSize}' to '{loadedLanceDef.LanceUnits.Length}'");
+          lanceSize = loadedLanceDef.LanceUnits.Length;
+        }
       }
+    }
+
+    // Checks if the LanceDef lance unit count should be used to override the Faction lance unit count
+    // It does this by checking a set tag. If it's present then it will be forced.
+    private bool IsLanceDefForced(LanceDef lanceDef) {
+      if (lanceDef.LanceTags.GetTagSetSourceFile().Contains(Main.Settings.ExtendedLances.ForceLanceDefSizeWithTag)) {
+        Main.LogDebug($"[AddExtraLanceMembers] TagSetSourceFile '{lanceDef.LanceTags.GetTagSetSourceFile()}' contains tag '{Main.Settings.ExtendedLances.ForceLanceDefSizeWithTag}'");
+        return true;
+      } else {
+        Main.LogDebug($"[AddExtraLanceMembers] TagSetSourceFile '{lanceDef.LanceTags.GetTagSetSourceFile()}' DOES NOT contain tag '{Main.Settings.ExtendedLances.ForceLanceDefSizeWithTag}'");
+      }
+      return false;
     }
 
     private bool CheckForLanceOverrideSkips(LanceOverride lanceOverride, TeamOverride teamOverride, string lanceGUID) {
