@@ -129,7 +129,7 @@ namespace MissionControl.Logic {
 
         UnitSpawnPointOverride unitSpawnPointOverride = originalUnitSpawnPointOverride.DeepCopy();
         unitSpawnPointOverride.customUnitName = "";
-        Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] Using unitDefId '{unitSpawnPointOverride.unitDefId}' as a base");
+        Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] Using unit with old GUID '{originalUnitSpawnPointOverride.GUID}' and new GUID '{unitSpawnPointOverride.GUID}' unitDefId '{unitSpawnPointOverride.unitDefId}' as a base");
 
         lanceOverride.unitSpawnPointOverrideList.Add(unitSpawnPointOverride);
       }

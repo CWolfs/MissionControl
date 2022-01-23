@@ -103,23 +103,11 @@ namespace MissionControl.Logic {
             }
           }
 
-          int originalLanceOverrideSize = this.state.GetInt($"LANCE_ORIGINAL_UNIT_OVERRIDE_COUNT_{lanceOverride.GUID}");
           bool lanceOverrideForced = this.state.GetBool($"LANCE_OVERRIDE_FORCED_{lanceOverride.GUID}");
           bool lanceDefForced = this.state.GetBool($"LANCE_DEF_FORCED_{lanceOverride.GUID}");
           if (lanceOverrideForced || lanceDefForced) {
             Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected that lance was forced using a LanceOverride or LanceDef EL enforcement. Skipping autofill.");
             continue;
-          }
-
-          List<int> unresolvedIndexes = lanceOverride.GetUnresolvedUnitIndexes(originalLanceOverrideSize);
-          Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected '{unresolvedIndexes.Count}' unresolved unit spawn overrides. Will resolve them before building spawn points.");
-          if (unresolvedIndexes.Count > 0) {
-            LanceDef loadedLanceDef = (LanceDef)AccessTools.Field(typeof(LanceOverride), "loadedLanceDef").GetValue(lanceOverride);
-            Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Loaded LanceDef is '{loadedLanceDef.Description.Id}'");
-
-            foreach (int index in unresolvedIndexes) {
-              ReplaceUnresolvedUnitOverride(lanceOverride, loadedLanceDef, index);
-            }
           }
         } else {
           Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Populated lance '{lanceOverride.name}' has fewer units than the faction requires. Allowing as a valid setup as 'Autofill' is false.");
@@ -127,41 +115,22 @@ namespace MissionControl.Logic {
 
         LanceSpawnerGameLogic lanceSpawner = lanceSpawners.Find(spawner => spawner.GUID == lanceOverride.lanceSpawner.EncounterObjectGuid);
         if (lanceSpawner != null) {
-          List<GameObject> unitSpawnPoints = lanceSpawner.gameObject.FindAllContains("UnitSpawnPoint");
-          numberOfUnitsInLance = lanceOverride.unitSpawnPointOverrideList.Count;
-
-          if (numberOfUnitsInLance > unitSpawnPoints.Count) {
-            Main.Logger.Log($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected lance '{lanceOverride.name}' has more units than lance spawn points. Creating new lance spawns to accommodate.");
-            string spawnerName = lanceSpawner.gameObject.name;
-            GameObject orientationUnit = unitSpawnPoints[0].gameObject;
-            string orientationKey = $"{spawnerName}.{orientationUnit.name}";
-            encounterRules.ObjectLookup[orientationKey] = orientationUnit;
-
-            for (int j = unitSpawnPoints.Count; j < numberOfUnitsInLance; j++) {
-              Vector3 randomLanceSpawn = unitSpawnPoints.GetRandom().transform.localPosition;
-              Vector3 spawnPositon = SceneUtils.GetRandomPositionFromTarget(randomLanceSpawn, 24, 100);
-              spawnPositon = spawnPositon.GetClosestHexLerpedPointOnGrid();
-
-              // Ensure spawn position isn't on another unit spawn. Give up if one isn't possible.
-              int failSafe = 0;
-              while (spawnPositon.IsTooCloseToAnotherSpawn()) {
-                spawnPositon = SceneUtils.GetRandomPositionFromTarget(randomLanceSpawn, 24, 100);
-                spawnPositon = spawnPositon.GetClosestHexLerpedPointOnGrid();
-                if (failSafe > 20) break;
-                failSafe++;
-              }
-
-              Main.Logger.Log($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Creating lance '{lanceOverride.name}' spawn point 'UnitSpawnPoint{j + 1}'");
-              UnitSpawnPointGameLogic unitSpawnGameLogic = LanceSpawnerFactory.CreateUnitSpawnPoint(lanceSpawner.gameObject, $"UnitSpawnPoint{j + 1}", spawnPositon, lanceOverride.unitSpawnPointOverrideList[j].unitSpawnPoint.EncounterObjectGuid);
-
-              string spawnKey = $"{spawnerName}.{unitSpawnGameLogic.gameObject.name}";
-              encounterRules.ObjectLookup[spawnKey] = unitSpawnGameLogic.gameObject;
-              spawnKeys.Add(new string[] { spawnKey, orientationKey });
-            }
-          }
+          AddSpawnPoints(lanceSpawner, teamOverride, lanceOverride, numberOfUnitsInLance);
         } else {
           Main.Logger.LogWarning($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Spawner is null for {lanceOverride.lanceSpawner.EncounterObjectGuid}. This is probably data from a restarted contract that hasn't been cleared up. It can be safely ignored.");
           lancesToDelete.Add(lanceOverride.lanceSpawner.EncounterObjectGuid);
+        }
+
+        int originalLanceOverrideSize = this.state.GetInt($"LANCE_ORIGINAL_UNIT_OVERRIDE_COUNT_{lanceOverride.GUID}");
+        List<int> unresolvedIndexes = lanceOverride.GetUnresolvedUnitIndexes(originalLanceOverrideSize);
+        Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected '{unresolvedIndexes.Count}' unresolved unit spawn overrides. Will resolve them before building spawn points.");
+        if (unresolvedIndexes.Count > 0) {
+          LanceDef loadedLanceDef = (LanceDef)AccessTools.Field(typeof(LanceOverride), "loadedLanceDef").GetValue(lanceOverride);
+          Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Loaded LanceDef is '{loadedLanceDef.Description.Id}'");
+
+          foreach (int index in unresolvedIndexes) {
+            ReplaceUnresolvedUnitOverride(lanceSpawner, teamOverride, lanceOverride, loadedLanceDef, index);
+          }
         }
       }
 
@@ -177,14 +146,61 @@ namespace MissionControl.Logic {
       }
     }
 
-    private void ReplaceUnresolvedUnitOverride(LanceOverride lanceOverride, LanceDef loadedLanceDef, int index) {
+    private void AddSpawnPoints(LanceSpawnerGameLogic lanceSpawner, TeamOverride teamOverride, LanceOverride lanceOverride, int numberOfUnitsInLance) {
+      List<GameObject> unitSpawnPoints = lanceSpawner.gameObject.FindAllContains("UnitSpawnPoint");
+      numberOfUnitsInLance = lanceOverride.unitSpawnPointOverrideList.Count;
+
+      if (numberOfUnitsInLance > unitSpawnPoints.Count) {
+        Main.Logger.Log($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected lance '{lanceOverride.name}' has more units than lance spawn points. Creating new lance spawns to accommodate.");
+        string spawnerName = lanceSpawner.gameObject.name;
+        GameObject orientationUnit = unitSpawnPoints[0].gameObject;
+        string orientationKey = $"{spawnerName}.{orientationUnit.name}";
+        encounterRules.ObjectLookup[orientationKey] = orientationUnit;
+
+        for (int j = unitSpawnPoints.Count; j < numberOfUnitsInLance; j++) {
+          Vector3 randomLanceSpawn = unitSpawnPoints.GetRandom().transform.localPosition;
+          Vector3 spawnPositon = SceneUtils.GetRandomPositionFromTarget(randomLanceSpawn, 24, 100);
+          spawnPositon = spawnPositon.GetClosestHexLerpedPointOnGrid();
+
+          // Ensure spawn position isn't on another unit spawn. Give up if one isn't possible.
+          int failSafe = 0;
+          while (spawnPositon.IsTooCloseToAnotherSpawn()) {
+            spawnPositon = SceneUtils.GetRandomPositionFromTarget(randomLanceSpawn, 24, 100);
+            spawnPositon = spawnPositon.GetClosestHexLerpedPointOnGrid();
+            if (failSafe > 20) break;
+            failSafe++;
+          }
+
+          Main.Logger.Log($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Creating lance '{lanceOverride.name}' spawn point 'UnitSpawnPoint{j + 1}'");
+          UnitSpawnPointGameLogic unitSpawnGameLogic = LanceSpawnerFactory.CreateUnitSpawnPoint(lanceSpawner.gameObject, $"UnitSpawnPoint{j + 1}", spawnPositon, lanceOverride.unitSpawnPointOverrideList[j].unitSpawnPoint.EncounterObjectGuid);
+          unitSpawnPoints.Add(unitSpawnGameLogic.gameObject);
+
+          string spawnKey = $"{spawnerName}.{unitSpawnGameLogic.gameObject.name}";
+          encounterRules.ObjectLookup[spawnKey] = unitSpawnGameLogic.gameObject;
+          spawnKeys.Add(new string[] { spawnKey, orientationKey });
+        }
+      }
+
+      // DEBUG
+      for (int j = 0; j < numberOfUnitsInLance; j++) {
+        string unitGUID = lanceOverride.unitSpawnPointOverrideList[j].unitSpawnPoint.EncounterObjectGuid;
+        string unitSpawnerGUID = unitSpawnPoints[j].GetComponent<UnitSpawnPointGameLogic>().encounterObjectGuid;
+        Main.Logger.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] [UNIT {j + 1} DATA] Unit GUID: '{unitGUID}' and Unit Spawner GUID: '{unitSpawnerGUID}'");
+      }
+    }
+
+    private void ReplaceUnresolvedUnitOverride(LanceSpawnerGameLogic lanceSpawner, TeamOverride teamOverride, LanceOverride lanceOverride, LanceDef loadedLanceDef, int index) {
+      List<GameObject> unitSpawnPoints = lanceSpawner.gameObject.FindAllContains("UnitSpawnPoint");
+
       UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetAnyTaggedLanceMember();
       if (originalUnitSpawnPointOverride == null) originalUnitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0];
       UnitSpawnPointOverride unitSpawnPointOverride = originalUnitSpawnPointOverride.DeepCopy();
 
-      // If force resolving - then ensure GUIDs for spawner unit spawns are maintained
-      originalUnitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[index].DeepCopy();
-      unitSpawnPointOverride.unitSpawnPoint.EncounterObjectGuid = originalUnitSpawnPointOverride.unitSpawnPoint.EncounterObjectGuid;
+      if (unitSpawnPoints.Count < index) {
+        Main.Logger.LogError($"[ReplaceUnresolvedUnitOverride] [Faction:{teamOverride.faction}] There are more unit overrides in lance '{lanceOverride.name} - {lanceOverride.GUID}' than unit spawn points in LanceSpawner '{lanceSpawner.name} - {lanceSpawner.GUID}'. This should never happen.");
+      }
+      string originalUnitSpawnPointGUID = unitSpawnPoints[index].GetComponent<UnitSpawnPointGameLogic>().GUID; // If force resolving - then ensure GUIDs for spawner unit spawns are maintained
+      unitSpawnPointOverride.unitSpawnPoint.EncounterObjectGuid = originalUnitSpawnPointGUID;
       unitSpawnPointOverride.customUnitName = "";
       TagSet companyTags = new TagSet(UnityGameInstance.BattleTechGame.Simulation.CompanyTags);
 
