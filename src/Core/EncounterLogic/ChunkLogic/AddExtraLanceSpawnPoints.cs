@@ -93,26 +93,6 @@ namespace MissionControl.Logic {
           return;
         }
 
-        if (Main.Settings.ExtendedLances.Autofill) {
-          // GUARD: If an AdditionalLance lance config has been set to 'supportAutoFill' false, then don't autofill
-          if (lanceOverride is MLanceOverride) {
-            MLanceOverride mLanceOverride = (MLanceOverride)lanceOverride;
-            if (!mLanceOverride.SupportAutofill) {
-              Main.LogDebug($"[AddExtraLanceSpawnPoints] Lance Override '{mLanceOverride.GUID}' has 'autofill' explicitly turned off in MC lance '{mLanceOverride.LanceKey}'");
-              continue;
-            }
-          }
-
-          bool lanceOverrideForced = this.state.GetBool($"LANCE_OVERRIDE_FORCED_{lanceOverride.GUID}");
-          bool lanceDefForced = this.state.GetBool($"LANCE_DEF_FORCED_{lanceOverride.GUID}");
-          if (lanceOverrideForced || lanceDefForced) {
-            Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected that lance was forced using a LanceOverride or LanceDef EL enforcement. Skipping autofill.");
-            continue;
-          }
-        } else {
-          Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Populated lance '{lanceOverride.name}' has fewer units than the faction requires. Allowing as a valid setup as 'Autofill' is false.");
-        }
-
         LanceSpawnerGameLogic lanceSpawner = lanceSpawners.Find(spawner => spawner.GUID == lanceOverride.lanceSpawner.EncounterObjectGuid);
         if (lanceSpawner != null) {
           AddSpawnPoints(lanceSpawner, teamOverride, lanceOverride, numberOfUnitsInLance);
@@ -121,15 +101,35 @@ namespace MissionControl.Logic {
           lancesToDelete.Add(lanceOverride.lanceSpawner.EncounterObjectGuid);
         }
 
-        int originalLanceOverrideSize = this.state.GetInt($"LANCE_ORIGINAL_UNIT_OVERRIDE_COUNT_{lanceOverride.GUID}");
-        List<int> unresolvedIndexes = lanceOverride.GetUnresolvedUnitIndexes(originalLanceOverrideSize);
-        Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected '{unresolvedIndexes.Count}' unresolved unit spawn overrides. Will resolve them before building spawn points.");
-        if (unresolvedIndexes.Count > 0) {
-          LanceDef loadedLanceDef = (LanceDef)AccessTools.Field(typeof(LanceOverride), "loadedLanceDef").GetValue(lanceOverride);
-          Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Loaded LanceDef is '{loadedLanceDef.Description.Id}'");
 
-          foreach (int index in unresolvedIndexes) {
-            ReplaceUnresolvedUnitOverride(lanceSpawner, teamOverride, lanceOverride, loadedLanceDef, index);
+        if (Main.Settings.ExtendedLances.Autofill) {
+          // GUARD: If an AdditionalLance lance config has been set to 'supportAutoFill' false, then don't autofill
+          if (lanceOverride is MLanceOverride) {
+            MLanceOverride mLanceOverride = (MLanceOverride)lanceOverride;
+            if (!mLanceOverride.SupportAutofill) {
+              Main.LogDebug($"[AddExtraLanceSpawnPoints] Lance Override '{lanceOverride.name} - {mLanceOverride.GUID}' has 'autofill' explicitly turned off in MC lance '{mLanceOverride.LanceKey}'");
+              continue;
+            }
+          }
+
+          bool lanceOverrideForced = this.state.GetBool($"LANCE_OVERRIDE_FORCED_{lanceOverride.GUID}");
+          bool lanceDefForced = this.state.GetBool($"LANCE_DEF_FORCED_{lanceOverride.GUID}");
+          if (lanceOverrideForced || lanceDefForced) {
+            Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected that lance '{lanceOverride.name} - {lanceOverride.GUID}' was forced using a LanceOverride or LanceDef EL enforcement. Skipping autofill.");
+            continue;
+          }
+
+          // Only replace unresolved unit overrides if autofill is on
+          int originalLanceOverrideSize = this.state.GetInt($"LANCE_ORIGINAL_UNIT_OVERRIDE_COUNT_{lanceOverride.GUID}");
+          List<int> unresolvedIndexes = lanceOverride.GetUnresolvedUnitIndexes(originalLanceOverrideSize);
+          Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected '{unresolvedIndexes.Count}' unresolved unit spawn overrides. Will resolve them before building spawn points.");
+          if (unresolvedIndexes.Count > 0) {
+            LanceDef loadedLanceDef = (LanceDef)AccessTools.Field(typeof(LanceOverride), "loadedLanceDef").GetValue(lanceOverride);
+            Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Loaded LanceDef is '{loadedLanceDef.Description.Id}'");
+
+            foreach (int index in unresolvedIndexes) {
+              ReplaceUnresolvedUnitOverride(lanceSpawner, teamOverride, lanceOverride, loadedLanceDef, index);
+            }
           }
         }
       }
