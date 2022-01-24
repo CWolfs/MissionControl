@@ -109,12 +109,6 @@ namespace MissionControl.Logic {
         return true;
       }
 
-      if (Main.Settings.ExtendedLances.GetSkipWhenExcludeTagsContain().Count > 0 && loadedLanceDef.LanceTags.ContainsAny(Main.Settings.ExtendedLances.GetSkipWhenExcludeTagsContain())) {
-        Main.LogDebug($"[AddExtraLanceMembersIndividualSecondPass] [{teamOverride.faction}] Lance contains an exclude tag set in 'GetSkipWhenExcludeTagsContain'. Skipping '{loadedLanceDef.Description.Id}'");
-        lancesToSkip.Add(lanceGUID);
-        return true;
-      }
-
       return false;
     }
   }
