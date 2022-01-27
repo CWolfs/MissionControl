@@ -23,9 +23,13 @@ namespace MissionControl.Logic {
 
       TeamOverride teamOverride = contractOverride.GetTeamOverrideLanceBelongsTo(lanceOverride.GUID);
 
-      // TODO: Check for Faction is EL should run for this Faction or not
-
       Main.Logger.Log($"[AddExtraLanceMembersIndividualSecondPass] Team Override for lance '{lanceOverride.name} - {lanceOverride.GUID}' is: {teamOverride.teamName}");
+
+      // GUARD: Don't process factions that aren't allowed
+      if (!IsTeamAllowedExtendedLances(contractOverride, teamOverride)) {
+        Main.Logger.Log($"[AddExtraLanceMembersIndividualSecondPass] Ignoring lance '{lanceOverride.name} - {lanceOverride.GUID}' is: {teamOverride.teamName}. Team is not allowed to be extended.");
+        return;
+      }
 
       lancesToSkip = (List<string>)state.GetObject("LancesToSkip");
 
@@ -67,6 +71,15 @@ namespace MissionControl.Logic {
           }
         }
       }
+    }
+
+    private bool IsTeamAllowedExtendedLances(ContractOverride contractOverride, TeamOverride teamOverride) {
+      if ((contractOverride.targetsAllyTeam == teamOverride) && !Main.Settings.ExtendedLances.EnableForTargetAlly) return false;
+      if ((contractOverride.employersAllyTeam == teamOverride) && !Main.Settings.ExtendedLances.EnableForEmployerAlly) return false;
+      if ((contractOverride.hostileToAllTeam == teamOverride) && !Main.Settings.ExtendedLances.EnableForHostileToAll) return false;
+      if ((contractOverride.neutralToAllTeam == teamOverride) && !Main.Settings.ExtendedLances.EnableForNeutralToAll) return false;
+
+      return true;
     }
 
     // Checks if the LanceDef lance unit count should be used to override the Faction lance unit count
