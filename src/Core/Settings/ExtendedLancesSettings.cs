@@ -9,6 +9,18 @@ using Newtonsoft.Json;
 
 namespace MissionControl.Config {
   public class ExtendedLancesSettings : AdvancedSettings {
+    [JsonProperty("EnableForTargetAlly")]
+    public bool EnableForTargetAlly { get; set; } = false;
+
+    [JsonProperty("EnableForEmployerAlly")]
+    public bool EnableForEmployerAlly { get; set; } = false;
+
+    [JsonProperty("EnableForHostileToAll")]
+    public bool EnableForHostileToAll { get; set; } = false;
+
+    [JsonProperty("EnableForNeutralToAll")]
+    public bool EnableForNeutralToAll { get; set; } = false;
+
     [JsonProperty("Autofill")]
     public bool Autofill { get; set; } = true;
 

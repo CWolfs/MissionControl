@@ -36,26 +36,29 @@ namespace MissionControl.Logic {
       lancesToSkip = (List<string>)state.GetObject("LancesToSkip");
       lanceSpawners = new List<LanceSpawnerGameLogic>(encounterLayerData.gameObject.GetComponentsInChildren<LanceSpawnerGameLogic>());
 
-      TeamOverride targetTeamOverride = contractOverride.targetTeam;
-      TeamOverride employerTeamOverride = contractOverride.employerTeam;
+      // Backwards compatibility between EL v1 and v2 for renaming of key
+      string targetKey = (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedLances_TargetLanceSizeOverride)) ? ContractSettingsOverrides.ExtendedLances_TargetLanceSizeOverride : ContractSettingsOverrides.ExtendedLances_EnemyLanceSizeOverride;
+      string employerKey = (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedLances_EmployerLanceSizeOverride)) ? ContractSettingsOverrides.ExtendedLances_EmployerLanceSizeOverride : ContractSettingsOverrides.ExtendedLances_AllyLanceSizeOverride;
 
-      if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedLances_EnemyLanceSizeOverride)) {
-        int lanceSizeOverride = Main.Settings.ActiveContractSettings.GetInt(ContractSettingsOverrides.ExtendedLances_EnemyLanceSizeOverride);
-        Main.Logger.Log($"[AddExtraLanceSpawnPoints] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Enemy lance size will be '{lanceSizeOverride}'.");
-        IncreaseLanceSpawnPoints(contractOverride, targetTeamOverride, lanceSizeOverride);
-      } else {
-        IncreaseLanceSpawnPoints(contractOverride, targetTeamOverride);
-      }
+      PrepareIncreaseLanceMembers(contractOverride, contractOverride.targetTeam, targetKey, "Target");
+      PrepareIncreaseLanceMembers(contractOverride, contractOverride.employerTeam, employerKey, "Employer");
 
-      if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedLances_AllyLanceSizeOverride)) {
-        int lanceSizeOverride = Main.Settings.ActiveContractSettings.GetInt(ContractSettingsOverrides.ExtendedLances_AllyLanceSizeOverride);
-        Main.Logger.Log($"[AddExtraLanceSpawnPoints] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lance size will be '{lanceSizeOverride}'.");
-        IncreaseLanceSpawnPoints(contractOverride, employerTeamOverride, lanceSizeOverride);
-      } else {
-        IncreaseLanceSpawnPoints(contractOverride, employerTeamOverride);
-      }
+      if (Main.Settings.ExtendedLances.EnableForTargetAlly) PrepareIncreaseLanceMembers(contractOverride, contractOverride.targetsAllyTeam, ContractSettingsOverrides.ExtendedLances_TargetAllyLanceSizeOverride, "TargetAlly");
+      if (Main.Settings.ExtendedLances.EnableForEmployerAlly) PrepareIncreaseLanceMembers(contractOverride, contractOverride.employersAllyTeam, ContractSettingsOverrides.ExtendedLances_EmployerAllyLanceSizeOverride, "EmployerAlly");
+      if (Main.Settings.ExtendedLances.EnableForHostileToAll) PrepareIncreaseLanceMembers(contractOverride, contractOverride.hostileToAllTeam, ContractSettingsOverrides.ExtendedLances_HostileToAllLanceSizeOverride, "HostileToAll");
+      if (Main.Settings.ExtendedLances.EnableForNeutralToAll) PrepareIncreaseLanceMembers(contractOverride, contractOverride.neutralToAllTeam, ContractSettingsOverrides.ExtendedLances_NeutralToAllLanceSizeOverride, "NeutralToAll");
 
       state.Set("ExtraLanceSpawnKeys", spawnKeys);
+    }
+
+    private void PrepareIncreaseLanceMembers(ContractOverride contractOverride, TeamOverride teamOverride, string FactionLanceSizeOverrideKey, string type) {
+      if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedLances_EnemyLanceSizeOverride)) {
+        int lanceSizeOverride = Main.Settings.ActiveContractSettings.GetInt(ContractSettingsOverrides.ExtendedLances_EnemyLanceSizeOverride);
+        Main.Logger.Log($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. {type} lance size will be '{lanceSizeOverride}'.");
+        IncreaseLanceSpawnPoints(contractOverride, teamOverride, lanceSizeOverride);
+      } else {
+        IncreaseLanceSpawnPoints(contractOverride, teamOverride);
+      }
     }
 
     private bool CheckForLanceSkips(TeamOverride teamOverride, LanceOverride lanceOverride) {

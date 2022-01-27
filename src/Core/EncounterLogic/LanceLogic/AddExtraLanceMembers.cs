@@ -21,23 +21,27 @@ namespace MissionControl.Logic {
     public override void Run(RunPayload payload) {
       Main.Logger.Log($"[AddExtraLanceMembers] Adding extra lance units to lance");
       ContractOverride contractOverride = ((ContractOverridePayload)payload).ContractOverride;
-      TeamOverride targetTeamOverride = contractOverride.targetTeam;
-      TeamOverride employerTeamOverride = contractOverride.employerTeam;
 
-      if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedLances_EnemyLanceSizeOverride)) {
-        int lanceSizeOverride = Main.Settings.ActiveContractSettings.GetInt(ContractSettingsOverrides.ExtendedLances_EnemyLanceSizeOverride);
-        Main.Logger.Log($"[AddExtraLanceMembers] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Enemy lance size will be '{lanceSizeOverride}'.");
-        IncreaseLanceMembers(contractOverride, targetTeamOverride, lanceSizeOverride);
-      } else {
-        IncreaseLanceMembers(contractOverride, targetTeamOverride);
-      }
+      // Backwards compatibility between EL v1 and v2 for renaming of key
+      string targetKey = (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedLances_TargetLanceSizeOverride)) ? ContractSettingsOverrides.ExtendedLances_TargetLanceSizeOverride : ContractSettingsOverrides.ExtendedLances_EnemyLanceSizeOverride;
+      string employerKey = (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedLances_EmployerLanceSizeOverride)) ? ContractSettingsOverrides.ExtendedLances_EmployerLanceSizeOverride : ContractSettingsOverrides.ExtendedLances_AllyLanceSizeOverride;
 
-      if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedLances_AllyLanceSizeOverride)) {
-        int lanceSizeOverride = Main.Settings.ActiveContractSettings.GetInt(ContractSettingsOverrides.ExtendedLances_AllyLanceSizeOverride);
-        Main.Logger.Log($"[AddExtraLanceMembers] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lance size will be '{lanceSizeOverride}'.");
-        IncreaseLanceMembers(contractOverride, employerTeamOverride, lanceSizeOverride);
+      PrepareIncreaseLanceMembers(contractOverride, contractOverride.targetTeam, targetKey, "Target");
+      PrepareIncreaseLanceMembers(contractOverride, contractOverride.employerTeam, employerKey, "Employer");
+
+      if (Main.Settings.ExtendedLances.EnableForTargetAlly) PrepareIncreaseLanceMembers(contractOverride, contractOverride.targetsAllyTeam, ContractSettingsOverrides.ExtendedLances_TargetAllyLanceSizeOverride, "TargetAlly");
+      if (Main.Settings.ExtendedLances.EnableForEmployerAlly) PrepareIncreaseLanceMembers(contractOverride, contractOverride.employersAllyTeam, ContractSettingsOverrides.ExtendedLances_EmployerAllyLanceSizeOverride, "EmployerAlly");
+      if (Main.Settings.ExtendedLances.EnableForHostileToAll) PrepareIncreaseLanceMembers(contractOverride, contractOverride.hostileToAllTeam, ContractSettingsOverrides.ExtendedLances_HostileToAllLanceSizeOverride, "HostileToAll");
+      if (Main.Settings.ExtendedLances.EnableForNeutralToAll) PrepareIncreaseLanceMembers(contractOverride, contractOverride.neutralToAllTeam, ContractSettingsOverrides.ExtendedLances_NeutralToAllLanceSizeOverride, "NeutralToAll");
+    }
+
+    private void PrepareIncreaseLanceMembers(ContractOverride contractOverride, TeamOverride teamOverride, string FactionLanceSizeOverrideKey, string type) {
+      if (Main.Settings.ActiveContractSettings.Has(FactionLanceSizeOverrideKey)) {
+        int lanceSizeOverride = Main.Settings.ActiveContractSettings.GetInt(FactionLanceSizeOverrideKey);
+        Main.Logger.Log($"[AddExtraLanceMembers] [{teamOverride.faction}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. {type} lance size will be '{lanceSizeOverride}'.");
+        IncreaseLanceMembers(contractOverride, teamOverride, lanceSizeOverride);
       } else {
-        IncreaseLanceMembers(contractOverride, employerTeamOverride);
+        IncreaseLanceMembers(contractOverride, teamOverride);
       }
     }
 

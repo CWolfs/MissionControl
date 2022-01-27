@@ -22,6 +22,9 @@ namespace MissionControl.Logic {
       int currentLanceSize = lanceOverride.unitSpawnPointOverrideList.Count;
 
       TeamOverride teamOverride = contractOverride.GetTeamOverrideLanceBelongsTo(lanceOverride.GUID);
+
+      // TODO: Check for Faction is EL should run for this Faction or not
+
       Main.Logger.Log($"[AddExtraLanceMembersIndividualSecondPass] Team Override for lance '{lanceOverride.name} - {lanceOverride.GUID}' is: {teamOverride.teamName}");
 
       lancesToSkip = (List<string>)state.GetObject("LancesToSkip");
