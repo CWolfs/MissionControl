@@ -57,9 +57,10 @@ namespace MissionControl.Logic {
     private void PrepareIncreaseLanceMembers(ContractOverride contractOverride, TeamOverride teamOverride, string FactionLanceSizeOverrideKey, string type) {
       if (Main.Settings.ActiveContractSettings.Has(FactionLanceSizeOverrideKey)) {
         int lanceSizeOverride = Main.Settings.ActiveContractSettings.GetInt(FactionLanceSizeOverrideKey);
-        Main.Logger.Log($"[AddExtraLanceMembers] [{teamOverride.faction}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. {type} lance size will be '{lanceSizeOverride}'.");
+        Main.Logger.Log($"[AddExtraLanceMembers] [{type} - {teamOverride.faction}] Preparing to increase lance members using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Team '{type}' lance size will be '{lanceSizeOverride}', unless later overridden.");
         IncreaseLanceMembers(contractOverride, teamOverride, lanceSizeOverride);
       } else {
+        Main.Logger.Log($"[AddExtraLanceMembers] [{type} - {teamOverride.faction}] Preparing to increase lance members for contract '{MissionControl.Instance.CurrentContract.Name}'.");
         IncreaseLanceMembers(contractOverride, teamOverride);
       }
     }
