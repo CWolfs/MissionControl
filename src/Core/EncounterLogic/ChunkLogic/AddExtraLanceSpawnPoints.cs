@@ -43,10 +43,29 @@ namespace MissionControl.Logic {
       PrepareIncreaseLanceMembers(contractOverride, contractOverride.targetTeam, targetKey, "Target");
       PrepareIncreaseLanceMembers(contractOverride, contractOverride.employerTeam, employerKey, "Employer");
 
-      if (Main.Settings.ExtendedLances.EnableForTargetAlly) PrepareIncreaseLanceMembers(contractOverride, contractOverride.targetsAllyTeam, ContractSettingsOverrides.ExtendedLances_TargetAllyLanceSizeOverride, "TargetAlly");
-      if (Main.Settings.ExtendedLances.EnableForEmployerAlly) PrepareIncreaseLanceMembers(contractOverride, contractOverride.employersAllyTeam, ContractSettingsOverrides.ExtendedLances_EmployerAllyLanceSizeOverride, "EmployerAlly");
-      if (Main.Settings.ExtendedLances.EnableForHostileToAll) PrepareIncreaseLanceMembers(contractOverride, contractOverride.hostileToAllTeam, ContractSettingsOverrides.ExtendedLances_HostileToAllLanceSizeOverride, "HostileToAll");
-      if (Main.Settings.ExtendedLances.EnableForNeutralToAll) PrepareIncreaseLanceMembers(contractOverride, contractOverride.neutralToAllTeam, ContractSettingsOverrides.ExtendedLances_NeutralToAllLanceSizeOverride, "NeutralToAll");
+      if (Main.Settings.ExtendedLances.EnableForTargetAlly) {
+        PrepareIncreaseLanceMembers(contractOverride, contractOverride.targetsAllyTeam, ContractSettingsOverrides.ExtendedLances_TargetAllyLanceSizeOverride, "TargetAlly");
+      } else {
+        Main.LogDebug($"[AddExtraLanceSpawnPoints] [{contractOverride.targetsAllyTeam}] TargetAlly is 'false' so will not increase lance members");
+      }
+
+      if (Main.Settings.ExtendedLances.EnableForEmployerAlly) {
+        PrepareIncreaseLanceMembers(contractOverride, contractOverride.employersAllyTeam, ContractSettingsOverrides.ExtendedLances_EmployerAllyLanceSizeOverride, "EmployerAlly");
+      } else {
+        Main.LogDebug($"[AddExtraLanceSpawnPoints] [{contractOverride.employersAllyTeam}] EmployerAlly is 'false' so will not increase lance members");
+      }
+
+      if (Main.Settings.ExtendedLances.EnableForHostileToAll) {
+        PrepareIncreaseLanceMembers(contractOverride, contractOverride.hostileToAllTeam, ContractSettingsOverrides.ExtendedLances_HostileToAllLanceSizeOverride, "HostileToAll");
+      } else {
+        Main.LogDebug($"[AddExtraLanceSpawnPoints] [{contractOverride.hostileToAllTeam}] HostileToAll is 'false' so will not increase lance members");
+      }
+
+      if (Main.Settings.ExtendedLances.EnableForNeutralToAll) {
+        PrepareIncreaseLanceMembers(contractOverride, contractOverride.neutralToAllTeam, ContractSettingsOverrides.ExtendedLances_NeutralToAllLanceSizeOverride, "NeutralToAll");
+      } else {
+        Main.LogDebug($"[AddExtraLanceSpawnPoints] [{contractOverride.neutralToAllTeam}] NeutralToAll is 'false' so will not increase lance members");
+      }
 
       state.Set("ExtraLanceSpawnKeys", spawnKeys);
     }
