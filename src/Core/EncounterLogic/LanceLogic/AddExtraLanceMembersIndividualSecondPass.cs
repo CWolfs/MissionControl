@@ -56,16 +56,17 @@ namespace MissionControl.Logic {
           if (newLanceSize < currentLanceSize) {
             // Remove UnitOverrides. Last to First. This is because the override in the LanceDef has fewer units that the EL faction size, or forced Contract Override size
             for (int i = currentLanceSize - 1; i >= newLanceSize; i--) {
-              Main.LogDebug($"[AddExtraLanceMembersIndividualSecondPass] Removing UnitOverride '{i}' from LanceOverride");
+              Main.LogDebug($"[AddExtraLanceMembersIndividualSecondPass] Removing UnitOverride '{i + 1}' from LanceOverride");
               lanceOverride.unitSpawnPointOverrideList.RemoveAt(i);
             }
           } else if (newLanceSize > currentLanceSize) {
             // Add UnitOverrides. This is because the override in the LanceDef has more units that the EL faction size, or forced Contract Override size
             // This allows the LanceOverride to allocated the correct LanceDef units to the right UnitOverride slots
             UnitSpawnPointOverride emptyUnitSpawnPointOverride = new UnitSpawnPointOverride();
+            emptyUnitSpawnPointOverride.unitDefId = UnitSpawnPointOverride.UseLance;
 
             for (int i = currentLanceSize; i < newLanceSize; i++) {
-              Main.LogDebug($"[AddExtraLanceMembersIndividualSecondPass] Adding UnitOverride '{i}' to LanceOverride");
+              Main.LogDebug($"[AddExtraLanceMembersIndividualSecondPass] Adding UnitOverride '{i + 1}' to LanceOverride");
               lanceOverride.unitSpawnPointOverrideList.Add(emptyUnitSpawnPointOverride.DeepCopy());
             }
           }
