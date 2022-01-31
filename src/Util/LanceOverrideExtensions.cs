@@ -75,8 +75,8 @@ public static class LanceOverrideExtensions {
     UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetAnyTaggedLanceMember();
     // If there are only manual units - then select one at random from the Lance. Previously this selected copies of the first unit in the lance
     if (originalUnitSpawnPointOverride == null) {
-      MissionControl.Main.LogDebug($"[LanceOverrideExtensions.GetUnitToCopy] Using '{MissionControl.Main.Settings.ExtendedLances.AutofillManualLanceType}' to get unit to copy");
-      if (MissionControl.Main.Settings.ExtendedLances.AutofillManualLanceType == "FirstInLance") {
+      MissionControl.Main.LogDebug($"[LanceOverrideExtensions.GetUnitToCopy] Using '{MissionControl.Main.Settings.ExtendedLances.AutofillUnitCopyType}' to get unit to copy");
+      if (MissionControl.Main.Settings.ExtendedLances.AutofillUnitCopyType == "FirstInLance") {
         originalUnitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0];
       } else { // RandomInLance
         originalUnitSpawnPointOverride = lanceOverride.GetRandomNonEmptyUnit();

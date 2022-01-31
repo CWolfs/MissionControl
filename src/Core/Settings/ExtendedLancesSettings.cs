@@ -27,8 +27,8 @@ namespace MissionControl.Config {
     [JsonProperty("AutofillType")]
     public string AutofillType { get; set; } = "RespectEmpty";  // RespectEmpty, FillEmpty
 
-    [JsonProperty("AutofillManualLanceType")]
-    public string AutofillManualLanceType { get; set; } = "RandomInLance";  // FirstInLance, RandomInLance
+    [JsonProperty("AutofillUnitCopyType")]
+    public string AutofillUnitCopyType { get; set; } = "RandomInLance";  // FirstInLance, RandomInLance
 
     [JsonProperty("LanceSizes")]
     public Dictionary<string, List<ExtendedLance>> LanceSizes { get; set; } = new Dictionary<string, List<ExtendedLance>>();
