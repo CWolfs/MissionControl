@@ -145,7 +145,7 @@ namespace MissionControl.Logic {
         UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetAnyTaggedLanceMember();
 
         if (originalUnitSpawnPointOverride == null) {
-          originalUnitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0];
+          originalUnitSpawnPointOverride = lanceOverride.GetUnitToCopy();
           Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] Autofill mode. Adding unit {i + 1} by duplicating the first unit of the lance.");
         } else {
           Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] Autofill mode. Adding unit {i + 1} by duplicating a 'Tagged' or 'Use Lance' lance member.");

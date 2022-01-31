@@ -70,4 +70,28 @@ public static class LanceOverrideExtensions {
 
     return unresolvedUnitIndexes;
   }
+
+  public static UnitSpawnPointOverride GetUnitToCopy(this LanceOverride lanceOverride) {
+    UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetAnyTaggedLanceMember();
+    // If there are only manual units - then select one at random from the Lance. Previously this selected copies of the first unit in the lance
+    if (originalUnitSpawnPointOverride == null) {
+      MissionControl.Main.LogDebug($"[LanceOverrideExtensions.GetUnitToCopy] Using '{MissionControl.Main.Settings.ExtendedLances.AutofillManualLanceType}' to get unit to copy");
+      if (MissionControl.Main.Settings.ExtendedLances.AutofillManualLanceType == "FirstInLance") {
+        originalUnitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0];
+      } else { // RandomInLance
+        originalUnitSpawnPointOverride = lanceOverride.GetRandomNonEmptyUnit();
+      }
+    }
+    return originalUnitSpawnPointOverride;
+  }
+
+  public static UnitSpawnPointOverride GetRandomNonEmptyUnit(this LanceOverride lanceOverride) {
+    for (int i = 0; i < 10; i++) {
+      UnitSpawnPointOverride unitOverride = lanceOverride.unitSpawnPointOverrideList.GetRandom();
+      if (!unitOverride.IsUnitDefNone) {
+        return unitOverride;
+      }
+    }
+    return lanceOverride.unitSpawnPointOverrideList[0]; // Fallback
+  }
 }

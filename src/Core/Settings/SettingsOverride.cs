@@ -79,6 +79,7 @@ namespace MissionControl.Config {
     public static string ExtendedLances_EnableForNeutralToAll = "ExtendedLances.EnableForNeutralToAll";
     public static string ExtendedLances_Autofill = "ExtendedLances.Autofill";
     public static string ExtendedLances_AutofillType = "ExtendedLances.AutofillType";
+    public static string ExtendedLances_AutofillManualLanceType = "ExtendedLances.AutofillManualLanceType";
     public static string ExtendedLances_IncludeContractTypes = "ExtendedLances.IncludeContractTypes";
     public static string ExtendedLances_ExcludeContractTypes = "ExtendedLances.ExcludeContractTypes";
     public static string ExtendedLances_SkipWhenTaggedWithAny = "ExtendedLances.SkipWhenTaggedWithAny";
@@ -277,6 +278,7 @@ namespace MissionControl.Config {
       if (Has(ExtendedLances_EnableForNeutralToAll)) settings.ExtendedLances.EnableForNeutralToAll = GetBool(ExtendedLances_EnableForNeutralToAll);
       if (Has(ExtendedLances_Autofill)) settings.ExtendedLances.Autofill = GetBool(ExtendedLances_Autofill);
       if (Has(ExtendedLances_AutofillType)) settings.ExtendedLances.AutofillType = GetString(ExtendedLances_AutofillType);
+      if (Has(ExtendedLances_AutofillManualLanceType)) settings.ExtendedLances.AutofillManualLanceType = GetString(ExtendedLances_AutofillManualLanceType);
       if (Has(ExtendedLances_IncludeContractTypes)) settings.ExtendedLances.IncludeContractTypes = GetStringList(ExtendedLances_IncludeContractTypes);
       if (Has(ExtendedLances_ExcludeContractTypes)) settings.ExtendedLances.ExcludeContractTypes = GetStringList(ExtendedLances_ExcludeContractTypes);
       if (Has(ExtendedLances_SkipWhenTaggedWithAny)) settings.ExtendedLances.SkipWhenTaggedWithAny = GetStringList(ExtendedLances_SkipWhenTaggedWithAny);

@@ -207,9 +207,7 @@ namespace MissionControl.Logic {
 
     private void ReplaceUnresolvedUnitOverride(LanceSpawnerGameLogic lanceSpawner, TeamOverride teamOverride, LanceOverride lanceOverride, LanceDef loadedLanceDef, int index) {
       List<GameObject> unitSpawnPoints = lanceSpawner.gameObject.FindAllContains("UnitSpawnPoint");
-
-      UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetAnyTaggedLanceMember();
-      if (originalUnitSpawnPointOverride == null) originalUnitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[0];
+      UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetUnitToCopy();
       UnitSpawnPointOverride unitSpawnPointOverride = originalUnitSpawnPointOverride.DeepCopy();
 
       if (unitSpawnPoints.Count < index) {
