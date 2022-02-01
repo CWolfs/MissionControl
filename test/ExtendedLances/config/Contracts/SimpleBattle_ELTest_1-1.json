@@ -1,0 +1,11 @@
+{
+  "ID": "My_Contract_ID_Example",
+  "AdditionalLances": {
+    "Enable": true,
+    "EnemyLanceCount": 1
+  },
+  "ExtendedLances": {
+    "Enable": true,
+    "TargetLanceSize": 5
+  }
+}

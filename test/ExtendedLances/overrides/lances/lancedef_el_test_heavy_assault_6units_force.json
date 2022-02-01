@@ -1,0 +1,74 @@
+{
+  "Description": {
+    "Id": "lancedef_el_test_heavy_assault_6units_force",
+    "Name": "EL Test Heavy Assault - 6 Unit Force",
+    "Details": "",
+    "Icon": "",
+    "Cost": 24780000,
+    "Rarity": 0,
+    "Purchasable": false
+  },
+  "Difficulty": 8,
+  "LanceTags": {
+    "items": ["lance_type_heavy6f"],
+    "tagSetSourceFile": "Tags/LanceTags, mc_force_extended_lance"
+  },
+  "LanceUnits": [
+    {
+      "unitType": "Mech",
+      "unitId": "Tagged",
+      "pilotId": "Tagged",
+      "unitTagSet": {
+        "items": ["unit_mech"]
+      },
+      "excludedUnitTagSet": null,
+      "pilotTagSet": null,
+      "excludedPilotTagSet": null
+    },
+    {
+      "unitType": "Mech",
+      "unitId": "mechdef_locust_LCT-1V",
+      "pilotId": "pilot_kbeta_showboat",
+      "unitTagSet": null,
+      "excludedUnitTagSet": null,
+      "pilotTagSet": null,
+      "excludedPilotTagSet": null
+    },
+    {
+      "unitType": "Mech",
+      "unitId": "mechdef_vindicator_VND-1R",
+      "pilotId": "pilot_kbeta_wildfire",
+      "unitTagSet": null,
+      "excludedUnitTagSet": null,
+      "pilotTagSet": null,
+      "excludedPilotTagSet": null
+    },
+    {
+      "unitType": "Mech",
+      "unitId": "mechdef_hunchback_HBK-4G",
+      "pilotId": "pilot_kbeta_ozone",
+      "unitTagSet": null,
+      "excludedUnitTagSet": null,
+      "pilotTagSet": null,
+      "excludedPilotTagSet": null
+    },
+    {
+      "unitType": "Mech",
+      "unitId": "mechdef_atlas_AS7-D",
+      "pilotId": "pilot_kbeta_sumo",
+      "unitTagSet": null,
+      "excludedUnitTagSet": null,
+      "pilotTagSet": null,
+      "excludedPilotTagSet": null
+    },
+    {
+      "unitType": "Mech",
+      "unitId": "mechdef_griffin_GRF-1N",
+      "pilotId": "pilot_kbeta_arclight",
+      "unitTagSet": null,
+      "excludedUnitTagSet": null,
+      "pilotTagSet": null,
+      "excludedPilotTagSet": null
+    }
+  ]
+}

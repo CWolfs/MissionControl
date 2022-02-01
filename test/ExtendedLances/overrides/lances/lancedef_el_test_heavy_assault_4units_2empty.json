@@ -1,0 +1,56 @@
+{
+  "Description": {
+    "Id": "lancedef_el_test_heavy_assault_4units_2empty",
+    "Name": "EL Test Heavy Assault - 4 Unit 2 Empty",
+    "Details": "",
+    "Icon": "",
+    "Cost": 24780000,
+    "Rarity": 0,
+    "Purchasable": false
+  },
+  "Difficulty": 8,
+  "LanceTags": {
+    "items": ["lance_type_heavy4_2e"],
+    "tagSetSourceFile": "Tags/LanceTags"
+  },
+  "LanceUnits": [
+    {
+      "unitType": "Mech",
+      "unitId": "Tagged",
+      "pilotId": "Tagged",
+      "unitTagSet": {
+        "items": ["unit_mech"]
+      },
+      "excludedUnitTagSet": null,
+      "pilotTagSet": null,
+      "excludedPilotTagSet": null
+    },
+    {
+      "unitType": "Mech",
+      "unitId": "mechdef_vindicator_VND-1R",
+      "pilotId": "pilot_kbeta_wildfire",
+      "unitTagSet": null,
+      "excludedUnitTagSet": null,
+      "pilotTagSet": null,
+      "excludedPilotTagSet": null
+    },
+    {
+      "unitType": "Mech",
+      "unitId": "mechDef_None",
+      "pilotId": "pilotDef_InheritLance",
+      "unitTagSet": null,
+      "excludedUnitTagSet": null,
+      "pilotTagSet": null,
+      "excludedPilotTagSet": null
+    },
+    {
+      "unitType": "Vehicle",
+      "unitId": "vehicleDef_None",
+      "pilotId": "pilotDef_InheritLance",
+      "unitTagSet": null,
+      "excludedUnitTagSet": null,
+      "pilotTagSet": null,
+      "excludedPilotTagSet": null
+    }
+  ]
+}
