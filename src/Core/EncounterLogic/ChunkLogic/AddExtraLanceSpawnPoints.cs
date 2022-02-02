@@ -1,4 +1,6 @@
 using UnityEngine;
+
+using System.Linq;
 using System.Collections.Generic;
 
 using BattleTech;
@@ -135,6 +137,9 @@ namespace MissionControl.Logic {
             continue;
           }
 
+          List<GameObject> unitSpawnPoints = lanceSpawner.gameObject.FindAllContains("UnitSpawnPoint");
+          List<string> unitSpawnPointGameLogicGUIDs = (List<string>)unitSpawnPoints.Select(unitSpawnPointGO => unitSpawnPointGO.GetComponent<UnitSpawnPointGameLogic>().GUID).ToList();
+
           // Only replace unresolved unit overrides if autofill is on
           int originalLanceOverrideSize = this.state.GetInt($"LANCE_ORIGINAL_UNIT_OVERRIDE_COUNT_{lanceOverride.GUID}");
           List<int> unresolvedIndexes = lanceOverride.GetUnresolvedUnitIndexes(originalLanceOverrideSize);
@@ -147,10 +152,11 @@ namespace MissionControl.Logic {
               Main.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Loaded LanceDef is '{loadedLanceDef.Description.Id}'");
             }
 
-            foreach (int index in unresolvedIndexes) {
-              ReplaceUnresolvedUnitOverride(lanceSpawner, teamOverride, lanceOverride, loadedLanceDef, index);
-            }
+            ReplaceUnresolvedUnitOverride(unitSpawnPointGameLogicGUIDs, teamOverride, lanceOverride, loadedLanceDef, unresolvedIndexes);
           }
+
+          // Fix any unmatching UnitSpawnPointOverrideGUIDs-to-UnitSpawnPointGameLogicGUIDs
+          FixMisMatchedGUIDs(unitSpawnPointGameLogicGUIDs, teamOverride, lanceOverride);
         }
       }
 
@@ -200,31 +206,95 @@ namespace MissionControl.Logic {
           spawnKeys.Add(new string[] { spawnKey, orientationKey });
         }
       }
+    }
 
-      // DEBUG
-      for (int j = 0; j < numberOfUnitsInLance; j++) {
-        string unitGUID = lanceOverride.unitSpawnPointOverrideList[j].unitSpawnPoint.EncounterObjectGuid;
-        string unitSpawnerGUID = unitSpawnPoints[j].GetComponent<UnitSpawnPointGameLogic>().encounterObjectGuid;
-        Main.Logger.LogDebug($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] [UNIT {j + 1} DATA] Unit GUID: '{unitGUID}' and Unit Spawner GUID: '{unitSpawnerGUID}'");
+    private void ReplaceUnresolvedUnitOverride(List<string> unitSpawnPointGameLogicGUIDs, TeamOverride teamOverride, LanceOverride lanceOverride, LanceDef loadedLanceDef, List<int> unresolvedIndexes) {
+      // Get all UnitSpawnPointGameLogic GUIDs
+      List<string> availableUnitSpawnPointGameLogicGUIDsList = new List<string>(unitSpawnPointGameLogicGUIDs);
+      Stack<string> availableUnitSpawnPointGameLogicGUIDsStack;
+
+      // Ensure no duplicates exist. If so, modder error in their set up.
+      if (unitSpawnPointGameLogicGUIDs.Distinct().ToList().Count != unitSpawnPointGameLogicGUIDs.Count()) {
+        Main.Logger.LogError($"[AddExtraLanceSpawnPoints.ReplaceUnresolvedUnitOverride] [Faction:{teamOverride.faction}] The lance '{lanceOverride.GUID}' has duplicate UnitSpawnPointOverride GUIDs. This is incorrect and will cause some units not to spawn! This is not a problem with MC. Please fix this in the contract override data!");
+      }
+
+      // Remove any available UnitSpawnPointGameLogicGUIDs that are correctly set in the UnitSpawnPointOverrides
+      // The remaining GUIDs are from unassigned UnitSpawnPointGameLogics and they can be assigned below
+      foreach (UnitSpawnPointOverride unitSpawnPointOverride in lanceOverride.unitSpawnPointOverrideList) {
+        if (availableUnitSpawnPointGameLogicGUIDsList.Contains(unitSpawnPointOverride.GUID)) {
+          availableUnitSpawnPointGameLogicGUIDsList.Remove(unitSpawnPointOverride.GUID);
+        }
+      }
+
+      Main.Logger.LogDebug($"[AddExtraLanceSpawnPoints.ReplaceUnresolvedUnitOverride] [Faction:{teamOverride.faction}] AvailableUnitSpawnPointGameLogicGUIDs will contain Game Logic GUID: '{string.Join(", ", unitSpawnPointGameLogicGUIDs)}'");
+      availableUnitSpawnPointGameLogicGUIDsStack = new Stack<string>(availableUnitSpawnPointGameLogicGUIDsList);
+
+      foreach (int index in unresolvedIndexes) {
+        UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetUnitToCopy();
+        UnitSpawnPointOverride unitSpawnPointOverride = originalUnitSpawnPointOverride.DeepCopy();
+
+        if (unitSpawnPointGameLogicGUIDs.Count < index) {
+          Main.Logger.LogError($"[AddExtraLanceSpawnPoints.ReplaceUnresolvedUnitOverride] [Faction:{teamOverride.faction}] There are more unit overrides in lance '{lanceOverride.name} - {lanceOverride.GUID}' than unit spawn points in LanceSpawner. This should never happen.");
+        }
+
+        string indexUnitSpawnPointOverrideGUID = lanceOverride.unitSpawnPointOverrideList[index].GUID;
+        Main.Logger.LogError($"[AddExtraLanceSpawnPoints.ReplaceUnresolvedUnitOverride] [Faction:{teamOverride.faction}] [Unit{index + 1}] Unit GUID is '{indexUnitSpawnPointOverrideGUID}'");
+        if (unitSpawnPointGameLogicGUIDs.Contains(indexUnitSpawnPointOverrideGUID)) {
+          unitSpawnPointOverride.unitSpawnPoint.EncounterObjectGuid = indexUnitSpawnPointOverrideGUID; // If force resolving - then ensure GUIDs for spawner unit spawns are maintained
+        } else {
+          if (availableUnitSpawnPointGameLogicGUIDsStack.Count > 0) {
+            string guid = availableUnitSpawnPointGameLogicGUIDsStack.Pop();
+            Main.Logger.LogDebug($"[AddExtraLanceSpawnPoints.ReplaceUnresolvedUnitOverride] [Faction:{teamOverride.faction}] [Unit{index + 1}] GUID '{unitSpawnPointOverride.unitSpawnPoint.EncounterObjectGuid}' does not exist for a UnitSpawnerGameLogic object. Reassigning with GUID '{guid}'");
+            unitSpawnPointOverride.unitSpawnPoint.EncounterObjectGuid = guid; // If force resolving - then ensure GUIDs for spawner unit spawns are maintained
+          } else {
+            Main.Logger.LogError($"[AddExtraLanceSpawnPoints.ReplaceUnresolvedUnitOverride] [Faction:{teamOverride.faction}] [Unit{index + 1}] No avaiable spare unit spawner guids to assign to unit override. This should never happen!");
+          }
+        }
+
+        unitSpawnPointOverride.customUnitName = "";
+        TagSet companyTags = new TagSet(UnityGameInstance.BattleTechGame.Simulation.CompanyTags);
+
+        Main.LogDebug($"[AddExtraLanceSpawnPoints.ReplaceUnresolvedUnitOverride] Generating unresolved unit '{index + 1}'");
+        unitSpawnPointOverride.GenerateUnit(MetadataDatabase.Instance, UnityGameInstance.Instance.Game.DataManager, lanceOverride.selectedLanceDifficulty, lanceOverride.name, loadedLanceDef == null ? null : loadedLanceDef.Description.Id, index, DataManager.Instance.GetSimGameCurrentDate(), companyTags);
+        lanceOverride.unitSpawnPointOverrideList[index] = unitSpawnPointOverride;
       }
     }
 
-    private void ReplaceUnresolvedUnitOverride(LanceSpawnerGameLogic lanceSpawner, TeamOverride teamOverride, LanceOverride lanceOverride, LanceDef loadedLanceDef, int index) {
-      List<GameObject> unitSpawnPoints = lanceSpawner.gameObject.FindAllContains("UnitSpawnPoint");
-      UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetUnitToCopy();
-      UnitSpawnPointOverride unitSpawnPointOverride = originalUnitSpawnPointOverride.DeepCopy();
+    private void FixMisMatchedGUIDs(List<string> unitSpawnPointGameLogicGUIDs, TeamOverride teamOverride, LanceOverride lanceOverride) {
+      // Get all UnitSpawnPointGameLogic GUIDs
+      List<string> availableUnitSpawnPointGameLogicGUIDsList = new List<string>(unitSpawnPointGameLogicGUIDs);
+      Stack<string> availableUnitSpawnPointGameLogicGUIDsStack;
 
-      if (unitSpawnPoints.Count < index) {
-        Main.Logger.LogError($"[ReplaceUnresolvedUnitOverride] [Faction:{teamOverride.faction}] There are more unit overrides in lance '{lanceOverride.name} - {lanceOverride.GUID}' than unit spawn points in LanceSpawner '{lanceSpawner.name} - {lanceSpawner.GUID}'. This should never happen.");
+      // Ensure no duplicates exist. If so, modder error in their set up.
+      if (unitSpawnPointGameLogicGUIDs.Distinct().ToList().Count != unitSpawnPointGameLogicGUIDs.Count()) {
+        Main.Logger.LogError($"[AddExtraLanceSpawnPoints.FixMisMatchedGUIDs] [Faction:{teamOverride.faction}] The lance '{lanceOverride.GUID}' has duplicate UnitSpawnPointOverride GUIDs. This is incorrect and will cause some units not to spawn! This is not a problem with MC. Please fix this in the contract override data!");
       }
-      string originalUnitSpawnPointGUID = unitSpawnPoints[index].GetComponent<UnitSpawnPointGameLogic>().GUID; // If force resolving - then ensure GUIDs for spawner unit spawns are maintained
-      unitSpawnPointOverride.unitSpawnPoint.EncounterObjectGuid = originalUnitSpawnPointGUID;
-      unitSpawnPointOverride.customUnitName = "";
-      TagSet companyTags = new TagSet(UnityGameInstance.BattleTechGame.Simulation.CompanyTags);
 
-      Main.LogDebug($"[AddExtraLanceSpawnPoints.ReplaceUnresolvedUnitOverride] Generating unresolved unit '{index + 1}'");
-      unitSpawnPointOverride.GenerateUnit(MetadataDatabase.Instance, UnityGameInstance.Instance.Game.DataManager, lanceOverride.selectedLanceDifficulty, lanceOverride.name, loadedLanceDef == null ? null : loadedLanceDef.Description.Id, index, DataManager.Instance.GetSimGameCurrentDate(), companyTags);
-      lanceOverride.unitSpawnPointOverrideList[index] = unitSpawnPointOverride;
+      // Remove any available UnitSpawnPointGameLogicGUIDs that are correctly set in the UnitSpawnPointOverrides
+      // The remaining GUIDs are from unassigned UnitSpawnPointGameLogics and they can be assigned below
+      foreach (UnitSpawnPointOverride unitSpawnPointOverride in lanceOverride.unitSpawnPointOverrideList) {
+        if (availableUnitSpawnPointGameLogicGUIDsList.Contains(unitSpawnPointOverride.GUID)) {
+          availableUnitSpawnPointGameLogicGUIDsList.Remove(unitSpawnPointOverride.GUID);
+        }
+      }
+
+      Main.Logger.LogDebug($"[AddExtraLanceSpawnPoints.FixMisMatchedGUIDs] [Faction:{teamOverride.faction}] AvailableUnitSpawnPointGameLogicGUIDs will contain Game Logic GUID: '{string.Join(", ", unitSpawnPointGameLogicGUIDs)}'");
+      availableUnitSpawnPointGameLogicGUIDsStack = new Stack<string>(availableUnitSpawnPointGameLogicGUIDsList);
+
+      for (int i = 0; i < lanceOverride.unitSpawnPointOverrideList.Count; i++) {
+        UnitSpawnPointOverride unitSpawnPointOverride = lanceOverride.unitSpawnPointOverrideList[i];
+        string unitSpawnPointOverrideGUID = unitSpawnPointOverride.GUID;
+
+        if (!unitSpawnPointGameLogicGUIDs.Contains(unitSpawnPointOverrideGUID)) {
+          if (availableUnitSpawnPointGameLogicGUIDsStack.Count > 0) {
+            string guid = availableUnitSpawnPointGameLogicGUIDsStack.Pop();
+            Main.Logger.LogDebug($"[AddExtraLanceSpawnPoints.FixMisMatchedGUIDs] [Faction:{teamOverride.faction}] [Unit{i + 1}] GUID '{unitSpawnPointOverride.unitSpawnPoint.EncounterObjectGuid}' does not exist for a UnitSpawnerGameLogic object. Reassigning with GUID '{guid}'");
+            unitSpawnPointOverride.unitSpawnPoint.EncounterObjectGuid = guid; // If force resolving - then ensure GUIDs for spawner unit spawns are maintained
+          } else {
+            Main.Logger.LogError($"[AddExtraLanceSpawnPoints.FixMisMatchedGUIDs] [Faction:{teamOverride.faction}] [Unit{i + 1}] No available spare unit spawner guids to assign to unit override. This should never happen!");
+          }
+        }
+      }
     }
   }
 }
