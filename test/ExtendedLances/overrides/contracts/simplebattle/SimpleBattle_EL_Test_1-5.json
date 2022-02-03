@@ -1,6 +1,6 @@
 {
-  "ID": "SimpleBattle_ELTest_4-2",
-  "contractName": "EL Test 4-2",
+  "ID": "SimpleBattle_ELTest_1-5",
+  "contractName": "EL Test 1-5",
   "contractDisplayStyle": "BaseCampaignNormal",
   "difficulty": 8,
   "difficultyUIModifier": 1,
@@ -478,7 +478,7 @@
         "lanceDefId": "Manual",
         "lanceTagSet": {
           "items": [],
-          "tagSetSourceFile": "tags/LanceTags"
+          "tagSetSourceFile": "tags/LanceTags, mc_force_extended_lance"
         },
         "lanceExcludedTagSet": {
           "items": [],
@@ -513,6 +513,138 @@
               "tagSetSourceFile": "tags/SpawnEffectTags"
             },
             "pilotDefId": "pilot_kbeta_showboat",
+            "pilotTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/PilotTags"
+            },
+            "pilotExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/PilotTags"
+            },
+            "selectedUnitType": "UNDEFINED",
+            "selectedUnitDefId": null,
+            "selectedPilotDefId": null
+          },
+          {
+            "unitSpawnPoint": {
+              "EncounterObjectGuid": "e3e34fc2-c664-42ab-920b-6002c058ac55"
+            },
+            "customUnitName": null,
+            "customHeraldryDefId": null,
+            "unitType": "Mech",
+            "unitDefId": "mechdef_vindicator_VND-1R",
+            "unitTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/UnitTags"
+            },
+            "unitExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/UnitTags"
+            },
+            "spawnEffectTags": {
+              "items": [],
+              "tagSetSourceFile": "tags/SpawnEffectTags"
+            },
+            "pilotDefId": "pilot_kbeta_wildfire",
+            "pilotTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/PilotTags"
+            },
+            "pilotExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/PilotTags"
+            },
+            "selectedUnitType": "UNDEFINED",
+            "selectedUnitDefId": null,
+            "selectedPilotDefId": null
+          },
+          {
+            "unitSpawnPoint": {
+              "EncounterObjectGuid": "ab9e2bfb-f6c4-4b4b-b540-957dcfc48a27"
+            },
+            "customUnitName": null,
+            "customHeraldryDefId": null,
+            "unitType": "Mech",
+            "unitDefId": "mechdef_hunchback_HBK-4G",
+            "unitTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/UnitTags"
+            },
+            "unitExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/UnitTags"
+            },
+            "spawnEffectTags": {
+              "items": [],
+              "tagSetSourceFile": "tags/SpawnEffectTags"
+            },
+            "pilotDefId": "pilot_kbeta_ozone",
+            "pilotTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/PilotTags"
+            },
+            "pilotExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/PilotTags"
+            },
+            "selectedUnitType": "UNDEFINED",
+            "selectedUnitDefId": null,
+            "selectedPilotDefId": null
+          },
+          {
+            "unitSpawnPoint": {
+              "EncounterObjectGuid": "f46b3021-803a-41ed-87e0-1b8cb86663b8"
+            },
+            "customUnitName": null,
+            "customHeraldryDefId": null,
+            "unitType": "Mech",
+            "unitDefId": "mechdef_griffin_GRF-1N",
+            "unitTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/UnitTags"
+            },
+            "unitExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/UnitTags"
+            },
+            "spawnEffectTags": {
+              "items": [],
+              "tagSetSourceFile": "tags/SpawnEffectTags"
+            },
+            "pilotDefId": "pilot_kbeta_arclight",
+            "pilotTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/PilotTags"
+            },
+            "pilotExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/PilotTags"
+            },
+            "selectedUnitType": "UNDEFINED",
+            "selectedUnitDefId": null,
+            "selectedPilotDefId": null
+          },
+          {
+            "unitSpawnPoint": {
+              "EncounterObjectGuid": "bde1ab10-85c3-440f-9ac0-85d441c1e9b6"
+            },
+            "customUnitName": null,
+            "customHeraldryDefId": null,
+            "unitType": "Mech",
+            "unitDefId": "mechdef_hunchback_HBK-4G",
+            "unitTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/UnitTags"
+            },
+            "unitExcludedTagSet": {
+              "items": [],
+              "tagSetSourceFile": "tags/UnitTags"
+            },
+            "spawnEffectTags": {
+              "items": [],
+              "tagSetSourceFile": "tags/SpawnEffectTags"
+            },
+            "pilotDefId": "pilot_kbeta_sumo",
             "pilotTagSet": {
               "items": [],
               "tagSetSourceFile": "tags/PilotTags"
