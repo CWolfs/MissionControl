@@ -238,7 +238,7 @@ namespace MissionControl.Logic {
         }
 
         string indexUnitSpawnPointOverrideGUID = lanceOverride.unitSpawnPointOverrideList[index].GUID;
-        Main.Logger.LogError($"[AddExtraLanceSpawnPoints.ReplaceUnresolvedUnitOverride] [Faction:{teamOverride.faction}] [Unit{index + 1}] Unit GUID is '{indexUnitSpawnPointOverrideGUID}'");
+        Main.Logger.LogDebug($"[AddExtraLanceSpawnPoints.ReplaceUnresolvedUnitOverride] [Faction:{teamOverride.faction}] [Unit{index + 1}] Unit GUID is '{indexUnitSpawnPointOverrideGUID}'");
         if (unitSpawnPointGameLogicGUIDs.Contains(indexUnitSpawnPointOverrideGUID)) {
           unitSpawnPointOverride.unitSpawnPoint.EncounterObjectGuid = indexUnitSpawnPointOverrideGUID; // If force resolving - then ensure GUIDs for spawner unit spawns are maintained
         } else {
