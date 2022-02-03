@@ -1,0 +1,27 @@
+{
+  "Description": {
+    "Id": "lancedef_el_test_heavy_assault_1unit_force",
+    "Name": "EL Test Heavy Assault - 1 Unit Force",
+    "Details": "",
+    "Icon": "",
+    "Cost": 24780000,
+    "Rarity": 0,
+    "Purchasable": false
+  },
+  "Difficulty": 8,
+  "LanceTags": {
+    "items": ["lance_type_heavy1f"],
+    "tagSetSourceFile": "Tags/LanceTags, mc_force_extended_lance"
+  },
+  "LanceUnits": [
+    {
+      "unitType": "Mech",
+      "unitId": "mechdef_locust_LCT-1V",
+      "pilotId": "pilot_kbeta_witness",
+      "unitTagSet": null,
+      "excludedUnitTagSet": null,
+      "pilotTagSet": null,
+      "excludedPilotTagSet": null
+    }
+  ]
+}

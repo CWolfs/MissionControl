@@ -1,0 +1,65 @@
+{
+  "Description": {
+    "Id": "lancedef_el_test_heavy_assault_5units",
+    "Name": "EL Test Heavy Assault - 5 Unit",
+    "Details": "",
+    "Icon": "",
+    "Cost": 24780000,
+    "Rarity": 0,
+    "Purchasable": false
+  },
+  "Difficulty": 8,
+  "LanceTags": {
+    "items": ["lance_type_heavy5"],
+    "tagSetSourceFile": "Tags/LanceTags"
+  },
+  "LanceUnits": [
+    {
+      "unitType": "Mech",
+      "unitId": "Tagged",
+      "pilotId": "Tagged",
+      "unitTagSet": {
+        "items": ["unit_mech"]
+      },
+      "excludedUnitTagSet": null,
+      "pilotTagSet": null,
+      "excludedPilotTagSet": null
+    },
+    {
+      "unitType": "Mech",
+      "unitId": "mechdef_locust_LCT-1V",
+      "pilotId": "pilot_kbeta_showboat",
+      "unitTagSet": null,
+      "excludedUnitTagSet": null,
+      "pilotTagSet": null,
+      "excludedPilotTagSet": null
+    },
+    {
+      "unitType": "Mech",
+      "unitId": "mechdef_vindicator_VND-1R",
+      "pilotId": "pilot_kbeta_wildfire",
+      "unitTagSet": null,
+      "excludedUnitTagSet": null,
+      "pilotTagSet": null,
+      "excludedPilotTagSet": null
+    },
+    {
+      "unitType": "Mech",
+      "unitId": "mechdef_atlas_AS7-D",
+      "pilotId": "pilot_kbeta_sumo",
+      "unitTagSet": null,
+      "excludedUnitTagSet": null,
+      "pilotTagSet": null,
+      "excludedPilotTagSet": null
+    },
+    {
+      "unitType": "Mech",
+      "unitId": "mechdef_griffin_GRF-1N",
+      "pilotId": "pilot_kbeta_arclight",
+      "unitTagSet": null,
+      "excludedUnitTagSet": null,
+      "pilotTagSet": null,
+      "excludedPilotTagSet": null
+    }
+  ]
+}

@@ -73,12 +73,20 @@ namespace MissionControl.Config {
     public static string ExtendedLances_Enable = "ExtendedLances.Enable";
     public static string ExtendedLances_EnableForFlashpoints = "ExtendedLances.EnableForFlashpoints";
     public static string ExtendedLances_EnableForStory = "ExtendedLances.EnableForStory";
+    public static string ExtendedLances_EnableForTargetAlly = "ExtendedLances.EnableForTargetAlly";
+    public static string ExtendedLances_EnableForEmployerAlly = "ExtendedLances.EnableForEmployerAlly";
+    public static string ExtendedLances_EnableForHostileToAll = "ExtendedLances.EnableForHostileToAll";
+    public static string ExtendedLances_EnableForNeutralToAll = "ExtendedLances.EnableForNeutralToAll";
     public static string ExtendedLances_Autofill = "ExtendedLances.Autofill";
+    public static string ExtendedLances_AutofillType = "ExtendedLances.AutofillType";
+    public static string ExtendedLances_AutofillUnitCopyType = "ExtendedLances.AutofillUnitCopyType";
     public static string ExtendedLances_IncludeContractTypes = "ExtendedLances.IncludeContractTypes";
     public static string ExtendedLances_ExcludeContractTypes = "ExtendedLances.ExcludeContractTypes";
     public static string ExtendedLances_SkipWhenTaggedWithAny = "ExtendedLances.SkipWhenTaggedWithAny";
     public static string ExtendedLances_SkipWhenTaggedWithAll = "ExtendedLances.SkipWhenTaggedWithAll";
     public static string ExtendedLances_SkipWhenExcludeTagsContain = "ExtendedLances.SkipWhenExcludeTagsContain";
+    public static string ExtendedLances_ForceLanceOverrideSizeWithTag = "ExtendedLances.ForceLanceOverrideSizeWithTag";
+    public static string ExtendedLances_ForceLanceDefSizeWithTag = "ExtendedLances.ForceLanceDefSizeWithTag";
     public static string ExtendedLances_LanceSizes = "ExtendedLances.LanceSizes";
 
     public static string ExtendedBoundaries_Enable = "ExtendedBoundaries.Enable";
@@ -264,12 +272,20 @@ namespace MissionControl.Config {
       if (Has(ExtendedLances_Enable)) settings.ExtendedLances.Enable = GetBool(ExtendedLances_Enable);
       if (Has(ExtendedLances_EnableForFlashpoints)) settings.ExtendedLances.EnableForFlashpoints = GetBool(ExtendedLances_EnableForFlashpoints);
       if (Has(ExtendedLances_EnableForStory)) settings.ExtendedLances.EnableForStory = GetBool(ExtendedLances_EnableForStory);
+      if (Has(ExtendedLances_EnableForTargetAlly)) settings.ExtendedLances.EnableForTargetAlly = GetBool(ExtendedLances_EnableForTargetAlly);
+      if (Has(ExtendedLances_EnableForEmployerAlly)) settings.ExtendedLances.EnableForEmployerAlly = GetBool(ExtendedLances_EnableForEmployerAlly);
+      if (Has(ExtendedLances_EnableForHostileToAll)) settings.ExtendedLances.EnableForHostileToAll = GetBool(ExtendedLances_EnableForHostileToAll);
+      if (Has(ExtendedLances_EnableForNeutralToAll)) settings.ExtendedLances.EnableForNeutralToAll = GetBool(ExtendedLances_EnableForNeutralToAll);
       if (Has(ExtendedLances_Autofill)) settings.ExtendedLances.Autofill = GetBool(ExtendedLances_Autofill);
+      if (Has(ExtendedLances_AutofillType)) settings.ExtendedLances.AutofillType = GetString(ExtendedLances_AutofillType);
+      if (Has(ExtendedLances_AutofillUnitCopyType)) settings.ExtendedLances.AutofillUnitCopyType = GetString(ExtendedLances_AutofillUnitCopyType);
       if (Has(ExtendedLances_IncludeContractTypes)) settings.ExtendedLances.IncludeContractTypes = GetStringList(ExtendedLances_IncludeContractTypes);
       if (Has(ExtendedLances_ExcludeContractTypes)) settings.ExtendedLances.ExcludeContractTypes = GetStringList(ExtendedLances_ExcludeContractTypes);
       if (Has(ExtendedLances_SkipWhenTaggedWithAny)) settings.ExtendedLances.SkipWhenTaggedWithAny = GetStringList(ExtendedLances_SkipWhenTaggedWithAny);
       if (Has(ExtendedLances_SkipWhenTaggedWithAll)) settings.ExtendedLances.SkipWhenTaggedWithAll = GetStringList(ExtendedLances_SkipWhenTaggedWithAll);
       if (Has(ExtendedLances_SkipWhenExcludeTagsContain)) settings.ExtendedLances.SkipWhenExcludeTagsContain = GetStringList(ExtendedLances_SkipWhenExcludeTagsContain);
+      if (Has(ExtendedLances_ForceLanceOverrideSizeWithTag)) settings.ExtendedLances.ForceLanceOverrideSizeWithTag = GetString(ExtendedLances_ForceLanceOverrideSizeWithTag);
+      if (Has(ExtendedLances_ForceLanceDefSizeWithTag)) settings.ExtendedLances.ForceLanceDefSizeWithTag = GetString(ExtendedLances_ForceLanceDefSizeWithTag);
 
       if (Has(ExtendedLances_LanceSizes)) {
         JObject lanceSizesObject = (JObject)Properties.SelectToken(ExtendedLances_LanceSizes);

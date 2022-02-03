@@ -1,0 +1,27 @@
+{
+  "Description": {
+    "Id": "lancedef_el_test_heavy_assault_1unit",
+    "Name": "EL Test Heavy Assault - 1 Unit",
+    "Details": "",
+    "Icon": "",
+    "Cost": 24780000,
+    "Rarity": 0,
+    "Purchasable": false
+  },
+  "Difficulty": 8,
+  "LanceTags": {
+    "items": ["lance_type_heavy1"],
+    "tagSetSourceFile": "Tags/LanceTags"
+  },
+  "LanceUnits": [
+    {
+      "unitType": "Mech",
+      "unitId": "mechdef_locust_LCT-1V",
+      "pilotId": "pilot_kbeta_witness",
+      "unitTagSet": null,
+      "excludedUnitTagSet": null,
+      "pilotTagSet": null,
+      "excludedPilotTagSet": null
+    }
+  ]
+}

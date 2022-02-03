@@ -67,6 +67,9 @@ namespace MissionControl.Rules {
         case LogicBlock.LogicType.ENCOUNTER_MANIPULATION:
           RunGeneralLogic(logicBlocks, payload);
           break;
+        case LogicBlock.LogicType.REQUEST_LANCE_COMPLETE:
+          RunGeneralLogic(logicBlocks, payload);
+          break;
         case LogicBlock.LogicType.SCENE_MANIPULATION:
           RunSceneManipulationLogic(logicBlocks, payload);
           MissionControl.Instance.IsMCLoadingFinished = true;
