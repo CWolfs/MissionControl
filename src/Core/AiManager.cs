@@ -92,8 +92,8 @@ namespace MissionControl {
 
     public void AddCustomBehaviourVariableScopes(AbstractActor unit) {
       AddCustomBehaviourVariableScope("UNIT", unit.GUID);
-      AddCustomBehaviourVariableScope("LANCE", unit.lance.GUID);
-      AddCustomBehaviourVariableScope("TEAM", unit.team.GUID);
+      if (unit.lance != null) AddCustomBehaviourVariableScope("LANCE", unit.lance.GUID);
+      if (unit.team != null) AddCustomBehaviourVariableScope("TEAM", unit.team.GUID);
       // TODO: Support global scopes [pilot personality, unit role, ai skill] on a later release
     }
 
