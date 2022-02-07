@@ -11,8 +11,18 @@ namespace MissionControl.Config {
     public static string AdditionalLances_EnemyLancesOverride = "AdditionalLances.EnemyLances";
 
     public static string ExtendedLances_Enable = "ExtendedLances.Enable";
+
+    // ELv1
     public static string ExtendedLances_AllyLanceSizeOverride = "ExtendedLances.AllyLanceSize";
     public static string ExtendedLances_EnemyLanceSizeOverride = "ExtendedLances.EnemyLanceSize";
+
+    // ELv2
+    public static string ExtendedLances_EmployerLanceSizeOverride = "ExtendedLances.EmployerLanceSize";
+    public static string ExtendedLances_TargetLanceSizeOverride = "ExtendedLances.TargetLanceSize";
+    public static string ExtendedLances_TargetAllyLanceSizeOverride = "ExtendedLances.TargetAllyLanceSize";
+    public static string ExtendedLances_EmployerAllyLanceSizeOverride = "ExtendedLances.EmployerAllyLanceSize";
+    public static string ExtendedLances_HostileToAllLanceSizeOverride = "ExtendedLances.HostileToAllLanceSize";
+    public static string ExtendedLances_NeutralToAllLanceSizeOverride = "ExtendedLances.NeutralToAllLanceSize";
 
     public static string RandomSpawns_Enable = "RandomSpawns.Enable";
 
