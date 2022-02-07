@@ -76,11 +76,29 @@ namespace MissionControl.Logic {
     public override void Run(RunPayload payload) {
       if (!GetObjectReferences()) return;
 
+      // GUARD: Every object should have a key and orientation target. Otherwise something went wrong.
+      if (objectKeys.Count != objectGos.Count) {
+        Main.Logger.LogError($"[SpawnObjectsAroundTarget] Objects do not have a matching set of 'object keys' for this spawner to work correctly.");
+        return;
+      }
+
+      if (orientationTargetKeys.Count != objectGos.Count) {
+        Main.Logger.LogError($"[SpawnObjectsAroundTarget] Objects do not have a matching set of 'orientation target keys' for this spawner to work correctly.");
+        return;
+      }
+
       for (int i = 0; i < objectGos.Count; i++) {
         GameObject objectGo = objectGos[i];
+
         string objectKey = objectKeys[i];
         string orientationTargetKey = orientationTargetKeys[i];
         Main.Logger.LogDebug($"[SpawnObjectsAroundTarget] Attempting for '{objectGo.name}' with key '{objectKey}'");
+
+        if (!orientationTargets.ContainsKey(orientationTargetKey)) {
+          Main.Logger.LogError($"[SpawnObjectsAroundTarget] Orientation target with key '{orientationTargetKey}' does not exist. This is required for this spawner to work correctly.");
+          return;
+        }
+
         GameObject orientationTarget = orientationTargets[orientationTargetKey];
         Main.Logger.LogDebug($"[SpawnObjectsAroundTarget] Using orientation target key '{orientationTargetKey}' and Go name '{orientationTarget.transform.name}'");
 
@@ -143,7 +161,6 @@ namespace MissionControl.Logic {
       }
     }
 
-    // TODO: Check the object references properly for nulls like the other spawners
     protected override bool GetObjectReferences() {
       if (state != null) {
         List<string[]> extraLanceKeys = (List<string[]>)state.GetObject("ExtraLanceSpawnKeys");
@@ -151,12 +168,39 @@ namespace MissionControl.Logic {
           string[] keys = extraLanceKeys[i];
 
           if (keys != null && keys.Length > 0) {
-            string objectKey = keys[0];
-            string orientationObjectKey = keys[1];
+            if (keys.Length == 2) {
+              string objectKey = keys[0];
+              string orientationObjectKey = keys[1];
 
-            objectKeys.Add(objectKey);
-            orientationTargetKeys.Add(orientationObjectKey);
-            keyLookup[objectKey] = orientationObjectKey;
+              // Check if the key object and orientation object really exist
+              if (objectKey == null || objectKey == "") {
+                Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] GameObject has a null or empty object key. This is unexpected.");
+                continue;
+              }
+
+              GameObject objectKeyGO = GameObject.Find(objectKey.Substring(objectKey.IndexOf(".") + 1));
+              if (objectKeyGO == null) {
+                Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] GameObject with key '{objectKey}' was not found. This is unexpected.");
+                continue;
+              }
+
+              if (orientationObjectKey == null || orientationObjectKey == "") {
+                Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] GameObject has a null or empty orientation object key. This is unexpected.");
+                continue;
+              }
+
+              GameObject orientationObjectKeyGO = GameObject.Find(orientationObjectKey.Substring(orientationObjectKey.IndexOf(".") + 1));
+              if (orientationObjectKeyGO == null) {
+                Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] GameObject for orientation target with key '{orientationObjectKeyGO}' was not found. This is unexpected.");
+                continue;
+              }
+
+              objectKeys.Add(objectKey);
+              orientationTargetKeys.Add(orientationObjectKey);
+              keyLookup[objectKey] = orientationObjectKey;
+            } else {
+              Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] ExtraLanceSpawnKeys keyset does not provide exactly a key and orientation key.");
+            }
           } else {
             Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] ExtraLanceSpawnKeys provides a first key set but the keyset is null or empty");
           }

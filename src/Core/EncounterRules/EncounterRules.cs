@@ -229,17 +229,30 @@ namespace MissionControl.Rules {
     }
 
     protected string GetPlotBaseName(string mapName) {
-      Vector3 playerLanceSpawnPosition = SpawnerPlayerLanceGo.transform.position;
-      GameObject plot = GetClosestPlot(playerLanceSpawnPosition);
+      GameObject plotGO = GetPlotBaseGO(mapName);
 
-      if (plot == null) {
+      if (plotGO == null) {
         Main.Logger.Log($"[{this.GetType().Name}] GetPlotBaseName for map '{mapName}' is empty");
         State = EncounterState.FAILED;
-        return "";
+        return null;
       }
 
-      Main.Logger.Log($"[{this.GetType().Name}] Using plot name '{plot.name}'");
-      return plot.name;
+      Main.Logger.Log($"[{this.GetType().Name}] Using plot name '{plotGO.name}'");
+      return plotGO.name;
+    }
+
+    protected GameObject GetPlotBaseGO(string mapName) {
+      Vector3 playerLanceSpawnPosition = SpawnerPlayerLanceGo.transform.position;
+      GameObject plotGO = GetClosestPlot(playerLanceSpawnPosition);
+
+      if (plotGO == null) {
+        Main.Logger.Log($"[{this.GetType().Name}] GetPlotBaseGO for map '{mapName}' is empty");
+        State = EncounterState.FAILED;
+        return null;
+      }
+
+      Main.Logger.Log($"[{this.GetType().Name}] Using plot '{plotGO.name}'");
+      return plotGO;
     }
 
     protected void BuildAdditionalLances(string enemyOrientationTargetKey, SpawnLogic.LookDirection enemyLookDirection,

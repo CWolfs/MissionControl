@@ -138,6 +138,11 @@ namespace MissionControl.Logic {
           }
 
           List<GameObject> unitSpawnPoints = lanceSpawner.gameObject.FindAllContains("UnitSpawnPoint");
+
+          if (unitSpawnPoints.Count <= 0) {
+            Main.Logger.LogError($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Lance '{lanceOverride.name} - {lanceOverride.GUID}' has no UnitSpawnPoints. A Lance must have at least one unit spawn point to be valid");
+          }
+
           List<string> unitSpawnPointGameLogicGUIDs = (List<string>)unitSpawnPoints.Select(unitSpawnPointGO => unitSpawnPointGO.GetComponent<UnitSpawnPointGameLogic>().GUID).ToList();
 
           // Only replace unresolved unit overrides if autofill is on
