@@ -93,6 +93,12 @@ namespace MissionControl.Logic {
         string objectKey = objectKeys[i];
         string orientationTargetKey = orientationTargetKeys[i];
         Main.Logger.LogDebug($"[SpawnObjectsAroundTarget] Attempting for '{objectGo.name}' with key '{objectKey}'");
+
+        if (!orientationTargets.ContainsKey(orientationTargetKey)) {
+          Main.Logger.LogError($"[SpawnObjectsAroundTarget] Orientation target with key '{orientationTargetKey}' does not exist. This is required for this spawner to work correctly.");
+          return;
+        }
+
         GameObject orientationTarget = orientationTargets[orientationTargetKey];
         Main.Logger.LogDebug($"[SpawnObjectsAroundTarget] Using orientation target key '{orientationTargetKey}' and Go name '{orientationTarget.transform.name}'");
 
