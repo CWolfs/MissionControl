@@ -267,7 +267,7 @@ namespace MissionControl {
         string contractId = CurrentContract.Override.ID;
         string type = IsAnyFlashpointContract() ? "flashpoint" : "contract";
 
-        if (contractId == null || contractId == "") Main.Logger.LogError($"[MissionControl] [SetContractSettingsOverride] 'contractId' is null or empty string. This indicates a badly created or corrupt contract override.");
+        if (contractId == null || contractId == "") Main.Logger.LogError($"[MissionControl] [SetContractSettingsOverride] 'contractId' is null or empty string. This indicates a badly created or corrupt BT contract override (contract json).");
 
         if (Main.Settings.ContractSettingsOverrides.ContainsKey(contractId)) {
           Main.Logger.Log($"[MissionControl] Setting a {type} MC settings override for '{contractId}'.");
@@ -340,6 +340,10 @@ namespace MissionControl {
           }
           case LogicBlock.LogicType.ENCOUNTER_MANIPULATION: {
             EncounterRules.Run(LogicBlock.LogicType.ENCOUNTER_MANIPULATION, payload);
+            break;
+          }
+          case LogicBlock.LogicType.REQUEST_LANCE_COMPLETE: {
+            EncounterRules.Run(LogicBlock.LogicType.REQUEST_LANCE_COMPLETE, payload);
             break;
           }
           case LogicBlock.LogicType.SCENE_MANIPULATION: {
