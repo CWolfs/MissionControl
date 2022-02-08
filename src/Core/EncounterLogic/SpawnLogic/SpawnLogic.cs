@@ -25,15 +25,18 @@ namespace MissionControl.Logic {
       START_TIME_FOR_SPAWN_LOGIC = Time.realtimeSinceStartup;
     }
 
-    private void CheckSpawnLogicTimeBudget() {
+    private bool CheckSpawnLogicTimeBudget() {
       int maxSecondsUntilTimeout = Main.Settings.RandomSpawns.TimeoutIn;
       Main.LogDebug($"[CheckSpawnLogicTimeBudget] Checking spawn logic time budget");
 
       float timeUsed = Time.realtimeSinceStartup - START_TIME_FOR_SPAWN_LOGIC;
       if (maxSecondsUntilTimeout < timeUsed) {
-        Main.LogDebug($"[CheckSpawnLogicTimeBudget] Spawn budget of '${maxSecondsUntilTimeout}' seconds exceeded. Gracefully attempting to stop spawn logic and using a fallback.");
+        Main.LogDebug($"[CheckSpawnLogicTimeBudget] Spawn budget of '{maxSecondsUntilTimeout}' seconds exceeded. Gracefully attempting to stop spawn logic and using a fallback.");
         shouldGracefullyStopSpawnLogic = true;
+        return true;
       }
+
+      return false;
     }
 
     protected bool IsSpawnValid(GameObject spawnPoint, GameObject checkTarget) {
@@ -45,7 +48,7 @@ namespace MissionControl.Logic {
     }
 
     public Vector3 GetClosestValidPathFindingHex(GameObject originGo, Vector3 origin, string identifier, Vector3 pathfindingTarget, int radius = 3) {
-      CheckSpawnLogicTimeBudget();
+      if (CheckSpawnLogicTimeBudget()) return Vector3.zero;
 
       Main.LogDebug($"[GetClosestValidPathFindingHex] About to process with origin '{origin}'");
       if (originalOrigin == Vector3.zero) originalOrigin = origin;
