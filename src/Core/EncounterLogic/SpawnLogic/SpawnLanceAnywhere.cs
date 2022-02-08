@@ -60,6 +60,7 @@ namespace MissionControl.Logic {
 
     private void Init() {
       if (!inited) {
+        StartTimer();
         Main.LogDebug($"[SpawnLanceAnywhere] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
         validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget, orientationTarget.transform.position, $"OrientationTarget.{orientationTarget.name}");
         inited = true;

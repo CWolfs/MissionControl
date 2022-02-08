@@ -22,15 +22,21 @@ namespace MissionControl.Logic {
     private int bailoutCount = 0;
     private Vector3 originalOrigin = Vector3.zero;
 
-    public SpawnLogic(EncounterRules encounterRules) : base(encounterRules) {
+    public SpawnLogic(EncounterRules encounterRules) : base(encounterRules) { }
+
+    protected void StartTimer() {
+      Main.LogDebug($"[{this.GetType().Name}.StartTimer] Starting timeout timer");
       START_TIME_FOR_SPAWN_LOGIC = Time.realtimeSinceStartup;
     }
 
     private bool HasSpawnLogicExceededTimeBudget() {
       int maxSecondsUntilTimeout = Main.Settings.RandomSpawns.TimeoutIn;
-      Main.LogDebug($"[CheckSpawnLogicTimeBudget] Checking spawn logic time budget");
-
       float timeUsed = Time.realtimeSinceStartup - START_TIME_FOR_SPAWN_LOGIC;
+      float timeRemaining = maxSecondsUntilTimeout - timeUsed;
+      if (timeRemaining <= 0) timeRemaining = 0;
+
+      Main.LogDebug($"[{this.GetType().Name}.HasSpawnLogicExceededTimeBudget] Checking spawn logic time budget. '{timeRemaining}' seconds remaining.");
+
       if (maxSecondsUntilTimeout < timeUsed) {
         return true;
       }
@@ -45,7 +51,7 @@ namespace MissionControl.Logic {
 
     protected bool HasSpawnerTimedOut() {
       if (shouldGracefullyStopSpawnLogic) {
-        Main.Logger.LogDebug($"[{this.GetType().Name}] Has timed out. Gracefully stopping spawn.");
+        Main.Logger.LogDebug($"[{this.GetType().Name}.HasSpawnerTimedOut] Has timed out. Gracefully stopping spawn.");
         return shouldGracefullyStopSpawnLogic;
       }
 
@@ -53,7 +59,7 @@ namespace MissionControl.Logic {
     }
 
     private void StopSpawnLogic() {
-      Main.LogDebug($"[CheckSpawnLogicTimeBudget] Spawn budget of '{Main.Settings.RandomSpawns.TimeoutIn}' seconds exceeded. Gracefully attempting to stop spawn logic and using a fallback.");
+      Main.LogDebug($"[{this.GetType().Name}].StopSpawnLogic] Spawn budget of '{Main.Settings.RandomSpawns.TimeoutIn}' seconds exceeded. Gracefully attempting to stop spawn logic.");
       shouldGracefullyStopSpawnLogic = true;
 
       // Restore original spawn points

@@ -31,6 +31,7 @@ namespace MissionControl.Logic {
     private int TotalAttemptMax { get; set; } = 3;
     private int TotalAttemptCount { get; set; } = 0;
 
+    private bool inited = false;
     private Vector3 validOrientationTargetPosition;
 
     public SpawnObjectsAroundTarget(EncounterRules encounterRules, string objectKey, string orientationTargetKey, LookDirection lookDirection) : base(encounterRules) {
@@ -73,6 +74,13 @@ namespace MissionControl.Logic {
       this.lookDirection = lookDirection;
     }
 
+    private void Init() {
+      if (!inited) {
+        StartTimer();
+        inited = true;
+      }
+    }
+
     public override void Run(RunPayload payload) {
       if (!GetObjectReferences()) return;
       if (HasSpawnerTimedOut()) return;
@@ -87,6 +95,8 @@ namespace MissionControl.Logic {
         Main.Logger.LogError($"[SpawnObjectsAroundTarget] Objects do not have a matching set of 'orientation target keys' for this spawner to work correctly.");
         return;
       }
+
+      Init();
 
       for (int i = 0; i < objectGos.Count; i++) {
         GameObject objectGo = objectGos[i];

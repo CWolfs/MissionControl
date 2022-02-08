@@ -76,6 +76,7 @@ namespace MissionControl.Logic {
 
     private void Init(bool forced = false) {
       if (!inited || forced) {
+        if (!forced) StartTimer();
         Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Forcing Re-init");
         Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
         validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget, orientationTarget.transform.position, $"OrientationTarget.{orientationTarget.name}");

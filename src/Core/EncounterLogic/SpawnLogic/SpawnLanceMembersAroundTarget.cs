@@ -30,6 +30,8 @@ namespace MissionControl.Logic {
 
     private RunPayload payload;
 
+    private bool inited = false;
+
     public SpawnLanceMembersAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, LookDirection lookDirection) :
       this(encounterRules, lanceKey, orientationTargetKey, lookDirection, 10, 10) { } // TODO: Replace the hard coded values with a setting.json setting
 
@@ -45,6 +47,13 @@ namespace MissionControl.Logic {
       this.mustBeWithinDistance = mustBeWithinDistance;
     }
 
+    private void Init() {
+      if (!inited) {
+        StartTimer();
+        inited = true;
+      }
+    }
+
     public override void Run(RunPayload payload) {
       if (!GetObjectReferences()) return;
       if (HasSpawnerTimedOut()) return;
@@ -53,6 +62,8 @@ namespace MissionControl.Logic {
       SaveSpawnPositions(lance);
       Main.Logger.Log($"[SpawnLanceMembersAroundTarget] Attempting for '{lance.name}'");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+
+      Init();
 
       Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget, orientationTarget.transform.position, $"OrientationTarget.{orientationTarget.name}");
       if (HasSpawnerTimedOut()) return;
