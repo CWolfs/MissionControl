@@ -75,10 +75,7 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       if (!GetObjectReferences()) return;
-      if (shouldGracefullyStopSpawnLogic) {
-        Main.Logger.LogDebug("[SpawnObjectsAroundTarget] Gracefully stopping spawn.");
-        return;
-      }
+      if (HasSpawnerTimedOut()) return;
 
       // GUARD: Every object should have a key and orientation target. Otherwise something went wrong.
       if (objectKeys.Count != objectGos.Count) {
@@ -117,6 +114,7 @@ namespace MissionControl.Logic {
         } else {
           Main.LogDebug($"[SpawnObjectsAroundTarget] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
           validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget, orientationTarget.transform.position, $"OrientationTarget.{orientationTarget.name}");
+          if (HasSpawnerTimedOut()) return;
         }
 
         if (TotalAttemptCount >= TotalAttemptMax) {
@@ -126,6 +124,7 @@ namespace MissionControl.Logic {
 
         Vector3 newSpawnPosition = GetRandomPositionFromTarget(validOrientationTargetPosition, minDistanceFromTarget, maxDistanceFromTarget);
         newSpawnPosition = GetClosestValidPathFindingHex(objectGo, newSpawnPosition, $"NewRandomSpawnPositionFromOrientationTarget.{orientationTarget.name}", 2);
+        if (HasSpawnerTimedOut()) return;
 
         if (encounterManager.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
           objectGo.transform.position = newSpawnPosition;

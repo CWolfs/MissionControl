@@ -68,10 +68,7 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       if (!GetObjectReferences()) return;
-      if (shouldGracefullyStopSpawnLogic) {
-        Main.Logger.LogDebug("[SpawnLanceAnywhere] Gracefully stopping spawn.");
-        return;
-      }
+      if (HasSpawnerTimedOut()) return;
 
       SaveSpawnPositions(lance);
       Main.Logger.Log($"[SpawnLanceAnywhere] Attemping for '{lance.name}'");
@@ -94,6 +91,7 @@ namespace MissionControl.Logic {
 
       Vector3 newPosition = GetRandomPositionWithinBounds();
       newPosition = GetClosestValidPathFindingHex(null, newPosition, $"NewSpawnPosition.{lance.name}", IsLancePlayerLance(lanceKey) ? orientationTarget.transform.position : Vector3.zero, 2);
+      if (HasSpawnerTimedOut()) return;
       Main.LogDebug($"[SpawnLanceAnywhere] Attempting selection of random position in bounds. Selected position '{newPosition}'");
       lance.transform.position = newPosition;
 

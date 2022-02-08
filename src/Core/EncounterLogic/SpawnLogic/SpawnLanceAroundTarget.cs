@@ -54,10 +54,7 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       if (!GetObjectReferences()) return;
-      if (shouldGracefullyStopSpawnLogic) {
-        Main.Logger.LogDebug("[SpawnLanceAroundTarget] Gracefully stopping spawn.");
-        return;
-      }
+      if (HasSpawnerTimedOut()) return;
 
       SaveSpawnPositions(lance);
       Main.Logger.Log($"[SpawnLanceAroundTarget] Attemping for '{lance.name}'");
@@ -73,6 +70,7 @@ namespace MissionControl.Logic {
 
       Vector3 newSpawnPosition = GetRandomPositionFromTarget(validOrientationTargetPosition, minDistanceFromTarget, maxDistanceFromTarget);
       newSpawnPosition = GetClosestValidPathFindingHex(lance, newSpawnPosition, $"NewRandomSpawnPositionFromOrientationTarget.{orientationTarget.name}", 2);
+      if (HasSpawnerTimedOut()) return;
 
       if (encounterManager.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
         lance.transform.position = newSpawnPosition;
@@ -90,6 +88,7 @@ namespace MissionControl.Logic {
             Main.Logger.Log($"[SpawnLanceAroundTarget] Fitting invalid lance member spawns");
             foreach (GameObject invalidSpawn in invalidLanceSpawns) {
               SpawnLanceMember(invalidSpawn, newSpawnPosition);
+              if (HasSpawnerTimedOut()) return;
             }
           } else {
             CheckAttempts();
@@ -108,6 +107,7 @@ namespace MissionControl.Logic {
     private void SpawnLanceMember(GameObject spawnPoint, Vector3 anchorPoint) {
       Main.Logger.Log($"[SpawnLanceAroundTarget] Fitting member '{spawnPoint.name}' around anchor point '{anchorPoint}'");
       Vector3 newSpawnLocation = GetClosestValidPathFindingHex(spawnPoint, anchorPoint, $"SpawnLanceMember.{spawnPoint.name}", IsLancePlayerLance(lanceKey) ? orientationTarget.transform.position : Vector3.zero, 2);
+      if (HasSpawnerTimedOut()) return;
       spawnPoint.transform.position = newSpawnLocation;
     }
 

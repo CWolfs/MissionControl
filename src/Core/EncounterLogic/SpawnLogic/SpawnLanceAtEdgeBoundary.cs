@@ -95,10 +95,7 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       if (!GetObjectReferences()) return;
-      if (shouldGracefullyStopSpawnLogic) {
-        Main.Logger.LogDebug("[SpawnLanceAtEdgeOfBoundary] Gracefully stopping spawn.");
-        return;
-      }
+      if (HasSpawnerTimedOut()) return;
 
       SaveSpawnPositions(lance);
       Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Attemping for '{lance.name}'. Attempt: '{AttemptCount}/{AttemptCountMax}' and Edge Check: '{EdgeCheckCount}/{EdgeCheckMax}'");
@@ -126,6 +123,7 @@ namespace MissionControl.Logic {
       Vector3 lancePosition = lance.transform.position.GetClosestHexLerpedPointOnGrid();
       Vector3 newSpawnPosition = new Vector3(xzEdge.Position.x, lancePosition.y, xzEdge.Position.z);
       newSpawnPosition = GetClosestValidPathFindingHex(lance, newSpawnPosition, $"NewSpawnPosition.{lance.name}", IsLancePlayerLance(lanceKey) ? orientationTarget.transform.position : Vector3.zero, 2);
+      if (HasSpawnerTimedOut()) return;
       lance.transform.position = newSpawnPosition;
 
       Main.LogDebug($"[SpawnLanceAtEdgeBoundary] Attempting to spawn lance at point on lerped grid '{newSpawnPosition}'");
@@ -140,6 +138,7 @@ namespace MissionControl.Logic {
             Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary] Fitting invalid lance member spawns");
             foreach (GameObject invalidSpawn in invalidLanceSpawns) {
               SpawnLanceMember(invalidSpawn, lance.transform.position);
+              if (HasSpawnerTimedOut()) return;
             }
 
             Main.Logger.Log("[SpawnLanceAtEdgeOfBoundary] Lance spawn complete");
@@ -182,6 +181,7 @@ namespace MissionControl.Logic {
     private void SpawnLanceMember(GameObject spawnPoint, Vector3 anchorPoint) {
       Main.Logger.Log($"[SpawnLanceAtEdgeOfBoundary.SpawnLanceMember] Fitting member '{spawnPoint.name}' at anchor point '{anchorPoint}'");
       Vector3 newSpawnLocation = GetClosestValidPathFindingHex(spawnPoint, anchorPoint, $"SpawnLanceMember.{spawnPoint.name}", IsLancePlayerLance(lanceKey) ? orientationTarget.transform.position : Vector3.zero, 2);
+      if (HasSpawnerTimedOut()) return;
 
       if (!newSpawnLocation.IsTooCloseToAnotherSpawn(spawnPoint)) {
         spawnPoint.transform.position = newSpawnLocation;

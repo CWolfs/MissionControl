@@ -14,6 +14,7 @@ namespace MissionControl.Logic {
   public abstract class SpawnLogic : SceneManipulationLogic {
     public float START_TIME_FOR_SPAWN_LOGIC = 0;
     protected bool shouldGracefullyStopSpawnLogic = false;
+    public static Vector3 TimedOutVector = new Vector3(99999, 99999, 99999);
 
     private int ADJACENT_NODE_LIMITED = 20;
     private List<Vector3> checkedAdjacentPoints = new List<Vector3>();
@@ -37,9 +38,25 @@ namespace MissionControl.Logic {
       return false;
     }
 
+    public bool IsTimedOut(Vector3 vector) {
+      if (vector == TimedOutVector) return true;
+      return false;
+    }
+
+    protected bool HasSpawnerTimedOut() {
+      if (shouldGracefullyStopSpawnLogic) {
+        Main.Logger.LogDebug($"[{this.GetType().Name}] Has timed out. Gracefully stopping spawn.");
+        return shouldGracefullyStopSpawnLogic;
+      }
+
+      return false;
+    }
+
     private void StopSpawnLogic() {
       Main.LogDebug($"[CheckSpawnLogicTimeBudget] Spawn budget of '{Main.Settings.RandomSpawns.TimeoutIn}' seconds exceeded. Gracefully attempting to stop spawn logic and using a fallback.");
       shouldGracefullyStopSpawnLogic = true;
+
+      // Restore original spawn points
     }
 
     protected bool IsSpawnValid(GameObject spawnPoint, GameObject checkTarget) {
@@ -53,7 +70,7 @@ namespace MissionControl.Logic {
     public Vector3 GetClosestValidPathFindingHex(GameObject originGo, Vector3 origin, string identifier, Vector3 pathfindingTarget, int radius = 3) {
       if (HasSpawnLogicExceededTimeBudget()) {
         StopSpawnLogic();
-        return Vector3.zero;
+        return TimedOutVector;
       }
 
       Main.LogDebug($"[GetClosestValidPathFindingHex] About to process with origin '{origin}'");

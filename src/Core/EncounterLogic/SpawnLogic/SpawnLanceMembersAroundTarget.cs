@@ -47,10 +47,7 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       if (!GetObjectReferences()) return;
-      if (shouldGracefullyStopSpawnLogic) {
-        Main.Logger.LogDebug("[SpawnLanceMembersAroundTarget] Gracefully stopping spawn.");
-        return;
-      }
+      if (HasSpawnerTimedOut()) return;
 
       this.payload = payload;
       SaveSpawnPositions(lance);
@@ -58,11 +55,13 @@ namespace MissionControl.Logic {
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
 
       Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget, orientationTarget.transform.position, $"OrientationTarget.{orientationTarget.name}");
+      if (HasSpawnerTimedOut()) return;
       lance.transform.position = validOrientationTargetPosition;
 
       List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
       foreach (GameObject spawnPoint in spawnPoints) {
         bool success = SpawnLanceMember(spawnPoint, validOrientationTargetPosition, lookTarget, lookDirection);
+        if (HasSpawnerTimedOut()) return;
         if (!success) break;
       }
 
@@ -103,6 +102,7 @@ namespace MissionControl.Logic {
 
       Vector3 newSpawnPosition = GetRandomPositionFromTarget(orientationTargetPosition, mustBeBeyondDistance, mustBeWithinDistance);
       newSpawnPosition = GetClosestValidPathFindingHex(spawnPoint, newSpawnPosition, $"NewRandomSpawnPositionFromOrientationTarget.{orientationTarget.name}");
+      if (HasSpawnerTimedOut()) return false;
 
       if (encounterManager.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
         if (!IsWithinDistanceOfInvalidPosition(newSpawnPosition)) {
