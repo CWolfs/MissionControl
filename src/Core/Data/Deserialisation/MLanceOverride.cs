@@ -18,7 +18,7 @@ namespace MissionControl.Data {
       this.lanceTagSet = new TagSet(lanceOverrideData.LanceTagSet.TagSetSourceFile);
       this.lanceTagSet.AddRange(lanceOverrideData.LanceTagSet.Items);
       this.lanceExcludedTagSet = new TagSet(lanceOverrideData.LanceExcludedTagSet.TagSetSourceFile);
-      this.lanceTagSet.AddRange(lanceOverrideData.LanceExcludedTagSet.Items);
+      this.lanceExcludedTagSet.AddRange(lanceOverrideData.LanceExcludedTagSet.Items);
       this.spawnEffectTags = new TagSet(lanceOverrideData.SpawnEffectTags.TagSetSourceFile);
       this.spawnEffectTags.AddRange(lanceOverrideData.SpawnEffectTags.Items);
       this.lanceDifficultyAdjustment = lanceOverrideData.LanceDifficultyAdjustment;
