@@ -131,7 +131,7 @@ namespace MissionControl.Logic {
         //    - If 'Autofill' is off: we populate with empty slots but we leave the actual resolved filling for later in the life cycle (AddExtraLanceSpawnPoints handles it).
         //    - If 'Autofill' is on: we make copies of any of the tagged unitSpawnPointOverrides in the lance to fill up the slots required
         if (numberOfUnitsInLanceOverride < intendedLanceSize) {
-          if (Main.Settings.ExtendedLances.Autofill && !mLanceOverrideSkipAutofill && !lanceOverride.IsATurretLance()) {
+          if (Main.Settings.ExtendedLances.IsAutofillAllowed(contractOverride) && !mLanceOverrideSkipAutofill && !lanceOverride.IsATurretLance()) {
             AutofillWithTaggedOrFirstUnitOverrideSlots(teamOverride, lanceOverride, numberOfUnitsInLanceOverride, intendedLanceSize);
           } else {
             AutofillWithEmptyUnitOverrideSlots(teamOverride, lanceOverride, numberOfUnitsInLanceOverride, intendedLanceSize);

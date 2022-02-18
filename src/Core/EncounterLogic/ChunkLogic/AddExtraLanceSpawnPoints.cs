@@ -120,7 +120,7 @@ namespace MissionControl.Logic {
         }
 
 
-        if (Main.Settings.ExtendedLances.Autofill) {
+        if (Main.Settings.ExtendedLances.IsAutofillAllowed(contractOverride)) {
           // GUARD: If an AdditionalLance lance config has been set to 'supportAutoFill' false, then don't autofill
           if (lanceOverride is MLanceOverride) {
             MLanceOverride mLanceOverride = (MLanceOverride)lanceOverride;
