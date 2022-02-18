@@ -31,30 +31,30 @@ namespace MissionControl.Data {
     public int LanceDifficultyAdjustment { get; set; } = 0;
 
     [JsonProperty("unitSpawnPointOverrideList")]
-    public List<MUnitSpawnPointOverrideData> UnitSpawnPointOverride { get; set; } = new List<MUnitSpawnPointOverrideData>();
+    public List<MUnitSpawnPointOverrideData> UnitSpawnPointOverrides { get; set; } = new List<MUnitSpawnPointOverrideData>();
 
     public List<UnitSpawnPointOverride> GetUnitSpawnPointOverrideList() {
       List<UnitSpawnPointOverride> unitSpawnPointOverrideList = new List<UnitSpawnPointOverride>();
 
-      if (UnitSpawnPointOverride.Count <= 0) {  // handle pure lance def references in the `lances` folder
+      if (UnitSpawnPointOverrides.Count <= 0) {  // handle pure lance def references in the `lances` folder
         for (int i = 0; i < 4; i++) {
           UnitSpawnPointOverride unitSpawnPointOverride = new UnitSpawnPointOverride();
-          unitSpawnPointOverride.unitDefId = "UseLance";
-          unitSpawnPointOverride.pilotDefId = "UseLance";
+          unitSpawnPointOverride.unitDefId = UnitSpawnPointOverride.UseLance;
+          unitSpawnPointOverride.pilotDefId = UnitSpawnPointOverride.UseLance;
           unitSpawnPointOverrideList.Add(unitSpawnPointOverride);
         }
       } else {
-        foreach (MUnitSpawnPointOverrideData unitSpawnPointOverideData in UnitSpawnPointOverride) {
+        foreach (MUnitSpawnPointOverrideData unitSpawnPointOverideData in UnitSpawnPointOverrides) {
           UnitSpawnPointOverride unitSpawnPointOverride = new UnitSpawnPointOverride();
           unitSpawnPointOverride.unitType = (UnitType)Enum.Parse(typeof(UnitType), unitSpawnPointOverideData.UnitType);
           unitSpawnPointOverride.unitDefId = unitSpawnPointOverideData.UnitDefId;
-          
+
           unitSpawnPointOverride.unitTagSet = new TagSet(unitSpawnPointOverideData.UnitTagSet.TagSetSourceFile);
           unitSpawnPointOverride.unitTagSet.AddRange(unitSpawnPointOverideData.UnitTagSet.Items);
-          
+
           unitSpawnPointOverride.unitExcludedTagSet = new TagSet(unitSpawnPointOverideData.UnitExcludedTagSet.TagSetSourceFile);
           unitSpawnPointOverride.unitExcludedTagSet.AddRange(unitSpawnPointOverideData.UnitExcludedTagSet.Items);
-          
+
           unitSpawnPointOverride.spawnEffectTags = new TagSet(unitSpawnPointOverideData.SpawnEffectTags.TagSetSourceFile);
           unitSpawnPointOverride.spawnEffectTags.AddRange(unitSpawnPointOverideData.SpawnEffectTags.Items);
 
@@ -62,7 +62,7 @@ namespace MissionControl.Data {
 
           unitSpawnPointOverride.pilotTagSet = new TagSet(unitSpawnPointOverideData.PilotTagSet.TagSetSourceFile);
           unitSpawnPointOverride.pilotTagSet.AddRange(unitSpawnPointOverideData.PilotTagSet.Items);
-          
+
           unitSpawnPointOverride.pilotExcludedTagSet = new TagSet(unitSpawnPointOverideData.PilotExcludedTagSet.TagSetSourceFile);
           unitSpawnPointOverride.pilotExcludedTagSet.AddRange(unitSpawnPointOverideData.PilotExcludedTagSet.Items);
 

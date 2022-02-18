@@ -92,8 +92,19 @@ namespace MissionControl {
 
     public void AddCustomBehaviourVariableScopes(AbstractActor unit) {
       AddCustomBehaviourVariableScope("UNIT", unit.GUID);
-      AddCustomBehaviourVariableScope("LANCE", unit.lance.GUID);
-      AddCustomBehaviourVariableScope("TEAM", unit.team.GUID);
+
+      if (unit.lance != null) {
+        AddCustomBehaviourVariableScope("LANCE", unit.lance.GUID);
+      } else {
+        Main.Logger.LogWarning($"[AiManager.AddCustomBehaviourVariableScopes] Unit '{unit.UnitName}' has no lance. This is unusual and a result of another mod. MC's AI behaviour won't track the unit's lance GUID");
+      }
+
+      if (unit.team != null) {
+        AddCustomBehaviourVariableScope("TEAM", unit.team.GUID);
+      } else {
+        Main.Logger.LogWarning($"[AiManager.AddCustomBehaviourVariableScopes] Unit '{unit.UnitName}' has no team. This is unusual and a result of another mod. MC's AI behaviour won't track the unit's team GUID");
+      }
+
       // TODO: Support global scopes [pilot personality, unit role, ai skill] on a later release
     }
 

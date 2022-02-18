@@ -9,8 +9,29 @@ using Newtonsoft.Json;
 
 namespace MissionControl.Config {
   public class ExtendedLancesSettings : AdvancedSettings {
+    [JsonProperty("EnableForTargetAlly")]
+    public bool EnableForTargetAlly { get; set; } = false;
+
+    [JsonProperty("EnableForEmployerAlly")]
+    public bool EnableForEmployerAlly { get; set; } = false;
+
+    [JsonProperty("EnableForHostileToAll")]
+    public bool EnableForHostileToAll { get; set; } = false;
+
+    [JsonProperty("EnableForNeutralToAll")]
+    public bool EnableForNeutralToAll { get; set; } = false;
+
     [JsonProperty("Autofill")]
     public bool Autofill { get; set; } = true;
+
+    [JsonProperty("AutofillType")]
+    public string AutofillType { get; set; } = "RespectEmpty";  // RespectEmpty, FillEmpty
+
+    [JsonProperty("AutofillUnitCopyType")]
+    public string AutofillUnitCopyType { get; set; } = "RandomInLance";  // FirstInLance, RandomInLance
+
+    [JsonProperty("AutofillStartingFromContractDifficulty")]
+    public int AutofillStartingFromContractDifficulty { get; set; } = 3;
 
     [JsonProperty("LanceSizes")]
     public Dictionary<string, List<ExtendedLance>> LanceSizes { get; set; } = new Dictionary<string, List<ExtendedLance>>();
@@ -23,6 +44,12 @@ namespace MissionControl.Config {
 
     [JsonProperty("SkipWhenExcludeTagsContain")]
     public List<string> SkipWhenExcludeTagsContain { get; set; } = new List<string>();
+
+    [JsonProperty("ForceLanceOverrideSizeWithTag")]
+    public string ForceLanceOverrideSizeWithTag { get; set; } = "mc_force_extended_lance";
+
+    [JsonProperty("ForceLanceDefSizeWithTag")]
+    public string ForceLanceDefSizeWithTag { get; set; } = "mc_force_extended_lance";
 
     public TagSet GetSkipWhenTaggedWithAny() {
       return new TagSet(SkipWhenTaggedWithAny);
@@ -62,6 +89,15 @@ namespace MissionControl.Config {
       }
 
       return lanceOverride.lanceDifficultyAdjustment;
+    }
+
+    public bool IsAutofillAllowed(ContractOverride contractOverride) {
+      if (!Autofill) return false;
+      if (contractOverride.finalDifficulty < AutofillStartingFromContractDifficulty) {
+        Main.Logger.Log($"[ExtendedLances.IsAutofillAllowed] Contract finalDifficulty of '{contractOverride.finalDifficulty}' is lower than AutofillFromDifficulty of '{AutofillStartingFromContractDifficulty}'. Not allowing autofilling.");
+        return false;
+      }
+      return true;
     }
   }
 }

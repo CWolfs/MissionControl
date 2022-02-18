@@ -62,11 +62,20 @@
     "Enable": true,
     "EnableForFlashpoints": true,
     "EnableForStory": false,
+    "EnableForTargetAlly": true,
+    "EnableForEmployerAlly": true,
+    "EnableForHostileToAll": true,
+    "EnableForNeutralToAll": true,
     "Autofill": true,
+    "AutofillType": "RespectEmpty",
+    "AutofillUnitCopyType": "RandomInLance",
+    "AutofillStartingFromContractDifficulty": 3,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "SkipWhenTaggedWithAny": ["lance_type_solo"],
     "SkipWhenTaggedWithAll": [],
-    "SkipWhenExcludeTagsContain": ["no_extended_lance"],
+    "SkipWhenExcludeTagsContain": ["mc_no_extended_lance", "no_extended_lance"],
+    "ForceLanceOverrideSizeWithTag": "mc_force_extended_lance",
+    "ForceLanceDefSizeWithTag": "mc_force_extended_lance",
     "LanceSizes": {
       "5": [],
       "6": []
@@ -102,6 +111,10 @@
         "MapId": "mapGeneral_desertDam_aDes",
         "ContractTypeName": "SimpleBattle",
         "IncreaseBoundarySizeByPercentage": 0.55
+      },
+      {
+        "ContractTypeName": "AmbushConvoy",
+        "IncreaseBoundarySizeByPercentage": 0.2
       }
     ]
   },

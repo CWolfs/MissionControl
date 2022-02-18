@@ -30,7 +30,7 @@ namespace MissionControl.Rules {
     }
 
     public override void LinkObjectReferences(string mapName) {
-      ObjectLookup["PlotBase"] = GameObject.Find(GetPlotBaseName(mapName));
+      ObjectLookup["PlotBase"] = GetPlotBaseGO(mapName);
       ObjectLookup["SpawnerLanceEnemyWave1"] = EncounterLayerData.gameObject.FindRecursive("Lance_Enemy_Wave1Attackers");
       ObjectLookup["SpawnerLanceEnemyWave2"] = EncounterLayerData.gameObject.FindRecursive("Lance_Enemy_Wave2Attackers");
       ObjectLookup["SpawnerLanceEnemyWave3"] = EncounterLayerData.gameObject.FindRecursive("Lance_Enemy_Wave3Attackers");
