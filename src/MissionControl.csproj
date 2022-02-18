@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Version>1.3.3</Version>
+    <Version>1.4.0</Version>
     <OutputType>Library</OutputType>
     <TargetFramework>net471</TargetFramework>
   </PropertyGroup>
