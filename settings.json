@@ -69,7 +69,7 @@
     "Autofill": true,
     "AutofillType": "RespectEmpty",
     "AutofillUnitCopyType": "RandomInLance",
-    "AutofillFromContractDifficulty": 3,
+    "AutofillStartingFromContractDifficulty": 3,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "SkipWhenTaggedWithAny": ["lance_type_solo"],
     "SkipWhenTaggedWithAll": [],

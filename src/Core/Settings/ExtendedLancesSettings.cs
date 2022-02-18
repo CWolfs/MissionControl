@@ -30,8 +30,8 @@ namespace MissionControl.Config {
     [JsonProperty("AutofillUnitCopyType")]
     public string AutofillUnitCopyType { get; set; } = "RandomInLance";  // FirstInLance, RandomInLance
 
-    [JsonProperty("AutofillFromContractDifficulty")]
-    public int AutofillFromContractDifficulty { get; set; } = 3;
+    [JsonProperty("AutofillStartingFromContractDifficulty")]
+    public int AutofillStartingFromContractDifficulty { get; set; } = 3;
 
     [JsonProperty("LanceSizes")]
     public Dictionary<string, List<ExtendedLance>> LanceSizes { get; set; } = new Dictionary<string, List<ExtendedLance>>();
@@ -93,8 +93,8 @@ namespace MissionControl.Config {
 
     public bool IsAutofillAllowed(ContractOverride contractOverride) {
       if (!Autofill) return false;
-      if (contractOverride.finalDifficulty < AutofillFromContractDifficulty) {
-        Main.Logger.Log($"[ExtendedLances.IsAutofillAllowed] Contract finalDifficulty of '{contractOverride.finalDifficulty}' is lower than AutofillFromDifficulty of '{AutofillFromContractDifficulty}'. Not allowing autofilling.");
+      if (contractOverride.finalDifficulty < AutofillStartingFromContractDifficulty) {
+        Main.Logger.Log($"[ExtendedLances.IsAutofillAllowed] Contract finalDifficulty of '{contractOverride.finalDifficulty}' is lower than AutofillFromDifficulty of '{AutofillStartingFromContractDifficulty}'. Not allowing autofilling.");
         return false;
       }
       return true;
