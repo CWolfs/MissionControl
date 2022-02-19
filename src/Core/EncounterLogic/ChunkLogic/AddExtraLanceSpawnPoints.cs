@@ -99,6 +99,11 @@ namespace MissionControl.Logic {
         LanceOverride lanceOverride = lanceOverrides[i];
         bool isManualLance = lanceOverride.lanceDefId == "Manual";
 
+        if (lanceOverride.IsATurretLance()) {
+          Main.Logger.LogDebug($"[AddExtraLanceSpawnPoints] Detected a turret lance. Skipping.");
+          continue;
+        }
+
         // At this point the number of units in a lance should be the expected amount.
         // The unitSpawnPointOverrides will be up to the EL limit set. They will be either:
         //  - Empty, Null, MechDef_None, Vehicle_None, Turret_None (Because they were a non-inheriting unit, manually entered as such or the LanceDef didn't have enough units to fill up the UnitOverride slots)
@@ -180,6 +185,11 @@ namespace MissionControl.Logic {
     private void AddSpawnPoints(LanceSpawnerGameLogic lanceSpawner, TeamOverride teamOverride, LanceOverride lanceOverride, int numberOfUnitsInLance) {
       List<GameObject> unitSpawnPoints = lanceSpawner.gameObject.FindAllContains("UnitSpawnPoint");
       numberOfUnitsInLance = lanceOverride.unitSpawnPointOverrideList.Count;
+
+      if (unitSpawnPoints.Count <= 0) {
+        Main.Logger.Log($"[AddSpawnPoints] Spawner '{lanceSpawner.name}' has '0' unit spawns containing the word 'UnitSpawnPoint'. A lance must have at least one valid spawn point. Skipping last '{lanceOverride.name}'");
+        return;
+      }
 
       if (numberOfUnitsInLance > unitSpawnPoints.Count) {
         Main.Logger.Log($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Detected lance '{lanceOverride.name}' has more units than lance spawn points. Creating new lance spawns to accommodate.");
