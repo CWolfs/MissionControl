@@ -108,7 +108,7 @@ namespace MissionControl.Logic {
 
         if (CheckForLanceSkips(teamOverride, lanceOverride)) {
           Main.Logger.LogDebug($"[AddExtraLanceSpawnPoints] Detected a skip for this Lance. Skipping.");
-          return;
+          continue;
         }
 
         LanceSpawnerGameLogic lanceSpawner = lanceSpawners.Find(spawner => spawner.GUID == lanceOverride.lanceSpawner.EncounterObjectGuid);
