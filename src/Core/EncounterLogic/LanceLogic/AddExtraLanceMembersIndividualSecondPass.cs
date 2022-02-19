@@ -126,6 +126,12 @@ namespace MissionControl.Logic {
         return true;
       }
 
+      if (loadedLanceDef.IsATurretLance()) {
+        Main.LogDebug($"[AddExtraLanceMembersIndividualSecondPass] [{teamOverride.faction}] LanceDef is a turret lance. Skipping '{loadedLanceDef.Description.Id}'");
+        lancesToSkip.Add(lanceGUID);
+        return true;
+      }
+
       return false;
     }
   }

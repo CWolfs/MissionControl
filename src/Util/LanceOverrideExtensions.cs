@@ -29,6 +29,7 @@ public static class LanceOverrideExtensions {
     for (int i = 0; i < units.Count; i++) {
       UnitSpawnPointOverride unit = units[i];
       if (unit.unitType == BattleTech.UnitType.Turret) return true;
+      if (unit.selectedUnitType == BattleTech.UnitType.Turret) return true;
     }
 
     return false;
@@ -72,6 +73,11 @@ public static class LanceOverrideExtensions {
   }
 
   public static UnitSpawnPointOverride GetUnitToCopy(this LanceOverride lanceOverride) {
+    if (lanceOverride.unitSpawnPointOverrideList.Count <= 0) {
+      MissionControl.Main.LogDebug("[GetUnitToCopy] No UnitSpawnPointOverrides in lance. No unit to copy");
+      return null;
+    }
+
     UnitSpawnPointOverride originalUnitSpawnPointOverride = lanceOverride.GetAnyTaggedLanceMember();
     // If there are only manual units - then select one at random from the Lance. Previously this selected copies of the first unit in the lance
     if (originalUnitSpawnPointOverride == null) {
@@ -86,6 +92,11 @@ public static class LanceOverrideExtensions {
   }
 
   public static UnitSpawnPointOverride GetRandomNonEmptyUnit(this LanceOverride lanceOverride) {
+    if (lanceOverride.unitSpawnPointOverrideList.Count <= 0) {
+      MissionControl.Main.LogDebug("[GetRandomNonEmptyUnit] No UnitSpawnPointOverrides in lance. No unit to copy");
+      return null;
+    }
+
     for (int i = 0; i < 10; i++) {
       UnitSpawnPointOverride unitOverride = lanceOverride.unitSpawnPointOverrideList.GetRandom();
       if (!unitOverride.IsUnitDefNone) {
