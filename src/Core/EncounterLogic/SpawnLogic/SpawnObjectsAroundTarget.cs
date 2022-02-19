@@ -89,10 +89,17 @@ namespace MissionControl.Logic {
 
       for (int i = 0; i < objectGos.Count; i++) {
         GameObject objectGo = objectGos[i];
+        if (objectGo == null) {
+          Main.Logger.LogDebug($"[SpawnObjectsAroundTarget] Found a null object. Skipping.'");
+          continue;
+        }
+        Main.Logger.LogDebug($"[SpawnObjectsAroundTarget] Attempting for '{objectGo.name}'");
 
-        string objectKey = objectKeys[i];
+
+        string objectKey = (objectKeys.Count > i) ? objectKeys[i] : "INVALID";
+        Main.Logger.LogDebug($"[SpawnObjectsAroundTarget] With key '{objectKey}'");
         string orientationTargetKey = orientationTargetKeys[i];
-        Main.Logger.LogDebug($"[SpawnObjectsAroundTarget] Attempting for '{objectGo.name}' with key '{objectKey}'");
+        Main.Logger.LogDebug($"[SpawnObjectsAroundTarget] And orientation target '{orientationTargetKey}'");
 
         if (!orientationTargets.ContainsKey(orientationTargetKey)) {
           Main.Logger.LogError($"[SpawnObjectsAroundTarget] Orientation target with key '{orientationTargetKey}' does not exist. This is required for this spawner to work correctly.");
