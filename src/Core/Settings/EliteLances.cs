@@ -20,11 +20,11 @@ namespace MissionControl.Config {
       if (MissionControl.Instance.IsSkirmish()) return false;
       bool useEliteLances = false;
 
-      if (useEliteLances && Conditions.Contains("IsEnemy")) {
+      if (Conditions.Contains("IsEnemy")) {
         useEliteLances = UnityGameInstance.Instance.Game.Simulation.IsFactionEnemy(faction.FactionValue);
       }
 
-      if (useEliteLances && Conditions.Contains("IsAlly")) {
+      if (Conditions.Contains("IsAlly")) {
         useEliteLances = UnityGameInstance.Instance.Game.Simulation.IsFactionAlly(faction.FactionValue);
       }
 
