@@ -64,6 +64,7 @@ namespace MissionControl.Logic {
             // This allows the LanceOverride to allocated the correct LanceDef units to the right UnitOverride slots
             UnitSpawnPointOverride emptyUnitSpawnPointOverride = new UnitSpawnPointOverride();
             emptyUnitSpawnPointOverride.unitDefId = UnitSpawnPointOverride.UseLance;
+            emptyUnitSpawnPointOverride.pilotDefId = UnitSpawnPointOverride.UseLance;
 
             for (int i = currentLanceSize; i < newLanceSize; i++) {
               Main.LogDebug($"[AddExtraLanceMembersIndividualSecondPass] Adding UnitOverride '{i + 1}' to LanceOverride");
