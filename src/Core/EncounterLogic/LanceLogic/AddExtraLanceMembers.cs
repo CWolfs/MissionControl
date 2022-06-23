@@ -162,6 +162,7 @@ namespace MissionControl.Logic {
     private void AutofillWithEmptyUnitOverrideSlots(TeamOverride teamOverride, LanceOverride lanceOverride, int numberOfUnitsInLanceOverride, int intendedLanceSize) {
       UnitSpawnPointOverride emptyUnitSpawnPointOverride = new UnitSpawnPointOverride();
       emptyUnitSpawnPointOverride.unitDefId = UnitSpawnPointOverride.UseLance;
+      emptyUnitSpawnPointOverride.pilotDefId = UnitSpawnPointOverride.UseLance;
 
       for (int i = numberOfUnitsInLanceOverride; i < intendedLanceSize; i++) {
         Main.LogDebug($"[AddExtraLanceMembers] [{teamOverride.faction}] Non-autofill mode. No autofill, turret lance or no units to copy. Expanding lance size for position {i + 1} with a placeholder empty unit override.");
