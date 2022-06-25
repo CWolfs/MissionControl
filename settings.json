@@ -30,7 +30,7 @@
     "EnableForFlashpoints": true,
     "EnableForStory": false,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
-    "IsPrimaryObjectiveIn": ["SimpleBattle", "CaptureBase"],
+    "IsPrimaryObjectiveIn": ["SimpleBattle", "CaptureBase", "ThreeWayBattle"],
     "ExcludeFromAutocomplete": ["DefendBase", "FireMission"],
     "HideObjective": true,
     "ShowObjectiveOnLanceDetected": true,
