@@ -122,7 +122,7 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static OccupyRegionObjective CreateOccupyRegionObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string requiredLanceSpawnerGuid, string regionGameLogicGuid,
-    string objectName, string title, string progressFormat, string description, int numberOfUnitsToOccupy, int durationToOccupy, bool useDropship, string[] requiredTagsOnUnit, string[] requiredTagsOnOpposingUnits) {
+    string objectName, string title, string progressFormat, string description, int numberOfUnitsToOccupy, int durationToOccupy, DurationType durationType, bool useDropship, string[] requiredTagsOnUnit, string[] requiredTagsOnOpposingUnits) {
       GameObject occupyRegionObjectiveGo = CreateGameObject(parent, objectName);
 
       OccupyRegionObjective occupyRegionObjective = occupyRegionObjectiveGo.AddComponent<OccupyRegionObjective>();
@@ -134,8 +134,8 @@ namespace MissionControl.EncounterFactories {
       lanceSpawnerRef.EncounterObjectGuid = requiredLanceSpawnerGuid;
       occupyRegionObjective.requiredLance = lanceSpawnerRef;
 
-      occupyRegionObjective.durationType = DurationType.AfterMoveComplete;
-      occupyRegionObjective.durationToOccupy = 1;
+      occupyRegionObjective.durationType = durationType;
+      occupyRegionObjective.durationToOccupy = durationToOccupy;
 
       occupyRegionObjective.numberOfUnitsToOccupy = numberOfUnitsToOccupy;
 
