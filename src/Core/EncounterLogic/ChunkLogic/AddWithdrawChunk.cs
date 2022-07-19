@@ -51,6 +51,7 @@ namespace MissionControl.Logic {
           "The objective for the player to withdraw and complete, or withdraw, the mission",
           0,
           0,
+          DurationType.AfterMoveComplete,
           useDropship,
           new string[] { MissionControl.Instance.IsCustomContractType ? "Player 1" : "player_unit" },
           new string[] { "opposing_unit" }
