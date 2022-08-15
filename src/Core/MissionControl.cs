@@ -29,6 +29,8 @@ namespace MissionControl {
       }
     }
 
+    public Metrics Metrics { get; set; }
+
     public Contract CurrentContract { get; set; }
     public string ContractMapName { get; private set; }
     public string CurrentContractType { get; private set; } = "INVALID_UNSET";
@@ -185,6 +187,7 @@ namespace MissionControl {
     public void SetContract(Contract contract) {
       Main.Logger.Log($"[MissionControl] Setting contract '{contract.Name}' for contract type '{contract.ContractTypeValue.Name}'");
       CurrentContract = contract;
+      Metrics = new Metrics();
 
       if (AllowMissionControl()) {
         Main.Logger.Log($"[MissionControl] Mission Control IS allowed to run. ");

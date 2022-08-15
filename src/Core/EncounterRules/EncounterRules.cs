@@ -300,6 +300,8 @@ namespace MissionControl.Rules {
         bool showObjectiveOnLanceDetected = Main.Settings.AdditionalLanceSettings.ShowObjectiveOnLanceDetected;
         int objectivePriority = -10;
 
+        MissionControl.Instance.Metrics.NumberOfTargetAdditionalLances = numberOfAdditionalEnemyLances;
+
         for (int i = 1; i <= numberOfAdditionalEnemyLances; i++) {
           if (MissionControl.Instance.CurrentContractType == "ArenaSkirmish") {
             new AddPlayer2LanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
@@ -338,6 +340,8 @@ namespace MissionControl.Rules {
           manuallySpecifiedLances = Main.Settings.ActiveContractSettings.GetList<string>(ContractSettingsOverrides.AdditionalLances_AllyLancesOverride);
           Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lances provided are '{string.Join(",", manuallySpecifiedLances)}'.");
         }
+
+        MissionControl.Instance.Metrics.NumberOfEmployerAdditionalLances = numberOfAdditionalAllyLances;
 
         for (int i = 1; i <= numberOfAdditionalAllyLances; i++) {
           if (manuallySpecifiedLances.Count >= i) {
