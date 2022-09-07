@@ -49,13 +49,16 @@ namespace MissionControl.ContractTypeBuilders {
     private void BuildConditional(JObject conditionalObject) {
       string type = conditionalObject["Type"].ToString();
       string contractTypeKey = (this.contractTypeBuilder != null) ? contractTypeBuilder.ContractTypeKey : "Result";
+      // v2 upgrade path: Remove 'Conditional' from type of Conditionals.
+      if (type.EndsWith("Conditional")) type = type.Substring(0, type.LastIndexOf("Conditional"));
+
 
       switch (type) {
-        case "AlwaysTrueConditional": BuildAlwaysTrueConditional(conditionalObject); break;
-        case "ObjectiveStatusConditional": BuildObjectiveStatusConditional(conditionalObject); break;
-        case "ObjectiveStatusesConditional": BuildObjectStatusesConditional(conditionalObject); break;
-        case "EncounterObjectMatchesStateConditional": BuildEncounterObjectMatchesStateConditional(conditionalObject); break;
-        case "DialogueMatchesConditional": BuildDialogueMatchesConditional(conditionalObject); break;
+        case "AlwaysTrue": BuildAlwaysTrueConditional(conditionalObject); break;
+        case "ObjectiveStatus": BuildObjectiveStatusConditional(conditionalObject); break;
+        case "ObjectiveStatuses": BuildObjectStatusesConditional(conditionalObject); break;
+        case "EncounterObjectMatchesStatel": BuildEncounterObjectMatchesStateConditional(conditionalObject); break;
+        case "DialogueMatches": BuildDialogueMatchesConditional(conditionalObject); break;
         default:
           Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeKey}] No valid conditional was built for '{type}'");
           break;
