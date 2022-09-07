@@ -35,6 +35,14 @@ namespace MissionControl.ContractTypeBuilders {
     private void BuildResult(JObject result) {
       string type = result["Type"].ToString();
 
+      // update deprecated result types
+      switch (type) {
+        case "SetLanceEvasionTicksByTag": type = "SetUnitEvasionTicksByTag"; break;
+        case "ModifyLanceEvasionTicksByTag": type = "ModifyUnitEvasionTicksByTag"; break;
+      }
+      // end update
+
+
       switch (type) {
         case "ExecuteGameLogic": BuildExecuteGameLogicResult(result); break;
         case "Dialogue": BuildDialogueGameLogicResult(result); break;
@@ -47,8 +55,8 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetUnitsInRegionToBeTaggedObjectiveTargets": BuildSetUnitsInRegionToBeTaggedObjectiveTargetsResult(result); break;
         case "CompleteObjective": BuildCompleteObjectiveResult(result); break;
         case "SetTemporaryUnitPhaseInitiativeByTag": BuildSetTemporaryUnitPhaseInitiativeByTagResult(result); break;
-        case "SetLanceEvasionTicksByTag": BuildSetLanceEvasionTicksByTagResult(result); break;
-        case "ModifyLanceEvasionTicksByTag": BuildModifyLanceEvasionTicksByTagResult(result); break;
+        case "SetUnitEvasionTicksByTag": BuildSetUnitEvasionTicksByTagResult(result); break;
+        case "ModifyUnitEvasionTicksByTag": BuildModifyUnitEvasionTicksByTagResult(result); break;
         case "CameraFocus": BuildCameraFocusResult(result); break;
         case "DestroyBuildingsAtLanceSpawns": BuildDestroyBuildingsAtLanceSpawnsResult(result); break;
         case "Delay": BuildDelayResult(result); break;
@@ -246,24 +254,24 @@ namespace MissionControl.ContractTypeBuilders {
       results.Add(result);
     }
 
-    private void BuildSetLanceEvasionTicksByTagResult(JObject resultObject) {
-      Main.LogDebug("[BuildSetLanceEvasionTicksByTagResult] Building 'SetLanceEvasionTicksByTag' result");
+    private void BuildSetUnitEvasionTicksByTagResult(JObject resultObject) {
+      Main.LogDebug("[BuildSetUnitEvasionTicksByTagResult] Building 'SetUnitEvasionTicksByTag' result");
       int amount = (int)resultObject["Amount"];
       string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
 
-      SetLanceEvasionTicksByTagResult result = ScriptableObject.CreateInstance<SetLanceEvasionTicksByTagResult>();
+      SetUnitEvasionTicksByTagResult result = ScriptableObject.CreateInstance<SetUnitEvasionTicksByTagResult>();
       result.Amount = amount;
       result.Tags = tags;
 
       results.Add(result);
     }
 
-    private void BuildModifyLanceEvasionTicksByTagResult(JObject resultObject) {
-      Main.LogDebug("[BuildModifyLanceEvasionTicksByTagResult] Building 'ModifyLanceEvasionTicksByTag' result");
+    private void BuildModifyUnitEvasionTicksByTagResult(JObject resultObject) {
+      Main.LogDebug("[BuildModifyUnitEvasionTicksByTagResult] Building 'ModifyUnitEvasionTicksByTag' result");
       int amount = (int)resultObject["Amount"];
       string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
 
-      ModifyLanceEvasionTicksByTagResult result = ScriptableObject.CreateInstance<ModifyLanceEvasionTicksByTagResult>();
+      ModifyUnitEvasionTicksByTagResult result = ScriptableObject.CreateInstance<ModifyUnitEvasionTicksByTagResult>();
       result.Amount = amount;
       result.Tags = tags;
 

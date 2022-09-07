@@ -749,7 +749,7 @@
           "Tags": ["turrets_1b"]
         },
         {
-          "Type": "ModifyLanceEvasionTicksByTag", // Reduce evasion to indicate a trap
+          "Type": "ModifyUnitEvasionTicksByTag", // Reduce evasion to indicate a trap
           "Amount": -2,
           "Tags": ["Player 1"]
         }
