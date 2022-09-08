@@ -125,7 +125,7 @@ namespace MissionControl.ContractTypeBuilders {
     private void BuildSetStatusAtRandomResult(JObject resultObject) {
       Main.LogDebug("[BuildSetStatusAtRandomResult] Building 'SetStatusAtRandom' result");
       List<string> encounterGuids = (resultObject.ContainsKey("EncounterGuids")) ? resultObject["EncounterGuids"].ToObject<List<string>>() : null;
-      string status = null;
+      string status = "Active";
 
       if (resultObject.ContainsKey("Status")) {
         status = resultObject["Status"].ToString();
