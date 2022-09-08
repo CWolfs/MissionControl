@@ -32,22 +32,26 @@ namespace MissionControl.ContractTypeBuilders {
       return results;
     }
 
+    private void WarnOfDeprecation(string resultName) {
+      Main.Logger.LogWarning($"[ResultsBuilder] DEPRECATION WARNING: Result {resultName} is deprecated. Read the changelog or documentation for updated usage. THIS RESULT TYPE WILL STOP WORKING IN A FUTURE RELEASE.");
+    }
+
     private void BuildResult(JObject result) {
       string type = result["Type"].ToString();
 
       // update deprecated result types
       switch (type) {
-        case "SetLanceEvasionTicksByTag": type = "SetUnitEvasionTicksByTag"; break;
-        case "ModifyLanceEvasionTicksByTag": type = "ModifyUnitEvasionTicksByTag"; break;
+        case "SetLanceEvasionTicksByTag": WarnOfDeprecation(type); type = "SetUnitEvasionTicksByTag"; break; // DEPRECATION VERSION: 1
+        case "ModifyLanceEvasionTicksByTag": WarnOfDeprecation(type); type = "ModifyUnitEvasionTicksByTag"; break; // DEPRECATION VERSION: 1
+        case "SetStateAtRandom": WarnOfDeprecation(type); type = "SetStatusAtRandom"; break; // DEPRECATION VERSION: 1
       }
       // end update
-
 
       switch (type) {
         case "ExecuteGameLogic": BuildExecuteGameLogicResult(result); break;
         case "Dialogue": BuildDialogueGameLogicResult(result); break;
         case "SetState": BuildSetStateResult(result); break;
-        case "SetStateAtRandom": BuildSetStateAtRandomResult(result); break;
+        case "SetStatusAtRandom": BuildSetStatusAtRandomResult(result); break;
         case "TagUnitsInRegion": BuildTagUnitsInRegion(result); break;
         case "SetTeamByTag": BuildSetTeamByTag(result); break;
         case "SetTeamByLanceSpawnerGuid": BuildSetTeamByLanceSpawnerGuid(result); break;
@@ -118,20 +122,27 @@ namespace MissionControl.ContractTypeBuilders {
       }
     }
 
-    private void BuildSetStateAtRandomResult(JObject resultObject) {
-      Main.LogDebug("[BuildSetStateAtRandomResult] Building 'SetStateAtRandom' result");
+    private void BuildSetStatusAtRandomResult(JObject resultObject) {
+      Main.LogDebug("[BuildSetStatusAtRandomResult] Building 'SetStatusAtRandom' result");
       List<string> encounterGuids = (resultObject.ContainsKey("EncounterGuids")) ? resultObject["EncounterGuids"].ToObject<List<string>>() : null;
-      string state = (resultObject.ContainsKey("State")) ? resultObject["State"].ToString() : null;
-      EncounterObjectStatus stateType = (EncounterObjectStatus)Enum.Parse(typeof(EncounterObjectStatus), state);
+      string status = null;
+
+      if (resultObject.ContainsKey("Status")) {
+        status = resultObject["Status"].ToString();
+      } else if (resultObject.ContainsKey("State")) {
+        status = resultObject["State"].ToString();
+      }
+
+      EncounterObjectStatus statusType = (EncounterObjectStatus)Enum.Parse(typeof(EncounterObjectStatus), status);
 
       if (encounterGuids != null) {
-        SetStateAtRandomResult result = ScriptableObject.CreateInstance<SetStateAtRandomResult>();
+        SetStatusAtRandomResult result = ScriptableObject.CreateInstance<SetStatusAtRandomResult>();
         result.EncounterGuids = encounterGuids;
-        result.State = stateType;
+        result.Status = statusType;
 
         results.Add(result);
       } else {
-        Main.Logger.LogError("[BuildSetStateAtRandomResult] You have not provided an 'EncounterGuids' to SetState on");
+        Main.Logger.LogError("[BuildSetStatusAtRandomResult] You have not provided an 'EncounterGuids' to SetStatus on");
       }
     }
 
