@@ -44,13 +44,14 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetLanceEvasionTicksByTag": WarnOfDeprecation(type); type = "SetUnitEvasionTicksByTag"; break; // DEPRECATION VERSION: 1
         case "ModifyLanceEvasionTicksByTag": WarnOfDeprecation(type); type = "ModifyUnitEvasionTicksByTag"; break; // DEPRECATION VERSION: 1
         case "SetStateAtRandom": WarnOfDeprecation(type); type = "SetStatusAtRandom"; break; // DEPRECATION VERSION: 1
+        case "SetState": WarnOfDeprecation(type); type = "SetStatus"; break; // DEPRECATION VERSION: 1
       }
       // end update
 
       switch (type) {
         case "ExecuteGameLogic": BuildExecuteGameLogicResult(result); break;
         case "Dialogue": BuildDialogueGameLogicResult(result); break;
-        case "SetState": BuildSetStateResult(result); break;
+        case "SetStatus": BuildSetStatusResult(result); break;
         case "SetStatusAtRandom": BuildSetStatusAtRandomResult(result); break;
         case "TagUnitsInRegion": BuildTagUnitsInRegion(result); break;
         case "SetTeamByTag": BuildSetTeamByTag(result); break;
@@ -105,20 +106,27 @@ namespace MissionControl.ContractTypeBuilders {
       results.Add(result);
     }
 
-    private void BuildSetStateResult(JObject resultObject) {
-      Main.LogDebug("[BuildSetStateResult] Building 'SetState' result");
+    private void BuildSetStatusResult(JObject resultObject) {
+      Main.LogDebug("[BuildSetStatusResult] Building 'SetStatus' result");
       string encounterGuid = (resultObject.ContainsKey("EncounterGuid")) ? resultObject["EncounterGuid"].ToString() : null;
-      string state = (resultObject.ContainsKey("State")) ? resultObject["State"].ToString() : null;
-      EncounterObjectStatus stateType = (EncounterObjectStatus)Enum.Parse(typeof(EncounterObjectStatus), state);
+
+      string status = "Active";
+      if (resultObject.ContainsKey("Status")) {
+        status = resultObject["Status"].ToString();
+      } else if (resultObject.ContainsKey("State")) {
+        status = resultObject["State"].ToString();
+      }
+
+      EncounterObjectStatus statusType = (EncounterObjectStatus)Enum.Parse(typeof(EncounterObjectStatus), status);
 
       if (encounterGuid != null) {
-        SetStateResult result = ScriptableObject.CreateInstance<SetStateResult>();
+        SetStatusResult result = ScriptableObject.CreateInstance<SetStatusResult>();
         result.EncounterGuid = encounterGuid;
-        result.State = stateType;
+        result.Status = statusType;
 
         results.Add(result);
       } else {
-        Main.Logger.LogError("[BuildSetStateResult] You have not provided an 'EncounterGuid' to SetState on");
+        Main.Logger.LogError("[BuildSetStatusResult] You have not provided an 'EncounterGuid' to SetStatus on");
       }
     }
 
