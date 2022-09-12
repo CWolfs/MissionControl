@@ -195,7 +195,7 @@ namespace MissionControl.ContractTypeBuilders {
       string team = resultObject["Team"].ToString();
       string lanceSpawnerGuid = resultObject["LanceSpawnerGuid"].ToString();
       bool alertLance = resultObject.ContainsKey("AlertLance") ? (bool)resultObject["AlertLance"] : true;
-      string[] applyTags = resultObject.ContainsKey("ApplyTags") ? ((JArray)resultObject["Tags"]).ToObject<string[]>() : null;
+      string[] applyTags = resultObject.ContainsKey("ApplyTags") ? ((JArray)resultObject["ApplyTags"]).ToObject<string[]>() : null;
 
       SetTeamByLanceSpawnerGuid result = ScriptableObject.CreateInstance<SetTeamByLanceSpawnerGuid>();
       result.Team = team;
