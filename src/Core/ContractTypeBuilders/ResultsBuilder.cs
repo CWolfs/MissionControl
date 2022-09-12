@@ -179,7 +179,7 @@ namespace MissionControl.ContractTypeBuilders {
       string team = resultObject["Team"].ToString();
       string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
       bool alertLance = resultObject.ContainsKey("AlertLance") ? (bool)resultObject["AlertLance"] : true;
-      string[] applyTags = resultObject.ContainsKey("ApplyTags") ? ((JArray)resultObject["Tags"]).ToObject<string[]>() : null;
+      string[] applyTags = resultObject.ContainsKey("ApplyTags") ? ((JArray)resultObject["ApplyTags"]).ToObject<string[]>() : null;
 
       SetTeamByTagResult result = ScriptableObject.CreateInstance<SetTeamByTagResult>();
       result.Team = team;
