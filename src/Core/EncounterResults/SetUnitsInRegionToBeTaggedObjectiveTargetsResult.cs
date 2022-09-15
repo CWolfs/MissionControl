@@ -53,7 +53,7 @@ namespace MissionControl.Result {
           }
         }
       } else {
-        Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Tagging '{Type}' Not Yet Supported. Use 'TagUnitsInRegion'");
+        Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Tagging '{Type}' Not Yet Supported.");
       }
     }
 

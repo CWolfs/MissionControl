@@ -923,6 +923,7 @@
           */
           "Type": "Delay",
           "Name": "Activate 3a Turrets",
+          "Description": "If the 'Destroy Invading Lance' objective is completed before the turrets activate then immediately activate the enemy turret event for Phase 2 OR just end the game. There's no need to have friendly turrets activate then.",
           "Rounds": 2,
           "SkipIf": {
             "TriggerOn": "OnObjectiveUpdated",
