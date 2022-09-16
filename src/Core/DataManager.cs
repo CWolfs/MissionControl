@@ -239,6 +239,13 @@ namespace MissionControl {
       AvailableCustomContractTypes[contractTypeValue.Name].Add(contractTypeValue);
     }
 
+    public bool IsCustomContractType(string contractTypeName) {
+      foreach (string name in AvailableCustomContractTypes.Keys) {
+        if (name == contractTypeName) return true;
+      }
+      return false;
+    }
+
     // *********************
     // ***** MODTEK V1 *****
     // *********************
