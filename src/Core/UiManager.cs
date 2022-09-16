@@ -176,24 +176,26 @@ namespace MissionControl {
 
       GameObject creditsPanelPrefab = UIPool.transform.Find("MCUI_Contract_Type_Credits_Panel").gameObject;
       VerticalLayoutGroup layoutGroup = creditsPanelPrefab.AddComponent<VerticalLayoutGroup>();
-      layoutGroup.padding.right = 12;
+      layoutGroup.padding.top = 2;
+      layoutGroup.padding.right = 14;
+      layoutGroup.padding.bottom = 4;
 
       GameObject contractTypeTextGo = creditsPanelPrefab.transform.Find("ContractTypeName").gameObject;
       TextMeshProUGUI contractTypeText = contractTypeTextGo.AddComponent<TextMeshProUGUI>();
       contractTypeText.font = font;
-      contractTypeText.fontSize = 36;
+      contractTypeText.fontSize = 32;
 
       // Authors
       GameObject authorTextGo = GameObject.Instantiate(contractTypeTextGo, creditsPanelPrefab.transform, false);
       authorTextGo.name = "Author";
       TextMeshProUGUI authorText = authorTextGo.GetComponent<TextMeshProUGUI>();
-      authorText.fontSize = 28;
+      authorText.fontSize = 24;
 
       // Contributors
       GameObject contributorsTextGo = GameObject.Instantiate(authorTextGo, creditsPanelPrefab.transform, false);
       contributorsTextGo.name = "Contributors";
       TextMeshProUGUI contributorsText = contributorsTextGo.GetComponent<TextMeshProUGUI>();
-      contributorsText.fontSize = 28;
+      contributorsText.fontSize = 14;
 
       // Created with the Designer
       GameObject designedWithTextGo = GameObject.Instantiate(contributorsTextGo, creditsPanelPrefab.transform, false);
@@ -255,7 +257,7 @@ namespace MissionControl {
       // Set text and alignment for Designed With
       GameObject designedWithTextGo = creditsGo.FindRecursive("DesignedWith");
       TextMeshProUGUI designedWithText = designedWithTextGo.GetComponent<TextMeshProUGUI>();
-      designedWithText.text = "Designed with CWolf's MC Designer";
+      designedWithText.text = "Designed with CWolf's Designer";
       designedWithText.alignment = TextAlignmentOptions.TopRight;
 
       UnityGameInstance.Instance.StartCoroutine(FinishCreateContractTypeCreditsPrefab(creditsTransform, contractTypeNameTextGo, authorTextGo, contributorsTextGo, designedWithTextGo));
@@ -266,20 +268,23 @@ namespace MissionControl {
 
       VerticalLayoutGroup verticalLayout = creditsTransform.gameObject.GetComponent<VerticalLayoutGroup>();
 
-      float contractTypeNameTextSizeDeltaX = contractTypeNameTextGo.GetComponent<TextMeshProUGUI>().bounds.size.x;
-      float authorTextSizeDeltaX = authorTextGo.GetComponent<TextMeshProUGUI>().bounds.size.x;
+      float contractTypeNameTextSizeDeltaX = contractTypeNameTextGo.GetComponent<TextMeshProUGUI>().textBounds.size.x;
+      float authorTextSizeDeltaX = authorTextGo.GetComponent<TextMeshProUGUI>().textBounds.size.x;
 
       float contributorsTextSizeDeltaX = 0;
       if (contributorsTextGo != null) {
-        contributorsTextSizeDeltaX = contributorsTextGo.GetComponent<TextMeshProUGUI>().bounds.size.x;
+        contributorsTextSizeDeltaX = contributorsTextGo.GetComponent<TextMeshProUGUI>().textBounds.size.x;
       }
 
-      float designedWithTextSizeDeltaX = designedWithTextGo.GetComponent<TextMeshProUGUI>().bounds.size.x;
+      float designedWithTextSizeDeltaX = designedWithTextGo.GetComponent<TextMeshProUGUI>().textBounds.size.x;
 
       // Update width and height of the container
       float[] sizeDeltaX = new float[] { contractTypeNameTextSizeDeltaX, authorTextSizeDeltaX, contributorsTextSizeDeltaX, designedWithTextSizeDeltaX };
       float largestX = sizeDeltaX.Max();
-      creditsTransform.sizeDelta = new Vector2(largestX + verticalLayout.padding.right, 110f);
+      float largestY = contributorsTextGo == null ? 100f : 120f;
+      float padding = verticalLayout.padding.right * 2f;
+
+      creditsTransform.sizeDelta = new Vector2(largestX + padding, largestY);
     }
   }
 }
