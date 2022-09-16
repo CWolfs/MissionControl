@@ -1,5 +1,11 @@
 {
   "Key": "SoloDuel", // Links to the ContractType Name
+  "Metadata": {
+    "DesignerVersion": "1.0",
+    "MinCompatibleMCVersion": "1.4.2",
+    "ContractTypeVersion": "0",
+    "Author": "CWolf"
+  },
   "Chunks": [
     {
       "Name": "Chunk_PlayerLance",

@@ -47,6 +47,7 @@ namespace MissionControl {
 
     public Dictionary<string, Dictionary<string, JObject>> AvailableCustomContractTypeBuilds { get; set; } = new Dictionary<string, Dictionary<string, JObject>>();
     private Dictionary<string, List<ContractTypeValue>> AvailableCustomContractTypes = new Dictionary<string, List<ContractTypeValue>>();
+    public Dictionary<string, ContractTypeMetadata> AvailableContractTypeMetadata = new Dictionary<string, ContractTypeMetadata>();
 
     private Dictionary<string, Dictionary<string, List<string>>> Dialogue = new Dictionary<string, Dictionary<string, List<string>>>();
 
@@ -160,6 +161,15 @@ namespace MissionControl {
           JObject contractTypeCommonBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildCommonSource, serialiserSettings);
           string contractTypeName = (string)contractTypeCommonBuild["Key"];
           Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loading contract type build '{contractTypeName}'");
+
+          JObject metadataObject = contractTypeCommonBuild.ContainsKey("Metadata") ? (JObject)contractTypeCommonBuild["Metadata"] : null;
+          ContractTypeMetadata metadata = metadataObject.ToObject<ContractTypeMetadata>();
+          AvailableContractTypeMetadata.Add(contractTypeName, metadata);
+          if (metadata == null) {
+            Main.Logger.LogError($"[LICENSE VIOLATION] !!!! CONTRACT TYPE '{contractTypeName}' HAS NO METADATA. THIS IS INVALID AND VIOLATES MISSION CONTROLS LICENSE! ALL CONTRACT TYPES SHOULD CLEARLY DISPLAY METADATA INCLUDING AUTHORS AND CONTRIBUTORS !!!!");
+          } else {
+            Main.Logger.Log($"[DataManager] Loaded metadata for '{contractTypeName}'");
+          }
 
           Dictionary<string, JObject> contractTypeMapBuilds = new Dictionary<string, JObject>();
           AvailableCustomContractTypeBuilds.Add(contractTypeCommonBuild["Key"].ToString(), contractTypeMapBuilds);

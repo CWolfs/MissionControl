@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
+using System;
+using System.Linq;
 using System.Collections;
 
 using TMPro;
@@ -10,8 +13,10 @@ using Harmony;
 using BattleTech;
 using BattleTech.UI;
 using BattleTech.Save;
+using BattleTech.UI.TMProWrapper;
 
 using MissionControl.Patches;
+using MissionControl.Data;
 
 namespace MissionControl {
   public class UiManager {
@@ -23,9 +28,20 @@ namespace MissionControl {
       }
     }
 
+    public GameObject UIPool { get; set; }
+
     public bool ClickedQuickSkirmish { get; set; } = false;
     public bool ReadyToLoadQuickSkirmish { get; set; } = false;
     public bool ShouldPatchMainMenu { get; set; } = true;
+
+    public bool WaitingToCreateContractTypeCredits { get; set; } = false;
+
+    public void Init() {
+      GameObject mcUIPool = new GameObject("MCUIPool");
+      mcUIPool.transform.parent = GameObject.Find("UIManager").transform;
+      GameObject.DontDestroyOnLoad(mcUIPool);
+      UIPool = mcUIPool;
+    }
 
     public void SetupQuickSkirmishMenu() {
       GameObject mainMenuScreenGo = GameObject.Find("uixPrfPanl_mainMenu-Screen_V3(Clone)");
@@ -124,6 +140,146 @@ namespace MissionControl {
       GenericPopupBuilder.Create(GenericPopupType.Warning,
         $"A new version of Mission Control is available ({latestVersion}). You have {currentVersion}. (You can disable this warning in the settings.json)")
         .AddButton("OK", null, true, null).Render();
+    }
+
+    public bool HasUI(string prefabName) {
+      if (UIPool.transform.Find(prefabName) != null) return true;
+      return false;
+    }
+
+    public void BuildContractTypeCreditsPrefab(GameObject widget) {
+      Main.LogDebug("[UiManager.BuildContractTypeCredits] About to build credits prefab");
+
+      GameObject panelGo = widget;
+      GameObject creditsPanelPrefab = GameObject.Instantiate(panelGo, UIPool.transform, false);
+      creditsPanelPrefab.name = "MCUI_Contract_Type_Credits_Panel";
+      creditsPanelPrefab.SetActive(false);
+
+      MonoBehaviour.Destroy(creditsPanelPrefab.GetComponent<HorizontalLayoutGroup>());
+
+      // Delete unrequired Gos and components
+      GameObject.Destroy(creditsPanelPrefab.transform.Find("loadingSpinner").gameObject);
+      GameObject.Destroy(creditsPanelPrefab.transform.Find("tipHeader").gameObject);
+      GameObject.Destroy(creditsPanelPrefab.GetComponent<LoadingSpinnerAndTip_Widget>());
+
+      GameObject messageTextGo = creditsPanelPrefab.transform.Find("message_text").gameObject;
+      messageTextGo.name = "ContractTypeName";
+      LocalizableText messageText = messageTextGo.GetComponent<LocalizableText>();
+      TMP_FontAsset font = messageText.font;
+      MonoBehaviour.Destroy(messageText);
+
+      UnityGameInstance.Instance.StartCoroutine(FinishBuildContractTypeCreditsPrefab(font));
+    }
+
+    IEnumerator FinishBuildContractTypeCreditsPrefab(TMP_FontAsset font) {
+      yield return new WaitForEndOfFrame();
+
+      GameObject creditsPanelPrefab = UIPool.transform.Find("MCUI_Contract_Type_Credits_Panel").gameObject;
+      VerticalLayoutGroup layoutGroup = creditsPanelPrefab.AddComponent<VerticalLayoutGroup>();
+      layoutGroup.padding.right = 12;
+
+      GameObject contractTypeTextGo = creditsPanelPrefab.transform.Find("ContractTypeName").gameObject;
+      TextMeshProUGUI contractTypeText = contractTypeTextGo.AddComponent<TextMeshProUGUI>();
+      contractTypeText.font = font;
+      contractTypeText.fontSize = 36;
+
+      // Authors
+      GameObject authorTextGo = GameObject.Instantiate(contractTypeTextGo, creditsPanelPrefab.transform, false);
+      authorTextGo.name = "Author";
+      TextMeshProUGUI authorText = authorTextGo.GetComponent<TextMeshProUGUI>();
+      authorText.fontSize = 28;
+
+      // Contributors
+      GameObject contributorsTextGo = GameObject.Instantiate(authorTextGo, creditsPanelPrefab.transform, false);
+      contributorsTextGo.name = "Contributors";
+      TextMeshProUGUI contributorsText = contributorsTextGo.GetComponent<TextMeshProUGUI>();
+      contributorsText.fontSize = 28;
+
+      // Created with the Designer
+      GameObject designedWithTextGo = GameObject.Instantiate(contributorsTextGo, creditsPanelPrefab.transform, false);
+      designedWithTextGo.name = "DesignedWith";
+      TextMeshProUGUI designedWithText = designedWithTextGo.GetComponent<TextMeshProUGUI>();
+      designedWithText.fontSize = 14;
+    }
+
+    public GameObject CreatePrefab(string prefabName, Transform parent) {
+      if (HasUI(prefabName)) {
+        GameObject prefab = UIPool.transform.Find(prefabName).gameObject;
+        GameObject go = GameObject.Instantiate(prefab, parent, false);
+        go.name = go.name.Replace("(Clone)", "");
+        go.SetActive(true);
+        return go;
+      }
+
+      Main.Logger.LogError($"[UiManager.CreatePrefab] Prefab '{prefabName}' does not exist. It should be built first.");
+      return null;
+    }
+
+    public void CreateContractTypeCredits() {
+      ContractTypeMetadata metaddata = DataManager.Instance.AvailableContractTypeMetadata[MissionControl.Instance.CurrentContractType];
+      Transform parentGo = GameObject.Find("uixPrfPanl_combatMissionLoad-overlay_V2-MANAGED").transform;
+      GameObject creditsGo = CreatePrefab("MCUI_Contract_Type_Credits_Panel", parentGo.Find("Representation"));
+
+      // Resize container
+      RectTransform creditsTransform = ((RectTransform)creditsGo.transform);
+      Vector3 anchoredPos = ((RectTransform)creditsGo.transform).anchoredPosition;
+      creditsTransform.pivot = new Vector2(1, 1);
+      creditsTransform.anchoredPosition = new Vector2(1900f, anchoredPos.y);
+
+      // Set text and alignment for Contract Type Name
+      GameObject contractTypeNameTextGo = creditsGo.FindRecursive("ContractTypeName");
+      TextMeshProUGUI contractTypeNameText = contractTypeNameTextGo.GetComponent<TextMeshProUGUI>();
+      contractTypeNameText.text = MissionControl.Instance.CurrentContractTypeValue.FriendlyName;
+      contractTypeNameText.alignment = TextAlignmentOptions.TopRight;
+
+      RectTransform contractTypeNameTextTransform = contractTypeNameTextGo.GetComponent<RectTransform>();
+      float contractTypeNameTextSizeDeltaX = contractTypeNameTextTransform.sizeDelta.x;
+
+      // Set text and alignment for Author
+      GameObject authorTextGo = creditsGo.FindRecursive("Author");
+      TextMeshProUGUI authorText = authorTextGo.GetComponent<TextMeshProUGUI>();
+      authorText.text = $"Created by: {metaddata.Author}";
+      authorText.alignment = TextAlignmentOptions.TopRight;
+
+      // Set text and alignment for Contributors
+      GameObject contributorsTextGo = null;
+      if (metaddata.Contributors != null && metaddata.Contributors.Count > 0) {
+        contributorsTextGo = creditsGo.FindRecursive("Contributors");
+        TextMeshProUGUI contributorsText = contributorsTextGo.GetComponent<TextMeshProUGUI>();
+        contributorsText.text = $"Contributed: {String.Join(", ", metaddata.Contributors)}";
+        contributorsText.alignment = TextAlignmentOptions.TopRight;
+      } else {
+        GameObject.Destroy(creditsGo.FindRecursive("Contributors"));
+      }
+
+      // Set text and alignment for Designed With
+      GameObject designedWithTextGo = creditsGo.FindRecursive("DesignedWith");
+      TextMeshProUGUI designedWithText = designedWithTextGo.GetComponent<TextMeshProUGUI>();
+      designedWithText.text = "Designed with CWolf's MC Designer";
+      designedWithText.alignment = TextAlignmentOptions.TopRight;
+
+      UnityGameInstance.Instance.StartCoroutine(FinishCreateContractTypeCreditsPrefab(creditsTransform, contractTypeNameTextGo, authorTextGo, contributorsTextGo, designedWithTextGo));
+    }
+
+    IEnumerator FinishCreateContractTypeCreditsPrefab(RectTransform creditsTransform, GameObject contractTypeNameTextGo, GameObject authorTextGo, GameObject contributorsTextGo, GameObject designedWithTextGo) {
+      yield return new WaitForEndOfFrame();
+
+      VerticalLayoutGroup verticalLayout = creditsTransform.gameObject.GetComponent<VerticalLayoutGroup>();
+
+      float contractTypeNameTextSizeDeltaX = contractTypeNameTextGo.GetComponent<TextMeshProUGUI>().bounds.size.x;
+      float authorTextSizeDeltaX = authorTextGo.GetComponent<TextMeshProUGUI>().bounds.size.x;
+
+      float contributorsTextSizeDeltaX = 0;
+      if (contributorsTextGo != null) {
+        contributorsTextSizeDeltaX = contributorsTextGo.GetComponent<TextMeshProUGUI>().bounds.size.x;
+      }
+
+      float designedWithTextSizeDeltaX = designedWithTextGo.GetComponent<TextMeshProUGUI>().bounds.size.x;
+
+      // Update width and height of the container
+      float[] sizeDeltaX = new float[] { contractTypeNameTextSizeDeltaX, authorTextSizeDeltaX, contributorsTextSizeDeltaX, designedWithTextSizeDeltaX };
+      float largestX = sizeDeltaX.Max();
+      creditsTransform.sizeDelta = new Vector2(largestX + verticalLayout.padding.right, 110f);
     }
   }
 }
