@@ -166,7 +166,7 @@ namespace MissionControl {
           ContractTypeMetadata metadata = metadataObject.ToObject<ContractTypeMetadata>();
           AvailableContractTypeMetadata.Add(contractTypeName, metadata);
           if (metadata == null) {
-            Main.Logger.LogError($"[LICENSE VIOLATION] !!!! CONTRACT TYPE '{contractTypeName}' HAS NO METADATA. THIS IS INVALID AND VIOLATES MISSION CONTROLS LICENSE! ALL CONTRACT TYPES SHOULD CLEARLY DISPLAY METADATA INCLUDING AUTHORS AND CONTRIBUTORS !!!!");
+            Main.Logger.LogError($"[VIOLATION] !!!! CONTRACT TYPE '{contractTypeName}' HAS NO METADATA. THIS IS INVALID! ALL CONTRACT TYPES SHOULD CLEARLY DISPLAY METADATA INCLUDING AUTHORS AND CONTRIBUTORS !!!!");
           } else {
             Main.Logger.Log($"[DataManager] Loaded metadata for '{contractTypeName}'");
           }
@@ -187,6 +187,12 @@ namespace MissionControl {
             if (fileName == "common" || contractTypeMapBuild.ContainsKey("EncounterLayerId")) {
               string encounterLayerId = (fileName == "common") ? fileName : (string)contractTypeMapBuild["EncounterLayerId"];
               Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type map build '{contractTypeName}/{fileName}' with encounterLayerId '{encounterLayerId}'");
+
+              if (contractTypeMapBuilds.ContainsKey(encounterLayerId)) {
+                Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Duplicate contract type override build key of '{encounterLayerId}' in file '{file}' was detected. FATAL ERROR!!!");
+                return;
+              }
+
               contractTypeMapBuilds.Add(encounterLayerId, contractTypeMapBuild);
             } else {
               Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Unable to load contract type map build file '{fileName}' for contract type '{contractTypeName}' because no 'EncounterLayerId' exists");
