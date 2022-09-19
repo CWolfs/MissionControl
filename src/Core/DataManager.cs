@@ -171,8 +171,13 @@ namespace MissionControl {
             Main.Logger.Log($"[DataManager] Loaded metadata for '{contractTypeName}'");
           }
 
+          if (AvailableCustomContractTypeBuilds.ContainsKey(contractTypeName)) {
+            Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Duplicate contract type build key of '{contractTypeName}' was detected. FATAL ERROR!!!");
+            return;
+          }
+
           Dictionary<string, JObject> contractTypeMapBuilds = new Dictionary<string, JObject>();
-          AvailableCustomContractTypeBuilds.Add(contractTypeCommonBuild["Key"].ToString(), contractTypeMapBuilds);
+          AvailableCustomContractTypeBuilds.Add(contractTypeName, contractTypeMapBuilds);
 
           foreach (string file in Directory.GetFiles(directory, "*.json*", SearchOption.AllDirectories)) {
             string contractTypeBuildMapSource = File.ReadAllText(file);
