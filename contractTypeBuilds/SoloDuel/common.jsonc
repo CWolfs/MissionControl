@@ -76,53 +76,6 @@
       ]
     },
     {
-      "Name": "Chunk_EncounterBoundary",
-      "Type": "Chunk",
-      "SubType": "EncounterBoundary",
-      "Children": [
-        {
-          "Name": "EncounterBoundaryRect",
-          "Type": "Region",
-          "SubType": "Boundary",
-          "Description": ""
-        }
-      ]
-    },
-    {
-      "Name": "Chunk_DefaultDialogue",
-      "Type": "Chunk",
-      "SubType": "Dialogue",
-      "Children": [
-        {
-          "Name": "Dialogue_MissionStart",
-          "Type": "Dialogue",
-          "SubType": "Simple",
-          "Description": "",
-          "Guid": "73df8d9c-a274-48fd-98c9-2bd0d7860e83",
-          "ShowGizmoHint": false,
-          "ShowOnlyOnce": true
-        },
-        {
-          "Name": "Dialogue_MissionSuccess",
-          "Type": "Dialogue",
-          "SubType": "Simple",
-          "Description": "",
-          "Guid": "4011a4c3-cba2-4d22-b2b3-3b19a3297ab9",
-          "ShowGizmoHint": false,
-          "ShowOnlyOnce": true
-        },
-        {
-          "Name": "Dialogue_MissionFailure",
-          "Type": "Dialogue",
-          "SubType": "Simple",
-          "Description": "",
-          "Guid": "d3d33d95-9ed7-4686-b9eb-954ebe51cc02",
-          "ShowGizmoHint": false,
-          "ShowOnlyOnce": true
-        }
-      ]
-    },
-    {
       "Name": "Chunk_DuelTaunt",
       "Type": "Chunk",
       "SubType": "Dialogue",
@@ -168,6 +121,53 @@
           "SubType": "DisablePilotDeath",
           "Description": "",
           "DisableInjuries": false
+        }
+      ]
+    },
+    {
+      "Name": "Chunk_DefaultDialogue",
+      "Type": "Chunk",
+      "SubType": "Dialogue",
+      "Children": [
+        {
+          "Name": "Dialogue_MissionStart",
+          "Type": "Dialogue",
+          "SubType": "Simple",
+          "Description": "",
+          "Guid": "73df8d9c-a274-48fd-98c9-2bd0d7860e83",
+          "ShowGizmoHint": false,
+          "ShowOnlyOnce": true
+        },
+        {
+          "Name": "Dialogue_MissionSuccess",
+          "Type": "Dialogue",
+          "SubType": "Simple",
+          "Description": "",
+          "Guid": "4011a4c3-cba2-4d22-b2b3-3b19a3297ab9",
+          "ShowGizmoHint": false,
+          "ShowOnlyOnce": true
+        },
+        {
+          "Name": "Dialogue_MissionFailure",
+          "Type": "Dialogue",
+          "SubType": "Simple",
+          "Description": "",
+          "Guid": "d3d33d95-9ed7-4686-b9eb-954ebe51cc02",
+          "ShowGizmoHint": false,
+          "ShowOnlyOnce": true
+        }
+      ]
+    },
+    {
+      "Name": "Chunk_EncounterBoundary",
+      "Type": "Chunk",
+      "SubType": "EncounterBoundary",
+      "Children": [
+        {
+          "Name": "EncounterBoundaryRect",
+          "Type": "Region",
+          "SubType": "Boundary",
+          "Description": ""
         }
       ]
     }
