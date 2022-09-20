@@ -57,7 +57,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "AlwaysTrue": BuildAlwaysTrueConditional(conditionalObject); break;
         case "ObjectiveStatus": BuildObjectiveStatusConditional(conditionalObject); break;
         case "ObjectiveStatuses": BuildObjectStatusesConditional(conditionalObject); break;
-        case "EncounterObjectMatchesStatel": BuildEncounterObjectMatchesStateConditional(conditionalObject); break;
+        case "EncounterObjectMatchesState": BuildEncounterObjectMatchesStateConditional(conditionalObject); break;
         case "DialogueMatches": BuildDialogueMatchesConditional(conditionalObject); break;
         default:
           Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeKey}] No valid conditional was built for '{type}'");
