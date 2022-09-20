@@ -104,16 +104,21 @@ namespace MissionControl.Result {
         building.BuildingRep.IsTargetable = true;
       }
 
-      CombatHUDInWorldElementMgr inworldElementManager = GameObject.Find("uixPrfPanl_HUD(Clone)").GetComponent<CombatHUDInWorldElementMgr>();
-      AccessTools.Method(typeof(CombatHUDInWorldElementMgr), "AddTickMark").Invoke(inworldElementManager, new object[] { combatant });
-      AccessTools.Method(typeof(CombatHUDInWorldElementMgr), "AddInWorldActorElements").Invoke(inworldElementManager, new object[] { combatant });
+      GameObject hubPanel = GameObject.Find("uixPrfPanl_HUD(Clone)");
+      if (hubPanel != null) {
+        CombatHUDInWorldElementMgr inworldElementManager = GameObject.Find("uixPrfPanl_HUD(Clone)").GetComponent<CombatHUDInWorldElementMgr>();
+        AccessTools.Method(typeof(CombatHUDInWorldElementMgr), "AddTickMark").Invoke(inworldElementManager, new object[] { combatant });
+        AccessTools.Method(typeof(CombatHUDInWorldElementMgr), "AddInWorldActorElements").Invoke(inworldElementManager, new object[] { combatant });
 
-      if (Type == "Building") {
-        CombatHUDNumFlagHex numFlagEx = inworldElementManager.GetNumFlagForCombatant(combatant);
-        CombatHUDFloatieStackActor floatie = inworldElementManager.GetFloatieStackForCombatant(combatant);
+        if (Type == "Building") {
+          CombatHUDNumFlagHex numFlagEx = inworldElementManager.GetNumFlagForCombatant(combatant);
+          CombatHUDFloatieStackActor floatie = inworldElementManager.GetFloatieStackForCombatant(combatant);
 
-        numFlagEx.anchorPosition = CombatHUDInWorldScalingActorInfo.AnchorPosition.Feet;
-        floatie.anchorPosition = CombatHUDInWorldScalingActorInfo.AnchorPosition.Feet;
+          numFlagEx.anchorPosition = CombatHUDInWorldScalingActorInfo.AnchorPosition.Feet;
+          floatie.anchorPosition = CombatHUDInWorldScalingActorInfo.AnchorPosition.Feet;
+        }
+      } else {
+        Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] 'uixPrfPanl_HUD(Clone)' wasn't found so skipping logic for it.");
       }
     }
   }
