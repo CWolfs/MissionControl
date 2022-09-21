@@ -22,6 +22,7 @@ namespace MissionControl.EncounterFactories {
       lanceSpawnerGameLogic.teamDefinitionGuid = teamDefinitionGuid;
       lanceSpawnerGameLogic.spawnMethod = spawnMethod;
       lanceSpawnerGameLogic.spawnUnitsOnActivation = spawnUnitsOnActivation;
+      lanceSpawnerGameLogic.alertLanceOnSpawn = true;
 
       float x = 0;
       float z = 0;
