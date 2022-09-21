@@ -144,7 +144,7 @@
             "Player 1"
           ],
           "RequiredTagsOnOpposingUnit": [],
-          "NumberOfUnitsToOccupy": 1,
+          "NumberOfUnitsToOccupy": 2,
           "DurationToOccupy": 0,
           "DurationType": "AfterMoveComplete",
           "ProgressFormat": "with [unitsOccupyingSoFar]/[numberOfUnitsToOccupy] unit(s)",
