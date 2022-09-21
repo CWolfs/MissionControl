@@ -27,7 +27,10 @@
           "SpawnUnitTypeHint": "Mech",
           "PreciseSpawnPoints": false,
           "AlertLanceOnSpawn": false,
-          "DefaultDetectionRange": 200.0
+          "DefaultDetectionRange": 200.0,
+          "Tags": [
+            "Player 1"
+          ]
         }
       ]
     },
@@ -50,7 +53,7 @@
           "SpawnType": "Instant",
           "SpawnUnitTypeHint": "Mech",
           "PreciseSpawnPoints": false,
-          "AlertLanceOnSpawn": false,
+          "AlertLanceOnSpawn": true,
           "DefaultDetectionRange": 200.0,
           "AI": [
             {
