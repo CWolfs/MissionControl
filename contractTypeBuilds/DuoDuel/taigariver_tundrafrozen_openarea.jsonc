@@ -1,0 +1,223 @@
+{
+  "EncounterLayerId": "mapGeneral_taigaRiver_iTnd.1bb92acf-bf9e-4759-9509-478a13a2afdf",
+  "Metadata": {
+    "DesignerVersion": "1.0",
+    "MinCompatibleMCVersion": "1.4.2",
+    "ContractTypeVersion": "0",
+    "Author": "CWolf"
+  },
+  "Overrides": [
+    {
+      "Path": "$",
+      "Action": "ObjectMerge",
+      "Value": {
+        "Plots": [
+          {
+            "Name": "Hill Top",
+            "Variant": "Default"
+          },
+          {
+            "Name": "Valley Area",
+            "Variant": "Default"
+          },
+          {
+            "Name": "Ridge Factory",
+            "Variant": "Default"
+          },
+          {
+            "Name": "Ridge Factory",
+            "Variant": "PlotVariant1"
+          },
+          {
+            "Name": "River Base",
+            "Variant": "Default"
+          },
+          {
+            "Name": "River Base",
+            "Variant": "PlotVariant1"
+          },
+          {
+            "Name": "River Base Turrets",
+            "Variant": "Default"
+          },
+          {
+            "Name": "River Base Turrets",
+            "Variant": "PlotVariant1"
+          },
+          {
+            "Name": "Ridge Factory Turrets",
+            "Variant": "Default"
+          },
+          {
+            "Name": "Ridge Factory Turrets",
+            "Variant": "PlotVariant1"
+          },
+          {
+            "Name": "River Base Landing Zone",
+            "Variant": "Default"
+          },
+          {
+            "Name": "River Base Landing Zone",
+            "Variant": "PlotVariant1"
+          }
+        ]
+      }
+    },
+    {
+      "Path": "Chunks[?(@.Name == 'Chunk_PlayerLance')].Children[?(@.Name == 'Spawner_PlayerLance')]",
+      "Action": "ObjectMerge",
+      "Value": {
+        "Position": {
+          "Type": "World",
+          "Value": {
+            "x": -120.0,
+            "y": 157.078232,
+            "z": -706.6767
+          }
+        },
+        "Rotation": {
+          "Type": "World",
+          "Value": {
+            "x": 0.0,
+            "y": 300.0,
+            "z": 0.0
+          }
+        },
+        "SpawnPointPositions": {
+          "ec9d2280-ca9a-4d90-8a20-963d8a4c0a39": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "5df48a48-1840-49b0-84e9-126847053afa": {
+            "x": 23.9999981,
+            "y": 0.0,
+            "z": -5.722046E-06
+          }
+        },
+        "SpawnPointRotations": {
+          "5df48a48-1840-49b0-84e9-126847053afa": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "MountOn": {}
+      }
+    },
+    {
+      "Path": "Chunks[?(@.Name == 'Chunk_DestroyWholeLance')].Children[?(@.Name == 'Lance_Enemy_OpposingForce')]",
+      "Action": "ObjectMerge",
+      "Value": {
+        "Position": {
+          "Type": "World",
+          "Value": {
+            "x": -744.0,
+            "y": 0.0,
+            "z": -207.8461
+          }
+        },
+        "Rotation": {
+          "Type": "World",
+          "Value": {
+            "x": 0.0,
+            "y": 135.0,
+            "z": 0.0
+          }
+        },
+        "SpawnPointPositions": {
+          "6cd3107e-0f9d-4809-ab8c-fb30faf4cd80": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "14c58a13-96a6-4f91-a1e5-47b5d02b81d1": {
+            "x": 23.18222,
+            "y": 0.0,
+            "z": 6.21165848
+          }
+        },
+        "SpawnPointRotations": {
+          "14c58a13-96a6-4f91-a1e5-47b5d02b81d1": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "MountOn": {}
+      }
+    },
+    {
+      "Path": "Chunks[?(@.Name == 'Chunk_DuelTaunt')].Children[?(@.Name == 'Dialogue_DuelTaunt')]",
+      "Action": "ObjectMerge",
+      "Value": {
+        "PositionHint": {
+          "Type": "World",
+          "Value": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      }
+    },
+    {
+      "Path": "Chunks[?(@.Name == 'Chunk_DefaultDialogue')].Children[?(@.Name == 'Dialogue_MissionStart')]",
+      "Action": "ObjectMerge",
+      "Value": {
+        "PositionHint": {
+          "Type": "World",
+          "Value": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      }
+    },
+    {
+      "Path": "Chunks[?(@.Name == 'Chunk_DefaultDialogue')].Children[?(@.Name == 'Dialogue_MissionSuccess')]",
+      "Action": "ObjectMerge",
+      "Value": {
+        "PositionHint": {
+          "Type": "World",
+          "Value": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      }
+    },
+    {
+      "Path": "Chunks[?(@.Name == 'Chunk_DefaultDialogue')].Children[?(@.Name == 'Dialogue_MissionFailure')]",
+      "Action": "ObjectMerge",
+      "Value": {
+        "PositionHint": {
+          "Type": "World",
+          "Value": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        }
+      }
+    },
+    {
+      "Path": "Chunks[?(@.Name == 'Chunk_EncounterBoundary')].Children[?(@.Name == 'EncounterBoundaryRect')]",
+      "Action": "ObjectMerge",
+      "Value": {
+        "Position": {
+          "Type": "World",
+          "Value": {
+            "x": -408.0,
+            "y": 191.628723,
+            "z": -498.830627
+          }
+        },
+        "Width": 800,
+        "Length": 700
+      }
+    }
+  ]
+}
