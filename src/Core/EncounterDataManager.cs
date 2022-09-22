@@ -6,6 +6,8 @@ using System.Collections.Generic;
 
 using Harmony;
 
+using MissionControl.Utils;
+
 namespace MissionControl {
   public class EncounterDataManager {
     private static EncounterDataManager instance;
@@ -19,9 +21,37 @@ namespace MissionControl {
     public void HandleCustomContractType() {
       // TODO: When new buildings can be added - handle usecase where contract builder added new buildings - don't wipe that data
       if (MissionControl.Instance.IsCustomContractType) {
+        OverridePlots();
         ResetAllBuildingData();
         ProcessQueuedBuildingMounts();
         GenerateEncounterLayerBuildingData();
+      }
+    }
+
+    public void OverridePlots() {
+      GameObject plotParentGo = GameObject.Find("PlotParent");
+
+      // Disable all plots as some are initially on
+      List<GameObject> allPlotVariantsList = GameObjextExtensions.GetAllPlotVariantsList();
+      foreach (GameObject plotVariant in allPlotVariantsList) {
+        plotVariant.SetActive(false);
+      }
+
+      // Enable all plots specified by Mission Control.
+      // This support is better than vanilla as vanilla only allowed for one variant per plot
+      // This allows for all variants for all plots
+      PlotOverride plotOverride = MissionControl.Instance.EncounterLayerData.GetComponent<PlotOverride>();
+      List<PlotOverrideEntry> plotOverrideEntries = plotOverride.plotOverrideEntryList;
+
+      foreach (PlotOverrideEntry plotOverrideEntry in plotOverrideEntries) {
+        Transform plotTransform = plotParentGo.transform.Find(plotOverrideEntry.plotName);
+        GameObject plotGo = plotTransform.gameObject;
+        GameObject plotVariantGo = plotTransform.Find(plotOverrideEntry.plotVariant).gameObject;
+
+        // Enable
+        Main.LogDebug($"[EncounterDataManager.OverridePlots] Enabling plot '{plotOverrideEntry.plotName}' and variant '{plotOverrideEntry.plotVariant}'");
+        plotGo.SetActive(true);
+        plotVariantGo.SetActive(true);
       }
     }
 
