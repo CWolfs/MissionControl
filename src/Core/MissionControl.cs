@@ -30,7 +30,7 @@ namespace MissionControl {
     }
 
     public API API { get; set; } = new API();
-    public Metrics Metrics { get; set; }
+    public Metrics Metrics { get; set; } = new Metrics();
 
     public Contract CurrentContract { get; set; }
     public string ContractMapName { get; private set; }
