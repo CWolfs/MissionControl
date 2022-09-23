@@ -53,6 +53,11 @@ namespace MissionControl {
       return new List<MLanceOverride>();
     }
 
+    public void SetOverriddenAdditionalLances(string teamType, int lanceCount) {
+      SetOverriddenAdditionalLances(teamType);
+      SetOverriddenAdditionalLanceCount(teamType, lanceCount);
+    }
+
     public void SetOverriddenAdditionalLances(string teamType, List<MLanceOverride> lanceOverrides) {
       SetOverriddenAdditionalLances(teamType);
       SetOverriddenAdditionalLanceCount(teamType, lanceOverrides.Count);

@@ -298,7 +298,7 @@ namespace MissionControl.Rules {
           // API DRIVEN
           numberOfAdditionalEnemyLances = MissionControl.Instance.API.GetOverriddenAdditionalLanceCount("enemy");
           manuallySpecifiedLanceOverrides = MissionControl.Instance.API.GetOverriddenAdditionalLanceOverrides("enemy");
-          Main.Logger.Log($"[{this.GetType().Name}] [API OVERRIDDEN] Enemy additional Lance count will be '{numberOfAdditionalEnemyLances}' with specified LanceOverrides of '{String.Join(",", manuallySpecifiedLanceOverrides)}'");
+          Main.Logger.Log($"[{this.GetType().Name}] [API OVERRIDDEN] Enemy additional Lance count will be '{numberOfAdditionalEnemyLances}'{(manuallySpecifiedLanceOverrides.Count > 0 ? $" with specified LanceOverrides of '{String.Join(",", manuallySpecifiedLanceOverrides)}'" : "")}");
         } else {
           // PER-CONTRACT OVERRIDE OR DEFAULT DRIVEN
           numberOfAdditionalEnemyLances = GetNumberOfLances("enemy", faction);
@@ -346,7 +346,7 @@ namespace MissionControl.Rules {
           // API DRIVEN
           numberOfAdditionalAllyLances = MissionControl.Instance.API.GetOverriddenAdditionalLanceCount("allies");
           manuallySpecifiedLanceOverrides = MissionControl.Instance.API.GetOverriddenAdditionalLanceOverrides("allies");
-          Main.Logger.Log($"[{this.GetType().Name}] [API OVERRIDDEN] Ally additional Lance count will be '{numberOfAdditionalAllyLances}' with specified LanceOverrides of '{String.Join(",", manuallySpecifiedLanceOverrides)}'");
+          Main.Logger.Log($"[{this.GetType().Name}] [API OVERRIDDEN] Ally additional Lance count will be '{numberOfAdditionalAllyLances}'{(manuallySpecifiedLanceOverrides.Count > 0 ? $" with specified LanceOverrides of '{String.Join(",", manuallySpecifiedLanceOverrides)}'" : "")}");
         } else {
           // PER-CONTRACT OVERRIDE OR DEFAULT DRIVEN
           numberOfAdditionalAllyLances = GetNumberOfLances("allies", faction);
@@ -403,6 +403,8 @@ namespace MissionControl.Rules {
       // Default
       if (teamType == "allies") {
         int numberOfAdditionalLances = Main.Settings.ActiveAdditionalLances.Allies.SelectNumberOfAdditionalLances(faction, teamType);
+
+        return numberOfAdditionalLances;
       } else if (teamType == "enemy") {
         int numberOfAdditionalLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances(faction, teamType);
 
