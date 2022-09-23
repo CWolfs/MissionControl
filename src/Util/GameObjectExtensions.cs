@@ -64,16 +64,52 @@ public static class GameObjextExtensions {
     return buildings;
   }
 
-  public static List<GameObject> GetActivePlots() {
+  public static List<Plot> GetAllPlots() {
+    List<GameObject> allPlots = new List<GameObject>();
+
+    GameObject plotParentGo = GameObject.Find("PlotParent");
+    return new List<Plot>(plotParentGo.GetComponentsInChildren<Plot>());
+  }
+
+  public static List<GameObject> GetActivePlotVariants() {
+    List<GameObject> activePlotVariants = new List<GameObject>();
+
+    GameObject plotParentGo = GameObject.Find("PlotParent");
+    foreach (Transform plot in plotParentGo.transform) {
+      foreach (Transform plotVariant in plot) {
+        if (plotVariant.gameObject.activeSelf) activePlotVariants.Add(plotVariant.gameObject);
+      }
+    }
+
+    return activePlotVariants;
+  }
+
+  public static List<GameObject> GetAllPlotVariantsList() {
     List<GameObject> activePlots = new List<GameObject>();
 
     GameObject plotParentGo = GameObject.Find("PlotParent");
     foreach (Transform plot in plotParentGo.transform) {
       foreach (Transform plotVariant in plot) {
-        if (plotVariant.gameObject.activeSelf) activePlots.Add(plotVariant.gameObject);
+        activePlots.Add(plotVariant.gameObject);
       }
     }
 
     return activePlots;
+  }
+
+  public static Dictionary<string, Dictionary<string, GameObject>> GetAllPlotVariants() {
+    Dictionary<string, Dictionary<string, GameObject>> allPlots = new Dictionary<string, Dictionary<string, GameObject>>();
+
+    GameObject plotParentGo = GameObject.Find("PlotParent");
+    foreach (Transform plot in plotParentGo.transform) {
+      Dictionary<string, GameObject> variants = new Dictionary<string, GameObject>();
+      allPlots.Add(plot.name, variants);
+
+      foreach (Transform plotVariant in plot) {
+        variants.Add(plotVariant.name, plotVariant.gameObject);
+      }
+    }
+
+    return allPlots;
   }
 }

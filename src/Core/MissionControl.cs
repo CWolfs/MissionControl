@@ -156,6 +156,16 @@ namespace MissionControl {
       if (HexGrid == null) HexGrid = ReflectionHelper.GetPrivateStaticField(typeof(WorldPointGameLogic), "_hexGrid") as HexGrid;
     }
 
+    public void SetPreContractTypeInfo(Contract contract) {
+      CurrentContract = contract;
+      MetadataDatabase mdd = MetadataDatabase.Instance;
+      EncounterLayerMDD = mdd.SelectEncounterLayerByGuid(CurrentContract.encounterObjectGuid);
+      CurrentContractTypeValue = CurrentContract.ContractTypeValue;
+
+      string type = CurrentContractTypeValue.Name;
+      CurrentContractType = type;
+    }
+
     private EncounterLayerData ConstructCustomContractType() {
       CurrentContract = UnityGameInstance.BattleTechGame.Combat.ActiveContract;
       MetadataDatabase mdd = MetadataDatabase.Instance;

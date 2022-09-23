@@ -47,6 +47,7 @@ namespace MissionControl {
 
     public Dictionary<string, Dictionary<string, JObject>> AvailableCustomContractTypeBuilds { get; set; } = new Dictionary<string, Dictionary<string, JObject>>();
     private Dictionary<string, List<ContractTypeValue>> AvailableCustomContractTypes = new Dictionary<string, List<ContractTypeValue>>();
+    public Dictionary<string, ContractTypeMetadata> AvailableContractTypeMetadata = new Dictionary<string, ContractTypeMetadata>();
 
     private Dictionary<string, Dictionary<string, List<string>>> Dialogue = new Dictionary<string, Dictionary<string, List<string>>>();
 
@@ -161,8 +162,22 @@ namespace MissionControl {
           string contractTypeName = (string)contractTypeCommonBuild["Key"];
           Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loading contract type build '{contractTypeName}'");
 
+          JObject metadataObject = contractTypeCommonBuild.ContainsKey("Metadata") ? (JObject)contractTypeCommonBuild["Metadata"] : null;
+          ContractTypeMetadata metadata = metadataObject.ToObject<ContractTypeMetadata>();
+          AvailableContractTypeMetadata.Add(contractTypeName, metadata);
+          if (metadata == null) {
+            Main.Logger.LogError($"[VIOLATION] !!!! CONTRACT TYPE '{contractTypeName}' HAS NO METADATA. THIS IS INVALID! ALL CONTRACT TYPES SHOULD CLEARLY DISPLAY METADATA INCLUDING AUTHORS AND CONTRIBUTORS !!!!");
+          } else {
+            Main.Logger.Log($"[DataManager] Loaded metadata for '{contractTypeName}'");
+          }
+
+          if (AvailableCustomContractTypeBuilds.ContainsKey(contractTypeName)) {
+            Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Duplicate contract type build key of '{contractTypeName}' was detected. FATAL ERROR!!!");
+            return;
+          }
+
           Dictionary<string, JObject> contractTypeMapBuilds = new Dictionary<string, JObject>();
-          AvailableCustomContractTypeBuilds.Add(contractTypeCommonBuild["Key"].ToString(), contractTypeMapBuilds);
+          AvailableCustomContractTypeBuilds.Add(contractTypeName, contractTypeMapBuilds);
 
           foreach (string file in Directory.GetFiles(directory, "*.json*", SearchOption.AllDirectories)) {
             string contractTypeBuildMapSource = File.ReadAllText(file);
@@ -172,6 +187,12 @@ namespace MissionControl {
             if (fileName == "common" || contractTypeMapBuild.ContainsKey("EncounterLayerId")) {
               string encounterLayerId = (fileName == "common") ? fileName : (string)contractTypeMapBuild["EncounterLayerId"];
               Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type map build '{contractTypeName}/{fileName}' with encounterLayerId '{encounterLayerId}'");
+
+              if (contractTypeMapBuilds.ContainsKey(encounterLayerId)) {
+                Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Duplicate contract type override build key of '{encounterLayerId}' in file '{file}' was detected. FATAL ERROR!!!");
+                return;
+              }
+
               contractTypeMapBuilds.Add(encounterLayerId, contractTypeMapBuild);
             } else {
               Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Unable to load contract type map build file '{fileName}' for contract type '{contractTypeName}' because no 'EncounterLayerId' exists");
@@ -227,6 +248,13 @@ namespace MissionControl {
       if (!AvailableCustomContractTypes.ContainsKey(contractTypeValue.Name)) AvailableCustomContractTypes.Add(contractTypeValue.Name, new List<ContractTypeValue>());
       Main.LogDebug($"[DataManager.AddContractType] Adding custom contract type: {contractTypeValue.Name}");
       AvailableCustomContractTypes[contractTypeValue.Name].Add(contractTypeValue);
+    }
+
+    public bool IsCustomContractType(string contractTypeName) {
+      foreach (string name in AvailableCustomContractTypes.Keys) {
+        if (name == contractTypeName) return true;
+      }
+      return false;
     }
 
     // *********************

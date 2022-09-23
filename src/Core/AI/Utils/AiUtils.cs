@@ -40,6 +40,11 @@ namespace MissionControl.AI {
       detectedEnemyUnits.AddRange(allyLance.team.GetDetectedEnemyUnits());
 
       detectedEnemyUnits.RemoveAll(potentialEnemy => {
+        if (potentialEnemy.IsDead) {
+          // Main.Logger.LogDebug($"[GetClosestDetectedEnemy] Removing potential enemy Unit '{potentialEnemy.DisplayName}' because it is a dead unit.");
+          return true;
+        }
+
         if (!UnityGameInstance.BattleTechGame.Combat.HostilityMatrix.IsEnemy(teamGuid, potentialEnemy.team.GUID)) {
           // Main.Logger.Log($"[GetClosestDetectedEnemy] Removing potential enemy Unit '{potentialEnemy.DisplayName}' because it's not an enemy.");
           return true;
@@ -71,8 +76,13 @@ namespace MissionControl.AI {
       visibleEnemyUnits.AddRange(allyLance.team.GetVisibleEnemyUnits());
 
       visibleEnemyUnits.RemoveAll(potentialEnemy => {
+        if (potentialEnemy.IsDead) {
+          // Main.Logger.LogDebug($"[GetClosestVisibleEnemy] Removing potential enemy Unit '{potentialEnemy.DisplayName}' because it is a dead unit.");
+          return true;
+        }
+
         if (!UnityGameInstance.BattleTechGame.Combat.HostilityMatrix.IsEnemy(teamGuid, potentialEnemy.team.GUID)) {
-          Main.Logger.Log($"[GetClosestVisibleEnemy] Removing potential enemy Unit '{potentialEnemy.DisplayName}' because it's not an enemy.");
+          // Main.Logger.LogDebug($"[GetClosestVisibleEnemy] Removing potential enemy Unit '{potentialEnemy.DisplayName}' because it's not an enemy.");
           return true;
         }
 
