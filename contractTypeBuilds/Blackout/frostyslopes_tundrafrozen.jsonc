@@ -14,39 +14,48 @@
         "Plots": [
           {
             "Name": "Cresttop Structures",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": false
           },
           {
             "Name": "Cresttop Structures",
-            "Variant": "plotVariant_facilityMedTowerWarehouse"
+            "Variant": "plotVariant_facilityMedTowerWarehouse",
+            "IsActive": true
           },
           {
             "Name": "Roadside Facility",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": true
           },
           {
             "Name": "Roadside Facility",
-            "Variant": "plotVariant_facilityLrgFactoriesTower"
+            "Variant": "plotVariant_facilityLrgFactoriesTower",
+            "IsActive": false
           },
           {
             "Name": "Ridgeline Base",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": true
           },
           {
             "Name": "Ridgeline Base",
-            "Variant": "plotVariant_facilityLrgMilitaryBunkers"
+            "Variant": "plotVariant_facilityLrgMilitaryBunkers",
+            "IsActive": false
           },
           {
             "Name": "Valley Fort",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": false
           },
           {
             "Name": "Valley Fort",
-            "Variant": "plotVariant_facilitySmlBarracks"
+            "Variant": "plotVariant_facilitySmlBarracks",
+            "IsActive": false
           },
           {
             "Name": "Valley Fort",
-            "Variant": "plotVariant_facilityLrgMilitaryAirControlBase"
+            "Variant": "plotVariant_facilityLrgMilitaryAirControlBase",
+            "IsActive": true
           }
         ]
       }
@@ -489,12 +498,12 @@
             "z": -48.0000076
           },
           "993b100b-dc76-44c2-85ac-e50beb0dc9ed": {
-            "x": -62.3538246,
+            "x": -62.3538551,
             "y": 0.0,
             "z": -36.00001
           },
           "55a83021-479e-4ff2-8104-46fd21c2ce22": {
-            "x": 62.3538628,
+            "x": 62.3538933,
             "y": 0.0,
             "z": -35.9999924
           },
@@ -639,22 +648,6 @@
       }
     },
     {
-      "Path": "Chunks[?(@.Name == 'Chunk_EncounterBoundary')].Children[?(@.Name == 'EncounterBoundaryRect')]",
-      "Action": "ObjectMerge",
-      "Value": {
-        "Position": {
-          "Type": "World",
-          "Value": {
-            "x": -456.0,
-            "y": 245.92662,
-            "z": 41.5692177
-          }
-        },
-        "Width": 1024,
-        "Length": 1948
-      }
-    },
-    {
       "Path": "Chunks[?(@.Name == 'Chunk_DefaultDialogue')].Children[?(@.Name == 'Dialogue_MissionStart')]",
       "Action": "ObjectMerge",
       "Value": {
@@ -694,6 +687,22 @@
             "z": 0.0
           }
         }
+      }
+    },
+    {
+      "Path": "Chunks[?(@.Name == 'Chunk_EncounterBoundary')].Children[?(@.Name == 'EncounterBoundaryRect')]",
+      "Action": "ObjectMerge",
+      "Value": {
+        "Position": {
+          "Type": "World",
+          "Value": {
+            "x": -456.0,
+            "y": 245.92662,
+            "z": 41.5692177
+          }
+        },
+        "Width": 1024,
+        "Length": 1948
       }
     }
   ]
