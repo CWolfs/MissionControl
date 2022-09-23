@@ -14,51 +14,63 @@
         "Plots": [
           {
             "Name": "Hill Top",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": true
           },
           {
             "Name": "Valley Area",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": true
           },
           {
             "Name": "Ridge Factory",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": true
           },
           {
             "Name": "Ridge Factory",
-            "Variant": "PlotVariant1"
+            "Variant": "PlotVariant1",
+            "IsActive": false
           },
           {
             "Name": "River Base",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": false
           },
           {
             "Name": "River Base",
-            "Variant": "PlotVariant1"
+            "Variant": "PlotVariant1",
+            "IsActive": true
           },
           {
             "Name": "River Base Turrets",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": false
           },
           {
             "Name": "River Base Turrets",
-            "Variant": "PlotVariant1"
+            "Variant": "PlotVariant1",
+            "IsActive": true
           },
           {
             "Name": "Ridge Factory Turrets",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": true
           },
           {
             "Name": "Ridge Factory Turrets",
-            "Variant": "PlotVariant1"
+            "Variant": "PlotVariant1",
+            "IsActive": false
           },
           {
             "Name": "River Base Landing Zone",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": false
           },
           {
             "Name": "River Base Landing Zone",
-            "Variant": "PlotVariant1"
+            "Variant": "PlotVariant1",
+            "IsActive": false
           }
         ]
       }
@@ -71,7 +83,7 @@
           "Type": "World",
           "Value": {
             "x": -120.0,
-            "y": 0.0,
+            "y": 157.078232,
             "z": -706.6767
           }
         },
@@ -102,7 +114,7 @@
           "Type": "World",
           "Value": {
             "x": -756.0,
-            "y": 0.0,
+            "y": 157.850281,
             "z": -228.6307
           }
         },
@@ -188,9 +200,9 @@
         "Position": {
           "Type": "World",
           "Value": {
-            "x": -416.0,
-            "y": 140.2573,
-            "z": -493.0
+            "x": -408.0,
+            "y": 191.628723,
+            "z": -498.830627
           }
         },
         "Width": 800,

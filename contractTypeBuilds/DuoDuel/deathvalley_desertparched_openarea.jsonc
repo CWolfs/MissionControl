@@ -14,19 +14,23 @@
         "Plots": [
           {
             "Name": "Plot1",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": false
           },
           {
             "Name": "Plot1",
-            "Variant": "plotVariant_facilityLrgFactoriesTower"
+            "Variant": "plotVariant_facilityLrgFactoriesTower",
+            "IsActive": false
           },
           {
             "Name": "Plot2",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": false
           },
           {
             "Name": "Plot2",
-            "Variant": "plotVariant_facility_med_military_airControlBase (1)"
+            "Variant": "plotVariant_facility_med_military_airControlBase (1)",
+            "IsActive": false
           }
         ]
       }

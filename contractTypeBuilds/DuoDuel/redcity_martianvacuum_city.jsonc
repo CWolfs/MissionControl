@@ -14,7 +14,8 @@
         "Plots": [
           {
             "Name": "Plot1",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": true
           }
         ]
       }

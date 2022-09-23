@@ -14,51 +14,63 @@
         "Plots": [
           {
             "Name": "Hill Top",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": true
           },
           {
             "Name": "Valley Area",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": true
           },
           {
             "Name": "Ridge Factory",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": true
           },
           {
             "Name": "Ridge Factory",
-            "Variant": "PlotVariant1"
+            "Variant": "PlotVariant1",
+            "IsActive": false
           },
           {
             "Name": "River Base",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": false
           },
           {
             "Name": "River Base",
-            "Variant": "PlotVariant1"
+            "Variant": "PlotVariant1",
+            "IsActive": true
           },
           {
             "Name": "River Base Turrets",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": false
           },
           {
             "Name": "River Base Turrets",
-            "Variant": "PlotVariant1"
+            "Variant": "PlotVariant1",
+            "IsActive": true
           },
           {
             "Name": "Ridge Factory Turrets",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": true
           },
           {
             "Name": "Ridge Factory Turrets",
-            "Variant": "PlotVariant1"
+            "Variant": "PlotVariant1",
+            "IsActive": false
           },
           {
             "Name": "River Base Landing Zone",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": false
           },
           {
             "Name": "River Base Landing Zone",
-            "Variant": "PlotVariant1"
+            "Variant": "PlotVariant1",
+            "IsActive": false
           }
         ]
       }

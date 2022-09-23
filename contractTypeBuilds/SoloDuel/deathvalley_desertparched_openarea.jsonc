@@ -14,19 +14,23 @@
         "Plots": [
           {
             "Name": "Plot1",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": false
           },
           {
             "Name": "Plot1",
-            "Variant": "plotVariant_facilityLrgFactoriesTower"
+            "Variant": "plotVariant_facilityLrgFactoriesTower",
+            "IsActive": false
           },
           {
             "Name": "Plot2",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": false
           },
           {
             "Name": "Plot2",
-            "Variant": "plotVariant_facility_med_military_airControlBase (1)"
+            "Variant": "plotVariant_facility_med_military_airControlBase (1)",
+            "IsActive": false
           }
         ]
       }
@@ -94,19 +98,17 @@
       }
     },
     {
-      "Path": "Chunks[?(@.Name == 'Chunk_EncounterBoundary')].Children[?(@.Name == 'EncounterBoundaryRect')]",
+      "Path": "Chunks[?(@.Name == 'Chunk_DuelTaunt')].Children[?(@.Name == 'Dialogue_DuelTaunt')]",
       "Action": "ObjectMerge",
       "Value": {
-        "Position": {
+        "PositionHint": {
           "Type": "World",
           "Value": {
-            "x": 24.0,
-            "y": 220.22641,
-            "z": 457.2614
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
           }
-        },
-        "Width": 900,
-        "Length": 1024
+        }
       }
     },
     {
@@ -152,17 +154,19 @@
       }
     },
     {
-      "Path": "Chunks[?(@.Name == 'Chunk_DuelTaunt')].Children[?(@.Name == 'Dialogue_DuelTaunt')]",
+      "Path": "Chunks[?(@.Name == 'Chunk_EncounterBoundary')].Children[?(@.Name == 'EncounterBoundaryRect')]",
       "Action": "ObjectMerge",
       "Value": {
-        "PositionHint": {
+        "Position": {
           "Type": "World",
           "Value": {
-            "x": 0.0,
-            "y": 0.0,
-            "z": 0.0
+            "x": 24.0,
+            "y": 220.22641,
+            "z": 457.2614
           }
-        }
+        },
+        "Width": 900,
+        "Length": 1024
       }
     }
   ]

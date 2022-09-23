@@ -14,27 +14,33 @@
         "Plots": [
           {
             "Name": "Plot1",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": true
           },
           {
             "Name": "Central Base Turret Foundations",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": true
           },
           {
             "Name": "Central Base Turret Foundations",
-            "Variant": "PlotVariant1"
+            "Variant": "PlotVariant1",
+            "IsActive": false
           },
           {
             "Name": "Central Base Turret Foundations",
-            "Variant": "PlotVariant2"
+            "Variant": "PlotVariant2",
+            "IsActive": false
           },
           {
             "Name": "Small Base Turret Foundations",
-            "Variant": "Default"
+            "Variant": "Default",
+            "IsActive": true
           },
           {
             "Name": "Small Base Turret Foundations",
-            "Variant": "PlotVariant1"
+            "Variant": "PlotVariant1",
+            "IsActive": false
           }
         ]
       }
@@ -47,7 +53,7 @@
           "Type": "World",
           "Value": {
             "x": -648.0,
-            "y": 0.0,
+            "y": 0.00168701191,
             "z": -665.1075
           }
         },
@@ -78,7 +84,7 @@
           "Type": "World",
           "Value": {
             "x": -636.0,
-            "y": 0.0,
+            "y": 16.0016823,
             "z": -145.492264
           }
         },
@@ -164,9 +170,9 @@
         "Position": {
           "Type": "World",
           "Value": {
-            "x": -659.0,
-            "y": 0.001687022,
-            "z": -402.0
+            "x": -660.0,
+            "y": 0.599709868,
+            "z": -394.907562
           }
         },
         "Width": 600,
