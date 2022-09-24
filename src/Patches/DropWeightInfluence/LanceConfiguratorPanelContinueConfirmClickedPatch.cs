@@ -18,7 +18,9 @@ namespace MissionControl.Patches {
         MissionControl.Instance.PlayerLanceDropSkullRating = lanceRatingWidget.Difficulty / 2f;
         CalculateTonnage();
       } else {
-        Main.Logger.LogError("[LanceConfiguratorPanelContinueConfirmClickedPatch] Unable to get object 'uixPrfPanel_LC_LanceConfigTopBar-Widget-MANAGED'. Name must have changed in an BT update.");
+        Main.Logger.LogError("[LanceConfiguratorPanelContinueConfirmClickedPatch] Unable to get object 'uixPrfPanel_LC_LanceConfigTopBar-Widget-MANAGED'. Setting PlayerLanceDropDifficultyValue and PlayerLanceDropSkullRating to '0'.");
+        MissionControl.Instance.PlayerLanceDropDifficultyValue = 0;
+        MissionControl.Instance.PlayerLanceDropSkullRating = 0;
       }
     }
 

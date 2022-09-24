@@ -43,7 +43,8 @@ namespace MissionControl.Logic {
         teamGuid,
         spawnOnActivation,
         SpawnUnitMethodType.InstantlyAtSpawnPoint,
-        unitGuids
+        unitGuids,
+        alertLanceOnSpawn: true
       );
       lanceSpawner.transform.position = Vector3.zero;
     }
