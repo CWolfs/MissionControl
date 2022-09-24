@@ -1,5 +1,6 @@
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 using Newtonsoft.Json;
 
@@ -11,16 +12,7 @@ namespace MissionControl.Config {
     [JsonProperty("Overrides")]
     public List<ExtendedBoundariesOverride> Overrides { get; set; } = new List<ExtendedBoundariesOverride>();
 
-    private bool hasSortedOverrides = false;
-
     public float GetSizePercentage(string mapId, string contractTypeName) {
-      if (!hasSortedOverrides) {
-        Overrides = Overrides.OrderBy(x => x.MapId != "UNSET" && x.ContractTypeName != "UNSET").
-          ThenBy(x => x.MapId != "UNSET" && x.ContractTypeName == "UNSET").
-          ThenBy(x => x.MapId == "UNSET" && x.ContractTypeName != "UNSET").ToList();
-        hasSortedOverrides = true;
-      }
-
       string id = $"{mapId}.{contractTypeName}";
 
       foreach (ExtendedBoundariesOverride ovr in Overrides) {
@@ -36,6 +28,14 @@ namespace MissionControl.Config {
       }
 
       return IncreaseBoundarySizeByPercentage;
+    }
+
+    [OnDeserialized]
+    internal void OnDeserialized(StreamingContext context) {
+      // Sort the overrides on Deserialisation
+      Overrides = Overrides.OrderByDescending(x => x.MapId != "UNSET" && x.ContractTypeName != "UNSET").
+                ThenByDescending(x => x.MapId != "UNSET" && x.ContractTypeName == "UNSET").
+                ThenByDescending(x => x.MapId == "UNSET" && x.ContractTypeName != "UNSET").ToList();
     }
   }
 }
