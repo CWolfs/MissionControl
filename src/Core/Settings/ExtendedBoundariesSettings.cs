@@ -15,18 +15,24 @@ namespace MissionControl.Config {
 
     public float GetSizePercentage(string mapId, string contractTypeName) {
       if (!hasSortedOverrides) {
-        Overrides = Overrides.OrderBy(x => x.MapId != "UNSET" && x.ContractTypeName != "UNSET").ToList();
+        Overrides = Overrides.OrderBy(x => x.MapId != "UNSET" && x.ContractTypeName != "UNSET").
+          ThenBy(x => x.MapId != "UNSET" && x.ContractTypeName == "UNSET").
+          ThenBy(x => x.MapId == "UNSET" && x.ContractTypeName != "UNSET").ToList();
         hasSortedOverrides = true;
       }
 
       string id = $"{mapId}.{contractTypeName}";
 
       foreach (ExtendedBoundariesOverride ovr in Overrides) {
-        // Allow for fuzzy map matching
-        if (ovr.MapId == "UNSET") ovr.MapId = mapId;
-        if (ovr.ContractTypeName == "UNSET") ovr.ContractTypeName = contractTypeName;
+        string builtMapId = ovr.MapId;
+        string builtContractTypeName = ovr.ContractTypeName;
 
-        if (ovr.Id == id) return ovr.IncreaseBoundarySizeByPercentage;
+        // Allow for fuzzy map matching
+        if (builtMapId == "UNSET") builtMapId = mapId;
+        if (builtContractTypeName == "UNSET") builtContractTypeName = contractTypeName;
+
+        string builtId = $"{builtMapId}.{builtContractTypeName}";
+        if (id == builtId) return ovr.IncreaseBoundarySizeByPercentage;
       }
 
       return IncreaseBoundarySizeByPercentage;
