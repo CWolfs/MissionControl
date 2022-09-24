@@ -1,5 +1,6 @@
-using System.Collections.Generic;
 using System.Linq;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 using Newtonsoft.Json;
 
@@ -15,12 +16,26 @@ namespace MissionControl.Config {
       string id = $"{mapId}.{contractTypeName}";
 
       foreach (ExtendedBoundariesOverride ovr in Overrides) {
-        if (ovr.MapId == "UNSET") ovr.MapId = mapId;  // Allow for fuzzy map matching
+        string builtMapId = ovr.MapId;
+        string builtContractTypeName = ovr.ContractTypeName;
 
-        if (ovr.Id == id) return ovr.IncreaseBoundarySizeByPercentage;
+        // Allow for fuzzy map matching
+        if (builtMapId == "UNSET") builtMapId = mapId;
+        if (builtContractTypeName == "UNSET") builtContractTypeName = contractTypeName;
+
+        string builtId = $"{builtMapId}.{builtContractTypeName}";
+        if (id == builtId) return ovr.IncreaseBoundarySizeByPercentage;
       }
 
       return IncreaseBoundarySizeByPercentage;
+    }
+
+    [OnDeserialized]
+    internal void OnDeserialized(StreamingContext context) {
+      // Sort the overrides on Deserialisation
+      Overrides = Overrides.OrderByDescending(x => x.MapId != "UNSET" && x.ContractTypeName != "UNSET").
+                ThenByDescending(x => x.MapId != "UNSET" && x.ContractTypeName == "UNSET").
+                ThenByDescending(x => x.MapId == "UNSET" && x.ContractTypeName != "UNSET").ToList();
     }
   }
 }
