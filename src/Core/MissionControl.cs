@@ -522,6 +522,10 @@ namespace MissionControl {
       return this.CurrentContract.IsStoryContract || CurrentContract.IsRestorationContract;
     }
 
+    public bool IsAnyStoryOrFlashpointContract() {
+      return IsAnyStoryContract() || IsAnyFlashpointContract();
+    }
+
     public bool ShouldUseElites(FactionDef faction, string teamType) {
       Config.Lance activeAdditionalLances = Main.Settings.ActiveAdditionalLances.GetActiveAdditionalLanceByTeamType(teamType);
       return Main.Settings.AdditionalLanceSettings.UseElites && activeAdditionalLances.EliteLances.ShouldEliteLancesBeSelected(faction);

@@ -294,7 +294,10 @@ namespace MissionControl.Rules {
         Main.Logger.Log($"[{this.GetType().Name}] Additional Lances will be primary objectives? {isPrimaryObjective}");
         FactionDef faction = MissionControl.Instance.GetFactionFromTeamType("enemy");
 
-        if (MissionControl.Instance.API.HasOverriddenAdditionalLances("enemy")) {
+        bool reportOverrideNotAllowed = MissionControl.Instance.IsAnyStoryOrFlashpointContract() && MissionControl.Instance.API.HasOverriddenAdditionalLances("enemy");
+        if (reportOverrideNotAllowed) Main.Logger.LogDebug($"[{this.GetType().Name}] API override detected for enemy Additional Lance but a story or flashpoint contract is loaded. API overrides are not allowed for flashpoints or story contracts.");
+
+        if (!MissionControl.Instance.IsAnyStoryOrFlashpointContract() && MissionControl.Instance.API.HasOverriddenAdditionalLances("enemy")) {
           // API DRIVEN
           numberOfAdditionalEnemyLances = MissionControl.Instance.API.GetOverriddenAdditionalLanceCount("enemy");
           manuallySpecifiedLanceOverrides = MissionControl.Instance.API.GetOverriddenAdditionalLanceOverrides("enemy");
@@ -342,7 +345,10 @@ namespace MissionControl.Rules {
         FactionDef faction = MissionControl.Instance.GetFactionFromTeamType("allies");
         int numberOfAdditionalAllyLances = 0;
 
-        if (MissionControl.Instance.API.HasOverriddenAdditionalLances("allies")) {
+        bool reportOverrideNotAllowed = MissionControl.Instance.IsAnyStoryOrFlashpointContract() && MissionControl.Instance.API.HasOverriddenAdditionalLances("allies");
+        if (reportOverrideNotAllowed) Main.Logger.LogDebug($"[{this.GetType().Name}] API override detected for allies Additional Lance but a story or flashpoint contract is loaded. API overrides are not allowed for flashpoints or story contracts.");
+
+        if (!MissionControl.Instance.IsAnyStoryOrFlashpointContract() && MissionControl.Instance.API.HasOverriddenAdditionalLances("allies")) {
           // API DRIVEN
           numberOfAdditionalAllyLances = MissionControl.Instance.API.GetOverriddenAdditionalLanceCount("allies");
           manuallySpecifiedLanceOverrides = MissionControl.Instance.API.GetOverriddenAdditionalLanceOverrides("allies");
