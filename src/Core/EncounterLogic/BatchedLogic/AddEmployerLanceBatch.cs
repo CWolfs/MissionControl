@@ -1,4 +1,3 @@
-using UnityEngine;
 using System;
 using System.Collections.Generic;
 
@@ -6,6 +5,8 @@ using MissionControl.Data;
 using MissionControl.Rules;
 using MissionControl.Trigger;
 using MissionControl.Config;
+
+using BattleTech;
 
 namespace MissionControl.Logic {
   public class AddEmployerLanceBatch {
@@ -34,13 +35,29 @@ namespace MissionControl.Logic {
       }
 
       if (useDialogue && !MissionControl.Instance.ContractStats.ContainsKey(ContractStats.DIALOGUE_ADDITIONAL_LANCE_ALLY_START)) {
+        CastDef castDef = null;
+        string dialogue = null;
+
+        if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_DialogueCastDefId)) {
+          string castDefId = Main.Settings.ActiveContractSettings.GetString(ContractSettingsOverrides.AdditionalLances_DialogueCastDefId);
+          Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Additional Lances DialogueCastDefId will be '{castDefId}'.");
+          castDef = UnityGameInstance.BattleTechGame.DataManager.CastDefs.Get(castDefId);
+        }
+
+        if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_Dialogue)) {
+          dialogue = Main.Settings.ActiveContractSettings.GetString(ContractSettingsOverrides.AdditionalLances_Dialogue);
+          Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Additional Lances Dialogue will be '{dialogue}'.");
+        }
+
         MissionControl.Instance.ContractStats.Add(ContractStats.DIALOGUE_ADDITIONAL_LANCE_ALLY_START, true);
         encounterRules.EncounterLogic.Add(new AddDialogueChunk(
           ChunkLogic.DIALOGUE_ADDITIONAL_LANCE_ALLY_START_GUID,
           "AdditionalLanceAllyStart",
           "Start Conversation For Additional Lance Ally",
-          lanceGuid
-        // "DialogBucketDef_Universal_KillConfirmed"
+          lanceGuid,
+          true,
+          dialogue,
+          castDef
         ));
         encounterRules.EncounterLogic.Add(new DialogTrigger(MessageCenterMessageType.OnEncounterIntroComplete, ChunkLogic.DIALOGUE_ADDITIONAL_LANCE_ALLY_START_GUID));
       }
