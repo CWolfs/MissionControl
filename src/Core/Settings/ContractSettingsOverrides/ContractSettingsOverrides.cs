@@ -6,6 +6,8 @@ namespace MissionControl.Config {
   public class ContractSettingsOverrides {
     public static string AdditionalLances_Enable = "AdditionalLances.Enable";
     public static string AdditionalLances_UseDialogue = "AdditionalLances.UseDialogue";
+    public static string AdditionalLances_DialogueCastDefId = "AdditionalLances.DialogueCastDefId";
+    public static string AdditionalLances_Dialogue = "AdditionalLances.Dialogue";
     public static string AdditionalLances_AllyLanceCountOverride = "AdditionalLances.AllyLanceCount";
     public static string AdditionalLances_EnemyLanceCountOverride = "AdditionalLances.EnemyLanceCount";
     public static string AdditionalLances_AllyLancesOverride = "AdditionalLances.AllyLances";
@@ -46,6 +48,11 @@ namespace MissionControl.Config {
       if (Properties == null) return false;
       JToken token = Properties.SelectToken(path);
       return token != null;
+    }
+
+    public string GetString(string path) {
+      JToken token = Properties.SelectToken(path);
+      return token.ToString();
     }
 
     public bool GetBool(string path) {
