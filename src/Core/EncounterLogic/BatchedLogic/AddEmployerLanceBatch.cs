@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using MissionControl.Data;
 using MissionControl.Rules;
 using MissionControl.Trigger;
+using MissionControl.Config;
 
 namespace MissionControl.Logic {
   public class AddEmployerLanceBatch {
@@ -23,7 +24,16 @@ namespace MissionControl.Logic {
       encounterRules.EncounterLogic.Add(new SpawnLanceMembersAroundTarget(encounterRules, spawnerName, orientationTargetKey,
         lookDirection, minDistance, maxDistance));
 
-      if (Main.Settings.AdditionalLanceSettings.UseDialogue && !MissionControl.Instance.ContractStats.ContainsKey(ContractStats.DIALOGUE_ADDITIONAL_LANCE_ALLY_START)) {
+      bool useDialogue = false;
+
+      if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_UseDialogue)) {
+        useDialogue = Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.AdditionalLances_UseDialogue);
+        Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Additional Lances UseDialogue will be '{useDialogue}'.");
+      } else {
+        useDialogue = Main.Settings.AdditionalLanceSettings.UseDialogue;
+      }
+
+      if (useDialogue && !MissionControl.Instance.ContractStats.ContainsKey(ContractStats.DIALOGUE_ADDITIONAL_LANCE_ALLY_START)) {
         MissionControl.Instance.ContractStats.Add(ContractStats.DIALOGUE_ADDITIONAL_LANCE_ALLY_START, true);
         encounterRules.EncounterLogic.Add(new AddDialogueChunk(
           ChunkLogic.DIALOGUE_ADDITIONAL_LANCE_ALLY_START_GUID,
