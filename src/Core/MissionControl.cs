@@ -29,7 +29,8 @@ namespace MissionControl {
       }
     }
 
-    public Metrics Metrics { get; set; }
+    public API API { get; set; } = new API();
+    public Metrics Metrics { get; set; } = new Metrics();
 
     public Contract CurrentContract { get; set; }
     public string ContractMapName { get; private set; }
@@ -216,12 +217,17 @@ namespace MissionControl {
         Main.Logger.Log($"[MissionControl] Mission Control is NOT allowed to run.");
         EncounterRules = null;
         EncounterRulesName = null;
-        IsMCLoadingFinished = true;
+        SetFinishedLoading();
       }
 
       ContractStats.Clear();
       ClearOldContractData();
       ClearOldCaches();
+    }
+
+    public void SetFinishedLoading() {
+      MissionControl.Instance.IsMCLoadingFinished = true;
+      MissionControl.Instance.API = new API();
     }
 
     private void ClearOldContractData() {
@@ -382,6 +388,9 @@ namespace MissionControl {
     }
 
     public bool AreAdditionalLancesAllowed(string teamType) {
+      // API-driven overrides everything
+      if (API.HasOverriddenAdditionalLances(teamType)) return true;
+
       // Allow contract settings overrides to force their respective setting
       if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_Enable)) {
         return Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.AdditionalLances_Enable);
@@ -511,6 +520,10 @@ namespace MissionControl {
 
     public bool IsAnyStoryContract() {
       return this.CurrentContract.IsStoryContract || CurrentContract.IsRestorationContract;
+    }
+
+    public bool IsAnyStoryOrFlashpointContract() {
+      return IsAnyStoryContract() || IsAnyFlashpointContract();
     }
 
     public bool ShouldUseElites(FactionDef faction, string teamType) {

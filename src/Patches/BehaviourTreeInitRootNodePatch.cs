@@ -1,12 +1,6 @@
-using UnityEngine;
-using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using Harmony;
 
 using BattleTech;
-using BattleTech.Framework;
 
 /*
   This patch is the hook to modify the Core AI behaviour tree

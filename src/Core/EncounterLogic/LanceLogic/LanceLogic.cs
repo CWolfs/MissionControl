@@ -31,7 +31,7 @@ namespace MissionControl.Logic {
       string selectedLanceKey = lancePoolKeys[index];
       if (useElites) selectedLanceKey = $"{selectedLanceKey}{activeAdditionalLance.EliteLances.Suffix}";
 
-      Main.LogDebug($"[SelectAppropriateLanceOverride] Lance pool keys valid for '{teamType.Capitalise()}', '{biome}', '{contractType}', '{faction}' are '{string.Join(", ", lancePoolKeys.ToArray())}'");
+      Main.LogDebug($"[SelectAppropriateLanceOverride] Lance pool keys valid for '{teamType.Capitalise()}', '{biome}', '{contractType}', '{faction.ID}' are '{string.Join(", ", lancePoolKeys.ToArray())}'");
 
       if (DataManager.Instance.DoesLanceOverrideExist(selectedLanceKey)) {
         Main.Logger.Log($"[SelectAppropriateLanceOverride] Selected lance key '{selectedLanceKey}'");

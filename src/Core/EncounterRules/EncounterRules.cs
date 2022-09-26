@@ -5,6 +5,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using BattleTech;
+using BattleTech.Framework;
 
 using MissionControl.Data;
 using MissionControl.Logic;
@@ -72,7 +73,7 @@ namespace MissionControl.Rules {
           break;
         case LogicBlock.LogicType.SCENE_MANIPULATION:
           RunSceneManipulationLogic(logicBlocks, payload);
-          MissionControl.Instance.IsMCLoadingFinished = true;
+          MissionControl.Instance.SetFinishedLoading();
           break;
         default:
           Main.Logger.LogError($"[EncounterRules] Unknown logic type '{type}'");
@@ -261,6 +262,12 @@ namespace MissionControl.Rules {
       BuildAdditionalLances(enemyOrientationTargetKey, enemyLookDirection, 100f, 400f, allyOrientationKey, allyLookDirection, mustBeBeyondDistance, mustBeWithinDistance);
     }
 
+    /*
+    There are three ways to get ALs 
+      - Default - rolling AL chances and selecting a lance
+      - Per-contract Overrides - specify the specific lances by LanceDef or MC lance key
+      - API override - a caller specifies the lance count and LanceOverrides
+    */
     protected void BuildAdditionalLances(string enemyOrientationTargetKey, SpawnLogic.LookDirection enemyLookDirection, float mustBeBeyondDistanceOfTarget, float mustBeWithinDistanceOfTarget,
       string allyOrientationKey, SpawnLogic.LookDirection allyLookDirection, float mustBeBeyondDistance, float mustBeWithinDistance) {
 
@@ -270,9 +277,13 @@ namespace MissionControl.Rules {
 
       if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
         List<string> manuallySpecifiedLances = new List<string>();
+        List<MLanceOverride> manuallySpecifiedLanceOverrides = new List<MLanceOverride>();
+
         bool isPrimaryObjective = MissionControl.Instance.CurrentContractType.In(Main.Settings.AdditionalLanceSettings.IsPrimaryObjectiveIn.ToArray());
         bool displayToUser = !Main.Settings.AdditionalLanceSettings.HideObjective;
         bool excludeFromAutocomplete = MissionControl.Instance.CurrentContractType.In(Main.Settings.AdditionalLanceSettings.ExcludeFromAutocomplete.ToArray());
+        bool showObjectiveOnLanceDetected = Main.Settings.AdditionalLanceSettings.ShowObjectiveOnLanceDetected;
+        int objectivePriority = -10;
 
         Main.Logger.Log($"[{this.GetType().Name}] Excluding Additional Lance from contract type's autocomplete? {excludeFromAutocomplete}");
 
@@ -283,22 +294,28 @@ namespace MissionControl.Rules {
         Main.Logger.Log($"[{this.GetType().Name}] Additional Lances will be primary objectives? {isPrimaryObjective}");
         FactionDef faction = MissionControl.Instance.GetFactionFromTeamType("enemy");
 
-        numberOfAdditionalEnemyLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances(faction, "enemy");
-        if (Main.Settings.DebugMode && (Main.Settings.Debug.AdditionalLancesEnemyLanceCount > -1)) numberOfAdditionalEnemyLances = Main.Settings.Debug.AdditionalLancesEnemyLanceCount;
+        bool reportOverrideNotAllowed = MissionControl.Instance.IsAnyStoryOrFlashpointContract() && MissionControl.Instance.API.HasOverriddenAdditionalLances("enemy");
+        if (reportOverrideNotAllowed) Main.Logger.LogDebug($"[{this.GetType().Name}] API override detected for enemy Additional Lance but a story or flashpoint contract is loaded. API overrides are not allowed for flashpoints or story contracts.");
 
-        // Allow contract-specific settings overrides to force their respective setting
-        if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_EnemyLanceCountOverride)) {
-          numberOfAdditionalEnemyLances = Main.Settings.ActiveContractSettings.GetInt(ContractSettingsOverrides.AdditionalLances_EnemyLanceCountOverride);
-          Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Enemy lance count will be '{numberOfAdditionalEnemyLances}'.");
+        if (!MissionControl.Instance.IsAnyStoryOrFlashpointContract() && MissionControl.Instance.API.HasOverriddenAdditionalLances("enemy")) {
+          // API DRIVEN
+          numberOfAdditionalEnemyLances = MissionControl.Instance.API.GetOverriddenAdditionalLanceCount("enemy");
+          manuallySpecifiedLanceOverrides = MissionControl.Instance.API.GetOverriddenAdditionalLanceOverrides("enemy");
+          Main.Logger.Log($"[{this.GetType().Name}] [API OVERRIDDEN] Enemy additional Lance count will be '{numberOfAdditionalEnemyLances}'");
+        } else {
+          // PER-CONTRACT OVERRIDE OR DEFAULT DRIVEN
+          numberOfAdditionalEnemyLances = GetNumberOfLances("enemy", faction);
+
+          if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_EnemyLancesOverride)) {
+            manuallySpecifiedLances = Main.Settings.ActiveContractSettings.GetList<string>(ContractSettingsOverrides.AdditionalLances_EnemyLancesOverride);
+            Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'.");
+
+            foreach (string lanceKey in manuallySpecifiedLances) {
+              MLanceOverride lanceOverride = DataManager.Instance.GetLanceOverride(lanceKey);
+              manuallySpecifiedLanceOverrides.Add(lanceOverride);
+            }
+          }
         }
-
-        if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_EnemyLancesOverride)) {
-          manuallySpecifiedLances = Main.Settings.ActiveContractSettings.GetList<string>(ContractSettingsOverrides.AdditionalLances_EnemyLancesOverride);
-          Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Enemy lances will be '{string.Join(",", manuallySpecifiedLances)}'.");
-        }
-
-        bool showObjectiveOnLanceDetected = Main.Settings.AdditionalLanceSettings.ShowObjectiveOnLanceDetected;
-        int objectivePriority = -10;
 
         MissionControl.Instance.Metrics.NumberOfTargetAdditionalLances = numberOfAdditionalEnemyLances;
 
@@ -307,9 +324,9 @@ namespace MissionControl.Rules {
             new AddPlayer2LanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
               $"Destroy Enemy Support Lance {i}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete);
           } else {
-            if (manuallySpecifiedLances.Count >= i) {
-              string lanceKey = manuallySpecifiedLances[i - 1];
-              MLanceOverride lanceOverride = DataManager.Instance.GetLanceOverride(lanceKey);
+            if (manuallySpecifiedLanceOverrides.Count >= i) {
+              MLanceOverride lanceOverride = manuallySpecifiedLanceOverrides[i - 1];
+
               Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Resolved Enemy lance will be '{lanceOverride.LanceKey}'.");
               new AddTargetLanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
                 $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete, lanceOverride);
@@ -323,30 +340,45 @@ namespace MissionControl.Rules {
 
       if (MissionControl.Instance.AreAdditionalLancesAllowed("allies")) {
         List<string> manuallySpecifiedLances = new List<string>();
+        List<MLanceOverride> manuallySpecifiedLanceOverrides = new List<MLanceOverride>();
+
         FactionDef faction = MissionControl.Instance.GetFactionFromTeamType("allies");
+        int numberOfAdditionalAllyLances = 0;
 
-        int numberOfAdditionalAllyLances = Main.Settings.ActiveAdditionalLances.Allies.SelectNumberOfAdditionalLances(faction, "allies");
+        bool reportOverrideNotAllowed = MissionControl.Instance.IsAnyStoryOrFlashpointContract() && MissionControl.Instance.API.HasOverriddenAdditionalLances("allies");
+        if (reportOverrideNotAllowed) Main.Logger.LogDebug($"[{this.GetType().Name}] API override detected for allies Additional Lance but a story or flashpoint contract is loaded. API overrides are not allowed for flashpoints or story contracts.");
 
-        // Allow contract-specific settings overrides to force their respective setting
-        if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_AllyLanceCountOverride)) {
-          numberOfAdditionalAllyLances = Main.Settings.ActiveContractSettings.GetInt(ContractSettingsOverrides.AdditionalLances_AllyLanceCountOverride);
-          Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lance count will be '{numberOfAdditionalAllyLances}'.");
-        } else if (Main.Settings.AdditionalLanceSettings.MatchAllyLanceCountToEnemy) {
-          Main.Logger.LogDebug($"[{this.GetType().Name}] 'MatchAllyLanceCountToEnemy' is on. Ally lance count will be {numberOfAdditionalEnemyLances}");
-          numberOfAdditionalAllyLances = numberOfAdditionalEnemyLances;
-        }
+        if (!MissionControl.Instance.IsAnyStoryOrFlashpointContract() && MissionControl.Instance.API.HasOverriddenAdditionalLances("allies")) {
+          // API DRIVEN
+          numberOfAdditionalAllyLances = MissionControl.Instance.API.GetOverriddenAdditionalLanceCount("allies");
+          manuallySpecifiedLanceOverrides = MissionControl.Instance.API.GetOverriddenAdditionalLanceOverrides("allies");
+          Main.Logger.Log($"[{this.GetType().Name}] [API OVERRIDDEN] Ally additional Lance count will be '{numberOfAdditionalAllyLances}'");
+        } else {
+          // PER-CONTRACT OVERRIDE OR DEFAULT DRIVEN
+          numberOfAdditionalAllyLances = GetNumberOfLances("allies", faction);
 
-        if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_AllyLancesOverride)) {
-          manuallySpecifiedLances = Main.Settings.ActiveContractSettings.GetList<string>(ContractSettingsOverrides.AdditionalLances_AllyLancesOverride);
-          Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Ally lances provided are '{string.Join(",", manuallySpecifiedLances)}'.");
+          if (Main.Settings.AdditionalLanceSettings.MatchAllyLanceCountToEnemy) {
+            Main.Logger.LogDebug($"[{this.GetType().Name}] 'MatchAllyLanceCountToEnemy' is on. Ally lance count will be {numberOfAdditionalEnemyLances}");
+            numberOfAdditionalAllyLances = numberOfAdditionalEnemyLances;
+          }
+
+          if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_AllyLancesOverride)) {
+            manuallySpecifiedLances = Main.Settings.ActiveContractSettings.GetList<string>(ContractSettingsOverrides.AdditionalLances_AllyLancesOverride);
+            Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'.");
+
+            foreach (string lanceKey in manuallySpecifiedLances) {
+              MLanceOverride lanceOverride = DataManager.Instance.GetLanceOverride(lanceKey);
+              manuallySpecifiedLanceOverrides.Add(lanceOverride);
+            }
+          }
         }
 
         MissionControl.Instance.Metrics.NumberOfEmployerAdditionalLances = numberOfAdditionalAllyLances;
 
         for (int i = 1; i <= numberOfAdditionalAllyLances; i++) {
-          if (manuallySpecifiedLances.Count >= i) {
-            string lanceKey = manuallySpecifiedLances[i - 1];
-            MLanceOverride lanceOverride = DataManager.Instance.GetLanceOverride(lanceKey);
+          if (manuallySpecifiedLanceOverrides.Count >= i) {
+            MLanceOverride lanceOverride = manuallySpecifiedLanceOverrides[i - 1];
+
             Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Resolved Ally lance will be '{lanceOverride.LanceKey}'.");
             new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, mustBeBeyondDistance, mustBeWithinDistance, lanceOverride);
           } else {
@@ -354,6 +386,42 @@ namespace MissionControl.Rules {
           }
         }
       }
+    }
+
+    /*
+    Used for:
+      - Per-Contract Override, AND
+      - Default
+
+      NOT: API overridden
+    */
+    private int GetNumberOfLances(string teamType, FactionDef faction) {
+      // If Per-Contract Override
+      // Allow contract-specific settings overrides to force their respective setting
+      string AdditionalLances_TeamTypeLanceCountOverride = teamType == "allies" ? ContractSettingsOverrides.AdditionalLances_AllyLanceCountOverride : ContractSettingsOverrides.AdditionalLances_EnemyLanceCountOverride;
+
+      if (Main.Settings.ActiveContractSettings.Has(AdditionalLances_TeamTypeLanceCountOverride)) {
+        int numberOfAdditionalLances = Main.Settings.ActiveContractSettings.GetInt(AdditionalLances_TeamTypeLanceCountOverride);
+        Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. '{teamType}' lance count will be '{numberOfAdditionalLances}'.");
+        return numberOfAdditionalLances;
+      }
+
+      // Default
+      if (teamType == "allies") {
+        int numberOfAdditionalLances = Main.Settings.ActiveAdditionalLances.Allies.SelectNumberOfAdditionalLances(faction, teamType);
+
+        return numberOfAdditionalLances;
+      } else if (teamType == "enemy") {
+        int numberOfAdditionalLances = Main.Settings.ActiveAdditionalLances.Enemy.SelectNumberOfAdditionalLances(faction, teamType);
+
+        if (Main.Settings.DebugMode && (Main.Settings.Debug.AdditionalLancesEnemyLanceCount > -1)) numberOfAdditionalLances = Main.Settings.Debug.AdditionalLancesEnemyLanceCount;
+
+        return numberOfAdditionalLances;
+      } else {
+        Main.Logger.LogError($"[EncounterRules.GetNumberOfLances] Unknown team type provided of '{teamType}'.");
+      }
+
+      return 0;
     }
 
     protected void MaximiseEncounterBoundary() {
