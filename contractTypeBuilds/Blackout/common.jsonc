@@ -57,7 +57,7 @@
           "SpawnUnitTypeHint": "Mech",
           "PreciseSpawnPoints": false,
           "AlertLanceOnSpawn": false,
-          "DefaultDetectionRange": 200.0
+          "DefaultDetectionRange": 100.0
         }
       ]
     },
