@@ -37,7 +37,7 @@ namespace MissionControl {
 
     private void SetOverriddenAdditionalLanceCount(string teamType, int count) {
       if (overriddenAdditionalLanceCount.ContainsKey(teamType)) {
-        Main.Logger.LogWarning("[MissionControl.API] Additional Lance count override has already been set. Overwriting previous value..");
+        Main.Logger.LogWarning("[MissionControl.API] Additional Lance count override has already been set. Overwriting previous value.");
       }
       overriddenAdditionalLanceCount[teamType] = count;
     }
