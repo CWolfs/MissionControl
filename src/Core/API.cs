@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 using MissionControl.Data;
 
+using BattleTech.Framework;
+
 namespace MissionControl {
   public class API {
     private Dictionary<string, bool> overriddenAdditionalLances = new Dictionary<string, bool>();
@@ -24,7 +26,7 @@ namespace MissionControl {
 
     /* ADDITIONAL LANCES */
     private void SetOverriddenAdditionalLances(string teamType) {
-      overriddenAdditionalLances.Add(teamType, true);
+      overriddenAdditionalLances[teamType] = true;
     }
 
     public bool HasOverriddenAdditionalLances(string teamType) {
@@ -33,7 +35,10 @@ namespace MissionControl {
     }
 
     private void SetOverriddenAdditionalLanceCount(string teamType, int count) {
-      overriddenAdditionalLanceCount.Add(teamType, count);
+      if (overriddenAdditionalLanceCount.ContainsKey(teamType)) {
+        Main.Logger.LogWarning("[MissionControl.API] Additional Lance count override has already been set. Overwriting previous value");
+      }
+      overriddenAdditionalLanceCount[teamType] = count;
     }
 
     public int GetOverriddenAdditionalLanceCount(string teamType) {
@@ -42,7 +47,10 @@ namespace MissionControl {
     }
 
     private void SetOverriddenAdditionalLanceOverrides(string teamType, List<MLanceOverride> lanceOverrides) {
-      overriddenAdditionalLanceOverrides.Add(teamType, lanceOverrides);
+      if (overriddenAdditionalLanceOverrides.ContainsKey(teamType)) {
+        Main.Logger.LogWarning("[MissionControl.API] Additional Lances override has already been set. Overwriting previous value");
+      }
+      overriddenAdditionalLanceOverrides[teamType] = lanceOverrides;
     }
 
     public List<MLanceOverride> GetOverriddenAdditionalLanceOverrides(string teamType) {
@@ -62,6 +70,18 @@ namespace MissionControl {
       SetOverriddenAdditionalLances(teamType);
       SetOverriddenAdditionalLanceCount(teamType, lanceOverrides.Count);
       SetOverriddenAdditionalLanceOverrides(teamType, lanceOverrides);
+    }
+
+    public void SetOverriddenAdditionalLances(string teamType, List<LanceOverride> lanceOverrides) {
+      SetOverriddenAdditionalLances(teamType);
+      SetOverriddenAdditionalLanceCount(teamType, lanceOverrides.Count);
+
+      List<MLanceOverride> mLanceOverrides = new List<MLanceOverride>();
+      foreach (LanceOverride lanceOverride in lanceOverrides) {
+        mLanceOverrides.Add(new MLanceOverride(lanceOverride));
+      }
+
+      SetOverriddenAdditionalLanceOverrides(teamType, mLanceOverrides);
     }
   }
 }
