@@ -278,7 +278,9 @@ namespace MissionControl.Rules {
       if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
         List<string> manuallySpecifiedLances = new List<string>();
         List<MLanceOverride> manuallySpecifiedLanceOverrides = new List<MLanceOverride>();
+        List<string> manuallySpecifiedObjectiveNames = new List<string>();
 
+        FactionDef faction = MissionControl.Instance.GetFactionFromTeamType("enemy");
         bool isPrimaryObjective = MissionControl.Instance.CurrentContractType.In(Main.Settings.AdditionalLanceSettings.IsPrimaryObjectiveIn.ToArray());
         bool displayToUser = !Main.Settings.AdditionalLanceSettings.HideObjective;
         bool excludeFromAutocomplete = MissionControl.Instance.CurrentContractType.In(Main.Settings.AdditionalLanceSettings.ExcludeFromAutocomplete.ToArray());
@@ -286,13 +288,11 @@ namespace MissionControl.Rules {
         int objectivePriority = -10;
 
         Main.Logger.Log($"[{this.GetType().Name}] Excluding Additional Lance from contract type's autocomplete? {excludeFromAutocomplete}");
-
         if (Main.Settings.AdditionalLanceSettings.AlwaysDisplayHiddenObjectiveIfPrimary) {
           displayToUser = (isPrimaryObjective) ? true : displayToUser;
         }
 
         Main.Logger.Log($"[{this.GetType().Name}] Additional Lances will be primary objectives? {isPrimaryObjective}");
-        FactionDef faction = MissionControl.Instance.GetFactionFromTeamType("enemy");
 
         bool reportOverrideNotAllowed = MissionControl.Instance.IsAnyStoryOrFlashpointContract() && MissionControl.Instance.API.HasOverriddenAdditionalLances("enemy");
         if (reportOverrideNotAllowed) Main.Logger.LogDebug($"[{this.GetType().Name}] API override detected for enemy Additional Lance but a story or flashpoint contract is loaded. API overrides are not allowed for flashpoints or story contracts.");
@@ -301,6 +301,7 @@ namespace MissionControl.Rules {
           // API DRIVEN
           numberOfAdditionalEnemyLances = MissionControl.Instance.API.GetOverriddenAdditionalLanceCount("enemy");
           manuallySpecifiedLanceOverrides = MissionControl.Instance.API.GetOverriddenAdditionalLances("enemy");
+          manuallySpecifiedObjectiveNames = MissionControl.Instance.API.GetOverriddenAdditionalLancesObjectiveNames("enemy");
           Main.Logger.Log($"[{this.GetType().Name}] [API OVERRIDDEN] Enemy additional Lance count will be '{numberOfAdditionalEnemyLances}'");
         } else {
           // PER-CONTRACT OVERRIDE OR DEFAULT DRIVEN
@@ -308,6 +309,11 @@ namespace MissionControl.Rules {
 
           if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_EnemyLancesOverride)) {
             manuallySpecifiedLances = Main.Settings.ActiveContractSettings.GetList<string>(ContractSettingsOverrides.AdditionalLances_EnemyLancesOverride);
+
+            if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_EnemyLanceObjectiveNamesOverride)) {
+              manuallySpecifiedObjectiveNames = Main.Settings.ActiveContractSettings.GetList<string>(ContractSettingsOverrides.AdditionalLances_EnemyLanceObjectiveNamesOverride);
+            }
+
             Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'.");
 
             foreach (string lanceKey in manuallySpecifiedLances) {
@@ -326,10 +332,11 @@ namespace MissionControl.Rules {
           } else {
             if (manuallySpecifiedLanceOverrides.Count >= i) {
               MLanceOverride lanceOverride = manuallySpecifiedLanceOverrides[i - 1];
+              string objectiveName = i <= manuallySpecifiedObjectiveNames.Count ? manuallySpecifiedObjectiveNames[i - 1] : $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i}";
 
               Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Resolved Enemy lance will be '{lanceOverride.LanceKey}'.");
               new AddTargetLanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
-                $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete, lanceOverride);
+                objectiveName, objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete, lanceOverride);
             } else {
               new AddTargetLanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
                 $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete);
