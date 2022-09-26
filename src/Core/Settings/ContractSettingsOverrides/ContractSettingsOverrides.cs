@@ -9,6 +9,7 @@ namespace MissionControl.Config {
     public static string AdditionalLances_EnemyLanceCountOverride = "AdditionalLances.EnemyLanceCount";
     public static string AdditionalLances_AllyLancesOverride = "AdditionalLances.AllyLances";
     public static string AdditionalLances_EnemyLancesOverride = "AdditionalLances.EnemyLances";
+    public static string AdditionalLances_EnemyLanceObjectiveNamesOverride = "AdditionalLances.EnemyLanceObjectiveNames";
 
     public static string ExtendedLances_Enable = "ExtendedLances.Enable";
 
