@@ -53,7 +53,7 @@ namespace MissionControl {
       overriddenAdditionalLanceOverrides[teamType] = lanceOverrides;
     }
 
-    public List<MLanceOverride> GetOverriddenAdditionalLanceOverrides(string teamType) {
+    public List<MLanceOverride> GetOverriddenAdditionalLances(string teamType) {
       if (overriddenAdditionalLanceOverrides.ContainsKey(teamType)) {
         return overriddenAdditionalLanceOverrides[teamType];
       }

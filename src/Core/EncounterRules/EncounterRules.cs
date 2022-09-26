@@ -300,7 +300,7 @@ namespace MissionControl.Rules {
         if (!MissionControl.Instance.IsAnyStoryOrFlashpointContract() && MissionControl.Instance.API.HasOverriddenAdditionalLances("enemy")) {
           // API DRIVEN
           numberOfAdditionalEnemyLances = MissionControl.Instance.API.GetOverriddenAdditionalLanceCount("enemy");
-          manuallySpecifiedLanceOverrides = MissionControl.Instance.API.GetOverriddenAdditionalLanceOverrides("enemy");
+          manuallySpecifiedLanceOverrides = MissionControl.Instance.API.GetOverriddenAdditionalLances("enemy");
           Main.Logger.Log($"[{this.GetType().Name}] [API OVERRIDDEN] Enemy additional Lance count will be '{numberOfAdditionalEnemyLances}'");
         } else {
           // PER-CONTRACT OVERRIDE OR DEFAULT DRIVEN
@@ -351,7 +351,7 @@ namespace MissionControl.Rules {
         if (!MissionControl.Instance.IsAnyStoryOrFlashpointContract() && MissionControl.Instance.API.HasOverriddenAdditionalLances("allies")) {
           // API DRIVEN
           numberOfAdditionalAllyLances = MissionControl.Instance.API.GetOverriddenAdditionalLanceCount("allies");
-          manuallySpecifiedLanceOverrides = MissionControl.Instance.API.GetOverriddenAdditionalLanceOverrides("allies");
+          manuallySpecifiedLanceOverrides = MissionControl.Instance.API.GetOverriddenAdditionalLances("allies");
           Main.Logger.Log($"[{this.GetType().Name}] [API OVERRIDDEN] Ally additional Lance count will be '{numberOfAdditionalAllyLances}'");
         } else {
           // PER-CONTRACT OVERRIDE OR DEFAULT DRIVEN
