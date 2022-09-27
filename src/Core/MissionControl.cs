@@ -55,6 +55,9 @@ namespace MissionControl {
 
     private Dictionary<string, string> CustomGameLogicData { get; set; } = new Dictionary<string, string>();
 
+    public Dictionary<int, string> DynamicCastDefs { get; set; } = new Dictionary<int, string>();
+    public Dictionary<int, bool> DynamicTakenLanceUnitIndex { get; set; } = new Dictionary<int, bool>();
+
     public HexGrid HexGrid { get; private set; }
 
     public bool IsContractValid { get; private set; } = false;
@@ -252,6 +255,9 @@ namespace MissionControl {
 
       AssetBundleManagerGetAssetFromBundlePatch.ClearLookup();
       CustomGameLogicData.Clear();  // This might need to be moved up higher in the load order
+      DynamicCastDefs.Clear();
+      DynamicTakenLanceUnitIndex.Clear();
+      DataManager.Instance.ResetBetweenContracts();
     }
 
     public void SetActiveAdditionalLances(Contract contract) {

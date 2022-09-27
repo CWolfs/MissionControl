@@ -44,6 +44,7 @@ namespace MissionControl {
     private Dictionary<string, List<string>> LastNames = new Dictionary<string, List<string>>();  // e.g. <All, [list of names]>
     private Dictionary<string, List<string>> Ranks = new Dictionary<string, List<string>>();      // e.g. <FactionName, [list of ranks]>
     private Dictionary<string, List<string>> Portraits = new Dictionary<string, List<string>>();  // e.g. <Male, [list of male portraits]
+    public Dictionary<string, Sprite> GeneratedPortraits = new Dictionary<string, Sprite>();     // e.g. <{pilotDef.Description.Icon}, Sprite>
 
     public Dictionary<string, Dictionary<string, JObject>> AvailableCustomContractTypeBuilds { get; set; } = new Dictionary<string, Dictionary<string, JObject>>();
     private Dictionary<string, List<ContractTypeValue>> AvailableCustomContractTypes = new Dictionary<string, List<ContractTypeValue>>();
@@ -553,8 +554,8 @@ namespace MissionControl {
       return null;
     }
 
-    public void Reset() {
-
+    public void ResetBetweenContracts() {
+      DataManager.Instance.GeneratedPortraits.Clear();
     }
 
     public void RequestResourcesAndProcess(BattleTechResourceType resourceType, string resourceId, bool filterByOwnership = false) {

@@ -5,6 +5,7 @@ using MissionControl.Data;
 using MissionControl.Rules;
 using MissionControl.Trigger;
 using MissionControl.Config;
+using MissionControl.Patches;
 
 using BattleTech;
 
@@ -41,7 +42,16 @@ namespace MissionControl.Logic {
         if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_DialogueCastDefId)) {
           string castDefId = Main.Settings.ActiveContractSettings.GetString(ContractSettingsOverrides.AdditionalLances_DialogueCastDefId);
           Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Additional Lances DialogueCastDefId will be '{castDefId}'.");
-          castDef = UnityGameInstance.BattleTechGame.DataManager.CastDefs.Get(castDefId);
+
+          if (castDefId.StartsWith(CustomCastDef.castDef_TeamPilot)) {
+            DialogueApplyCastDefCommon.HandlePilotCast(MissionControl.Instance.CurrentContract, ref castDefId);
+          }
+
+          if (UnityGameInstance.BattleTechGame.DataManager.CastDefs.Exists(castDefId)) {
+            castDef = UnityGameInstance.BattleTechGame.DataManager.CastDefs.Get(castDefId);
+          } else {
+            Main.Logger.LogError($"[Additional Lance Dialogue] Attempted to use a castdef of '{castDefId}' but this was not found.");
+          }
         }
 
         if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_Dialogue)) {

@@ -1,11 +1,12 @@
 using UnityEngine;
-using System;
 
 using BattleTech;
 
 using HBS.Data;
 
 using MissionControl.Rules;
+
+using System.Collections.Generic;
 
 namespace MissionControl.RuntimeCast {
   public class RuntimeCastFactory {
@@ -49,6 +50,33 @@ namespace MissionControl.RuntimeCast {
       runtimeCastDef.defaultEmotePortrait.portraitAssetPath = portraitPath;
 
       ((DictionaryStore<CastDef>)UnityGameInstance.BattleTechGame.DataManager.CastDefs).Add(runtimeCastDef.id, runtimeCastDef);
+
+      return runtimeCastDef;
+    }
+
+    public static CastDef CreateCast(PilotDef pilotDef) {
+      CastDef runtimeCastDef = new CastDef();
+      runtimeCastDef.id = $"castDef_{pilotDef.Description.Id}";
+      runtimeCastDef.internalName = pilotDef.Description.Id;
+      runtimeCastDef.firstName = pilotDef.Description.Callsign;
+      runtimeCastDef.lastName = pilotDef.Description.Callsign;
+      runtimeCastDef.callsign = pilotDef.Description.Callsign;
+      runtimeCastDef.rank = $"{UnityGameInstance.Instance.Game.Simulation.CompanyName} - Pilot";
+      runtimeCastDef.gender = pilotDef.Description.Gender;
+      runtimeCastDef.FactionValue = FactionEnumeration.GetPlayer1sMercUnitFactionValue();
+      runtimeCastDef.showRank = true;
+      runtimeCastDef.showFirstName = true;
+      runtimeCastDef.showCallsign = false;
+      runtimeCastDef.showLastName = false;
+
+      string pilotIconPath = "";
+      if ((pilotDef.Description.Icon != "") && (pilotDef.Description.Icon != null)) {
+        pilotIconPath = $"sprites/Portraits/{pilotDef.Description.Icon}";
+        runtimeCastDef.defaultEmotePortrait.portraitAssetPath = $"{pilotIconPath}.png";
+      } else {
+        runtimeCastDef.defaultEmotePortrait.portraitAssetPath = $"{pilotDef.Description.Id}.generated";
+        DataManager.Instance.GeneratedPortraits[pilotDef.Description.Id] = pilotDef.GetPortraitSprite(UnityGameInstance.Instance.Game.DataManager);
+      }
 
       return runtimeCastDef;
     }
