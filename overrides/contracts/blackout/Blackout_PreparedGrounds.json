@@ -163,7 +163,7 @@
       "encounterChunk": {
         "EncounterObjectGuid": "bf661bb2-67dd-475b-9f56-45be07b0d181"
       },
-      "enableChunkFromContract": true,
+      "enableChunkFromContract": false,
       "controlledByContractChunkGroupList": ["Inactive"]
     },
     {
@@ -211,7 +211,7 @@
       "encounterChunk": {
         "EncounterObjectGuid": "df31d9e4-762f-4556-bc49-ce8dc1659c0a"
       },
-      "enableChunkFromContract": true,
+      "enableChunkFromContract": false,
       "controlledByContractChunkGroupList": ["Inactive"]
     }
   ],
@@ -398,7 +398,7 @@
           "revealRadius": -1
         },
         {
-          "words": "Ping sent... sconfirmed. Alpha si-Wait-",
+          "words": "Ping sent... confirmed. Alpha si-Wait-",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -1380,7 +1380,7 @@
             "unitSpawnPoint": {
               "EncounterObjectGuid": "6cd3107e-0f9d-4809-ab8c-fb30faf4cd80"
             },
-            "customUnitName": "Larry 'Clayman' Pots",
+            "customUnitName": "Sara 'Echo' Davis",
             "customHeraldryDefId": "",
             "unitType": "Mech",
             "unitDefId": "mechDef_InheritLance",
@@ -1536,7 +1536,7 @@
             "unitSpawnPoint": {
               "EncounterObjectGuid": "ec9b2fd0-15a0-488c-8190-64cea5cce242"
             },
-            "customUnitName": "Larry 'Clayman' Pots",
+            "customUnitName": "Sara 'Echo' Davis",
             "customHeraldryDefId": "",
             "unitType": "Mech",
             "unitDefId": "mechDef_InheritLance",
@@ -1692,7 +1692,7 @@
             "unitSpawnPoint": {
               "EncounterObjectGuid": "9405bf60-db6c-4ae9-95b0-3c26a6e9fd88"
             },
-            "customUnitName": "Harkon 'Harko' Winters",
+            "customUnitName": "Dietmar 'Doorman' Bauer",
             "customHeraldryDefId": "",
             "unitType": "Mech",
             "unitDefId": "mechDef_InheritLance",
