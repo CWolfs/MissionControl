@@ -13,9 +13,14 @@ namespace MissionControl.Patches {
     public static bool Prefix(EmotePortrait __instance, ref Sprite __result) {
       if (__instance.portraitAssetPath.EndsWith(".generated")) {
         string pilotDefId = __instance.portraitAssetPath.Substring(0, __instance.portraitAssetPath.LastIndexOf("."));
-        Sprite sprite = DataManager.Instance.GeneratedPortraits[pilotDefId];
-        __result = sprite;
-        return false;
+
+        if (DataManager.Instance.GeneratedPortraits.ContainsKey(pilotDefId)) {
+          Sprite sprite = DataManager.Instance.GeneratedPortraits[pilotDefId];
+          __result = sprite;
+          return false;
+        } else {
+          Main.LogDebug("[EmotePortraitLoadPortraitPatch] Issue finding cached generated portrait. Skipping");
+        }
       }
 
       return true;

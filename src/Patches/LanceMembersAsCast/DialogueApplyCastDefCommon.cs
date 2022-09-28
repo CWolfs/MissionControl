@@ -7,6 +7,8 @@ using HBS.Data;
 using MissionControl.Data;
 using MissionControl.RuntimeCast;
 
+using System;
+
 namespace MissionControl.Patches {
   public class DialogueApplyCastDefCommon {
     protected static bool IsTrueRandom(string selectedCastDefId) {
@@ -18,11 +20,24 @@ namespace MissionControl.Patches {
     }
 
     public static void HandlePilotCast(Contract contract, ref string selectedCastDefId) {
-      if (selectedCastDefId.StartsWith(CustomCastDef.castDef_TeamPilot)) {
-        // If no existing random binding, check for specific pilot slot or random request
-        SpawnableUnit[] units = contract.Lances.GetLanceUnits(TeamUtils.PLAYER_TEAM_ID);
-        if (units.Length <= 0) return;
+      // If no existing random binding, check for specific pilot slot or random request
+      SpawnableUnit[] units = contract.Lances.GetLanceUnits(TeamUtils.PLAYER_TEAM_ID);
+      if (units.Length <= 0) return;
 
+      if (selectedCastDefId == CustomCastDef.castDef_Commander) {
+        Pilot commanderPilot = UnityGameInstance.Instance.Game.Simulation.Commander;
+        PilotDef commanderPilotDef = commanderPilot.pilotDef;
+        string pilotCastDefId = $"castDef_{commanderPilot.Description.Id}";
+
+        // If there is no pilotdef cast, make it
+        if (!UnityGameInstance.BattleTechGame.DataManager.CastDefs.Exists(pilotCastDefId)) {
+          ((DictionaryStore<CastDef>)UnityGameInstance.BattleTechGame.DataManager.CastDefs).Add(pilotCastDefId, RuntimeCastFactory.CreateCast(commanderPilotDef, "Commander"));
+        } else {
+          RebindPortrait(commanderPilotDef);
+        }
+
+        selectedCastDefId = pilotCastDefId;
+      } else if (selectedCastDefId.StartsWith(CustomCastDef.castDef_TeamPilot)) {
         // Check for already bound random pilots - castDef_TeamPilot_Random_*
         if (IsBindableRandom(selectedCastDefId)) {
           int bindingID = int.Parse(selectedCastDefId.Substring(selectedCastDefId.LastIndexOf("_") + 1));
@@ -36,11 +51,13 @@ namespace MissionControl.Patches {
         bool isRandomDynamicForBinding = false;
 
         if (IsTrueRandom(selectedCastDefId)) {
-          pilotIndex = Random.Range(1, units.Length + 1);
+          System.Random random = new System.Random();
+          int possiblePilotIndex = random.Next(1, units.Length + 1);
         } else if (IsBindableRandom(selectedCastDefId)) {
           // Weed out bindings
           while (MissionControl.Instance.DynamicTakenLanceUnitIndex.Count < units.Length) {
-            int possiblePilotIndex = Random.Range(1, units.Length + 1);
+            System.Random random = new System.Random();
+            int possiblePilotIndex = random.Next(1, units.Length + 1);
 
             if (!MissionControl.Instance.DynamicTakenLanceUnitIndex.ContainsKey(possiblePilotIndex)) {
               pilotIndex = possiblePilotIndex;
@@ -73,7 +90,13 @@ namespace MissionControl.Patches {
 
           // If there is no pilotdef cast, make it
           if (!UnityGameInstance.BattleTechGame.DataManager.CastDefs.Exists(pilotCastDefId)) {
-            ((DictionaryStore<CastDef>)UnityGameInstance.BattleTechGame.DataManager.CastDefs).Add(pilotCastDefId, RuntimeCastFactory.CreateCast(pilotDef));
+            if (pilotDef.Description.Id == "commander") {
+              ((DictionaryStore<CastDef>)UnityGameInstance.BattleTechGame.DataManager.CastDefs).Add(pilotCastDefId, RuntimeCastFactory.CreateCast(pilotDef, "Commander"));
+            } else {
+              ((DictionaryStore<CastDef>)UnityGameInstance.BattleTechGame.DataManager.CastDefs).Add(pilotCastDefId, RuntimeCastFactory.CreateCast(pilotDef));
+            }
+          } else {
+            RebindPortrait(pilotDef);
           }
 
           if (isRandomDynamicForBinding) {
@@ -84,6 +107,11 @@ namespace MissionControl.Patches {
           selectedCastDefId = pilotCastDefId;
         }
       }
+    }
+
+    private static void RebindPortrait(PilotDef pilotDef) {
+      Sprite sprite = pilotDef.GetPortraitSprite(UnityGameInstance.Instance.Game.DataManager);
+      DataManager.Instance.GeneratedPortraits[pilotDef.Description.Id] = sprite;
     }
   }
 }
