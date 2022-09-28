@@ -237,6 +237,7 @@ namespace MissionControl {
     }
 
     private void CheckIfCommanderCastDefUsedInThisCombat() {
+      DynamicTakenLanceUnitIndex.Clear();
       List<DialogueOverride> dialogueOverrides = CurrentContract.Override.dialogueList;
 
       foreach (DialogueOverride dialogueOverride in dialogueOverrides) {
@@ -252,7 +253,7 @@ namespace MissionControl {
               SpawnableUnit unit = units[i];
 
               if (unit.PilotId == commanderPilot.Description.Id) {
-                MissionControl.Instance.DynamicTakenLanceUnitIndex.Add(i + 1, false);
+                MissionControl.Instance.DynamicTakenLanceUnitIndex[i + 1] = false;
               }
             }
           }

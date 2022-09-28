@@ -1,9 +1,9 @@
 {
-  "id": "castDef_MC_LanceLeader1",
-  "internalName": "MC_LanceLeader1",
-  "firstName": "Hakon",
-  "lastName": "Winters",
-  "callsign": "Hako",
+  "id": "castDef_MC_LanceLeader4",
+  "internalName": "MC_LanceLeader4",
+  "firstName": "Dietmar",
+  "lastName": "Bauer",
+  "callsign": "Doorman",
   "rank": "",
   "gender": "Male",
   "factionID": "NoFaction",
@@ -15,7 +15,7 @@
   "localizeName": true,
   "defaultEmotePortrait": {
     "emote": "Default",
-    "portraitAssetPath": "sprites/Portraits/x_male_40s_military_1.png"
+    "portraitAssetPath": "sprites/Portraits/x_male_20s_military_1.png"
   },
   "emotePotraitList": []
 }

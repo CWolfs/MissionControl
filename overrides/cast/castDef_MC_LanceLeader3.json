@@ -1,11 +1,11 @@
 {
-  "id": "castDef_MC_LanceLeader1",
-  "internalName": "MC_LanceLeader1",
-  "firstName": "Hakon",
-  "lastName": "Winters",
-  "callsign": "Hako",
+  "id": "castDef_MC_LanceLeader3",
+  "internalName": "MC_LanceLeader3",
+  "firstName": "Sara",
+  "lastName": "Davis",
+  "callsign": "Echo",
   "rank": "",
-  "gender": "Male",
+  "gender": "Female",
   "factionID": "NoFaction",
   "sgCharType": "UNSET",
   "showRank": false,
@@ -15,7 +15,7 @@
   "localizeName": true,
   "defaultEmotePortrait": {
     "emote": "Default",
-    "portraitAssetPath": "sprites/Portraits/x_male_40s_military_1.png"
+    "portraitAssetPath": "sprites/Portraits/x_female_20s_military_1.png"
   },
   "emotePotraitList": []
 }

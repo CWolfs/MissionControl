@@ -50,7 +50,7 @@ namespace MissionControl.Patches {
 
         if (IsTrueRandom(selectedCastDefId)) {
           System.Random random = new System.Random();
-          int possiblePilotIndex = random.Next(1, units.Length + 1);
+          pilotIndex = random.Next(1, units.Length + 1);
         } else if (IsBindableRandom(selectedCastDefId)) {
           // Weed out bindings
           while (MissionControl.Instance.DynamicTakenLanceUnitIndex.Count < units.Length) {

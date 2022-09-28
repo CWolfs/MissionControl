@@ -43,14 +43,26 @@ namespace MissionControl.Interpolation {
 
     private string InterpolatePlayerLances(string message, string[] lookups) {
       Main.LogDebug("[InterpolatorInterpolatePatch] PlayerLances interpolation");
-      string key = lookups[2];
-      int bindingID = int.Parse(key.Substring(key.LastIndexOf("_") + 1));
       string resolvedData = "MC_INCORRECT_PLAYERLANCE_COMMAND";
+      string unitKey = lookups[2];
+      string unitDataKey = lookups[3];
 
-      if (MissionControl.Instance.DynamicCastDefs.ContainsKey(bindingID)) {
-        string castDefId = MissionControl.Instance.DynamicCastDefs[bindingID];
-        CastDef castDef = UnityGameInstance.Instance.Game.DataManager.CastDefs.Get(castDefId);
-        resolvedData = castDef.Callsign() == null ? castDef.FirstName() : castDef.Callsign();
+      if (unitKey.StartsWith(DialogueInterpolationConstants.TeamPilot_Random)) {
+        int bindingID = int.Parse(unitKey.Substring(unitKey.LastIndexOf("_") + 1));
+
+        if (unitDataKey == "DisplayName") {
+          if (MissionControl.Instance.DynamicCastDefs.ContainsKey(bindingID)) {
+            string castDefId = MissionControl.Instance.DynamicCastDefs[bindingID];
+            CastDef castDef = UnityGameInstance.Instance.Game.DataManager.CastDefs.Get(castDefId);
+            resolvedData = castDef.Callsign() == null ? castDef.FirstName() : castDef.Callsign();
+          }
+        } else if (unitDataKey == "UnitName") {
+          // Need a reference to the unit
+        } else {
+          // Other commands like Unit's Mech etc
+        }
+      } else {
+        // Other PlayerLance specific info like lance count etc
       }
 
       return resolvedData;
