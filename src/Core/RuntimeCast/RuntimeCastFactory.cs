@@ -54,14 +54,14 @@ namespace MissionControl.RuntimeCast {
       return runtimeCastDef;
     }
 
-    public static CastDef CreateCast(PilotDef pilotDef) {
+    public static CastDef CreateCast(PilotDef pilotDef, string rankOverride = "Pilot") {
       CastDef runtimeCastDef = new CastDef();
       runtimeCastDef.id = $"castDef_{pilotDef.Description.Id}";
       runtimeCastDef.internalName = pilotDef.Description.Id;
       runtimeCastDef.firstName = pilotDef.Description.Callsign;
       runtimeCastDef.lastName = pilotDef.Description.Callsign;
       runtimeCastDef.callsign = pilotDef.Description.Callsign;
-      runtimeCastDef.rank = $"{UnityGameInstance.Instance.Game.Simulation.CompanyName} - Pilot";
+      runtimeCastDef.rank = $"{UnityGameInstance.Instance.Game.Simulation.CompanyName} - {rankOverride}";
       runtimeCastDef.gender = pilotDef.Description.Gender;
       runtimeCastDef.FactionValue = FactionEnumeration.GetPlayer1sMercUnitFactionValue();
       runtimeCastDef.showRank = true;
@@ -75,7 +75,8 @@ namespace MissionControl.RuntimeCast {
         runtimeCastDef.defaultEmotePortrait.portraitAssetPath = $"{pilotIconPath}.png";
       } else {
         runtimeCastDef.defaultEmotePortrait.portraitAssetPath = $"{pilotDef.Description.Id}.generated";
-        DataManager.Instance.GeneratedPortraits[pilotDef.Description.Id] = pilotDef.GetPortraitSprite(UnityGameInstance.Instance.Game.DataManager);
+        Sprite sprite = pilotDef.GetPortraitSprite(UnityGameInstance.Instance.Game.DataManager);
+        DataManager.Instance.GeneratedPortraits[pilotDef.Description.Id] = sprite;
       }
 
       return runtimeCastDef;

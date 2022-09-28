@@ -55,6 +55,7 @@ namespace MissionControl {
 
     private Dictionary<string, string> CustomGameLogicData { get; set; } = new Dictionary<string, string>();
 
+    // TODO: Probably extract these to their own dynamic cast area
     public Dictionary<int, string> DynamicCastDefs { get; set; } = new Dictionary<int, string>();
     public Dictionary<int, bool> DynamicTakenLanceUnitIndex { get; set; } = new Dictionary<int, bool>();
 
@@ -216,6 +217,7 @@ namespace MissionControl {
         ContractMapName = contract.mapName;
         SetContractType(CurrentContract.ContractTypeValue);
         AiManager.Instance.ResetCustomBehaviourVariableScopes();
+        if (!IsSkirmish()) CheckIfCommanderCastDefUsedInThisCombat();
       } else {
         Main.Logger.Log($"[MissionControl] Mission Control is NOT allowed to run.");
         EncounterRules = null;
@@ -226,6 +228,36 @@ namespace MissionControl {
       ContractStats.Clear();
       ClearOldContractData();
       ClearOldCaches();
+    }
+
+    private void ClearOldDynamicCast() {
+      DynamicCastDefs.Clear();
+      DynamicTakenLanceUnitIndex.Clear();
+      DataManager.Instance.ResetBetweenContracts();
+    }
+
+    private void CheckIfCommanderCastDefUsedInThisCombat() {
+      List<DialogueOverride> dialogueOverrides = CurrentContract.Override.dialogueList;
+
+      foreach (DialogueOverride dialogueOverride in dialogueOverrides) {
+        List<DialogueContentOverride> dialogueContentOverrides = dialogueOverride.dialogueContent;
+
+        foreach (DialogueContentOverride dialogueContentOverride in dialogueContentOverrides) {
+          if (dialogueContentOverride.selectedCastDefId == CustomCastDef.castDef_Commander) {
+            Pilot commanderPilot = UnityGameInstance.Instance.Game.Simulation.Commander;
+            PilotDef commanderPilotDef = commanderPilot.pilotDef;
+            SpawnableUnit[] units = CurrentContract.Lances.GetLanceUnits(TeamUtils.PLAYER_TEAM_ID);
+
+            for (int i = 0; i < units.Length; i++) {
+              SpawnableUnit unit = units[i];
+
+              if (unit.PilotId == commanderPilot.Description.Id) {
+                MissionControl.Instance.DynamicTakenLanceUnitIndex.Add(i + 1, false);
+              }
+            }
+          }
+        }
+      }
     }
 
     public void SetFinishedLoading() {
@@ -255,9 +287,6 @@ namespace MissionControl {
 
       AssetBundleManagerGetAssetFromBundlePatch.ClearLookup();
       CustomGameLogicData.Clear();  // This might need to be moved up higher in the load order
-      DynamicCastDefs.Clear();
-      DynamicTakenLanceUnitIndex.Clear();
-      DataManager.Instance.ResetBetweenContracts();
     }
 
     public void SetActiveAdditionalLances(Contract contract) {
@@ -593,6 +622,11 @@ namespace MissionControl {
 
     public void RemoveGameLogicData(string key) {
       CustomGameLogicData.Remove(key);
+    }
+
+    public void OnCombatDestroyed() {
+      Main.LogDebug("[MissionControl.OnCombatDestroyed] Clearing specific data");
+      ClearOldDynamicCast();
     }
   }
 }
