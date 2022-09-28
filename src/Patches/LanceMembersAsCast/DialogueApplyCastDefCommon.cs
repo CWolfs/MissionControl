@@ -7,8 +7,6 @@ using HBS.Data;
 using MissionControl.Data;
 using MissionControl.RuntimeCast;
 
-using System;
-
 namespace MissionControl.Patches {
   public class DialogueApplyCastDefCommon {
     protected static bool IsTrueRandom(string selectedCastDefId) {

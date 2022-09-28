@@ -203,7 +203,6 @@ namespace MissionControl {
       Main.Logger.Log($"[MissionControl] Setting contract '{contract.Name}' for contract type '{contract.ContractTypeValue.Name}'");
       CurrentContract = contract;
       Metrics = new Metrics();
-      ClearOldDynamicCast();
 
       if (AllowMissionControl()) {
         Main.Logger.Log($"[MissionControl] Mission Control IS allowed to run. ");
@@ -623,6 +622,11 @@ namespace MissionControl {
 
     public void RemoveGameLogicData(string key) {
       CustomGameLogicData.Remove(key);
+    }
+
+    public void OnCombatDestroyed() {
+      Main.LogDebug("[MissionControl.OnCombatDestroyed] Clearing specific data");
+      ClearOldDynamicCast();
     }
   }
 }
