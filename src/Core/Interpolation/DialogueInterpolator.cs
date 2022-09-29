@@ -17,7 +17,7 @@ namespace MissionControl.Interpolation {
     public string Interoplate(string message) {
       MatchCollection matchCollection = re.Matches(message);
       if (matchCollection.Count > 0) {
-        Main.LogDebug("[InterpolatorInterpolatePatch] Found '{matchCollection.Count}' MC interpolation matches");
+        Main.LogDebug($"[InterpolatorInterpolatePatch] Found '{matchCollection.Count}' MC interpolation matches");
       }
 
       while (matchCollection.Count > 0) {
@@ -48,11 +48,9 @@ namespace MissionControl.Interpolation {
       string unitDataKey = lookups[3];
 
       if (unitKey.StartsWith(DialogueInterpolationConstants.TeamPilot_Random)) {
-        int bindingID = int.Parse(unitKey.Substring(unitKey.LastIndexOf("_") + 1));
-
         if (unitDataKey == "DisplayName") {
-          if (MissionControl.Instance.DynamicCastDefs.ContainsKey(bindingID)) {
-            string castDefId = MissionControl.Instance.DynamicCastDefs[bindingID];
+          if (PilotCastInterpolator.Instance.DynamicCastDefs.ContainsKey(unitKey)) {
+            string castDefId = PilotCastInterpolator.Instance.DynamicCastDefs[unitKey];
             CastDef castDef = UnityGameInstance.Instance.Game.DataManager.CastDefs.Get(castDefId);
             resolvedData = castDef.Callsign() == null ? castDef.FirstName() : castDef.Callsign();
           }

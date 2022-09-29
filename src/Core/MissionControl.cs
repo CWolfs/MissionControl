@@ -16,6 +16,7 @@ using MissionControl.EncounterFactories;
 using MissionControl.ContractTypeBuilders;
 using MissionControl.Patches;
 using MissionControl.Config;
+using MissionControl.Interpolation;
 
 using Newtonsoft.Json.Linq;
 
@@ -54,10 +55,6 @@ namespace MissionControl {
     public List<object[]> QueuedBuildingMounts { get; set; } = new List<object[]>();
 
     private Dictionary<string, string> CustomGameLogicData { get; set; } = new Dictionary<string, string>();
-
-    // TODO: Probably extract these to their own dynamic cast area
-    public Dictionary<int, string> DynamicCastDefs { get; set; } = new Dictionary<int, string>();
-    public Dictionary<int, bool> DynamicTakenLanceUnitIndex { get; set; } = new Dictionary<int, bool>();
 
     public HexGrid HexGrid { get; private set; }
 
@@ -230,14 +227,8 @@ namespace MissionControl {
       ClearOldCaches();
     }
 
-    private void ClearOldDynamicCast() {
-      DynamicCastDefs.Clear();
-      DynamicTakenLanceUnitIndex.Clear();
-      DataManager.Instance.ResetBetweenContracts();
-    }
-
     private void CheckIfCommanderCastDefUsedInThisCombat() {
-      DynamicTakenLanceUnitIndex.Clear();
+      PilotCastInterpolator.Instance.DynamicTakenLanceUnitPositions.Clear();
       List<DialogueOverride> dialogueOverrides = CurrentContract.Override.dialogueList;
 
       foreach (DialogueOverride dialogueOverride in dialogueOverrides) {
@@ -253,7 +244,7 @@ namespace MissionControl {
               SpawnableUnit unit = units[i];
 
               if (unit.PilotId == commanderPilot.Description.Id) {
-                MissionControl.Instance.DynamicTakenLanceUnitIndex[i + 1] = false;
+                PilotCastInterpolator.Instance.AddTakenPilotPosition("Player1", i + 1, null);
               }
             }
           }
@@ -627,7 +618,7 @@ namespace MissionControl {
 
     public void OnCombatDestroyed() {
       Main.LogDebug("[MissionControl.OnCombatDestroyed] Clearing specific data");
-      ClearOldDynamicCast();
+      PilotCastInterpolator.Instance.Reset();
     }
   }
 }
