@@ -17,6 +17,8 @@ namespace MissionControl.Logic {
       public static string NUMBER_OF_UNITS_TO_OCCUPY = "[numberOfUnitsToOccupy]";
     }
 
+    public static string PLAYER1_LANCE_SPAWNER_GUID = "76b654a6-4f2c-4a6f-86e6-d4cf868335fe";
+
     public static string DIALOGUE_ADDITIONAL_LANCE_ALLY_START_GUID = "47647e3c-a82d-4946-a601-b7dddbb63452";
     public static string DIALOGUE_DYNAMIC_WITHDRAW_ESCAPE_GUID = "a6eae1af-7fd1-41a4-a0cc-e2deca2cf2a1";
 

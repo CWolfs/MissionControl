@@ -27,7 +27,8 @@ namespace MissionControl.Trigger {
       this.lanceTargetGuid = lanceTargetGuid;
       this.objectiveGuid = objectiveGuid;
       this.isContractObjective = isContractObjective;
-      LanceDetectedConditional lanceDetectedConditional = ScriptableObject.CreateInstance<LanceDetectedConditional>();
+      LanceDetectedByFriendlyConditional lanceDetectedConditional = ScriptableObject.CreateInstance<LanceDetectedByFriendlyConditional>();
+      lanceDetectedConditional.DetectingLanceGuid = ChunkLogic.PLAYER1_LANCE_SPAWNER_GUID;
       lanceDetectedConditional.TargetLanceGuid = lanceTargetGuid;
       this.conditional = lanceDetectedConditional;
     }
