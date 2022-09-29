@@ -14,6 +14,7 @@ using Newtonsoft.Json.Linq;
 
 using BattleTech;
 using BattleTech.Data;
+using BattleTech.Framework;
 
 using HBS.Data;
 
@@ -51,6 +52,10 @@ namespace MissionControl {
     public Dictionary<string, ContractTypeMetadata> AvailableContractTypeMetadata = new Dictionary<string, ContractTypeMetadata>();
 
     private Dictionary<string, Dictionary<string, List<string>>> Dialogue = new Dictionary<string, Dictionary<string, List<string>>>();
+
+    // Data backup
+    private Dictionary<string, List<LanceOverride>> ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
+    private List<ObjectiveOverride> ContractOverrideObjectiveOverrideBackup = new List<ObjectiveOverride>();
 
     JsonSerializerSettings serialiserSettings = new JsonSerializerSettings() {
       TypeNameHandling = TypeNameHandling.All,
@@ -555,7 +560,81 @@ namespace MissionControl {
     }
 
     public void ResetBetweenContracts() {
-      DataManager.Instance.GeneratedPortraits.Clear();
+      GeneratedPortraits.Clear();
+      RestoreContractOverriddeData();
+    }
+
+    public void BackupContractOverriddeData() {
+      Main.Logger.Log($"[MissionControl] Backing up original ContractOverride data for: " + MissionControl.Instance.CurrentContract.Name);
+
+      // Lance Overrides
+      ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
+
+      ContractOverrideLanceOverrideBackup.Add("Player1", new List<LanceOverride>());
+      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.player1Team.lanceOverrideList) {
+        ContractOverrideLanceOverrideBackup["Player1"].Add(lanceOverride.Copy());
+      }
+
+      ContractOverrideLanceOverrideBackup.Add("Employer", new List<LanceOverride>());
+      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.employerTeam.lanceOverrideList) {
+        ContractOverrideLanceOverrideBackup["Employer"].Add(lanceOverride.Copy());
+      }
+
+      ContractOverrideLanceOverrideBackup.Add("EmployerAlly", new List<LanceOverride>());
+      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.employersAllyTeam.lanceOverrideList) {
+        ContractOverrideLanceOverrideBackup["EmployerAlly"].Add(lanceOverride.Copy());
+      }
+
+      ContractOverrideLanceOverrideBackup.Add("Target", new List<LanceOverride>());
+      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.targetTeam.lanceOverrideList) {
+        ContractOverrideLanceOverrideBackup["Target"].Add(lanceOverride.Copy());
+      }
+
+      ContractOverrideLanceOverrideBackup.Add("TargetAlly", new List<LanceOverride>());
+      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.targetsAllyTeam.lanceOverrideList) {
+        ContractOverrideLanceOverrideBackup["TargetAlly"].Add(lanceOverride.Copy());
+      }
+
+      ContractOverrideLanceOverrideBackup.Add("NeutralToAll", new List<LanceOverride>());
+      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.neutralToAllTeam.lanceOverrideList) {
+        ContractOverrideLanceOverrideBackup["NeutralToAll"].Add(lanceOverride.Copy());
+      }
+
+      ContractOverrideLanceOverrideBackup.Add("HostileToAll", new List<LanceOverride>());
+      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.hostileToAllTeam.lanceOverrideList) {
+        ContractOverrideLanceOverrideBackup["HostileToAll"].Add(lanceOverride.Copy());
+      }
+
+      // Objective Overrides
+      ContractOverrideObjectiveOverrideBackup = new List<ObjectiveOverride>();
+      foreach (ObjectiveOverride objectiveOverride in MissionControl.Instance.CurrentContract.Override.objectiveList) {
+        ContractOverrideObjectiveOverrideBackup.Add(objectiveOverride.Copy());
+      }
+    }
+
+    private void RestoreContractOverriddeData() {
+      Main.Logger.Log($"[MissionControl] Restoring original ContractOverride data for: " + MissionControl.Instance.CurrentContract.Name);
+
+      RestoreOverrideList<LanceOverride>(MissionControl.Instance.CurrentContract.Override.player1Team.lanceOverrideList, ContractOverrideLanceOverrideBackup["Player1"]);
+      RestoreOverrideList<LanceOverride>(MissionControl.Instance.CurrentContract.Override.employerTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["Employer"]);
+      RestoreOverrideList<LanceOverride>(MissionControl.Instance.CurrentContract.Override.employersAllyTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["EmployerAlly"]);
+      RestoreOverrideList<LanceOverride>(MissionControl.Instance.CurrentContract.Override.targetTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["Target"]);
+      RestoreOverrideList<LanceOverride>(MissionControl.Instance.CurrentContract.Override.targetsAllyTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["TargetAlly"]);
+      RestoreOverrideList<LanceOverride>(MissionControl.Instance.CurrentContract.Override.neutralToAllTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["NeutralToAll"]);
+      RestoreOverrideList<LanceOverride>(MissionControl.Instance.CurrentContract.Override.hostileToAllTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["HostileToAll"]);
+
+      RestoreOverrideList<ObjectiveOverride>(MissionControl.Instance.CurrentContract.Override.objectiveList, ContractOverrideObjectiveOverrideBackup);
+
+      ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
+      ContractOverrideObjectiveOverrideBackup = new List<ObjectiveOverride>();
+    }
+
+    // Maintain original list in case other mods hold references to the list
+    private void RestoreOverrideList<T>(List<T> overrideList, List<T> backup) {
+      overrideList.Clear();
+      foreach (T lanceOverride in backup) {
+        overrideList.Add(lanceOverride);
+      }
     }
 
     public void RequestResourcesAndProcess(BattleTechResourceType resourceType, string resourceId, bool filterByOwnership = false) {

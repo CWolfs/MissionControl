@@ -240,7 +240,6 @@ namespace MissionControl.Interpolation {
       BackedUpDialogueOverrides.Clear();
       DynamicCastDefs.Clear();
       DynamicTakenLanceUnitPositions.Clear();
-      DataManager.Instance.ResetBetweenContracts();
     }
   }
 }
