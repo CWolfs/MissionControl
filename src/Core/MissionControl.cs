@@ -209,6 +209,9 @@ namespace MissionControl {
         Main.Logger.Log($"[MissionControl] Player drop tonnage: '{PlayerLanceDropTonnage}' tons");
 
         IsMCLoadingFinished = false;
+
+        DataManager.Instance.BackupContractOverriddeData();
+
         SetActiveAdditionalLances(contract);
         Main.Logger.Log($"[MissionControl] Contract map is '{contract.mapName}'");
         ContractMapName = contract.mapName;
@@ -223,7 +226,6 @@ namespace MissionControl {
       }
 
       ContractStats.Clear();
-      ClearOldContractData();
       ClearOldCaches();
     }
 
@@ -255,23 +257,6 @@ namespace MissionControl {
     public void SetFinishedLoading() {
       MissionControl.Instance.IsMCLoadingFinished = true;
       MissionControl.Instance.API = new API();
-    }
-
-    private void ClearOldContractData() {
-      Main.Logger.Log($"[MissionControl] Clearing old contract data");
-
-      // Clear old lance data
-      if (CurrentContract != null) {
-        // Old Lances
-        CurrentContract.Override.targetTeam.lanceOverrideList =
-          CurrentContract.Override.targetTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
-        CurrentContract.Override.employerTeam.lanceOverrideList =
-          CurrentContract.Override.employerTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
-
-        // Old Objectives
-        CurrentContract.Override.contractObjectiveList =
-         CurrentContract.Override.contractObjectiveList.Where(contractObjective => !contractObjective.description.StartsWith("MC ")).ToList();
-      }
     }
 
     private void ClearOldCaches() {
@@ -619,6 +604,7 @@ namespace MissionControl {
     public void OnCombatDestroyed() {
       Main.LogDebug("[MissionControl.OnCombatDestroyed] Clearing specific data");
       PilotCastInterpolator.Instance.Reset();
+      DataManager.Instance.ResetBetweenContracts();
     }
   }
 }
