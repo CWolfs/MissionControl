@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text.RegularExpressions;
 
 using BattleTech;
@@ -12,12 +13,16 @@ namespace MissionControl.Interpolation {
       }
     }
 
-    private static Regex re = new Regex("\\{MC\\..*?\\}");
+    public enum InterpolateType { PreInterpolate, PostInterpolate }
+    private static Regex preMessagePattern = new Regex("\\{MC\\..*?\\}");
+    private static Regex postMessagePattern = new Regex("\\[MC\\..*?\\]");
 
-    public string Interoplate(string message) {
-      MatchCollection matchCollection = re.Matches(message);
+    public string Interpolate(InterpolateType interpolateType, string message) {
+      Regex pattern = interpolateType == InterpolateType.PreInterpolate ? preMessagePattern : postMessagePattern;
+
+      MatchCollection matchCollection = pattern.Matches(message);
       if (matchCollection.Count > 0) {
-        Main.LogDebug($"[InterpolatorInterpolatePatch] Found '{matchCollection.Count}' MC interpolation matches");
+        Main.LogDebug($"[Interpolate.{interpolateType.ToString()}] Found '{matchCollection.Count}' MC interpolation matches");
       }
 
       while (matchCollection.Count > 0) {
@@ -28,22 +33,40 @@ namespace MissionControl.Interpolation {
         string resolvedData = "ERROR";
 
         string[] lookups = value.Substring(1, value.Length - 2).Split('.');
-        Main.LogDebug("[InterpolatorInterpolatePatch] MC interpolation commands " + string.Join(", ", lookups));
+        Main.LogDebug($"[Interpolate.{interpolateType.ToString()}] MC interpolation commands " + string.Join(", ", lookups));
 
-        if (lookups[1] == "PlayerLances") {
-          resolvedData = InterpolatePlayerLances(message, lookups);
+        if (interpolateType == InterpolateType.PreInterpolate) {
+          resolvedData = PreInterpolate(message, lookups);
+        } else if (interpolateType == InterpolateType.PostInterpolate) {
+          resolvedData = PostInterpolate(message, lookups);
         }
 
         message = message.Remove(index, length).Insert(index, resolvedData);
-        matchCollection = re.Matches(message);
+        matchCollection = pattern.Matches(message);
       }
 
       return message;
     }
 
-    private string InterpolatePlayerLances(string message, string[] lookups) {
-      Main.LogDebug("[InterpolatorInterpolatePatch] PlayerLances interpolation");
-      string resolvedData = "MC_INCORRECT_PLAYERLANCE_COMMAND";
+    public string PreInterpolate(string message, string[] lookups) {
+      switch (lookups[1]) {
+        case DialogueInterpolationConstants.PlayerLances: return InterpolatePlayerLances(InterpolateType.PreInterpolate, message, lookups);
+        default: break;
+      }
+      return "MC_INCORRECT_PREINTERPOLATE_COMMAND";
+    }
+
+    public string PostInterpolate(string message, string[] lookups) {
+      switch (lookups[1]) {
+        case DialogueInterpolationConstants.Format: return InterpolateFormat(InterpolateType.PostInterpolate, message, lookups);
+        default: break;
+      }
+      return "MC_INCORRECT_POSTINTERPOLATE_COMMAND";
+    }
+
+    private string InterpolatePlayerLances(InterpolateType interpolateType, string message, string[] lookups) {
+      Main.LogDebug($"[Interpolate.{interpolateType.ToString()}] PlayerLances interpolation");
+      string fallbackData = "MC_INCORRECT_PLAYERLANCE_COMMAND";
       string unitKey = lookups[2];
       string unitDataKey = lookups[3];
 
@@ -52,7 +75,7 @@ namespace MissionControl.Interpolation {
           if (PilotCastInterpolator.Instance.DynamicCastDefs.ContainsKey(unitKey)) {
             string castDefId = PilotCastInterpolator.Instance.DynamicCastDefs[unitKey];
             CastDef castDef = UnityGameInstance.Instance.Game.DataManager.CastDefs.Get(castDefId);
-            resolvedData = castDef.Callsign() == null ? castDef.FirstName() : castDef.Callsign();
+            return castDef.Callsign() == null ? castDef.FirstName() : castDef.Callsign();
           }
         } else if (unitDataKey == "UnitName") {
           // Need a reference to the unit
@@ -63,7 +86,26 @@ namespace MissionControl.Interpolation {
         // Other PlayerLance specific info like lance count etc
       }
 
-      return resolvedData;
+      return fallbackData;
+    }
+
+    private string InterpolateFormat(InterpolateType interpolateType, string message, string[] lookups) {
+      Main.LogDebug($"[Interpolate.{interpolateType.ToString()}] Format interpolation");
+      string fallbackData = "MC_INCORRECT_FORMAT_COMMAND";
+      string method = lookups[2];
+      string value = lookups[3];
+
+      if (method == "ToUpperFirst") {
+        return value[0].ToString().ToUpper() + value.Substring(1);
+      } else if (method == "ToUpper") {
+        return value.ToUpper();
+      } else if (method == "ToLower") {
+        return value.ToLower();
+      } else if (method == "ToAlternating") {
+        return string.Concat(value.ToLower().AsEnumerable().Select((c, i) => i % 2 == 0 ? c : char.ToUpper(c)));
+      }
+
+      return fallbackData;
     }
   }
 }
