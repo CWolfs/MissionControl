@@ -274,6 +274,7 @@ namespace MissionControl.Rules {
       Main.Logger.Log($"[{this.GetType().Name}] Building additional lance rules");
 
       int numberOfAdditionalEnemyLances = 0;
+      List<string> lanceTags = new List<string> { Tags.ADDITIONAL_LANCE };
 
       if (MissionControl.Instance.AreAdditionalLancesAllowed("enemy")) {
         List<string> manuallySpecifiedLances = new List<string>();
@@ -328,7 +329,7 @@ namespace MissionControl.Rules {
         for (int i = 1; i <= numberOfAdditionalEnemyLances; i++) {
           if (MissionControl.Instance.CurrentContractType == "ArenaSkirmish") {
             new AddPlayer2LanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
-              $"Destroy Enemy Support Lance {i}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete);
+              $"Destroy Enemy Support Lance {i}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete, lanceTags);
           } else {
             if (manuallySpecifiedLanceOverrides.Count >= i) {
               MLanceOverride lanceOverride = manuallySpecifiedLanceOverrides[i - 1];
@@ -336,10 +337,10 @@ namespace MissionControl.Rules {
 
               Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Resolved Enemy lance will be '{lanceOverride.LanceKey}'.");
               new AddTargetLanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
-                objectiveName, objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete, lanceOverride);
+                objectiveName, objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete, lanceTags, lanceOverride);
             } else {
               new AddTargetLanceWithDestroyObjectiveBatch(this, enemyOrientationTargetKey, enemyLookDirection, mustBeBeyondDistanceOfTarget, mustBeWithinDistanceOfTarget,
-                $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete);
+                $"Destroy {{TEAM_TAR.FactionDef.Demonym}} Support Lance {i}", objectivePriority--, isPrimaryObjective, displayToUser, showObjectiveOnLanceDetected, excludeFromAutocomplete, lanceTags);
             }
           }
         }
@@ -387,9 +388,9 @@ namespace MissionControl.Rules {
             MLanceOverride lanceOverride = manuallySpecifiedLanceOverrides[i - 1];
 
             Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Resolved Ally lance will be '{lanceOverride.LanceKey}'.");
-            new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, mustBeBeyondDistance, mustBeWithinDistance, lanceOverride);
+            new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, mustBeBeyondDistance, mustBeWithinDistance, lanceTags, lanceOverride);
           } else {
-            new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, mustBeBeyondDistance, mustBeWithinDistance);
+            new AddEmployerLanceBatch(this, allyOrientationKey, allyLookDirection, mustBeBeyondDistance, mustBeWithinDistance, lanceTags);
           }
         }
       }
@@ -448,7 +449,7 @@ namespace MissionControl.Rules {
     }
 
     private void BuildAi() {
-      EncounterLogic.Add(new IssueFollowLanceOrderTrigger(new List<string>() { Tags.EMPLOYER_TEAM }, IssueAIOrderTo.ToLance, new List<string>() { Tags.PLAYER_1_TEAM }));
+      EncounterLogic.Add(new IssueFollowLanceOrderTrigger(new List<string>() { Tags.EMPLOYER_TEAM, Tags.ADDITIONAL_LANCE }, IssueAIOrderTo.ToLance, new List<string>() { Tags.PLAYER_1_TEAM }));
     }
   }
 }

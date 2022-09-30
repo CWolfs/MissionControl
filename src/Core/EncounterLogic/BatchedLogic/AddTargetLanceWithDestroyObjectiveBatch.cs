@@ -9,7 +9,7 @@ namespace MissionControl.Logic {
   public class AddTargetLanceWithDestroyObjectiveBatch {
     public AddTargetLanceWithDestroyObjectiveBatch(EncounterRules encounterRules, string orientationTargetKey,
       SpawnLogic.LookDirection lookDirection, float mustBeBeyondDistance, float mustBeWithinDistance, string objectiveName, int priority,
-      bool isPrimaryObjective, bool displayToUser, bool showObjectiveOnLanceDetected, bool excludeFromAutocomplete, MLanceOverride manuallySpecifiedLance = null) {
+      bool isPrimaryObjective, bool displayToUser, bool showObjectiveOnLanceDetected, bool excludeFromAutocomplete, List<string> lanceTags, MLanceOverride manuallySpecifiedLance = null) {
 
       int numberOfUnitsInLance = 4;
       string lanceGuid = Guid.NewGuid().ToString();
@@ -21,7 +21,7 @@ namespace MissionControl.Logic {
 
       encounterRules.EncounterLogic.Add(new AddLanceToTargetTeam(lanceGuid, unitGuids, manuallySpecifiedLance));
       encounterRules.EncounterLogic.Add(new AddDestroyWholeUnitChunk(encounterRules, targetTeamGuid, lanceGuid, unitGuids,
-         spawnerName, objectiveGuid, objectiveName, priority, isPrimaryObjective, displayToUser));
+         spawnerName, objectiveGuid, objectiveName, priority, isPrimaryObjective, displayToUser, lanceTags));
       if (!excludeFromAutocomplete) encounterRules.EncounterLogic.Add(new AddObjectiveToAutocompleteTrigger(objectiveGuid));
       encounterRules.EncounterLogic.Add(new SpawnLanceMembersAroundTarget(encounterRules, spawnerName, orientationTargetKey,
         SpawnLogic.LookDirection.AWAY_FROM_TARGET, mustBeBeyondDistance, mustBeWithinDistance));
