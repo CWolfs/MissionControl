@@ -250,7 +250,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "{TEAM_EMP.FactionDef.Name} didn't want to put all their eggs in one basket. They've split the cache over two locations within a quick march of each other. When you close in to each location, we can make contact with the garrison and get a sitrep.",
+          "words": "[MC.Format.ToUpperFirst.{TEAM_EMP.FactionDef.Name}] didn't want to put all their eggs in one basket. They've split the cache over two locations within a quick march of each other. When you close in to each location, we can make contact with the garrison and get a sitrep.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -519,7 +519,7 @@
           "revealRadius": -1
         },
         {
-          "words": "{TEAM_EMP.FactionDef.Name} didn't have the guts to send their own men, eh? No matter. Your deaths will send the message they're not welcome here all the same, mercenary.",
+          "words": "[MC.Format.ToUpperFirst.{TEAM_EMP.FactionDef.Name}] didn't have the guts to send their own men, eh? No matter. Your deaths will send the message they're not welcome here all the same, mercenary.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -560,7 +560,7 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "That's discretion out the window, {COMMANDER.Callsign}. {TEAM_TAR.FactionDef.Name} hacked the defences to attack on receiving the ident codes {TEAM_EMP.FactionDef.Name} gave us. Let's hope they only found the first cache.",
+          "words": "That's discretion out the window, {COMMANDER.Callsign}. [MC.Format.ToUpperFirst.{TEAM_TAR.FactionDef.Name}] hacked the defences to attack on receiving the ident codes {TEAM_EMP.FactionDef.Name} gave us. Let's hope they only found the first cache.",
           "wordsColor": {
             "r": 1,
             "g": 1,
