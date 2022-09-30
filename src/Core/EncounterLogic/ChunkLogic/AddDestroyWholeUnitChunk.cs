@@ -26,10 +26,11 @@ namespace MissionControl.Logic {
     private int priority;
     private bool isPrimary;
     private bool displayToUser;
+    private List<string> lanceTags;
     private string contractObjectiveGameLogicGuid;
 
     public AddDestroyWholeUnitChunk(EncounterRules encounterRules, string teamGuid, string lanceGuid, List<string> unitGuids,
-      string spawnerName, string objectiveGuid, string objectiveLabel, int priority, bool isPrimary, bool displayToUser, string contractObjectiveGameLogicGuid = null) {
+      string spawnerName, string objectiveGuid, string objectiveLabel, int priority, bool isPrimary, bool displayToUser, List<string> lanceTags, string contractObjectiveGameLogicGuid = null) {
       this.encounterRules = encounterRules;
       this.teamGuid = teamGuid;
       this.lanceGuid = lanceGuid;
@@ -40,6 +41,7 @@ namespace MissionControl.Logic {
       this.priority = priority;
       this.isPrimary = isPrimary;
       this.displayToUser = displayToUser;
+      this.lanceTags = lanceTags;
       this.contractObjectiveGameLogicGuid = contractObjectiveGameLogicGuid;
     }
 
@@ -59,7 +61,8 @@ namespace MissionControl.Logic {
         teamGuid,
         spawnOnActivation,
         SpawnUnitMethodType.InstantlyAtSpawnPoint,
-        unitGuids
+        unitGuids,
+        lanceTags
       );
       LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef(lanceSpawner);
 

@@ -21,7 +21,7 @@ namespace MissionControl.Rules {
     }
 
     public void BuildAi() {
-      EncounterLogic.Add(new IssueFollowLanceOrderTrigger(new List<string>() { Tags.EMPLOYER_TEAM }, IssueAIOrderTo.ToLance, new List<string>() { Tags.PLAYER_1_TEAM }));
+      EncounterLogic.Add(new IssueFollowLanceOrderTrigger(new List<string>() { Tags.EMPLOYER_TEAM, Tags.ADDITIONAL_LANCE }, IssueAIOrderTo.ToLance, new List<string>() { Tags.PLAYER_1_TEAM }));
     }
 
     public void BuildRandomSpawns() {

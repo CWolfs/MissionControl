@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
+
 using BattleTech;
 using BattleTech.Save.Test;
-using BattleTech.Serialization;
-using fastJSON;
-using HBS.Collections;
-using HBS.Util;
+
 using UnityEngine;
 
 namespace MissionControl.AI {
@@ -19,7 +16,7 @@ namespace MissionControl.AI {
     private Dictionary<string, BehaviorVariableValue> behaviorVariables;
     public Dictionary<AIMood, CustomBehaviorVariableScope> ScopesByMood;
 
-    public List<string> VariableNames	{
+    public List<string> VariableNames {
       get {
         return new List<string>(this.behaviorVariables.Keys);
       }
@@ -43,14 +40,14 @@ namespace MissionControl.AI {
       return null;
     }
 
-    public BehaviorVariableValue GetVariableWithMood(string key, AIMood mood)	{
+    public BehaviorVariableValue GetVariableWithMood(string key, AIMood mood) {
       if (this.ScopesByMood.ContainsKey(mood)) {
         BehaviorVariableValue variable = this.ScopesByMood[mood].GetVariable(key);
         if (variable != null) return variable;
       }
-      
+
       if (this.behaviorVariables.ContainsKey(key)) return this.behaviorVariables[key];
-    
+
       return null;
     }
 
@@ -60,7 +57,7 @@ namespace MissionControl.AI {
       }
     }
 
-    public bool IssueAIOrder(CustomAIOrder order)	{
+    public bool IssueAIOrder(CustomAIOrder order) {
       Main.LogDebug("[IssueAIOrder] Handling order: " + order);
       switch (order.CustomOrderType) {
         case "FOLLOW_LANCE": {
@@ -89,7 +86,7 @@ namespace MissionControl.AI {
 
     // TODO: Need to cover vanilla deserialisation for `CustomBehaviorVariableScope` type before this will work
     // TODO: Patch a call into this for the unit to save the data into the save file, or output as a companion save file
-    public void Hydrate(SerializableReferenceContainer references)  {
+    public void Hydrate(SerializableReferenceContainer references) {
       Dictionary<string, BehaviorVariableValue> itemDictionary = references.GetItemDictionary<string, BehaviorVariableValue>(this, "serializableCustomBehaviorVariables");
       Dictionary<int, CustomBehaviorVariableScope> itemDictionary2 = references.GetItemDictionary<int, CustomBehaviorVariableScope>(this, "serializableCustomScopesByMood");
       this.behaviorVariables = new Dictionary<string, BehaviorVariableValue>(itemDictionary.Count);
@@ -113,7 +110,7 @@ namespace MissionControl.AI {
     public void Dehydrate(SerializableReferenceContainer references) {
       Dictionary<string, BehaviorVariableValue> dictionary = new Dictionary<string, BehaviorVariableValue>(this.behaviorVariables.Count);
       Dictionary<int, CustomBehaviorVariableScope> dictionary2 = new Dictionary<int, CustomBehaviorVariableScope>(this.ScopesByMood.Count);
-      
+
       foreach (KeyValuePair<string, BehaviorVariableValue> keyValuePair in this.behaviorVariables) {
         string key = (string)keyValuePair.Key;
         BehaviorVariableValue value = keyValuePair.Value;

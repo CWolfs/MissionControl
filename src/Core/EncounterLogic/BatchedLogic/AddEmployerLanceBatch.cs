@@ -12,7 +12,7 @@ using BattleTech;
 namespace MissionControl.Logic {
   public class AddEmployerLanceBatch {
     public AddEmployerLanceBatch(EncounterRules encounterRules, string orientationTargetKey,
-      SpawnLogic.LookDirection lookDirection, float minDistance, float maxDistance, MLanceOverride manuallySpecifiedLance = null) {
+      SpawnLogic.LookDirection lookDirection, float minDistance, float maxDistance, List<string> lanceTags, MLanceOverride manuallySpecifiedLance = null) {
 
       int numberOfUnitsInLance = 4;
       string lanceGuid = Guid.NewGuid().ToString();
@@ -21,10 +21,8 @@ namespace MissionControl.Logic {
       string spawnerName = $"Lance_Ally_SupportingForce_{lanceGuid}";
 
       encounterRules.EncounterLogic.Add(new AddLanceToAllyTeam(lanceGuid, unitGuids, manuallySpecifiedLance));
-      encounterRules.EncounterLogic.Add(new AddLanceSpawnChunk(employerTeamGuid, lanceGuid, unitGuids, spawnerName,
-        "Spawns a non-objective related ally supporting lance"));
-      encounterRules.EncounterLogic.Add(new SpawnLanceMembersAroundTarget(encounterRules, spawnerName, orientationTargetKey,
-        lookDirection, minDistance, maxDistance));
+      encounterRules.EncounterLogic.Add(new AddLanceSpawnChunk(employerTeamGuid, lanceGuid, unitGuids, spawnerName, lanceTags, "Spawns a non-objective related ally supporting lance"));
+      encounterRules.EncounterLogic.Add(new SpawnLanceMembersAroundTarget(encounterRules, spawnerName, orientationTargetKey, lookDirection, minDistance, maxDistance));
 
       bool useDialogue = false;
 
