@@ -140,22 +140,21 @@ namespace MissionControl {
 
     public void InitSceneData() {
       CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
+      if (HexGrid == null) HexGrid = ReflectionHelper.GetPrivateStaticField(typeof(WorldPointGameLogic), "_hexGrid") as HexGrid;
 
       if (!EncounterLayerParentGameObject) EncounterLayerParentGameObject = GameObject.Find("EncounterLayerParent");
       EncounterLayerParent = EncounterLayerParentGameObject.GetComponent<EncounterLayerParent>();
 
       EncounterLayerData = GetActiveEncounter();
       if (EncounterLayerData == null) { // If no EncounterLayer matches the Contract Type GUID, it's a custom contract type
-        EncounterLayerData = ConstructCustomContractType();
         IsCustomContractType = true;
+        EncounterLayerData = ConstructCustomContractType();
       } else {
         IsCustomContractType = false;
       }
 
       EncounterLayerGameObject = EncounterLayerData.gameObject;
       EncounterLayerData.CalculateEncounterBoundary();
-
-      if (HexGrid == null) HexGrid = ReflectionHelper.GetPrivateStaticField(typeof(WorldPointGameLogic), "_hexGrid") as HexGrid;
     }
 
     public void SetPreContractTypeInfo(Contract contract) {

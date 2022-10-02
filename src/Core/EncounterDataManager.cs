@@ -18,13 +18,22 @@ namespace MissionControl {
       }
     }
 
-    public void HandleCustomContractType() {
+    public void HandlePlotsAndMapMetadataUpdate() {
       // TODO: When new buildings can be added - handle usecase where contract builder added new buildings - don't wipe that data
       if (MissionControl.Instance.IsCustomContractType) {
         OverridePlots();
         ResetAllBuildingData();
-        ProcessQueuedBuildingMounts();
         GenerateEncounterLayerBuildingData();
+        RefreshMapMetadata();
+      }
+    }
+
+    public void HandleDeferredContractTypeBuild() {
+      if (MissionControl.Instance.IsCustomContractType) {
+        ProcessQueuedBuildingMounts();
+        ResetAllBuildingData();
+        GenerateEncounterLayerBuildingData();
+        RefreshMapMetadata();
       }
     }
 
@@ -219,6 +228,12 @@ namespace MissionControl {
           encounterLayerData.mapEncounterLayerDataCells[zCellIndex, xCellIndex].relatedTerrainCell = mapMetaData.mapTerrainDataCells[zCellIndex, xCellIndex];
           mapMetaData.mapTerrainDataCells[zCellIndex, xCellIndex].MapEncounterLayerDataCell = mapEncounterLayerDataCell;
         }
+      }
+    }
+
+    private void RefreshMapMetadata() {
+      foreach (MapTerrainDataCell mapTerrainDataCell in UnityGameInstance.BattleTechGame.Combat.MapMetaData.mapTerrainDataCells) {
+        mapTerrainDataCell.UpdateCachedValues();
       }
     }
   }

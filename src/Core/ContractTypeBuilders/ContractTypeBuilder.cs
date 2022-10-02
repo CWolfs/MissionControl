@@ -34,6 +34,9 @@ namespace MissionControl.ContractTypeBuilders {
 
       BuildTeamsData();
       BuildPlotsData();
+
+      EncounterDataManager.Instance.HandlePlotsAndMapMetadataUpdate();
+
       BuildChunks();
       BuildTriggers();
 
@@ -224,7 +227,7 @@ namespace MissionControl.ContractTypeBuilders {
 
     private void Validate() {
       Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Validating");
-      MissionControl.Instance.EncounterLayerData.Validate();
+      // MissionControl.Instance.EncounterLayerData.Validate();
     }
   }
 }
