@@ -11,7 +11,7 @@
   "missionSuccessStatementOverride": null,
   "badFaithStatementOverride": null,
   "goodFaithStatementOverride": null,
-  "shortDescription": "Commander, we need you to confirm the status of a supply cache in the {TGT_SYSTEM.name} system that we established in case we need to execute local operations. It's a blackout site so that's why we need you there in person. Maintain a low profile, discretion is paramount on this operation.",
+  "shortDescription": "Commander, we need you to confirm the status of a supply cache in the {TGT_SYSTEM.name} system that we established in case we need to execute local operations. Your company will run a patrol through the region, passing by the dumps and establishing communications by tightbeam only.\n\nDo not attempt to contact the cache by radio and maintain a low profile, discretion is paramount on this operation.",
   "longDescription": "Oh sure, dropping in a merc mech company to check your secret supply cache is the very definition of discretion. Commander, if this doesn't go sideways I may die of shock.",
   "salvagePotential": 20,
   "requirementList": [
