@@ -137,6 +137,20 @@ namespace MissionControl.Interpolation {
         }
 
         return DialogueInterpolationConstants.SKIP_DIALOGUE;
+      } else if (conditionalSubject.EndsWith("EmployerFactionShortName")) {
+        ContractOverride contractOverride = MissionControl.Instance.CurrentContract.Override;
+        FactionDef factionDef = (conditionalSubject.StartsWith("Employer")) ? contractOverride.employerTeam.FactionDef : contractOverride.targetTeam.FactionDef;
+        string factionName = factionDef.ShortName;
+
+        if (conditionalType == DialogueInterpolationConstants.ConditionalTypePositive) {
+          if (factionName == conditionalValue) return "";
+        } else if (conditionalType == DialogueInterpolationConstants.ConditionalTypeNegative) {
+          if (factionName != conditionalValue) return "";
+        } else if (conditionalType == DialogueInterpolationConstants.ConditionalTypeContains) {
+          if (factionName.Contains(conditionalValue)) return "";
+        }
+
+        return DialogueInterpolationConstants.SKIP_DIALOGUE;
       }
 
       return fallbackData;
