@@ -90,8 +90,29 @@ namespace MissionControl.Interpolation {
         } else if (unitDataKey == "UnitName") {
           AbstractActor actor = PilotCastInterpolator.Instance.BoundAbstractActors[unitKey];
           return actor.UnitName;
+        } else if (unitDataKey == "UnitVariant") {
+          AbstractActor actor = PilotCastInterpolator.Instance.BoundAbstractActors[unitKey];
+          return actor.VariantName;
         } else {
           // Other commands like Unit's Mech etc
+        }
+      } else if (unitKey == DialogueInterpolationConstants.Commander) {
+        if (unitDataKey == "DisplayName") {
+          return UnityGameInstance.Instance.Game.Simulation.Commander.Name;
+        } else if (unitDataKey == "UnitName") {
+          if (PilotCastInterpolator.Instance.BoundAbstractActors.ContainsKey(DialogueInterpolationConstants.Commander)) {
+            AbstractActor actor = PilotCastInterpolator.Instance.BoundAbstractActors[DialogueInterpolationConstants.Commander];
+            return actor.UnitName;
+          } else {
+            return "Argo";
+          }
+        } else if (unitDataKey == "UnitVariant") {
+          if (PilotCastInterpolator.Instance.BoundAbstractActors.ContainsKey(DialogueInterpolationConstants.Commander)) {
+            AbstractActor actor = PilotCastInterpolator.Instance.BoundAbstractActors[DialogueInterpolationConstants.Commander];
+            return actor.VariantName;
+          } else {
+            return "Argo";
+          }
         }
       } else {
         // Other PlayerLance specific info like lance count etc

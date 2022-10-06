@@ -164,6 +164,18 @@ namespace MissionControl.Interpolation {
         Main.LogDebug($"[PilotCastInterpolator.BindAbstractActorToBindingKey] Binding AbstractActor '{actor.UnitName}' with pilot '{actor.GetPilot().Name}' using '{entry.Key}:{entry.Value - 1}'");
         BoundAbstractActors[entry.Key] = actor;
       }
+
+      // Bind the commander if they are in combat
+      if (!MissionControl.Instance.IsSkirmish()) {
+        foreach (AbstractActor unit in units) {
+          Pilot pilot = unit.GetPilot();
+          Pilot commanderPilot = UnityGameInstance.Instance.Game.Simulation.Commander;
+
+          if (pilot.Description.Id == commanderPilot.Description.Id) {
+            BoundAbstractActors[DialogueInterpolationConstants.Commander] = unit;
+          }
+        }
+      }
     }
 
     private bool IsPilotInAction(AbstractActor actor) {
