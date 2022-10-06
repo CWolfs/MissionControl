@@ -14,8 +14,9 @@ namespace MissionControl.Interpolation {
     public const string Format = "Format";
 
     public const string Conditional = "If";
-    public const string ConditionalPositive = "Is";
-    public const string ConditionalNegative = "IsNot";
+    public const string ConditionalTypePositive = "Is";
+    public const string ConditionalTypeNegative = "IsNot";
+    public const string ConditionalTypeContains = "Contains";
 
     // Faction Types
     public const string FactionTypeRealFaction = "RealFaction";

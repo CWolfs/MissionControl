@@ -2,6 +2,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 
 using BattleTech;
+using BattleTech.Framework;
 
 namespace MissionControl.Interpolation {
   public class DialogueInterpolator {
@@ -99,38 +100,43 @@ namespace MissionControl.Interpolation {
       Main.LogDebug($"[Interpolate.{interpolateType.ToString()}] Conditional interpolation");
       string fallbackData = "MC_INCORRECT_CONDITIONAL_COMMAND";
       string conditionalSubject = lookups[2];
-      string positiveNegativeConditional = lookups[3];
-      string conditionalSpecifics = lookups[4];
+      string conditionalType = lookups[3];
+      string conditionalValue = lookups[4];
 
-      Main.LogDebug($"[Interpolate.{interpolateType.ToString()}] positiveNegativeConditional '{positiveNegativeConditional}' conditionalSubject '{conditionalSubject}' conditionalSpecifics '{conditionalSpecifics}'");
+      Main.LogDebug($"[Interpolate.{interpolateType.ToString()}] positiveNegativeConditional '{conditionalType}' conditionalSubject '{conditionalSubject}' conditionalSpecifics '{conditionalValue}'");
       bool isPositive = true;
-      if (positiveNegativeConditional == DialogueInterpolationConstants.ConditionalPositive) {
+      if (conditionalType == DialogueInterpolationConstants.ConditionalTypePositive) {
         isPositive = true;
-      } else if (positiveNegativeConditional == DialogueInterpolationConstants.ConditionalNegative) {
+      } else if (conditionalType == DialogueInterpolationConstants.ConditionalTypeNegative) {
         isPositive = false;
       }
 
-      if (conditionalSubject == "EmployerFactionType") {
-        FactionDef factionDef = MissionControl.Instance.CurrentContract.Override.employerTeam.FactionDef;
-        FactionValue factionValue = MissionControl.Instance.CurrentContract.Override.employerTeam.FactionValue;
+      if (conditionalSubject.EndsWith("FactionType")) {
+        ContractOverride contractOverride = MissionControl.Instance.CurrentContract.Override;
+        FactionDef factionDef = (conditionalSubject.StartsWith("Employer")) ? contractOverride.employerTeam.FactionDef : contractOverride.targetTeam.FactionDef;
+        FactionValue factionValue = (conditionalSubject.StartsWith("Employer")) ? contractOverride.employerTeam.FactionValue : contractOverride.targetTeam.FactionValue;
 
-        if (IsFactionType(factionDef, factionValue, conditionalSpecifics)) {
-          if (isPositive) {
-            return "";
-          } else {
-            return DialogueInterpolationConstants.SKIP_DIALOGUE;
-          }
+        if (IsFactionType(factionDef, factionValue, conditionalValue)) {
+          if (isPositive) return "";
         } else {
-          if (!isPositive) {
-            return "";
-          } else {
-            return DialogueInterpolationConstants.SKIP_DIALOGUE;
-          }
+          if (!isPositive) return "";
         }
 
-      } else if (conditionalSubject == "EmployerFactionNameContains") {
-        FactionDef factionDef = MissionControl.Instance.CurrentContract.Override.employerTeam.FactionDef;
-        FactionValue factionValue = MissionControl.Instance.CurrentContract.Override.employerTeam.FactionValue;
+        return DialogueInterpolationConstants.SKIP_DIALOGUE;
+      } else if (conditionalSubject.EndsWith("EmployerFactionName")) {
+        ContractOverride contractOverride = MissionControl.Instance.CurrentContract.Override;
+        FactionDef factionDef = (conditionalSubject.StartsWith("Employer")) ? contractOverride.employerTeam.FactionDef : contractOverride.targetTeam.FactionDef;
+        string factionName = factionDef.Name;
+
+        if (conditionalType == DialogueInterpolationConstants.ConditionalTypePositive) {
+          if (factionName == conditionalValue) return "";
+        } else if (conditionalType == DialogueInterpolationConstants.ConditionalTypeNegative) {
+          if (factionName != conditionalValue) return "";
+        } else if (conditionalType == DialogueInterpolationConstants.ConditionalTypeContains) {
+          if (factionName.Contains(conditionalValue)) return "";
+        }
+
+        return DialogueInterpolationConstants.SKIP_DIALOGUE;
       }
 
       return fallbackData;
