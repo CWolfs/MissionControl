@@ -6,8 +6,23 @@ namespace MissionControl.Interpolation {
 
     public const string Commander = "Commander";
 
+    // Special Commands
+    public const string SKIP_DIALOGUE = "|SKIPDIALOGUE|";
+
     // Lookups
     public const string PlayerLances = "PlayerLances";
     public const string Format = "Format";
+
+    public const string Conditional = "If";
+    public const string ConditionalTypePositive = "Is";
+    public const string ConditionalTypeNegative = "IsNot";
+    public const string ConditionalTypeContains = "Contains";
+
+    // Faction Types
+    public const string FactionTypeRealFaction = "RealFaction";
+    public const string FactionTypeClan = "Clan";
+    public const string FactionTypeMerc = "Merc";
+    public const string FactionTypePirate = "Pirate";
+    public const string FactionTypeGreatHouse = "GreatHouse";
   }
 }

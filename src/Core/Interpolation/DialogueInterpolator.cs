@@ -2,6 +2,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 
 using BattleTech;
+using BattleTech.Framework;
 
 namespace MissionControl.Interpolation {
   public class DialogueInterpolator {
@@ -41,7 +42,12 @@ namespace MissionControl.Interpolation {
           resolvedData = PostInterpolate(message, lookups);
         }
 
-        message = message.Remove(index, length).Insert(index, resolvedData);
+        if (resolvedData == DialogueInterpolationConstants.SKIP_DIALOGUE) {
+          message = DialogueInterpolationConstants.SKIP_DIALOGUE;
+        } else {
+          message = message.Remove(index, length).Insert(index, resolvedData);
+        }
+
         matchCollection = pattern.Matches(message);
       }
 
@@ -51,6 +57,7 @@ namespace MissionControl.Interpolation {
     public string PreInterpolate(string message, string[] lookups) {
       switch (lookups[1]) {
         case DialogueInterpolationConstants.PlayerLances: return InterpolatePlayerLances(InterpolateType.PreInterpolate, message, lookups);
+        case DialogueInterpolationConstants.Conditional: return InterpolateConditional(InterpolateType.PreInterpolate, message, lookups);
         default: break;
       }
       return "MC_INCORRECT_PREINTERPOLATE_COMMAND";
@@ -87,6 +94,68 @@ namespace MissionControl.Interpolation {
       }
 
       return fallbackData;
+    }
+
+    private string InterpolateConditional(InterpolateType interpolateType, string message, string[] lookups) {
+      Main.LogDebug($"[Interpolate.{interpolateType.ToString()}] Conditional interpolation");
+      string fallbackData = "MC_INCORRECT_CONDITIONAL_COMMAND";
+      string conditionalSubject = lookups[2];
+      string conditionalType = lookups[3];
+      string conditionalValue = lookups[4];
+
+      Main.LogDebug($"[Interpolate.{interpolateType.ToString()}] positiveNegativeConditional '{conditionalType}' conditionalSubject '{conditionalSubject}' conditionalSpecifics '{conditionalValue}'");
+      bool isPositive = true;
+      if (conditionalType == DialogueInterpolationConstants.ConditionalTypePositive) {
+        isPositive = true;
+      } else if (conditionalType == DialogueInterpolationConstants.ConditionalTypeNegative) {
+        isPositive = false;
+      }
+
+      if (conditionalSubject.EndsWith("FactionType")) {
+        ContractOverride contractOverride = MissionControl.Instance.CurrentContract.Override;
+        FactionDef factionDef = (conditionalSubject.StartsWith("Employer")) ? contractOverride.employerTeam.FactionDef : contractOverride.targetTeam.FactionDef;
+        FactionValue factionValue = (conditionalSubject.StartsWith("Employer")) ? contractOverride.employerTeam.FactionValue : contractOverride.targetTeam.FactionValue;
+
+        if (IsFactionType(factionDef, factionValue, conditionalValue)) {
+          if (isPositive) return "";
+        } else {
+          if (!isPositive) return "";
+        }
+
+        return DialogueInterpolationConstants.SKIP_DIALOGUE;
+      } else if (conditionalSubject.EndsWith("EmployerFactionName")) {
+        ContractOverride contractOverride = MissionControl.Instance.CurrentContract.Override;
+        FactionDef factionDef = (conditionalSubject.StartsWith("Employer")) ? contractOverride.employerTeam.FactionDef : contractOverride.targetTeam.FactionDef;
+        string factionName = factionDef.Name;
+
+        if (conditionalType == DialogueInterpolationConstants.ConditionalTypePositive) {
+          if (factionName == conditionalValue) return "";
+        } else if (conditionalType == DialogueInterpolationConstants.ConditionalTypeNegative) {
+          if (factionName != conditionalValue) return "";
+        } else if (conditionalType == DialogueInterpolationConstants.ConditionalTypeContains) {
+          if (factionName.Contains(conditionalValue)) return "";
+        }
+
+        return DialogueInterpolationConstants.SKIP_DIALOGUE;
+      }
+
+      return fallbackData;
+    }
+
+    private bool IsFactionType(FactionDef factionDef, FactionValue factionValue, string type) {
+      switch (type) {
+        case DialogueInterpolationConstants.FactionTypeGreatHouse: return factionValue.IsGreatHouse == true;
+        case DialogueInterpolationConstants.FactionTypeClan: return factionValue.IsClan == true;
+        case DialogueInterpolationConstants.FactionTypeMerc: return factionValue.IsMercenary == true;
+        case DialogueInterpolationConstants.FactionTypePirate: return factionValue.IsPirate == true;
+        case DialogueInterpolationConstants.FactionTypeRealFaction: return factionValue.IsRealFaction == true;
+      }
+      return false;
+    }
+
+    private bool FactionNameContains(FactionDef factionDef, FactionValue factionValue, string pattern) {
+      if (factionDef.Name.ToLower().Contains(pattern.ToLower())) return true;
+      return false;
     }
 
     private string InterpolateFormat(InterpolateType interpolateType, string message, string[] lookups) {
