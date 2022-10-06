@@ -160,8 +160,9 @@ namespace MissionControl.Interpolation {
       List<AbstractActor> units = lance.GetLanceUnits();
 
       foreach (KeyValuePair<string, int> entry in BoundAbstractActorsCollapsedIndex) {
-        Main.LogDebug($"[PilotCastInterpolator.BindAbstractActorToBindingKey] Binding AbstractActor '{units[entry.Value].UnitName}' to '{entry.Key}:{entry.Value}'");
-        BoundAbstractActors[entry.Key] = units[entry.Value];
+        AbstractActor actor = units[entry.Value - 1];
+        Main.LogDebug($"[PilotCastInterpolator.BindAbstractActorToBindingKey] Binding AbstractActor '{actor.UnitName}' with pilot '{actor.GetPilot().Name}' using '{entry.Key}:{entry.Value - 1}'");
+        BoundAbstractActors[entry.Key] = actor;
       }
     }
 

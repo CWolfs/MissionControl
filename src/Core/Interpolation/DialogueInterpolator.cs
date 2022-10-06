@@ -88,7 +88,8 @@ namespace MissionControl.Interpolation {
             return castDef.Callsign() == null ? castDef.FirstName() : castDef.Callsign();
           }
         } else if (unitDataKey == "UnitName") {
-          // Need a reference to the unit
+          AbstractActor actor = PilotCastInterpolator.Instance.BoundAbstractActors[unitKey];
+          return actor.UnitName;
         } else {
           // Other commands like Unit's Mech etc
         }

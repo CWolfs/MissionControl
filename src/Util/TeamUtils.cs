@@ -31,7 +31,6 @@ public static class TeamUtils {
 
   public static Team GetTeam(string teamGUID) {
     List<Team> teams = UnityGameInstance.Instance.Game.Combat.Teams;
-    MissionControl.Main.LogDebug("[GetTeam] Teams count is: " + teams.Count);
     Team team = teams.Find((Team x) => x.GUID == teamGUID);
 
     if (team != null) return team;
