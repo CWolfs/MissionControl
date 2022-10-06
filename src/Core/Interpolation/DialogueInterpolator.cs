@@ -74,6 +74,9 @@ namespace MissionControl.Interpolation {
     private string InterpolatePlayerLances(InterpolateType interpolateType, string message, string[] lookups) {
       Main.LogDebug($"[Interpolate.{interpolateType.ToString()}] PlayerLances interpolation");
       string fallbackData = "MC_INCORRECT_PLAYERLANCE_COMMAND";
+
+      if (lookups.Length != 4) return "MC_INCORRECT_ARGUMENTS_PROVIDED_FOR_PLAYERLANCE_COMMAND";
+
       string unitKey = lookups[2];
       string unitDataKey = lookups[3];
 

@@ -1,5 +1,7 @@
 using UnityEngine;
 
+using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using BattleTech;
@@ -12,6 +14,11 @@ using HBS.Data;
 using MissionControl.RuntimeCast;
 
 namespace MissionControl.Interpolation {
+  /*
+    1 - On contract initialisation, run a first pass over all dialogue to select and bind dynamic custom castdefs to prevent errors in vanilla code
+    2 - On each interpolation, check if the speaking pilot's AbstractActor is dead or not
+      2.1 - If dead, rebind and change all references in dialogue
+  */
   public class PilotCastInterpolator {
     private static PilotCastInterpolator instance;
     public static PilotCastInterpolator Instance {
@@ -24,6 +31,8 @@ namespace MissionControl.Interpolation {
     private List<DialogueOverride> BackedUpDialogueOverrides { get; set; } = new List<DialogueOverride>();
     public Dictionary<string, string> DynamicCastDefs { get; set; } = new Dictionary<string, string>(); // <BindingKey, castDefID>
     public Dictionary<string, Dictionary<int, SpawnableUnit>> DynamicTakenLanceUnitPositions { get; set; } = new Dictionary<string, Dictionary<int, SpawnableUnit>>(); // <Team Name, <LancePosition, bool>>
+    public Dictionary<string, AbstractActor> BoundAbstractActors { get; set; } = new Dictionary<string, AbstractActor>(); // <BindingKey, AbstractActors>
+    public Dictionary<string, int> BoundAbstractActorsCollapsedIndex { get; set; } = new Dictionary<string, int>(); // <BindingKey, IndexInCollapsedLance>
 
     public void InterpolateContractDialogueCast() {
       List<DialogueOverride> dialogueOverrides = MissionControl.Instance.CurrentContract.Override.dialogueList;
@@ -44,15 +53,18 @@ namespace MissionControl.Interpolation {
     public string Interpolate(Contract contract, string selectedCastDefID) {
       if (!IsDynamicCastDef(selectedCastDefID)) return null;
 
-      // GUARD: If no existing random binding, check for specific pilot slot or random request
-      SpawnableUnit[] units = contract.Lances.GetLanceUnits(GetTeamIDFromCastDefID(selectedCastDefID));
-      if (units.Length <= 0) return null;
+      // GUARD: Prevent triggering when not required
+      SpawnableUnit[] lanceConfigUnits = contract.Lances.GetLanceUnits(GetTeamIDFromCastDefID(selectedCastDefID));
+      if (lanceConfigUnits.Length <= 0) return null;
+
+      SpawnableUnit[] collapsedLanceConfigUnits = contract.Lances.GetLanceUnitsIncludeEmptySlots(GetTeamIDFromCastDefID(selectedCastDefID));
+      if (collapsedLanceConfigUnits.Length <= 0) return null;
 
       // Check the castDef - Commander, Team position or Team random
       if (selectedCastDefID == CustomCastDef.castDef_Commander) {
-        return InterpolateCommander(contract, selectedCastDefID, units);
+        return InterpolateCommander(contract, selectedCastDefID);
       } else if (IsPlayerTeamDynamicCastDefID(selectedCastDefID)) {
-        return InterpolatePlayerPilot(contract, selectedCastDefID, units);
+        return InterpolatePlayerPilot(contract, selectedCastDefID, lanceConfigUnits, collapsedLanceConfigUnits);
       } else if (IsNonPlayerTeamDynamicCastDefID(selectedCastDefID)) {
         return InterpolateNonPlayerPilot(contract, selectedCastDefID);
       }
@@ -60,7 +72,7 @@ namespace MissionControl.Interpolation {
       return selectedCastDefID;
     }
 
-    private string InterpolateCommander(Contract contract, string selectedCastDefID, SpawnableUnit[] units) {
+    private string InterpolateCommander(Contract contract, string selectedCastDefID) {
       Pilot commanderPilot = UnityGameInstance.Instance.Game.Simulation.Commander;
       PilotDef commanderPilotDef = commanderPilot.pilotDef;
       string pilotCastDefID = $"castDef_{commanderPilot.Description.Id}";
@@ -70,7 +82,7 @@ namespace MissionControl.Interpolation {
       return pilotCastDefID;
     }
 
-    private string InterpolatePlayerPilot(Contract contract, string selectedCastDefID, SpawnableUnit[] units) {
+    private string InterpolatePlayerPilot(Contract contract, string selectedCastDefID, SpawnableUnit[] lanceConfigUnits, SpawnableUnit[] collapsedLanceConfigUnits) {
       // Check for already bound random pilots - castDef_TeamPilot_Random_*
       if (IsBindableRandom(selectedCastDefID)) {
         string bindingKey = GetBindingKey(selectedCastDefID);
@@ -78,7 +90,7 @@ namespace MissionControl.Interpolation {
         if (boundCastDefID != null) return boundCastDefID;
       }
 
-      int pilotPosition = SelectPilotPositionInLance(selectedCastDefID, "Player1", units); // Positon starting at slot 1
+      int pilotPosition = SelectPilotPositionInLance(selectedCastDefID, "Player1", lanceConfigUnits); // Positon starting at slot 1
 
       // Handle fallback
       if (!IsPilotPositionValid(pilotPosition)) {
@@ -97,9 +109,17 @@ namespace MissionControl.Interpolation {
       PilotDef pilotDef = null;
       string pilotCastDefId = "";
 
-      if (units.Length >= pilotPosition) {
-        SpawnableUnit unit = units[pilotPosition - 1];
-        pilotDef = unit.Pilot;
+      if (lanceConfigUnits.Length >= pilotPosition) {
+        SpawnableUnit lanceConfigUnit = lanceConfigUnits[pilotPosition - 1];
+        PilotDef lanceConfigUnitPilotDef = lanceConfigUnit.Pilot;
+
+        // Find the collapsed position so we can map it to the AbstractActors in the Team Lance
+        int collapsedUnitPosition = collapsedLanceConfigUnits.Select((value, index) => new { value, index = index + 1 }).FirstOrDefault(collapsedUnit => collapsedUnit.value == lanceConfigUnit).index;
+
+        // Can't access AbstractActors yet
+        pilotDef = lanceConfigUnitPilotDef;
+        // AbstractActor unit = units[collapsedUnitPosition];
+        // pilotDef = unit.GetPilot().pilotDef;
         pilotCastDefId = $"castDef_{pilotDef.Description.Id}";
 
         HandlePilotCastDefAndRebinding(pilotCastDefId, pilotDef, false);
@@ -107,6 +127,7 @@ namespace MissionControl.Interpolation {
         if (IsBindableRandom(selectedCastDefID)) {
           string bindingKey = GetBindingKey(selectedCastDefID);
           PilotCastInterpolator.Instance.DynamicCastDefs[bindingKey] = pilotCastDefId;
+          PilotCastInterpolator.Instance.BoundAbstractActorsCollapsedIndex[bindingKey] = collapsedUnitPosition;
         }
 
         return pilotCastDefId;
@@ -123,36 +144,61 @@ namespace MissionControl.Interpolation {
       return null;
     }
 
+    public void LateBinding() {
+      BindAbstractActorToBindingKey();
+    }
+
+    private void BindAbstractActorToBindingKey() {
+      Main.LogDebug("[PilotCastInterpolator.BindAbstractActorToBindingKey] Running bind of AbstractActor");
+
+      // GUARD: Prevent triggering when not required
+      Team player1Team = TeamUtils.GetTeam(TeamUtils.PLAYER_TEAM_ID);
+      List<Lance> lances = player1Team.lances;
+      if (lances.Count <= 0) return;
+
+      Lance lance = lances[0];
+      List<AbstractActor> units = lance.GetLanceUnits();
+
+      foreach (KeyValuePair<string, int> entry in BoundAbstractActorsCollapsedIndex) {
+        Main.LogDebug($"[PilotCastInterpolator.BindAbstractActorToBindingKey] Binding AbstractActor '{units[entry.Value].UnitName}' to '{entry.Key}:{entry.Value}'");
+        BoundAbstractActors[entry.Key] = units[entry.Value];
+      }
+    }
+
+    private bool IsPilotInAction(AbstractActor actor) {
+      return !actor.IsDead;
+    }
+
     private bool IsPilotPositionValid(int pilotPosition) {
       return pilotPosition > 0;
     }
 
-    private int SelectPilotPositionInLance(string selectedCastDefID, string teamName, SpawnableUnit[] units) {
+    private int SelectPilotPositionInLance(string selectedCastDefID, string teamName, SpawnableUnit[] lanceConfigUnits) {
       if (IsTrueRandom(selectedCastDefID)) { // castDef_TeamPilot_Random format
-        return Random.Range(1, units.Length + 1);
+        return UnityEngine.Random.Range(1, lanceConfigUnits.Length + 1);
       } else if (IsBindableRandom(selectedCastDefID)) { // castDef_TeamPilot_Random_X format
-        return FindNonUsedPilotPosition(teamName, units);
+        return FindNonUsedPilotPosition(teamName, lanceConfigUnits);
       } else { // castDef_TeamPilot_X format
         return int.Parse(GetPilotPositionFromCastDef(selectedCastDefID));
       }
     }
 
-    public void AddTakenPilotPosition(string teamName, int unitPosition, SpawnableUnit unit = null) {
+    public void AddTakenPilotPosition(string teamName, int unitPosition, SpawnableUnit lanceConfigUnit = null) {
       if (!DynamicTakenLanceUnitPositions.ContainsKey(teamName)) DynamicTakenLanceUnitPositions.Add(teamName, new Dictionary<int, SpawnableUnit>());
       Dictionary<int, SpawnableUnit> takenUnitPositions = DynamicTakenLanceUnitPositions[teamName];
 
-      takenUnitPositions[unitPosition] = unit;
+      takenUnitPositions[unitPosition] = lanceConfigUnit;
     }
 
-    private int FindNonUsedPilotPosition(string teamName, SpawnableUnit[] units) {
+    private int FindNonUsedPilotPosition(string teamName, SpawnableUnit[] lanceConfigUnits) {
       if (!DynamicTakenLanceUnitPositions.ContainsKey(teamName)) DynamicTakenLanceUnitPositions.Add(teamName, new Dictionary<int, SpawnableUnit>());
       Dictionary<int, SpawnableUnit> takenUnitPositions = DynamicTakenLanceUnitPositions[teamName];
 
-      while (takenUnitPositions.Count < units.Length) {
-        int possiblePilotPosition = Random.Range(1, units.Length + 1);
+      while (takenUnitPositions.Count < lanceConfigUnits.Length) {
+        int possiblePilotPosition = UnityEngine.Random.Range(1, lanceConfigUnits.Length + 1);
 
         if (!takenUnitPositions.ContainsKey(possiblePilotPosition)) {
-          takenUnitPositions.Add(possiblePilotPosition, units[possiblePilotPosition - 1]);
+          takenUnitPositions.Add(possiblePilotPosition, lanceConfigUnits[possiblePilotPosition - 1]);
           return possiblePilotPosition;
         }
       }
@@ -240,6 +286,8 @@ namespace MissionControl.Interpolation {
       BackedUpDialogueOverrides.Clear();
       DynamicCastDefs.Clear();
       DynamicTakenLanceUnitPositions.Clear();
+      BoundAbstractActors.Clear();
+      BoundAbstractActorsCollapsedIndex.Clear();
     }
   }
 }

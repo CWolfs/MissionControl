@@ -1,3 +1,7 @@
+using BattleTech;
+
+using System.Collections.Generic;
+
 public static class TeamUtils {
   public const string PLAYER_TEAM_ID = "bf40fd39-ccf9-47c4-94a6-061809681140";
   public const string PLAYER_2_TEAM_ID = "757173dd-b4e1-4bb5-9bee-d78e623cc867";
@@ -23,5 +27,16 @@ public static class TeamUtils {
         return null;
       }
     }
+  }
+
+  public static Team GetTeam(string teamGUID) {
+    List<Team> teams = UnityGameInstance.Instance.Game.Combat.Teams;
+    MissionControl.Main.LogDebug("[GetTeam] Teams count is: " + teams.Count);
+    Team team = teams.Find((Team x) => x.GUID == teamGUID);
+
+    if (team != null) return team;
+
+    MissionControl.Main.Logger.LogError($"[GetTeam] Attempted to get team with guid '{teamGUID}' but no team was found.");
+    return null;
   }
 }
