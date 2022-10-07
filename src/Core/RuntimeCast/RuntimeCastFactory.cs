@@ -83,5 +83,13 @@ namespace MissionControl.RuntimeCast {
     public static string GetPilotDefIDFromCastDefID(string castDefID) {
       return castDefID.Substring(castDefID.IndexOf("_") + 1);
     }
+
+    public static string GetCastDefIDFromPilotDefID(string pilotDefID) {
+      return $"castDef_{pilotDefID.ToUpperFirst()}";
+    }
+
+    public static CastDef GetCastDef(string castDefID) {
+      return UnityGameInstance.Instance.Game.DataManager.CastDefs.Get(castDefID);
+    }
   }
 }

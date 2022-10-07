@@ -32,7 +32,7 @@ namespace MissionControl.Interpolation {
     public Dictionary<string, string> DynamicCastDefs { get; set; } = new Dictionary<string, string>(); // <BindingKey, castDefID>
     public Dictionary<string, Dictionary<int, SpawnableUnit>> DynamicTakenLanceUnitPositions { get; set; } = new Dictionary<string, Dictionary<int, SpawnableUnit>>(); // <Team Name, <LancePosition, bool>>
     public Dictionary<string, AbstractActor> BoundAbstractActors { get; set; } = new Dictionary<string, AbstractActor>(); // <BindingKey, AbstractActors>
-    public Dictionary<string, int> BoundAbstractActorsCollapsedIndex { get; set; } = new Dictionary<string, int>(); // <BindingKey, IndexInCollapsedLance>
+    public Dictionary<string, int> BoundAbstractActorsFullIndex { get; set; } = new Dictionary<string, int>(); // <BindingKey, IndexInFullLanceIncludingSpaces>
 
     public void InterpolateContractDialogueCast() {
       List<DialogueOverride> dialogueOverrides = MissionControl.Instance.CurrentContract.Override.dialogueList;
@@ -57,14 +57,14 @@ namespace MissionControl.Interpolation {
       SpawnableUnit[] lanceConfigUnits = contract.Lances.GetLanceUnits(GetTeamIDFromCastDefID(selectedCastDefID));
       if (lanceConfigUnits.Length <= 0) return null;
 
-      SpawnableUnit[] collapsedLanceConfigUnits = contract.Lances.GetLanceUnitsIncludeEmptySlots(GetTeamIDFromCastDefID(selectedCastDefID));
-      if (collapsedLanceConfigUnits.Length <= 0) return null;
+      SpawnableUnit[] fullLanceConfigUnits = contract.Lances.GetLanceUnitsIncludeEmptySlots(GetTeamIDFromCastDefID(selectedCastDefID));
+      if (fullLanceConfigUnits.Length <= 0) return null;
 
       // Check the castDef - Commander, Team position or Team random
       if (selectedCastDefID == CustomCastDef.castDef_Commander) {
         return InterpolateCommander(contract, selectedCastDefID);
       } else if (IsPlayerTeamDynamicCastDefID(selectedCastDefID)) {
-        return InterpolatePlayerPilot(contract, selectedCastDefID, lanceConfigUnits, collapsedLanceConfigUnits);
+        return InterpolatePlayerPilot(contract, selectedCastDefID, lanceConfigUnits, fullLanceConfigUnits);
       } else if (IsNonPlayerTeamDynamicCastDefID(selectedCastDefID)) {
         return InterpolateNonPlayerPilot(contract, selectedCastDefID);
       }
@@ -75,9 +75,9 @@ namespace MissionControl.Interpolation {
     private string InterpolateCommander(Contract contract, string selectedCastDefID) {
       Pilot commanderPilot = UnityGameInstance.Instance.Game.Simulation.Commander;
       PilotDef commanderPilotDef = commanderPilot.pilotDef;
-      string pilotCastDefID = $"castDef_{commanderPilot.Description.Id.ToUpperFirst()}";
+      string pilotCastDefID = RuntimeCastFactory.GetCastDefIDFromPilotDefID(commanderPilot.Description.Id);
 
-      HandlePilotCastDefAndRebinding(pilotCastDefID, commanderPilotDef, true);
+      HandlePilotCastDefAndRebinding(pilotCastDefID, commanderPilotDef);
 
       return pilotCastDefID;
     }
@@ -85,7 +85,7 @@ namespace MissionControl.Interpolation {
     // Fallback to Darius default
     private string HandleFallback(int pilotPosition, string selectedCastDefID) {
       Main.LogDebug($"[PilotCastInterpolator.InterpolatePlayerPilot] All pilots are used up. Defaulting to 'castDef_DariusDefault'");
-      string fallbackCastDefID = "castDef_DariusDefault";
+      string fallbackCastDefID = CustomCastDef.castDef_Darius;
 
       if (IsBindableRandom(selectedCastDefID)) {
         string bindingKey = GetBindingKey(selectedCastDefID);
@@ -95,24 +95,24 @@ namespace MissionControl.Interpolation {
       return fallbackCastDefID;
     }
 
-    private string BindCastDefAndActorIndex(int pilotPosition, string selectedCastDefID, SpawnableUnit[] lanceConfigUnits, SpawnableUnit[] collapsedLanceConfigUnits) {
+    private string BindCastDefAndActorIndex(int pilotPosition, string selectedCastDefID, SpawnableUnit[] lanceConfigUnits, SpawnableUnit[] fullLanceConfigUnits) {
       if (lanceConfigUnits.Length >= pilotPosition) {
         SpawnableUnit lanceConfigUnit = lanceConfigUnits[pilotPosition - 1];
         PilotDef lanceConfigUnitPilotDef = lanceConfigUnit.Pilot;
 
-        // Find the collapsed position so we can map it to the AbstractActors in the Team Lance
-        int collapsedUnitPosition = collapsedLanceConfigUnits.Select((value, index) => new { value, index = index + 1 }).FirstOrDefault(collapsedUnit => collapsedUnit.value == lanceConfigUnit).index;
+        // Find the full exact position so we can map it to the AbstractActors in the Team Lance
+        int fullUnitPosition = fullLanceConfigUnits.Select((value, index) => new { value, index = index + 1 }).FirstOrDefault(fullUnit => fullUnit.value == lanceConfigUnit).index;
 
         // Can't access AbstractActors yet
         PilotDef pilotDef = lanceConfigUnitPilotDef;
-        string pilotCastDefId = $"castDef_{pilotDef.Description.Id.ToUpperFirst()}";
+        string pilotCastDefId = RuntimeCastFactory.GetCastDefIDFromPilotDefID(pilotDef.Description.Id);
 
-        HandlePilotCastDefAndRebinding(pilotCastDefId, pilotDef, false);
+        HandlePilotCastDefAndRebinding(pilotCastDefId, pilotDef);
 
         if (IsBindableRandom(selectedCastDefID)) {
           string bindingKey = GetBindingKey(selectedCastDefID);
           PilotCastInterpolator.Instance.DynamicCastDefs[bindingKey] = pilotCastDefId;
-          PilotCastInterpolator.Instance.BoundAbstractActorsCollapsedIndex[bindingKey] = collapsedUnitPosition;
+          PilotCastInterpolator.Instance.BoundAbstractActorsFullIndex[bindingKey] = fullUnitPosition;
         }
 
         return pilotCastDefId;
@@ -121,7 +121,7 @@ namespace MissionControl.Interpolation {
       return null;
     }
 
-    private string InterpolatePlayerPilot(Contract contract, string selectedCastDefID, SpawnableUnit[] lanceConfigUnits, SpawnableUnit[] collapsedLanceConfigUnits) {
+    private string InterpolatePlayerPilot(Contract contract, string selectedCastDefID, SpawnableUnit[] lanceConfigUnits, SpawnableUnit[] fullLanceConfigUnits) {
       // Check for already bound random pilots - castDef_TeamPilot_Random_*
       if (IsBindableRandom(selectedCastDefID)) {
         string bindingKey = GetBindingKey(selectedCastDefID);
@@ -135,7 +135,7 @@ namespace MissionControl.Interpolation {
         return HandleFallback(pilotPosition, selectedCastDefID);
       }
 
-      return BindCastDefAndActorIndex(pilotPosition, selectedCastDefID, lanceConfigUnits, collapsedLanceConfigUnits);
+      return BindCastDefAndActorIndex(pilotPosition, selectedCastDefID, lanceConfigUnits, fullLanceConfigUnits);
     }
 
     private string InterpolateNonPlayerPilot(Contract contract, string selectedCastDefID) {
@@ -161,7 +161,7 @@ namespace MissionControl.Interpolation {
       Lance lance = lances[0];
       List<AbstractActor> units = lance.GetLanceUnits();
 
-      foreach (KeyValuePair<string, int> entry in BoundAbstractActorsCollapsedIndex) {
+      foreach (KeyValuePair<string, int> entry in BoundAbstractActorsFullIndex) {
         AbstractActor actor = units[entry.Value - 1];
         // Main.LogDebug($"[PilotCastInterpolator.BindAbstractActorToBindingKey] Binding AbstractActor '{actor.UnitName}' with pilot '{actor.GetPilot().Name}' using '{entry.Key}:{entry.Value - 1}'");
         BoundAbstractActors[entry.Key] = actor;
@@ -197,14 +197,14 @@ namespace MissionControl.Interpolation {
     private string RebindDeadUnitCastDef(string bindKey) {
       Contract contract = MissionControl.Instance.CurrentContract;
       SpawnableUnit[] lanceConfigUnits = contract.Lances.GetLanceUnits(TeamUtils.GetTeamGuid("Player1"));
-      SpawnableUnit[] collapsedLanceConfigUnits = contract.Lances.GetLanceUnitsIncludeEmptySlots(TeamUtils.GetTeamGuid("Player1"));
+      SpawnableUnit[] fullLanceConfigUnits = contract.Lances.GetLanceUnitsIncludeEmptySlots(TeamUtils.GetTeamGuid("Player1"));
       int pilotPosition = FindNonUsedPilotPosition("Player1", lanceConfigUnits);
 
       if (!IsPilotPositionValid(pilotPosition)) {
         return HandleFallback(pilotPosition, bindKey);
       }
 
-      return BindCastDefAndActorIndex(pilotPosition, GetDynamicCastDefIDFromBindKey(bindKey), lanceConfigUnits, collapsedLanceConfigUnits);
+      return BindCastDefAndActorIndex(pilotPosition, GetDynamicCastDefIDFromBindKey(bindKey), lanceConfigUnits, fullLanceConfigUnits);
     }
 
     private void RebindDeadUnitReferences(string oldCastDefID, string reboundCastDefID) {
@@ -279,8 +279,9 @@ namespace MissionControl.Interpolation {
       return null;
     }
 
-    private void HandlePilotCastDefAndRebinding(string pilotCastDefID, PilotDef pilotDef, bool isCommander) {
+    private void HandlePilotCastDefAndRebinding(string pilotCastDefID, PilotDef pilotDef) {
       if (!UnityGameInstance.BattleTechGame.DataManager.CastDefs.Exists(pilotCastDefID)) {
+        bool isCommander = pilotCastDefID == CustomCastDef.castDef_Commander;
         ((DictionaryStore<CastDef>)UnityGameInstance.BattleTechGame.DataManager.CastDefs).Add(pilotCastDefID, RuntimeCastFactory.CreateCast(pilotDef, isCommander ? "Commander" : "Pilot"));
       } else {
         RebindPortrait(pilotDef);
@@ -352,7 +353,7 @@ namespace MissionControl.Interpolation {
       DynamicCastDefs.Clear();
       DynamicTakenLanceUnitPositions.Clear();
       BoundAbstractActors.Clear();
-      BoundAbstractActorsCollapsedIndex.Clear();
+      BoundAbstractActorsFullIndex.Clear();
     }
   }
 }

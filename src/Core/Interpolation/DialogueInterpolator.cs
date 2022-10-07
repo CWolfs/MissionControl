@@ -281,9 +281,11 @@ namespace MissionControl.Interpolation {
 
     public void HandleDeadActorFromDialogueContent(ref CastDef castDef) {
       if (castDef == null) Main.Logger.LogError("[DialogueInterpolator] Was provided a null or bad castDef. If a custom contract check the 'selectedCastDefId' property to ensure it's a valid castDef (often 'castDef_' has been forgotten).");
+
       string castDefID = castDef.id;
       string bindingKey = (castDefID.Contains(DialogueInterpolationConstants.Commander) ? DialogueInterpolationConstants.Commander : PilotCastInterpolator.Instance.GetBindIDFromCastDefID(castDefID));
 
+      // Handle bound units
       if (bindingKey != null) {
         AbstractActor unit = DialogueInterpolator.Instance.GetBoundUnit(bindingKey);
         while (unit != null && unit.IsDead) {
@@ -293,6 +295,23 @@ namespace MissionControl.Interpolation {
 
           castDef = reboundCastDef;
           unit = GetBoundUnit(bindingKey == DialogueInterpolationConstants.Commander ? DialogueInterpolationConstants.Darius : bindingKey);
+        }
+      } else {  // Attempt to see if a unit exists against the castDef pilot (PureRandom units)
+        AbstractActor unit = GetSpeakerUnit(RuntimeCastFactory.GetPilotDefIDFromCastDefID(castDef.id));
+        while (unit != null && unit.IsDead) {
+          Contract contract = MissionControl.Instance.CurrentContract;
+          SpawnableUnit[] lanceConfigUnits = contract.Lances.GetLanceUnits(TeamUtils.GetTeamGuid("Player1"));
+          int randomPosition = UnityEngine.Random.Range(0, lanceConfigUnits.Length);
+          string pilotDefID = lanceConfigUnits[randomPosition].PilotId;
+
+          CastDef updatedCastDef = RuntimeCastFactory.GetCastDef(RuntimeCastFactory.GetCastDefIDFromPilotDefID(pilotDefID));
+          if (castDef != null) {
+            castDef = updatedCastDef;
+            unit = GetSpeakerUnit(pilotDefID);
+          } else {
+            Main.LogDebug($"[Interpolate.HandleDeadActorFromDialogueContent] Attempted to find a new CastDef but only found null. Preventing overwriting existing castdef.");
+            unit = null;
+          }
         }
       }
     }
