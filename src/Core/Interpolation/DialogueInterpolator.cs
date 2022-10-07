@@ -109,14 +109,7 @@ namespace MissionControl.Interpolation {
       string unitKey = lookups[2];
       string unitDataKey = lookups[3];
 
-      // Check if AbstractActor/unit exists and if it's dead
-      // If it's dead then a full rebind for all dialogue and references for that TeamPilot or Commander is needed
       AbstractActor unit = GetBoundUnit(unitKey);
-      // while (unit != null && unit.IsDead) {
-      //   Main.LogDebug($"[Interpolate.InterpolatePlayerLances] Unit '{unit.UnitName} with pilot '{unit.GetPilot().Name}' is dead (or ejected). Rebinding all castdefs and references for unit key '{unitKey}'");
-      //   PilotCastInterpolator.Instance.RebindDeadUnit(unitKey);
-      //   unit = GetBoundUnit(unitKey);
-      // }
 
       // Continue with interpolation
       if (unitKey.StartsWith(DialogueInterpolationConstants.TeamPilot_Random)) {
