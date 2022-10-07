@@ -244,7 +244,7 @@ namespace MissionControl {
             for (int i = 0; i < units.Length; i++) {
               SpawnableUnit unit = units[i];
 
-              if (unit.PilotId == commanderPilot.Description.Id) {
+              if (unit.PilotId.ToUpperFirst() == commanderPilot.Description.Id.ToUpperFirst()) {
                 PilotCastInterpolator.Instance.AddTakenPilotPosition("Player1", i + 1, null);
               }
             }

@@ -73,7 +73,11 @@ namespace MissionControl.Interpolation {
 
     private AbstractActor GetBoundUnit(string bindKey) {
       if (bindKey.StartsWith(DialogueInterpolationConstants.TeamPilot_Random)) {
-        return PilotCastInterpolator.Instance.BoundAbstractActors[bindKey];
+        if (PilotCastInterpolator.Instance.BoundAbstractActors.ContainsKey(bindKey)) {
+          return PilotCastInterpolator.Instance.BoundAbstractActors[bindKey];
+        } else {
+          Main.Logger.LogError($"[DialogueInterpolator.GetBoundUnit] Attempting to get a bound unit on a TeamPilot_Random pilot '{bindKey}' but it is not bound. This is very likely an error in the contract and it's referencing a TeamPilot_Random that hasn't been set in at least one dialogue content section in the 'selectedCastDefId' property");
+        }
       } else if (bindKey == DialogueInterpolationConstants.Commander) {
         if (PilotCastInterpolator.Instance.BoundAbstractActors.ContainsKey(DialogueInterpolationConstants.Commander)) {
           return PilotCastInterpolator.Instance.BoundAbstractActors[DialogueInterpolationConstants.Commander];
@@ -85,17 +89,17 @@ namespace MissionControl.Interpolation {
 
     public void HandleDeadActorFromDialogueContent(ref CastDef castDef) {
       string castDefID = castDef.id;
-      string bindingKey = PilotCastInterpolator.Instance.GetBindIDFromCastDefID(castDefID);
+      string bindingKey = (castDefID.Contains(DialogueInterpolationConstants.Commander) ? DialogueInterpolationConstants.Commander : PilotCastInterpolator.Instance.GetBindIDFromCastDefID(castDefID));
 
       if (bindingKey != null) {
         AbstractActor unit = DialogueInterpolator.Instance.GetBoundUnit(bindingKey);
         while (unit != null && unit.IsDead) {
           string reboundCastDefID = PilotCastInterpolator.Instance.RebindDeadUnit(bindingKey);
-          Main.LogDebug($"[Interpolate.InterpolatePlayerLances] Unit '{unit.UnitName} with pilot '{unit.GetPilot().Name}' is dead (or ejected). Rebinding all castdefs and references for unit key '{reboundCastDefID}'");
+          Main.LogDebug($"[Interpolate.HandleDeadActorFromDialogueContent] Unit '{unit.UnitName} with pilot '{unit.GetPilot().Name}' is dead (or ejected). Rebinding all castdefs and references for unit key '{reboundCastDefID}'");
           CastDef reboundCastDef = UnityGameInstance.Instance.Game.DataManager.CastDefs.Get(reboundCastDefID);
 
           castDef = reboundCastDef;
-          unit = GetBoundUnit(bindingKey);
+          unit = GetBoundUnit(bindingKey == DialogueInterpolationConstants.Commander ? DialogueInterpolationConstants.Darius : bindingKey);
         }
       }
     }
@@ -133,8 +137,11 @@ namespace MissionControl.Interpolation {
           }
         }
       } else if (unitKey == DialogueInterpolationConstants.Commander) {
+        bool commanderIsDead = unit != null && unit.IsDead;
+        if (commanderIsDead) unit = null;
+
         if (unitDataKey == "DisplayName") {
-          return UnityGameInstance.Instance.Game.Simulation.Commander.Name;
+          return commanderIsDead ? "Darius" : UnityGameInstance.Instance.Game.Simulation.Commander.Name;
         } else if (unitDataKey == "UnitName") {
           if (unit != null) {
             return unit.UnitName;
@@ -238,7 +245,7 @@ namespace MissionControl.Interpolation {
       string value = lookups[3];
 
       if (method == "ToUpperFirst") {
-        return value[0].ToString().ToUpper() + value.Substring(1);
+        return value.ToUpperFirst();
       } else if (method == "ToUpper") {
         return value.ToUpper();
       } else if (method == "ToLower") {

@@ -75,7 +75,7 @@ namespace MissionControl.Interpolation {
     private string InterpolateCommander(Contract contract, string selectedCastDefID) {
       Pilot commanderPilot = UnityGameInstance.Instance.Game.Simulation.Commander;
       PilotDef commanderPilotDef = commanderPilot.pilotDef;
-      string pilotCastDefID = $"castDef_{commanderPilot.Description.Id}";
+      string pilotCastDefID = $"castDef_{commanderPilot.Description.Id.ToUpperFirst()}";
 
       HandlePilotCastDefAndRebinding(pilotCastDefID, commanderPilotDef, true);
 
@@ -105,7 +105,7 @@ namespace MissionControl.Interpolation {
 
         // Can't access AbstractActors yet
         PilotDef pilotDef = lanceConfigUnitPilotDef;
-        string pilotCastDefId = $"castDef_{pilotDef.Description.Id}";
+        string pilotCastDefId = $"castDef_{pilotDef.Description.Id.ToUpperFirst()}";
 
         HandlePilotCastDefAndRebinding(pilotCastDefId, pilotDef, false);
 
@@ -173,7 +173,7 @@ namespace MissionControl.Interpolation {
           Pilot pilot = unit.GetPilot();
           Pilot commanderPilot = UnityGameInstance.Instance.Game.Simulation.Commander;
 
-          if (pilot.Description.Id == commanderPilot.Description.Id) {
+          if (pilot.Description.Id.ToUpperFirst() == commanderPilot.Description.Id.ToUpperFirst()) {
             BoundAbstractActors[DialogueInterpolationConstants.Commander] = unit;
           }
         }
@@ -181,11 +181,17 @@ namespace MissionControl.Interpolation {
     }
 
     public string RebindDeadUnit(string bindingKey) {
-      string oldCastDefID = PilotCastInterpolator.Instance.DynamicCastDefs[bindingKey];
-      string reboundCastDefID = RebindDeadUnitCastDef(bindingKey);
-      RebindDeadUnitReferences(oldCastDefID, reboundCastDefID);
-      LateBinding();
-      return reboundCastDefID;
+      if (bindingKey == DialogueInterpolationConstants.Commander) {
+        Main.LogDebug($"[PilotCastInterpolator.RebindDeadUnit] Rebinding and referencing dead commander to Darius");
+        RebindDeadUnitReferences(CustomCastDef.castDef_Commander, CustomCastDef.castDef_Darius);
+        return CustomCastDef.castDef_Darius;
+      } else {
+        string oldCastDefID = PilotCastInterpolator.Instance.DynamicCastDefs[bindingKey];
+        string reboundCastDefID = RebindDeadUnitCastDef(bindingKey);
+        RebindDeadUnitReferences(oldCastDefID, reboundCastDefID);
+        LateBinding();
+        return reboundCastDefID;
+      }
     }
 
     private string RebindDeadUnitCastDef(string bindKey) {
@@ -283,7 +289,7 @@ namespace MissionControl.Interpolation {
 
     private static void RebindPortrait(PilotDef pilotDef) {
       Sprite sprite = pilotDef.GetPortraitSprite(UnityGameInstance.Instance.Game.DataManager);
-      DataManager.Instance.GeneratedPortraits[pilotDef.Description.Id] = sprite;
+      DataManager.Instance.GeneratedPortraits[pilotDef.Description.Id.ToUpperFirst()] = sprite;
     }
 
     public bool IsPlayerTeamDynamicCastDefID(string selectedCastDefID) {

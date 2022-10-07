@@ -5,6 +5,7 @@ namespace MissionControl.Interpolation {
     public const string TeamPilot_Random = "TeamPilot_Random";
 
     public const string Commander = "Commander";
+    public const string Darius = "Darius";
 
     // Special Commands
     public const string SKIP_DIALOGUE = "|SKIPDIALOGUE|";
