@@ -6,8 +6,6 @@ using HBS.Data;
 
 using MissionControl.Rules;
 
-using System.Collections.Generic;
-
 namespace MissionControl.RuntimeCast {
   public class RuntimeCastFactory {
     public static CastDef CreateCast() {
@@ -56,8 +54,8 @@ namespace MissionControl.RuntimeCast {
 
     public static CastDef CreateCast(PilotDef pilotDef, string rankOverride = "Pilot") {
       CastDef runtimeCastDef = new CastDef();
-      runtimeCastDef.id = $"castDef_{pilotDef.Description.Id}";
-      runtimeCastDef.internalName = pilotDef.Description.Id;
+      runtimeCastDef.id = $"castDef_{pilotDef.Description.Id.ToUpperFirst()}";
+      runtimeCastDef.internalName = pilotDef.Description.Id.ToUpperFirst();
       runtimeCastDef.firstName = pilotDef.Description.Callsign;
       runtimeCastDef.lastName = pilotDef.Description.Callsign;
       runtimeCastDef.callsign = pilotDef.Description.Callsign;
@@ -74,12 +72,24 @@ namespace MissionControl.RuntimeCast {
         pilotIconPath = $"sprites/Portraits/{pilotDef.Description.Icon}";
         runtimeCastDef.defaultEmotePortrait.portraitAssetPath = $"{pilotIconPath}.png";
       } else {
-        runtimeCastDef.defaultEmotePortrait.portraitAssetPath = $"{pilotDef.Description.Id}.generated";
+        runtimeCastDef.defaultEmotePortrait.portraitAssetPath = $"{pilotDef.Description.Id.ToUpperFirst()}.generated";
         Sprite sprite = pilotDef.GetPortraitSprite(UnityGameInstance.Instance.Game.DataManager);
-        DataManager.Instance.GeneratedPortraits[pilotDef.Description.Id] = sprite;
+        DataManager.Instance.GeneratedPortraits[pilotDef.Description.Id.ToUpperFirst()] = sprite;
       }
 
       return runtimeCastDef;
+    }
+
+    public static string GetPilotDefIDFromCastDefID(string castDefID) {
+      return castDefID.Substring(castDefID.IndexOf("_") + 1);
+    }
+
+    public static string GetCastDefIDFromPilotDefID(string pilotDefID) {
+      return $"castDef_{pilotDefID.ToUpperFirst()}";
+    }
+
+    public static CastDef GetCastDef(string castDefID) {
+      return UnityGameInstance.Instance.Game.DataManager.CastDefs.Get(castDefID);
     }
   }
 }
