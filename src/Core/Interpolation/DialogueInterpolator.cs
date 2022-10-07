@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 using BattleTech;
 using BattleTech.Framework;
 
+using HBS.Collections;
+
 using MissionControl.RuntimeCast;
 
 namespace MissionControl.Interpolation {
@@ -60,7 +62,7 @@ namespace MissionControl.Interpolation {
     public string PreInterpolate(CastDef speakerCastDef, string message, string[] lookups) {
       switch (lookups[1]) {
         case DialogueInterpolationConstants.PlayerLances: return InterpolatePlayerLances(InterpolateType.PreInterpolate, speakerCastDef, message, lookups);
-        case DialogueInterpolationConstants.Conditional: return InterpolateConditional(InterpolateType.PreInterpolate, message, lookups);
+        case DialogueInterpolationConstants.Conditional: return InterpolateConditional(InterpolateType.PreInterpolate, speakerCastDef, message, lookups);
         default: break;
       }
       return "MC_INCORRECT_PREINTERPOLATE_COMMAND";
@@ -148,7 +150,7 @@ namespace MissionControl.Interpolation {
       return fallbackData;
     }
 
-    private string InterpolateConditional(InterpolateType interpolateType, string message, string[] lookups) {
+    private string InterpolateConditional(InterpolateType interpolateType, CastDef speakerCastDef, string message, string[] lookups) {
       Main.LogDebug($"[Interpolate.{interpolateType.ToString()}] Conditional interpolation");
       string fallbackData = "MC_INCORRECT_CONDITIONAL_COMMAND";
       string conditionalSubject = lookups[2];
@@ -203,9 +205,72 @@ namespace MissionControl.Interpolation {
         }
 
         return DialogueInterpolationConstants.SKIP_DIALOGUE;
+      } else if (conditionalSubject == "PlayerLances") {
+        return InterpolatePlayerLancesConditional(speakerCastDef, lookups);
       }
 
       return fallbackData;
+    }
+
+    private string InterpolatePlayerLancesConditional(CastDef speakerCastDef, string[] lookups) {
+      string conditionalTarget = lookups[3];        // TeamPilot_Random_1 | Speaker | etc
+      string conditionalType = lookups[4];          // HasTag | HasNoTag | HasAllTags | HasAnyTag
+      string conditionalValue = lookups[5];         // Tag Name
+
+      AbstractActor unit = GetBoundUnit(conditionalTarget);
+
+      // Continue with interpolation
+      if (conditionalTarget.StartsWith(DialogueInterpolationConstants.TeamPilot_Random)) {
+        if (unit != null) {
+          PilotDef pilotDef = unit.GetPilot().pilotDef;
+          if (IsTagConditional(conditionalType)) {
+            return InterpolatePlayerLancesPilotTagsConditional(pilotDef.PilotTags, conditionalType, conditionalValue);
+          }
+        }
+      } else if (conditionalTarget == DialogueInterpolationConstants.Commander) {
+        bool commanderIsDead = unit != null && unit.IsDead;
+        if (commanderIsDead) return DialogueInterpolationConstants.SKIP_DIALOGUE;
+
+        if (IsTagConditional(conditionalType)) {
+          TagSet commanderTags = UnityGameInstance.Instance.Game.Simulation.CommanderTags;
+
+          Main.LogDebug("[InterpolatePlayerLancesConditional] Commander tags are: " + commanderTags.ToJSON());
+
+          return InterpolatePlayerLancesPilotTagsConditional(commanderTags, conditionalType, conditionalValue);
+        }
+      } else if (conditionalTarget == DialogueInterpolationConstants.Speaker) { // Interact with the actor/pilot talking
+        unit = GetSpeakerUnit(RuntimeCastFactory.GetPilotDefIDFromCastDefID(speakerCastDef.id));
+
+        if (unit != null) {
+          if (IsTagConditional(conditionalType)) {
+            TagSet pilotTags = unit.GetPilot().pilotDef.PilotTags;
+            return InterpolatePlayerLancesPilotTagsConditional(pilotTags, conditionalType, conditionalValue);
+          }
+        }
+      }
+
+      return DialogueInterpolationConstants.SKIP_DIALOGUE;
+    }
+
+    private bool IsTagConditional(string conditionalType) {
+      return conditionalType == "HasTag" || conditionalType == "HasNoTag" || conditionalType == "HasAllTags" || conditionalType == "HasAnyTag";
+    }
+
+    private string InterpolatePlayerLancesPilotTagsConditional(TagSet pilotTags, string conditionalType, string tagValues) {
+      Main.LogDebug("[InterpolatePlayerLancesPilotTagsConditional] Pilot tags are: " + pilotTags.ToJSON() + " conditionalType: " + conditionalType + " tagValues " + tagValues);
+      string[] tags = tagValues.Split('|');
+
+      if (conditionalType == "HasTag") {
+        if (pilotTags.Contains(tags[0])) return "";
+      } else if (conditionalType == "HasNoTag") {
+        if (!pilotTags.Contains(tags[0])) return "";
+      } else if (conditionalType == "HasAllTags") {
+        if (pilotTags.ContainsAll(new TagSet(tags))) return "";
+      } else if (conditionalType == "HasAnyTag") {
+        if (pilotTags.ContainsAny(new TagSet(tags))) return "";
+      }
+
+      return DialogueInterpolationConstants.SKIP_DIALOGUE;
     }
 
     private string InterpolateFormat(InterpolateType interpolateType, string message, string[] lookups) {
