@@ -8,11 +8,6 @@ using MissionControl.Interpolation;
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(Interpolator), "Interpolate")]
   public class InterpolatorInterpolatePatch {
-    public static void Prefix(ref string template, GameContext context, bool localize) {
-      if (template == null) return;
-      template = DialogueInterpolator.Instance.Interpolate(DialogueInterpolator.InterpolateType.PreInterpolate, template);
-    }
-
     public static void Postfix(ref string __result, GameContext context, bool localize) {
       if (__result == null) return;
       __result = DialogueInterpolator.Instance.Interpolate(DialogueInterpolator.InterpolateType.PostInterpolate, __result);

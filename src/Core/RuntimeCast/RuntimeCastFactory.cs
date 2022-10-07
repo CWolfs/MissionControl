@@ -6,8 +6,6 @@ using HBS.Data;
 
 using MissionControl.Rules;
 
-using System.Collections.Generic;
-
 namespace MissionControl.RuntimeCast {
   public class RuntimeCastFactory {
     public static CastDef CreateCast() {
@@ -80,6 +78,10 @@ namespace MissionControl.RuntimeCast {
       }
 
       return runtimeCastDef;
+    }
+
+    public static string GetPilotDefIDFromCastDefID(string castDefID) {
+      return castDefID.Substring(castDefID.IndexOf("_") + 1);
     }
   }
 }

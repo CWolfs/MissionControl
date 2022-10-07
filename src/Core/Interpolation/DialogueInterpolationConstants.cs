@@ -7,6 +7,8 @@ namespace MissionControl.Interpolation {
     public const string Commander = "Commander";
     public const string Darius = "Darius";
 
+    public const string Speaker = "Speaker";
+
     // Special Commands
     public const string SKIP_DIALOGUE = "|SKIPDIALOGUE|";
 
