@@ -71,6 +71,35 @@ namespace MissionControl.Interpolation {
       return "MC_INCORRECT_POSTINTERPOLATE_COMMAND";
     }
 
+    private AbstractActor GetBoundUnit(string bindKey) {
+      if (bindKey.StartsWith(DialogueInterpolationConstants.TeamPilot_Random)) {
+        return PilotCastInterpolator.Instance.BoundAbstractActors[bindKey];
+      } else if (bindKey == DialogueInterpolationConstants.Commander) {
+        if (PilotCastInterpolator.Instance.BoundAbstractActors.ContainsKey(DialogueInterpolationConstants.Commander)) {
+          return PilotCastInterpolator.Instance.BoundAbstractActors[DialogueInterpolationConstants.Commander];
+        }
+      }
+
+      return null;
+    }
+
+    public void HandleDeadActorFromDialogueContent(ref CastDef castDef) {
+      string castDefID = castDef.id;
+      string bindingKey = PilotCastInterpolator.Instance.GetBindIDFromCastDefID(castDefID);
+
+      if (bindingKey != null) {
+        AbstractActor unit = DialogueInterpolator.Instance.GetBoundUnit(bindingKey);
+        while (unit != null && unit.IsDead) {
+          string reboundCastDefID = PilotCastInterpolator.Instance.RebindDeadUnit(bindingKey);
+          Main.LogDebug($"[Interpolate.InterpolatePlayerLances] Unit '{unit.UnitName} with pilot '{unit.GetPilot().Name}' is dead (or ejected). Rebinding all castdefs and references for unit key '{reboundCastDefID}'");
+          CastDef reboundCastDef = UnityGameInstance.Instance.Game.DataManager.CastDefs.Get(reboundCastDefID);
+
+          castDef = reboundCastDef;
+          unit = GetBoundUnit(bindingKey);
+        }
+      }
+    }
+
     private string InterpolatePlayerLances(InterpolateType interpolateType, string message, string[] lookups) {
       Main.LogDebug($"[Interpolate.{interpolateType.ToString()}] PlayerLances interpolation");
       string fallbackData = "MC_INCORRECT_PLAYERLANCE_COMMAND";
@@ -80,6 +109,16 @@ namespace MissionControl.Interpolation {
       string unitKey = lookups[2];
       string unitDataKey = lookups[3];
 
+      // Check if AbstractActor/unit exists and if it's dead
+      // If it's dead then a full rebind for all dialogue and references for that TeamPilot or Commander is needed
+      AbstractActor unit = GetBoundUnit(unitKey);
+      // while (unit != null && unit.IsDead) {
+      //   Main.LogDebug($"[Interpolate.InterpolatePlayerLances] Unit '{unit.UnitName} with pilot '{unit.GetPilot().Name}' is dead (or ejected). Rebinding all castdefs and references for unit key '{unitKey}'");
+      //   PilotCastInterpolator.Instance.RebindDeadUnit(unitKey);
+      //   unit = GetBoundUnit(unitKey);
+      // }
+
+      // Continue with interpolation
       if (unitKey.StartsWith(DialogueInterpolationConstants.TeamPilot_Random)) {
         if (unitDataKey == "DisplayName") {
           if (PilotCastInterpolator.Instance.DynamicCastDefs.ContainsKey(unitKey)) {
@@ -88,28 +127,30 @@ namespace MissionControl.Interpolation {
             return castDef.Callsign() == null ? castDef.FirstName() : castDef.Callsign();
           }
         } else if (unitDataKey == "UnitName") {
-          AbstractActor actor = PilotCastInterpolator.Instance.BoundAbstractActors[unitKey];
-          return actor.UnitName;
+          if (unit != null) {
+            return unit.UnitName;
+          } else {
+            return "Argo";
+          }
         } else if (unitDataKey == "UnitVariant") {
-          AbstractActor actor = PilotCastInterpolator.Instance.BoundAbstractActors[unitKey];
-          return actor.VariantName;
-        } else {
-          // Other commands like Unit's Mech etc
+          if (unit != null) {
+            return unit.VariantName;
+          } else {
+            return "Argo";
+          }
         }
       } else if (unitKey == DialogueInterpolationConstants.Commander) {
         if (unitDataKey == "DisplayName") {
           return UnityGameInstance.Instance.Game.Simulation.Commander.Name;
         } else if (unitDataKey == "UnitName") {
-          if (PilotCastInterpolator.Instance.BoundAbstractActors.ContainsKey(DialogueInterpolationConstants.Commander)) {
-            AbstractActor actor = PilotCastInterpolator.Instance.BoundAbstractActors[DialogueInterpolationConstants.Commander];
-            return actor.UnitName;
+          if (unit != null) {
+            return unit.UnitName;
           } else {
             return "Argo";
           }
         } else if (unitDataKey == "UnitVariant") {
-          if (PilotCastInterpolator.Instance.BoundAbstractActors.ContainsKey(DialogueInterpolationConstants.Commander)) {
-            AbstractActor actor = PilotCastInterpolator.Instance.BoundAbstractActors[DialogueInterpolationConstants.Commander];
-            return actor.VariantName;
+          if (unit != null) {
+            return unit.VariantName;
           } else {
             return "Argo";
           }

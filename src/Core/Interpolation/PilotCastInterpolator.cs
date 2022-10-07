@@ -82,33 +82,20 @@ namespace MissionControl.Interpolation {
       return pilotCastDefID;
     }
 
-    private string InterpolatePlayerPilot(Contract contract, string selectedCastDefID, SpawnableUnit[] lanceConfigUnits, SpawnableUnit[] collapsedLanceConfigUnits) {
-      // Check for already bound random pilots - castDef_TeamPilot_Random_*
+    // Fallback to Darius default
+    private string HandleFallback(int pilotPosition, string selectedCastDefID) {
+      Main.LogDebug($"[PilotCastInterpolator.InterpolatePlayerPilot] All pilots are used up. Defaulting to 'castDef_DariusDefault'");
+      string fallbackCastDefID = "castDef_DariusDefault";
+
       if (IsBindableRandom(selectedCastDefID)) {
         string bindingKey = GetBindingKey(selectedCastDefID);
-        string boundCastDefID = GetExistingBoundCastDefID(bindingKey);
-        if (boundCastDefID != null) return boundCastDefID;
+        PilotCastInterpolator.Instance.DynamicCastDefs[bindingKey] = fallbackCastDefID;
       }
 
-      int pilotPosition = SelectPilotPositionInLance(selectedCastDefID, "Player1", lanceConfigUnits); // Positon starting at slot 1
+      return fallbackCastDefID;
+    }
 
-      // Handle fallback
-      if (!IsPilotPositionValid(pilotPosition)) {
-        // Fallback to Darius default
-        Main.LogDebug($"[PilotCastInterpolator.InterpolatePlayerPilot] All pilots are used up. Defaulting to 'castDef_DariusDefault'");
-        string fallbackCastDefID = "castDef_DariusDefault";
-
-        if (IsBindableRandom(selectedCastDefID)) {
-          string bindingKey = GetBindingKey(selectedCastDefID);
-          PilotCastInterpolator.Instance.DynamicCastDefs[bindingKey] = fallbackCastDefID;
-        }
-
-        return fallbackCastDefID;
-      }
-
-      PilotDef pilotDef = null;
-      string pilotCastDefId = "";
-
+    private string BindCastDefAndActorIndex(int pilotPosition, string selectedCastDefID, SpawnableUnit[] lanceConfigUnits, SpawnableUnit[] collapsedLanceConfigUnits) {
       if (lanceConfigUnits.Length >= pilotPosition) {
         SpawnableUnit lanceConfigUnit = lanceConfigUnits[pilotPosition - 1];
         PilotDef lanceConfigUnitPilotDef = lanceConfigUnit.Pilot;
@@ -117,10 +104,8 @@ namespace MissionControl.Interpolation {
         int collapsedUnitPosition = collapsedLanceConfigUnits.Select((value, index) => new { value, index = index + 1 }).FirstOrDefault(collapsedUnit => collapsedUnit.value == lanceConfigUnit).index;
 
         // Can't access AbstractActors yet
-        pilotDef = lanceConfigUnitPilotDef;
-        // AbstractActor unit = units[collapsedUnitPosition];
-        // pilotDef = unit.GetPilot().pilotDef;
-        pilotCastDefId = $"castDef_{pilotDef.Description.Id}";
+        PilotDef pilotDef = lanceConfigUnitPilotDef;
+        string pilotCastDefId = $"castDef_{pilotDef.Description.Id}";
 
         HandlePilotCastDefAndRebinding(pilotCastDefId, pilotDef, false);
 
@@ -136,6 +121,23 @@ namespace MissionControl.Interpolation {
       return null;
     }
 
+    private string InterpolatePlayerPilot(Contract contract, string selectedCastDefID, SpawnableUnit[] lanceConfigUnits, SpawnableUnit[] collapsedLanceConfigUnits) {
+      // Check for already bound random pilots - castDef_TeamPilot_Random_*
+      if (IsBindableRandom(selectedCastDefID)) {
+        string bindingKey = GetBindingKey(selectedCastDefID);
+        string boundCastDefID = GetExistingBoundCastDefID(bindingKey);
+        if (boundCastDefID != null) return boundCastDefID;
+      }
+
+      int pilotPosition = SelectPilotPositionInLance(selectedCastDefID, "Player1", lanceConfigUnits); // Positon starting at slot 1
+
+      if (!IsPilotPositionValid(pilotPosition)) {
+        return HandleFallback(pilotPosition, selectedCastDefID);
+      }
+
+      return BindCastDefAndActorIndex(pilotPosition, selectedCastDefID, lanceConfigUnits, collapsedLanceConfigUnits);
+    }
+
     private string InterpolateNonPlayerPilot(Contract contract, string selectedCastDefID) {
       // Problem: This code runs way before non-player units are resolved. Solve this later.
       Main.LogDebugWarning("[PilotCastInterpolator] Using a dynamic pilot castdef for a non-player unit is not supported yet");
@@ -149,7 +151,7 @@ namespace MissionControl.Interpolation {
     }
 
     private void BindAbstractActorToBindingKey() {
-      Main.LogDebug("[PilotCastInterpolator.BindAbstractActorToBindingKey] Running bind of AbstractActor");
+      BoundAbstractActors.Clear();
 
       // GUARD: Prevent triggering when not required
       Team player1Team = TeamUtils.GetTeam(TeamUtils.PLAYER_TEAM_ID);
@@ -161,7 +163,7 @@ namespace MissionControl.Interpolation {
 
       foreach (KeyValuePair<string, int> entry in BoundAbstractActorsCollapsedIndex) {
         AbstractActor actor = units[entry.Value - 1];
-        Main.LogDebug($"[PilotCastInterpolator.BindAbstractActorToBindingKey] Binding AbstractActor '{actor.UnitName}' with pilot '{actor.GetPilot().Name}' using '{entry.Key}:{entry.Value - 1}'");
+        // Main.LogDebug($"[PilotCastInterpolator.BindAbstractActorToBindingKey] Binding AbstractActor '{actor.UnitName}' with pilot '{actor.GetPilot().Name}' using '{entry.Key}:{entry.Value - 1}'");
         BoundAbstractActors[entry.Key] = actor;
       }
 
@@ -178,8 +180,41 @@ namespace MissionControl.Interpolation {
       }
     }
 
-    private bool IsPilotInAction(AbstractActor actor) {
-      return !actor.IsDead;
+    public string RebindDeadUnit(string bindingKey) {
+      string oldCastDefID = PilotCastInterpolator.Instance.DynamicCastDefs[bindingKey];
+      string reboundCastDefID = RebindDeadUnitCastDef(bindingKey);
+      RebindDeadUnitReferences(oldCastDefID, reboundCastDefID);
+      LateBinding();
+      return reboundCastDefID;
+    }
+
+    private string RebindDeadUnitCastDef(string bindKey) {
+      Contract contract = MissionControl.Instance.CurrentContract;
+      SpawnableUnit[] lanceConfigUnits = contract.Lances.GetLanceUnits(TeamUtils.GetTeamGuid("Player1"));
+      SpawnableUnit[] collapsedLanceConfigUnits = contract.Lances.GetLanceUnitsIncludeEmptySlots(TeamUtils.GetTeamGuid("Player1"));
+      int pilotPosition = FindNonUsedPilotPosition("Player1", lanceConfigUnits);
+
+      if (!IsPilotPositionValid(pilotPosition)) {
+        return HandleFallback(pilotPosition, bindKey);
+      }
+
+      return BindCastDefAndActorIndex(pilotPosition, GetDynamicCastDefIDFromBindKey(bindKey), lanceConfigUnits, collapsedLanceConfigUnits);
+    }
+
+    private void RebindDeadUnitReferences(string oldCastDefID, string reboundCastDefID) {
+      Main.LogDebug($"[PilotCastInterpolator.RebindDeadUnitReferences] Replacing selectedCastDefID on dialogue contents from '{oldCastDefID}' to '{reboundCastDefID}'");
+      MissionControl.Instance.EncounterLayerData.OperateOnAllEncounterObjectGameLogic(delegate (EncounterObjectGameLogic eogl) {
+        DialogueGameLogic dialogueGameLogic = eogl as DialogueGameLogic;
+        if (dialogueGameLogic != null) {
+          DialogueContent[] dialogueContents = dialogueGameLogic.conversationContent.contents;
+          foreach (DialogueContent dialogueContent in dialogueContents) {
+            if (dialogueContent.selectedCastDefId == oldCastDefID) {
+              dialogueContent.selectedCastDefId = reboundCastDefID;
+              dialogueContent.ContractInitialize(UnityGameInstance.Instance.Game.Combat);
+            }
+          }
+        }
+      });
     }
 
     private bool IsPilotPositionValid(int pilotPosition) {
@@ -225,6 +260,10 @@ namespace MissionControl.Interpolation {
 
     public string GetBindingKey(string selectedCastDefID) {
       return selectedCastDefID.Substring(selectedCastDefID.IndexOf("_") + 1);
+    }
+
+    public string GetDynamicCastDefIDFromBindKey(string bindKey) {
+      return $"castDef_{bindKey}";
     }
 
     private string GetExistingBoundCastDefID(string bindingKey) {
@@ -288,6 +327,13 @@ namespace MissionControl.Interpolation {
       string teamName = selectedCastDefID.Substring(firstIndex, length);
       if (teamName == "Team") teamName = "Player1";
       return TeamUtils.GetTeamGuid(teamName);
+    }
+
+    public string GetBindIDFromCastDefID(string castDefID) {
+      foreach (KeyValuePair<string, string> entry in DynamicCastDefs) {
+        if (entry.Value == castDefID) return entry.Key;
+      }
+      return null;
     }
 
     public void Reset() {
