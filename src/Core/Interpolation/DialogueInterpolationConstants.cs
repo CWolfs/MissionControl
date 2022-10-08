@@ -16,10 +16,15 @@ namespace MissionControl.Interpolation {
     public const string PlayerLances = "PlayerLances";
     public const string Format = "Format";
 
+    // Conditionals
     public const string Conditional = "If";
     public const string ConditionalTypePositive = "Is";
     public const string ConditionalTypeNegative = "IsNot";
     public const string ConditionalTypeContains = "Contains";
+
+    // Conditional Operators
+    public const string ConditionalOperatorAND = "AND";
+    public const string ConditionalOperatorOR = "OR";
 
     // Faction Types
     public const string FactionTypeRealFaction = "RealFaction";

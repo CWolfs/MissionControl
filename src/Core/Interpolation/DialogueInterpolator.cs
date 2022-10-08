@@ -21,12 +21,112 @@ namespace MissionControl.Interpolation {
 
     public enum InterpolateType { PreInterpolate, PostInterpolate }
     private static Regex preMessagePattern = new Regex("\\{MC\\..*?\\}");
+    private static Regex preGroupPattern = new Regex("\\{{MC\\..*?\\}}");
+    private static Regex groupSeperator = new Regex("(\\{MC\\..*?\\})\\s?(AND|OR)?\\s?");
     private static Regex postMessagePattern = new Regex("\\[MC\\..*?\\]");
+    private static Regex postGroupPattern = new Regex("\\[[MC\\..*?\\]]");
 
     public string Interpolate(InterpolateType interpolateType, string message, CastDef speaker = null) {
-      Regex pattern = interpolateType == InterpolateType.PreInterpolate ? preMessagePattern : postMessagePattern;
+      Regex messagePattern = interpolateType == InterpolateType.PreInterpolate ? preMessagePattern : postMessagePattern;
+      Regex groupPattern = interpolateType == InterpolateType.PreInterpolate ? preGroupPattern : postGroupPattern;
 
-      MatchCollection matchCollection = pattern.Matches(message);
+      // Match and process groups first in pre-interpolate only
+      // All groups are conditional groups
+      if (interpolateType == InterpolateType.PreInterpolate) {
+        message = InterpolateGroups(interpolateType, message, speaker);
+
+        // No need to process individual API calls if the conditional group returns a skip
+        if (message == DialogueInterpolationConstants.SKIP_DIALOGUE) return message;
+      }
+
+      // Match and process individual matches
+      message = InterpolateIndividuals(interpolateType, messagePattern, message, speaker);
+
+      return message;
+    }
+
+    /*
+      For each API group:
+        - Find the two API calls and operator
+        - Run each API call and store the result
+        - Check both results agaisnt the operator for the final result
+        - Feed final result back into the returned result
+    */
+    private string InterpolateGroups(InterpolateType interpolateType, string message, CastDef speaker) {
+      MatchCollection groupMatchCollection = preGroupPattern.Matches(message);
+      if (groupMatchCollection.Count > 0) {
+        Main.LogDebug($"[Interpolate.{interpolateType.ToString()}] Found '{groupMatchCollection.Count}' MC interpolation GROUP matches");
+      }
+
+      for (int i = 0; i < groupMatchCollection.Count; i++) {
+        List<string> conditionals = new List<string>();
+        List<string> conditionalResults = new List<string>();
+        string conditionalOperator = DialogueInterpolationConstants.ConditionalOperatorAND;
+
+        Match match = groupMatchCollection[i];
+        string matchValue = match.Value;
+        int index = match.Index;
+        int length = match.Length;
+        string resolvedData = "ERROR";
+        // Main.LogDebug("[Group Test] First match of multi-conditional is: " + matchValue);
+
+        Match m = groupSeperator.Match(matchValue);
+        // int matchCount = 0;
+        while (m.Success) {
+          // Main.LogDebug("Match" + (++matchCount));
+          for (int j = 1; j <= 2; j++) {
+            Group g = m.Groups[j];
+            // Main.LogDebug("Group" + j + "='" + g + "'");
+
+            switch (j) {
+              case 1: conditionals.Add(g.ToString()); break;
+              case 2: {
+                if (g.ToString() != null && g.ToString() != "") {
+                  conditionalOperator = g.ToString();
+                }
+                break;
+              }
+            }
+          }
+
+          m = m.NextMatch();
+        }
+
+        // Execute the conditionals
+        foreach (string conditional in conditionals) {
+          string result = InterpolateIndividuals(interpolateType, preMessagePattern, conditional, speaker);
+          conditionalResults.Add(result);
+        }
+
+        // Check conditional results against operator
+        if (conditionalOperator == DialogueInterpolationConstants.ConditionalOperatorAND) {
+          if (conditionalResults.All((result) => result == "")) {
+            resolvedData = "";
+          } else {
+            resolvedData = DialogueInterpolationConstants.SKIP_DIALOGUE;
+          }
+        } else if (conditionalOperator == DialogueInterpolationConstants.ConditionalOperatorOR) {
+          if (conditionalResults.Any((result) => result == "")) {
+            resolvedData = "";
+          } else {
+            resolvedData = DialogueInterpolationConstants.SKIP_DIALOGUE;
+          }
+        } else {
+          Main.Logger.LogError($"[DialogueInterpolator] Invalid conditional operator used of '{conditionalOperator}'.");
+        }
+
+        if (resolvedData == DialogueInterpolationConstants.SKIP_DIALOGUE) {
+          message = DialogueInterpolationConstants.SKIP_DIALOGUE;
+        } else {
+          message = message.Remove(index, length).Insert(index, resolvedData);
+        }
+      }
+
+      return message;
+    }
+
+    private string InterpolateIndividuals(InterpolateType interpolateType, Regex messagePattern, string message, CastDef speaker) {
+      MatchCollection matchCollection = messagePattern.Matches(message);
       if (matchCollection.Count > 0) {
         Main.LogDebug($"[Interpolate.{interpolateType.ToString()}] Found '{matchCollection.Count}' MC interpolation matches");
       }
@@ -53,7 +153,7 @@ namespace MissionControl.Interpolation {
           message = message.Remove(index, length).Insert(index, resolvedData);
         }
 
-        matchCollection = pattern.Matches(message);
+        matchCollection = messagePattern.Matches(message);
       }
 
       return message;
@@ -233,9 +333,6 @@ namespace MissionControl.Interpolation {
 
         if (IsTagConditional(conditionalType)) {
           TagSet commanderTags = UnityGameInstance.Instance.Game.Simulation.CommanderTags;
-
-          Main.LogDebug("[InterpolatePlayerLancesConditional] Commander tags are: " + commanderTags.ToJSON());
-
           return InterpolatePlayerLancesPilotTagsConditional(commanderTags, conditionalType, conditionalValue);
         }
       } else if (conditionalTarget == DialogueInterpolationConstants.Speaker) { // Interact with the actor/pilot talking
