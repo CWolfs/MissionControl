@@ -307,6 +307,8 @@ namespace MissionControl.Interpolation {
         return DialogueInterpolationConstants.SKIP_DIALOGUE;
       } else if (conditionalSubject == "PlayerLances") {
         return InterpolatePlayerLancesConditional(speakerCastDef, lookups);
+      } else if (conditionalSubject == "Company") {
+        return InterpolateCompanyConditional(lookups);
       }
 
       return fallbackData;
@@ -324,7 +326,7 @@ namespace MissionControl.Interpolation {
         if (unit != null) {
           PilotDef pilotDef = unit.GetPilot().pilotDef;
           if (IsTagConditional(conditionalType)) {
-            return InterpolatePlayerLancesPilotTagsConditional(pilotDef.PilotTags, conditionalType, conditionalValue);
+            return InterpolateTagsConditional(pilotDef.PilotTags, conditionalType, conditionalValue);
           }
         }
       } else if (conditionalTarget == DialogueInterpolationConstants.Commander) {
@@ -333,7 +335,7 @@ namespace MissionControl.Interpolation {
 
         if (IsTagConditional(conditionalType)) {
           TagSet commanderTags = UnityGameInstance.Instance.Game.Simulation.CommanderTags;
-          return InterpolatePlayerLancesPilotTagsConditional(commanderTags, conditionalType, conditionalValue);
+          return InterpolateTagsConditional(commanderTags, conditionalType, conditionalValue);
         }
       } else if (conditionalTarget == DialogueInterpolationConstants.Speaker) { // Interact with the actor/pilot talking
         unit = GetSpeakerUnit(RuntimeCastFactory.GetPilotDefIDFromCastDefID(speakerCastDef.id));
@@ -341,9 +343,21 @@ namespace MissionControl.Interpolation {
         if (unit != null) {
           if (IsTagConditional(conditionalType)) {
             TagSet pilotTags = unit.GetPilot().pilotDef.PilotTags;
-            return InterpolatePlayerLancesPilotTagsConditional(pilotTags, conditionalType, conditionalValue);
+            return InterpolateTagsConditional(pilotTags, conditionalType, conditionalValue);
           }
         }
+      }
+
+      return DialogueInterpolationConstants.SKIP_DIALOGUE;
+    }
+
+    private string InterpolateCompanyConditional(string[] lookups) {
+      string conditionalType = lookups[3];          // HasTag | HasNoTag | HasAllTags | HasAnyTag
+      string conditionalValue = lookups[4];         // Tag Name
+
+      if (IsTagConditional(conditionalType)) {
+        TagSet pilotTags = UnityGameInstance.Instance.Game.Simulation.CompanyTags;
+        return InterpolateTagsConditional(pilotTags, conditionalType, conditionalValue);
       }
 
       return DialogueInterpolationConstants.SKIP_DIALOGUE;
@@ -353,18 +367,18 @@ namespace MissionControl.Interpolation {
       return conditionalType == "HasTag" || conditionalType == "HasNoTag" || conditionalType == "HasAllTags" || conditionalType == "HasAnyTag";
     }
 
-    private string InterpolatePlayerLancesPilotTagsConditional(TagSet pilotTags, string conditionalType, string tagValues) {
-      Main.LogDebug("[InterpolatePlayerLancesPilotTagsConditional] Pilot tags are: " + pilotTags.ToJSON() + " conditionalType: " + conditionalType + " tagValues " + tagValues);
+    private string InterpolateTagsConditional(TagSet existingTags, string conditionalType, string tagValues) {
+      Main.LogDebug("[InterpolateTagsConditional] Current tags in tagset are: " + existingTags.ToJSON() + " conditionalType: " + conditionalType + " tagValues " + tagValues);
       string[] tags = tagValues.Split('|');
 
       if (conditionalType == "HasTag") {
-        if (pilotTags.Contains(tags[0])) return "";
+        if (existingTags.Contains(tags[0])) return "";
       } else if (conditionalType == "HasNoTag") {
-        if (!pilotTags.Contains(tags[0])) return "";
+        if (!existingTags.Contains(tags[0])) return "";
       } else if (conditionalType == "HasAllTags") {
-        if (pilotTags.ContainsAll(new TagSet(tags))) return "";
+        if (existingTags.ContainsAll(new TagSet(tags))) return "";
       } else if (conditionalType == "HasAnyTag") {
-        if (pilotTags.ContainsAny(new TagSet(tags))) return "";
+        if (existingTags.ContainsAny(new TagSet(tags))) return "";
       }
 
       return DialogueInterpolationConstants.SKIP_DIALOGUE;
