@@ -255,22 +255,6 @@
       "overrideDialogueBucketId": "",
       "dialogueContent": [
         {
-          "words": "{MC.If.EmployerFactionName.Contains.Capellan} Our employer has the word 'Capellan' in its name",
-          "wordsColor": {
-            "r": 1,
-            "g": 1,
-            "b": 1,
-            "a": 1
-          },
-          "selectedCastDefId": "castDef_DariusDefault",
-          "emote": "Default",
-          "audioName": "NONE",
-          "cameraFocusGuid": "",
-          "cameraDistance": "Far",
-          "cameraHeight": "Default",
-          "revealRadius": -1
-        },
-        {
           "words": "There are two main settlements in this area. You know how this goes. Let's do a sweep and get more info, Commander. And let's hope this is just a case of some bad comms systems... the alternative won't be pretty.",
           "wordsColor": {
             "r": 1,
