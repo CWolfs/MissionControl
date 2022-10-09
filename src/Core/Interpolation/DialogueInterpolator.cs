@@ -309,6 +309,30 @@ namespace MissionControl.Interpolation {
         return InterpolatePlayerLancesConditional(speakerCastDef, lookups);
       } else if (conditionalSubject == "Company") {
         return InterpolateCompanyConditional(lookups);
+      } else if (conditionalSubject == "RandomPercentage") {
+        int testValue = 0;
+        string conditionalValueWithoutSymbol = conditionalValue.Replace("%", "");
+
+        if (!int.TryParse(conditionalValueWithoutSymbol, out testValue)) {
+          Main.Logger.LogError($"[InterpolateConditional.RandomPercentage] Provided value of '{testValue}' is not an integar. It must be for this check.");
+        }
+
+        int randomPercentage = UnityEngine.Random.Range(0, 101);
+        Main.LogDebug($"[InterpolateConditional.RandomPercentage] Rolled a '{randomPercentage}'");
+
+        if (conditionalType == DialogueInterpolationConstants.ConditionalTypePositive) {
+          if (randomPercentage == testValue) return "";
+        } else if (conditionalType == DialogueInterpolationConstants.ConditionalTypeIsLessThan) {
+          if (randomPercentage < testValue) return "";
+        } else if (conditionalType == DialogueInterpolationConstants.ConditionalTypeIsLessThanOrIs) {
+          if (randomPercentage <= testValue) return "";
+        } else if (conditionalType == DialogueInterpolationConstants.ConditionalTypeIsGreaterThan) {
+          if (randomPercentage > testValue) return "";
+        } else if (conditionalType == DialogueInterpolationConstants.ConditionalTypeIsGreaterThanOrIs) {
+          if (randomPercentage >= testValue) return "";
+        }
+
+        return DialogueInterpolationConstants.SKIP_DIALOGUE;
       }
 
       return fallbackData;

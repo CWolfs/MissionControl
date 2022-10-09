@@ -22,6 +22,11 @@ namespace MissionControl.Interpolation {
     public const string ConditionalTypeNegative = "IsNot";
     public const string ConditionalTypeContains = "Contains";
 
+    public const string ConditionalTypeIsLessThan = "IsLessThan";
+    public const string ConditionalTypeIsLessThanOrIs = "IsLessThanOrIs";
+    public const string ConditionalTypeIsGreaterThan = "IsGreaterThan";
+    public const string ConditionalTypeIsGreaterThanOrIs = "IsGreaterThanOrIs";
+
     // Conditional Operators
     public const string ConditionalOperatorAND = "AND";
     public const string ConditionalOperatorOR = "OR";
