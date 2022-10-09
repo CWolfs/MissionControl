@@ -162,6 +162,7 @@ namespace MissionControl.Interpolation {
     public string PreInterpolate(CastDef speakerCastDef, string message, string[] lookups) {
       switch (lookups[1]) {
         case DialogueInterpolationConstants.PlayerLances: return InterpolatePlayerLances(InterpolateType.PreInterpolate, speakerCastDef, message, lookups);
+        case DialogueInterpolationConstants.Modification: return InterpolateModification(InterpolateType.PreInterpolate, speakerCastDef, message, lookups);
         case DialogueInterpolationConstants.Conditional: return InterpolateConditional(InterpolateType.PreInterpolate, speakerCastDef, message, lookups);
         default: break;
       }
@@ -250,6 +251,37 @@ namespace MissionControl.Interpolation {
       return fallbackData;
     }
 
+    private string InterpolateModification(InterpolateType interpolateType, CastDef speakerCastDef, string message, string[] lookups) {
+      Main.LogDebug($"[Interpolate.{interpolateType.ToString()}] Modification interpolation");
+      string fallbackData = "MC_INCORRECT_MODIFICATION_COMMAND";
+      string modificationType = lookups[2];
+      string modificationSubject = lookups[3];
+      string modificationValue = lookups[4];
+
+      TagSet tags = null;
+      if (modificationSubject == "EncounterTags") {
+        tags = MissionControl.Instance.EncounterTags;
+      } else if (modificationSubject == "CompanyTags") {
+        tags = UnityGameInstance.Instance.Game.Simulation.CompanyTags;
+      } else if (modificationSubject == "CommanderTags") {
+        tags = UnityGameInstance.Instance.Game.Simulation.CommanderTags;
+      } else if (modificationSubject == "SystemTags") {
+        tags = UnityGameInstance.Instance.Game.Simulation.CurSystem.Tags;
+      }
+
+      if (modificationType == DialogueInterpolationConstants.ModificationAddTo) {
+        tags.Add(modificationValue);
+        return "";
+      } else if (modificationType == DialogueInterpolationConstants.ModificationRemoveFrom) {
+        tags.Remove(modificationValue);
+        return "";
+      } else {
+        Main.Logger.LogError($"[InterpolateModification] Unknown modification type of '{modificationType}'");
+      }
+
+      return fallbackData;
+    }
+
     private string InterpolateConditional(InterpolateType interpolateType, CastDef speakerCastDef, string message, string[] lookups) {
       Main.LogDebug($"[Interpolate.{interpolateType.ToString()}] Conditional interpolation");
       string fallbackData = "MC_INCORRECT_CONDITIONAL_COMMAND";
@@ -309,6 +341,10 @@ namespace MissionControl.Interpolation {
         return InterpolatePlayerLancesConditional(speakerCastDef, lookups);
       } else if (conditionalSubject == "Company") {
         return InterpolateCompanyConditional(lookups);
+      } else if (conditionalSubject == "Encounter") {
+        return InterpolateEncounterConditional(lookups);
+      } else if (conditionalSubject == "System") {
+        return InterpolateSystemConditional(lookups);
       } else if (conditionalSubject == "RandomPercentage") {
         int testValue = 0;
         string conditionalValueWithoutSymbol = conditionalValue.Replace("%", "");
@@ -380,8 +416,32 @@ namespace MissionControl.Interpolation {
       string conditionalValue = lookups[4];         // Tag Name
 
       if (IsTagConditional(conditionalType)) {
-        TagSet pilotTags = UnityGameInstance.Instance.Game.Simulation.CompanyTags;
-        return InterpolateTagsConditional(pilotTags, conditionalType, conditionalValue);
+        TagSet tags = UnityGameInstance.Instance.Game.Simulation.CompanyTags;
+        return InterpolateTagsConditional(tags, conditionalType, conditionalValue);
+      }
+
+      return DialogueInterpolationConstants.SKIP_DIALOGUE;
+    }
+
+    private string InterpolateEncounterConditional(string[] lookups) {
+      string conditionalType = lookups[3];          // HasTag | HasNoTag | HasAllTags | HasAnyTag
+      string conditionalValue = lookups[4];         // Tag Name
+
+      if (IsTagConditional(conditionalType)) {
+        TagSet tags = MissionControl.Instance.EncounterTags;
+        return InterpolateTagsConditional(tags, conditionalType, conditionalValue);
+      }
+
+      return DialogueInterpolationConstants.SKIP_DIALOGUE;
+    }
+
+    private string InterpolateSystemConditional(string[] lookups) {
+      string conditionalType = lookups[3];          // HasTag | HasNoTag | HasAllTags | HasAnyTag
+      string conditionalValue = lookups[4];         // Tag Name
+
+      if (IsTagConditional(conditionalType)) {
+        TagSet tags = UnityGameInstance.Instance.Game.Simulation.CurSystem.Tags;
+        return InterpolateTagsConditional(tags, conditionalType, conditionalValue);
       }
 
       return DialogueInterpolationConstants.SKIP_DIALOGUE;

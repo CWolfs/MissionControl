@@ -8,6 +8,8 @@ using BattleTech;
 using BattleTech.Data;
 using BattleTech.Framework;
 
+using HBS.Collections;
+
 using MissionControl.Data;
 using MissionControl.Logic;
 using MissionControl.Rules;
@@ -48,6 +50,8 @@ namespace MissionControl {
     public int PlayerLanceDropDifficultyValue { get; set; }
     public float PlayerLanceDropSkullRating { get; set; }
     public float PlayerLanceDropTonnage { get; set; }
+
+    public TagSet EncounterTags { get; set; } = new TagSet();
 
     // Only populated for custom contract types
     public EncounterLayer_MDD EncounterLayerMDD { get; private set; }
@@ -604,6 +608,7 @@ namespace MissionControl {
       Main.LogDebug("[MissionControl.OnCombatDestroyed] Clearing specific data");
       PilotCastInterpolator.Instance.Reset();
       DataManager.Instance.ResetBetweenContracts();
+      EncounterTags.Clear();
     }
   }
 }

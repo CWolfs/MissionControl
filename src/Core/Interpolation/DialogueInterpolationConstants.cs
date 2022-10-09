@@ -15,6 +15,7 @@ namespace MissionControl.Interpolation {
     // Lookups
     public const string PlayerLances = "PlayerLances";
     public const string Format = "Format";
+    public const string Modification = "Modification";
 
     // Conditionals
     public const string Conditional = "If";
@@ -30,6 +31,10 @@ namespace MissionControl.Interpolation {
     // Conditional Operators
     public const string ConditionalOperatorAND = "AND";
     public const string ConditionalOperatorOR = "OR";
+
+    // Modifications
+    public const string ModificationAddTo = "AddTo";
+    public const string ModificationRemoveFrom = "RemoveFrom";
 
     // Faction Types
     public const string FactionTypeRealFaction = "RealFaction";
