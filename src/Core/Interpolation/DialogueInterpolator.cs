@@ -144,7 +144,7 @@ namespace MissionControl.Interpolation {
         if (interpolateType == InterpolateType.PreInterpolate) {
           resolvedData = PreInterpolate(speaker, message, lookups);
         } else if (interpolateType == InterpolateType.PostInterpolate) {
-          resolvedData = PostInterpolate(message, lookups);
+          resolvedData = PostInterpolate(speaker, message, lookups);
         }
 
         if (resolvedData == DialogueInterpolationConstants.SKIP_DIALOGUE) {
@@ -169,9 +169,10 @@ namespace MissionControl.Interpolation {
       return "MC_INCORRECT_PREINTERPOLATE_COMMAND";
     }
 
-    public string PostInterpolate(string message, string[] lookups) {
+    public string PostInterpolate(CastDef speakerCastDef, string message, string[] lookups) {
       switch (lookups[1]) {
         case DialogueInterpolationConstants.Format: return InterpolateFormat(InterpolateType.PostInterpolate, message, lookups);
+        case DialogueInterpolationConstants.Modification: return InterpolateModification(InterpolateType.PreInterpolate, speakerCastDef, message, lookups);
         default: break;
       }
       return "MC_INCORRECT_POSTINTERPOLATE_COMMAND";
@@ -257,6 +258,7 @@ namespace MissionControl.Interpolation {
       string modificationType = lookups[2];
       string modificationSubject = lookups[3];
       string modificationValue = lookups[4];
+      string lowercaseValue = modificationValue.ToLower();
 
       TagSet tags = null;
       if (modificationSubject == "EncounterTags") {
@@ -270,10 +272,10 @@ namespace MissionControl.Interpolation {
       }
 
       if (modificationType == DialogueInterpolationConstants.ModificationAddTo) {
-        tags.Add(modificationValue);
+        tags.Add(lowercaseValue);
         return "";
       } else if (modificationType == DialogueInterpolationConstants.ModificationRemoveFrom) {
-        tags.Remove(modificationValue);
+        tags.Remove(lowercaseValue);
         return "";
       } else {
         Main.Logger.LogError($"[InterpolateModification] Unknown modification type of '{modificationType}'");
