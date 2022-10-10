@@ -450,7 +450,7 @@ namespace MissionControl.Interpolation {
     }
 
     private bool IsTagConditional(string conditionalType) {
-      return conditionalType == "HasTag" || conditionalType == "HasNoTag" || conditionalType == "HasAllTags" || conditionalType == "HasAnyTag";
+      return conditionalType == "HasTag" || conditionalType == "HasNoTag" || conditionalType == "HasAllTags" || conditionalType == "HasAnyTag" || conditionalType == "HasNoTags";
     }
 
     private string InterpolateTagsConditional(TagSet existingTags, string conditionalType, string tagValues) {
@@ -465,6 +465,8 @@ namespace MissionControl.Interpolation {
         if (existingTags.ContainsAll(new TagSet(tags))) return "";
       } else if (conditionalType == "HasAnyTag") {
         if (existingTags.ContainsAny(new TagSet(tags))) return "";
+      } else if (conditionalType == "HasNoTags") {
+        if (!existingTags.ContainsAny(new TagSet(tags))) return "";
       }
 
       return DialogueInterpolationConstants.SKIP_DIALOGUE;
