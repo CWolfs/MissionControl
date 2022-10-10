@@ -161,6 +161,7 @@ namespace MissionControl.Interpolation {
 
     public string PreInterpolate(CastDef speakerCastDef, string message, string[] lookups) {
       switch (lookups[1]) {
+        case DialogueInterpolationConstants.Commander: return InterpolateCommander(InterpolateType.PreInterpolate, speakerCastDef, message, lookups); // Quick acces for PlayerLances.Commander
         case DialogueInterpolationConstants.PlayerLances: return InterpolatePlayerLances(InterpolateType.PreInterpolate, speakerCastDef, message, lookups);
         case DialogueInterpolationConstants.Modification: return InterpolateModification(InterpolateType.PreInterpolate, speakerCastDef, message, lookups);
         case DialogueInterpolationConstants.Conditional: return InterpolateConditional(InterpolateType.PreInterpolate, speakerCastDef, message, lookups);
@@ -176,6 +177,17 @@ namespace MissionControl.Interpolation {
         default: break;
       }
       return "MC_INCORRECT_POSTINTERPOLATE_COMMAND";
+    }
+
+    private string InterpolateCommander(InterpolateType interpolateType, CastDef speakerCastDef, string message, string[] lookups) {
+      List<string> quickAccessorLookup = new List<string>();
+
+      for (int i = 0; i < lookups.Length; i++) {
+        if (i == 1) quickAccessorLookup.Add("PlayerLances");
+        quickAccessorLookup.Add(lookups[i]);
+      }
+
+      return InterpolatePlayerLances(interpolateType, speakerCastDef, message, quickAccessorLookup.ToArray());
     }
 
     private string InterpolatePlayerLances(InterpolateType interpolateType, CastDef speakerCastDef, string message, string[] lookups) {
@@ -341,6 +353,15 @@ namespace MissionControl.Interpolation {
         return DialogueInterpolationConstants.SKIP_DIALOGUE;
       } else if (conditionalSubject == "PlayerLances") {
         return InterpolatePlayerLancesConditional(speakerCastDef, lookups);
+      } else if (conditionalSubject == "Commander") { // quick accessor for PlayerLances.Commander
+        List<string> quickAccessorLookup = new List<string>();
+
+        for (int i = 0; i < lookups.Length; i++) {
+          if (i == 2) quickAccessorLookup.Add("PlayerLances");
+          quickAccessorLookup.Add(lookups[i]);
+        }
+
+        return InterpolatePlayerLancesConditional(speakerCastDef, quickAccessorLookup.ToArray());
       } else if (conditionalSubject == "Company") {
         return InterpolateCompanyConditional(lookups);
       } else if (conditionalSubject == "Encounter") {
