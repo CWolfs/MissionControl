@@ -477,6 +477,8 @@ namespace MissionControl.Interpolation {
       Main.LogDebug("[InterpolateTagsConditional] Current tags in tagset are: " + existingTags.ToJSON() + " conditionalType: " + conditionalType + " tagValues " + tagValues);
       string[] tags = tagValues.Split('|');
 
+      if (conditionalType == "HasTags") Main.Logger.LogError("[InterpolateTagsConditional] 'HasTags' is not a valid MC API tag check. It must be either 'HasAllTags' or 'HasAnyTags'");
+
       if (conditionalType == "HasTag") {
         if (existingTags.Contains(tags[0])) return "";
       } else if (conditionalType == "HasNoTag") {
