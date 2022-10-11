@@ -1047,7 +1047,7 @@
           "revealRadius": -1
         },
         {
-          "words": "{{MC.If.Encounter.HasNoTag.mc_recognised_strange_turrets} AND {MC.If.Encounter.HasTags.mc_solved_crime}}This is a setup! Henriette must have hired these guys.",
+          "words": "{{MC.If.Encounter.HasNoTag.mc_recognised_strange_turrets} AND {MC.If.Encounter.HasTag.mc_solved_crime}}This is a setup! Henriette must have hired these guys.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -1111,7 +1111,7 @@
           "revealRadius": -1
         },
         {
-          "words": "{MC.If.Encounter.HasTag.mc_met_bosh_in_phase1}Commander! Take these ruffians out this instant!",
+          "words": "{MC.If.Encounter.HasTag.mc_met_bosh_in_phase1}<b>Commander!</b> Take these ruffians out this instant!",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -1362,7 +1362,7 @@
           "revealRadius": -1
         },
         {
-          "words": "{{MC.If.Encounter.HasNoTag.mc_recognised_strange_turrets} AND {MC.If.Encounter.HasTags.mc_solved_crime}}This is a setup! Henriette must have hired these guys.",
+          "words": "{{MC.If.Encounter.HasNoTag.mc_recognised_strange_turrets} AND {MC.If.Encounter.HasTag.mc_solved_crime}}This is a setup! Henriette must have hired these guys.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -1394,7 +1394,23 @@
           "revealRadius": -1
         },
         {
-          "words": "{MC.If.Encounter.HasNoTag.mc_solved_crime}No wonder she went quiet. She didn't want to be disturbed.",
+          "words": "{MC.If.Encounter.HasTag.mc_solved_crime}No wonder she went quiet. She didn't want to be disturbed.",
+          "wordsColor": {
+            "r": 1,
+            "g": 1,
+            "b": 1,
+            "a": 1
+          },
+          "selectedCastDefId": "castDef_DariusDefault",
+          "emote": "Default",
+          "audioName": "NONE",
+          "cameraFocusGuid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
+          "cameraDistance": "Close",
+          "cameraHeight": "Default",
+          "revealRadius": -1
+        },
+        {
+          "words": "{MC.If.Encounter.HasNoTag.mc_solved_crime}Sounds like there's more going on here than we expected, Commander. No time to figure it out right now though.",
           "wordsColor": {
             "r": 1,
             "g": 1,
