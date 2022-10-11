@@ -270,7 +270,6 @@ namespace MissionControl.Interpolation {
       string modificationType = lookups[2];
       string modificationSubject = lookups[3];
       string modificationValue = lookups[4];
-      string lowercaseValue = modificationValue.ToLower();
 
       TagSet tags = null;
       if (modificationSubject == "EncounterTags") {
@@ -284,10 +283,10 @@ namespace MissionControl.Interpolation {
       }
 
       if (modificationType == DialogueInterpolationConstants.ModificationAddTo) {
-        tags.Add(lowercaseValue);
+        if (!tags.Contains(modificationValue)) tags.Add(modificationValue);
         return "";
       } else if (modificationType == DialogueInterpolationConstants.ModificationRemoveFrom) {
-        tags.Remove(lowercaseValue);
+        if (tags.Contains(modificationValue)) tags.Remove(modificationValue);
         return "";
       } else {
         Main.Logger.LogError($"[InterpolateModification] Unknown modification type of '{modificationType}'");
