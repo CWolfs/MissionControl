@@ -270,7 +270,6 @@ namespace MissionControl.Interpolation {
       string modificationType = lookups[2];
       string modificationSubject = lookups[3];
       string modificationValue = lookups[4];
-      string lowercaseValue = modificationValue.ToLower();
 
       TagSet tags = null;
       if (modificationSubject == "EncounterTags") {
@@ -284,10 +283,10 @@ namespace MissionControl.Interpolation {
       }
 
       if (modificationType == DialogueInterpolationConstants.ModificationAddTo) {
-        tags.Add(lowercaseValue);
+        if (!tags.Contains(modificationValue)) tags.Add(modificationValue);
         return "";
       } else if (modificationType == DialogueInterpolationConstants.ModificationRemoveFrom) {
-        tags.Remove(lowercaseValue);
+        if (tags.Contains(modificationValue)) tags.Remove(modificationValue);
         return "";
       } else {
         Main.Logger.LogError($"[InterpolateModification] Unknown modification type of '{modificationType}'");
@@ -477,6 +476,8 @@ namespace MissionControl.Interpolation {
     private string InterpolateTagsConditional(TagSet existingTags, string conditionalType, string tagValues) {
       Main.LogDebug("[InterpolateTagsConditional] Current tags in tagset are: " + existingTags.ToJSON() + " conditionalType: " + conditionalType + " tagValues " + tagValues);
       string[] tags = tagValues.Split('|');
+
+      if (conditionalType == "HasTags") Main.Logger.LogError("[InterpolateTagsConditional] 'HasTags' is not a valid MC API tag check. It must be either 'HasAllTags' or 'HasAnyTags'");
 
       if (conditionalType == "HasTag") {
         if (existingTags.Contains(tags[0])) return "";
