@@ -5,6 +5,7 @@ namespace MissionControl.Data {
 
     public const string castDef_TeamPilot = "castDef_TeamPilot_";
     public const string castDef_TeamPilot_Random = "castDef_TeamPilot_Random";
+    public const string castDef_TeamPilot_Position = "castDef_TeamPilot_Position";
 
     public const string castDef_EmployerPilot = "castDef_EmployerPilot_";
     public const string castDef_EmployerPilot_Random = "castDef_EmployerPilot_Random";

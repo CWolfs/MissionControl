@@ -1,6 +1,5 @@
 using UnityEngine;
 
-using System;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -34,6 +33,7 @@ namespace MissionControl.Interpolation {
     public Dictionary<string, AbstractActor> BoundAbstractActors { get; set; } = new Dictionary<string, AbstractActor>(); // <BindingKey, AbstractActors>
     public Dictionary<string, int> BoundAbstractActorsFullIndex { get; set; } = new Dictionary<string, int>(); // <BindingKey, IndexInFullLanceIncludingSpaces>
 
+    /* This is run on contract initialisation */
     public void InterpolateContractDialogueCast() {
       List<DialogueOverride> dialogueOverrides = MissionControl.Instance.CurrentContract.Override.dialogueList;
       foreach (DialogueOverride dialogueOverride in dialogueOverrides) {
@@ -87,7 +87,7 @@ namespace MissionControl.Interpolation {
       Main.LogDebug($"[PilotCastInterpolator.InterpolatePlayerPilot] All pilots are used up. Defaulting to 'castDef_DariusDefault'");
       string fallbackCastDefID = CustomCastDef.castDef_Darius;
 
-      if (IsBindableRandom(selectedCastDefID)) {
+      if (IsBindableRandomCastDefID(selectedCastDefID)) {
         string bindingKey = GetBindingKey(selectedCastDefID);
         PilotCastInterpolator.Instance.DynamicCastDefs[bindingKey] = fallbackCastDefID;
       }
@@ -109,7 +109,7 @@ namespace MissionControl.Interpolation {
 
         HandlePilotCastDefAndRebinding(pilotCastDefId, pilotDef);
 
-        if (IsBindableRandom(selectedCastDefID)) {
+        if (IsBindableRandomCastDefID(selectedCastDefID)) {
           string bindingKey = GetBindingKey(selectedCastDefID);
           PilotCastInterpolator.Instance.DynamicCastDefs[bindingKey] = pilotCastDefId;
           PilotCastInterpolator.Instance.BoundAbstractActorsFullIndex[bindingKey] = fullUnitPosition;
@@ -122,14 +122,22 @@ namespace MissionControl.Interpolation {
     }
 
     private string InterpolatePlayerPilot(Contract contract, string selectedCastDefID, SpawnableUnit[] lanceConfigUnits, SpawnableUnit[] fullLanceConfigUnits) {
+      SpawnableUnit[] lanceConfigUnitsToUse = lanceConfigUnits;
+
       // Check for already bound random pilots - castDef_TeamPilot_Random_*
-      if (IsBindableRandom(selectedCastDefID)) {
+      if (IsBindableRandomCastDefID(selectedCastDefID)) {
         string bindingKey = GetBindingKey(selectedCastDefID);
-        string boundCastDefID = GetExistingBoundCastDefID(bindingKey);
+        string boundCastDefID = GetExistingRandomBoundCastDefID(bindingKey);
         if (boundCastDefID != null) return boundCastDefID;
       }
 
       int pilotPosition = SelectPilotPositionInLance(selectedCastDefID, "Player1", lanceConfigUnits); // Positon starting at slot 1
+
+      // Exact defined pilot position processing
+      if (pilotPosition == -1) {
+        pilotPosition = GetExactDefinedPilotPosition(selectedCastDefID);
+        lanceConfigUnitsToUse = fullLanceConfigUnits;
+      }
 
       if (!IsPilotPositionValid(pilotPosition)) {
         return HandleFallback(pilotPosition, selectedCastDefID);
@@ -228,13 +236,18 @@ namespace MissionControl.Interpolation {
     }
 
     private int SelectPilotPositionInLance(string selectedCastDefID, string teamName, SpawnableUnit[] lanceConfigUnits) {
-      if (IsTrueRandom(selectedCastDefID)) { // castDef_TeamPilot_Random format
+      if (IsTrueRandomCastDefID(selectedCastDefID)) { // castDef_TeamPilot_Random format
         return UnityEngine.Random.Range(1, lanceConfigUnits.Length + 1);
-      } else if (IsBindableRandom(selectedCastDefID)) { // castDef_TeamPilot_Random_X format
+      } else if (IsBindableRandomCastDefID(selectedCastDefID)) { // castDef_TeamPilot_Random_X format
         return FindNonUsedPilotPosition(teamName, lanceConfigUnits);
-      } else { // castDef_TeamPilot_X format
-        return int.Parse(GetPilotPositionFromCastDef(selectedCastDefID));
+      } else if (IsExactPositionCastDefID(selectedCastDefID)) { // castDef_TeamPilot_Position_[number] format
+        return -1;
       }
+      return 0;
+    }
+
+    private int GetExactDefinedPilotPosition(string selectedCastDefID) {
+      return int.Parse(GetPilotPositionFromCastDef(selectedCastDefID));
     }
 
     public void AddTakenPilotPosition(string teamName, int unitPosition, SpawnableUnit lanceConfigUnit = null) {
@@ -272,7 +285,7 @@ namespace MissionControl.Interpolation {
       return $"castDef_{bindKey}";
     }
 
-    private string GetExistingBoundCastDefID(string bindingKey) {
+    private string GetExistingRandomBoundCastDefID(string bindingKey) {
       if (PilotCastInterpolator.Instance.DynamicCastDefs.ContainsKey(bindingKey)) {
         return PilotCastInterpolator.Instance.DynamicCastDefs[bindingKey];
       }
@@ -314,14 +327,18 @@ namespace MissionControl.Interpolation {
         selectedCastDefId.StartsWith(CustomCastDef.castDef_EmployerPilot) || selectedCastDefId.StartsWith(CustomCastDef.castDef_TargetPilot));
     }
 
-    protected static bool IsTrueRandom(string selectedCastDefId) {
+    protected static bool IsTrueRandomCastDefID(string selectedCastDefId) {
       return selectedCastDefId == CustomCastDef.castDef_TeamPilot_Random || selectedCastDefId == CustomCastDef.castDef_EmployerPilot_Random || selectedCastDefId == CustomCastDef.castDef_TargetPilot_Random;
     }
 
-    protected static bool IsBindableRandom(string selectedCastDefId) {
+    protected static bool IsBindableRandomCastDefID(string selectedCastDefId) {
       return (selectedCastDefId.StartsWith(CustomCastDef.castDef_TeamPilot_Random) && (selectedCastDefId != CustomCastDef.castDef_TeamPilot_Random)) ||
         (selectedCastDefId.StartsWith(CustomCastDef.castDef_EmployerPilot_Random) && (selectedCastDefId != CustomCastDef.castDef_EmployerPilot_Random)) ||
         (selectedCastDefId.StartsWith(CustomCastDef.castDef_TargetPilot_Random) && (selectedCastDefId != CustomCastDef.castDef_TargetPilot_Random));
+    }
+
+    protected static bool IsExactPositionCastDefID(string selectedCastDefId) {
+      return selectedCastDefId.StartsWith(CustomCastDef.castDef_TeamPilot_Position);
     }
 
     public string GetTeamIDFromCastDefID(string selectedCastDefID) {

@@ -3,6 +3,7 @@ namespace MissionControl.Interpolation {
     public const string TeamPilot = "TeamPilot_";
 
     public const string TeamPilot_Random = "TeamPilot_Random";
+    public const string TeamPilot_Position = "TeamPilot_Position";
 
     public const string Commander = "Commander";
     public const string Darius = "Darius";

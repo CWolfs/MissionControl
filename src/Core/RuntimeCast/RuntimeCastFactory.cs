@@ -89,7 +89,11 @@ namespace MissionControl.RuntimeCast {
     }
 
     public static CastDef GetCastDef(string castDefID) {
-      return UnityGameInstance.Instance.Game.DataManager.CastDefs.Get(castDefID);
+      if (UnityGameInstance.Instance.Game.DataManager.CastDefs.Exists(castDefID)) {
+        return UnityGameInstance.Instance.Game.DataManager.CastDefs.Get(castDefID);
+      }
+
+      return null;
     }
   }
 }

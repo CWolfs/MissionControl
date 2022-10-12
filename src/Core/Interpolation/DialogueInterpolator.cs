@@ -5,8 +5,10 @@ using System.Text.RegularExpressions;
 using BattleTech;
 using BattleTech.Framework;
 
+using HBS.Data;
 using HBS.Collections;
 
+using MissionControl.Data;
 using MissionControl.RuntimeCast;
 
 namespace MissionControl.Interpolation {
@@ -257,6 +259,22 @@ namespace MissionControl.Interpolation {
             return unit.VariantName;
           } else {
             return "Argo";
+          }
+        }
+      } else if (unitKey.StartsWith(DialogueInterpolationConstants.TeamPilot_Position)) { // Interact with the actor/pilot talking
+        string index = unitKey.Substring(unitKey.LastIndexOf("_") + 1);
+        unit = GetUnitAtPlayerPosition(int.Parse(index));
+
+        if (unitDataKey == "DisplayName") {
+          Pilot pilot = unit.GetPilot();
+          return pilot.Callsign == null ? pilot.FirstName : pilot.Callsign;
+        } else if (unitDataKey == "UnitName") {
+          if (unit != null) {
+            return unit.UnitName;
+          }
+        } else if (unitDataKey == "UnitVariant") {
+          if (unit != null) {
+            return unit.VariantName;
           }
         }
       }
@@ -560,13 +578,65 @@ namespace MissionControl.Interpolation {
           Main.LogDebug("[DialogueInterpolator.GetSpeakerUnit] Found speaker's unit!");
           return unit;
         }
+
+        if (unitPilotDefID == pilotDefID.ToUpperFirst()) {
+          Main.LogDebug("[DialogueInterpolator.GetSpeakerUnit] Found speaker's unit!");
+          return unit;
+        }
       }
 
       return null;
     }
 
+    private AbstractActor GetUnitAtPlayerPosition(int position) {
+      Team player1Team = TeamUtils.GetTeam(TeamUtils.PLAYER_TEAM_ID);
+      List<Lance> lances = player1Team.lances;
+      if (lances.Count <= 0) return null;
+
+      Lance lance = lances[0];
+      List<AbstractActor> units = lance.GetLanceUnits();
+
+      SpawnableUnit[] fullLanceConfigUnits = MissionControl.Instance.CurrentContract.Lances.GetLanceUnitsIncludeEmptySlots(TeamUtils.PLAYER_TEAM_ID);
+      if (fullLanceConfigUnits.Length <= 0) return null;
+
+      if (position <= fullLanceConfigUnits.Length) {
+        string pilotDefID = fullLanceConfigUnits[position - 1].PilotId;
+        return GetSpeakerUnit(pilotDefID);
+      }
+
+      return null;
+    }
+
+    private PilotDef GetSpeakerPilotDef(string pilotDefID) {
+      Team player1Team = TeamUtils.GetTeam(TeamUtils.PLAYER_TEAM_ID);
+      List<Lance> lances = player1Team.lances;
+      if (lances.Count <= 0) return null;
+
+      Lance lance = lances[0];
+      List<AbstractActor> units = lance.GetLanceUnits();
+      foreach (AbstractActor unit in units) {
+        PilotDef pilotDef = unit.GetPilot().pilotDef;
+        string unitPilotDefID = pilotDef.Description.Id.ToUpperFirst();
+        if (unitPilotDefID == pilotDefID) {
+          return pilotDef;
+        }
+
+        if (unitPilotDefID == pilotDefID.ToUpperFirst()) {
+          return pilotDef;
+        }
+      }
+
+      Main.LogDebug("[DialogueInterpolator.GetSpeakerPilotDef] Returning null");
+      return null;
+    }
+
+    /* This is the entry point before the dialogue is shown */
     public void HandleDeadActorFromDialogueContent(ref CastDef castDef) {
-      if (castDef == null) Main.Logger.LogError("[DialogueInterpolator] Was provided a null or bad castDef. If a custom contract check the 'selectedCastDefId' property to ensure it's a valid castDef (often 'castDef_' has been forgotten).");
+      if (castDef == null) {
+        Main.Logger.LogError("[DialogueInterpolator] Was provided a null or bad castDef. If a custom contract check the 'selectedCastDefId' property to ensure it's a valid castDef (often 'castDef_' has been forgotten). Falling back to Darius.");
+        castDef = RuntimeCastFactory.GetCastDef(CustomCastDef.castDef_Darius);
+        return;
+      }
 
       string castDefID = castDef.id;
       string bindingKey = (castDefID.Contains(DialogueInterpolationConstants.Commander) ? DialogueInterpolationConstants.Commander : PilotCastInterpolator.Instance.GetBindIDFromCastDefID(castDefID));
@@ -590,12 +660,26 @@ namespace MissionControl.Interpolation {
           int randomPosition = UnityEngine.Random.Range(0, lanceConfigUnits.Length);
           string pilotDefID = lanceConfigUnits[randomPosition].PilotId;
 
-          CastDef updatedCastDef = RuntimeCastFactory.GetCastDef(RuntimeCastFactory.GetCastDefIDFromPilotDefID(pilotDefID));
-          if (castDef != null) {
+          string pilotCastDefID = RuntimeCastFactory.GetCastDefIDFromPilotDefID(pilotDefID);
+          CastDef updatedCastDef = RuntimeCastFactory.GetCastDef(pilotCastDefID);
+
+          if (updatedCastDef == null) {
+            // The castdef might be null if it wasn't created at the start of the contract - for when a pilot isn't immediately selected for use in the initial set up
+            PilotDef pilotDef = GetSpeakerPilotDef(pilotDefID);
+
+            if (pilotDef != null) {
+              bool isCommander = pilotCastDefID == CustomCastDef.castDef_Commander;
+              updatedCastDef = RuntimeCastFactory.CreateCast(pilotDef, isCommander ? "Commander" : "Pilot");
+              ((DictionaryStore<CastDef>)UnityGameInstance.BattleTechGame.DataManager.CastDefs).Add(pilotCastDefID, updatedCastDef);
+            }
+          }
+
+          if (updatedCastDef != null) {
             castDef = updatedCastDef;
             unit = GetSpeakerUnit(pilotDefID);
           } else {
             Main.LogDebug($"[Interpolate.HandleDeadActorFromDialogueContent] Attempted to find a new CastDef but only found null. Preventing overwriting existing castdef.");
+            castDef = RuntimeCastFactory.GetCastDef(CustomCastDef.castDef_Darius);
             unit = null;
           }
         }
