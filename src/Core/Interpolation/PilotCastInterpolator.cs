@@ -192,7 +192,6 @@ namespace MissionControl.Interpolation {
       if (bindingKey == DialogueInterpolationConstants.Commander) {
         Main.LogDebug($"[PilotCastInterpolator.RebindDeadUnit] Rebinding and referencing dead commander to Darius");
         RebindDeadUnitReferences(CustomCastDef.castDef_Commander, CustomCastDef.castDef_Darius);
-        LateBinding();
         return CustomCastDef.castDef_Darius;
       } else {
         string oldCastDefID = PilotCastInterpolator.Instance.DynamicCastDefs[bindingKey];
@@ -355,9 +354,14 @@ namespace MissionControl.Interpolation {
     }
 
     public string GetBindIDFromCastDefID(string castDefID) {
+      // First check if values exist in the dynamic casts (including the commander to ensure death rebinding is adhered to
       foreach (KeyValuePair<string, string> entry in DynamicCastDefs) {
         if (entry.Value == castDefID) return entry.Key;
       }
+
+      // If nothing is found and the castDefID is the commander, then return Commander as the bindingID
+      if (castDefID.Contains(DialogueInterpolationConstants.Commander)) return DialogueInterpolationConstants.Commander;
+
       return null;
     }
 
