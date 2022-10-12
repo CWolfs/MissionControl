@@ -221,6 +221,7 @@ namespace MissionControl {
       ContractTypeMetadata metaddata = DataManager.Instance.AvailableContractTypeMetadata[MissionControl.Instance.CurrentContractType];
       Transform parentGo = GameObject.Find("uixPrfPanl_combatMissionLoad-overlay_V2-MANAGED").transform;
       GameObject creditsGo = CreatePrefab("MCUI_Contract_Type_Credits_Panel", parentGo.Find("Representation"));
+      if (creditsGo == null) return;
 
       // Resize container
       RectTransform creditsTransform = ((RectTransform)creditsGo.transform);
