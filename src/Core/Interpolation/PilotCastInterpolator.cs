@@ -143,7 +143,7 @@ namespace MissionControl.Interpolation {
         return HandleFallback(pilotPosition, selectedCastDefID);
       }
 
-      return BindCastDefAndActorIndex(pilotPosition, selectedCastDefID, lanceConfigUnits, fullLanceConfigUnits);
+      return BindCastDefAndActorIndex(pilotPosition, selectedCastDefID, lanceConfigUnitsToUse, fullLanceConfigUnits);
     }
 
     private string InterpolateNonPlayerPilot(Contract contract, string selectedCastDefID) {
@@ -192,6 +192,7 @@ namespace MissionControl.Interpolation {
       if (bindingKey == DialogueInterpolationConstants.Commander) {
         Main.LogDebug($"[PilotCastInterpolator.RebindDeadUnit] Rebinding and referencing dead commander to Darius");
         RebindDeadUnitReferences(CustomCastDef.castDef_Commander, CustomCastDef.castDef_Darius);
+        LateBinding();
         return CustomCastDef.castDef_Darius;
       } else {
         string oldCastDefID = PilotCastInterpolator.Instance.DynamicCastDefs[bindingKey];
