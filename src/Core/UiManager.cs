@@ -257,7 +257,7 @@ namespace MissionControl {
       // Set text and alignment for Designed With
       GameObject designedWithTextGo = creditsGo.FindRecursive("DesignedWith");
       TextMeshProUGUI designedWithText = designedWithTextGo.GetComponent<TextMeshProUGUI>();
-      designedWithText.text = "Designed with CWolf's Designer";
+      designedWithText.text = "Made with Mission Control Designer";
       designedWithText.alignment = TextAlignmentOptions.TopRight;
 
       UnityGameInstance.Instance.StartCoroutine(FinishCreateContractTypeCreditsPrefab(creditsTransform, contractTypeNameTextGo, authorTextGo, contributorsTextGo, designedWithTextGo));
