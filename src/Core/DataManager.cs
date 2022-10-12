@@ -561,7 +561,11 @@ namespace MissionControl {
 
     public void ResetBetweenContracts() {
       GeneratedPortraits.Clear();
-      RestoreContractOverriddeData();
+      if (Main.Settings.Misc.ContractOverrideDataCleanupMethod == "RestoreFromCopy") {
+        RestoreContractOverriddeData();
+      } else {
+        DataScrubContractOverrideData();
+      }
     }
 
     public void BackupContractOverriddeData() {
@@ -612,18 +616,35 @@ namespace MissionControl {
       }
     }
 
+    // OLD METHOD FOR POSSIBLE COMPATIBILITY ISSUES WITH OTHER MODS
+    private void DataScrubContractOverrideData() {
+      Main.Logger.Log($"[MissionControl] Clearing old contract data");
+      ContractOverride contractOverride = MissionControl.Instance.CurrentContract.Override;
+
+      // Old Lances
+      contractOverride.targetTeam.lanceOverrideList =
+        contractOverride.targetTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
+      contractOverride.employerTeam.lanceOverrideList =
+        contractOverride.employerTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
+
+      // Old Objectives
+      contractOverride.contractObjectiveList =
+       contractOverride.contractObjectiveList.Where(contractObjective => !contractObjective.description.StartsWith("MC")).ToList();
+    }
+
     private void RestoreContractOverriddeData() {
       Main.Logger.Log($"[MissionControl] Restoring original ContractOverride data for: " + MissionControl.Instance.CurrentContract.Name);
+      ContractOverride contractOverride = MissionControl.Instance.CurrentContract.Override;
 
-      RestoreOverrideList<LanceOverride>(MissionControl.Instance.CurrentContract.Override.player1Team.lanceOverrideList, ContractOverrideLanceOverrideBackup["Player1"]);
-      RestoreOverrideList<LanceOverride>(MissionControl.Instance.CurrentContract.Override.employerTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["Employer"]);
-      RestoreOverrideList<LanceOverride>(MissionControl.Instance.CurrentContract.Override.employersAllyTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["EmployerAlly"]);
-      RestoreOverrideList<LanceOverride>(MissionControl.Instance.CurrentContract.Override.targetTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["Target"]);
-      RestoreOverrideList<LanceOverride>(MissionControl.Instance.CurrentContract.Override.targetsAllyTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["TargetAlly"]);
-      RestoreOverrideList<LanceOverride>(MissionControl.Instance.CurrentContract.Override.neutralToAllTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["NeutralToAll"]);
-      RestoreOverrideList<LanceOverride>(MissionControl.Instance.CurrentContract.Override.hostileToAllTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["HostileToAll"]);
+      RestoreOverrideList<LanceOverride>(contractOverride.player1Team.lanceOverrideList, ContractOverrideLanceOverrideBackup["Player1"]);
+      RestoreOverrideList<LanceOverride>(contractOverride.employerTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["Employer"]);
+      RestoreOverrideList<LanceOverride>(contractOverride.employersAllyTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["EmployerAlly"]);
+      RestoreOverrideList<LanceOverride>(contractOverride.targetTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["Target"]);
+      RestoreOverrideList<LanceOverride>(contractOverride.targetsAllyTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["TargetAlly"]);
+      RestoreOverrideList<LanceOverride>(contractOverride.neutralToAllTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["NeutralToAll"]);
+      RestoreOverrideList<LanceOverride>(contractOverride.hostileToAllTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["HostileToAll"]);
 
-      RestoreOverrideList<ObjectiveOverride>(MissionControl.Instance.CurrentContract.Override.objectiveList, ContractOverrideObjectiveOverrideBackup);
+      RestoreOverrideList<ObjectiveOverride>(contractOverride.objectiveList, ContractOverrideObjectiveOverrideBackup);
 
       ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
       ContractOverrideObjectiveOverrideBackup = new List<ObjectiveOverride>();
