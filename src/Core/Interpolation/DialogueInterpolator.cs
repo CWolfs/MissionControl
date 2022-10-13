@@ -298,16 +298,37 @@ namespace MissionControl.Interpolation {
         tags = UnityGameInstance.Instance.Game.Simulation.CommanderTags;
       } else if (modificationSubject == "SystemTags") {
         tags = UnityGameInstance.Instance.Game.Simulation.CurSystem.Tags;
+      } else if (modificationSubject.StartsWith(DialogueInterpolationConstants.TeamPilot_Random)) {
+        string key = modificationSubject.Replace("_Tags", "");
+        AbstractActor unit = GetBoundUnit(key);
+
+        if (unit != null) {
+          tags = unit.GetPilot().pilotDef.PilotTags;
+        } else {
+          Main.Logger.LogWarning($"[InterpolateModification] Couldn't find unit from TeamPilot_Random_* '{speakerCastDef.id}' to set tags on.");
+        }
+      } else if (modificationSubject == "SpeakerTags") {
+        AbstractActor unit = GetSpeakerUnit(RuntimeCastFactory.GetPilotDefIDFromCastDefID(speakerCastDef.id));
+
+        if (unit != null) {
+          tags = unit.GetPilot().pilotDef.PilotTags;
+        } else {
+          Main.Logger.LogWarning($"[InterpolateModification] Couldn't find unit from speaker '{speakerCastDef.id}' to set SpeakerTags on.");
+        }
       }
 
-      if (modificationType == DialogueInterpolationConstants.ModificationAddTo) {
-        if (!tags.Contains(modificationValue)) tags.Add(modificationValue);
-        return "";
-      } else if (modificationType == DialogueInterpolationConstants.ModificationRemoveFrom) {
-        if (tags.Contains(modificationValue)) tags.Remove(modificationValue);
-        return "";
+      if (tags != null) {
+        if (modificationType == DialogueInterpolationConstants.ModificationAddTo) {
+          if (!tags.Contains(modificationValue)) tags.Add(modificationValue);
+          return "";
+        } else if (modificationType == DialogueInterpolationConstants.ModificationRemoveFrom) {
+          if (tags.Contains(modificationValue)) tags.Remove(modificationValue);
+          return "";
+        } else {
+          Main.Logger.LogError($"[InterpolateModification] Unknown modification type of '{modificationType}'");
+        }
       } else {
-        Main.Logger.LogError($"[InterpolateModification] Unknown modification type of '{modificationType}'");
+        Main.Logger.LogError($"[InterpolateModification] No valid tag sets were collected.");
       }
 
       return fallbackData;
@@ -493,7 +514,7 @@ namespace MissionControl.Interpolation {
 
     private string InterpolateTagsConditional(TagSet existingTags, string conditionalType, string tagValues) {
       Main.LogDebug("[InterpolateTagsConditional] Current tags in tagset are: " + existingTags.ToJSON() + " conditionalType: " + conditionalType + " tagValues " + tagValues);
-      string[] tags = tagValues.Split('|');
+      string[] tags = tagValues.Split(',');
 
       if (conditionalType == "HasTags") Main.Logger.LogError("[InterpolateTagsConditional] 'HasTags' is not a valid MC API tag check. It must be either 'HasAllTags' or 'HasAnyTags'");
 

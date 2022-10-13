@@ -661,7 +661,7 @@
           "revealRadius": -1
         },
         {
-          "words": "{MC.If.Commander.HasNoTags.commander_career_gladiator|commander_career_merchantGuard}I've no clue but I'm sure we'll find out at that other settlement nearby. Let's head out.",
+          "words": "{MC.If.Commander.HasNoTags.commander_career_gladiator,commander_career_merchantGuard}I've no clue but I'm sure we'll find out at that other settlement nearby. Let's head out.",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -846,7 +846,7 @@
           "revealRadius": -1
         },
         {
-          "words": "{MC.If.Commander.HasAnyTag.commander_youth_loner|background_career_pirate}Really, Commander. Must you be so crass?",
+          "words": "{MC.If.Commander.HasAnyTag.commander_youth_loner,background_career_pirate}Really, Commander. Must you be so crass?",
           "wordsColor": {
             "r": 1,
             "g": 1,
@@ -862,7 +862,7 @@
           "revealRadius": -1
         },
         {
-          "words": "{MC.If.Commander.HasNoTags.commander_youth_loner|background_career_pirate}Pilots, you heard Ms. Bosh. Our job's not over yet. Let's recover and extract that dog.",
+          "words": "{MC.If.Commander.HasNoTags.commander_youth_loner,background_career_pirate}Pilots, you heard Ms. Bosh. Our job's not over yet. Let's recover and extract that dog.",
           "wordsColor": {
             "r": 1,
             "g": 1,
