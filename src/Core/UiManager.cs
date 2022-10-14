@@ -18,6 +18,8 @@ using BattleTech.UI.TMProWrapper;
 using MissionControl.Patches;
 using MissionControl.Data;
 
+using System.Collections.Generic;
+
 namespace MissionControl {
   public class UiManager {
     private static UiManager instance;
@@ -35,6 +37,10 @@ namespace MissionControl {
     public bool ShouldPatchMainMenu { get; set; } = true;
 
     public bool WaitingToCreateContractTypeCredits { get; set; } = false;
+
+    public Dictionary<string, bool> BuildingUIStatus = new Dictionary<string, bool>();
+
+    public const string CreditsPrefabName = "MCUI_Contract_Type_Credits_Panel";
 
     public void Init() {
       GameObject mcUIPool = new GameObject("MCUIPool");
@@ -147,34 +153,41 @@ namespace MissionControl {
       return false;
     }
 
+    public bool IsBuildingUI(string prefabName) {
+      if (BuildingUIStatus.ContainsKey(prefabName)) return BuildingUIStatus[prefabName];
+      return false;
+    }
+
     public void BuildContractTypeCreditsPrefab(GameObject widget) {
-      Main.LogDebug("[UiManager.BuildContractTypeCredits] About to build credits prefab");
+      if (!HasUI(CreditsPrefabName) && !IsBuildingUI(CreditsPrefabName)) {
+        BuildingUIStatus[CreditsPrefabName] = true;
 
-      GameObject panelGo = widget;
-      GameObject creditsPanelPrefab = GameObject.Instantiate(panelGo, UIPool.transform, false);
-      creditsPanelPrefab.name = "MCUI_Contract_Type_Credits_Panel";
-      creditsPanelPrefab.SetActive(false);
+        GameObject panelGo = widget;
+        GameObject creditsPanelPrefab = GameObject.Instantiate(panelGo, UIPool.transform, false);
+        creditsPanelPrefab.name = CreditsPrefabName;
+        creditsPanelPrefab.SetActive(false);
 
-      MonoBehaviour.Destroy(creditsPanelPrefab.GetComponent<HorizontalLayoutGroup>());
+        MonoBehaviour.Destroy(creditsPanelPrefab.GetComponent<HorizontalLayoutGroup>());
 
-      // Delete unrequired Gos and components
-      GameObject.Destroy(creditsPanelPrefab.transform.Find("loadingSpinner").gameObject);
-      GameObject.Destroy(creditsPanelPrefab.transform.Find("tipHeader").gameObject);
-      GameObject.Destroy(creditsPanelPrefab.GetComponent<LoadingSpinnerAndTip_Widget>());
+        // Delete unrequired Gos and components
+        GameObject.Destroy(creditsPanelPrefab.transform.Find("loadingSpinner").gameObject);
+        GameObject.Destroy(creditsPanelPrefab.transform.Find("tipHeader").gameObject);
+        GameObject.Destroy(creditsPanelPrefab.GetComponent<LoadingSpinnerAndTip_Widget>());
 
-      GameObject messageTextGo = creditsPanelPrefab.transform.Find("message_text").gameObject;
-      messageTextGo.name = "ContractTypeName";
-      LocalizableText messageText = messageTextGo.GetComponent<LocalizableText>();
-      TMP_FontAsset font = messageText.font;
-      MonoBehaviour.Destroy(messageText);
+        GameObject messageTextGo = creditsPanelPrefab.transform.Find("message_text").gameObject;
+        messageTextGo.name = "ContractTypeName";
+        LocalizableText messageText = messageTextGo.GetComponent<LocalizableText>();
+        TMP_FontAsset font = messageText.font;
+        MonoBehaviour.Destroy(messageText);
 
-      UnityGameInstance.Instance.StartCoroutine(FinishBuildContractTypeCreditsPrefab(font));
+        UnityGameInstance.Instance.StartCoroutine(FinishBuildContractTypeCreditsPrefab(font));
+      }
     }
 
     IEnumerator FinishBuildContractTypeCreditsPrefab(TMP_FontAsset font) {
       yield return new WaitForEndOfFrame();
 
-      GameObject creditsPanelPrefab = UIPool.transform.Find("MCUI_Contract_Type_Credits_Panel").gameObject;
+      GameObject creditsPanelPrefab = UIPool.transform.Find(CreditsPrefabName).gameObject;
       VerticalLayoutGroup layoutGroup = creditsPanelPrefab.AddComponent<VerticalLayoutGroup>();
       layoutGroup.padding.top = 2;
       layoutGroup.padding.right = 14;
@@ -202,6 +215,8 @@ namespace MissionControl {
       designedWithTextGo.name = "DesignedWith";
       TextMeshProUGUI designedWithText = designedWithTextGo.GetComponent<TextMeshProUGUI>();
       designedWithText.fontSize = 14;
+
+      BuildingUIStatus[CreditsPrefabName] = false;
     }
 
     public GameObject CreatePrefab(string prefabName, Transform parent) {
@@ -213,21 +228,51 @@ namespace MissionControl {
         return go;
       }
 
-      Main.Logger.LogError($"[UiManager.CreatePrefab] Prefab '{prefabName}' does not exist. It should be built first.");
+      Main.Logger.LogWarning($"[UiManager.CreatePrefab] Prefab '{prefabName}' does not exist. It should be built first.");
       return null;
     }
 
-    public void CreateContractTypeCredits() {
+    public IEnumerator CreateContractTypeCredits(GameObject spinnerWidget) {
+      float startTime = Time.time;
+      if (!HasUI(CreditsPrefabName) && IsBuildingUI(CreditsPrefabName)) {
+        Main.Logger.Log("[UiManager.CreateContractTypeCredits] Waiting for 'MCUI_Contract_Type_Credits_Panel' to exist or finish building");
+        yield return new WaitUntil(() => {
+          Main.Logger.Log($"[UiManager.CreatePrefab v1] Waiting for MC prefab to be built so it can be instantiated");
+          return (HasUI(CreditsPrefabName) && !IsBuildingUI(CreditsPrefabName)) || Time.time > (startTime + 2f);
+        });
+      } else if (!HasUI(CreditsPrefabName) && !IsBuildingUI(CreditsPrefabName)) {
+        Main.Logger.Log("[UiManager.CreateContractTypeCredits] Attempted to use 'MCUI_Contract_Type_Credits_Panel' but it doesn't exist. Going to build prefab first.");
+        GameObject UIManagerGameObject = GameObject.Find("UIManager");
+        if (UIManagerGameObject != null) {
+          if (spinnerWidget != null) {
+            BuildContractTypeCreditsPrefab(spinnerWidget);
+            yield return new WaitUntil(() => {
+              Main.Logger.Log($"[UiManager.CreatePrefab v2] Waiting for MC prefab to be built so it can be instantiated");
+              return (HasUI(CreditsPrefabName) && !IsBuildingUI(CreditsPrefabName)) || Time.time > (startTime + 2f);
+            });
+          } else {
+            Main.Logger.Log("[UiManager.CreateContractTypeCredits] Spinner widget provided by the Briefing component is null.");
+          }
+        } else {
+          Main.Logger.Log("[UiManager.CreateContractTypeCredits] Can't find vanilla UIManager GameObject");
+        }
+      }
+
+      ProceedToCreateContractTypeCredits();
+      yield return null;
+    }
+
+    public void ProceedToCreateContractTypeCredits() {
       ContractTypeMetadata metaddata = DataManager.Instance.AvailableContractTypeMetadata[MissionControl.Instance.CurrentContractType];
       Transform parentGo = GameObject.Find("uixPrfPanl_combatMissionLoad-overlay_V2-MANAGED").transform;
-      GameObject creditsGo = CreatePrefab("MCUI_Contract_Type_Credits_Panel", parentGo.Find("Representation"));
+      GameObject creditsGo = CreatePrefab(CreditsPrefabName, parentGo.Find("Representation"));
       if (creditsGo == null) return;
 
-      // Resize container
       RectTransform creditsTransform = ((RectTransform)creditsGo.transform);
       Vector3 anchoredPos = ((RectTransform)creditsGo.transform).anchoredPosition;
       creditsTransform.pivot = new Vector2(1, 1);
-      creditsTransform.anchoredPosition = new Vector2(1900f, anchoredPos.y);
+      creditsTransform.anchorMin = new Vector2(1, 1);
+      creditsTransform.anchorMax = new Vector2(1, 1);
 
       // Set text and alignment for Contract Type Name
       GameObject contractTypeNameTextGo = creditsGo.FindRecursive("ContractTypeName");
@@ -286,6 +331,18 @@ namespace MissionControl {
       float padding = verticalLayout.padding.right * 2f;
 
       creditsTransform.sizeDelta = new Vector2(largestX + padding, largestY);
+
+      // Resize container
+      GameObject positionTargetParent = GameObject.Find("uixPfrPanlMissionObjective-element-MANAGED");
+      RectTransform positionTargetTransform = positionTargetParent.transform.Find("fullInfo/obj-CrewInfo") as RectTransform;
+
+      float xPosition = 1900f;
+      if (positionTargetParent != null) {
+        xPosition = positionTargetTransform.position.x;
+        creditsTransform.position = new Vector2(xPosition, creditsTransform.position.y);
+      } else {
+        creditsTransform.anchoredPosition = new Vector2(xPosition, creditsTransform.anchoredPosition.y);
+      }
     }
   }
 }
