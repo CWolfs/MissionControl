@@ -1,5 +1,4 @@
 using UnityEngine;
-using System;
 
 using BattleTech;
 
@@ -51,6 +50,50 @@ namespace MissionControl.RuntimeCast {
       ((DictionaryStore<CastDef>)UnityGameInstance.BattleTechGame.DataManager.CastDefs).Add(runtimeCastDef.id, runtimeCastDef);
 
       return runtimeCastDef;
+    }
+
+    public static CastDef CreateCast(PilotDef pilotDef, string rankOverride = "Pilot") {
+      CastDef runtimeCastDef = new CastDef();
+      runtimeCastDef.id = $"castDef_{pilotDef.Description.Id.ToUpperFirst()}";
+      runtimeCastDef.internalName = pilotDef.Description.Id.ToUpperFirst();
+      runtimeCastDef.firstName = pilotDef.Description.Callsign;
+      runtimeCastDef.lastName = pilotDef.Description.Callsign;
+      runtimeCastDef.callsign = pilotDef.Description.Callsign;
+      runtimeCastDef.rank = $"{UnityGameInstance.Instance.Game.Simulation.CompanyName} - {rankOverride}";
+      runtimeCastDef.gender = pilotDef.Description.Gender;
+      runtimeCastDef.FactionValue = FactionEnumeration.GetPlayer1sMercUnitFactionValue();
+      runtimeCastDef.showRank = true;
+      runtimeCastDef.showFirstName = true;
+      runtimeCastDef.showCallsign = false;
+      runtimeCastDef.showLastName = false;
+
+      string pilotIconPath = "";
+      if ((pilotDef.Description.Icon != "") && (pilotDef.Description.Icon != null)) {
+        pilotIconPath = $"sprites/Portraits/{pilotDef.Description.Icon}";
+        runtimeCastDef.defaultEmotePortrait.portraitAssetPath = $"{pilotIconPath}.png";
+      } else {
+        runtimeCastDef.defaultEmotePortrait.portraitAssetPath = $"{pilotDef.Description.Id.ToUpperFirst()}.generated";
+        Sprite sprite = pilotDef.GetPortraitSprite(UnityGameInstance.Instance.Game.DataManager);
+        DataManager.Instance.GeneratedPortraits[pilotDef.Description.Id.ToUpperFirst()] = sprite;
+      }
+
+      return runtimeCastDef;
+    }
+
+    public static string GetPilotDefIDFromCastDefID(string castDefID) {
+      return castDefID.Substring(castDefID.IndexOf("_") + 1);
+    }
+
+    public static string GetCastDefIDFromPilotDefID(string pilotDefID) {
+      return $"castDef_{pilotDefID.ToUpperFirst()}";
+    }
+
+    public static CastDef GetCastDef(string castDefID) {
+      if (UnityGameInstance.Instance.Game.DataManager.CastDefs.Exists(castDefID)) {
+        return UnityGameInstance.Instance.Game.DataManager.CastDefs.Get(castDefID);
+      }
+
+      return null;
     }
   }
 }

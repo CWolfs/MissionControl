@@ -113,6 +113,9 @@ namespace MissionControl.ContractTypeBuilders {
       string description = objective["Description"].ToString();
       int numberOfUnitsToOccupy = (objective.ContainsKey("NumberOfUnitsToOccupy")) ? (int)objective["NumberOfUnitsToOccupy"] : 0;
       int durationToOccupy = (objective.ContainsKey("DurationToOccupy")) ? (int)objective["DurationToOccupy"] : 0;
+      string durationTypeStr = (objective.ContainsKey("DurationType")) ? objective["DurationType"].ToString() : "Rounds";
+      DurationType durationType = (DurationType)Enum.Parse(typeof(DurationType), durationTypeStr);
+
       bool useDropship = (objective.ContainsKey("UseDropship")) ? (bool)objective["UseDropship"] : false;
       string[] requiredTagsOnUnit = (objective.ContainsKey("RequiredTagsOnUnit")) ? ((JArray)objective["RequiredTagsOnUnit"]).ToObject<string[]>() : null;
       string[] requiredTagsOnOpposingUnits = (objective.ContainsKey("RequiredTagsOpposingUnits")) ? ((JArray)objective["RequiredTagsOpposingUnits"]).ToObject<string[]>() : null;
@@ -129,6 +132,7 @@ namespace MissionControl.ContractTypeBuilders {
         description,
         numberOfUnitsToOccupy,
         durationToOccupy,
+        durationType,
         useDropship,
         requiredTagsOnUnit,
         requiredTagsOnOpposingUnits

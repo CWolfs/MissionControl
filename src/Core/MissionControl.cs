@@ -8,6 +8,8 @@ using BattleTech;
 using BattleTech.Data;
 using BattleTech.Framework;
 
+using HBS.Collections;
+
 using MissionControl.Data;
 using MissionControl.Logic;
 using MissionControl.Rules;
@@ -16,6 +18,7 @@ using MissionControl.EncounterFactories;
 using MissionControl.ContractTypeBuilders;
 using MissionControl.Patches;
 using MissionControl.Config;
+using MissionControl.Interpolation;
 
 using Newtonsoft.Json.Linq;
 
@@ -28,6 +31,9 @@ namespace MissionControl {
         return instance;
       }
     }
+
+    public API API { get; set; } = new API();
+    public Metrics Metrics { get; set; } = new Metrics();
 
     public Contract CurrentContract { get; set; }
     public string ContractMapName { get; private set; }
@@ -44,6 +50,8 @@ namespace MissionControl {
     public int PlayerLanceDropDifficultyValue { get; set; }
     public float PlayerLanceDropSkullRating { get; set; }
     public float PlayerLanceDropTonnage { get; set; }
+
+    public TagSet EncounterTags { get; set; } = new TagSet();
 
     // Only populated for custom contract types
     public EncounterLayer_MDD EncounterLayerMDD { get; private set; }
@@ -136,22 +144,31 @@ namespace MissionControl {
 
     public void InitSceneData() {
       CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
+      if (HexGrid == null) HexGrid = ReflectionHelper.GetPrivateStaticField(typeof(WorldPointGameLogic), "_hexGrid") as HexGrid;
 
       if (!EncounterLayerParentGameObject) EncounterLayerParentGameObject = GameObject.Find("EncounterLayerParent");
       EncounterLayerParent = EncounterLayerParentGameObject.GetComponent<EncounterLayerParent>();
 
       EncounterLayerData = GetActiveEncounter();
       if (EncounterLayerData == null) { // If no EncounterLayer matches the Contract Type GUID, it's a custom contract type
-        EncounterLayerData = ConstructCustomContractType();
         IsCustomContractType = true;
+        EncounterLayerData = ConstructCustomContractType();
       } else {
         IsCustomContractType = false;
       }
 
       EncounterLayerGameObject = EncounterLayerData.gameObject;
       EncounterLayerData.CalculateEncounterBoundary();
+    }
 
-      if (HexGrid == null) HexGrid = ReflectionHelper.GetPrivateStaticField(typeof(WorldPointGameLogic), "_hexGrid") as HexGrid;
+    public void SetPreContractTypeInfo(Contract contract) {
+      CurrentContract = contract;
+      MetadataDatabase mdd = MetadataDatabase.Instance;
+      EncounterLayerMDD = mdd.SelectEncounterLayerByGuid(CurrentContract.encounterObjectGuid);
+      CurrentContractTypeValue = CurrentContract.ContractTypeValue;
+
+      string type = CurrentContractTypeValue.Name;
+      CurrentContractType = type;
     }
 
     private EncounterLayerData ConstructCustomContractType() {
@@ -185,6 +202,7 @@ namespace MissionControl {
     public void SetContract(Contract contract) {
       Main.Logger.Log($"[MissionControl] Setting contract '{contract.Name}' for contract type '{contract.ContractTypeValue.Name}'");
       CurrentContract = contract;
+      Metrics = new Metrics();
 
       if (AllowMissionControl()) {
         Main.Logger.Log($"[MissionControl] Mission Control IS allowed to run. ");
@@ -194,38 +212,54 @@ namespace MissionControl {
         Main.Logger.Log($"[MissionControl] Player drop tonnage: '{PlayerLanceDropTonnage}' tons");
 
         IsMCLoadingFinished = false;
+
+        DataManager.Instance.BackupContractOverriddeData();
+
         SetActiveAdditionalLances(contract);
         Main.Logger.Log($"[MissionControl] Contract map is '{contract.mapName}'");
         ContractMapName = contract.mapName;
         SetContractType(CurrentContract.ContractTypeValue);
         AiManager.Instance.ResetCustomBehaviourVariableScopes();
+        if (!IsSkirmish()) CheckIfCommanderCastDefUsedInThisCombat();
       } else {
         Main.Logger.Log($"[MissionControl] Mission Control is NOT allowed to run.");
         EncounterRules = null;
         EncounterRulesName = null;
-        IsMCLoadingFinished = true;
+        SetFinishedLoading();
       }
 
       ContractStats.Clear();
-      ClearOldContractData();
       ClearOldCaches();
     }
 
-    private void ClearOldContractData() {
-      Main.Logger.Log($"[MissionControl] Clearing old contract data");
+    private void CheckIfCommanderCastDefUsedInThisCombat() {
+      PilotCastInterpolator.Instance.DynamicTakenLanceUnitPositions.Clear();
+      List<DialogueOverride> dialogueOverrides = CurrentContract.Override.dialogueList;
 
-      // Clear old lance data
-      if (CurrentContract != null) {
-        // Old Lances
-        CurrentContract.Override.targetTeam.lanceOverrideList =
-          CurrentContract.Override.targetTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
-        CurrentContract.Override.employerTeam.lanceOverrideList =
-          CurrentContract.Override.employerTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
+      foreach (DialogueOverride dialogueOverride in dialogueOverrides) {
+        List<DialogueContentOverride> dialogueContentOverrides = dialogueOverride.dialogueContent;
 
-        // Old Objectives
-        CurrentContract.Override.contractObjectiveList =
-         CurrentContract.Override.contractObjectiveList.Where(contractObjective => !contractObjective.description.StartsWith("MC ")).ToList();
+        foreach (DialogueContentOverride dialogueContentOverride in dialogueContentOverrides) {
+          if (dialogueContentOverride.selectedCastDefId == CustomCastDef.castDef_Commander) {
+            Pilot commanderPilot = UnityGameInstance.Instance.Game.Simulation.Commander;
+            PilotDef commanderPilotDef = commanderPilot.pilotDef;
+            SpawnableUnit[] units = CurrentContract.Lances.GetLanceUnits(TeamUtils.PLAYER_TEAM_ID);
+
+            for (int i = 0; i < units.Length; i++) {
+              SpawnableUnit unit = units[i];
+
+              if (unit.PilotId.ToUpperFirst() == commanderPilot.Description.Id.ToUpperFirst()) {
+                PilotCastInterpolator.Instance.AddTakenPilotPosition("Player1", i + 1, null);
+              }
+            }
+          }
+        }
       }
+    }
+
+    public void SetFinishedLoading() {
+      MissionControl.Instance.IsMCLoadingFinished = true;
+      MissionControl.Instance.API = new API();
     }
 
     private void ClearOldCaches() {
@@ -369,6 +403,9 @@ namespace MissionControl {
     }
 
     public bool AreAdditionalLancesAllowed(string teamType) {
+      // API-driven overrides everything
+      if (API.HasOverriddenAdditionalLances(teamType)) return true;
+
       // Allow contract settings overrides to force their respective setting
       if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_Enable)) {
         return Main.Settings.ActiveContractSettings.GetBool(ContractSettingsOverrides.AdditionalLances_Enable);
@@ -500,6 +537,10 @@ namespace MissionControl {
       return this.CurrentContract.IsStoryContract || CurrentContract.IsRestorationContract;
     }
 
+    public bool IsAnyStoryOrFlashpointContract() {
+      return IsAnyStoryContract() || IsAnyFlashpointContract();
+    }
+
     public bool ShouldUseElites(FactionDef faction, string teamType) {
       Config.Lance activeAdditionalLances = Main.Settings.ActiveAdditionalLances.GetActiveAdditionalLanceByTeamType(teamType);
       return Main.Settings.AdditionalLanceSettings.UseElites && activeAdditionalLances.EliteLances.ShouldEliteLancesBeSelected(faction);
@@ -561,6 +602,13 @@ namespace MissionControl {
 
     public void RemoveGameLogicData(string key) {
       CustomGameLogicData.Remove(key);
+    }
+
+    public void OnCombatDestroyed() {
+      Main.LogDebug("[MissionControl.OnCombatDestroyed] Clearing specific data");
+      PilotCastInterpolator.Instance.Reset();
+      DataManager.Instance.ResetBetweenContracts();
+      EncounterTags.Clear();
     }
   }
 }

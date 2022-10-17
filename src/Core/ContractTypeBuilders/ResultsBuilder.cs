@@ -32,14 +32,27 @@ namespace MissionControl.ContractTypeBuilders {
       return results;
     }
 
+    private void WarnOfDeprecation(string resultName) {
+      Main.Logger.LogWarning($"[ResultsBuilder] DEPRECATION WARNING: Result {resultName} is deprecated. Read the changelog or documentation for updated usage. THIS RESULT TYPE WILL STOP WORKING IN A FUTURE RELEASE.");
+    }
+
     private void BuildResult(JObject result) {
       string type = result["Type"].ToString();
+
+      // update deprecated result types
+      switch (type) {
+        case "SetLanceEvasionTicksByTag": WarnOfDeprecation(type); type = "SetUnitEvasionTicksByTag"; break; // DEPRECATION VERSION: 1
+        case "ModifyLanceEvasionTicksByTag": WarnOfDeprecation(type); type = "ModifyUnitEvasionTicksByTag"; break; // DEPRECATION VERSION: 1
+        case "SetStateAtRandom": WarnOfDeprecation(type); type = "SetStatusAtRandom"; break; // DEPRECATION VERSION: 1
+        case "SetState": WarnOfDeprecation(type); type = "SetStatus"; break; // DEPRECATION VERSION: 1
+      }
+      // end update
 
       switch (type) {
         case "ExecuteGameLogic": BuildExecuteGameLogicResult(result); break;
         case "Dialogue": BuildDialogueGameLogicResult(result); break;
-        case "SetState": BuildSetStateResult(result); break;
-        case "SetStateAtRandom": BuildSetStateAtRandomResult(result); break;
+        case "SetStatus": BuildSetStatusResult(result); break;
+        case "SetStatusAtRandom": BuildSetStatusAtRandomResult(result); break;
         case "TagUnitsInRegion": BuildTagUnitsInRegion(result); break;
         case "SetTeamByTag": BuildSetTeamByTag(result); break;
         case "SetTeamByLanceSpawnerGuid": BuildSetTeamByLanceSpawnerGuid(result); break;
@@ -47,8 +60,8 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetUnitsInRegionToBeTaggedObjectiveTargets": BuildSetUnitsInRegionToBeTaggedObjectiveTargetsResult(result); break;
         case "CompleteObjective": BuildCompleteObjectiveResult(result); break;
         case "SetTemporaryUnitPhaseInitiativeByTag": BuildSetTemporaryUnitPhaseInitiativeByTagResult(result); break;
-        case "SetLanceEvasionTicksByTag": BuildSetLanceEvasionTicksByTagResult(result); break;
-        case "ModifyLanceEvasionTicksByTag": BuildModifyLanceEvasionTicksByTagResult(result); break;
+        case "SetUnitEvasionTicksByTag": BuildSetUnitEvasionTicksByTagResult(result); break;
+        case "ModifyUnitEvasionTicksByTag": BuildModifyUnitEvasionTicksByTagResult(result); break;
         case "CameraFocus": BuildCameraFocusResult(result); break;
         case "DestroyBuildingsAtLanceSpawns": BuildDestroyBuildingsAtLanceSpawnsResult(result); break;
         case "Delay": BuildDelayResult(result); break;
@@ -93,37 +106,51 @@ namespace MissionControl.ContractTypeBuilders {
       results.Add(result);
     }
 
-    private void BuildSetStateResult(JObject resultObject) {
-      Main.LogDebug("[BuildSetStateResult] Building 'SetState' result");
+    private void BuildSetStatusResult(JObject resultObject) {
+      Main.LogDebug("[BuildSetStatusResult] Building 'SetStatus' result");
       string encounterGuid = (resultObject.ContainsKey("EncounterGuid")) ? resultObject["EncounterGuid"].ToString() : null;
-      string state = (resultObject.ContainsKey("State")) ? resultObject["State"].ToString() : null;
-      EncounterObjectStatus stateType = (EncounterObjectStatus)Enum.Parse(typeof(EncounterObjectStatus), state);
+
+      string status = "Active";
+      if (resultObject.ContainsKey("Status")) {
+        status = resultObject["Status"].ToString();
+      } else if (resultObject.ContainsKey("State")) {
+        status = resultObject["State"].ToString();
+      }
+
+      EncounterObjectStatus statusType = (EncounterObjectStatus)Enum.Parse(typeof(EncounterObjectStatus), status);
 
       if (encounterGuid != null) {
-        SetStateResult result = ScriptableObject.CreateInstance<SetStateResult>();
+        SetStatusResult result = ScriptableObject.CreateInstance<SetStatusResult>();
         result.EncounterGuid = encounterGuid;
-        result.State = stateType;
+        result.Status = statusType;
 
         results.Add(result);
       } else {
-        Main.Logger.LogError("[BuildSetStateResult] You have not provided an 'EncounterGuid' to SetState on");
+        Main.Logger.LogError("[BuildSetStatusResult] You have not provided an 'EncounterGuid' to SetStatus on");
       }
     }
 
-    private void BuildSetStateAtRandomResult(JObject resultObject) {
-      Main.LogDebug("[BuildSetStateAtRandomResult] Building 'SetStateAtRandom' result");
+    private void BuildSetStatusAtRandomResult(JObject resultObject) {
+      Main.LogDebug("[BuildSetStatusAtRandomResult] Building 'SetStatusAtRandom' result");
       List<string> encounterGuids = (resultObject.ContainsKey("EncounterGuids")) ? resultObject["EncounterGuids"].ToObject<List<string>>() : null;
-      string state = (resultObject.ContainsKey("State")) ? resultObject["State"].ToString() : null;
-      EncounterObjectStatus stateType = (EncounterObjectStatus)Enum.Parse(typeof(EncounterObjectStatus), state);
+      string status = "Active";
+
+      if (resultObject.ContainsKey("Status")) {
+        status = resultObject["Status"].ToString();
+      } else if (resultObject.ContainsKey("State")) {
+        status = resultObject["State"].ToString();
+      }
+
+      EncounterObjectStatus statusType = (EncounterObjectStatus)Enum.Parse(typeof(EncounterObjectStatus), status);
 
       if (encounterGuids != null) {
-        SetStateAtRandomResult result = ScriptableObject.CreateInstance<SetStateAtRandomResult>();
+        SetStatusAtRandomResult result = ScriptableObject.CreateInstance<SetStatusAtRandomResult>();
         result.EncounterGuids = encounterGuids;
-        result.State = stateType;
+        result.Status = statusType;
 
         results.Add(result);
       } else {
-        Main.Logger.LogError("[BuildSetStateAtRandomResult] You have not provided an 'EncounterGuids' to SetState on");
+        Main.Logger.LogError("[BuildSetStatusAtRandomResult] You have not provided an 'EncounterGuids' to SetStatus on");
       }
     }
 
@@ -152,7 +179,7 @@ namespace MissionControl.ContractTypeBuilders {
       string team = resultObject["Team"].ToString();
       string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
       bool alertLance = resultObject.ContainsKey("AlertLance") ? (bool)resultObject["AlertLance"] : true;
-      string[] applyTags = resultObject.ContainsKey("ApplyTags") ? ((JArray)resultObject["Tags"]).ToObject<string[]>() : null;
+      string[] applyTags = resultObject.ContainsKey("ApplyTags") ? ((JArray)resultObject["ApplyTags"]).ToObject<string[]>() : null;
 
       SetTeamByTagResult result = ScriptableObject.CreateInstance<SetTeamByTagResult>();
       result.Team = team;
@@ -168,7 +195,7 @@ namespace MissionControl.ContractTypeBuilders {
       string team = resultObject["Team"].ToString();
       string lanceSpawnerGuid = resultObject["LanceSpawnerGuid"].ToString();
       bool alertLance = resultObject.ContainsKey("AlertLance") ? (bool)resultObject["AlertLance"] : true;
-      string[] applyTags = resultObject.ContainsKey("ApplyTags") ? ((JArray)resultObject["Tags"]).ToObject<string[]>() : null;
+      string[] applyTags = resultObject.ContainsKey("ApplyTags") ? ((JArray)resultObject["ApplyTags"]).ToObject<string[]>() : null;
 
       SetTeamByLanceSpawnerGuid result = ScriptableObject.CreateInstance<SetTeamByLanceSpawnerGuid>();
       result.Team = team;
@@ -246,24 +273,24 @@ namespace MissionControl.ContractTypeBuilders {
       results.Add(result);
     }
 
-    private void BuildSetLanceEvasionTicksByTagResult(JObject resultObject) {
-      Main.LogDebug("[BuildSetLanceEvasionTicksByTagResult] Building 'SetLanceEvasionTicksByTag' result");
+    private void BuildSetUnitEvasionTicksByTagResult(JObject resultObject) {
+      Main.LogDebug("[BuildSetUnitEvasionTicksByTagResult] Building 'SetUnitEvasionTicksByTag' result");
       int amount = (int)resultObject["Amount"];
       string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
 
-      SetLanceEvasionTicksByTagResult result = ScriptableObject.CreateInstance<SetLanceEvasionTicksByTagResult>();
+      SetUnitEvasionTicksByTagResult result = ScriptableObject.CreateInstance<SetUnitEvasionTicksByTagResult>();
       result.Amount = amount;
       result.Tags = tags;
 
       results.Add(result);
     }
 
-    private void BuildModifyLanceEvasionTicksByTagResult(JObject resultObject) {
-      Main.LogDebug("[BuildModifyLanceEvasionTicksByTagResult] Building 'ModifyLanceEvasionTicksByTag' result");
+    private void BuildModifyUnitEvasionTicksByTagResult(JObject resultObject) {
+      Main.LogDebug("[BuildModifyUnitEvasionTicksByTagResult] Building 'ModifyUnitEvasionTicksByTag' result");
       int amount = (int)resultObject["Amount"];
       string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
 
-      ModifyLanceEvasionTicksByTagResult result = ScriptableObject.CreateInstance<ModifyLanceEvasionTicksByTagResult>();
+      ModifyUnitEvasionTicksByTagResult result = ScriptableObject.CreateInstance<ModifyUnitEvasionTicksByTagResult>();
       result.Amount = amount;
       result.Tags = tags;
 

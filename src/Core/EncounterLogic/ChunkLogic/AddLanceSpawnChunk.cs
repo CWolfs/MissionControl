@@ -18,14 +18,16 @@ namespace MissionControl.Logic {
     private string lanceGuid;
     private List<string> unitGuids;
     private string spawnerName;
+    private List<string> lanceTags;
     private string debugDescription;
 
-    public AddLanceSpawnChunk(string teamGuid, string lanceGuid, List<string> unitGuids, string spawnerName, string debugDescription) {
+    public AddLanceSpawnChunk(string teamGuid, string lanceGuid, List<string> unitGuids, string spawnerName, List<string> lanceTags, string debugDescription) {
       this.teamGuid = teamGuid;
       this.lanceGuid = lanceGuid;
       this.unitGuids = unitGuids;
       this.spawnerName = spawnerName;
       this.debugDescription = debugDescription;
+      this.lanceTags = lanceTags;
     }
 
     public override void Run(RunPayload payload) {
@@ -43,7 +45,9 @@ namespace MissionControl.Logic {
         teamGuid,
         spawnOnActivation,
         SpawnUnitMethodType.InstantlyAtSpawnPoint,
-        unitGuids
+        unitGuids,
+        lanceTags,
+        alertLanceOnSpawn: true
       );
       lanceSpawner.transform.position = Vector3.zero;
     }

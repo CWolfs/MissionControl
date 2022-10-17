@@ -148,6 +148,7 @@
     "LanceSelectionDivergenceOverride": {
       "Enable": true,
       "Divergence": 20
-    }
+    },
+    "ContractOverrideDataCleanupMethod": "RestoreFromCopy"
   }
 }

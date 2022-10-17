@@ -34,6 +34,9 @@ namespace MissionControl.ContractTypeBuilders {
 
       BuildTeamsData();
       BuildPlotsData();
+
+      EncounterDataManager.Instance.HandlePlotsAndMapMetadataUpdate();
+
       BuildChunks();
       BuildTriggers();
 
@@ -94,13 +97,16 @@ namespace MissionControl.ContractTypeBuilders {
       string plotName = plotData["Name"].ToString();
       string plotVariant = plotData.ContainsKey("Variant") ? plotData["Variant"].ToString() : "Default";
       if (plotVariant == "None") plotVariant = "Default";
+      bool isActive = plotData.ContainsKey("IsActive") ? (bool)plotData["IsActive"] : true;
 
-      Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Plot Data for '{plotName}:{plotVariant}'");
+      Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Plot Data for '{plotName}:{plotVariant}:{isActive}'");
 
-      plotOverride.plotOverrideEntryList.Add(new PlotOverrideEntry() {
-        plotName = plotName,
-        plotVariant = plotVariant
-      });
+      if (isActive) {
+        plotOverride.plotOverrideEntryList.Add(new PlotOverrideEntry() {
+          plotName = plotName,
+          plotVariant = plotVariant,
+        });
+      }
     }
 
     private void BuildChunk(JObject chunk) {
@@ -221,7 +227,7 @@ namespace MissionControl.ContractTypeBuilders {
 
     private void Validate() {
       Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Validating");
-      MissionControl.Instance.EncounterLayerData.Validate();
+      // MissionControl.Instance.EncounterLayerData.Validate();
     }
   }
 }

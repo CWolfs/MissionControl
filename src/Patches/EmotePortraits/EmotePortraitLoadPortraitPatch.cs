@@ -1,24 +1,36 @@
 using UnityEngine;
-using System;
+
 using System.IO;
-using System.Linq;
-using System.Reflection;
+
 using Harmony;
 
 using BattleTech;
-using BattleTech.Designed;
-using BattleTech.Framework;
 
-using MissionControl.Logic;
 
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(EmotePortrait), "LoadPortrait")]
   public class EmotePortraitLoadPortraitPatch {
-    static void Postfix(EmotePortrait __instance, ref Sprite __result) {
+    public static bool Prefix(EmotePortrait __instance, ref Sprite __result) {
+      if (__instance.portraitAssetPath.EndsWith(".generated")) {
+        string pilotDefId = __instance.portraitAssetPath.Substring(0, __instance.portraitAssetPath.LastIndexOf("."));
+
+        if (DataManager.Instance.GeneratedPortraits.ContainsKey(pilotDefId)) {
+          Sprite sprite = DataManager.Instance.GeneratedPortraits[pilotDefId];
+          __result = sprite;
+          return false;
+        } else {
+          Main.LogDebug("[EmotePortraitLoadPortraitPatch] Issue finding cached generated portrait. Skipping");
+        }
+      }
+
+      return true;
+    }
+
+    public static void Postfix(EmotePortrait __instance, ref Sprite __result) {
       string path = Utilities.PathUtils.AppendPath(Main.Path, __instance.portraitAssetPath, false);
       if (File.Exists(path)) {
-				__result = Utilities.ImageUtils.LoadSprite(path);
-			}
+        __result = Utilities.ImageUtils.LoadSprite(path);
+      }
     }
   }
 }

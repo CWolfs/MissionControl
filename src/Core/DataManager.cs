@@ -14,6 +14,7 @@ using Newtonsoft.Json.Linq;
 
 using BattleTech;
 using BattleTech.Data;
+using BattleTech.Framework;
 
 using HBS.Data;
 
@@ -44,11 +45,17 @@ namespace MissionControl {
     private Dictionary<string, List<string>> LastNames = new Dictionary<string, List<string>>();  // e.g. <All, [list of names]>
     private Dictionary<string, List<string>> Ranks = new Dictionary<string, List<string>>();      // e.g. <FactionName, [list of ranks]>
     private Dictionary<string, List<string>> Portraits = new Dictionary<string, List<string>>();  // e.g. <Male, [list of male portraits]
+    public Dictionary<string, Sprite> GeneratedPortraits = new Dictionary<string, Sprite>();     // e.g. <{pilotDef.Description.Icon}, Sprite>
 
     public Dictionary<string, Dictionary<string, JObject>> AvailableCustomContractTypeBuilds { get; set; } = new Dictionary<string, Dictionary<string, JObject>>();
     private Dictionary<string, List<ContractTypeValue>> AvailableCustomContractTypes = new Dictionary<string, List<ContractTypeValue>>();
+    public Dictionary<string, ContractTypeMetadata> AvailableContractTypeMetadata = new Dictionary<string, ContractTypeMetadata>();
 
     private Dictionary<string, Dictionary<string, List<string>>> Dialogue = new Dictionary<string, Dictionary<string, List<string>>>();
+
+    // Data backup
+    private Dictionary<string, List<LanceOverride>> ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
+    private List<ObjectiveOverride> ContractOverrideObjectiveOverrideBackup = new List<ObjectiveOverride>();
 
     JsonSerializerSettings serialiserSettings = new JsonSerializerSettings() {
       TypeNameHandling = TypeNameHandling.All,
@@ -161,8 +168,22 @@ namespace MissionControl {
           string contractTypeName = (string)contractTypeCommonBuild["Key"];
           Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loading contract type build '{contractTypeName}'");
 
+          JObject metadataObject = contractTypeCommonBuild.ContainsKey("Metadata") ? (JObject)contractTypeCommonBuild["Metadata"] : null;
+          ContractTypeMetadata metadata = metadataObject.ToObject<ContractTypeMetadata>();
+          AvailableContractTypeMetadata.Add(contractTypeName, metadata);
+          if (metadata == null) {
+            Main.Logger.LogError($"[VIOLATION] !!!! CONTRACT TYPE '{contractTypeName}' HAS NO METADATA. THIS IS INVALID! ALL CONTRACT TYPES SHOULD CLEARLY DISPLAY METADATA INCLUDING AUTHORS AND CONTRIBUTORS !!!!");
+          } else {
+            Main.Logger.Log($"[DataManager] Loaded metadata for '{contractTypeName}'");
+          }
+
+          if (AvailableCustomContractTypeBuilds.ContainsKey(contractTypeName)) {
+            Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Duplicate contract type build key of '{contractTypeName}' was detected. FATAL ERROR!!!");
+            return;
+          }
+
           Dictionary<string, JObject> contractTypeMapBuilds = new Dictionary<string, JObject>();
-          AvailableCustomContractTypeBuilds.Add(contractTypeCommonBuild["Key"].ToString(), contractTypeMapBuilds);
+          AvailableCustomContractTypeBuilds.Add(contractTypeName, contractTypeMapBuilds);
 
           foreach (string file in Directory.GetFiles(directory, "*.json*", SearchOption.AllDirectories)) {
             string contractTypeBuildMapSource = File.ReadAllText(file);
@@ -172,6 +193,12 @@ namespace MissionControl {
             if (fileName == "common" || contractTypeMapBuild.ContainsKey("EncounterLayerId")) {
               string encounterLayerId = (fileName == "common") ? fileName : (string)contractTypeMapBuild["EncounterLayerId"];
               Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type map build '{contractTypeName}/{fileName}' with encounterLayerId '{encounterLayerId}'");
+
+              if (contractTypeMapBuilds.ContainsKey(encounterLayerId)) {
+                Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Duplicate contract type override build key of '{encounterLayerId}' in file '{file}' was detected. FATAL ERROR!!!");
+                return;
+              }
+
               contractTypeMapBuilds.Add(encounterLayerId, contractTypeMapBuild);
             } else {
               Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Unable to load contract type map build file '{fileName}' for contract type '{contractTypeName}' because no 'EncounterLayerId' exists");
@@ -227,6 +254,13 @@ namespace MissionControl {
       if (!AvailableCustomContractTypes.ContainsKey(contractTypeValue.Name)) AvailableCustomContractTypes.Add(contractTypeValue.Name, new List<ContractTypeValue>());
       Main.LogDebug($"[DataManager.AddContractType] Adding custom contract type: {contractTypeValue.Name}");
       AvailableCustomContractTypes[contractTypeValue.Name].Add(contractTypeValue);
+    }
+
+    public bool IsCustomContractType(string contractTypeName) {
+      foreach (string name in AvailableCustomContractTypes.Keys) {
+        if (name == contractTypeName) return true;
+      }
+      return false;
     }
 
     // *********************
@@ -525,8 +559,103 @@ namespace MissionControl {
       return null;
     }
 
-    public void Reset() {
+    public void ResetBetweenContracts() {
+      GeneratedPortraits.Clear();
+      if (Main.Settings.Misc.ContractOverrideDataCleanupMethod == "RestoreFromCopy") {
+        RestoreContractOverriddeData();
+      } else {
+        DataScrubContractOverrideData();
+      }
+    }
 
+    public void BackupContractOverriddeData() {
+      Main.Logger.Log($"[MissionControl] Backing up original ContractOverride data for: " + MissionControl.Instance.CurrentContract.Name);
+
+      // Lance Overrides
+      ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
+
+      ContractOverrideLanceOverrideBackup.Add("Player1", new List<LanceOverride>());
+      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.player1Team.lanceOverrideList) {
+        ContractOverrideLanceOverrideBackup["Player1"].Add(lanceOverride.Copy());
+      }
+
+      ContractOverrideLanceOverrideBackup.Add("Employer", new List<LanceOverride>());
+      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.employerTeam.lanceOverrideList) {
+        ContractOverrideLanceOverrideBackup["Employer"].Add(lanceOverride.Copy());
+      }
+
+      ContractOverrideLanceOverrideBackup.Add("EmployerAlly", new List<LanceOverride>());
+      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.employersAllyTeam.lanceOverrideList) {
+        ContractOverrideLanceOverrideBackup["EmployerAlly"].Add(lanceOverride.Copy());
+      }
+
+      ContractOverrideLanceOverrideBackup.Add("Target", new List<LanceOverride>());
+      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.targetTeam.lanceOverrideList) {
+        ContractOverrideLanceOverrideBackup["Target"].Add(lanceOverride.Copy());
+      }
+
+      ContractOverrideLanceOverrideBackup.Add("TargetAlly", new List<LanceOverride>());
+      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.targetsAllyTeam.lanceOverrideList) {
+        ContractOverrideLanceOverrideBackup["TargetAlly"].Add(lanceOverride.Copy());
+      }
+
+      ContractOverrideLanceOverrideBackup.Add("NeutralToAll", new List<LanceOverride>());
+      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.neutralToAllTeam.lanceOverrideList) {
+        ContractOverrideLanceOverrideBackup["NeutralToAll"].Add(lanceOverride.Copy());
+      }
+
+      ContractOverrideLanceOverrideBackup.Add("HostileToAll", new List<LanceOverride>());
+      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.hostileToAllTeam.lanceOverrideList) {
+        ContractOverrideLanceOverrideBackup["HostileToAll"].Add(lanceOverride.Copy());
+      }
+
+      // Objective Overrides
+      ContractOverrideObjectiveOverrideBackup = new List<ObjectiveOverride>();
+      foreach (ObjectiveOverride objectiveOverride in MissionControl.Instance.CurrentContract.Override.objectiveList) {
+        ContractOverrideObjectiveOverrideBackup.Add(objectiveOverride.Copy());
+      }
+    }
+
+    // OLD METHOD FOR POSSIBLE COMPATIBILITY ISSUES WITH OTHER MODS
+    private void DataScrubContractOverrideData() {
+      Main.Logger.Log($"[MissionControl] Clearing old contract data");
+      ContractOverride contractOverride = MissionControl.Instance.CurrentContract.Override;
+
+      // Old Lances
+      contractOverride.targetTeam.lanceOverrideList =
+        contractOverride.targetTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
+      contractOverride.employerTeam.lanceOverrideList =
+        contractOverride.employerTeam.lanceOverrideList.Where(lanceOverride => !(lanceOverride is MLanceOverride)).ToList();
+
+      // Old Objectives
+      contractOverride.contractObjectiveList =
+       contractOverride.contractObjectiveList.Where(contractObjective => !contractObjective.description.StartsWith("MC")).ToList();
+    }
+
+    private void RestoreContractOverriddeData() {
+      Main.Logger.Log($"[MissionControl] Restoring original ContractOverride data for: " + MissionControl.Instance.CurrentContract.Name);
+      ContractOverride contractOverride = MissionControl.Instance.CurrentContract.Override;
+
+      RestoreOverrideList<LanceOverride>(contractOverride.player1Team.lanceOverrideList, ContractOverrideLanceOverrideBackup["Player1"]);
+      RestoreOverrideList<LanceOverride>(contractOverride.employerTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["Employer"]);
+      RestoreOverrideList<LanceOverride>(contractOverride.employersAllyTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["EmployerAlly"]);
+      RestoreOverrideList<LanceOverride>(contractOverride.targetTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["Target"]);
+      RestoreOverrideList<LanceOverride>(contractOverride.targetsAllyTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["TargetAlly"]);
+      RestoreOverrideList<LanceOverride>(contractOverride.neutralToAllTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["NeutralToAll"]);
+      RestoreOverrideList<LanceOverride>(contractOverride.hostileToAllTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["HostileToAll"]);
+
+      RestoreOverrideList<ObjectiveOverride>(contractOverride.objectiveList, ContractOverrideObjectiveOverrideBackup);
+
+      ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
+      ContractOverrideObjectiveOverrideBackup = new List<ObjectiveOverride>();
+    }
+
+    // Maintain original list in case other mods hold references to the list
+    private void RestoreOverrideList<T>(List<T> overrideList, List<T> backup) {
+      overrideList.Clear();
+      foreach (T lanceOverride in backup) {
+        overrideList.Add(lanceOverride);
+      }
     }
 
     public void RequestResourcesAndProcess(BattleTechResourceType resourceType, string resourceId, bool filterByOwnership = false) {

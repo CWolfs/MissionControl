@@ -1,27 +1,29 @@
 using UnityEngine;
-using System;
-using System.Collections;
+
 using System.Collections.Generic;
 
 using BattleTech;
-using BattleTech.Designed;
 
 using MissionControl.LogicComponents.Spawners;
 
 namespace MissionControl.EncounterFactories {
   public class LanceSpawnerFactory {
     public static LanceSpawnerGameLogic CreateLanceSpawner(GameObject parent, string name, string guid, string teamDefinitionGuid, bool spawnUnitsOnActivation,
-      SpawnUnitMethodType spawnMethod, List<string> unitGuids) {
+      SpawnUnitMethodType spawnMethod, List<string> unitGuids, List<string> tags = null, bool alertLanceOnSpawn = false) {
 
       GameObject lanceSpawnerGo = new GameObject(name);
       lanceSpawnerGo.transform.parent = parent.transform;
       lanceSpawnerGo.transform.localPosition = Vector3.zero;
+
+      if (tags == null) tags = new List<string>();
 
       LanceSpawnerGameLogic lanceSpawnerGameLogic = lanceSpawnerGo.AddComponent<LanceSpawnerGameLogic>();
       lanceSpawnerGameLogic.encounterObjectGuid = guid;
       lanceSpawnerGameLogic.teamDefinitionGuid = teamDefinitionGuid;
       lanceSpawnerGameLogic.spawnMethod = spawnMethod;
       lanceSpawnerGameLogic.spawnUnitsOnActivation = spawnUnitsOnActivation;
+      lanceSpawnerGameLogic.alertLanceOnSpawn = alertLanceOnSpawn;
+      lanceSpawnerGameLogic.encounterTags.AddRange(tags);
 
       float x = 0;
       float z = 0;

@@ -9,9 +9,13 @@ using System.Collections.Generic;
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(EncounterLayerData), "OverridePlots")]
   public class EncounterLayerDataOverridePlotsPatch {
-    static void Postfix(EncounterLayerData __instance) {
-      Main.LogDebug($"[EncounterLayerData.Postfix] Running...");
-      EncounterDataManager.Instance.HandleCustomContractType();
+    static bool Prefix(EncounterLayerData __instance) {
+      if (MissionControl.Instance.IsCustomContractType) {
+        Main.LogDebug($"[EncounterLayerData.Prefix] Running...");
+        EncounterDataManager.Instance.HandleDeferredContractTypeBuild();
+        return false;
+      }
+      return true;
     }
   }
 }
