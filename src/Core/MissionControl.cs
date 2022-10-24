@@ -203,6 +203,7 @@ namespace MissionControl {
       Main.Logger.Log($"[MissionControl] Setting contract '{contract.Name}' for contract type '{contract.ContractTypeValue.Name}'");
       CurrentContract = contract;
       Metrics = new Metrics();
+      DataManager.Instance.BackupContractOverriddeData();
 
       if (AllowMissionControl()) {
         Main.Logger.Log($"[MissionControl] Mission Control IS allowed to run. ");
@@ -212,8 +213,6 @@ namespace MissionControl {
         Main.Logger.Log($"[MissionControl] Player drop tonnage: '{PlayerLanceDropTonnage}' tons");
 
         IsMCLoadingFinished = false;
-
-        DataManager.Instance.BackupContractOverriddeData();
 
         SetActiveAdditionalLances(contract);
         Main.Logger.Log($"[MissionControl] Contract map is '{contract.mapName}'");
