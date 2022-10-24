@@ -569,50 +569,52 @@ namespace MissionControl {
     }
 
     public void BackupContractOverriddeData() {
-      Main.Logger.Log($"[MissionControl] Backing up original ContractOverride data for: " + MissionControl.Instance.CurrentContract.Name);
+      if (Main.Settings.Misc.ContractOverrideDataCleanupMethod == "RestoreFromCopy") {
+        Main.Logger.Log($"[MissionControl] Backing up original ContractOverride data for: " + MissionControl.Instance.CurrentContract.Name);
 
-      // Lance Overrides
-      ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
+        // Lance Overrides
+        ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
 
-      ContractOverrideLanceOverrideBackup.Add("Player1", new List<LanceOverride>());
-      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.player1Team.lanceOverrideList) {
-        ContractOverrideLanceOverrideBackup["Player1"].Add(lanceOverride.Copy());
-      }
+        ContractOverrideLanceOverrideBackup.Add("Player1", new List<LanceOverride>());
+        foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.player1Team.lanceOverrideList) {
+          ContractOverrideLanceOverrideBackup["Player1"].Add(lanceOverride.Copy());
+        }
 
-      ContractOverrideLanceOverrideBackup.Add("Employer", new List<LanceOverride>());
-      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.employerTeam.lanceOverrideList) {
-        ContractOverrideLanceOverrideBackup["Employer"].Add(lanceOverride.Copy());
-      }
+        ContractOverrideLanceOverrideBackup.Add("Employer", new List<LanceOverride>());
+        foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.employerTeam.lanceOverrideList) {
+          ContractOverrideLanceOverrideBackup["Employer"].Add(lanceOverride.Copy());
+        }
 
-      ContractOverrideLanceOverrideBackup.Add("EmployerAlly", new List<LanceOverride>());
-      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.employersAllyTeam.lanceOverrideList) {
-        ContractOverrideLanceOverrideBackup["EmployerAlly"].Add(lanceOverride.Copy());
-      }
+        ContractOverrideLanceOverrideBackup.Add("EmployerAlly", new List<LanceOverride>());
+        foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.employersAllyTeam.lanceOverrideList) {
+          ContractOverrideLanceOverrideBackup["EmployerAlly"].Add(lanceOverride.Copy());
+        }
 
-      ContractOverrideLanceOverrideBackup.Add("Target", new List<LanceOverride>());
-      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.targetTeam.lanceOverrideList) {
-        ContractOverrideLanceOverrideBackup["Target"].Add(lanceOverride.Copy());
-      }
+        ContractOverrideLanceOverrideBackup.Add("Target", new List<LanceOverride>());
+        foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.targetTeam.lanceOverrideList) {
+          ContractOverrideLanceOverrideBackup["Target"].Add(lanceOverride.Copy());
+        }
 
-      ContractOverrideLanceOverrideBackup.Add("TargetAlly", new List<LanceOverride>());
-      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.targetsAllyTeam.lanceOverrideList) {
-        ContractOverrideLanceOverrideBackup["TargetAlly"].Add(lanceOverride.Copy());
-      }
+        ContractOverrideLanceOverrideBackup.Add("TargetAlly", new List<LanceOverride>());
+        foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.targetsAllyTeam.lanceOverrideList) {
+          ContractOverrideLanceOverrideBackup["TargetAlly"].Add(lanceOverride.Copy());
+        }
 
-      ContractOverrideLanceOverrideBackup.Add("NeutralToAll", new List<LanceOverride>());
-      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.neutralToAllTeam.lanceOverrideList) {
-        ContractOverrideLanceOverrideBackup["NeutralToAll"].Add(lanceOverride.Copy());
-      }
+        ContractOverrideLanceOverrideBackup.Add("NeutralToAll", new List<LanceOverride>());
+        foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.neutralToAllTeam.lanceOverrideList) {
+          ContractOverrideLanceOverrideBackup["NeutralToAll"].Add(lanceOverride.Copy());
+        }
 
-      ContractOverrideLanceOverrideBackup.Add("HostileToAll", new List<LanceOverride>());
-      foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.hostileToAllTeam.lanceOverrideList) {
-        ContractOverrideLanceOverrideBackup["HostileToAll"].Add(lanceOverride.Copy());
-      }
+        ContractOverrideLanceOverrideBackup.Add("HostileToAll", new List<LanceOverride>());
+        foreach (LanceOverride lanceOverride in MissionControl.Instance.CurrentContract.Override.hostileToAllTeam.lanceOverrideList) {
+          ContractOverrideLanceOverrideBackup["HostileToAll"].Add(lanceOverride.Copy());
+        }
 
-      // Objective Overrides
-      ContractOverrideObjectiveOverrideBackup = new List<ObjectiveOverride>();
-      foreach (ObjectiveOverride objectiveOverride in MissionControl.Instance.CurrentContract.Override.objectiveList) {
-        ContractOverrideObjectiveOverrideBackup.Add(objectiveOverride.Copy());
+        // Objective Overrides
+        ContractOverrideObjectiveOverrideBackup = new List<ObjectiveOverride>();
+        foreach (ObjectiveOverride objectiveOverride in MissionControl.Instance.CurrentContract.Override.objectiveList) {
+          ContractOverrideObjectiveOverrideBackup.Add(objectiveOverride.Copy());
+        }
       }
     }
 
