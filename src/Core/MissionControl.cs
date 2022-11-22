@@ -514,6 +514,9 @@ namespace MissionControl {
       if (CurrentContract != null) {
         return IsSkirmish(CurrentContract);
       }
+
+      if (UnityGameInstance.Instance.Game.Simulation == null) return true;
+
       return false;
     }
 

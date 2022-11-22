@@ -8,17 +8,22 @@ namespace MissionControl.Patches {
   [HarmonyPatch(typeof(LanceConfiguratorPanel), "ContinueConfirmClicked")]
   public class LanceConfiguratorPanelContinueConfirmClickedPatch {
     static void Postfix(LanceConfiguratorPanel __instance) {
-      Main.LogDebug("[LanceConfiguratorPanelContinueConfirmClickedPatch] Patching");
-      GameObject lanceHeaderWidgetGo = GameObject.Find("uixPrfPanel_LC_LanceConfigTopBar-Widget-MANAGED");
-      if (lanceHeaderWidgetGo != null) {
-        LanceHeaderWidget lanceHeaderWidget = lanceHeaderWidgetGo.GetComponent<LanceHeaderWidget>();
-        SGDifficultyIndicatorWidget lanceRatingWidget = (SGDifficultyIndicatorWidget)AccessTools.Field(typeof(LanceHeaderWidget), "lanceRatingWidget").GetValue(lanceHeaderWidget);
+      if (!MissionControl.Instance.IsSkirmish()) {
+        Main.LogDebug("[LanceConfiguratorPanelContinueConfirmClickedPatch] Patching");
+        GameObject lanceHeaderWidgetGo = GameObject.Find("uixPrfPanel_LC_LanceConfigTopBar-Widget-MANAGED");
+        if (lanceHeaderWidgetGo != null) {
+          LanceHeaderWidget lanceHeaderWidget = lanceHeaderWidgetGo.GetComponent<LanceHeaderWidget>();
+          SGDifficultyIndicatorWidget lanceRatingWidget = (SGDifficultyIndicatorWidget)AccessTools.Field(typeof(LanceHeaderWidget), "lanceRatingWidget").GetValue(lanceHeaderWidget);
 
-        MissionControl.Instance.PlayerLanceDropDifficultyValue = lanceRatingWidget.Difficulty;
-        MissionControl.Instance.PlayerLanceDropSkullRating = lanceRatingWidget.Difficulty / 2f;
-        CalculateTonnage();
+          MissionControl.Instance.PlayerLanceDropDifficultyValue = lanceRatingWidget.Difficulty;
+          MissionControl.Instance.PlayerLanceDropSkullRating = lanceRatingWidget.Difficulty / 2f;
+          CalculateTonnage();
+        } else {
+          Main.Logger.LogError("[LanceConfiguratorPanelContinueConfirmClickedPatch] Unable to get object 'uixPrfPanel_LC_LanceConfigTopBar-Widget-MANAGED'. Setting PlayerLanceDropDifficultyValue and PlayerLanceDropSkullRating to '0'.");
+          MissionControl.Instance.PlayerLanceDropDifficultyValue = 0;
+          MissionControl.Instance.PlayerLanceDropSkullRating = 0;
+        }
       } else {
-        Main.Logger.LogError("[LanceConfiguratorPanelContinueConfirmClickedPatch] Unable to get object 'uixPrfPanel_LC_LanceConfigTopBar-Widget-MANAGED'. Setting PlayerLanceDropDifficultyValue and PlayerLanceDropSkullRating to '0'.");
         MissionControl.Instance.PlayerLanceDropDifficultyValue = 0;
         MissionControl.Instance.PlayerLanceDropSkullRating = 0;
       }
