@@ -164,7 +164,30 @@ namespace MissionControl {
       LoadCustomContractTypeBuilds($"{ModDirectory}/contractTypeBuilds/");
 
       // Search for any other mods that have an 'mcData' folder - and look in that to load custom contract type builds
+      if (Main.Settings.CustomData.Search) {
+        Main.LogDebug("[DataManager] Searching for custom 'mcData' folders in other mods");
 
+        // Get the 'Mods' folder
+        string btModsPath = ModDirectory.Substring(0, ModDirectory.LastIndexOf("Mods") + 4);
+        Main.LogDebug("[DataManager] Found mods folder path at: " + btModsPath);
+
+        if (Main.Settings.CustomData.SearchType.StartsWith("Shallow")) {
+          string[] modDirectories = Directory.GetDirectories(btModsPath);
+          foreach (string modDirectory in modDirectories) {
+            string[] modDirectoryFullPaths = Directory.GetDirectories(modDirectory);
+            string[] modDirectoryNames = modDirectoryFullPaths.Select(d => Path.GetFileName(d)).ToArray();
+
+            if (modDirectoryNames.Contains("mcData")) {
+              Main.LogDebug($"[DataManager] Found mod with 'mcData' folder. Loading from mod '{Path.GetFileName(modDirectory)}'");
+              LoadCustomContractTypeBuilds($"{modDirectory}/mcData/contractTypeBuilds/");
+            }
+          }
+        } else {
+          // Deep
+        }
+
+
+      }
     }
 
     private void LoadCustomContractTypeBuilds(string path) {
