@@ -161,7 +161,14 @@ namespace MissionControl {
     }
 
     private void LoadCustomContractTypeBuilds() {
-      foreach (string directory in Directory.GetDirectories($"{ModDirectory}/contractTypeBuilds/")) {
+      LoadCustomContractTypeBuilds($"{ModDirectory}/contractTypeBuilds/");
+
+      // Search for any other mods that have an 'mcData' folder - and look in that to load custom contract type builds
+
+    }
+
+    private void LoadCustomContractTypeBuilds(string path) {
+      foreach (string directory in Directory.GetDirectories(path)) {
         if (File.Exists($"{directory}/common.jsonc")) {
           string contractTypeBuildCommonSource = File.ReadAllText($"{directory}/common.jsonc");
           JObject contractTypeCommonBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildCommonSource, serialiserSettings);

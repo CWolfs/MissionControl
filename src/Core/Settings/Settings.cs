@@ -75,6 +75,9 @@ namespace MissionControl.Config {
     [JsonProperty("Spawners")]
     public SpawnerSettings Spawners { get; set; } = new SpawnerSettings();
 
+    [JsonProperty("CustomData")]
+    public CustomDataSettings CustomData { get; set; } = new CustomDataSettings();
+
     [JsonProperty("Misc")]
     public MiscSettings Misc { get; set; } = new MiscSettings();
 

@@ -144,6 +144,10 @@
       "MaxBuffer": 200
     }
   },
+  "CustomData": {
+    "Search": true,
+    "SearchType": "ShallowFromModsFolder"
+  },
   "Misc": {
     "LanceSelectionDivergenceOverride": {
       "Enable": true,
