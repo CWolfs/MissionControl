@@ -11,7 +11,7 @@ namespace MissionControl.AI {
 
     public BlockUntilPathfindingReadyNode(string name, BehaviorTree tree, AbstractActor unit) : base(name, tree, unit) { }
 
-    protected override void OnStart() {
+    public override void OnStart() {
       this.startTime = Time.realtimeSinceStartup;
       this.tickCount = 0;
       Main.LogDebug($"[AI] [BlockUntilPathfindingReadyNode] Block until pathfinding ready started at {this.startTime}");
@@ -21,7 +21,7 @@ namespace MissionControl.AI {
       }
     }
 
-    protected override BehaviorTreeResults Tick() {
+    public override BehaviorTreeResults Tick() {
       if (this.unit.Pathing == null) {
         return BehaviorTreeResults.BehaviorTreeResultsFromBoolean(false);
       }

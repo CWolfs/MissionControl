@@ -40,7 +40,7 @@ namespace MissionControl.LogicComponents.Placers {
       //  this.messageMemory.TrackMethod((MessageCenterMessageType)MessageTypes.BeforeSceneManipulation, new ReceiveMessageCenterMessage(this.BeforeSceneManipulation));
     }
 
-    protected override void SubscribeToMessages(bool shouldAdd) {
+    public override void SubscribeToMessages(bool shouldAdd) {
       // this.messageMemory.Subscribe((MessageCenterMessageType)MessageTypes.BeforeSceneManipulation, new ReceiveMessageCenterMessage(this.BeforeSceneManipulation), shouldAdd);
       base.SubscribeToMessages(shouldAdd);
     }

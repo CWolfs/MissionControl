@@ -27,7 +27,7 @@ namespace MissionControl.AI {
       this.waitForLance = waitForLance;
     }
 
-    protected override BehaviorTreeResults Tick() {
+    public override BehaviorTreeResults Tick() {
       if (unit.HasMovedThisRound) return new BehaviorTreeResults(BehaviorNodeState.Failure);
 
       BehaviorVariableValue targetLanceGuidValue = this.tree.GetCustomBehaviorVariableValue(FOLLOW_LANCE_TARGET_GUID_KEY);
