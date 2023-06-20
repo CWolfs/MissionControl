@@ -21,8 +21,17 @@ namespace MissionControl.EncounterFactories {
     private static void AttachRequiredReferences(ObjectiveGameLogic objectiveGameLogic, string contractObjectiveGuid) {
       if (contractObjectiveGuid != null) {
         ContractObjectiveGameLogic contractObjectiveGameLogic = MissionControl.Instance.EncounterLayerData.GetContractObjectiveGameLogicByGUID(contractObjectiveGuid);
+
+        if (contractObjectiveGuid == null) {
+          Main.Logger.LogWarning($"[MissionControl.ObjectiveFactory] [{objectiveGameLogic.Name}] Contract objective of GUID '{contractObjectiveGuid}' could not be found. If you want the objective to be linked to a contract objective you need to specify the GUID and ensure the contract override (contract json) sets the same GUID under the 'contractObjectiveList' section");
+        }
+
+        if (contractObjectiveGuid == "") {
+          Main.Logger.LogWarning($"[MissionControl.ObjectiveFactory] [{objectiveGameLogic.Name}] Contract objective of GUID was empty so it cannot link to a contract object. If you want the objective to be linked to a contract objective you need to specify the GUID and ensure the contract override (contract json) sets the same GUID under the 'contractObjectiveList' section");
+        }
+
         ObjectiveRef objectiveRef = new ObjectiveRef(objectiveGameLogic);
-        contractObjectiveGameLogic.objectiveRefList.Add(objectiveRef);
+        if (contractObjectiveGameLogic != null) contractObjectiveGameLogic.objectiveRefList.Add(objectiveRef);
       }
 
       objectiveGameLogic.onSuccessDialogue = new DialogueRef();
