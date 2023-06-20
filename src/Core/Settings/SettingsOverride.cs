@@ -118,6 +118,9 @@ namespace MissionControl.Config {
     public static string Spawners_SpawnLanceAtEdgeBoundary_MinBuffer = "Spawners.SpawnLanceAtEdgeBoundary.MinBuffer";
     public static string Spawners_SpawnLanceAtEdgeBoundary_MaxBuffer = "Spawners.SpawnLanceAtEdgeBoundary.MaxBuffer";
 
+    public static string CustomData_Search = "CustomData.Search";
+    public static string CustomData_SearchType = "CustomData.SearchType";
+
     public static string Misc_LanceSelectionDivergenceOverride_Enable = "Misc.LanceSelectionDivergenceOverride.Enable";
     public static string Misc_LanceSelectionDivergenceOverride_Divergence = "Misc.LanceSelectionDivergenceOverride.Divergence";
 
@@ -191,6 +194,7 @@ namespace MissionControl.Config {
         LoadDynamicWithdraw(settings);
         LoadAI(settings);
         LoadSpawners(settings);
+        LoadCustomData(settings);
         LoadMisc(settings);
       }
 
@@ -335,6 +339,11 @@ namespace MissionControl.Config {
     public void LoadSpawners(Settings settings) {
       if (Has(Spawners_SpawnLanceAtEdgeBoundary_MinBuffer)) settings.Spawners.SpawnLanceAtBoundary.MinBuffer = GetInt(Spawners_SpawnLanceAtEdgeBoundary_MinBuffer);
       if (Has(Spawners_SpawnLanceAtEdgeBoundary_MaxBuffer)) settings.Spawners.SpawnLanceAtBoundary.MaxBuffer = GetInt(Spawners_SpawnLanceAtEdgeBoundary_MaxBuffer);
+    }
+
+    public void LoadCustomData(Settings settings) {
+      if (Has(CustomData_Search)) settings.CustomData.Search = GetBool(CustomData_Search);
+      if (Has(CustomData_SearchType)) settings.CustomData.SearchType = GetString(CustomData_SearchType);
     }
 
     public void LoadMisc(Settings settings) {
