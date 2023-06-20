@@ -30,7 +30,7 @@ namespace MissionControl.EncounterFactories {
       return regionPoint;
     }
 
-    public static RegionGameLogic CreateRegion(GameObject parent, string regionGameLogicGuid, string objectiveGuid, string name, string regionDefId, float radius = 0) {
+    public static RegionGameLogic CreateRegion(GameObject parent, string regionGameLogicGuid, string objectiveGuid, string name, string regionDefId, float radius = 0, bool alwaysShowRegionWhenActive = true, bool showPreviewOfRegion = true) {
       GameObject regionGo = CreateRegionGameObject(parent, name);
       float regionRadius = (radius > 0) ? radius : DEFAULT_REGION_RADIUS;
 
@@ -48,7 +48,11 @@ namespace MissionControl.EncounterFactories {
       regionGameLogic.encounterObjectGuid = regionGameLogicGuid;
       regionGameLogic.radius = regionRadius;
       regionGameLogic.regionDefId = regionDefId;
-      regionGameLogic.alwaysShowRegionWhenActive = true;
+      regionGameLogic.alwaysShowRegionWhenActive = alwaysShowRegionWhenActive;
+
+      regionGameLogic.SetDrawRegionDefIdDisplay(regionDefId);
+      regionGameLogic.ShowPreviewOfRegion(showPreviewOfRegion);
+      regionGameLogic.regionVersion = RegionVersion.VersionTwo;
 
       CreateRegionPointGameObject(regionGo, $"RegionPoint1", new Vector3(0, 0, regionRadius));                      // North
       CreateRegionPointGameObject(regionGo, $"RegionPoint2", new Vector3(regionRadius, 0, regionRadius / 2f));      // North-East
