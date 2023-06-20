@@ -40,7 +40,7 @@ namespace MissionControl.ContractTypeBuilders {
       this.title = objective["Title"].ToString();
       this.priority = (int)objective["Priority"];
       this.displayToUser = objective.ContainsKey("DisplayToUser") ? (bool)objective["DisplayToUser"] : true;
-      this.contractObjectiveGuid = objective["ContractObjectiveGuid"].ToString();
+      this.contractObjectiveGuid = objective.ContainsKey("ContractObjectiveGuid") ? objective["ContractObjectiveGuid"].ToString() : "";
     }
 
     public override void Build() {
@@ -49,6 +49,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "DestroyLance": BuildDestroyWholeLanceObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         case "OccupyRegion": BuildOccupyRegionObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         case "DefendXUnits": BuildDefendXUnitsObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
+        case "DestroyXUnits": BuildDestroyXUnitsObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         default: Main.LogDebug($"[ObjectiveBuilder.{contractTypeBuilder.ContractTypeKey}] No support for sub-type '{subType}'. Check for spelling mistakes."); break;
       }
     }
@@ -155,6 +156,17 @@ namespace MissionControl.ContractTypeBuilders {
         DurationType durationType = (DurationType)Enum.Parse(typeof(DurationType), durationTypeStr);
         ObjectiveFactory.CreateDefendXUnitsObjective(guid, parent, contractObjectiveGuid, name, title, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDefend, durationToDefend, durationType);
       }
+    }
+
+    private void BuildDestroyXUnitsObjective(GameObject parent, JObject objective, string name, string title, string guid,
+      bool isPrimaryObjectve, int priority, bool displayToUser, string contractObjectiveGuid) {
+
+      string[] requiredTagsOnUnit = (objective.ContainsKey("RequiredTagsOnUnit")) ? ((JArray)objective["RequiredTagsOnUnit"]).ToObject<string[]>() : null;
+      int numberOfUnitsToDestroy = (objective.ContainsKey("NumberOfUnitsToDestroy")) ? ((int)objective["NumberOfUnitsToDestroy"]) : 1;
+      string progressFormat = (objective.ContainsKey("ProgressFormat")) ? objective["ProgressFormat"].ToString() : "";
+      string description = objective["Description"].ToString();
+
+      ObjectiveFactory.CreateDestroyXUnitsObjective(guid, parent, contractObjectiveGuid, name, title, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDestroy);
     }
   }
 }
