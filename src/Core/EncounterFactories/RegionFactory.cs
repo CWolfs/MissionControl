@@ -30,7 +30,7 @@ namespace MissionControl.EncounterFactories {
       return regionPoint;
     }
 
-    public static RegionGameLogic CreateRegion(GameObject parent, string regionGameLogicGuid, string objectiveGuid, string name, string regionDefId, float radius = 0, bool showRegionHexWhenActive = true, bool alwaysShowRegionWhenActive = true, bool showPreviewOfRegion = false) {
+    public static RegionGameLogic CreateRegion(GameObject parent, string regionGameLogicGuid, string objectiveGuid, string name, string regionDefId, float radius = 0, bool showRegionHexWhenActive = true, bool alwaysShowRegionWhenActive = false, bool showPreviewOfRegion = false) {
       GameObject regionGo = CreateRegionGameObject(parent, name);
       float regionRadius = (radius > 0) ? radius : DEFAULT_REGION_RADIUS;
 
