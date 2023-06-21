@@ -9,6 +9,8 @@ using BattleTech.Framework;
 
 using HBS.Collections;
 
+using MissionControl.LogicComponents.Objectives;
+
 namespace MissionControl.EncounterFactories {
   public class ObjectiveFactory {
     private static GameObject CreateGameObject(GameObject parent, string name = null) {
@@ -232,6 +234,36 @@ namespace MissionControl.EncounterFactories {
       AttachRequiredReferences(destroyXUnitsObjective, contractObjectiveGuid);
 
       return destroyXUnitsObjective;
+    }
+
+
+    public static DestroyXDestructiblesObjective CreateDestroyXDestructiblesObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, int priority,
+      string progressFormat, string description, string regionGuid, int numberOfDestructiblesToDestroy) {
+
+      GameObject destroyXUnitsObjectiveGo = CreateGameObject(parent, objectName);
+
+      DestroyXDestructiblesObjective destroyXDestructiblesObjective = destroyXUnitsObjectiveGo.AddComponent<DestroyXDestructiblesObjective>();
+      destroyXDestructiblesObjective.title = destroyXUnitsObjectiveGo.name;
+      destroyXDestructiblesObjective.encounterObjectGuid = objectiveGuid;
+      destroyXDestructiblesObjective.RegionGuid = regionGuid;
+
+      destroyXDestructiblesObjective.NumberOfDestructiblesToDestroy = numberOfDestructiblesToDestroy;
+
+      destroyXDestructiblesObjective.title = title;
+      destroyXDestructiblesObjective.showProgress = true;
+      destroyXDestructiblesObjective.progressFormat = progressFormat;
+      destroyXDestructiblesObjective.description = description;
+      destroyXDestructiblesObjective.priority = priority;
+
+      destroyXDestructiblesObjective.displayToUser = true;
+      destroyXDestructiblesObjective.checkObjectiveFlag = false; // maybe true?
+      destroyXDestructiblesObjective.useBeacon = false;
+      destroyXDestructiblesObjective.markUnitsWith = ObjectiveMark.AttackTarget;
+      destroyXDestructiblesObjective.enableObjectiveLogging = true;
+
+      AttachRequiredReferences(destroyXDestructiblesObjective, contractObjectiveGuid);
+
+      return destroyXDestructiblesObjective;
     }
 
     public static DefendXUnitsForeverObjective CreateDefendXUnitsForeverObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, int priority,

@@ -1,5 +1,6 @@
 using UnityEngine;
 
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -62,6 +63,21 @@ public static class GameObjextExtensions {
     buildings.AddRange(buildingsUnderPlots);
 
     return buildings;
+  }
+
+  // TODO: Cache this
+  public static List<DestructibleObject> GetDestructiblesWithLODComponents(bool includeInactive = false) {
+    List<DestructibleObject> destructibles = new List<DestructibleObject>();
+    DestructibleObject[] destructiblesUnderGameObject = GameObject.Find("GAME").GetComponentsInChildren<DestructibleObject>(includeInactive);
+    DestructibleObject[] destructiblesUnderPlots = GameObject.Find("PlotParent").GetComponentsInChildren<DestructibleObject>(includeInactive);
+
+    List<DestructibleObject> filteredDestructiblesUnderGameObject = destructiblesUnderGameObject.Where(destructible => destructible.GetComponent<LODGroup> != null).ToList();
+    List<DestructibleObject> filteredDestructiblesUnderPlots = destructiblesUnderPlots.Where(destructible => destructible.GetComponent<LODGroup> != null).ToList();
+
+    destructibles.AddRange(filteredDestructiblesUnderGameObject);
+    destructibles.AddRange(filteredDestructiblesUnderPlots);
+
+    return destructibles;
   }
 
   public static List<Plot> GetAllPlots() {

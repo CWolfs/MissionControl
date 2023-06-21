@@ -50,6 +50,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "OccupyRegion": BuildOccupyRegionObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         case "DefendXUnits": BuildDefendXUnitsObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         case "DestroyXUnits": BuildDestroyXUnitsObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
+        case "DestroyXDestructibles": BuildDestroyXDestructiblesObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         default: Main.LogDebug($"[ObjectiveBuilder.{contractTypeBuilder.ContractTypeKey}] No support for sub-type '{subType}'. Check for spelling mistakes."); break;
       }
     }
@@ -167,6 +168,20 @@ namespace MissionControl.ContractTypeBuilders {
       string description = objective["Description"].ToString();
 
       ObjectiveFactory.CreateDestroyXUnitsObjective(guid, parent, contractObjectiveGuid, name, title, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDestroy);
+
+      // Test
+      ObjectiveFactory.CreateDestroyXDestructiblesObjective(GUIDFactory.GetGUID(), parent, contractObjectiveGuid, "Test Destroy X Destructibles", "Test Destroy X Destructibles", priority, progressFormat, description, "a4a7d412-c641-4db8-bb18-859053bcfc29", 5);
+    }
+
+    private void BuildDestroyXDestructiblesObjective(GameObject parent, JObject objective, string name, string title, string guid,
+      bool isPrimaryObjectve, int priority, bool displayToUser, string contractObjectiveGuid) {
+
+      string regionGuid = objective["RegionGuid"].ToString();
+      int numberOfDestructiblesToDestroy = (objective.ContainsKey("NumberOfDestructiblesToDestroy")) ? ((int)objective["NumberOfDestructiblesToDestroy"]) : 1;
+      string progressFormat = (objective.ContainsKey("ProgressFormat")) ? objective["ProgressFormat"].ToString() : "";
+      string description = objective["Description"].ToString();
+
+      ObjectiveFactory.CreateDestroyXDestructiblesObjective(guid, parent, contractObjectiveGuid, name, title, priority, progressFormat, description, regionGuid, numberOfDestructiblesToDestroy);
     }
   }
 }
