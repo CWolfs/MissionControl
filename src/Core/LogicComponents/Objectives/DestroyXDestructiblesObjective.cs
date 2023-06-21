@@ -10,6 +10,8 @@ using Localize;
 using System.Globalization;
 using System.Collections.Generic;
 
+using MissionControl.Messages;
+
 namespace MissionControl.LogicComponents.Objectives {
   public class DestroyXDestructiblesObjective : ObjectiveGameLogic {
 
@@ -27,14 +29,35 @@ namespace MissionControl.LogicComponents.Objectives {
 
     public override void AlwaysInit(CombatGameState combat) {
       base.AlwaysInit(combat);
-      // messageMemory.TrackMethod(MessageCenterMessageType.OnActorDestroyed, OnActorDestroyed);
+      Main.LogDebug($"[DestroyXDestructiblesObjective.AlwaysInit] AlwaysInit");
+
+      MessageCenter messageCenter = UnityGameInstance.BattleTechGame.MessageCenter;
+      messageCenter.AddSubscriber((MessageCenterMessageType)MessageTypes.OnDestructibleCollapsed, new ReceiveMessageCenterMessage(this.OnDestructibleDestroyed));
 
       Validate();
     }
 
     public override void SubscribeToMessages(bool shouldAdd) {
-      // messageMemory.Subscribe(MessageCenterMessageType.OnActorDestroyed, OnActorDestroyed, shouldAdd);
+      Main.LogDebug($"[DestroyXDestructiblesObjective.SubscribeToMessages] SubscribeToMessages");
+
+      MessageCenter messageCenter = UnityGameInstance.BattleTechGame.MessageCenter;
+      messageCenter.AddSubscriber((MessageCenterMessageType)MessageTypes.OnDestructibleCollapsed, new ReceiveMessageCenterMessage(this.OnDestructibleDestroyed));
+
       base.SubscribeToMessages(shouldAdd);
+    }
+
+    public override void ContractInitialize() {
+      base.ContractInitialize();
+
+      RegionRef regionRef = new RegionRef();
+      regionRef.EncounterObjectGuid = RegionGuid;
+      AttachRegionToObjective(regionRef);
+    }
+
+    public void OnDestroy() {
+      Main.LogDebug($"[DestroyXDestructiblesObjective.OnDestroy] OnDestroy");
+      MessageCenter messageCenter = UnityGameInstance.BattleTechGame.MessageCenter;
+      messageCenter.RemoveSubscriber((MessageCenterMessageType)MessageTypes.OnDestructibleCollapsed, new ReceiveMessageCenterMessage(this.OnDestructibleDestroyed));
     }
 
     public override void ActivateObjective() {
@@ -48,7 +71,7 @@ namespace MissionControl.LogicComponents.Objectives {
         return;
       }
 
-      List<DestructibleObject> destructibles = GameObjextExtensions.GetDestructiblesWithLODComponents();
+      List<DestructibleObject> destructibles = GameObjextExtensions.GetDestructiblesWithLODComponents(new List<string>() { "envPrfGrbl_", "envPrfDeco_" }); // Pick the bigger destructible props
       Main.Logger.Log($"[DestroyXDestructiblesObjective] Found {destructibles.Count} destructibles");
 
       destructibles.Shuffle();
@@ -58,14 +81,20 @@ namespace MissionControl.LogicComponents.Objectives {
         NumberOfDestructiblesToDestroy = destructibles.Count;
       }
 
-      for (int i = 0; i < NumberOfDestructiblesToDestroy; i++) {
-        TrackedDestructibles.Add(destructibles[i]);
+      foreach (DestructibleObject destructible in destructibles) {
+        bool isDestructibleInRegion = RegionUtil.PointInRegion(UnityGameInstance.BattleTechGame.Combat, destructible.transform.position, RegionGuid);
+        if (isDestructibleInRegion) {
+          TrackedDestructibles.Add(destructible);
+        }
       }
 
-      Main.Logger.Log($"[DestroyXDestructiblesObjective] Now tracking {TrackedDestructibles.Count} destructibles");
-      foreach (DestructibleObject destructible in TrackedDestructibles) {
-        Main.Logger.Log("[DestroyXDestructiblesObjective] Tracking... " + destructible.gameObject.name);
-      }
+      Main.Logger.Log($"[DestroyXDestructiblesObjective] Tracking all destructibles found in region. Count of: {TrackedDestructibles.Count} destructibles");
+    }
+
+    public override Vector3 GetBeaconPosition() {
+      Vector3 position = base.Combat.ItemRegistry.GetItemByGUID<RegionGameLogic>(RegionGuid).Position;
+      position.y = base.Combat.MapMetaData.GetLerpedHeightAt(position) + ObjectiveGameLogic.BEACON_OFFSET;
+      return position;
     }
 
     private void Validate() {
@@ -89,20 +118,26 @@ namespace MissionControl.LogicComponents.Objectives {
       return progressText;
     }
 
-    // public override List<ICombatant> GetTargetUnits() {
-    //   return ObjectiveGameLogic.GetTaggedCombatants(base.Combat, requiredTagsOnUnit);
-    // }
+    public void OnDestructibleDestroyed(MessageCenterMessage message) {
+      if (message is DestructibleCollapsedMessage) {
+        DestructibleCollapsedMessage destructibleCollapsedMessage = (DestructibleCollapsedMessage)message;
+        QueueCheckObjective();
+      }
+    }
 
     public override void UpdateCounts() {
-      // base.UpdateCounts();
-      // List<ICombatant> targetUnits = GetTargetUnits();
-      // int destructionCount = 0;
-      // for (int i = 0; i < targetUnits.Count; i++) {
-      //   if (targetUnits[i].IsDead) {
-      //     destructionCount++;
-      //   }
-      // }
-      // killedDestructiblesSoFar = destructionCount;
+      base.UpdateCounts();
+
+      int destructionCount = 0;
+
+      for (int i = 0; i < TrackedDestructibles.Count; i++) {
+        if (TrackedDestructibles[i].isCollapsed) {
+          Main.Logger.Log($"[DestroyXDestructiblesObjective.OnDestructibleDestroyed] Tracked Destructible '{TrackedDestructibles[i].gameObject}' collapsed");
+          destructionCount++;
+        }
+      }
+
+      destroyedDestructiblesSoFar = destructionCount;
     }
 
     public override bool CheckForSuccess() {
@@ -118,13 +153,6 @@ namespace MissionControl.LogicComponents.Objectives {
       base.CheckForFailure();
       return false;
     }
-
-    // TODO: Check if there's a OnDestructibleDestroyed message, otherwise make one and use it
-    // private void OnActorDestroyed(MessageCenterMessage message) {
-    //   QueueCheckObjective();
-    // }
-
-    // TODO: Maybe in the future support the Save/Load methods but it's a lot of work considering it's not supported by any/many mods
 
     public override void FromJSON(string json) {
       JSONSerializationUtility.FromJSON<DestroyXDestructiblesObjective>(this, json);

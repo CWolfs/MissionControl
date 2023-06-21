@@ -1,5 +1,6 @@
 using UnityEngine;
 
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -66,13 +67,28 @@ public static class GameObjextExtensions {
   }
 
   // TODO: Cache this
-  public static List<DestructibleObject> GetDestructiblesWithLODComponents(bool includeInactive = false) {
+  public static List<DestructibleObject> GetDestructiblesWithLODComponents(List<string> filterByName = null, bool includeInactive = false) {
     List<DestructibleObject> destructibles = new List<DestructibleObject>();
     DestructibleObject[] destructiblesUnderGameObject = GameObject.Find("GAME").GetComponentsInChildren<DestructibleObject>(includeInactive);
     DestructibleObject[] destructiblesUnderPlots = GameObject.Find("PlotParent").GetComponentsInChildren<DestructibleObject>(includeInactive);
 
-    List<DestructibleObject> filteredDestructiblesUnderGameObject = destructiblesUnderGameObject.Where(destructible => destructible.GetComponent<LODGroup> != null).ToList();
-    List<DestructibleObject> filteredDestructiblesUnderPlots = destructiblesUnderPlots.Where(destructible => destructible.GetComponent<LODGroup> != null).ToList();
+    List<DestructibleObject> filteredDestructiblesUnderGameObject = destructiblesUnderGameObject.Where(destructible => {
+      if (filterByName != null) {
+        Boolean startsWithFilterName = filterByName.Any(filterName => destructible.gameObject.name.StartsWith(filterName, StringComparison.OrdinalIgnoreCase));
+        if (!startsWithFilterName) return false;
+      }
+
+      return destructible.GetComponent<LODGroup> != null;
+    }).ToList();
+
+    List<DestructibleObject> filteredDestructiblesUnderPlots = destructiblesUnderPlots.Where(destructible => {
+      if (filterByName != null) {
+        Boolean startsWithFilterName = filterByName.Any(filterName => destructible.gameObject.name.StartsWith(filterName, StringComparison.OrdinalIgnoreCase));
+        if (!startsWithFilterName) return false;
+      }
+
+      return destructible.GetComponent<LODGroup> != null;
+    }).ToList();
 
     destructibles.AddRange(filteredDestructiblesUnderGameObject);
     destructibles.AddRange(filteredDestructiblesUnderPlots);
