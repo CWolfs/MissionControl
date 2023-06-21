@@ -225,7 +225,7 @@ namespace MissionControl.EncounterFactories {
 
       destroyXUnitsObjective.displayToUser = true;
       destroyXUnitsObjective.checkObjectiveFlag = false; // maybe true?
-      destroyXUnitsObjective.useBeacon = true;
+      destroyXUnitsObjective.useBeacon = false;
       destroyXUnitsObjective.markUnitsWith = ObjectiveMark.AttackTarget;
       destroyXUnitsObjective.enableObjectiveLogging = true;
 
