@@ -100,15 +100,15 @@ namespace MissionControl.Result {
 
       if (Type == "Building") {
         BattleTech.Building building = combatant as BattleTech.Building;
-        AccessTools.Field(typeof(BattleTech.Building), "isObjectiveTarget").SetValue(building, true);
+        building.isObjectiveTarget = true;
         building.BuildingRep.IsTargetable = true;
       }
 
       GameObject hubPanel = GameObject.Find("uixPrfPanl_HUD(Clone)");
       if (hubPanel != null) {
         CombatHUDInWorldElementMgr inworldElementManager = GameObject.Find("uixPrfPanl_HUD(Clone)").GetComponent<CombatHUDInWorldElementMgr>();
-        AccessTools.Method(typeof(CombatHUDInWorldElementMgr), "AddTickMark").Invoke(inworldElementManager, new object[] { combatant });
-        AccessTools.Method(typeof(CombatHUDInWorldElementMgr), "AddInWorldActorElements").Invoke(inworldElementManager, new object[] { combatant });
+        inworldElementManager.AddTickMark(combatant);
+        inworldElementManager.AddInWorldActorElements(combatant);
 
         if (Type == "Building") {
           CombatHUDNumFlagHex numFlagEx = inworldElementManager.GetNumFlagForCombatant(combatant);
