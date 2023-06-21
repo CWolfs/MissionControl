@@ -61,9 +61,10 @@ namespace MissionControl.ContractTypeBuilders {
       string objectiveGuid = region.ContainsKey("ObjectiveGuid") ? region["ObjectiveGuid"].ToString() : null;
       float radius = region.ContainsKey("Radius") ? (float)region["Radius"] : (float)70;
       bool showPreviewOfRegion = region.ContainsKey("ShowPreviewOfRegionWhenInactive") ? (bool)region["ShowPreviewOfRegionWhenInactive"] : false;
-      bool showHexWhenActive = region.ContainsKey("ShowHexWhenActive") ? (bool)region["ShowHexWhenActive"] : false;
+      bool showHexWhenActive = region.ContainsKey("ShowHexWhenActive") ? (bool)region["ShowHexWhenActive"] : true;
+      bool alwaysShowRegionWhenActive = region.ContainsKey("AlwaysShowRegionWhenActive") ? (bool)region["AlwaysShowRegionWhenActive"] : false;
 
-      RegionGameLogic regionLogic = RegionFactory.CreateRegion(this.parent, regionGuid, objectiveGuid, this.name, regionDefId, radius, showHexWhenActive, alwaysShowRegionWhenActive: true, showPreviewOfRegion);
+      RegionGameLogic regionLogic = RegionFactory.CreateRegion(this.parent, regionGuid, objectiveGuid, this.name, regionDefId, radius, showHexWhenActive, alwaysShowRegionWhenActive, showPreviewOfRegion);
       GameObject regionGo = regionLogic.gameObject;
 
       if (position != null) SetPosition(regionGo, position);
