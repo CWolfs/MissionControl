@@ -205,6 +205,35 @@ namespace MissionControl.EncounterFactories {
       return defendXUnitsObjective;
     }
 
+    public static DestroyXUnitsObjective CreateDestroyXUnitsObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, int priority,
+      string progressFormat, string description, string[] requiredTagsOnUnit, int numberOfUnitsToDestroy) {
+
+      GameObject destroyXUnitsObjectiveGo = CreateGameObject(parent, objectName);
+
+      DestroyXUnitsObjective destroyXUnitsObjective = destroyXUnitsObjectiveGo.AddComponent<DestroyXUnitsObjective>();
+      destroyXUnitsObjective.title = destroyXUnitsObjectiveGo.name;
+      destroyXUnitsObjective.encounterObjectGuid = objectiveGuid;
+      destroyXUnitsObjective.requiredTagsOnUnit = new TagSet(requiredTagsOnUnit);
+
+      destroyXUnitsObjective.numberOfUnitsToKill = numberOfUnitsToDestroy;
+
+      destroyXUnitsObjective.title = title;
+      destroyXUnitsObjective.showProgress = true;
+      destroyXUnitsObjective.progressFormat = progressFormat;
+      destroyXUnitsObjective.description = description;
+      destroyXUnitsObjective.priority = priority;
+
+      destroyXUnitsObjective.displayToUser = true;
+      destroyXUnitsObjective.checkObjectiveFlag = false; // maybe true?
+      destroyXUnitsObjective.useBeacon = false;
+      destroyXUnitsObjective.markUnitsWith = ObjectiveMark.AttackTarget;
+      destroyXUnitsObjective.enableObjectiveLogging = true;
+
+      AttachRequiredReferences(destroyXUnitsObjective, contractObjectiveGuid);
+
+      return destroyXUnitsObjective;
+    }
+
     public static DefendXUnitsForeverObjective CreateDefendXUnitsForeverObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, int priority,
       string progressFormat, string description, string[] requiredTagsOnUnit, int numberOfUnitsToDefend) {
 

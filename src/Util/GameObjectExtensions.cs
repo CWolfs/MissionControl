@@ -53,10 +53,10 @@ public static class GameObjextExtensions {
   }
 
   // TODO: Cache this
-  public static List<BuildingRepresentation> GetBuildingsInMap() {
+  public static List<BuildingRepresentation> GetBuildingsInMap(bool includeInactive = false) {
     List<BuildingRepresentation> buildings = new List<BuildingRepresentation>();
-    BuildingRepresentation[] buildingsUnderGameObject = GameObject.Find("GAME").GetComponentsInChildren<BuildingRepresentation>();
-    BuildingRepresentation[] buildingsUnderPlots = GameObject.Find("PlotParent").GetComponentsInChildren<BuildingRepresentation>();
+    BuildingRepresentation[] buildingsUnderGameObject = GameObject.Find("GAME").GetComponentsInChildren<BuildingRepresentation>(includeInactive);
+    BuildingRepresentation[] buildingsUnderPlots = GameObject.Find("PlotParent").GetComponentsInChildren<BuildingRepresentation>(includeInactive);
 
     buildings.AddRange(buildingsUnderGameObject);
     buildings.AddRange(buildingsUnderPlots);
