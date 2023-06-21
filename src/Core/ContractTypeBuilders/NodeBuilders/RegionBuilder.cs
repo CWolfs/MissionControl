@@ -15,7 +15,7 @@ namespace MissionControl.ContractTypeBuilders {
     private const int DEFAULT_LENGTH = 800;
 
     private ContractTypeBuilder contractTypeBuilder;
-    private JObject objective;
+    private JObject region;
 
     private GameObject parent;
     private string name;
@@ -26,18 +26,18 @@ namespace MissionControl.ContractTypeBuilders {
     private JObject rotation;
     private string regionDefId;
 
-    public RegionBuilder(ContractTypeBuilder contractTypeBuilder, GameObject parent, JObject objective) {
+    public RegionBuilder(ContractTypeBuilder contractTypeBuilder, GameObject parent, JObject region) {
       this.contractTypeBuilder = contractTypeBuilder;
-      this.objective = objective;
+      this.region = region;
 
       this.parent = parent;
-      this.name = objective["Name"].ToString();
-      this.subType = objective["SubType"].ToString();
-      this.width = objective.ContainsKey("Width") ? (int)objective["Width"] : DEFAULT_WIDTH;
-      this.length = objective.ContainsKey("Length") ? (int)objective["Length"] : DEFAULT_LENGTH;
-      this.position = objective.ContainsKey("Position") ? (JObject)objective["Position"] : null;
-      this.rotation = objective.ContainsKey("Rotation") ? (JObject)objective["Rotation"] : null;
-      this.regionDefId = objective.ContainsKey("RegionDefId") ? (string)objective["RegionDefId"] : "regionDef_TargetZone";
+      this.name = region["Name"].ToString();
+      this.subType = region["SubType"].ToString();
+      this.width = region.ContainsKey("Width") ? (int)region["Width"] : DEFAULT_WIDTH;
+      this.length = region.ContainsKey("Length") ? (int)region["Length"] : DEFAULT_LENGTH;
+      this.position = region.ContainsKey("Position") ? (JObject)region["Position"] : null;
+      this.rotation = region.ContainsKey("Rotation") ? (JObject)region["Rotation"] : null;
+      this.regionDefId = region.ContainsKey("RegionDefId") ? (string)region["RegionDefId"] : "regionDef_TargetZone";
     }
 
     public override void Build() {
@@ -57,11 +57,13 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     public void BuildNormal() {
-      string regionGuid = objective["Guid"].ToString();
-      string objectiveGuid = objective.ContainsKey("ObjectiveGuid") ? objective["ObjectiveGuid"].ToString() : null;
-      float radius = objective.ContainsKey("Radius") ? (float)objective["Radius"] : (float)70;
+      string regionGuid = region["Guid"].ToString();
+      string objectiveGuid = region.ContainsKey("ObjectiveGuid") ? region["ObjectiveGuid"].ToString() : null;
+      float radius = region.ContainsKey("Radius") ? (float)region["Radius"] : (float)70;
+      bool showPreviewOfRegion = region.ContainsKey("ShowPreviewOfRegionWhenInactive") ? (bool)region["ShowPreviewOfRegionWhenInactive"] : false;
+      bool showHexWhenActive = region.ContainsKey("ShowHexWhenActive") ? (bool)region["ShowHexWhenActive"] : false;
 
-      RegionGameLogic regionLogic = RegionFactory.CreateRegion(this.parent, regionGuid, objectiveGuid, this.name, regionDefId, radius);
+      RegionGameLogic regionLogic = RegionFactory.CreateRegion(this.parent, regionGuid, objectiveGuid, this.name, regionDefId, radius, showHexWhenActive, alwaysShowRegionWhenActive: true, showPreviewOfRegion);
       GameObject regionGo = regionLogic.gameObject;
 
       if (position != null) SetPosition(regionGo, position);
