@@ -36,7 +36,7 @@ namespace MissionControl.Logic {
         emptyCustomChunk.startingStatus = EncounterObjectStatus.Inactive;
         emptyCustomChunk.notes = debugDescription;
 
-        RegionFactory.CreateRegion(escapeChunkGo, regionGameLogicGuid, objectiveGuid, "Region_Withdraw", "regionDef_EvacZone");
+        RegionFactory.CreateRegion(escapeChunkGo, regionGameLogicGuid, objectiveGuid, "Region_Withdraw", "regionDef_EvacZone", showPreviewOfRegion: false);
 
         bool useDropship = true;
         OccupyRegionObjective occupyRegionObjective = ObjectiveFactory.CreateOccupyRegionObjective(
