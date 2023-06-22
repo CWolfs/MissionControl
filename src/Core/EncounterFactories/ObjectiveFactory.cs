@@ -9,6 +9,7 @@ using BattleTech.Framework;
 
 using HBS.Collections;
 
+using MissionControl.Data;
 using MissionControl.LogicComponents.Objectives;
 
 namespace MissionControl.EncounterFactories {
@@ -238,7 +239,7 @@ namespace MissionControl.EncounterFactories {
 
 
     public static DestroyXDestructiblesObjective CreateDestroyXDestructiblesObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, int priority,
-      string progressFormat, string description, string regionGuid, int numberOfDestructiblesToDestroy) {
+      string progressFormat, string description, string regionGuid, ObjectiveCountType countType, int valueOfDestructiblesToDestroy) {
 
       GameObject destroyXUnitsObjectiveGo = CreateGameObject(parent, objectName);
 
@@ -247,7 +248,8 @@ namespace MissionControl.EncounterFactories {
       destroyXDestructiblesObjective.encounterObjectGuid = objectiveGuid;
       destroyXDestructiblesObjective.RegionGuid = regionGuid;
 
-      destroyXDestructiblesObjective.NumberOfDestructiblesToDestroy = numberOfDestructiblesToDestroy;
+      destroyXDestructiblesObjective.CountType = countType;
+      destroyXDestructiblesObjective.valueOfDestructiblesToDestroy = valueOfDestructiblesToDestroy;
 
       destroyXDestructiblesObjective.title = title;
       destroyXDestructiblesObjective.showProgress = true;

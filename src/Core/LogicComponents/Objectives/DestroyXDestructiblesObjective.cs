@@ -10,6 +10,7 @@ using Localize;
 using System.Globalization;
 using System.Collections.Generic;
 
+using MissionControl.Data;
 using MissionControl.Messages;
 
 namespace MissionControl.LogicComponents.Objectives {
@@ -19,7 +20,14 @@ namespace MissionControl.LogicComponents.Objectives {
     public string RegionGuid { get; set; }
 
     [SerializeField]
-    public int NumberOfDestructiblesToDestroy { get; set; } = 1;
+    public ObjectiveCountType CountType { get; set; }
+
+    [SerializeField]
+    public int valueOfDestructiblesToDestroy { get; set; } = 1;
+
+    [SerializeField]
+    private int NumberOfDestructiblesToDestroy { get; set; } = 1;
+
 
     public int destroyedDestructiblesSoFar = 0;
 
@@ -76,16 +84,31 @@ namespace MissionControl.LogicComponents.Objectives {
 
       destructibles.Shuffle();
 
-      if (destructibles.Count < NumberOfDestructiblesToDestroy) {
-        Main.Logger.LogWarning("[DestroyXDestructiblesObjective] Couldn't find enough destructibles to track for this objective so setting the NumberOfDestructiblesToDestroy to the max available");
-        NumberOfDestructiblesToDestroy = destructibles.Count;
-      }
-
       foreach (DestructibleObject destructible in destructibles) {
         bool isDestructibleInRegion = RegionUtil.PointInRegion(UnityGameInstance.BattleTechGame.Combat, destructible.transform.position, RegionGuid);
         if (isDestructibleInRegion) {
           TrackedDestructibles.Add(destructible);
         }
+      }
+
+      if (CountType == ObjectiveCountType.Number) {
+        if (TrackedDestructibles.Count < NumberOfDestructiblesToDestroy) {
+          Main.Logger.LogWarning("[DestroyXDestructiblesObjective] Couldn't find enough destructibles to track for this objective so setting the NumberOfDestructiblesToDestroy to the max available");
+          NumberOfDestructiblesToDestroy = TrackedDestructibles.Count;
+        }
+      } else if (CountType == ObjectiveCountType.Percentage) {
+        if (TrackedDestructibles.Count == 1) {
+          NumberOfDestructiblesToDestroy = 1;
+        } else {
+          float multiFactor = (float)valueOfDestructiblesToDestroy / 100f;
+          NumberOfDestructiblesToDestroy = (int)((float)TrackedDestructibles.Count * multiFactor);
+        }
+
+        if (NumberOfDestructiblesToDestroy <= 0) {
+          NumberOfDestructiblesToDestroy = 1;
+        }
+
+        Main.Logger.LogWarning($"[DestroyXDestructiblesObjective] Using percentage mode with value '{valueOfDestructiblesToDestroy}%' the number of destructibles to be destroyed will be {NumberOfDestructiblesToDestroy} / {TrackedDestructibles.Count}");
       }
 
       Main.Logger.Log($"[DestroyXDestructiblesObjective] Tracking all destructibles found in region. Count of: {TrackedDestructibles.Count} destructibles");
