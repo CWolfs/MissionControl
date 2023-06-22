@@ -134,10 +134,10 @@ namespace MissionControl.LogicComponents.Objectives {
 
     public override Text GetProgressText() {
       Text progressText = base.GetProgressText();
-      progressText.Replace("[killedUnitsSoFar]", destroyedDestructiblesSoFar.ToString());
-      progressText.Replace("[numberOfUnitsToKill]", NumberOfDestructiblesToDestroy.ToString());
+      progressText.Replace("[destroyedDestructiblesSoFar]", destroyedDestructiblesSoFar.ToString());
+      progressText.Replace("[numberOfDestructiblesToDestroy]", NumberOfDestructiblesToDestroy.ToString());
       progressText.Replace("[percentageComplete]", ((float)destroyedDestructiblesSoFar / (float)NumberOfDestructiblesToDestroy).ToString("P0", CultureInfo.InvariantCulture));
-      progressText.Replace("[unitsStillNeededToMeetThreshold]", (NumberOfDestructiblesToDestroy - destroyedDestructiblesSoFar).ToString());
+      progressText.Replace("[destructiblesStillNeededToMeetThreshold]", (NumberOfDestructiblesToDestroy - destroyedDestructiblesSoFar).ToString());
       return progressText;
     }
 

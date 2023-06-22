@@ -169,9 +169,6 @@ namespace MissionControl.ContractTypeBuilders {
       string description = objective["Description"].ToString();
 
       ObjectiveFactory.CreateDestroyXUnitsObjective(guid, parent, contractObjectiveGuid, name, title, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDestroy);
-
-      // Test
-      // ObjectiveFactory.CreateDestroyXDestructiblesObjective(GUIDFactory.GetGUID(), parent, contractObjectiveGuid, "Objective_DestroyMinorInfrastructure", "Destroy Minor Infrastructure", priority, progressFormat, description, "a4a7d412-c641-4db8-bb18-859053bcfc29", ObjectiveCountType.Percentage, 50);
     }
 
     private void BuildDestroyXDestructiblesObjective(GameObject parent, JObject objective, string name, string title, string guid,
@@ -179,14 +176,14 @@ namespace MissionControl.ContractTypeBuilders {
 
       string regionGuid = objective["RegionGuid"].ToString();
       string countType = (objective.ContainsKey("CountType")) ? objective["CountType"].ToString() : "Number";
-      int typedValueOfDestructiblesToDestroy = (objective.ContainsKey("TypedValueOfDestructiblesToDestroy")) ? ((int)objective["TypedValueOfDestructiblesToDestroy"]) : 1;
+      int valueOfDestructiblesToDestroy = (objective.ContainsKey("ValueOfDestructiblesToDestroy")) ? ((int)objective["ValueOfDestructiblesToDestroy"]) : 1;
       string progressFormat = (objective.ContainsKey("ProgressFormat")) ? objective["ProgressFormat"].ToString() : "";
       string description = objective["Description"].ToString();
 
       ObjectiveCountType countTypeEnum = (ObjectiveCountType)Enum.Parse(typeof(ObjectiveCountType), countType);
 
 
-      ObjectiveFactory.CreateDestroyXDestructiblesObjective(guid, parent, contractObjectiveGuid, name, title, priority, progressFormat, description, regionGuid, countTypeEnum, typedValueOfDestructiblesToDestroy);
+      ObjectiveFactory.CreateDestroyXDestructiblesObjective(guid, parent, contractObjectiveGuid, name, title, priority, progressFormat, description, regionGuid, countTypeEnum, valueOfDestructiblesToDestroy);
     }
   }
 }
