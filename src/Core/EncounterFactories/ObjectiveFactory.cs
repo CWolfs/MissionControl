@@ -260,7 +260,7 @@ namespace MissionControl.EncounterFactories {
       destroyXDestructiblesObjective.displayToUser = true;
       destroyXDestructiblesObjective.checkObjectiveFlag = false; // maybe true?
       destroyXDestructiblesObjective.useBeacon = true;
-      destroyXDestructiblesObjective.markUnitsWith = ObjectiveMark.AttackTarget;
+      destroyXDestructiblesObjective.markUnitsWith = ObjectiveMark.None;
       destroyXDestructiblesObjective.enableObjectiveLogging = true;
 
       AttachRequiredReferences(destroyXDestructiblesObjective, contractObjectiveGuid);
