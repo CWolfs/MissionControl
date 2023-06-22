@@ -30,6 +30,14 @@ namespace MissionControl.EncounterFactories {
       return regionPoint;
     }
 
+    private static void RotateVector3(ref Vector3 point, float theta) {
+      float x = point.x;
+      float z = point.z;
+
+      point.x = x * Mathf.Cos(theta) + z * Mathf.Sin(theta);
+      point.z = -x * Mathf.Sin(theta) + z * Mathf.Cos(theta);
+    }
+
     public static RegionGameLogic CreateRegion(GameObject parent, string regionGameLogicGuid, string objectiveGuid, string name, string regionDefId, float radius = 0, bool showRegionHexWhenActive = true, bool alwaysShowRegionWhenActive = false, bool showPreviewOfRegion = false) {
       GameObject regionGo = CreateRegionGameObject(parent, name);
       float regionRadius = (radius > 0) ? radius : DEFAULT_REGION_RADIUS;
@@ -56,12 +64,28 @@ namespace MissionControl.EncounterFactories {
 
       regionGameLogic.ShowPreviewOfRegion(showPreviewOfRegion); // This displays the region's 'Future Target' mouse over label if it's not an active region
 
-      CreateRegionPointGameObject(regionGo, $"RegionPoint1", new Vector3(0, 0, regionRadius));                      // North
-      CreateRegionPointGameObject(regionGo, $"RegionPoint2", new Vector3(regionRadius, 0, regionRadius / 2f));      // North-East
-      CreateRegionPointGameObject(regionGo, $"RegionPoint3", new Vector3(regionRadius, 0, -(regionRadius / 2f)));   // South-East
-      CreateRegionPointGameObject(regionGo, $"RegionPoint4", new Vector3(0, 0, -regionRadius));                     // South
-      CreateRegionPointGameObject(regionGo, $"RegionPoint5", new Vector3(-regionRadius, 0, -(regionRadius / 2f)));  // South-West
-      CreateRegionPointGameObject(regionGo, $"RegionPoint6", new Vector3(-regionRadius, 0, regionRadius / 2f));     // North-West
+      // Theta is -30 degrees converted to radians
+      float theta = -30f * Mathf.Deg2Rad;
+      Vector3 armPoint1 = new Vector3(0, 0, regionRadius);                      // North
+      Vector3 armPoint2 = new Vector3(regionRadius, 0, regionRadius / 2f);      // NorthEast
+      Vector3 armPoint3 = new Vector3(regionRadius, 0, -(regionRadius / 2f));   // SouthEast
+      Vector3 armPoint4 = new Vector3(0, 0, -regionRadius);                     // South
+      Vector3 armPoint5 = new Vector3(-regionRadius, 0, -(regionRadius / 2f));  // SouthWest
+      Vector3 armPoint6 = new Vector3(-regionRadius, 0, regionRadius / 2f);     // NorthWest
+
+      RotateVector3(ref armPoint1, theta);
+      RotateVector3(ref armPoint2, theta);
+      RotateVector3(ref armPoint3, theta);
+      RotateVector3(ref armPoint4, theta);
+      RotateVector3(ref armPoint5, theta);
+      RotateVector3(ref armPoint6, theta);
+
+      CreateRegionPointGameObject(regionGo, $"RegionPoint1", armPoint1);  // North
+      CreateRegionPointGameObject(regionGo, $"RegionPoint2", armPoint2);  // North-East
+      CreateRegionPointGameObject(regionGo, $"RegionPoint3", armPoint3);  // South-East
+      CreateRegionPointGameObject(regionGo, $"RegionPoint4", armPoint4);  // South
+      CreateRegionPointGameObject(regionGo, $"RegionPoint5", armPoint5);  // South-West
+      CreateRegionPointGameObject(regionGo, $"RegionPoint6", armPoint6);  // North-West
 
       return regionGameLogic;
     }
