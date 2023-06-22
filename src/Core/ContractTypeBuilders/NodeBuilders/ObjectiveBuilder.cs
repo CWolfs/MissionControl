@@ -171,7 +171,7 @@ namespace MissionControl.ContractTypeBuilders {
       ObjectiveFactory.CreateDestroyXUnitsObjective(guid, parent, contractObjectiveGuid, name, title, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDestroy);
 
       // Test
-      ObjectiveFactory.CreateDestroyXDestructiblesObjective(GUIDFactory.GetGUID(), parent, contractObjectiveGuid, "Objective_DestroyMinorInfrastructure", "Destroy Minor Infrastructure", priority, progressFormat, description, "a4a7d412-c641-4db8-bb18-859053bcfc29", ObjectiveCountType.Percentage, 50);
+      // ObjectiveFactory.CreateDestroyXDestructiblesObjective(GUIDFactory.GetGUID(), parent, contractObjectiveGuid, "Objective_DestroyMinorInfrastructure", "Destroy Minor Infrastructure", priority, progressFormat, description, "a4a7d412-c641-4db8-bb18-859053bcfc29", ObjectiveCountType.Percentage, 50);
     }
 
     private void BuildDestroyXDestructiblesObjective(GameObject parent, JObject objective, string name, string title, string guid,
