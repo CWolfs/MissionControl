@@ -174,8 +174,14 @@ namespace MissionControl.ContractTypeBuilders {
       // GameObject templateBuildingGo = GameObject.Find("PlotParent/Plot2/plotVariant_facility_med_military_airControlBase (1)/envNstSets_militaryTowerAirControlGroupingA");
       // if (templateBuildingGo == null) Main.Logger.Log("Template building GO is null");
       // GameObject buildingGo = GameObject.Instantiate(templateBuildingGo, new Vector3(-336, 175, 53), templateBuildingGo.transform.rotation, MissionControl.Instance.EncounterLayerData.gameObject.transform);
-      GameObject facilityGo = BuildingFactory.CreateFacility(MissionControl.Instance.EncounterLayerData.gameObject, "CustomFacility");
-      facilityGo.transform.position = new Vector3(-336, 175, 53);
+
+      GameObject customfacility = GameObject.Find("CustomFacility");
+      if (customfacility == null) {
+        GameObject facilityGo = BuildingFactory.CreateFacility(MissionControl.Instance.EncounterLayerData.gameObject, "CustomFacility");
+        facilityGo.transform.position = new Vector3(-336, 175, 53); // in the region
+      }
+
+      // facilityGo.transform.position = new Vector3(-400, 160, 340); // in the road near spawn
     }
 
     private void BuildDestroyXDestructiblesObjective(GameObject parent, JObject objective, string name, string title, string guid,
