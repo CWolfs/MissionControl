@@ -38,21 +38,9 @@ namespace MissionControl.EncounterFactories {
         }
       }
 
-      CreateContractObjectives(encounterLayerGo);
-
       encounterLayerGo.AddComponent<PlotOverride>();
 
       return encounterLayer;
-    }
-
-    public static void CreateContractObjectives(GameObject encounterLayerGo) {
-      List<ContractObjectiveOverride> contractObjectives = MissionControl.Instance.CurrentContract.Override.contractObjectiveList;
-
-      foreach (ContractObjectiveOverride contractObjective in contractObjectives) {
-        ContractObjectiveGameLogic contractObjectiveGameLogic = encounterLayerGo.AddComponent<ContractObjectiveGameLogic>();
-        contractObjectiveGameLogic.encounterObjectGuid = contractObjective.GUID;
-        contractObjectiveGameLogic.description = contractObjective.description;
-      }
     }
   }
 }
