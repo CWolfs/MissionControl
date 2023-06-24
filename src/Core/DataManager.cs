@@ -68,7 +68,7 @@ namespace MissionControl {
       ModDirectory = modDirectory;
       LoadSettingsOverrides();
       LoadLanceOverrides();
-      LoadContractConfigOverrides();
+      LoadContractConfigOverrides(ModDirectory);
       LoadRuntimeCastData();
       LoadDialogueData();
       InjectMessageScopes();
@@ -115,7 +115,7 @@ namespace MissionControl {
         Main.LogDebug($"[DataManager.SubscribeDeferredDefs] ModTek v1 version so loading EncounterLayers manually.");
         LoadCustomContractTypesV1();
       } else {
-        Main.LogDebug($"[DataManager.SubscribeDeferredDefs] ModTek v2 version so EncounterLayers already loaded by ModTek.");
+        Main.LogDebug($"[DataManager.SubscribeDeferredDefs] ModTek v2+ version so EncounterLayers already loaded by ModTek.");
         LoadCustomContractTypes();
       }
 
@@ -127,9 +127,9 @@ namespace MissionControl {
              SingleOrDefault(assembly => assembly.GetName().Name == name);
     }
 
-    private void LoadContractConfigOverrides() {
-      string contractsDirectory = $"{ModDirectory}/config/Contracts/";
-      string flashpointsDirectory = $"{ModDirectory}/config/Flashpoints/";
+    private void LoadContractConfigOverrides(string dataDirectoryPath) {
+      string contractsDirectory = $"{dataDirectoryPath}/config/Contracts/";
+      string flashpointsDirectory = $"{dataDirectoryPath}/config/Flashpoints/";
 
       if (Directory.Exists(contractsDirectory)) {
         LoadContractConfigOverridesByDirectory(contractsDirectory);
@@ -180,13 +180,12 @@ namespace MissionControl {
             if (modDirectoryNames.Contains("mcData")) {
               Main.LogDebug($"[DataManager] Found mod with 'mcData' folder. Loading from mod '{Path.GetFileName(modDirectory)}'");
               LoadCustomContractTypeBuilds($"{modDirectory}/mcData/contractTypeBuilds/");
+              LoadContractConfigOverrides($"{modDirectory}/mcData");
             }
           }
         } else {
           // Deep
         }
-
-
       }
     }
 
