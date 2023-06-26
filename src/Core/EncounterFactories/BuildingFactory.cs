@@ -98,6 +98,7 @@ namespace MissionControl.EncounterFactories {
       // test for keeping the building when damaged
       destructibleObject.destructionParent = destructionParent;
       destructibleObject.damagedInstance = destructionParent.transform.Find($"{buildingGO.name}_{genericStaticDestructName}_split").GetComponent<PhysicsExplodeChildren>();
+      destructibleObject.embeddedFlimsyChildren = new List<DestructibleObject>();
 
       LODGroup lodGroup = buildingGO.AddComponent<LODGroup>();
       lodGroup.animateCrossFading = true;

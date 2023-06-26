@@ -26,6 +26,8 @@ public class MeshFracturer {
       splitPiece.AddComponent<Rigidbody>();
       DestructibleObject destructibleObject = splitPiece.AddComponent<DestructibleObject>();
       destructibleObject.dependentPersistentFX = new List<GameObject>();
+      destructibleObject.embeddedFlimsyChildren = new List<DestructibleObject>();
+
       splitPiece.AddComponent<PhysicsExplodeChild>();
 
       splitPieceGOs.Add(splitPiece);
