@@ -565,6 +565,10 @@ namespace MissionControl {
         if (IsLoadingFromSave) return false;
       }
 
+      // Allow for story contracts that manually override contracts - even if story settings are off
+      // Unsure if I want to allow this or not. Story missions are very strict for good reason
+      // if (IsAnyStoryContract() && Main.Settings.ActiveContractSettings.Enabled) return true;
+
       // Allow for story contracts that have overrides or player lances allowed
       if (IsAnyStoryContract() && (Main.Settings.EnableStoryOverrides || Main.Settings.EnableAdditionalPlayerMechsForStory)) return true;
 
