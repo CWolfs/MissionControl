@@ -177,8 +177,9 @@ namespace MissionControl.ContractTypeBuilders {
 
       GameObject customfacility = GameObject.Find("CustomFacility");
       if (customfacility == null) {
-        GameObject facilityGo = BuildingFactory.CreateFacility(MissionControl.Instance.EncounterLayerData.gameObject, "CustomFacility");
-        facilityGo.transform.position = new Vector3(-336, 175, 53); // in the region
+        Vector3 facilityPosition = new Vector3(-336, 175, 53);
+        GameObject facilityGo = BuildingFactory.CreateFacility("CustomFacility", facilityPosition);
+        // facilityGo.transform.position = new Vector3(-336, 175, 53); // in the region
       }
 
       // facilityGo.transform.position = new Vector3(-400, 160, 340); // in the road near spawn

@@ -11,6 +11,34 @@ using MissionControl.Utils;
 
 namespace MissionControl.EncounterFactories {
   public class BuildingFactory {
+    private static GameObject mcBuildingParent = null;
+    public static GameObject MCBuildingParent {
+      get {
+        if (mcBuildingParent == null) {
+          mcBuildingParent = new GameObject("MCBuildingParent");
+          mcBuildingParent.transform.SetParent(MissionControl.Instance.EncounterLayerData.transform);
+          mcBuildingParent.transform.position = Vector3.zero;
+        }
+
+        return mcBuildingParent;
+      }
+    }
+
+    private static GameObject mcGenericStaticDestruct = null;
+    public static GameObject MCGenericStaticDestruct {
+      get {
+        if (mcGenericStaticDestruct == null) {
+          mcGenericStaticDestruct = new GameObject("MCGenericStaticDestruct");
+          mcGenericStaticDestruct.transform.SetParent(MissionControl.Instance.EncounterLayerData.transform);
+          mcGenericStaticDestruct.transform.position = Vector3.zero;
+        }
+
+        return mcGenericStaticDestruct;
+      }
+    }
+
+    private static string genericStaticDestructName = "generic_static_destruct";
+
     private static GameObject CreateGameObject(GameObject parent, string name = null) {
       GameObject gameObject = new GameObject((name == null) ? "CustomName" : name);
       gameObject.transform.parent = parent.transform;
@@ -19,20 +47,21 @@ namespace MissionControl.EncounterFactories {
       return gameObject;
     }
 
-    public static GameObject CreateFacility(GameObject parent, string name) {
-      GameObject facilityGO = CreateGameObject(parent, name);
+    public static GameObject CreateFacility(string name, Vector3 position) {
+      GameObject facilityGO = CreateGameObject(BuildingFactory.MCBuildingParent, name);
 
-      CreateBuildingGroup(facilityGO, "BuildingGroup_MyTower");
+      CreateBuildingGroup(facilityGO, "BuildingGroup_MyTower", position);
 
       facilityGO.AddComponent<FacilityParent>();
+      facilityGO.transform.position = position;
 
       return facilityGO;
     }
 
-    private static GameObject CreateBuildingGroup(GameObject facilityGO, string name) {
+    private static GameObject CreateBuildingGroup(GameObject facilityGO, string name, Vector3 position) {
       GameObject buildingGroupGO = CreateGameObject(facilityGO, name);
 
-      CreateBuilding(buildingGroupGO, "Building_MyTower");
+      CreateBuilding(buildingGroupGO, "Building_MyTower", position);
 
       SnapToTerrain snapToTerrain = buildingGroupGO.AddComponent<SnapToTerrain>();
 
@@ -53,16 +82,22 @@ namespace MissionControl.EncounterFactories {
       return buildingGroupGO;
     }
 
-    private static GameObject CreateBuilding(GameObject buildingGroupGO, string name) {
+    private static GameObject CreateBuilding(GameObject buildingGroupGO, string name, Vector3 position) {
       GameObject buildingGO = CreateGameObject(buildingGroupGO, name);
-
       CreateColAndLODs(buildingGO);
+      GameObject destructionParent = CreateGenericStaticDestruct(buildingGO);
+      destructionParent.transform.position = position;
 
       DestructibleObject destructibleObject = buildingGO.AddComponent<DestructibleObject>();
       destructibleObject.destructType = DestructibleObject.DestructType.targetStruct;
       destructibleObject.structSize = DestructibleObject.DestructibleSize.large;
       destructibleObject.structMaterial = DestructibleObject.DestructibleMaterial.metal;
       destructibleObject.flimsyDestructType = FlimsyDestructType.largeMetal;
+      destructibleObject.dependentPersistentFX = new List<GameObject>();
+
+      // test for keeping the building when damaged
+      destructibleObject.destructionParent = destructionParent;
+      destructibleObject.damagedInstance = destructionParent.transform.Find($"{buildingGO.name}_{genericStaticDestructName}_split").GetComponent<PhysicsExplodeChildren>();
 
       LODGroup lodGroup = buildingGO.AddComponent<LODGroup>();
       lodGroup.animateCrossFading = true;
@@ -125,6 +160,43 @@ namespace MissionControl.EncounterFactories {
       // MeshFilter buildingLOD2MF = buildingLOD2GO.AddComponent<MeshFilter>();
       // MeshRenderer buildingLOD2MR = buildingLOD2GO.AddComponent<MeshRenderer>();
       // buildingLOD2MF.mesh = buildingLOD2Mesh;
+    }
+
+    private static GameObject CreateGenericStaticDestruct(GameObject buildingGO) {
+      GameObject destructWholeParent = CreateGameObject(MCGenericStaticDestruct, $"{buildingGO.name}_{genericStaticDestructName}_whole_destructionParent");
+      destructWholeParent.AddComponent<DestructionNotification>();
+
+      // VFX
+      GameObject destructVFXParent = CreateGameObject(destructWholeParent, $"{buildingGO.name}_{genericStaticDestructName}_whole_vfx_Parent");
+      destructVFXParent.layer = 13;
+
+      // Structure Flimsy Parent
+      GameObject destructFlimsyParent = CreateGameObject(destructWholeParent, $"{buildingGO.name}_{genericStaticDestructName}_whole_structureFlimsyParent");
+      destructFlimsyParent.SetActive(false);
+
+      // Destroyed Decal Parent
+      GameObject destructDecalParent = CreateGameObject(destructWholeParent, $"{buildingGO.name}_{genericStaticDestructName}_whole_destroyedDecalParent");
+      destructDecalParent.SetActive(false);
+
+      // Split
+      GameObject destructSplit = CreateGameObject(destructWholeParent, $"{buildingGO.name}_{genericStaticDestructName}_split");
+      destructSplit.layer = 8;
+
+      List<GameObject> splitPieceGOs = MeshFracturer.Fracture(buildingGO, 10);
+      foreach (GameObject splitPiece in splitPieceGOs) {
+        splitPiece.transform.SetParent(destructSplit.transform);
+        splitPiece.layer = 8;
+      }
+
+      destructSplit.AddComponent<PhysicsExplodeChildren>();
+      destructSplit.SetActive(false);
+
+      // Shell
+      GameObject destructShell = CreateGameObject(destructWholeParent, $"{buildingGO.name}_{genericStaticDestructName}_shell");
+      destructShell.layer = 8;
+      destructShell.SetActive(false);
+
+      return destructWholeParent;
     }
   }
 }
