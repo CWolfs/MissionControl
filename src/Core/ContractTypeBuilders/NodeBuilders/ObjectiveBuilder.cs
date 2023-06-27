@@ -173,8 +173,9 @@ namespace MissionControl.ContractTypeBuilders {
       // Test
       GameObject customfacility = GameObject.Find("CustomFacility");
       if (customfacility == null) {
-        Vector3 facilityPosition = new Vector3(-336, 175, 53);
-        GameObject facilityGo = BuildingFactory.CreateFacility("CustomFacility", facilityPosition);
+        Vector3 facilityPosition = new Vector3(-336, 175, 23);
+        BuildingBuilder buildingBuilder = new BuildingBuilder();
+        GameObject facilityGo = buildingBuilder.CreateFacility("CustomFacility", facilityPosition);
       }
     }
 

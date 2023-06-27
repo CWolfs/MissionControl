@@ -8,6 +8,7 @@ public class MeshFracturer {
     MissionControl.Main.Logger.Log("[CreateGenericStaticDestruct] lod0Mesh " + lod0Mesh.name);
 
     List<GameObject> splitPieceGOs = new List<GameObject>();
+
     List<Mesh> meshPieces = Fracture(lod0Mesh, pieces);
 
     Material placeholderMaterial = new Material(Shader.Find("BattleTech Standard"));
@@ -20,7 +21,11 @@ public class MeshFracturer {
       mf.mesh = mesh;
 
       MeshRenderer mr = splitPiece.AddComponent<MeshRenderer>();
-      mr.sharedMaterial = placeholderMaterial;
+      Material[] materials = new Material[mesh.subMeshCount];
+      for (int j = 0; j < mesh.subMeshCount; j++) {
+        materials[j] = placeholderMaterial;
+      }
+      mr.sharedMaterials = materials;
 
       splitPiece.AddComponent<BoxCollider>();
       splitPiece.AddComponent<Rigidbody>();
@@ -37,10 +42,17 @@ public class MeshFracturer {
   }
 
   public static List<Mesh> Fracture(Mesh mesh, int pieces) {
+    List<Mesh> fracturedPieces = new List<Mesh>();
+
+    if (pieces == 1) {
+      Mesh copiedMesh = Mesh.Instantiate(mesh);
+      fracturedPieces.Add(copiedMesh);
+      return fracturedPieces;
+    }
+
     Vector3[] vertices = mesh.vertices;
     int[] triangles = mesh.triangles;
     Vector2[] uvs = mesh.uv;
-    List<Mesh> fracturedPieces = new List<Mesh>();
 
     // Each face of a mesh consists of 3 vertices forming a triangle
     int numberOfFaces = triangles.Length / 3;
