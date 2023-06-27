@@ -1,5 +1,6 @@
 using UnityEngine;
 
+using System.Linq;
 using System.Collections.Generic;
 
 using BattleTech;
@@ -42,6 +43,7 @@ namespace MissionControl.EncounterFactories {
     // TODO: Make this cache at custom contract type level
     private Mesh[] allGameMeshes;
     private Material[] allGameMaterials;
+    private DamageAssetGroup[] allDamageAssetGroups;
 
     private GameObject facilityGO;
     private GameObject buildingGroupGO;
@@ -52,9 +54,14 @@ namespace MissionControl.EncounterFactories {
     private Mesh buildingLOD1Mesh = null;
     private Mesh buildingLOD2Mesh = null;
 
+    // private GameObject destructDecalParent;
+    private GameObject destructSplit;
+    private GameObject destructShell;
+
     public BuildingBuilder() {
       allGameMeshes = Resources.FindObjectsOfTypeAll<Mesh>();
       allGameMaterials = Resources.FindObjectsOfTypeAll<Material>();
+      allDamageAssetGroups = Resources.FindObjectsOfTypeAll<DamageAssetGroup>();
     }
 
     private GameObject CreateGameObject(GameObject parent, string name = null) {
@@ -102,9 +109,10 @@ namespace MissionControl.EncounterFactories {
 
     private GameObject CreateBuilding(GameObject buildingGroupGO, string name, Vector3 position) {
       buildingGO = CreateGameObject(buildingGroupGO, name);
+      buildingGO.SetActive(false);
+
       CreateColAndLODs(buildingGO);
-      GameObject destructionParent = CreateGenericStaticDestruct(buildingGO);
-      destructionParent.transform.position = position;
+      CreateGenericStaticDestruct(buildingGO);
 
       DestructibleObject destructibleObject = buildingGO.AddComponent<DestructibleObject>();
       destructibleObject.destructType = DestructibleObject.DestructType.targetStruct;
@@ -114,12 +122,15 @@ namespace MissionControl.EncounterFactories {
       destructibleObject.dependentPersistentFX = new List<GameObject>();
 
       // test for keeping the building when damaged
-      destructibleObject.destructionParent = destructionParent;
-      destructibleObject.damagedInstance = destructionParent.transform.Find($"{buildingGO.name}_{genericStaticDestructName}_split").GetComponent<PhysicsExplodeChildren>();
+      destructibleObject.damagedInstance = destructSplit.GetComponent<PhysicsExplodeChildren>();
       destructibleObject.embeddedFlimsyChildren = new List<DestructibleObject>();
 
+      Main.Logger.Log("[CreateBuilding] allDamageAssetGroups count: " + allDamageAssetGroups.Length);
+      destructibleObject.damageAssetGroup = allDamageAssetGroups[Random.Range(0, allDamageAssetGroups.Length)];
+      destructibleObject.decalObjects = new List<GameObject>();
+      destructibleObject.decalSpawners = new List<BTDecalSpawner>();
+
       // TODO: Set these when read
-      //  - destructibleObject.destroyedDecalParent
       //  - destructibleObject.vfxParent
       //  - destructibleObject.shellInstance
 
@@ -143,6 +154,18 @@ namespace MissionControl.EncounterFactories {
       structureGroup.structureGroupRenderers = buildingGO.GetComponentsInChildren<MeshRenderer>();
       structureGroup.destructibleObject = destructibleObject;
       structureGroup.destructionParent = buildingGO;
+
+      buildingGO.SetActive(true);
+
+      destructibleObject.destructionParent.transform.SetParent(MCGenericStaticDestruct.transform, true);
+      destructibleObject.destructionParent.transform.position = position;
+
+      destructSplit.transform.SetParent(destructibleObject.destructionParent.transform, false);
+      destructSplit.transform.localPosition = Vector3.zero;
+      destructSplit.transform.localEulerAngles = Vector3.zero;
+      destructShell.transform.SetParent(destructibleObject.destructionParent.transform, false);
+      destructShell.transform.localPosition = Vector3.zero;
+      destructShell.transform.localEulerAngles = Vector3.zero;
 
       return buildingGO;
     }
@@ -186,24 +209,9 @@ namespace MissionControl.EncounterFactories {
       // buildingLOD2MF.mesh = buildingLOD2Mesh;
     }
 
-    private GameObject CreateGenericStaticDestruct(GameObject buildingGO) {
-      GameObject destructWholeParent = CreateGameObject(MCGenericStaticDestruct, $"{buildingGO.name}_{genericStaticDestructName}_whole_destructionParent");
-      destructWholeParent.AddComponent<DestructionNotification>();
-
-      // VFX
-      GameObject destructVFXParent = CreateGameObject(destructWholeParent, $"{buildingGO.name}_{genericStaticDestructName}_whole_vfx_Parent");
-      destructVFXParent.layer = 13;
-
-      // Structure Flimsy Parent
-      GameObject destructFlimsyParent = CreateGameObject(destructWholeParent, $"{buildingGO.name}_{genericStaticDestructName}_whole_structureFlimsyParent");
-      destructFlimsyParent.SetActive(false);
-
-      // Destroyed Decal Parent
-      GameObject destructDecalParent = CreateGameObject(destructWholeParent, $"{buildingGO.name}_{genericStaticDestructName}_whole_destroyedDecalParent");
-      destructDecalParent.SetActive(false);
-
+    private void CreateGenericStaticDestruct(GameObject buildingGO) {
       // Split
-      GameObject destructSplit = CreateGameObject(destructWholeParent, $"{buildingGO.name}_{genericStaticDestructName}_split");
+      destructSplit = CreateGameObject(buildingGO, $"{buildingGO.name}_{genericStaticDestructName}_split");
       destructSplit.layer = 8;
 
       List<GameObject> splitPieceGOs = MeshFracturer.Fracture(buildingGO, 1);
@@ -225,11 +233,9 @@ namespace MissionControl.EncounterFactories {
       destructSplit.SetActive(false);
 
       // Shell
-      GameObject destructShell = CreateGameObject(destructWholeParent, $"{buildingGO.name}_{genericStaticDestructName}_shell");
+      destructShell = CreateGameObject(buildingGO, $"{buildingGO.name}_{genericStaticDestructName}_shell");
       destructShell.layer = 8;
       destructShell.SetActive(false);
-
-      return destructWholeParent;
     }
 
     private Material[] BuildMaterialsForRenderer(Mesh mesh, List<string> materialNames, Material placeholderMaterial) {

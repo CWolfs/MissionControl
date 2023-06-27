@@ -28,7 +28,10 @@ public class MeshFracturer {
       mr.sharedMaterials = materials;
 
       splitPiece.AddComponent<BoxCollider>();
-      splitPiece.AddComponent<Rigidbody>();
+
+      Rigidbody rb = splitPiece.AddComponent<Rigidbody>();
+      rb.mass = 5000; // seems the main chunks are around this mass in vanilla
+
       DestructibleObject destructibleObject = splitPiece.AddComponent<DestructibleObject>();
       destructibleObject.dependentPersistentFX = new List<GameObject>();
       destructibleObject.embeddedFlimsyChildren = new List<DestructibleObject>();
