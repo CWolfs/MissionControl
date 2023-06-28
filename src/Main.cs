@@ -1,3 +1,5 @@
+using UnityEngine;
+
 using System;
 using System.IO;
 using System.Net;
@@ -15,6 +17,7 @@ using Newtonsoft.Json.Linq;
 
 using System.Reflection;
 
+using MissionControl.Data;
 using MissionControl.Config;
 using MissionControl.Utils;
 
@@ -24,6 +27,8 @@ namespace MissionControl {
     public static Config.Settings Settings { get; private set; }
     public static Assembly MissionControlAssembly { get; set; }
     public static string Path { get; private set; }
+
+    public static AssetBundle CommonAssetsBundle { get; set; }
 
     public static void InitLogger(string modDirectory) {
       Dictionary<string, LogLevel> logLevels = new Dictionary<string, LogLevel> {
@@ -42,11 +47,17 @@ namespace MissionControl {
       if (Main.Settings.DebugMode) Main.Logger.LogWarning(message);
     }
 
+    public static void LoadAssetBundles() {
+      CommonAssetsBundle = AssetBundle.LoadFromFile($"{Main.Path}/bundles/common-assets-bundle");
+      AssetBundleLoader.AssetBundles.Add("common-assets-bundle", CommonAssetsBundle);
+    }
+
     // Entry point into the mod, specified in the `mod.json`
     public static void Init(string modDirectory, string modSettings) {
       try {
         InitLogger(modDirectory);
         LoadSettings(modDirectory);
+        LoadAssetBundles();
         LoadData(modDirectory);
         VersionCheck();
       } catch (Exception e) {

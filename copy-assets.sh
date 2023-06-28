@@ -7,6 +7,8 @@ rm -rf 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionCon
 rm -rf 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl/lances'
 rm -rf 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl/overrides'
 rm -rf 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl/sprites'
+rm -rf 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl/bundles'
+rm -rf 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl/props'
 
 cp -r 'cast' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
 cp -r 'config' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
@@ -15,6 +17,8 @@ cp -r 'dialogue/' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods
 cp -r 'lances' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
 cp -r 'overrides/' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
 cp -r 'sprites/' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
+cp -r 'bundles/' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
+cp -r 'props/' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
 cp -r 'mod.json' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
 cp -r 'settings.json' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
 cp -r 'src/bin/Debug/net471/MissionControl.dll' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'

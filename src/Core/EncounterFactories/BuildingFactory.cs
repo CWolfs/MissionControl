@@ -9,6 +9,7 @@ using BattleTech.Rendering.UI;
 using BattleTech.Framework;
 
 using MissionControl.Utils;
+using MissionControl.Data;
 
 namespace MissionControl.EncounterFactories {
   public class BuildingBuilder {
@@ -44,6 +45,7 @@ namespace MissionControl.EncounterFactories {
     private Mesh[] allGameMeshes;
     private Material[] allGameMaterials;
     private DamageAssetGroup[] allDamageAssetGroups;
+    private Dictionary<string, Material> matLookup;
 
     private GameObject facilityGO;
     private GameObject buildingGroupGO;
@@ -62,6 +64,11 @@ namespace MissionControl.EncounterFactories {
       allGameMeshes = Resources.FindObjectsOfTypeAll<Mesh>();
       allGameMaterials = Resources.FindObjectsOfTypeAll<Material>();
       allDamageAssetGroups = Resources.FindObjectsOfTypeAll<DamageAssetGroup>();
+
+      matLookup = new Dictionary<string, Material>();
+      foreach (Material mat in allGameMaterials) {
+        matLookup[mat.name] = mat;
+      }
     }
 
     private GameObject CreateGameObject(GameObject parent, string name = null) {
@@ -121,17 +128,16 @@ namespace MissionControl.EncounterFactories {
       destructibleObject.flimsyDestructType = FlimsyDestructType.largeMetal;
       destructibleObject.dependentPersistentFX = new List<GameObject>();
 
-      // test for keeping the building when damaged
       destructibleObject.damagedInstance = destructSplit.GetComponent<PhysicsExplodeChildren>();
       destructibleObject.embeddedFlimsyChildren = new List<DestructibleObject>();
 
-      Main.Logger.Log("[CreateBuilding] allDamageAssetGroups count: " + allDamageAssetGroups.Length);
+      destructibleObject.shellInstance = destructShell;
+
       destructibleObject.damageAssetGroup = allDamageAssetGroups[Random.Range(0, allDamageAssetGroups.Length)];
       destructibleObject.decalObjects = new List<GameObject>();
       destructibleObject.decalSpawners = new List<BTDecalSpawner>();
 
       // TODO: Set these when read
-      //  - destructibleObject.vfxParent
       //  - destructibleObject.shellInstance
 
       LODGroup lodGroup = buildingGO.AddComponent<LODGroup>();
@@ -166,6 +172,8 @@ namespace MissionControl.EncounterFactories {
       destructShell.transform.SetParent(destructibleObject.destructionParent.transform, false);
       destructShell.transform.localPosition = Vector3.zero;
       destructShell.transform.localEulerAngles = Vector3.zero;
+
+      RandomiseShell(destructibleObject);
 
       return buildingGO;
     }
@@ -236,14 +244,66 @@ namespace MissionControl.EncounterFactories {
       destructShell = CreateGameObject(buildingGO, $"{buildingGO.name}_{genericStaticDestructName}_shell");
       destructShell.layer = 8;
       destructShell.SetActive(false);
+
+      string shellPrefabName = "small_civilian_building_shell";
+      GameObject randomShellPrefab = AssetBundleLoader.GetAsset<GameObject>("common-assets-bundle", shellPrefabName);
+      if (randomShellPrefab == null) Main.Logger.LogError($"[CreateGenericStaticDestruct] Shell prefab '{shellPrefabName}' is null");
+
+      shellPrefabName = "small_civilian_building_walls_shell";
+      GameObject wallShellPrefab = AssetBundleLoader.GetAsset<GameObject>("common-assets-bundle", shellPrefabName);
+      if (wallShellPrefab == null) Main.Logger.LogError($"[CreateGenericStaticDestruct] Shell prefab '{shellPrefabName}' is null");
+
+      GameObject randomShell1 = GameObject.Instantiate(randomShellPrefab, Vector3.zero, new Quaternion(), destructShell.transform);
+      randomShell1.name = randomShell1.name.Replace("(Clone)", "");
+
+      GameObject randomShell2 = GameObject.Instantiate(randomShellPrefab, Vector3.zero, new Quaternion(), destructShell.transform);
+      randomShell2.name = randomShell2.name.Replace("(Clone)", "");
+
+      GameObject randomShell3 = GameObject.Instantiate(randomShellPrefab, Vector3.zero, new Quaternion(), destructShell.transform);
+      randomShell3.name = randomShell3.name.Replace("(Clone)", "");
+
+      GameObject wallShell = GameObject.Instantiate(wallShellPrefab, Vector3.zero, new Quaternion(), destructShell.transform);
+      wallShell.name = wallShell.name.Replace("(Clone)", "");
+
+      SetShellMaterials(randomShell1);
+      SetShellMaterials(randomShell2);
+      SetShellMaterials(randomShell3);
+      SetShellMaterials(wallShell);
+    }
+
+    private void RandomiseShell(DestructibleObject linkedDestructibleObject) {
+      float x = linkedDestructibleObject.footprint.x;
+      float z = linkedDestructibleObject.footprint.z;
+
+      foreach (Transform t in destructShell.transform) {
+        t.localPosition = new Vector3(Random.Range(-x, x), 3, Random.Range(-z, z));
+
+        if (!t.gameObject.name.Contains("wall")) {
+          t.rotation = Random.rotation;
+
+          float scale = Random.Range(0.5f, 1.5f);
+          t.localScale = new Vector3(scale, 1, scale);
+        }
+      }
+    }
+
+    private void SetShellMaterials(GameObject shell) {
+      // Setup materials
+      Mesh mesh = shell.GetComponent<MeshFilter>().mesh;
+      MeshRenderer mr = shell.GetComponent<MeshRenderer>();
+
+      List<string> shellMaterialNames = new List<string>() { "envMatStct_darkMetal_generic", "envMatStct_mediumMetal_generic", "envMatStct_lightMetal_generic", "envMatStct_asphalt_generic" };
+      Material[] shellMaterials = BuildMaterialsForRenderer(mesh, shellMaterialNames, null);
+
+      Material[] shellMaterialToUse = new Material[mesh.subMeshCount];
+      for (int i = 0; i < mesh.subMeshCount; i++) {
+        shellMaterialToUse[i] = shellMaterials[Random.Range(0, shellMaterials.Length)];
+      }
+
+      mr.materials = shellMaterialToUse;
     }
 
     private Material[] BuildMaterialsForRenderer(Mesh mesh, List<string> materialNames, Material placeholderMaterial) {
-      Dictionary<string, Material> matLookup = new Dictionary<string, Material>();
-      foreach (Material mat in allGameMaterials) {
-        matLookup[mat.name] = mat;
-      }
-
       Material[] materials = new Material[mesh.subMeshCount];
       for (int i = 0; i < mesh.subMeshCount; i++) {
         if (i >= materialNames.Count) {
