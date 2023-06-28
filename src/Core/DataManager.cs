@@ -53,6 +53,10 @@ namespace MissionControl {
 
     private Dictionary<string, Dictionary<string, List<string>>> Dialogue = new Dictionary<string, Dictionary<string, List<string>>>();
 
+    // Props
+    private Dictionary<string, PropModelDef> ModelDefs = new Dictionary<string, PropModelDef>();
+    private Dictionary<string, PropBuildingDef> BuildingDefs = new Dictionary<string, PropBuildingDef>();
+
     // Data backup
     private Dictionary<string, List<LanceOverride>> ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
     private List<ObjectiveOverride> ContractOverrideObjectiveOverrideBackup = new List<ObjectiveOverride>();
@@ -70,7 +74,7 @@ namespace MissionControl {
       LoadLanceOverrides();
       LoadContractConfigOverrides(ModDirectory);
       LoadRuntimeCastData();
-      LoadDialogueData();
+      LoadPropData($"{ModDirectory}/props");
       InjectMessageScopes();
 
       ModTekVersion = GetAssemblyByName("ModTek").GetName().Version.ToString();
@@ -262,6 +266,66 @@ namespace MissionControl {
       }
 
       return storyContractTypeNames;
+    }
+
+    public void LoadPropData(string propsPath) {
+      Main.Logger.Log("[LoadPropData] Starting");
+
+      if (Directory.Exists($"{propsPath}/models")) {
+        LoadPropModelDefs($"{propsPath}/models");
+      }
+
+      if (Directory.Exists($"{propsPath}/buildings")) {
+        LoadPropBuildingDefs($"{propsPath}/buildings");
+      }
+    }
+
+    private void LoadPropModelDefs(string modelsPath) {
+      foreach (string modelDirectory in Directory.GetDirectories(modelsPath)) {
+        // Main.Logger.Log("[DataManager.LoadPropModelData] Loading model directory data " + modelDirectory);
+        string modelSource = File.ReadAllText($"{modelDirectory}/model.json");
+        PropModelDef propModelDef = JsonConvert.DeserializeObject<PropModelDef>(modelSource, serialiserSettings);
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef: " + propModelDef.Key);
+
+        if (File.Exists($"{modelDirectory}/bundle")) {
+          Main.Logger.Log("[DataManager.LoadPropModelData] Bundle exists for  " + propModelDef.Key);
+          propModelDef.BundlePath = $"{modelDirectory}/bundle";
+        }
+
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef MeshName: " + propModelDef.MeshName);
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef Materials: " + propModelDef.Materials.Count);
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef Materials[0].Name: " + propModelDef.Materials[0].Name);
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef Materials[0].Shader: " + propModelDef.Materials[0].Shader);
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef Materials[0].Texture: " + propModelDef.Materials[0].Texture);
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef IsMeshInBundle: " + propModelDef.IsMeshInBundle);
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef HasCustomSplits: " + propModelDef.HasCustomSplits);
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef HasCustomShell: " + propModelDef.HasCustomShell);
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef BundlePath: " + propModelDef.BundlePath);
+
+        if (!ModelDefs.ContainsKey(propModelDef.Key)) {
+          ModelDefs.Add(propModelDef.Key, propModelDef);
+        } else {
+          Main.Logger.Log($"[DataManager.LoadPropModelDefs] A PropModelDef of key '{propModelDef.Key}' already exists. Model keys must be unique.");
+        }
+      }
+    }
+
+    private void LoadPropBuildingDefs(string buildingsPath) {
+      foreach (string buildingDefPaths in Directory.GetFiles(buildingsPath, "*.json", SearchOption.AllDirectories)) {
+        // Main.Logger.Log("[DataManager.LoadPropModelData] Loading model directory data " + modelDirectory);
+        string buildingSource = File.ReadAllText(buildingDefPaths);
+        PropBuildingDef propBuildingDef = JsonConvert.DeserializeObject<PropBuildingDef>(buildingSource, serialiserSettings);
+        Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded LoadPropBuildingDefs: " + propBuildingDef.Key);
+
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropBuildingDef MainModelKey: " + propBuildingDef.MainModelKey);
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropBuildingDef FlimseyModes Count: " + propBuildingDef.FlimsyModels.Count);
+
+        if (!BuildingDefs.ContainsKey(propBuildingDef.Key)) {
+          BuildingDefs.Add(propBuildingDef.Key, propBuildingDef);
+        } else {
+          Main.Logger.Log($"[DataManager.LoadPropModelDefs] A PropBuildingDef of key '{propBuildingDef.Key}' already exists. Building keys must be unique.");
+        }
+      }
     }
 
     // *********************
