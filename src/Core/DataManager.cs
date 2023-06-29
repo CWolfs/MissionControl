@@ -54,8 +54,8 @@ namespace MissionControl {
     private Dictionary<string, Dictionary<string, List<string>>> Dialogue = new Dictionary<string, Dictionary<string, List<string>>>();
 
     // Props
-    private Dictionary<string, PropModelDef> ModelDefs = new Dictionary<string, PropModelDef>();
-    private Dictionary<string, PropBuildingDef> BuildingDefs = new Dictionary<string, PropBuildingDef>();
+    public Dictionary<string, PropModelDef> ModelDefs = new Dictionary<string, PropModelDef>();
+    public Dictionary<string, PropBuildingDef> BuildingDefs = new Dictionary<string, PropBuildingDef>();
 
     // Data backup
     private Dictionary<string, List<LanceOverride>> ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
@@ -294,9 +294,14 @@ namespace MissionControl {
 
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef MeshName: " + propModelDef.MeshName);
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef Materials: " + propModelDef.Materials.Count);
-        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef Materials[0].Name: " + propModelDef.Materials[0].Name);
-        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef Materials[0].Shader: " + propModelDef.Materials[0].Shader);
-        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef Materials[0].Texture: " + propModelDef.Materials[0].Texture);
+
+        for (int i = 0; i < propModelDef.Materials.Count; i++) {
+          PropMaterialDef propMatDef = propModelDef.Materials[i];
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef Materials[{i}].Name: " + propMatDef.Name);
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef Materials[{i}].Shader: " + propMatDef.Shader);
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef Materials[{i}].Texture: " + propMatDef.Texture);
+        }
+
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef IsMeshInBundle: " + propModelDef.IsMeshInBundle);
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef HasCustomSplits: " + propModelDef.HasCustomSplits);
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef HasCustomShell: " + propModelDef.HasCustomShell);
@@ -318,7 +323,7 @@ namespace MissionControl {
         Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded LoadPropBuildingDefs: " + propBuildingDef.Key);
 
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropBuildingDef MainModelKey: " + propBuildingDef.MainModelKey);
-        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropBuildingDef FlimseyModes Count: " + propBuildingDef.FlimsyModels.Count);
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropBuildingDef FlimsyModels Count: " + propBuildingDef.FlimsyModels.Count);
 
         if (!BuildingDefs.ContainsKey(propBuildingDef.Key)) {
           BuildingDefs.Add(propBuildingDef.Key, propBuildingDef);

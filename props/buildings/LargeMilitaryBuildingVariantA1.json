@@ -1,4 +1,5 @@
 {
   "Key": "LargeMilitaryBuildingVariantA1",
+  "BuildingDefID": "buildingdef_Military_Large",
   "MainModel": "LargeMilitaryBuildingA"
 }
