@@ -184,11 +184,28 @@ namespace MissionControl.EncounterFactories {
       return buildingGO;
     }
 
+    private void LoadAssetBundle(PropModelDef propModelDef) {
+      if (!AssetBundleLoader.HasAlreadyLoadedBundle(propModelDef.BundlePath)) {
+        AssetBundleLoader.LoadPropBundle(propModelDef.BundlePath);
+      }
+    }
+
     private void CreateColAndLODs(GameObject buildingGO) {
       PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
 
       if (propModelDef.IsMeshInBundle) {
-        // TODO: Find mesh in bundle
+        LoadAssetBundle(propModelDef);
+
+        buildingCOLMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_COL");
+        buildingLOD0Mesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_LOD0");
+        buildingLOD1Mesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_LOD1");
+        buildingLOD2Mesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_LOD2");
+
+        if (buildingCOLMesh == null) {
+          Main.Logger.LogError("[BuildingFactory.CreateColAndLODs] buildingCOLMesh is null");
+        } else {
+          Main.Logger.Log("[BuildingFactory.CreateColAndLODs] buildingCOLMesh is " + buildingCOLMesh.name);
+        }
       } else {
         foreach (Mesh mesh in allGameMeshes) {
           if (mesh.name == $"{propModelDef.MeshName}_COL") buildingCOLMesh = mesh;
@@ -236,7 +253,6 @@ namespace MissionControl.EncounterFactories {
         // TODO: The fracture UV mapping and material assignment need more work. Fewer mats should be assign per split (e.g. in vanilla a building with 7 mats might have splits with 2-3 mats depending on how they were fractured )
         // TODO: So we don't need to assign all 7 original ones to each split. Probably need a 3rd party lib or definitely a better script for fracturing.
         // TODO: Having issues making good runtime fractures - just use a copy of LOD0 for now
-        // List<string> materialNames = new List<string>() { "envMatStct_darkMetal_generic", "envMatStct_glassA_decals_generic", "envMatStct_mediumMetal_generic", "envMatStct_lightMetal_generic", "envMatStct_decals_generic", "envMatStct_lights_decals_generic", "envMatStct_asphalt_generic" };
         Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, PropBuildingDef.GetPropModelDef().Materials, placeholderMaterial);
         splitPiece.GetComponent<MeshRenderer>().materials = materials;
       }

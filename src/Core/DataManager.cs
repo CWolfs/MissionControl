@@ -287,9 +287,11 @@ namespace MissionControl {
         PropModelDef propModelDef = JsonConvert.DeserializeObject<PropModelDef>(modelSource, serialiserSettings);
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef: " + propModelDef.Key);
 
-        if (File.Exists($"{modelDirectory}/bundle")) {
+        // Get bundle path
+        string bundleFile = Directory.GetFiles(modelDirectory, "*-bundle").FirstOrDefault();
+        if (bundleFile != null) {
           Main.Logger.Log("[DataManager.LoadPropModelData] Bundle exists for  " + propModelDef.Key);
-          propModelDef.BundlePath = $"{modelDirectory}/bundle";
+          propModelDef.BundlePath = bundleFile;
         }
 
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef MeshName: " + propModelDef.MeshName);
@@ -306,6 +308,10 @@ namespace MissionControl {
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef HasCustomSplits: " + propModelDef.HasCustomSplits);
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef HasCustomShell: " + propModelDef.HasCustomShell);
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef BundlePath: " + propModelDef.BundlePath);
+
+        if ((propModelDef.IsMeshInBundle || propModelDef.HasCustomShell || propModelDef.HasCustomSplits) && propModelDef.BundlePath == null) {
+          Main.Logger.LogError($"[DataManager.LoadPropModelDefs] PropModelDef '{propModelDef.Key}' has settings that require a custom bundle but no custom bundle was provided or successfully loaded");
+        }
 
         if (!ModelDefs.ContainsKey(propModelDef.Key)) {
           ModelDefs.Add(propModelDef.Key, propModelDef);
@@ -332,7 +338,7 @@ namespace MissionControl {
         if (!BuildingDefs.ContainsKey(propBuildingDef.Key)) {
           BuildingDefs.Add(propBuildingDef.Key, propBuildingDef);
         } else {
-          Main.Logger.Log($"[DataManager.LoadPropModelDefs] A PropBuildingDef of key '{propBuildingDef.Key}' already exists. Building keys must be unique.");
+          Main.Logger.Log($"[DataManager.LoadPropBuildingDefs] A PropBuildingDef of key '{propBuildingDef.Key}' already exists. Building keys must be unique.");
         }
       }
     }
