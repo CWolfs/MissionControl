@@ -22,6 +22,9 @@ namespace MissionControl.Data {
     [JsonProperty("HasCustomShell")]
     public bool HasCustomShell { get; set; } = false;
 
+    [JsonProperty("CustomShellMaterials")]
+    public List<PropMaterialDef> CustomShellMaterials { get; set; } = new List<PropMaterialDef>();
+
     public string BundlePath { get; set; }
   }
 }

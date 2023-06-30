@@ -307,6 +307,16 @@ namespace MissionControl {
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef IsMeshInBundle: " + propModelDef.IsMeshInBundle);
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef HasCustomSplits: " + propModelDef.HasCustomSplits);
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef HasCustomShell: " + propModelDef.HasCustomShell);
+
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef Materials: " + propModelDef.Materials.Count);
+
+        for (int i = 0; i < propModelDef.CustomShellMaterials.Count; i++) {
+          PropMaterialDef propMatDef = propModelDef.CustomShellMaterials[i];
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef CustomShellMaterials[{i}].Name: " + propMatDef.Name);
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef CustomShellMaterials[{i}].Shader: " + propMatDef.Shader);
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef CustomShellMaterials[{i}].Texture: " + propMatDef.Texture);
+        }
+
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef BundlePath: " + propModelDef.BundlePath);
 
         if ((propModelDef.IsMeshInBundle || propModelDef.HasCustomShell || propModelDef.HasCustomSplits) && propModelDef.BundlePath == null) {

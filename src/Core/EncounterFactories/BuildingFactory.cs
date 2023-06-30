@@ -270,6 +270,8 @@ namespace MissionControl.EncounterFactories {
       destructShell.SetActive(false);
 
       if (propModelDef.HasCustomShell) {
+        Main.Logger.Log("[BuildingFactory.CreateGenericStaticDestruct] CustomShell has been set for " + PropBuildingDef.Key);
+
         // Load from bundle
         LoadAssetBundle(propModelDef);
 
@@ -283,14 +285,21 @@ namespace MissionControl.EncounterFactories {
         MeshFilter mf = shellGO.AddComponent<MeshFilter>();
         mf.sharedMesh = shellMesh;
 
-        shellGO.AddComponent<MeshRenderer>();
+        MeshRenderer mr = shellGO.AddComponent<MeshRenderer>();
 
         if (shellCOLMesh != null) {
           MeshCollider shellCollider = shellGO.AddComponent<MeshCollider>();
           shellCollider.sharedMesh = shellCOLMesh;
         }
 
-        SetShellMaterials(shellGO);
+        if (propModelDef.CustomShellMaterials.Count > 0) {
+          Main.Logger.Log("[BuildingFactory.CreateGenericStaticDestruct] Shell Materials are specified");
+
+          Material[] materials = BuildMaterialsForRenderer(shellMesh, propModelDef.CustomShellMaterials, placeholderMaterial);
+          mr.materials = materials;
+        } else {
+          SetShellMaterials(shellGO);
+        }
       } else {
         // Dynamically create basic shell debris
         string shellPrefabName = "small_civilian_building_shell";
