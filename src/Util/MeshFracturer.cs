@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class MeshFracturer {
   public static List<GameObject> Fracture(GameObject parentDestructibleGO, int pieces) {
     Mesh lod0Mesh = parentDestructibleGO.FindRecursive($"{parentDestructibleGO.name}_LOD0").GetComponent<MeshFilter>().sharedMesh;
-    MissionControl.Main.Logger.Log("[CreateGenericStaticDestruct] lod0Mesh " + lod0Mesh.name);
+    MissionControl.Main.Logger.Log("[Fracture] lod0Mesh " + lod0Mesh.name);
 
     List<GameObject> splitPieceGOs = new List<GameObject>();
 

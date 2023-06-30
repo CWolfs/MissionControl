@@ -1,0 +1,9 @@
+{
+  "Key": "AirconUnitA",
+  "Mesh": "acUnit1",
+  "Materials": [
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    }
+  ]
+}

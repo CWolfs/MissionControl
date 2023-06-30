@@ -130,6 +130,7 @@ namespace MissionControl.EncounterFactories {
       buildingGO.SetActive(false);
 
       CreateColAndLODs(buildingGO);
+      CreateFlimsies(buildingGO);
       CreateGenericStaticDestruct(buildingGO);
 
       DestructibleObject destructibleObject = buildingGO.AddComponent<DestructibleObject>();
@@ -210,6 +211,16 @@ namespace MissionControl.EncounterFactories {
         }
       } else {
         foreach (Mesh mesh in allGameMeshes) {
+          // If a flimsy base (e.g. no COL, LOD0, LOD1, LOD2) then set them all to the flimsy mesh
+          if (mesh.name == propModelDef.MeshName) {
+            Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] Found a flimsy base for '{propModelDef.Key}' so using that for COL, LOD0, LOD1, LOD2");
+            buildingCOLMesh = mesh;
+            buildingLOD0Mesh = mesh;
+            buildingLOD1Mesh = mesh;
+            buildingLOD2Mesh = mesh;
+            break;
+          }
+
           if (mesh.name == $"{propModelDef.MeshName}_COL") buildingCOLMesh = mesh;
           if (mesh.name == $"{propModelDef.MeshName}_LOD0") buildingLOD0Mesh = mesh;
           if (mesh.name == $"{propModelDef.MeshName}_LOD1") buildingLOD1Mesh = mesh;
@@ -239,6 +250,10 @@ namespace MissionControl.EncounterFactories {
       // MeshFilter buildingLOD2MF = buildingLOD2GO.AddComponent<MeshFilter>();
       // MeshRenderer buildingLOD2MR = buildingLOD2GO.AddComponent<MeshRenderer>();
       // buildingLOD2MF.mesh = buildingLOD2Mesh;
+    }
+
+    private void CreateFlimsies(GameObject buildingGO) {
+
     }
 
     private void CreateGenericStaticDestruct(GameObject buildingGO) {
@@ -363,12 +378,11 @@ namespace MissionControl.EncounterFactories {
     private Material[] BuildMaterialsForRenderer(Mesh mesh, List<PropMaterialDef> materialDefs, Material placeholderMaterial) {
       Material[] materials = new Material[mesh.subMeshCount];
 
-      Main.Logger.Log("[BuildingFactory.BuildMaterialsForRenderer] mesh.subMeshCount " + mesh.subMeshCount);
+      Main.Logger.Log($"[BuildingFactory.BuildMaterialsForRenderer] mesh.subMeshCount for '{mesh.name}' is '{mesh.subMeshCount}'");
       for (int i = 0; i < mesh.subMeshCount; i++) {
         if (i >= materialDefs.Count) {
-          Main.Logger.LogWarning($"[BuildingFactory.BuildMaterialsForRenderer] Not enough supplied material identifiers in prop data to use for submesh '{i}' for mesh '{mesh.name}'. Falling back to placeholder mat");
-          materials[i] = placeholderMaterial;
-          continue;
+          Main.Logger.LogWarning($"[BuildingFactory.BuildMaterialsForRenderer] Not enough supplied material identifiers in prop data to use for submesh '{i}' for mesh '{mesh.name}'. Duplicating existing mat references.");
+          materialDefs.Add(materialDefs[Random.Range(0, materialDefs.Count)]);
         }
 
         PropMaterialDef propMaterialDef = materialDefs[i];
@@ -408,7 +422,7 @@ namespace MissionControl.EncounterFactories {
           material.mainTexture = texture;
           materials[i] = material;
         } else {
-          Main.Logger.Log($"[BuildingFactory.BuildMaterialsForRenderer] Only Material Name provided PropMaterialDef '{propMaterialDef.Name}' so looking for Material in bundle '{PropBuildingDef.GetPropModelDef().BundlePath}' first then Game data");
+          // Main.Logger.Log($"[BuildingFactory.BuildMaterialsForRenderer] Only material name provided in PropMaterialDef '{propMaterialDef.Name}' so looking for material in bundle first then game data");
 
           // Look first at bundle for custom bundled Material
           Material mat = null; // TODO: support this

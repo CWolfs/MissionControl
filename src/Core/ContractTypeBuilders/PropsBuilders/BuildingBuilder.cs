@@ -29,6 +29,11 @@ namespace MissionControl.ContractTypeBuilders {
       }
 
       Main.Logger.Log($"[BuildingBuilder.Build] Building '{buildingName}' Building");
+      if (!DataManager.Instance.BuildingDefs.ContainsKey(buildingName)) {
+        Main.Logger.LogError($"[BuildingBuilder.Build] PropBuildingDef '{buildingName}' does not exist");
+        return;
+      }
+
       PropBuildingDef propBuildingDef = DataManager.Instance.BuildingDefs[buildingName];
 
       BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef);
