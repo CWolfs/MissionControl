@@ -124,6 +124,8 @@ namespace MissionControl.EncounterFactories {
     }
 
     private GameObject CreateBuilding(GameObject buildingGroupGO, string name) {
+      PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
+
       buildingGO = CreateGameObject(buildingGroupGO, name);
       buildingGO.SetActive(false);
 
@@ -179,7 +181,7 @@ namespace MissionControl.EncounterFactories {
       destructShell.transform.localPosition = Vector3.zero;
       destructShell.transform.localEulerAngles = Vector3.zero;
 
-      RandomiseShell(destructibleObject);
+      if (!propModelDef.HasCustomShell) RandomiseShell(destructibleObject);
 
       return buildingGO;
     }
@@ -202,9 +204,9 @@ namespace MissionControl.EncounterFactories {
         buildingLOD2Mesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_LOD2");
 
         if (buildingCOLMesh == null) {
-          Main.Logger.LogError("[BuildingFactory.CreateColAndLODs] buildingCOLMesh is null");
+          Main.Logger.LogError("[BuildingFactory.CreateColAndLODs] Bundle COL Mesh is is null. It's possible LOD0, LOD1 and LOD2 might also be null. Check the names of the Meshes in the bundle match the Mesh in the MC PropModelDef");
         } else {
-          Main.Logger.Log("[BuildingFactory.CreateColAndLODs] buildingCOLMesh is " + buildingCOLMesh.name);
+          Main.Logger.Log("[BuildingFactory.CreateColAndLODs] Bundle COL Mesh is " + buildingCOLMesh.name);
         }
       } else {
         foreach (Mesh mesh in allGameMeshes) {
@@ -240,6 +242,8 @@ namespace MissionControl.EncounterFactories {
     }
 
     private void CreateGenericStaticDestruct(GameObject buildingGO) {
+      PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
+
       // Split
       destructSplit = CreateGameObject(buildingGO, $"{buildingGO.name}_{genericStaticDestructName}_split");
       destructSplit.layer = 8;
@@ -265,30 +269,55 @@ namespace MissionControl.EncounterFactories {
       destructShell.layer = 8;
       destructShell.SetActive(false);
 
-      string shellPrefabName = "small_civilian_building_shell";
-      GameObject randomShellPrefab = AssetBundleLoader.GetAsset<GameObject>("common-assets-bundle", shellPrefabName);
-      if (randomShellPrefab == null) Main.Logger.LogError($"[CreateGenericStaticDestruct] Shell prefab '{shellPrefabName}' is null");
+      if (propModelDef.HasCustomShell) {
+        // Load from bundle
+        LoadAssetBundle(propModelDef);
 
-      shellPrefabName = "small_civilian_building_walls_shell";
-      GameObject wallShellPrefab = AssetBundleLoader.GetAsset<GameObject>("common-assets-bundle", shellPrefabName);
-      if (wallShellPrefab == null) Main.Logger.LogError($"[CreateGenericStaticDestruct] Shell prefab '{shellPrefabName}' is null");
+        Mesh shellMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_shell");
+        Mesh shellCOLMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_shell_COL");
 
-      GameObject randomShell1 = GameObject.Instantiate(randomShellPrefab, Vector3.zero, new Quaternion(), destructShell.transform);
-      randomShell1.name = randomShell1.name.Replace("(Clone)", "");
+        GameObject shellGO = new GameObject(shellMesh.name);
+        shellGO.transform.SetParent(destructShell.transform);
+        shellGO.transform.localPosition = Vector3.zero;
 
-      GameObject randomShell2 = GameObject.Instantiate(randomShellPrefab, Vector3.zero, new Quaternion(), destructShell.transform);
-      randomShell2.name = randomShell2.name.Replace("(Clone)", "");
+        MeshFilter mf = shellGO.AddComponent<MeshFilter>();
+        mf.sharedMesh = shellMesh;
 
-      GameObject randomShell3 = GameObject.Instantiate(randomShellPrefab, Vector3.zero, new Quaternion(), destructShell.transform);
-      randomShell3.name = randomShell3.name.Replace("(Clone)", "");
+        shellGO.AddComponent<MeshRenderer>();
 
-      GameObject wallShell = GameObject.Instantiate(wallShellPrefab, Vector3.zero, new Quaternion(), destructShell.transform);
-      wallShell.name = wallShell.name.Replace("(Clone)", "");
+        if (shellCOLMesh != null) {
+          MeshCollider shellCollider = shellGO.AddComponent<MeshCollider>();
+          shellCollider.sharedMesh = shellCOLMesh;
+        }
 
-      SetShellMaterials(randomShell1);
-      SetShellMaterials(randomShell2);
-      SetShellMaterials(randomShell3);
-      SetShellMaterials(wallShell);
+        SetShellMaterials(shellGO);
+      } else {
+        // Dynamically create basic shell debris
+        string shellPrefabName = "small_civilian_building_shell";
+        GameObject randomShellPrefab = AssetBundleLoader.GetAsset<GameObject>("common-assets-bundle", shellPrefabName);
+        if (randomShellPrefab == null) Main.Logger.LogError($"[CreateGenericStaticDestruct] Shell prefab '{shellPrefabName}' is null");
+
+        shellPrefabName = "small_civilian_building_walls_shell";
+        GameObject wallShellPrefab = AssetBundleLoader.GetAsset<GameObject>("common-assets-bundle", shellPrefabName);
+        if (wallShellPrefab == null) Main.Logger.LogError($"[CreateGenericStaticDestruct] Shell prefab '{shellPrefabName}' is null");
+
+        GameObject randomShell1 = GameObject.Instantiate(randomShellPrefab, Vector3.zero, new Quaternion(), destructShell.transform);
+        randomShell1.name = randomShell1.name.Replace("(Clone)", "");
+
+        GameObject randomShell2 = GameObject.Instantiate(randomShellPrefab, Vector3.zero, new Quaternion(), destructShell.transform);
+        randomShell2.name = randomShell2.name.Replace("(Clone)", "");
+
+        GameObject randomShell3 = GameObject.Instantiate(randomShellPrefab, Vector3.zero, new Quaternion(), destructShell.transform);
+        randomShell3.name = randomShell3.name.Replace("(Clone)", "");
+
+        GameObject wallShell = GameObject.Instantiate(wallShellPrefab, Vector3.zero, new Quaternion(), destructShell.transform);
+        wallShell.name = wallShell.name.Replace("(Clone)", "");
+
+        SetShellMaterials(randomShell1);
+        SetShellMaterials(randomShell2);
+        SetShellMaterials(randomShell3);
+        SetShellMaterials(wallShell);
+      }
     }
 
     private void RandomiseShell(DestructibleObject linkedDestructibleObject) {
