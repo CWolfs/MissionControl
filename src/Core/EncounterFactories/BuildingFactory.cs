@@ -108,11 +108,9 @@ namespace MissionControl.EncounterFactories {
       BuildingRepresentation buildingRepresentation = buildingGroupGO.AddComponent<BuildingRepresentation>();
 
       ObstructionGameLogic obstructionGameLogic = buildingGroupGO.AddComponent<ObstructionGameLogic>();
-      obstructionGameLogic.buildingDefId = PropBuildingDef.BuildingDefID;
-      obstructionGameLogic.teamDefinitionGuid = TeamUtils.TARGET_TEAM_ID;
+      obstructionGameLogic.buildingDefId = PropBuildingDef.BuildingDefID; // Supports direct BuildingDefIds (e.g. buildingdef_Military_Large) or general values (e.g. ObstructionGameLogic.buildingDef_SolidObstruction)
+      obstructionGameLogic.teamDefinitionGuid = TeamUtils.WORLD_TEAM_ID;
 
-      // obstructionGameLogic.buildingDefId = "buildingdef_Military_Large"; //  ObstructionGameLogic.buildingDef_SolidObstruction;
-      // obstructionGameLogic.teamDefinitionGuid = TeamUtils.TARGET_TEAM_ID;
       // obstructionGameLogic.overrideBuildingName // keep here as a reminder they exist if needed
       // obstructionGameLogic.overrideStructurePoints // keep here as a reminder they exist if needed
 
@@ -213,7 +211,6 @@ namespace MissionControl.EncounterFactories {
       Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef.Materials, placeholderMaterial);
       buildingLOD0MR.materials = materials;
       buildingLOD0MF.mesh = buildingLOD0Mesh;
-      // buildingLOD0MR.material = placeholderMaterial;
 
       // GameObject buildingLOD1GO = CreateGameObject(buildingGO, $"{buildingGO.name}_LOD1");
       // MeshFilter buildingLOD1MF = buildingLOD1GO.AddComponent<MeshFilter>();
@@ -300,8 +297,7 @@ namespace MissionControl.EncounterFactories {
       Mesh mesh = shell.GetComponent<MeshFilter>().mesh;
       MeshRenderer mr = shell.GetComponent<MeshRenderer>();
 
-      // List<string> shellMaterialNames = new List<string>() { "envMatStct_darkMetal_generic", "envMatStct_mediumMetal_generic", "envMatStct_lightMetal_generic", "envMatStct_asphalt_generic" };
-      Material[] shellMaterials = BuildMaterialsForRenderer(mesh, PropBuildingDef.GetPropModelDef().Materials.Where(mat => !mat.Name.Contains("glass") && !mat.Name.Contains("light")).ToList(), null);
+      Material[] shellMaterials = BuildMaterialsForRenderer(mesh, PropBuildingDef.GetPropModelDef().Materials.Where(mat => !mat.Name.Contains("glass") && !mat.Name.Contains("lights") && !mat.Name.Contains("decals")).ToList(), null);
 
       Material[] shellMaterialToUse = new Material[mesh.subMeshCount];
       for (int i = 0; i < mesh.subMeshCount; i++) {

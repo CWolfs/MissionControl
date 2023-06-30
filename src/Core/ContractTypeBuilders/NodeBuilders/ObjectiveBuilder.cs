@@ -169,14 +169,6 @@ namespace MissionControl.ContractTypeBuilders {
       string description = objective["Description"].ToString();
 
       ObjectiveFactory.CreateDestroyXUnitsObjective(guid, parent, contractObjectiveGuid, name, title, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDestroy);
-
-      // Test
-      // GameObject customfacility = GameObject.Find("CustomFacility");
-      // if (customfacility == null) {
-      //   Vector3 facilityPosition = new Vector3(-336, 175, 23);
-      //   BuildingFactory buildingFactory = new BuildingFactory();
-      //   GameObject facilityGo = buildingFactory.CreateFacility("CustomFacility", facilityPosition);
-      // }
     }
 
     private void BuildDestroyXDestructiblesObjective(GameObject parent, JObject objective, string name, string title, string guid,

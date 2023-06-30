@@ -38,8 +38,8 @@ namespace MissionControl.ContractTypeBuilders {
       GameObject destructionParentGO = destructibleObject.destructionParent.gameObject;
 
       if (this.position != null) {
-        SetPosition(facilityGo, this.position);
-        SetPosition(destructionParentGO, this.position);
+        SetPosition(facilityGo, this.position, exactPosition: true);
+        SetPosition(destructionParentGO, this.position, exactPosition: true);
       }
 
       if (this.rotation != null) {
