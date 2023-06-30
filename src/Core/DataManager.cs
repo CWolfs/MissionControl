@@ -322,8 +322,12 @@ namespace MissionControl {
         PropBuildingDef propBuildingDef = JsonConvert.DeserializeObject<PropBuildingDef>(buildingSource, serialiserSettings);
         Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded LoadPropBuildingDefs: " + propBuildingDef.Key);
 
-        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropBuildingDef MainModelKey: " + propBuildingDef.MainModelKey);
-        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropBuildingDef FlimsyModels Count: " + propBuildingDef.FlimsyModels.Count);
+        Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded PropBuildingDef MainModelKey: " + propBuildingDef.MainModelKey);
+        Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded PropBuildingDef FlimsyModels Count: " + propBuildingDef.FlimsyModels.Count);
+
+        Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded PropBuildingDef DestructibleSize: " + propBuildingDef.DestructibleSize.ToString());
+        Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded PropBuildingDef DestructibleMaterial: " + propBuildingDef.DestructibleMaterial.ToString());
+        Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded PropBuildingDef FlimsyDestructibleType: " + propBuildingDef.FlimsyDestructibleType.ToString());
 
         if (!BuildingDefs.ContainsKey(propBuildingDef.Key)) {
           BuildingDefs.Add(propBuildingDef.Key, propBuildingDef);

@@ -131,11 +131,10 @@ namespace MissionControl.EncounterFactories {
       CreateGenericStaticDestruct(buildingGO);
 
       DestructibleObject destructibleObject = buildingGO.AddComponent<DestructibleObject>();
-      // TODO: Expose this to the PropDefs
       destructibleObject.destructType = DestructibleObject.DestructType.targetStruct;
-      destructibleObject.structSize = DestructibleObject.DestructibleSize.large;
-      destructibleObject.structMaterial = DestructibleObject.DestructibleMaterial.metal;
-      destructibleObject.flimsyDestructType = FlimsyDestructType.largeMetal;
+      destructibleObject.structSize = PropBuildingDef.DestructibleSize;
+      destructibleObject.structMaterial = PropBuildingDef.DestructibleMaterial;
+      destructibleObject.flimsyDestructType = PropBuildingDef.FlimsyDestructibleType;
       destructibleObject.dependentPersistentFX = new List<GameObject>();
 
       destructibleObject.damagedInstance = destructSplit.GetComponent<PhysicsExplodeChildren>();
