@@ -193,6 +193,25 @@ namespace MissionControl.EncounterFactories {
       }
     }
 
+    private Mesh CenterMeshPivot(Mesh oldMesh) {
+      // Copy the mesh to not alter the original one
+      Mesh mesh = MonoBehaviour.Instantiate(oldMesh);
+
+      // Calculate the mesh's center point
+      Vector3 center = mesh.bounds.center;
+
+      // Shift the mesh vertices to center the mesh
+      Vector3[] vertices = mesh.vertices;
+      for (int i = 0; i < vertices.Length; i++) {
+        vertices[i] -= center;
+      }
+
+      mesh.vertices = vertices;
+      mesh.RecalculateBounds();
+
+      return mesh;
+    }
+
     private void CreateColAndLODs(GameObject buildingGO) {
       PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
 
@@ -214,10 +233,17 @@ namespace MissionControl.EncounterFactories {
           // If a flimsy base (e.g. no COL, LOD0, LOD1, LOD2) then set them all to the flimsy mesh
           if (mesh.name == propModelDef.MeshName) {
             Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] Found a flimsy base for '{propModelDef.Key}' so using that for COL, LOD0, LOD1, LOD2");
-            buildingCOLMesh = mesh;
-            buildingLOD0Mesh = mesh;
-            buildingLOD1Mesh = mesh;
-            buildingLOD2Mesh = mesh;
+
+            // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
+            Mesh flimsyFormattedMesh = mesh;
+            if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
+              flimsyFormattedMesh = CenterMeshPivot(mesh);
+            }
+
+            buildingCOLMesh = flimsyFormattedMesh;
+            buildingLOD0Mesh = flimsyFormattedMesh;
+            buildingLOD1Mesh = flimsyFormattedMesh;
+            buildingLOD2Mesh = flimsyFormattedMesh;
             break;
           }
 

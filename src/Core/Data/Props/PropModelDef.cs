@@ -10,6 +10,9 @@ namespace MissionControl.Data {
     [JsonProperty("Mesh")]
     public string MeshName { get; set; }
 
+    [JsonProperty("ChangePivotToCenterIfFlimsyMeshFormat")]
+    public bool ChangePivotToCenterIfFlimsyMeshFormat { get; set; } = true;
+
     [JsonProperty("Materials")]
     public List<PropMaterialDef> Materials { get; set; } = new List<PropMaterialDef>();
 
