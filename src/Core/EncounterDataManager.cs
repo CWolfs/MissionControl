@@ -212,7 +212,8 @@ namespace MissionControl {
             // For all the regions detected, if it exists in 10 or more cells - add the region to the map encounter layer data (this is vanilla... why?!)
             // And all all obstruction games logics to the region
             foreach (RegionGameLogic regionGameLogic in regionGameObjectList) {
-              if (regionRaycastHits[regionGameLogic.encounterObjectGuid] >= 10) {
+              bool isCustomBuilding = MissionControl.Instance.CustomBuildingGuids.Contains(regionGameLogic.encounterObjectGuid);
+              if (regionRaycastHits[regionGameLogic.encounterObjectGuid] >= 10 || isCustomBuilding) {
                 mapEncounterLayerDataCell.AddRegion(regionGameLogic);
                 foreach (ObstructionGameLogic obstructionGameLogic in obstructionGameObjectList) {
                   regionGameLogic.AddBuildingGuidToRegion(obstructionGameLogic.encounterObjectGuid);
