@@ -23,20 +23,21 @@ namespace MissionControl.Patches {
           BuildingRaycastHit buildingRaycastHit = value[0];
 
           if (MissionControl.Instance.CustomBuildingGuids.Contains(buildingRaycastHit.buildingGuid)) {
-            Main.LogDebug($"[MapEncounterLayerDataCellAverageTheBuildingHitsPatch.Prefix] Force adding custom buildings to the building list - effectively bypassing the min 8 cell hit for a valid building with guid: " + value[0].buildingGuid);
             if (__instance.buildingList == null) {
               __instance.buildingList = new List<BuildingRaycastHit>();
             }
 
-            for (int i = 1; i < value.Count; i++) {
-              buildingRaycastHit.buildingHeight += value[i].buildingHeight;
-              buildingRaycastHit.buildingSteepness += value[i].buildingSteepness;
+            if (!__instance.buildingList.Any(savedBuildingRaycastHit => savedBuildingRaycastHit.buildingGuid == buildingRaycastHit.buildingGuid)) {
+              for (int i = 1; i < value.Count; i++) {
+                buildingRaycastHit.buildingHeight += value[i].buildingHeight;
+                buildingRaycastHit.buildingSteepness += value[i].buildingSteepness;
+              }
+
+              buildingRaycastHit.buildingHeight /= value.Count;
+              buildingRaycastHit.buildingSteepness /= value.Count;
+
+              __instance.buildingList.Add(buildingRaycastHit);
             }
-
-            buildingRaycastHit.buildingHeight /= value.Count;
-            buildingRaycastHit.buildingSteepness /= value.Count;
-
-            __instance.buildingList.Add(buildingRaycastHit);
           }
         }
       }
