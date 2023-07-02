@@ -53,6 +53,8 @@ namespace MissionControl {
 
     public TagSet EncounterTags { get; set; } = new TagSet();
 
+    public List<string> CustomBuildingGuids = new List<string>();
+
     // Only populated for custom contract types
     public EncounterLayer_MDD EncounterLayerMDD { get; private set; }
     public bool IsCustomContractType { get; set; } = false;
@@ -616,6 +618,7 @@ namespace MissionControl {
       DataManager.Instance.ResetBetweenContracts();
       EncounterTags.Clear();
       AssetBundleLoader.UnloadPropBundles();
+      CustomBuildingGuids.Clear();
     }
   }
 }

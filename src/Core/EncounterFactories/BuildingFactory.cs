@@ -1,14 +1,12 @@
 using UnityEngine;
 
+using System;
 using System.Linq;
 using System.Collections.Generic;
 
 using BattleTech;
 using BattleTech.Rendering;
-using BattleTech.Rendering.UI;
-using BattleTech.Framework;
 
-using MissionControl.Utils;
 using MissionControl.Data;
 
 namespace MissionControl.EncounterFactories {
@@ -111,6 +109,12 @@ namespace MissionControl.EncounterFactories {
       obstructionGameLogic.buildingDefId = PropBuildingDef.BuildingDefID; // Supports direct BuildingDefIds (e.g. buildingdef_Military_Large) or general values (e.g. ObstructionGameLogic.buildingDef_SolidObstruction)
       obstructionGameLogic.teamDefinitionGuid = TeamUtils.WORLD_TEAM_ID;
 
+      string obstructionGuid = Guid.NewGuid().ToString();
+      obstructionGameLogic.encounterObjectGuid = obstructionGuid;
+
+      // Track the custom buildings to bypass the min 8 cell hit count for buildings to be added to the proper building list of a MapEncounterLayerDataCell
+      MissionControl.Instance.CustomBuildingGuids.Add(obstructionGuid);
+
       // obstructionGameLogic.overrideBuildingName // keep here as a reminder they exist if needed
       // obstructionGameLogic.overrideStructurePoints // keep here as a reminder they exist if needed
 
@@ -145,7 +149,7 @@ namespace MissionControl.EncounterFactories {
 
       destructibleObject.shellInstance = destructShell;
 
-      destructibleObject.damageAssetGroup = allDamageAssetGroups[Random.Range(0, allDamageAssetGroups.Length)];
+      destructibleObject.damageAssetGroup = allDamageAssetGroups[UnityEngine.Random.Range(0, allDamageAssetGroups.Length)];
       destructibleObject.decalObjects = new List<GameObject>();
       destructibleObject.decalSpawners = new List<BTDecalSpawner>();
 
@@ -212,6 +216,34 @@ namespace MissionControl.EncounterFactories {
       return mesh;
     }
 
+    // private void EnsureMiniumMeshSize(GameObject go) {
+    //   Vector3 minSize = new Vector3(4, 1, 4);
+    //   Transform transform = go.transform;
+    //   MeshFilter meshFilter = go.GetComponent<MeshFilter>();
+    //   if (meshFilter == null) {
+    //     Debug.LogError("MeshFilter component is missing.");
+    //     return;
+    //   }
+
+    //   Mesh mesh = meshFilter.mesh;
+    //   Vector3 meshSize = mesh.bounds.size;
+
+    //   Vector3 scale = transform.localScale;
+    //   if (meshSize.x < minSize.x) {
+    //     scale.x = minSize.x;
+    //   }
+
+    //   if (meshSize.y < minSize.y) {
+    //     scale.y = minSize.y;
+    //   }
+
+    //   if (meshSize.z < minSize.z) {
+    //     scale.z = minSize.z;
+    //   }
+
+    //   transform.localScale = scale;
+    // }
+
     private void CreateColAndLODs(GameObject buildingGO) {
       PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
 
@@ -258,10 +290,12 @@ namespace MissionControl.EncounterFactories {
       MeshCollider buildingCOLCollider = buildingCOLGO.AddComponent<MeshCollider>();
       buildingCOLCollider.sharedMesh = buildingCOLMesh;
       buildingCOLGO.layer = 12; // so raycasts can hit it for highlight effect and selection
+      // EnsureMiniumMeshSize(buildingCOLGO);
 
       GameObject buildingLOD0GO = CreateGameObject(buildingGO, $"{buildingGO.name}_LOD0");
       MeshFilter buildingLOD0MF = buildingLOD0GO.AddComponent<MeshFilter>();
       MeshRenderer buildingLOD0MR = buildingLOD0GO.AddComponent<MeshRenderer>();
+      // EnsureMiniumMeshSize(buildingLOD0GO);
 
       Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef.Materials, placeholderMaterial);
       buildingLOD0MR.materials = materials;
@@ -375,12 +409,12 @@ namespace MissionControl.EncounterFactories {
       float z = linkedDestructibleObject.footprint.z;
 
       foreach (Transform t in destructShell.transform) {
-        t.localPosition = new Vector3(Random.Range(-x, x), 3, Random.Range(-z, z));
+        t.localPosition = new Vector3(UnityEngine.Random.Range(-x, x), 3, UnityEngine.Random.Range(-z, z));
 
         if (!t.gameObject.name.Contains("wall")) {
-          t.rotation = Random.rotation;
+          t.rotation = UnityEngine.Random.rotation;
 
-          float scale = Random.Range(0.5f, 1.5f);
+          float scale = UnityEngine.Random.Range(0.5f, 1.5f);
           t.localScale = new Vector3(scale, 1, scale);
         }
       }
@@ -395,7 +429,7 @@ namespace MissionControl.EncounterFactories {
 
       Material[] shellMaterialToUse = new Material[mesh.subMeshCount];
       for (int i = 0; i < mesh.subMeshCount; i++) {
-        shellMaterialToUse[i] = shellMaterials[Random.Range(0, shellMaterials.Length)];
+        shellMaterialToUse[i] = shellMaterials[UnityEngine.Random.Range(0, shellMaterials.Length)];
       }
 
       mr.materials = shellMaterialToUse;
@@ -408,7 +442,7 @@ namespace MissionControl.EncounterFactories {
       for (int i = 0; i < mesh.subMeshCount; i++) {
         if (i >= materialDefs.Count) {
           Main.Logger.LogWarning($"[BuildingFactory.BuildMaterialsForRenderer] Not enough supplied material identifiers in prop data to use for submesh '{i}' for mesh '{mesh.name}'. Duplicating existing mat references.");
-          materialDefs.Add(materialDefs[Random.Range(0, materialDefs.Count)]);
+          materialDefs.Add(materialDefs[UnityEngine.Random.Range(0, materialDefs.Count)]);
         }
 
         PropMaterialDef propMaterialDef = materialDefs[i];

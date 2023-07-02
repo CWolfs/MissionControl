@@ -6,8 +6,6 @@ using System.Collections.Generic;
 
 using Harmony;
 
-using MissionControl.Utils;
-
 namespace MissionControl {
   public class EncounterDataManager {
     private static EncounterDataManager instance;
@@ -71,8 +69,8 @@ namespace MissionControl {
         BattleTech.Building building = buildingRep.ParentBuilding;
 
         if (building != null) {
-          AccessTools.Field(typeof(BattleTech.Building), "isObjectiveTarget").SetValue(building, false);
-          AccessTools.Field(typeof(BattleTech.Building), "isObjectiveActive").SetValue(building, false);
+          building.isObjectiveTarget = false;
+          building.isObjectiveActive = false;
           building.objectiveGUIDS.Clear();
         }
 
@@ -138,7 +136,7 @@ namespace MissionControl {
       List<ObstructionGameLogic> obstructionGameObjectList = new List<ObstructionGameLogic>();
 
       // Marks only the ObstructionGameLogic objects for ray tracing for performance reasons
-      AccessTools.Method(typeof(MapMetaDataExporter), "MarkCellsForRaycasting").Invoke(mapMetaExporter, new object[] { mapMetaData.mapTerrainDataCells, (int)terrain.transform.position.x, (int)terrain.transform.position.z });
+      mapMetaExporter.MarkCellsForRaycasting(mapMetaData.mapTerrainDataCells, (int)terrain.transform.position.x, (int)terrain.transform.position.z);
 
       // TODO: Maybe wipe region building lists. Not sure if I really need/want this yet
       RegionGameLogic[] componentsInChildren = encounterLayerData.GetComponentsInChildren<RegionGameLogic>();
@@ -203,6 +201,7 @@ namespace MissionControl {
                       buildingGuid = obstructionGameLogicInParent.encounterObjectGuid,
                       hitIndex = hitIndex
                     };
+
                     mapEncounterLayerDataCell.AddBuildingHit(buildingRaycastHit);
                   }
                 }
