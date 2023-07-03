@@ -5,16 +5,23 @@
   "FlimsyModels": [
     {
       "Key": "AirconUnitA",
-      "Position": {
-        "x": 0,
-        "y": 18.3,
-        "z": 18
-      },
-      "Rotation": {
-        "x": 0,
-        "y": 0,
-        "z": 0
-      }
+      "Position": { "x": 3.3, "y": 18.3, "z": 18 },
+      "Mass": 600
+    },
+    {
+      "Key": "AirconUnitA",
+      "Position": { "x": -2, "y": 18.3, "z": 18 },
+      "Mass": 600
+    },
+    {
+      "Key": "GreeblePipesTwoShortCurved",
+      "Position": { "x": 1, "y": 0.5, "z": 0.6 },
+      "Mass": 100
+    },
+    {
+      "Key": "GreeblePipesTwoShortCurved",
+      "Position": { "x": 1, "y": -0.5, "z": 0.6 },
+      "Mass": 100
     }
   ]
 }

@@ -1,0 +1,13 @@
+{
+  "Key": "GreeblePipesTwoShortCurved",
+  "Mesh": "greeblePipesTwoShortCurved",
+  "Materials": [
+    {
+      "Name": "envMatStct_copper_generic"
+    }
+  ],
+  "IsMeshInBundle": true,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

@@ -235,18 +235,34 @@ namespace MissionControl.EncounterFactories {
       destructibleObject.structMaterial = propModelDef.DestructibleMaterial;
       destructibleObject.destructType = DestructibleObject.DestructType.flimsyChild;
       destructibleObject.dependentPersistentFX = new List<GameObject>();
+      destructibleObject.pieceSize = DestructibleObject.PieceSize.small; // TODO: Expose this
 
       AttachFlimsyMesh(flimsyGO, propFlimsyDef);
-
-      Bounds bounds = default(Bounds);
-      bounds.Encapsulate(mf.sharedMesh.bounds);
-      boxCollider.size = bounds.size;
-      boxCollider.center = bounds.center;
+      CalculateBounds(mf, boxCollider);
 
       flimsyGO.transform.localPosition = propFlimsyDef.Position;
       flimsyGO.transform.localEulerAngles = propFlimsyDef.Rotation;
 
       flimsyGO.SetActive(true);
+    }
+
+    private void CalculateBounds(MeshFilter mf, BoxCollider boxCollider) {
+      Mesh mesh = mf.sharedMesh;
+      Matrix4x4 localToWorld = mf.transform.localToWorldMatrix;
+      Bounds bounds = new Bounds(localToWorld.MultiplyPoint3x4(mesh.vertices[0]), Vector3.zero);
+
+      for (int i = 1; i < mesh.vertices.Length; i++) {
+        bounds.Encapsulate(localToWorld.MultiplyPoint3x4(mesh.vertices[i]));
+      }
+
+      // Convert bounds back into local space
+      Bounds localBounds = new Bounds(
+          mf.transform.InverseTransformPoint(bounds.center),
+          mf.transform.InverseTransformDirection(bounds.size)
+      );
+
+      boxCollider.size = localBounds.size;
+      boxCollider.center = localBounds.center;
     }
 
     private void LoadAssetBundle(PropModelDef propModelDef) {
@@ -379,16 +395,18 @@ namespace MissionControl.EncounterFactories {
 
         flimsyLOD0Mesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_LOD0");
 
-        if (buildingLOD0Mesh == null) {
-          Main.Logger.LogError("[BuildingFactory.CreateColAndLODs] Bundle COL Mesh is is null. It's possible LOD0, LOD1 and LOD2 might also be null. Check the names of the Meshes in the bundle match the Mesh in the MC PropModelDef");
+        if (flimsyLOD0Mesh == null) flimsyLOD0Mesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}");
+
+        if (flimsyLOD0Mesh == null) {
+          Main.Logger.LogError("[BuildingFactory.AttachFlimsyMesh] Bundle LOD Mesh is null. It's possible LOD0, LOD1 and LOD2 might also be null. Check the names of the Meshes in the bundle match the Mesh in the MC PropModelDef");
         } else {
-          Main.Logger.Log("[BuildingFactory.CreateColAndLODs] Bundle COL Mesh is " + buildingCOLMesh.name);
+          Main.Logger.Log("[BuildingFactory.AttachFlimsyMesh] Bundle LOD Mesh is " + flimsyLOD0Mesh.name);
         }
       } else {
         foreach (Mesh mesh in allGameMeshes) {
           // If a flimsy base (e.g. no COL, LOD0, LOD1, LOD2) then set them all to the flimsy mesh
           if (mesh.name == propModelDef.MeshName) {
-            Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] Found a flimsy base for '{propModelDef.Key}' so using that for COL, LOD0, LOD1, LOD2");
+            Main.Logger.Log($"[BuildingFactory.AttachFlimsyMesh] Found a flimsy base for '{propModelDef.Key}' so using that for COL, LOD0, LOD1, LOD2");
 
             // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
             Mesh flimsyFormattedMesh = mesh;
@@ -583,7 +601,7 @@ namespace MissionControl.EncounterFactories {
           material.mainTexture = texture;
           materials[i] = material;
         } else {
-          Main.Logger.Log($"[BuildingFactory.BuildMaterialsForRenderer] Only material name provided in PropMaterialDef '{propMaterialDef.Name}' so looking for material in bundle first then game data");
+          // Main.Logger.Log($"[BuildingFactory.BuildMaterialsForRenderer] Only material name provided in PropMaterialDef '{propMaterialDef.Name}' so looking for material in bundle first then game data");
 
           // Look first at bundle for custom bundled Material
           Material mat = propModelDef.BundlePath != null ? AssetBundleLoader.GetAsset<Material>(propModelDef.BundlePath, propMaterialDef.Name) : null;

@@ -25,7 +25,7 @@ namespace MissionControl.ContractTypeBuilders {
 
     public override void Build() {
       if (!DataManager.Instance.BuildingDefs.ContainsKey(buildingName)) {
-        Main.Logger.LogError($"[BuildingBuilder.Build] No PrpoBuildingDef exists with the name '{buildingName}'");
+        Main.Logger.LogError($"[BuildingBuilder.Build] No PropBuildingDef exists with the name '{buildingName}'");
       }
 
       Main.Logger.Log($"[BuildingBuilder.Build] Building '{buildingName}' Building");
