@@ -139,9 +139,9 @@ namespace MissionControl.EncounterFactories {
 
       DestructibleObject destructibleObject = buildingGO.AddComponent<DestructibleObject>();
       destructibleObject.destructType = DestructibleObject.DestructType.targetStruct;
-      destructibleObject.structSize = PropBuildingDef.DestructibleSize;
-      destructibleObject.structMaterial = PropBuildingDef.DestructibleMaterial;
-      destructibleObject.flimsyDestructType = PropBuildingDef.FlimsyDestructibleType;
+      destructibleObject.structSize = propModelDef.DestructibleSize;
+      destructibleObject.structMaterial = propModelDef.DestructibleMaterial;
+      destructibleObject.flimsyDestructType = propModelDef.FlimsyDestructibleType;
       destructibleObject.dependentPersistentFX = new List<GameObject>();
 
       destructibleObject.damagedInstance = destructSplit.GetComponent<PhysicsExplodeChildren>();
@@ -230,8 +230,9 @@ namespace MissionControl.EncounterFactories {
       DestructibleObject destructibleObject = flimsyGO.AddComponent<DestructibleObject>();
       destructibleObject.isFlimsy = true;
       destructibleObject.embeddedFlimsy = true;
-      destructibleObject.flimsyDestructType = FlimsyDestructType.largeStone;
-      destructibleObject.structMaterial = DestructibleObject.DestructibleMaterial.stone;
+      destructibleObject.structSize = propModelDef.DestructibleSize;
+      destructibleObject.flimsyDestructType = propModelDef.FlimsyDestructibleType;
+      destructibleObject.structMaterial = propModelDef.DestructibleMaterial;
       destructibleObject.destructType = DestructibleObject.DestructType.flimsyChild;
       destructibleObject.dependentPersistentFX = new List<GameObject>();
 
@@ -481,7 +482,7 @@ namespace MissionControl.EncounterFactories {
 
         int shellDebrisCount = 0;
 
-        switch (PropBuildingDef.DestructibleSize) {
+        switch (propModelDef.DestructibleSize) {
           case DestructibleObject.DestructibleSize.small: shellDebrisCount = 1; break;
           case DestructibleObject.DestructibleSize.medium: shellDebrisCount = 2; break;
           case DestructibleObject.DestructibleSize.large: shellDebrisCount = 3; break;

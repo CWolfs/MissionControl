@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 
+using System;
 using System.Collections.Generic;
 
 namespace MissionControl.Data {
@@ -27,6 +28,36 @@ namespace MissionControl.Data {
 
     [JsonProperty("CustomShellMaterials")]
     public List<PropMaterialDef> CustomShellMaterials { get; set; } = new List<PropMaterialDef>();
+
+    [JsonProperty("DestructibleSize")]
+    private string destructibleSize { get; set; } = "large";
+
+    [JsonIgnore]
+    public DestructibleObject.DestructibleSize DestructibleSize {
+      get {
+        return (DestructibleObject.DestructibleSize)Enum.Parse(typeof(DestructibleObject.DestructibleSize), destructibleSize);
+      }
+    }
+
+    [JsonProperty("DestructibleMaterial")]
+    public string destructibleMaterial { get; set; } = "metal";
+
+    [JsonIgnore]
+    public DestructibleObject.DestructibleMaterial DestructibleMaterial {
+      get {
+        return (DestructibleObject.DestructibleMaterial)Enum.Parse(typeof(DestructibleObject.DestructibleMaterial), destructibleMaterial);
+      }
+    }
+
+    [JsonProperty("FlimsyDestructibleType")]
+    public string flimsyDestructibleType { get; set; } = "largeMetal";
+
+    [JsonIgnore]
+    public FlimsyDestructType FlimsyDestructibleType {
+      get {
+        return (FlimsyDestructType)Enum.Parse(typeof(FlimsyDestructType), flimsyDestructibleType);
+      }
+    }
 
     public string BundlePath { get; set; }
   }

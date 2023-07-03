@@ -1,8 +1,5 @@
 {
   "Key": "AirconUnitVariantA1",
   "BuildingDefID": "buildingdef_Civilian_Small",
-  "MainModel": "AirconUnitA",
-  "DestructibleSize": "small",
-  "DestructibleMaterial": "metal",
-  "FlimsyDestructibleType": "smallMetal"
+  "MainModel": "AirconUnitA"
 }

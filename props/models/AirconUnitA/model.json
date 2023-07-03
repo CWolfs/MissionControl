@@ -5,5 +5,8 @@
     {
       "Name": "envMatStct_lightMetal_generic"
     }
-  ]
+  ],
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
 }

@@ -1,8 +1,5 @@
 {
   "Key": "MediumMilitaryBuildingVariantB1",
   "BuildingDefID": "buildingdef_Military_Medium",
-  "MainModel": "MediumMilitaryBuildingB",
-  "DestructibleSize": "medium",
-  "DestructibleMaterial": "metal",
-  "FlimsyDestructibleType": "mediumMetal"
+  "MainModel": "MediumMilitaryBuildingB"
 }

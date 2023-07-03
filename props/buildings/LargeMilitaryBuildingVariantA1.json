@@ -16,8 +16,5 @@
         "z": 0
       }
     }
-  ],
-  "DestructibleSize": "large",
-  "DestructibleMaterial": "metal",
-  "FlimsyDestructibleType": "largeMetal"
+  ]
 }

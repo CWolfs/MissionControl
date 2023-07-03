@@ -14,5 +14,8 @@
   ],
   "IsMeshInBundle": true,
   "HasCustomSplits": false,
-  "HasCustomShell": true
+  "HasCustomShell": true,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
 }

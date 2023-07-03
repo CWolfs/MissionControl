@@ -317,6 +317,10 @@ namespace MissionControl {
           Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef CustomShellMaterials[{i}].Texture: " + propMatDef.Texture);
         }
 
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef DestructibleSize: " + propModelDef.DestructibleSize.ToString());
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef DestructibleMaterial: " + propModelDef.DestructibleMaterial.ToString());
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef FlimsyDestructibleType: " + propModelDef.FlimsyDestructibleType.ToString());
+
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef BundlePath: " + propModelDef.BundlePath);
 
         if ((propModelDef.IsMeshInBundle || propModelDef.HasCustomShell || propModelDef.HasCustomSplits) && propModelDef.BundlePath == null) {
@@ -340,10 +344,6 @@ namespace MissionControl {
 
         Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded PropBuildingDef MainModelKey: " + propBuildingDef.MainModelKey);
         Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded PropBuildingDef FlimsyModels Count: " + propBuildingDef.FlimsyModels.Count);
-
-        Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded PropBuildingDef DestructibleSize: " + propBuildingDef.DestructibleSize.ToString());
-        Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded PropBuildingDef DestructibleMaterial: " + propBuildingDef.DestructibleMaterial.ToString());
-        Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded PropBuildingDef FlimsyDestructibleType: " + propBuildingDef.FlimsyDestructibleType.ToString());
 
         if (!BuildingDefs.ContainsKey(propBuildingDef.Key)) {
           BuildingDefs.Add(propBuildingDef.Key, propBuildingDef);
