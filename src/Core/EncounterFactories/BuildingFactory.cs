@@ -385,21 +385,23 @@ namespace MissionControl.EncounterFactories {
         GameObject wallShellPrefab = AssetBundleLoader.GetAsset<GameObject>("common-assets-bundle", shellPrefabName);
         if (wallShellPrefab == null) Main.Logger.LogError($"[CreateGenericStaticDestruct] Shell prefab '{shellPrefabName}' is null");
 
-        GameObject randomShell1 = GameObject.Instantiate(randomShellPrefab, Vector3.zero, new Quaternion(), destructShell.transform);
-        randomShell1.name = randomShell1.name.Replace("(Clone)", "");
+        int shellDebrisCount = 0;
 
-        GameObject randomShell2 = GameObject.Instantiate(randomShellPrefab, Vector3.zero, new Quaternion(), destructShell.transform);
-        randomShell2.name = randomShell2.name.Replace("(Clone)", "");
+        switch (PropBuildingDef.DestructibleSize) {
+          case DestructibleObject.DestructibleSize.small: shellDebrisCount = 1; break;
+          case DestructibleObject.DestructibleSize.medium: shellDebrisCount = 2; break;
+          case DestructibleObject.DestructibleSize.large: shellDebrisCount = 3; break;
+          case DestructibleObject.DestructibleSize.huge: shellDebrisCount = 4; break;
+        }
 
-        GameObject randomShell3 = GameObject.Instantiate(randomShellPrefab, Vector3.zero, new Quaternion(), destructShell.transform);
-        randomShell3.name = randomShell3.name.Replace("(Clone)", "");
+        for (int i = 0; i < shellDebrisCount; i++) {
+          GameObject randomShellDebris = GameObject.Instantiate(randomShellPrefab, Vector3.zero, new Quaternion(), destructShell.transform);
+          randomShellDebris.name = randomShellDebris.name.Replace("(Clone)", "");
+          SetShellMaterials(randomShellDebris);
+        }
 
         GameObject wallShell = GameObject.Instantiate(wallShellPrefab, Vector3.zero, new Quaternion(), destructShell.transform);
         wallShell.name = wallShell.name.Replace("(Clone)", "");
-
-        SetShellMaterials(randomShell1);
-        SetShellMaterials(randomShell2);
-        SetShellMaterials(randomShell3);
         SetShellMaterials(wallShell);
       }
     }
