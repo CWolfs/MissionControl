@@ -436,6 +436,7 @@ namespace MissionControl.EncounterFactories {
     }
 
     private Material[] BuildMaterialsForRenderer(Mesh mesh, List<PropMaterialDef> materialDefs, Material placeholderMaterial) {
+      PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
       Material[] materials = new Material[mesh.subMeshCount];
 
       Main.Logger.Log($"[BuildingFactory.BuildMaterialsForRenderer] mesh.subMeshCount for '{mesh.name}' is '{mesh.subMeshCount}'");
@@ -452,13 +453,13 @@ namespace MissionControl.EncounterFactories {
           // Build whole material with specific shader and texture
 
           // First look for Shader in bundle
-          Shader shader = null; // TODO: support this
+          Shader shader = AssetBundleLoader.GetAsset<Shader>(propModelDef.BundlePath, propMaterialDef.Shader);
 
           // Otherwise look for Shader in game
           if (shader == null) shader = Shader.Find(propMaterialDef.Shader);
 
           // First look for Texture in bundle
-          Texture texture = null; // TODO: support this
+          Texture texture = AssetBundleLoader.GetAsset<Texture>(propModelDef.BundlePath, propMaterialDef.Texture);
 
           // Otherwise look for texture in game
           if (texture == null) texture = UnityGameInstance.Instance.Game.DataManager.TextureManager.GetLoadedTexture(propMaterialDef.Texture);
@@ -473,7 +474,7 @@ namespace MissionControl.EncounterFactories {
           Shader shader = Shader.Find("BattleTech Standard");
 
           // First look for Texture in bundle
-          Texture texture = null; // TODO: support this
+          Texture texture = AssetBundleLoader.GetAsset<Texture>(propModelDef.BundlePath, propMaterialDef.Texture);
 
           // Otherwise look for texture in game
           if (texture == null) texture = UnityGameInstance.Instance.Game.DataManager.TextureManager.GetLoadedTexture(propMaterialDef.Texture);
@@ -485,7 +486,7 @@ namespace MissionControl.EncounterFactories {
           // Main.Logger.Log($"[BuildingFactory.BuildMaterialsForRenderer] Only material name provided in PropMaterialDef '{propMaterialDef.Name}' so looking for material in bundle first then game data");
 
           // Look first at bundle for custom bundled Material
-          Material mat = null; // TODO: support this
+          Material mat = AssetBundleLoader.GetAsset<Material>(propModelDef.BundlePath, propMaterialDef.Name);
 
           // Otherwise look at all game Materials
           if (mat == null) mat = matLookup.ContainsKey(materialDefs[i].Name) ? matLookup[materialDefs[i].Name] : placeholderMaterial;
