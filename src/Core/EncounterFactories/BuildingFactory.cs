@@ -213,13 +213,18 @@ namespace MissionControl.EncounterFactories {
     }
 
     private void CreateFlimsy(GameObject flimsyParentGO, PropFlimsyDef propFlimsyDef) {
+      PropModelDef propModelDef = propFlimsyDef.GetPropModelDef();
+
       Main.Logger.Log("[BuildingFactory.CreateFlimsy] About to create flimsy " + propFlimsyDef.Key);
       GameObject flimsyGO = CreateGameObject(flimsyParentGO, propFlimsyDef.Key);
       flimsyGO.SetActive(false);
 
       MeshFilter mf = flimsyGO.AddComponent<MeshFilter>();
       flimsyGO.AddComponent<MeshRenderer>();
-      flimsyGO.AddComponent<Rigidbody>();
+
+      Rigidbody rb = flimsyGO.AddComponent<Rigidbody>();
+      rb.mass = propFlimsyDef.Mass;
+
       BoxCollider boxCollider = flimsyGO.AddComponent<BoxCollider>();
 
       DestructibleObject destructibleObject = flimsyGO.AddComponent<DestructibleObject>();
