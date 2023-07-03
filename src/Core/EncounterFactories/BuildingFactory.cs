@@ -134,7 +134,7 @@ namespace MissionControl.EncounterFactories {
       buildingGO.SetActive(false);
 
       CreateColAndLODs(buildingGO);
-      CreateFlimsies(buildingGO);
+      GameObject flimsyParentGO = CreateFlimsies(buildingGO);
       CreateGenericStaticDestruct(buildingGO);
 
       DestructibleObject destructibleObject = buildingGO.AddComponent<DestructibleObject>();
@@ -152,6 +152,10 @@ namespace MissionControl.EncounterFactories {
       destructibleObject.damageAssetGroup = allDamageAssetGroups[UnityEngine.Random.Range(0, allDamageAssetGroups.Length)];
       destructibleObject.decalObjects = new List<GameObject>();
       destructibleObject.decalSpawners = new List<BTDecalSpawner>();
+
+      destructibleObject.flimsyChild = flimsyParentGO;
+
+      destructibleObject.dependentPersistentFX = new List<GameObject>();
 
       LODGroup lodGroup = buildingGO.AddComponent<LODGroup>();
       lodGroup.animateCrossFading = true;
@@ -189,6 +193,54 @@ namespace MissionControl.EncounterFactories {
       if (!propModelDef.HasCustomShell) RandomiseShell(destructibleObject);
 
       return buildingGO;
+    }
+
+    private GameObject CreateFlimsies(GameObject buildingGO) {
+      List<PropFlimsyDef> flimsyModels = PropBuildingDef.FlimsyModels;
+
+      if (flimsyModels.Count > 0) {
+        GameObject flimsyParentGO = CreateGameObject(buildingGO, "_flimsy");
+        flimsyParentGO.transform.rotation = Quaternion.identity;
+
+        foreach (PropFlimsyDef propFlimsyModel in flimsyModels) {
+          CreateFlimsy(flimsyParentGO, propFlimsyModel);
+        }
+
+        return flimsyParentGO;
+      }
+
+      return null;
+    }
+
+    private void CreateFlimsy(GameObject flimsyParentGO, PropFlimsyDef propFlimsyDef) {
+      Main.Logger.Log("[BuildingFactory.CreateFlimsy] About to create flimsy " + propFlimsyDef.Key);
+      GameObject flimsyGO = CreateGameObject(flimsyParentGO, propFlimsyDef.Key);
+      flimsyGO.SetActive(false);
+
+      MeshFilter mf = flimsyGO.AddComponent<MeshFilter>();
+      flimsyGO.AddComponent<MeshRenderer>();
+      flimsyGO.AddComponent<Rigidbody>();
+      BoxCollider boxCollider = flimsyGO.AddComponent<BoxCollider>();
+
+      DestructibleObject destructibleObject = flimsyGO.AddComponent<DestructibleObject>();
+      destructibleObject.isFlimsy = true;
+      destructibleObject.embeddedFlimsy = true;
+      destructibleObject.flimsyDestructType = FlimsyDestructType.largeStone;
+      destructibleObject.structMaterial = DestructibleObject.DestructibleMaterial.stone;
+      destructibleObject.destructType = DestructibleObject.DestructType.flimsyChild;
+      destructibleObject.dependentPersistentFX = new List<GameObject>();
+
+      AttachFlimsyMesh(flimsyGO, propFlimsyDef);
+
+      Bounds bounds = default(Bounds);
+      bounds.Encapsulate(mf.sharedMesh.bounds);
+      boxCollider.size = bounds.size;
+      boxCollider.center = bounds.center;
+
+      flimsyGO.transform.localPosition = propFlimsyDef.Position;
+      flimsyGO.transform.localEulerAngles = propFlimsyDef.Rotation;
+
+      flimsyGO.SetActive(true);
     }
 
     private void LoadAssetBundle(PropModelDef propModelDef) {
@@ -312,8 +364,45 @@ namespace MissionControl.EncounterFactories {
       // buildingLOD2MF.mesh = buildingLOD2Mesh;
     }
 
-    private void CreateFlimsies(GameObject buildingGO) {
+    private void AttachFlimsyMesh(GameObject flimsyGO, PropFlimsyDef flimsyDef) {
+      PropModelDef propModelDef = flimsyDef.GetPropModelDef();
+      Mesh flimsyLOD0Mesh = null;
 
+      if (propModelDef.IsMeshInBundle) {
+        LoadAssetBundle(propModelDef);
+
+        flimsyLOD0Mesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_LOD0");
+
+        if (buildingLOD0Mesh == null) {
+          Main.Logger.LogError("[BuildingFactory.CreateColAndLODs] Bundle COL Mesh is is null. It's possible LOD0, LOD1 and LOD2 might also be null. Check the names of the Meshes in the bundle match the Mesh in the MC PropModelDef");
+        } else {
+          Main.Logger.Log("[BuildingFactory.CreateColAndLODs] Bundle COL Mesh is " + buildingCOLMesh.name);
+        }
+      } else {
+        foreach (Mesh mesh in allGameMeshes) {
+          // If a flimsy base (e.g. no COL, LOD0, LOD1, LOD2) then set them all to the flimsy mesh
+          if (mesh.name == propModelDef.MeshName) {
+            Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] Found a flimsy base for '{propModelDef.Key}' so using that for COL, LOD0, LOD1, LOD2");
+
+            // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
+            Mesh flimsyFormattedMesh = mesh;
+            if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
+              flimsyFormattedMesh = CenterMeshPivot(mesh);
+            }
+
+            flimsyLOD0Mesh = flimsyFormattedMesh;
+            break;
+          }
+
+          if (mesh.name == $"{propModelDef.MeshName}_LOD0") flimsyLOD0Mesh = mesh;
+        }
+      }
+      MeshFilter flimsyLOD0MF = flimsyGO.GetComponent<MeshFilter>();
+      MeshRenderer flimsyLOD0MR = flimsyGO.GetComponent<MeshRenderer>();
+
+      Material[] materials = BuildMaterialsForRenderer(flimsyLOD0Mesh, propModelDef.Materials, placeholderMaterial);
+      flimsyLOD0MR.materials = materials;
+      flimsyLOD0MF.mesh = flimsyLOD0Mesh;
     }
 
     private void CreateGenericStaticDestruct(GameObject buildingGO) {

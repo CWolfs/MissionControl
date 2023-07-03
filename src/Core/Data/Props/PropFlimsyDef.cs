@@ -12,5 +12,14 @@ namespace MissionControl.Data {
 
     [JsonProperty("Rotation")]
     public Vector3 Rotation { get; set; } = Vector3.zero;
+
+    public PropModelDef GetPropModelDef() {
+      if (DataManager.Instance.ModelDefs.ContainsKey(Key)) {
+        return DataManager.Instance.ModelDefs[Key];
+      }
+
+      Main.Logger.LogError($"[PropFlimsyDef.GetPropModelDef] No PropModelDef found for Flimsy with key '{Key}'. This should not happen.");
+      return null;
+    }
   }
 }
