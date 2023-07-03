@@ -51,6 +51,8 @@ namespace MissionControl.ContractTypeBuilders {
         SetRotation(facilityGo, this.rotation);
         SetRotation(destructionParentGO, this.rotation);
       }
+
+      buildingFactory.AddToCameraFadeGroup();
     }
   }
 }

@@ -64,6 +64,11 @@ namespace MissionControl.EncounterFactories {
     private GameObject destructSplit;
     private GameObject destructShell;
 
+    // CameraFade variables
+    private LODGroup fadeLODGroup;
+    private StructureGroup fadeStructureGroup;
+    private DestructibleObject fadeDestructibleObject;
+
     public BuildingFactory(PropBuildingDef propBuildingDef) {
       PropBuildingDef = propBuildingDef;
 
@@ -179,6 +184,9 @@ namespace MissionControl.EncounterFactories {
       structureGroup.destructibleObject = destructibleObject;
       structureGroup.destructionParent = buildingGO;
 
+      destructibleObject.structureGroup = structureGroup;
+      destructibleObject.destructList = destructibleObject.GetComponentsInChildren<DestructibleObject>().ToList();
+
       buildingGO.SetActive(true);
 
       destructibleObject.destructionParent.transform.SetParent(MCGenericStaticDestruct.transform, true);
@@ -192,7 +200,36 @@ namespace MissionControl.EncounterFactories {
 
       if (!propModelDef.HasCustomShell) RandomiseShell(destructibleObject);
 
+      // Cache for adding to Camera Fade Manager
+      fadeLODGroup = lodGroup;
+      fadeStructureGroup = structureGroup;
+      fadeDestructibleObject = destructibleObject;
+
       return buildingGO;
+    }
+
+    // Add to CameraFadeManager to allow for fading the building when the camera is too close
+    public void AddToCameraFadeGroup() {
+      CameraFadeManager instance = CameraFadeManager.Instance;
+      Renderer[] structureGroupRenderers = fadeStructureGroup.structureGroupRenderers;
+      CameraFadeManager.FadeGroup fadeGroup = instance.Add(fadeLODGroup, structureGroupRenderers);
+
+      fadeStructureGroup.destructibleObject.AddChildrenToFadeManager(fadeGroup);
+
+      // TODO: Include this when adding glass support
+      // if (structureGroup != null) {
+      // for (int i = 0; i < structureGroup.flimsyChildren.Length; i++) {
+      //   structureGroup.flimsyChildren[i].fadeGroup = fadeGroup;
+      //   if (glassRenderer != null) {
+      //     fadeGroup.AddRenderer(glassRenderer);
+      //   }
+
+      if (fadeDestructibleObject.damagedInstance != null) {
+        fadeDestructibleObject.damagedInstance.UpdateSnapshots(forceUpdate: true);
+        for (int j = 0; j < fadeDestructibleObject.damagedInstance.children.Length; j++) {
+          fadeDestructibleObject.damagedInstance.children[j].fadeGroup = fadeGroup;
+        }
+      }
     }
 
     private GameObject CreateFlimsies(GameObject buildingGO) {
