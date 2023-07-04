@@ -56,6 +56,7 @@ namespace MissionControl {
     // Props
     public Dictionary<string, PropModelDef> ModelDefs = new Dictionary<string, PropModelDef>();
     public Dictionary<string, PropBuildingDef> BuildingDefs = new Dictionary<string, PropBuildingDef>();
+    public Dictionary<string, PropStructureDef> StructureDefs = new Dictionary<string, PropStructureDef>();
 
     // Data backup
     private Dictionary<string, List<LanceOverride>> ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
@@ -278,6 +279,10 @@ namespace MissionControl {
       if (Directory.Exists($"{propsPath}/buildings")) {
         LoadPropBuildingDefs($"{propsPath}/buildings");
       }
+
+      if (Directory.Exists($"{propsPath}/structures")) {
+        LoadPropStructureDefs($"{propsPath}/structures");
+      }
     }
 
     private void LoadPropModelDefs(string modelsPath) {
@@ -349,6 +354,24 @@ namespace MissionControl {
           BuildingDefs.Add(propBuildingDef.Key, propBuildingDef);
         } else {
           Main.Logger.Log($"[DataManager.LoadPropBuildingDefs] A PropBuildingDef of key '{propBuildingDef.Key}' already exists. Building keys must be unique.");
+        }
+      }
+    }
+
+    private void LoadPropStructureDefs(string structuresPath) {
+      foreach (string structureDefPaths in Directory.GetFiles(structuresPath, "*.json", SearchOption.AllDirectories)) {
+        // Main.Logger.Log("[DataManager.LoadPropModelData] Loading model directory data " + modelDirectory);
+        string structureSource = File.ReadAllText(structureDefPaths);
+        PropStructureDef propStructureDef = JsonConvert.DeserializeObject<PropStructureDef>(structureSource, serialiserSettings);
+        Main.Logger.Log("[DataManager.LoadPropStructureDefs] Loaded LoadPropStructureDefs: " + propStructureDef.Key);
+
+        Main.Logger.Log("[DataManager.LoadPropStructureDefs] Loaded LoadPropStructureDef MainModelKey: " + propStructureDef.MainModelKey);
+        Main.Logger.Log("[DataManager.LoadPropStructureDefs] Loaded LoadPropStructureDef FlimsyModels Count: " + propStructureDef.FlimsyModels.Count);
+
+        if (!StructureDefs.ContainsKey(propStructureDef.Key)) {
+          StructureDefs.Add(propStructureDef.Key, propStructureDef);
+        } else {
+          Main.Logger.Log($"[DataManager.LoadPropStructureDefs] A LoadPropStructureDef of key '{propStructureDef.Key}' already exists. Structure keys must be unique.");
         }
       }
     }

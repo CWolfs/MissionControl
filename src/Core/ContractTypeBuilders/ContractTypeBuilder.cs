@@ -98,8 +98,8 @@ namespace MissionControl.ContractTypeBuilders {
           JArray structures = (JArray)propsArray[STRUCTURES_ID];
 
           foreach (JObject structure in structures.Children<JObject>()) {
-            // BuildingBuilder buildingBuilder = new BuildingBuilder(this, building);
-            // buildingBuilder.Build();
+            StructureBuilder buildingBuilder = new StructureBuilder(this, structure);
+            buildingBuilder.Build();
           }
         }
       }
