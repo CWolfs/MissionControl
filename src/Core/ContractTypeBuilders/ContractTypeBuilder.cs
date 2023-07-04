@@ -9,6 +9,7 @@ using BattleTech.Framework;
 using MissionControl.Messages;
 using MissionControl.Result;
 using MissionControl.Conditional;
+using MissionControl.EncounterFactories;
 
 using Newtonsoft.Json.Linq;
 
@@ -36,6 +37,8 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     public bool Build() {
+      PropFactory.RebuildStaticAssets();
+
       Main.LogDebug($"[ContractTypeBuild] Building '{ContractTypeKey}'");
       BuildGlobalData();
 
@@ -49,6 +52,8 @@ namespace MissionControl.ContractTypeBuilders {
       BuildTriggers();
 
       Validate();
+
+      PropFactory.ResetStaticAssets();
 
       return true;
     }
