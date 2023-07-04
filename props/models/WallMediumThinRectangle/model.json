@@ -1,0 +1,13 @@
+{
+  "Key": "WallMediumThinRectangle",
+  "Mesh": "wallMediumThinRectangle",
+  "Materials": [
+    {
+      "Name": "envMatStct_asphalt_generic"
+    }
+  ],
+  "IsMeshInBundle": true,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

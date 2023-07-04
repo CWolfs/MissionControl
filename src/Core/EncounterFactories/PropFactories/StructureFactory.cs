@@ -1,11 +1,9 @@
 using UnityEngine;
 
 using System;
-using System.Linq;
 using System.Collections.Generic;
 
 using BattleTech;
-using BattleTech.Rendering;
 
 using MissionControl.Data;
 
@@ -130,20 +128,7 @@ namespace MissionControl.EncounterFactories {
       MeshFilter mf = flimsyGO.AddComponent<MeshFilter>();
       flimsyGO.AddComponent<MeshRenderer>();
 
-      // Rigidbody rb = flimsyGO.AddComponent<Rigidbody>();
-      // rb.mass = propFlimsyDef.Mass;
-
       BoxCollider boxCollider = flimsyGO.AddComponent<BoxCollider>();
-
-      // DestructibleObject destructibleObject = flimsyGO.AddComponent<DestructibleObject>();
-      // destructibleObject.isFlimsy = true;
-      // destructibleObject.embeddedFlimsy = true;
-      // destructibleObject.structSize = propModelDef.DestructibleSize;
-      // destructibleObject.flimsyDestructType = propModelDef.FlimsyDestructibleType;
-      // destructibleObject.structMaterial = propModelDef.DestructibleMaterial;
-      // destructibleObject.destructType = DestructibleObject.DestructType.flimsyChild;
-      // destructibleObject.dependentPersistentFX = new List<GameObject>();
-      // destructibleObject.pieceSize = DestructibleObject.PieceSize.small; // TODO: Expose this
 
       AttachFlimsyMesh(flimsyGO, propFlimsyDef);
       CalculateBounds(mf, boxCollider);

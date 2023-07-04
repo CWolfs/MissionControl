@@ -207,16 +207,39 @@ namespace MissionControl.EncounterFactories {
         buildingLOD1Mesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_LOD1");
         buildingLOD2Mesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_LOD2");
 
+        if (buildingCOLMesh == null && buildingLOD0Mesh == null) {
+          Mesh bundledFlimsyStyledMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}");
+
+          if (bundledFlimsyStyledMesh != null) {
+            Main.Logger.Log($"[PropFactory.CreateColAndLODs] Found a flimsy base in bundle for '{propModelDef.Key}' so using that for COL, LOD0, LOD1, LOD2");
+            bundledFlimsyStyledMesh.name = bundledFlimsyStyledMesh.name.Replace("(Clone)", "");
+
+            // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
+            if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
+              bundledFlimsyStyledMesh = CenterMeshPivot(bundledFlimsyStyledMesh);
+            }
+
+            buildingCOLMesh = bundledFlimsyStyledMesh;
+            buildingLOD0Mesh = bundledFlimsyStyledMesh;
+            buildingLOD1Mesh = bundledFlimsyStyledMesh;
+            buildingLOD2Mesh = bundledFlimsyStyledMesh;
+
+            isFlimsyBase = true;
+          } else {
+            Main.Logger.LogError("[PropFactory.CreateColAndLODs] IsMeshInBundle was true but couldn't find the mesh in either COL/LOD0/LOD1/LOD2 or fimsey (pure name) format");
+          }
+        }
+
         if (buildingCOLMesh == null) {
-          Main.Logger.LogError("[BuildingFactory.CreateColAndLODs] Bundle COL Mesh is is null. It's possible LOD0, LOD1 and LOD2 might also be null. Check the names of the Meshes in the bundle match the Mesh in the MC PropModelDef");
+          Main.Logger.LogError("[PropFactory.CreateColAndLODs] Bundle COL Mesh is is null. It's possible LOD0, LOD1 and LOD2 might also be null. Check the names of the Meshes in the bundle match the Mesh in the MC PropModelDef");
         } else {
-          Main.Logger.Log("[BuildingFactory.CreateColAndLODs] Bundle COL Mesh is " + buildingCOLMesh.name);
+          Main.Logger.Log("[PropFactory.CreateColAndLODs] Bundle COL Mesh is " + buildingCOLMesh.name);
         }
       } else {
         foreach (Mesh mesh in allGameMeshes) {
           // If a flimsy base (e.g. no COL, LOD0, LOD1, LOD2) then set them all to the flimsy mesh
           if (mesh.name == propModelDef.MeshName) {
-            Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] Found a flimsy base for '{propModelDef.Key}' so using that for COL, LOD0, LOD1, LOD2");
+            Main.Logger.Log($"[PropFactory.CreateColAndLODs] Found a flimsy base for '{propModelDef.Key}' so using that for COL, LOD0, LOD1, LOD2");
 
             // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
             Mesh flimsyFormattedMesh = mesh;
@@ -259,14 +282,14 @@ namespace MissionControl.EncounterFactories {
       // ApplyScale(buildingLOD0GO);
 
       if (buildingLOD1Mesh != null) {
-        Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] Check - LOD1 mesh " + buildingLOD1Mesh.name + " isFlimsyBase: " + isFlimsyBase);
+        Main.Logger.Log($"[PropFactory.CreateColAndLODs] Check - LOD1 mesh " + buildingLOD1Mesh.name + " isFlimsyBase: " + isFlimsyBase);
       } else {
-        Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] Check - LOD1 mesh is null and isFlimsyBase: " + isFlimsyBase);
+        Main.Logger.Log($"[PropFactory.CreateColAndLODs] Check - LOD1 mesh is null and isFlimsyBase: " + isFlimsyBase);
       }
 
       if (!isFlimsyBase) {
         if (buildingLOD1Mesh != null) {
-          Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] Building LOD1 GO with mesh '{propModelDef.MeshName}_LOD1'");
+          Main.Logger.Log($"[PropFactory.CreateColAndLODs] Building LOD1 GO with mesh '{propModelDef.MeshName}_LOD1'");
 
           GameObject buildingLOD1GO = CreateGameObject(buildingGO, $"{buildingGO.name}_LOD1");
           MeshFilter buildingLOD1MF = buildingLOD1GO.AddComponent<MeshFilter>();
@@ -274,11 +297,11 @@ namespace MissionControl.EncounterFactories {
           buildingLOD1MR.materials = materials;
           buildingLOD1MF.mesh = buildingLOD1Mesh;
         } else {
-          Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] No LOD1 mesh found under name '{propModelDef.MeshName}_LOD1' so skipping LOD1 GO build");
+          Main.Logger.Log($"[PropFactory.CreateColAndLODs] No LOD1 mesh found under name '{propModelDef.MeshName}_LOD1' so skipping LOD1 GO build");
         }
 
         if (buildingLOD2Mesh != null) {
-          Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] Building LOD2 with mesh '{propModelDef.MeshName}_LOD1'");
+          Main.Logger.Log($"[PropFactory.CreateColAndLODs] Building LOD2 with mesh '{propModelDef.MeshName}_LOD1'");
 
           GameObject buildingLOD2GO = CreateGameObject(buildingGO, $"{buildingGO.name}_LOD2");
           MeshFilter buildingLOD2MF = buildingLOD2GO.AddComponent<MeshFilter>();
@@ -286,7 +309,7 @@ namespace MissionControl.EncounterFactories {
           buildingLOD2MR.materials = materials;
           buildingLOD2MF.mesh = buildingLOD2Mesh;
         } else {
-          Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] No LOD2 mesh found under name '{propModelDef.MeshName}_LOD1' so skipping LOD2 GO build");
+          Main.Logger.Log($"[PropFactory.CreateColAndLODs] No LOD2 mesh found under name '{propModelDef.MeshName}_LOD1' so skipping LOD2 GO build");
         }
       }
     }
@@ -294,20 +317,20 @@ namespace MissionControl.EncounterFactories {
     protected Material[] BuildMaterialsForRenderer(Mesh mesh, PropModelDef propModelDef, List<PropMaterialDef> materialDefs, Material placeholderMaterial) {
       Material[] materials = new Material[mesh.subMeshCount];
 
-      Main.Logger.Log($"[BuildingFactory.BuildMaterialsForRenderer] mesh.subMeshCount for '{mesh.name}' is '{mesh.subMeshCount}'");
+      Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] mesh.subMeshCount for '{mesh.name}' is '{mesh.subMeshCount}'");
       for (int i = 0; i < mesh.subMeshCount; i++) {
         if (i >= materialDefs.Count) {
-          Main.Logger.LogWarning($"[BuildingFactory.BuildMaterialsForRenderer] Not enough supplied material identifiers in prop data to use for submesh '{i}' for mesh '{mesh.name}'. Duplicating existing mat references.");
+          Main.Logger.LogWarning($"[PropFactory.BuildMaterialsForRenderer] Not enough supplied material identifiers in prop data to use for submesh '{i}' for mesh '{mesh.name}'. Duplicating existing mat references.");
           materialDefs.Add(materialDefs[UnityEngine.Random.Range(0, materialDefs.Count)]);
         }
 
         PropMaterialDef propMaterialDef = materialDefs[i];
 
         if (propMaterialDef.Shader != null) {
-          Main.Logger.Log($"[BuildingFactory.BuildMaterialsForRenderer] Shader provided for PropMaterialDef '{propMaterialDef.Name}' so building Material with specific shader '{propMaterialDef.Shader}' and texture '{propMaterialDef.Texture}'");
+          Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Shader provided for PropMaterialDef '{propMaterialDef.Name}' so building Material with specific shader '{propMaterialDef.Shader}' and texture '{propMaterialDef.Texture}'");
           // Build whole material with specific shader and texture
-          if (propModelDef.BundlePath == null) Main.Logger.LogWarning("[BuildingFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef Shader name but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
-          if (propModelDef.BundlePath == null) Main.Logger.LogWarning("[BuildingFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef Texture name but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
+          if (propModelDef.BundlePath == null) Main.Logger.LogWarning("[PropFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef Shader name but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
+          if (propModelDef.BundlePath == null) Main.Logger.LogWarning("[PropFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef Texture name but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
 
           // First look for Shader in bundle
           Shader shader = propModelDef.BundlePath != null ? AssetBundleLoader.GetAsset<Shader>(propModelDef.BundlePath, propMaterialDef.Shader) : null;
@@ -325,8 +348,8 @@ namespace MissionControl.EncounterFactories {
           material.mainTexture = texture;
           materials[i] = material;
         } else if (propMaterialDef.Texture != null) {
-          Main.Logger.Log($"[BuildingFactory.BuildMaterialsForRenderer] Texture but no Shader provided for PropMaterialDef '{propMaterialDef.Name}' so building Material with default shader 'BattleTech Standard' and texture '{propMaterialDef.Texture}'");
-          if (propModelDef.BundlePath == null) Main.Logger.LogWarning("[BuildingFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef Texture name but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
+          Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Texture but no Shader provided for PropMaterialDef '{propMaterialDef.Name}' so building Material with default shader 'BattleTech Standard' and texture '{propMaterialDef.Texture}'");
+          if (propModelDef.BundlePath == null) Main.Logger.LogWarning("[PropFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef Texture name but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
 
           // Build whole material with specifix texture but use 'BattleTech Standard' shader
           Shader shader = Shader.Find("BattleTech Standard");
@@ -341,13 +364,15 @@ namespace MissionControl.EncounterFactories {
           material.mainTexture = texture;
           materials[i] = material;
         } else {
-          // Main.Logger.Log($"[BuildingFactory.BuildMaterialsForRenderer] Only material name provided in PropMaterialDef '{propMaterialDef.Name}' so looking for material in bundle first then game data");
+          // Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Only material name provided in PropMaterialDef '{propMaterialDef.Name}' so looking for material in bundle first then game data");
 
           // Look first at bundle for custom bundled Material
           Material mat = propModelDef.BundlePath != null ? AssetBundleLoader.GetAsset<Material>(propModelDef.BundlePath, propMaterialDef.Name) : null;
+          if (mat != null) Main.Logger.Log("[PropFactory.BuildMaterialsForRenderer] Found Material in bundle " + mat.name + " after looking for: " + propMaterialDef.Name);
 
           // Otherwise look at all game Materials
           if (mat == null) mat = matLookup.ContainsKey(propMaterialDef.Name) ? matLookup[propMaterialDef.Name] : placeholderMaterial;
+          Main.Logger.Log("[PropFactory.BuildMaterialsForRenderer] Using Material " + mat.name + " after looking for: " + propMaterialDef.Name);
 
           materials[i] = mat;
         }
