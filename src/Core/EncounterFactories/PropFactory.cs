@@ -51,6 +51,10 @@ namespace MissionControl.EncounterFactories {
     protected Mesh buildingLOD1Mesh = null;
     protected Mesh buildingLOD2Mesh = null;
 
+    private float[] lodDistances1 = new float[1] { 0f };
+    private float[] lodDistances2 = new float[2] { 0.1f, 0f };
+    private float[] lodDistances3 = new float[3] { 0.1f, 0.01f, 0f };
+
     /** This is called at the start of a custom contract type build to optimise asset grabs */
     public static void RebuildStaticAssets() {
       allGameMeshes = Resources.FindObjectsOfTypeAll<Mesh>();
@@ -92,6 +96,7 @@ namespace MissionControl.EncounterFactories {
       MeshRenderer lod1MR = buildingGO.transform.Find($"{buildingGO.name}_LOD1")?.GetComponent<MeshRenderer>();
       MeshRenderer lod2MR = buildingGO.transform.Find($"{buildingGO.name}_LOD2")?.GetComponent<MeshRenderer>();
 
+
       int availableLODCount = 1;
       // Only support sequential LODs - do not allow LOD0 and LOD2, for example. Only LOD0 | LOD0, LOD1 | LOD0, LOD1, LOD2
       if (lod1MR != null && lod2MR == null) availableLODCount = 2;
@@ -99,25 +104,37 @@ namespace MissionControl.EncounterFactories {
 
       LOD[] lods = new LOD[availableLODCount]; // Numer of LODS
 
+      float[] lodRanges = null;
+      if (availableLODCount == 1) {
+        lodRanges = lodDistances1;
+      } else if (availableLODCount == 2) {
+        lodRanges = lodDistances2;
+      } else if (availableLODCount == 3) {
+        lodRanges = lodDistances3;
+      }
+
       Renderer[] lod0Renderers = new Renderer[1];
       lod0Renderers[0] = lod0MR;
-      lods[0] = new LOD(0, lod0Renderers);
+      lods[0] = new LOD(lodRanges[0], lod0Renderers);
 
-      // if (lod1MR != null) {
-      //   Renderer[] lod1Renderers = new Renderer[1];
-      //   lod1Renderers[0] = lod1MR;
-      //   lods[0] = new LOD(0, lod1Renderers);
-      // }
+      if (lod1MR != null) {
+        Renderer[] lod1Renderers = new Renderer[1];
+        lod1Renderers[0] = lod1MR;
+        lods[1] = new LOD(lodRanges[1], lod1Renderers);
+      }
 
-      // if (lod2MR != null) {
-      //   Renderer[] lod2Renderers = new Renderer[1];
-      //   lod2Renderers[0] = lod2MR;
-      //   lods[0] = new LOD(0, lod2Renderers);
-      // }
+      if (lod2MR != null) {
+        Renderer[] lod2Renderers = new Renderer[1];
+        lod2Renderers[0] = lod2MR;
+        lods[2] = new LOD(lodRanges[2], lod2Renderers);
+      }
 
       // Set LODs into Group
       lodGroup.SetLODs(lods);
       lodGroup.RecalculateBounds();
+      lodGroup.fadeMode = LODFadeMode.CrossFade;
+      lodGroup.animateCrossFading = true;
+      // lodGroup.size = 6f / Mathf.Max(Mathf.Max(staticRoot.transform.lossyScale.x, staticRoot.transform.lossyScale.y), staticRoot.transform.lossyScale.z);
 
       return lodGroup;
     }
@@ -234,31 +251,31 @@ namespace MissionControl.EncounterFactories {
         Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] Check - LOD1 mesh is null and isFlimsyBase: " + isFlimsyBase);
       }
 
-      // if (!isFlimsyBase) {
-      //   if (buildingLOD1Mesh != null) {
-      //     Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] Building LOD1 GO with mesh '{propModelDef.MeshName}_LOD1'");
+      if (!isFlimsyBase) {
+        if (buildingLOD1Mesh != null) {
+          Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] Building LOD1 GO with mesh '{propModelDef.MeshName}_LOD1'");
 
-      //     GameObject buildingLOD1GO = CreateGameObject(buildingGO, $"{buildingGO.name}_LOD1");
-      //     MeshFilter buildingLOD1MF = buildingLOD1GO.AddComponent<MeshFilter>();
-      //     MeshRenderer buildingLOD1MR = buildingLOD1GO.AddComponent<MeshRenderer>();
-      //     buildingLOD1MR.materials = materials;
-      //     buildingLOD1MF.mesh = buildingLOD1Mesh;
-      //   } else {
-      //     Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] No LOD1 mesh found under name '{propModelDef.MeshName}_LOD1' so skipping LOD1 GO build");
-      //   }
+          GameObject buildingLOD1GO = CreateGameObject(buildingGO, $"{buildingGO.name}_LOD1");
+          MeshFilter buildingLOD1MF = buildingLOD1GO.AddComponent<MeshFilter>();
+          MeshRenderer buildingLOD1MR = buildingLOD1GO.AddComponent<MeshRenderer>();
+          buildingLOD1MR.materials = materials;
+          buildingLOD1MF.mesh = buildingLOD1Mesh;
+        } else {
+          Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] No LOD1 mesh found under name '{propModelDef.MeshName}_LOD1' so skipping LOD1 GO build");
+        }
 
-      //   if (buildingLOD2Mesh != null) {
-      //     Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] Building LOD2 with mesh '{propModelDef.MeshName}_LOD1'");
+        if (buildingLOD2Mesh != null) {
+          Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] Building LOD2 with mesh '{propModelDef.MeshName}_LOD1'");
 
-      //     GameObject buildingLOD2GO = CreateGameObject(buildingGO, $"{buildingGO.name}_LOD2");
-      //     MeshFilter buildingLOD2MF = buildingLOD2GO.AddComponent<MeshFilter>();
-      //     MeshRenderer buildingLOD2MR = buildingLOD2GO.AddComponent<MeshRenderer>();
-      //     buildingLOD2MR.materials = materials;
-      //     buildingLOD2MF.mesh = buildingLOD2Mesh;
-      //   } else {
-      //     Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] No LOD2 mesh found under name '{propModelDef.MeshName}_LOD1' so skipping LOD2 GO build");
-      //   }
-      // }
+          GameObject buildingLOD2GO = CreateGameObject(buildingGO, $"{buildingGO.name}_LOD2");
+          MeshFilter buildingLOD2MF = buildingLOD2GO.AddComponent<MeshFilter>();
+          MeshRenderer buildingLOD2MR = buildingLOD2GO.AddComponent<MeshRenderer>();
+          buildingLOD2MR.materials = materials;
+          buildingLOD2MF.mesh = buildingLOD2Mesh;
+        } else {
+          Main.Logger.Log($"[BuildingFactory.CreateColAndLODs] No LOD2 mesh found under name '{propModelDef.MeshName}_LOD1' so skipping LOD2 GO build");
+        }
+      }
     }
 
     protected Material[] BuildMaterialsForRenderer(Mesh mesh, PropModelDef propModelDef, List<PropMaterialDef> materialDefs, Material placeholderMaterial) {
