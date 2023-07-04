@@ -406,11 +406,11 @@ namespace MissionControl.EncounterFactories {
       GameObject buildingLOD0GO = CreateGameObject(buildingGO, $"{buildingGO.name}_LOD0");
       MeshFilter buildingLOD0MF = buildingLOD0GO.AddComponent<MeshFilter>();
       MeshRenderer buildingLOD0MR = buildingLOD0GO.AddComponent<MeshRenderer>();
-      // EnsureMiniumMeshSize(buildingLOD0GO);
 
       Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef.Materials, placeholderMaterial);
       buildingLOD0MR.materials = materials;
       buildingLOD0MF.mesh = buildingLOD0Mesh;
+      // EnsureMiniumMeshSize(buildingLOD0GO);
 
       // GameObject buildingLOD1GO = CreateGameObject(buildingGO, $"{buildingGO.name}_LOD1");
       // MeshFilter buildingLOD1MF = buildingLOD1GO.AddComponent<MeshFilter>();
