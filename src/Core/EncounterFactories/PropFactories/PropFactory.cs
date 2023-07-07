@@ -372,31 +372,55 @@ namespace MissionControl.EncounterFactories {
           if (propModelDef.BundlePath == null) Main.Logger.LogWarning("[PropFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef Shader name but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
           if (propModelDef.BundlePath == null) Main.Logger.LogWarning("[PropFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef Texture name but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
 
-          // First look for Shader in bundle
-          Shader shader = propModelDef.BundlePath != null ? AssetBundleLoader.GetAsset<Shader>(propModelDef.BundlePath, propMaterialDef.Shader) : null;
+          Material material = null;
 
-          // Otherwise look for Shader in game
-          if (shader == null) shader = Shader.Find(propMaterialDef.Shader);
+          // Check for cached generated Material first
+          if (MissionControl.Instance.GeneratedMaterials.ContainsKey(propMaterialDef.Name)) {
+            Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Using cached runtime generated material '{propMaterialDef.Name}'");
+            material = MissionControl.Instance.GeneratedMaterials[propMaterialDef.Name];
+          } else {
+            Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Generating cached runtime generated material '{propMaterialDef.Name}'");
 
-          Material material = new Material(shader);
-          material.name = propMaterialDef.Name;
-          JObject materialProperties = propMaterialDef.MaterialProperties;
-          SetMaterialProperties(propModelDef, material, materialProperties);
+            // First look for Shader in bundle
+            Shader shader = propModelDef.BundlePath != null ? AssetBundleLoader.GetAsset<Shader>(propModelDef.BundlePath, propMaterialDef.Shader) : null;
 
-          MissionControl.Instance.GeneratedMaterials.Add(propMaterialDef.Name, material);
+            // Otherwise look for Shader in game
+            if (shader == null) shader = Shader.Find(propMaterialDef.Shader);
+
+            material = new Material(shader);
+            material.name = propMaterialDef.Name;
+            JObject materialProperties = propMaterialDef.MaterialProperties;
+            SetMaterialProperties(propModelDef, material, materialProperties);
+
+            MissionControl.Instance.GeneratedMaterials.Add(propMaterialDef.Name, material);
+          }
+
+          materials[i] = material;
         } else if (propMaterialDef.MaterialProperties != null) {
           Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Texture but no Shader provided for PropMaterialDef '{propMaterialDef.Name}' so building Material with default shader 'BattleTech Standard' and MaterialProperties '{propMaterialDef.MaterialProperties.ToString()}'");
           if (propModelDef.BundlePath == null) Main.Logger.LogWarning("[PropFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef MaterialProperties but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
 
-          // Build whole material with specifix texture but use 'BattleTech Standard' shader
-          Shader shader = Shader.Find("BattleTech Standard");
+          Material material = null;
 
-          Material material = new Material(shader);
-          material.name = propMaterialDef.Name;
-          JObject materialProperties = propMaterialDef.MaterialProperties;
-          SetMaterialProperties(propModelDef, material, materialProperties);
+          // Check for cached generated Material first
+          if (MissionControl.Instance.GeneratedMaterials.ContainsKey(propMaterialDef.Name)) {
+            Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Using cached runtime generated material '{propMaterialDef.Name}'");
+            material = MissionControl.Instance.GeneratedMaterials[propMaterialDef.Name];
+          } else {
+            Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Generating cached runtime generated material '{propMaterialDef.Name}'");
 
-          MissionControl.Instance.GeneratedMaterials.Add(propMaterialDef.Name, material);
+            // Build whole material with specifix texture but use 'BattleTech Standard' shader
+            Shader shader = Shader.Find("BattleTech Standard");
+
+            material = new Material(shader);
+            material.name = propMaterialDef.Name;
+            JObject materialProperties = propMaterialDef.MaterialProperties;
+            SetMaterialProperties(propModelDef, material, materialProperties);
+
+            MissionControl.Instance.GeneratedMaterials.Add(propMaterialDef.Name, material);
+          }
+
+          materials[i] = material;
         } else {
           // Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Only material name provided in PropMaterialDef '{propMaterialDef.Name}' so looking for material in bundle first then game data");
 
