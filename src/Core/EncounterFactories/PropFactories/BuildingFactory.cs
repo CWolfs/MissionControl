@@ -258,11 +258,22 @@ namespace MissionControl.EncounterFactories {
         } else {
           Main.Logger.Log("[BuildingFactory.AttachFlimsyMesh] Bundle LOD Mesh is " + flimsyLOD0Mesh.name);
         }
+
+        if (flimsyLOD0Mesh.name == propModelDef.MeshName) {
+          Main.Logger.Log($"[BuildingFactory.AttachFlimsyMesh] Found a flimsy base for '{propModelDef.Key}'");
+
+          // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
+          Mesh flimsyFormattedMesh = flimsyLOD0Mesh;
+          if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
+            flimsyFormattedMesh = CenterMeshPivot(flimsyLOD0Mesh);
+            flimsyLOD0Mesh = flimsyFormattedMesh;
+          }
+        }
       } else {
         foreach (Mesh mesh in allGameMeshes) {
           // If a flimsy base (e.g. no COL, LOD0, LOD1, LOD2) then set them all to the flimsy mesh
           if (mesh.name == propModelDef.MeshName) {
-            Main.Logger.Log($"[BuildingFactory.AttachFlimsyMesh] Found a flimsy base for '{propModelDef.Key}' so using that for COL, LOD0, LOD1, LOD2");
+            Main.Logger.Log($"[BuildingFactory.AttachFlimsyMesh] Found a flimsy base for '{propModelDef.Key}'");
 
             // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
             Mesh flimsyFormattedMesh = mesh;

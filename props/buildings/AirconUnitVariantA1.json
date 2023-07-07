@@ -1,5 +1,5 @@
 {
-  "Key": "AirconUnitVariantA1",
+  "Key": "MachineAirConditioningUnitVariantA1",
   "BuildingDefID": "buildingdef_Civilian_Small",
-  "MainModel": "AirconUnitA"
+  "MainModel": "MachineAirConditioningUnitA"
 }

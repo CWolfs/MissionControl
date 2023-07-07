@@ -4,12 +4,12 @@
   "MainModel": "LargeMilitaryBuildingA",
   "FlimsyModels": [
     {
-      "Key": "AirconUnitA",
+      "Key": "MachineAirConditioningUnitA",
       "Position": { "x": 3.3, "y": 18.3, "z": 18 },
       "Mass": 600
     },
     {
-      "Key": "AirconUnitA",
+      "Key": "MachineAirConditioningUnitA",
       "Position": { "x": -2, "y": 18.3, "z": 18 },
       "Mass": 600
     },
