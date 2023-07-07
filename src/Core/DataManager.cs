@@ -286,9 +286,12 @@ namespace MissionControl {
     }
 
     private void LoadPropModelDefs(string modelsPath) {
-      foreach (string modelDirectory in Directory.GetDirectories(modelsPath)) {
+      foreach (string modelDirectory in DirectoryUtils.GetAllDirectories(modelsPath)) {
         // Main.Logger.Log("[DataManager.LoadPropModelData] Loading model directory data " + modelDirectory);
+        if (!File.Exists($"{modelDirectory}/model.json")) continue;
+
         string modelSource = File.ReadAllText($"{modelDirectory}/model.json");
+
         PropModelDef propModelDef = JsonConvert.DeserializeObject<PropModelDef>(modelSource, serialiserSettings);
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef: " + propModelDef.Key);
 
