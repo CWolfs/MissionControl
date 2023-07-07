@@ -50,7 +50,7 @@ namespace MissionControl.EncounterFactories {
       }
     }
 
-    protected static string genericStaticDestructName = "generic_static_destruct";
+    protected static string GenericStaticDestructName { get; set; } = "generic_static_destruct";
 
     // Rebuilt at start of custom contract type building and reset after the build has completed
     protected static Mesh[] allGameMeshes;

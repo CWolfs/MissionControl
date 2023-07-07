@@ -8,6 +8,7 @@ using BattleTech;
 using BattleTech.Rendering;
 
 using MissionControl.Data;
+using MissionControl.Utils;
 
 namespace MissionControl.EncounterFactories {
   public class BuildingFactory : PropFactory {
@@ -287,28 +288,40 @@ namespace MissionControl.EncounterFactories {
     private void CreateGenericStaticDestruct(GameObject buildingGO) {
       PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
 
-      // Split
-      destructSplit = CreateGameObject(buildingGO, $"{buildingGO.name}_{genericStaticDestructName}_split");
-      destructSplit.layer = 8;
+      if (propModelDef.HasCustomSplits) {
+        LoadAssetBundle(propModelDef);
 
-      List<GameObject> splitPieceGOs = MeshFracturer.Fracture(buildingGO, 1);
-      foreach (GameObject splitPiece in splitPieceGOs) {
-        splitPiece.transform.SetParent(destructSplit.transform);
-        splitPiece.layer = 8;
+        // Spawn the prefab split
+        GameObject destructSplitPrefab = AssetBundleLoader.GetAsset<GameObject>(propModelDef.BundlePath, $"{propModelDef.MeshName}_{GenericStaticDestructName}_split");
+        destructSplit = GameObject.Instantiate(destructSplitPrefab, Vector3.zero, new Quaternion(), buildingGO.transform);
+        LayerTools.SetLayerRecursively(destructSplit, 8);
 
-        // Apply material
-        // TODO: The fracture UV mapping and material assignment need more work. Fewer mats should be assign per split (e.g. in vanilla a building with 7 mats might have splits with 2-3 mats depending on how they were fractured )
-        // TODO: So we don't need to assign all 7 original ones to each split. Probably need a 3rd party lib or definitely a better script for fracturing.
-        // TODO: Having issues making good runtime fractures - just use a copy of LOD0 for now
-        Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef, PropBuildingDef.GetPropModelDef().Materials, placeholderMaterial);
-        splitPiece.GetComponent<MeshRenderer>().materials = materials;
+        // Set all materials
+        // TODO: Handle this
+      } else {
+        // Split
+        destructSplit = CreateGameObject(buildingGO, $"{buildingGO.name}_{GenericStaticDestructName}_split");
+        destructSplit.layer = 8;
+
+        List<GameObject> splitPieceGOs = MeshFracturer.Fracture(buildingGO, 1);
+        foreach (GameObject splitPiece in splitPieceGOs) {
+          splitPiece.transform.SetParent(destructSplit.transform);
+          splitPiece.layer = 8;
+
+          // Apply material
+          // TODO: The fracture UV mapping and material assignment need more work. Fewer mats should be assign per split (e.g. in vanilla a building with 7 mats might have splits with 2-3 mats depending on how they were fractured )
+          // TODO: So we don't need to assign all 7 original ones to each split. Probably need a 3rd party lib or definitely a better script for fracturing.
+          // TODO: Having issues making good runtime fractures - just use a copy of LOD0 for now
+          Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef, PropBuildingDef.GetPropModelDef().Materials, placeholderMaterial);
+          splitPiece.GetComponent<MeshRenderer>().materials = materials;
+        }
       }
 
       destructSplit.AddComponent<PhysicsExplodeChildren>();
       destructSplit.SetActive(false);
 
       // Shell
-      destructShell = CreateGameObject(buildingGO, $"{buildingGO.name}_{genericStaticDestructName}_shell");
+      destructShell = CreateGameObject(buildingGO, $"{buildingGO.name}_{GenericStaticDestructName}_shell");
       destructShell.layer = 8;
       destructShell.SetActive(false);
 
