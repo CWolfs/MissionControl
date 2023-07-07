@@ -15,12 +15,12 @@
     },
     {
       "Key": "GreeblePipesTwoShortCurved",
-      "Position": { "x": 1, "y": 0.5, "z": 0.6 },
+      "Position": { "x": -8, "y": 2.5, "z": 22 },
       "Mass": 100
     },
     {
       "Key": "GreeblePipesTwoShortCurved",
-      "Position": { "x": 1, "y": -0.5, "z": 0.6 },
+      "Position": { "x": -8, "y": 3.5, "z": 22 },
       "Mass": 100
     }
   ]

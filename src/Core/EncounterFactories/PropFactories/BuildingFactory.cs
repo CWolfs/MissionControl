@@ -265,6 +265,7 @@ namespace MissionControl.EncounterFactories {
           // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
           Mesh flimsyFormattedMesh = flimsyLOD0Mesh;
           if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
+            Main.Logger.Log($"[BuildingFactory.AttachFlimsyMesh] Found a flimsy base for '{propModelDef.Key}'");
             flimsyFormattedMesh = CenterMeshPivot(flimsyLOD0Mesh);
             flimsyLOD0Mesh = flimsyFormattedMesh;
           }

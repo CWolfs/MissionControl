@@ -180,6 +180,8 @@ namespace MissionControl.EncounterFactories {
     }
 
     protected Mesh CenterMeshPivot(Mesh oldMesh) {
+      Main.Logger.Log($"[BuildingFactory.AttachFlimsyMesh] Centering pivot on mesh");
+
       // Copy the mesh to not alter the original one
       Mesh mesh = MonoBehaviour.Instantiate(oldMesh);
 

@@ -9,5 +9,6 @@
   "IsMeshInBundle": true,
   "DestructibleSize": "small",
   "DestructibleMaterial": "metal",
-  "FlimsyDestructibleType": "smallMetal"
+  "FlimsyDestructibleType": "smallMetal",
+  "ChangePivotToCenterIfFlimsyMeshFormat": true
 }
