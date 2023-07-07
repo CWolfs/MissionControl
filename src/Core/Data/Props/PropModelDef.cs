@@ -23,6 +23,9 @@ namespace MissionControl.Data {
     [JsonProperty("HasCustomSplits")]
     public bool HasCustomSplits { get; set; } = false;
 
+    [JsonProperty("CustomSplitMaterials")]
+    public List<PropMaterialDef> CustomSplitMaterials { get; set; } = new List<PropMaterialDef>();
+
     [JsonProperty("HasCustomShell")]
     public bool HasCustomShell { get; set; } = false;
 

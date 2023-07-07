@@ -9,6 +9,8 @@ using BattleTech.Rendering;
 
 using MissionControl.Data;
 
+using Newtonsoft.Json.Linq;
+
 namespace MissionControl.EncounterFactories {
   public abstract class PropFactory {
     private static GameObject mcBuildingParent = null;
@@ -314,6 +316,44 @@ namespace MissionControl.EncounterFactories {
       }
     }
 
+    private void SetMaterialProperties(PropModelDef propModelDef, Material material, JObject materialProperties) {
+      foreach (KeyValuePair<string, JToken> kvPair in materialProperties) {
+        string propertyNameAndType = kvPair.Key;
+        string[] propertyNameAndTypeSplit = kvPair.Key.Split('.');
+
+        string propertyName = propertyNameAndTypeSplit[0];
+        string propertyType = propertyNameAndTypeSplit[1].ToLower();
+        JToken propertyValue = kvPair.Value;
+
+        if (propertyType == "texture") {
+          // Grab, load and set texture
+          // First look for Texture in bundle
+          string textureName = propertyValue.ToString();
+          Texture texture = propModelDef.BundlePath != null ? AssetBundleLoader.GetAsset<Texture>(propModelDef.BundlePath, textureName) : null;
+
+          // Otherwise look for texture in game
+          if (texture == null) texture = UnityGameInstance.Instance.Game.DataManager.TextureManager.GetLoadedTexture(textureName);
+
+          material.SetTexture(propertyName, texture);
+        } else if (propertyType == "textureoffset") {
+          JArray propertyValueArray = propertyValue.ToObject<JArray>();
+          Vector2 offset = new Vector2((float)propertyValueArray[0], (float)propertyValueArray[1]);
+          material.SetTextureOffset(propertyName, offset);
+        } else if (propertyType == "float") {
+          material.SetFloat(propertyName, (float)propertyValue);
+        } else if (propertyType == "int") {
+          material.SetInt(propertyName, (int)propertyValue);
+        } else if (propertyType == "vector") {
+          JArray propertyValueArray = propertyValue.ToObject<JArray>();
+          Vector4 vector = new Vector4((float)propertyValueArray[0], (float)propertyValueArray[1], (float)propertyValueArray[2], (float)propertyValueArray[3]);
+          material.SetVector(propertyName, vector);
+        } else if (propertyType == "shaderwords") {
+          string[] shaderwords = propertyValue.ToString().Split(',');
+          material.SetShaderKeywords(shaderwords);
+        }
+      }
+    }
+
     protected Material[] BuildMaterialsForRenderer(Mesh mesh, PropModelDef propModelDef, List<PropMaterialDef> materialDefs, Material placeholderMaterial) {
       Material[] materials = new Material[mesh.subMeshCount];
 
@@ -327,7 +367,7 @@ namespace MissionControl.EncounterFactories {
         PropMaterialDef propMaterialDef = materialDefs[i];
 
         if (propMaterialDef.Shader != null) {
-          Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Shader provided for PropMaterialDef '{propMaterialDef.Name}' so building Material with specific shader '{propMaterialDef.Shader}' and texture '{propMaterialDef.Texture}'");
+          Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Shader provided for PropMaterialDef '{propMaterialDef.Name}' so building Material with specific shader '{propMaterialDef.Shader}' and MaterialProperties '{propMaterialDef.MaterialProperties}'");
           // Build whole material with specific shader and texture
           if (propModelDef.BundlePath == null) Main.Logger.LogWarning("[PropFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef Shader name but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
           if (propModelDef.BundlePath == null) Main.Logger.LogWarning("[PropFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef Texture name but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
@@ -338,31 +378,25 @@ namespace MissionControl.EncounterFactories {
           // Otherwise look for Shader in game
           if (shader == null) shader = Shader.Find(propMaterialDef.Shader);
 
-          // First look for Texture in bundle
-          Texture texture = propModelDef.BundlePath != null ? AssetBundleLoader.GetAsset<Texture>(propModelDef.BundlePath, propMaterialDef.Texture) : null;
-
-          // Otherwise look for texture in game
-          if (texture == null) texture = UnityGameInstance.Instance.Game.DataManager.TextureManager.GetLoadedTexture(propMaterialDef.Texture);
-
           Material material = new Material(shader);
-          material.mainTexture = texture;
-          materials[i] = material;
-        } else if (propMaterialDef.Texture != null) {
-          Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Texture but no Shader provided for PropMaterialDef '{propMaterialDef.Name}' so building Material with default shader 'BattleTech Standard' and texture '{propMaterialDef.Texture}'");
-          if (propModelDef.BundlePath == null) Main.Logger.LogWarning("[PropFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef Texture name but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
+          material.name = propMaterialDef.Name;
+          JObject materialProperties = propMaterialDef.MaterialProperties;
+          SetMaterialProperties(propModelDef, material, materialProperties);
+
+          MissionControl.Instance.GeneratedMaterials.Add(propMaterialDef.Name, material);
+        } else if (propMaterialDef.MaterialProperties != null) {
+          Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Texture but no Shader provided for PropMaterialDef '{propMaterialDef.Name}' so building Material with default shader 'BattleTech Standard' and MaterialProperties '{propMaterialDef.MaterialProperties.ToString()}'");
+          if (propModelDef.BundlePath == null) Main.Logger.LogWarning("[PropFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef MaterialProperties but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
 
           // Build whole material with specifix texture but use 'BattleTech Standard' shader
           Shader shader = Shader.Find("BattleTech Standard");
 
-          // First look for Texture in bundle
-          Texture texture = propModelDef.BundlePath != null ? AssetBundleLoader.GetAsset<Texture>(propModelDef.BundlePath, propMaterialDef.Texture) : null;
-
-          // Otherwise look for texture in game
-          if (texture == null) texture = UnityGameInstance.Instance.Game.DataManager.TextureManager.GetLoadedTexture(propMaterialDef.Texture);
-
           Material material = new Material(shader);
-          material.mainTexture = texture;
-          materials[i] = material;
+          material.name = propMaterialDef.Name;
+          JObject materialProperties = propMaterialDef.MaterialProperties;
+          SetMaterialProperties(propModelDef, material, materialProperties);
+
+          MissionControl.Instance.GeneratedMaterials.Add(propMaterialDef.Name, material);
         } else {
           // Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Only material name provided in PropMaterialDef '{propMaterialDef.Name}' so looking for material in bundle first then game data");
 

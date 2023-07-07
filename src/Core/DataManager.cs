@@ -306,7 +306,7 @@ namespace MissionControl {
           PropMaterialDef propMatDef = propModelDef.Materials[i];
           Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef Materials[{i}].Name: " + propMatDef.Name);
           Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef Materials[{i}].Shader: " + propMatDef.Shader);
-          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef Materials[{i}].Texture: " + propMatDef.Texture);
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef Materials[{i}].MaterialProperties: " + propMatDef.MaterialProperties);
         }
 
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef IsMeshInBundle: " + propModelDef.IsMeshInBundle);
@@ -315,11 +315,18 @@ namespace MissionControl {
 
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef Materials: " + propModelDef.Materials.Count);
 
+        for (int i = 0; i < propModelDef.CustomSplitMaterials.Count; i++) {
+          PropMaterialDef propMatDef = propModelDef.CustomSplitMaterials[i];
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef CustomSplitMaterials[{i}].Name: " + propMatDef.Name);
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef CustomSplitMaterials[{i}].Shader: " + propMatDef.Shader);
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef CustomSplitMaterials[{i}].MaterialProperties: " + propMatDef.MaterialProperties);
+        }
+
         for (int i = 0; i < propModelDef.CustomShellMaterials.Count; i++) {
           PropMaterialDef propMatDef = propModelDef.CustomShellMaterials[i];
           Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef CustomShellMaterials[{i}].Name: " + propMatDef.Name);
           Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef CustomShellMaterials[{i}].Shader: " + propMatDef.Shader);
-          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef CustomShellMaterials[{i}].Texture: " + propMatDef.Texture);
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef CustomShellMaterials[{i}].MaterialProperties: " + propMatDef.MaterialProperties);
         }
 
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef DestructibleSize: " + propModelDef.DestructibleSize.ToString());
