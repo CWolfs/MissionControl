@@ -296,8 +296,16 @@ namespace MissionControl.EncounterFactories {
         destructSplit = GameObject.Instantiate(destructSplitPrefab, Vector3.zero, new Quaternion(), buildingGO.transform);
         LayerTools.SetLayerRecursively(destructSplit, 8);
 
-        // Set all materials
-        // TODO: Handle this
+        foreach (GameObject splitPiece in destructSplit.transform) {
+          // Apply Material
+          // FIXME: This is a hack that reuses the materials of the original model and only assigns the first sequential materials from that original mesh into the splits
+          // FIXME: This will result in some split pieces having the wrong material but it's only intended as a placeholder for now until I figure out what to do with this usecase
+          // FIXME: A manual process won't work here as splits can go up to the hundreds so some kind of workflow is required that works for both:
+          //  - user custom bundled
+          //  - original vanilla extracted and bundled
+          Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef, PropBuildingDef.GetPropModelDef().Materials, placeholderMaterial);
+          splitPiece.GetComponent<MeshRenderer>().materials = materials;
+        }
       } else {
         // Split
         destructSplit = CreateGameObject(buildingGO, $"{buildingGO.name}_{GenericStaticDestructName}_split");
@@ -309,9 +317,9 @@ namespace MissionControl.EncounterFactories {
           splitPiece.layer = 8;
 
           // Apply material
-          // TODO: The fracture UV mapping and material assignment need more work. Fewer mats should be assign per split (e.g. in vanilla a building with 7 mats might have splits with 2-3 mats depending on how they were fractured )
-          // TODO: So we don't need to assign all 7 original ones to each split. Probably need a 3rd party lib or definitely a better script for fracturing.
-          // TODO: Having issues making good runtime fractures - just use a copy of LOD0 for now
+          // FIXME: The fracture UV mapping and material assignment need more work. Fewer mats should be assign per split (e.g. in vanilla a building with 7 mats might have splits with 2-3 mats depending on how they were fractured )
+          // FIXME: So we don't need to assign all 7 original ones to each split. Probably need a 3rd party lib or definitely a better script for fracturing.
+          // FIXME: Having issues making good runtime fractures - just use a copy of LOD0 for now
           Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef, PropBuildingDef.GetPropModelDef().Materials, placeholderMaterial);
           splitPiece.GetComponent<MeshRenderer>().materials = materials;
         }
