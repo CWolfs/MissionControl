@@ -29,6 +29,7 @@ namespace MissionControl.ContractTypeBuilders {
     private const string CONTRACT_OBJECTIVES_ID = "ContractObjectives";
     private const string BUILDINGS_ID = "Buildings";
     private const string STRUCTURES_ID = "Structures";
+    private const string DESTRUCTIBLE_GROUPS_ID = "DestructibleGroups";
 
     public ContractTypeBuilder(GameObject encounterLayerGo, JObject contractTypeBuild) {
       this.ContractTypeBuild = contractTypeBuild;
@@ -100,6 +101,16 @@ namespace MissionControl.ContractTypeBuilders {
           foreach (JObject structure in structures.Children<JObject>()) {
             StructureBuilder buildingBuilder = new StructureBuilder(this, structure);
             buildingBuilder.Build();
+          }
+        }
+
+        if (propsArray.ContainsKey(DESTRUCTIBLE_GROUPS_ID)) {
+          JArray destructibleGroups = (JArray)propsArray[DESTRUCTIBLE_GROUPS_ID];
+          Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] There are '{destructibleGroups.Count}' destructible group data entries defined.");
+
+          foreach (JObject destructibleGroup in destructibleGroups.Children<JObject>()) {
+            DestructibleBuilder destructibleBuilder = new DestructibleBuilder(this, destructibleGroup);
+            destructibleBuilder.Build();
           }
         }
       }

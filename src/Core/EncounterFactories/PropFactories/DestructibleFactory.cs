@@ -12,17 +12,13 @@ using MissionControl.Utils;
 
 namespace MissionControl.EncounterFactories {
   public class DestructibleFactory : PropFactory {
-    private string destructibleName = "UNNAMED";
-
-    private PropFlimsyDef PropFlimsyDef { get; set; }
+    private PropDestructibleFlimsyDef PropFlimsyDef { get; set; }
 
     private GameObject destructibleFlimsyGroupGO;
 
-    // private GameObject destructDecalParent;
-    private GameObject destructSplit;
-    private GameObject destructShell;
+    public DestructibleFactory() { }
 
-    public DestructibleFactory(PropFlimsyDef propFlimsyDef) {
+    public DestructibleFactory(PropDestructibleFlimsyDef propFlimsyDef) {
       PropFlimsyDef = propFlimsyDef;
     }
 
@@ -34,13 +30,11 @@ namespace MissionControl.EncounterFactories {
       return gameObject;
     }
 
-    private GameObject CreateDestructibleFlimsyGroup(string name) {
-      this.destructibleFlimsyGroupGO = CreateGameObject(DestructibleFactory.MCDestructibleParent, name);
+    public GameObject CreateDestructibleFlimsyGroup(string name) {
+      this.destructibleFlimsyGroupGO = CreateGameObject(DestructibleFactory.MCDestructibleParent, $"DestructibleFlimsyGroup_{name}");
       destructibleFlimsyGroupGO.SetActive(false);
 
       destructibleFlimsyGroupGO.AddComponent<SnapToTerrain>();
-
-      // CreateDestructible(this.destructibleFlimsyGroupGO, $"Destructible_{destructibleName}");
 
       DestructibleFlimsyGroup destructibleFlimsyGroup = this.destructibleFlimsyGroupGO.AddComponent<DestructibleFlimsyGroup>();
       destructibleFlimsyGroup.BakeDestructionAssets();
@@ -49,12 +43,12 @@ namespace MissionControl.EncounterFactories {
       return this.destructibleFlimsyGroupGO;
     }
 
-    private GameObject CreateDestructible(GameObject parentGO, string name) {
+    public GameObject CreateDestructible(GameObject parentGO, string name) {
       PropModelDef propModelDef = PropFlimsyDef.GetPropModelDef();
 
       DestructibleFlimsyGroup destructibleFlimsyGroup = parentGO.GetComponent<DestructibleFlimsyGroup>();
 
-      GameObject destructibleGO = CreateGameObject(parentGO, name);
+      GameObject destructibleGO = CreateGameObject(parentGO, $"Destructible_{name}");
       destructibleGO.SetActive(false);
 
       // CreateColAndLODs(destructibleGO, propModelDef);
@@ -67,7 +61,6 @@ namespace MissionControl.EncounterFactories {
       destructibleObject.flimsyDestructType = propModelDef.FlimsyDestructibleType; // TODO: Check if this should change for destructible flimsies - always a certain size?
       destructibleObject.dependentPersistentFX = new List<GameObject>();
       destructibleObject.embeddedFlimsyChildren = new List<DestructibleObject>();
-      destructibleObject.shellInstance = destructShell;
       destructibleObject.damageAssetGroup = allDamageAssetGroups[UnityEngine.Random.Range(0, allDamageAssetGroups.Length)];
       destructibleObject.decalObjects = new List<GameObject>();
       destructibleObject.decalSpawners = new List<BTDecalSpawner>();
@@ -82,11 +75,11 @@ namespace MissionControl.EncounterFactories {
       return destructibleGO;
     }
 
-    private void CreateDestructibleFlimsy(GameObject flimsyParentGO, PropFlimsyDef propFlimsyDef) {
+    private GameObject CreateDestructibleFlimsy(GameObject flimsyParentGO, PropDestructibleFlimsyDef propFlimsyDef) {
       PropModelDef propModelDef = propFlimsyDef.GetPropModelDef();
 
       Main.Logger.Log("[BuildingFactory.CreateFlimsy] About to create flimsy " + propFlimsyDef.Key);
-      GameObject flimsyGO = CreateGameObject(flimsyParentGO, propFlimsyDef.Key);
+      GameObject flimsyGO = CreateGameObject(flimsyParentGO, $"Destructible_{propFlimsyDef.Key}");
       flimsyGO.SetActive(false);
 
       MeshFilter mf = flimsyGO.AddComponent<MeshFilter>();
@@ -114,9 +107,10 @@ namespace MissionControl.EncounterFactories {
       flimsyGO.transform.localEulerAngles = propFlimsyDef.Rotation;
 
       flimsyGO.SetActive(true);
+      return flimsyGO;
     }
 
-    private void AttachFlimsyMesh(GameObject flimsyGO, PropFlimsyDef flimsyDef) {
+    private void AttachFlimsyMesh(GameObject flimsyGO, PropDestructibleFlimsyDef flimsyDef) {
       PropModelDef propModelDef = flimsyDef.GetPropModelDef();
       Mesh flimsyLOD0Mesh = null;
 

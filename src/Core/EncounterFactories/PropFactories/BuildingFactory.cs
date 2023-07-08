@@ -164,13 +164,13 @@ namespace MissionControl.EncounterFactories {
     }
 
     private GameObject CreateFlimsies(GameObject buildingGO) {
-      List<PropFlimsyDef> flimsyModels = PropBuildingDef.FlimsyModels;
+      List<PropDestructibleFlimsyDef> flimsyModels = PropBuildingDef.FlimsyModels;
 
       if (flimsyModels.Count > 0) {
         GameObject flimsyParentGO = CreateGameObject(buildingGO, "_flimsy");
         flimsyParentGO.transform.rotation = Quaternion.identity;
 
-        foreach (PropFlimsyDef propFlimsyModel in flimsyModels) {
+        foreach (PropDestructibleFlimsyDef propFlimsyModel in flimsyModels) {
           CreateFlimsy(flimsyParentGO, propFlimsyModel);
         }
 
@@ -180,7 +180,7 @@ namespace MissionControl.EncounterFactories {
       return null;
     }
 
-    private void CreateFlimsy(GameObject flimsyParentGO, PropFlimsyDef propFlimsyDef) {
+    private void CreateFlimsy(GameObject flimsyParentGO, PropDestructibleFlimsyDef propFlimsyDef) {
       PropModelDef propModelDef = propFlimsyDef.GetPropModelDef();
 
       Main.Logger.Log("[BuildingFactory.CreateFlimsy] About to create flimsy " + propFlimsyDef.Key);
@@ -242,7 +242,7 @@ namespace MissionControl.EncounterFactories {
     //   transform.localScale = scale;
     // }
 
-    private void AttachFlimsyMesh(GameObject flimsyGO, PropFlimsyDef flimsyDef) {
+    private void AttachFlimsyMesh(GameObject flimsyGO, PropDestructibleFlimsyDef flimsyDef) {
       PropModelDef propModelDef = flimsyDef.GetPropModelDef();
       Mesh flimsyLOD0Mesh = null;
 

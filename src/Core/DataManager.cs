@@ -57,6 +57,7 @@ namespace MissionControl {
     public Dictionary<string, PropModelDef> ModelDefs = new Dictionary<string, PropModelDef>();
     public Dictionary<string, PropBuildingDef> BuildingDefs = new Dictionary<string, PropBuildingDef>();
     public Dictionary<string, PropStructureDef> StructureDefs = new Dictionary<string, PropStructureDef>();
+    public Dictionary<string, PropDestructibleFlimsyDef> DestructibleDefs = new Dictionary<string, PropDestructibleFlimsyDef>();
 
     // Data backup
     private Dictionary<string, List<LanceOverride>> ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
@@ -283,6 +284,10 @@ namespace MissionControl {
       if (Directory.Exists($"{propsPath}/structures")) {
         LoadPropStructureDefs($"{propsPath}/structures");
       }
+
+      if (Directory.Exists($"{propsPath}/destructibles")) {
+        LoadPropDestructibleDefs($"{propsPath}/destructibles");
+      }
     }
 
     private void LoadPropModelDefs(string modelsPath) {
@@ -382,6 +387,24 @@ namespace MissionControl {
           StructureDefs.Add(propStructureDef.Key, propStructureDef);
         } else {
           Main.Logger.Log($"[DataManager.LoadPropStructureDefs] A LoadPropStructureDef of key '{propStructureDef.Key}' already exists. Structure keys must be unique.");
+        }
+      }
+    }
+
+    private void LoadPropDestructibleDefs(string destructiblesPath) {
+      foreach (string destructibleDefPaths in Directory.GetFiles(destructiblesPath, "*.json", SearchOption.AllDirectories)) {
+        string destructibleSource = File.ReadAllText(destructibleDefPaths);
+        PropDestructibleFlimsyDef propDestructibleDef = JsonConvert.DeserializeObject<PropDestructibleFlimsyDef>(destructibleSource, serialiserSettings);
+        Main.Logger.Log("[DataManager.LoadPropDestructibleDefs] Loaded LoadPropDestructibleDefs: " + propDestructibleDef.Key);
+
+        Main.Logger.Log("[DataManager.LoadPropDestructibleDefs] Loaded LoadPropDestructibleDefs Key: " + propDestructibleDef.Key);
+        Main.Logger.Log("[DataManager.LoadPropDestructibleDefs] Loaded LoadPropDestructibleDefs Model: " + propDestructibleDef.ModelKey);
+        Main.Logger.Log("[DataManager.LoadPropDestructibleDefs] Loaded LoadPropDestructibleDefs Mass: " + propDestructibleDef.Mass);
+
+        if (!DestructibleDefs.ContainsKey(propDestructibleDef.Key)) {
+          DestructibleDefs.Add(propDestructibleDef.Key, propDestructibleDef);
+        } else {
+          Main.Logger.Log($"[DataManager.LoadPropDestructibleDefs] A LoadPropStructureDef of key '{propDestructibleDef.Key}' already exists. Destructible keys must be unique.");
         }
       }
     }

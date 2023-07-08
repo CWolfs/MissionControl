@@ -11,7 +11,7 @@ namespace MissionControl.Data {
     public string MainModelKey { get; set; }
 
     [JsonProperty("FlimsyModels")]
-    public List<PropFlimsyDef> FlimsyModels { get; set; } = new List<PropFlimsyDef>();
+    public List<PropDestructibleFlimsyDef> FlimsyModels { get; set; } = new List<PropDestructibleFlimsyDef>();
 
     public PropModelDef GetPropModelDef() {
       if (DataManager.Instance.ModelDefs.ContainsKey(MainModelKey)) {

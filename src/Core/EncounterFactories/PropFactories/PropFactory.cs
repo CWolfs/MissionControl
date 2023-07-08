@@ -114,16 +114,21 @@ namespace MissionControl.EncounterFactories {
       return gameObject;
     }
 
-    protected LODGroup SetupLODGroup(GameObject buildingGO) {
+    protected LODGroup SetupLODGroup(GameObject targetGO) {
       // Setup LOD Group
-      LODGroup lodGroup = buildingGO.AddComponent<LODGroup>();
+      LODGroup lodGroup = targetGO.AddComponent<LODGroup>();
       lodGroup.animateCrossFading = true;
       lodGroup.fadeMode = LODFadeMode.CrossFade;
 
-      MeshRenderer lod0MR = buildingGO.transform.Find($"{buildingGO.name}_LOD0").GetComponent<MeshRenderer>();
-      MeshRenderer lod1MR = buildingGO.transform.Find($"{buildingGO.name}_LOD1")?.GetComponent<MeshRenderer>();
-      MeshRenderer lod2MR = buildingGO.transform.Find($"{buildingGO.name}_LOD2")?.GetComponent<MeshRenderer>();
+      MeshRenderer lod0MR = targetGO.transform.Find($"{targetGO.name}_LOD0")?.GetComponent<MeshRenderer>();
+      MeshRenderer lod1MR = targetGO.transform.Find($"{targetGO.name}_LOD1")?.GetComponent<MeshRenderer>();
+      MeshRenderer lod2MR = targetGO.transform.Find($"{targetGO.name}_LOD2")?.GetComponent<MeshRenderer>();
 
+      if (lod0MR == null) lod0MR = targetGO.transform.Find(targetGO.name)?.GetComponent<MeshRenderer>();
+
+      if (lod0MR == null) {
+        Main.Logger.LogError("[PropFactory.SetupLODGroup] Couldn't find the LOD0 / main flimsy GameObject or its MeshRenderer. This should not happen. It may be due to a badly named bundled Mesh that isn't named correctly");
+      }
 
       int availableLODCount = 1;
       // Only support sequential LODs - do not allow LOD0 and LOD2, for example. Only LOD0 | LOD0, LOD1 | LOD0, LOD1, LOD2
