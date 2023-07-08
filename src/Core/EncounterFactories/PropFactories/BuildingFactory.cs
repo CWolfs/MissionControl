@@ -54,7 +54,7 @@ namespace MissionControl.EncounterFactories {
     private GameObject CreateBuildingGroup(GameObject facilityGO, string name) {
       buildingGroupGO = CreateGameObject(facilityGO, name);
 
-      CreateBuilding(buildingGroupGO, $"Building_{facilityName}");
+      CreateBuilding(buildingGroupGO, $"Building_{facilityName}", DestructibleObject.DestructType.targetStruct);
 
       SnapToTerrain snapToTerrain = buildingGroupGO.AddComponent<SnapToTerrain>();
       BuildingRepresentation buildingRepresentation = buildingGroupGO.AddComponent<BuildingRepresentation>();
@@ -81,7 +81,7 @@ namespace MissionControl.EncounterFactories {
       return buildingGroupGO;
     }
 
-    private GameObject CreateBuilding(GameObject buildingGroupGO, string name) {
+    public GameObject CreateBuilding(GameObject buildingGroupGO, string name, DestructibleObject.DestructType destructTypeOverride) {
       PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
 
       buildingGO = CreateGameObject(buildingGroupGO, name);
@@ -92,7 +92,7 @@ namespace MissionControl.EncounterFactories {
       CreateGenericStaticDestruct(buildingGO);
 
       DestructibleObject destructibleObject = buildingGO.AddComponent<DestructibleObject>();
-      destructibleObject.destructType = DestructibleObject.DestructType.targetStruct;
+      destructibleObject.destructType = destructTypeOverride;
       destructibleObject.structSize = propModelDef.DestructibleSize;
       destructibleObject.structMaterial = propModelDef.DestructibleMaterial;
       destructibleObject.flimsyDestructType = propModelDef.FlimsyDestructibleType;

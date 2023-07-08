@@ -35,9 +35,7 @@ namespace MissionControl.EncounterFactories {
       destructibleFlimsyGroupGO.SetActive(false);
 
       destructibleFlimsyGroupGO.AddComponent<SnapToTerrain>();
-
-      DestructibleFlimsyGroup destructibleFlimsyGroup = this.destructibleFlimsyGroupGO.AddComponent<DestructibleFlimsyGroup>();
-      destructibleFlimsyGroup.BakeDestructionAssets();
+      this.destructibleFlimsyGroupGO.AddComponent<DestructibleFlimsyGroup>();
 
       destructibleFlimsyGroupGO.SetActive(true);
       return this.destructibleFlimsyGroupGO;
@@ -92,11 +90,11 @@ namespace MissionControl.EncounterFactories {
 
       DestructibleObject destructibleObject = flimsyGO.AddComponent<DestructibleObject>();
       destructibleObject.isFlimsy = true;
-      destructibleObject.embeddedFlimsy = true;
+      destructibleObject.flimsyGroupChild = true;
+      destructibleObject.destructType = DestructibleObject.DestructType.flimsyChild;
       destructibleObject.structSize = propModelDef.DestructibleSize;
       destructibleObject.flimsyDestructType = propModelDef.FlimsyDestructibleType;
       destructibleObject.structMaterial = propModelDef.DestructibleMaterial;
-      destructibleObject.destructType = DestructibleObject.DestructType.flimsyChild;
       destructibleObject.dependentPersistentFX = new List<GameObject>();
       destructibleObject.pieceSize = DestructibleObject.PieceSize.small; // TODO: Expose this
 
