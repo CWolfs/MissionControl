@@ -39,6 +39,19 @@ namespace MissionControl.EncounterFactories {
       }
     }
 
+    private static GameObject mcDestructibleParent = null;
+    public static GameObject MCDestructibleParent {
+      get {
+        if (mcDestructibleParent == null) {
+          mcDestructibleParent = new GameObject("MCDestructibleParent");
+          mcDestructibleParent.transform.SetParent(MissionControl.Instance.EncounterLayerData.transform);
+          mcDestructibleParent.transform.position = Vector3.zero;
+        }
+
+        return mcDestructibleParent;
+      }
+    }
+
     private static GameObject mcGenericStaticDestruct = null;
     public static GameObject MCGenericStaticDestruct {
       get {
