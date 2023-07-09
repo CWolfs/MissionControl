@@ -13,6 +13,9 @@ namespace MissionControl.Data {
     [JsonProperty("MainModel")]
     public string MainModelKey { get; set; }
 
+    [JsonProperty("Glass")]
+    public PropPositionalDef Glass { get; set; }
+
     [JsonProperty("FlimsyModels")]
     public List<PropDestructibleFlimsyDef> FlimsyModels { get; set; } = new List<PropDestructibleFlimsyDef>();
 

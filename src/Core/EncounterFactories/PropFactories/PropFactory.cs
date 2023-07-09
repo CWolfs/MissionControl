@@ -78,6 +78,7 @@ namespace MissionControl.EncounterFactories {
     protected Mesh buildingLOD0Mesh = null;
     protected Mesh buildingLOD1Mesh = null;
     protected Mesh buildingLOD2Mesh = null;
+    protected Mesh buildingGlassMesh = null;
 
     private float[] lodDistances1 = new float[1] { 0f };
     private float[] lodDistances2 = new float[2] { 0.1f, 0f };

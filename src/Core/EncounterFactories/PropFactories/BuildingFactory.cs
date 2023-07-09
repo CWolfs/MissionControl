@@ -19,6 +19,8 @@ namespace MissionControl.EncounterFactories {
     private GameObject facilityGO;
     private GameObject buildingGroupGO;
     private GameObject buildingGO;
+    private GameObject glassParentGO;
+    private GameObject glassGO;
 
     // private GameObject destructDecalParent;
     private GameObject destructSplit;
@@ -88,7 +90,8 @@ namespace MissionControl.EncounterFactories {
       buildingGO.SetActive(false);
 
       CreateColAndLODs(buildingGO, propModelDef);
-      GameObject flimsyParentGO = CreateFlimsies(buildingGO);
+      GameObject flimsyParentGO = CreateFlimsies(buildingGroupGO);
+      GameObject glassParentGO = CreateGlass(buildingGroupGO);
       CreateGenericStaticDestruct(buildingGO);
 
       DestructibleObject destructibleObject = buildingGO.AddComponent<DestructibleObject>();
@@ -111,6 +114,7 @@ namespace MissionControl.EncounterFactories {
       destructibleObject.decalObjects = new List<GameObject>();
       destructibleObject.decalSpawners = new List<BTDecalSpawner>();
       destructibleObject.flimsyChild = flimsyParentGO;
+      destructibleObject.glassChild = glassParentGO;
       destructibleObject.dependentPersistentFX = new List<GameObject>();
 
       // Setup LOD Group
@@ -135,6 +139,12 @@ namespace MissionControl.EncounterFactories {
       destructShell.transform.SetParent(destructibleObject.destructionParent.transform, false);
       destructShell.transform.localPosition = Vector3.zero;
       destructShell.transform.localEulerAngles = Vector3.zero;
+
+      if (glassGO != null) {
+        glassGO.transform.SetParent(glassParentGO.transform, false);
+        glassGO.transform.localPosition = PropBuildingDef.Glass != null ? PropBuildingDef.Glass.Position : Vector3.zero;
+        glassGO.transform.localEulerAngles = PropBuildingDef.Glass != null ? PropBuildingDef.Glass.Rotation : Vector3.zero;
+      }
 
       if (!propModelDef.HasCustomShell) RandomiseShell(destructibleObject);
 
@@ -170,11 +180,47 @@ namespace MissionControl.EncounterFactories {
       }
     }
 
-    private GameObject CreateFlimsies(GameObject buildingGO) {
+    private GameObject CreateGlass(GameObject buildingGroupGO) {
+      PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
+
+      if (propModelDef.IsMeshInBundle) {
+        LoadAssetBundle(propModelDef);
+
+        buildingGlassMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_glass");
+      } else {
+        foreach (Mesh mesh in allGameMeshes) {
+          if (mesh.name == $"{propModelDef.MeshName}_glass") {
+            buildingGlassMesh = mesh;
+            break;
+          }
+        }
+      }
+
+      if (buildingGlassMesh == null) return null;
+
+      Main.Logger.Log("[PropFactory.CreateGlass] Glass Mesh is " + buildingGlassMesh.name);
+
+      glassParentGO = CreateGameObject(buildingGroupGO, "_glass");
+      glassParentGO.transform.rotation = Quaternion.identity;
+
+      glassGO = CreateGameObject(glassParentGO, buildingGlassMesh.name);
+      MeshFilter mf = glassGO.AddComponent<MeshFilter>();
+      MeshRenderer mr = glassGO.AddComponent<MeshRenderer>();
+
+      mf.sharedMesh = buildingGlassMesh;
+
+      if (matLookup.ContainsKey("envMatStct_glassA_decals_generic")) {
+        mr.sharedMaterial = matLookup["envMatStct_glassA_decals_generic"];
+      }
+
+      return glassParentGO;
+    }
+
+    private GameObject CreateFlimsies(GameObject buildingGroupGO) {
       List<PropDestructibleFlimsyDef> flimsyModels = PropBuildingDef.FlimsyModels;
 
       if (flimsyModels.Count > 0) {
-        GameObject flimsyParentGO = CreateGameObject(buildingGO, "_flimsy");
+        GameObject flimsyParentGO = CreateGameObject(buildingGroupGO, "_flimsy");
         flimsyParentGO.transform.rotation = Quaternion.identity;
 
         foreach (PropDestructibleFlimsyDef propFlimsyModel in flimsyModels) {
@@ -307,6 +353,7 @@ namespace MissionControl.EncounterFactories {
     private void CreateGenericStaticDestruct(GameObject buildingGO) {
       PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
 
+      // SPLIT
       if (propModelDef.HasCustomSplits) {
         LoadAssetBundle(propModelDef);
 
@@ -347,7 +394,7 @@ namespace MissionControl.EncounterFactories {
       destructSplit.AddComponent<PhysicsExplodeChildren>();
       destructSplit.SetActive(false);
 
-      // Shell
+      // SHELL
       destructShell = CreateGameObject(buildingGO, $"{buildingGO.name}_{GenericStaticDestructName}_shell");
       destructShell.layer = 8;
       destructShell.SetActive(false);
