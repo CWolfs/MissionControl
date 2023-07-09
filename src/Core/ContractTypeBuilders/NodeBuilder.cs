@@ -23,6 +23,7 @@ namespace MissionControl.ContractTypeBuilders {
         } else {
           worldPosition = worldPosition.GetClosestHexLerpedPointOnGrid();
         }
+
         target.transform.position = worldPosition;
       } else if (type == "Local") {
         Vector3 localPosition = new Vector3((float)value["x"], (float)value["y"], (float)value["z"]);
@@ -39,6 +40,7 @@ namespace MissionControl.ContractTypeBuilders {
         } else {
           worldPosition = worldPosition.GetClosestHexLerpedPointOnGrid();
         }
+
         worldPosition.y += localPosition.y;
         target.transform.position = worldPosition;
       } else if (type == "SpawnProfile") {

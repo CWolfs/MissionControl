@@ -93,6 +93,13 @@ namespace MissionControl.EncounterFactories {
 
       DestructibleObject destructibleObject = buildingGO.AddComponent<DestructibleObject>();
       destructibleObject.destructType = destructTypeOverride;
+
+      if (destructTypeOverride == DestructibleObject.DestructType.flimsyStruct) {
+        destructibleObject.isFlimsy = true;
+        destructibleObject.instantKillFlimsy = true;
+        destructibleObject.isDependentFlimsy = true;
+      }
+
       destructibleObject.structSize = propModelDef.DestructibleSize;
       destructibleObject.structMaterial = propModelDef.DestructibleMaterial;
       destructibleObject.flimsyDestructType = propModelDef.FlimsyDestructibleType;
