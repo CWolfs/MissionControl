@@ -31,5 +31,15 @@ namespace MissionControl.Data {
       Main.Logger.LogError($"[PropDestructibleFlimsyDef.GetPropModelDef] No PropModelDef found for Flimsy with key '{Key}' or '{ModelKey}'. This should not happen.");
       return null;
     }
+
+    public PropDestructibleFlimsyDef Clone() {
+      PropDestructibleFlimsyDef newPropDestructibleFlimsyDef = new PropDestructibleFlimsyDef();
+      newPropDestructibleFlimsyDef.Key = Key;
+      newPropDestructibleFlimsyDef.ModelKey = ModelKey;
+      newPropDestructibleFlimsyDef.Position = Position;
+      newPropDestructibleFlimsyDef.Rotation = Rotation;
+      newPropDestructibleFlimsyDef.Mass = Mass;
+      return newPropDestructibleFlimsyDef;
+    }
   }
 }

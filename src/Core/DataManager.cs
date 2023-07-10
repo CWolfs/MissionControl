@@ -277,16 +277,16 @@ namespace MissionControl {
         LoadPropModelDefs($"{propsPath}/models");
       }
 
+      if (Directory.Exists($"{propsPath}/destructibles")) {
+        LoadPropDestructibleDefs($"{propsPath}/destructibles");
+      }
+
       if (Directory.Exists($"{propsPath}/buildings")) {
         LoadPropBuildingDefs($"{propsPath}/buildings");
       }
 
       if (Directory.Exists($"{propsPath}/structures")) {
         LoadPropStructureDefs($"{propsPath}/structures");
-      }
-
-      if (Directory.Exists($"{propsPath}/destructibles")) {
-        LoadPropDestructibleDefs($"{propsPath}/destructibles");
       }
     }
 
@@ -363,7 +363,7 @@ namespace MissionControl {
         Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded LoadPropBuildingDefs: " + propBuildingDef.Key);
 
         Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded PropBuildingDef MainModelKey: " + propBuildingDef.MainModelKey);
-        Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded PropBuildingDef FlimsyModels Count: " + propBuildingDef.FlimsyModels.Count);
+        Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded PropBuildingDef Destructibles Count: " + propBuildingDef.DestructibleFlimsyModels.Count);
 
         if (!BuildingDefs.ContainsKey(propBuildingDef.Key)) {
           BuildingDefs.Add(propBuildingDef.Key, propBuildingDef);
