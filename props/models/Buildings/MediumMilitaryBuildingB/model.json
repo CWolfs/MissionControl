@@ -1,0 +1,21 @@
+{
+  "Key": "MediumMilitaryBuildingB",
+  "Mesh": "mediumMilitaryBarracksB",
+  "Materials": [
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    },
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": true,
+  "HasCustomSplits": false,
+  "HasCustomShell": true,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
+}

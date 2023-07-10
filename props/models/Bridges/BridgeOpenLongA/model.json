@@ -1,0 +1,19 @@
+{
+  "Key": "BridgeOpenLongA",
+  "Mesh": "bridgeOpenLongA",
+  "Materials": [
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    },
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_asphalt_generic"
+    }
+  ],
+  "IsMeshInBundle": true,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

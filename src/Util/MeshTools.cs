@@ -19,7 +19,7 @@ namespace MissionControl.Utils {
 
       Vector3[] vertices = new Vector3[vertices2d.Length];
       for (int i = 0; i < vertices.Length; i++) {
-          vertices[i] = new Vector3(vertices2d[i].x, 0, vertices2d[i].y);
+        vertices[i] = new Vector3(vertices2d[i].x, 0, vertices2d[i].y);
       }
 
       Mesh mesh = new Mesh();
@@ -46,7 +46,7 @@ namespace MissionControl.Utils {
 
       Vector3[] vertices = new Vector3[vertices2d.Length];
       for (int i = 0; i < vertices.Length; i++) {
-          vertices[i] = new Vector3(vertices2d[i].x, points[i].y, vertices2d[i].y);
+        vertices[i] = new Vector3(vertices2d[i].x, points[i].y, vertices2d[i].y);
       }
 
       Mesh mesh = new Mesh();

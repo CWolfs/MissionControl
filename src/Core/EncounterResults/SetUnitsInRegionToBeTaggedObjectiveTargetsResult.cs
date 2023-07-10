@@ -2,11 +2,10 @@ using UnityEngine;
 
 using System.Collections.Generic;
 
-
 using BattleTech;
 using BattleTech.UI;
 
-using Harmony;
+using BattleTech.Framework;
 
 namespace MissionControl.Result {
   public class SetUnitsInRegionToBeTaggedObjectiveTargetsResult : EncounterResult {
@@ -69,7 +68,7 @@ namespace MissionControl.Result {
     }
 
     private void SetTeam(ICombatant combatant) {
-      Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Setting Team '{Team}' for '{combatant.GameRep.name} - {combatant.DisplayName}'");
+      Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Setting Team '{Team}' for '{combatant.GameRep.name} - {combatant.DisplayName}' who is currently on team '{combatant.team.Name} : {combatant.team.GUID}'");
       Team oldTeam = combatant.team;
       Team newTeam = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(TeamUtils.GetTeamGuid(Team));
 
@@ -119,6 +118,12 @@ namespace MissionControl.Result {
         }
       } else {
         Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] 'uixPrfPanl_HUD(Clone)' wasn't found so skipping logic for it.");
+      }
+
+      // Ensure objectives do a check now units have target objective changed
+      ObjectiveGameLogic[] objectiveGameLogics = MissionControl.Instance.EncounterLayerData.GetComponentsInChildren<ObjectiveGameLogic>();
+      foreach (ObjectiveGameLogic objectiveGameLogic in objectiveGameLogics) {
+        objectiveGameLogic.QueueCheckObjective();
       }
     }
   }

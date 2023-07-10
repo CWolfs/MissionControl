@@ -53,6 +53,12 @@ namespace MissionControl {
 
     private Dictionary<string, Dictionary<string, List<string>>> Dialogue = new Dictionary<string, Dictionary<string, List<string>>>();
 
+    // Props
+    public Dictionary<string, PropModelDef> ModelDefs = new Dictionary<string, PropModelDef>();
+    public Dictionary<string, PropBuildingDef> BuildingDefs = new Dictionary<string, PropBuildingDef>();
+    public Dictionary<string, PropStructureDef> StructureDefs = new Dictionary<string, PropStructureDef>();
+    public Dictionary<string, PropDestructibleFlimsyDef> DestructibleDefs = new Dictionary<string, PropDestructibleFlimsyDef>();
+
     // Data backup
     private Dictionary<string, List<LanceOverride>> ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
     private List<ObjectiveOverride> ContractOverrideObjectiveOverrideBackup = new List<ObjectiveOverride>();
@@ -70,7 +76,7 @@ namespace MissionControl {
       LoadLanceOverrides();
       LoadContractConfigOverrides(ModDirectory);
       LoadRuntimeCastData();
-      LoadDialogueData();
+      LoadPropData($"{ModDirectory}/props");
       InjectMessageScopes();
 
       ModTekVersion = GetAssemblyByName("ModTek").GetName().Version.ToString();
@@ -262,6 +268,145 @@ namespace MissionControl {
       }
 
       return storyContractTypeNames;
+    }
+
+    public void LoadPropData(string propsPath) {
+      Main.Logger.Log("[LoadPropData] Starting");
+
+      if (Directory.Exists($"{propsPath}/models")) {
+        LoadPropModelDefs($"{propsPath}/models");
+      }
+
+      if (Directory.Exists($"{propsPath}/destructibles")) {
+        LoadPropDestructibleDefs($"{propsPath}/destructibles");
+      }
+
+      if (Directory.Exists($"{propsPath}/buildings")) {
+        LoadPropBuildingDefs($"{propsPath}/buildings");
+      }
+
+      if (Directory.Exists($"{propsPath}/structures")) {
+        LoadPropStructureDefs($"{propsPath}/structures");
+      }
+    }
+
+    private void LoadPropModelDefs(string modelsPath) {
+      foreach (string modelDirectory in DirectoryUtils.GetAllDirectories(modelsPath)) {
+        // Main.Logger.Log("[DataManager.LoadPropModelData] Loading model directory data " + modelDirectory);
+        if (!File.Exists($"{modelDirectory}/model.json")) continue;
+
+        string modelSource = File.ReadAllText($"{modelDirectory}/model.json");
+
+        PropModelDef propModelDef = JsonConvert.DeserializeObject<PropModelDef>(modelSource, serialiserSettings);
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef: " + propModelDef.Key);
+
+        // Get bundle path
+        string bundleFile = Directory.GetFiles(modelDirectory, "*-bundle").FirstOrDefault();
+        if (bundleFile != null) {
+          Main.Logger.Log("[DataManager.LoadPropModelData] Bundle exists for  " + propModelDef.Key);
+          propModelDef.BundlePath = bundleFile;
+        }
+
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef MeshName: " + propModelDef.MeshName);
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef Materials: " + propModelDef.Materials.Count);
+
+        for (int i = 0; i < propModelDef.Materials.Count; i++) {
+          PropMaterialDef propMatDef = propModelDef.Materials[i];
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef Materials[{i}].Name: " + propMatDef.Name);
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef Materials[{i}].Shader: " + propMatDef.Shader);
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef Materials[{i}].MaterialProperties: " + propMatDef.MaterialProperties);
+        }
+
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef IsMeshInBundle: " + propModelDef.IsMeshInBundle);
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef HasCustomSplits: " + propModelDef.HasCustomSplits);
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef HasCustomShell: " + propModelDef.HasCustomShell);
+
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef Materials: " + propModelDef.Materials.Count);
+
+        for (int i = 0; i < propModelDef.CustomSplitMaterials.Count; i++) {
+          PropMaterialDef propMatDef = propModelDef.CustomSplitMaterials[i];
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef CustomSplitMaterials[{i}].Name: " + propMatDef.Name);
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef CustomSplitMaterials[{i}].Shader: " + propMatDef.Shader);
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef CustomSplitMaterials[{i}].MaterialProperties: " + propMatDef.MaterialProperties);
+        }
+
+        for (int i = 0; i < propModelDef.CustomShellMaterials.Count; i++) {
+          PropMaterialDef propMatDef = propModelDef.CustomShellMaterials[i];
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef CustomShellMaterials[{i}].Name: " + propMatDef.Name);
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef CustomShellMaterials[{i}].Shader: " + propMatDef.Shader);
+          Main.Logger.Log($"[DataManager.LoadPropModelData] Loaded PropModelDef CustomShellMaterials[{i}].MaterialProperties: " + propMatDef.MaterialProperties);
+        }
+
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef DestructibleSize: " + propModelDef.DestructibleSize.ToString());
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef DestructibleMaterial: " + propModelDef.DestructibleMaterial.ToString());
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef FlimsyDestructibleType: " + propModelDef.FlimsyDestructibleType.ToString());
+
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef BundlePath: " + propModelDef.BundlePath);
+
+        if ((propModelDef.IsMeshInBundle || propModelDef.HasCustomShell || propModelDef.HasCustomSplits) && propModelDef.BundlePath == null) {
+          Main.Logger.LogError($"[DataManager.LoadPropModelDefs] PropModelDef '{propModelDef.Key}' has settings that require a custom bundle but no custom bundle was provided or successfully loaded");
+        }
+
+        if (!ModelDefs.ContainsKey(propModelDef.Key)) {
+          ModelDefs.Add(propModelDef.Key, propModelDef);
+        } else {
+          Main.Logger.Log($"[DataManager.LoadPropModelDefs] A PropModelDef of key '{propModelDef.Key}' already exists. Model keys must be unique.");
+        }
+      }
+    }
+
+    private void LoadPropBuildingDefs(string buildingsPath) {
+      foreach (string buildingDefPaths in Directory.GetFiles(buildingsPath, "*.json", SearchOption.AllDirectories)) {
+        // Main.Logger.Log("[DataManager.LoadPropModelData] Loading model directory data " + modelDirectory);
+        string buildingSource = File.ReadAllText(buildingDefPaths);
+        PropBuildingDef propBuildingDef = JsonConvert.DeserializeObject<PropBuildingDef>(buildingSource, serialiserSettings);
+        Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded LoadPropBuildingDefs: " + propBuildingDef.Key);
+
+        Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded PropBuildingDef MainModelKey: " + propBuildingDef.MainModelKey);
+        Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded PropBuildingDef Destructibles Count: " + propBuildingDef.DestructibleFlimsyModels.Count);
+
+        if (!BuildingDefs.ContainsKey(propBuildingDef.Key)) {
+          BuildingDefs.Add(propBuildingDef.Key, propBuildingDef);
+        } else {
+          Main.Logger.Log($"[DataManager.LoadPropBuildingDefs] A PropBuildingDef of key '{propBuildingDef.Key}' already exists. Building keys must be unique.");
+        }
+      }
+    }
+
+    private void LoadPropStructureDefs(string structuresPath) {
+      foreach (string structureDefPaths in Directory.GetFiles(structuresPath, "*.json", SearchOption.AllDirectories)) {
+        // Main.Logger.Log("[DataManager.LoadPropModelData] Loading model directory data " + modelDirectory);
+        string structureSource = File.ReadAllText(structureDefPaths);
+        PropStructureDef propStructureDef = JsonConvert.DeserializeObject<PropStructureDef>(structureSource, serialiserSettings);
+        Main.Logger.Log("[DataManager.LoadPropStructureDefs] Loaded LoadPropStructureDefs: " + propStructureDef.Key);
+
+        Main.Logger.Log("[DataManager.LoadPropStructureDefs] Loaded LoadPropStructureDef MainModelKey: " + propStructureDef.MainModelKey);
+        Main.Logger.Log("[DataManager.LoadPropStructureDefs] Loaded LoadPropStructureDef FlimsyModels Count: " + propStructureDef.FlimsyModels.Count);
+
+        if (!StructureDefs.ContainsKey(propStructureDef.Key)) {
+          StructureDefs.Add(propStructureDef.Key, propStructureDef);
+        } else {
+          Main.Logger.Log($"[DataManager.LoadPropStructureDefs] A LoadPropStructureDef of key '{propStructureDef.Key}' already exists. Structure keys must be unique.");
+        }
+      }
+    }
+
+    private void LoadPropDestructibleDefs(string destructiblesPath) {
+      foreach (string destructibleDefPaths in Directory.GetFiles(destructiblesPath, "*.json", SearchOption.AllDirectories)) {
+        string destructibleSource = File.ReadAllText(destructibleDefPaths);
+        PropDestructibleFlimsyDef propDestructibleDef = JsonConvert.DeserializeObject<PropDestructibleFlimsyDef>(destructibleSource, serialiserSettings);
+        Main.Logger.Log("[DataManager.LoadPropDestructibleDefs] Loaded LoadPropDestructibleDefs: " + propDestructibleDef.Key);
+
+        Main.Logger.Log("[DataManager.LoadPropDestructibleDefs] Loaded LoadPropDestructibleDefs Key: " + propDestructibleDef.Key);
+        Main.Logger.Log("[DataManager.LoadPropDestructibleDefs] Loaded LoadPropDestructibleDefs Model: " + propDestructibleDef.ModelKey);
+        Main.Logger.Log("[DataManager.LoadPropDestructibleDefs] Loaded LoadPropDestructibleDefs Mass: " + propDestructibleDef.Mass);
+
+        if (!DestructibleDefs.ContainsKey(propDestructibleDef.Key)) {
+          DestructibleDefs.Add(propDestructibleDef.Key, propDestructibleDef);
+        } else {
+          Main.Logger.Log($"[DataManager.LoadPropDestructibleDefs] A LoadPropStructureDef of key '{propDestructibleDef.Key}' already exists. Destructible keys must be unique.");
+        }
+      }
     }
 
     // *********************

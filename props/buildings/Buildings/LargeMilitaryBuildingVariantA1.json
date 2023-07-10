@@ -1,0 +1,23 @@
+{
+  "Key": "LargeMilitaryBuildingVariantA1",
+  "BuildingDefID": "buildingdef_Military_Large",
+  "MainModel": "LargeMilitaryBuildingA",
+  "Destructibles": [
+    {
+      "Key": "MachineAirConditioningUnitVariantA",
+      "Position": { "x": 3.3, "y": 18.3, "z": 18 }
+    },
+    {
+      "Key": "MachineAirConditioningUnitVariantA",
+      "Position": { "x": -2, "y": 18.3, "z": 18 }
+    },
+    {
+      "Key": "PipeTwoShortCurvedVariantA",
+      "Position": { "x": -8, "y": 2.5, "z": 22 }
+    },
+    {
+      "Key": "PipeTwoShortCurvedVariantA",
+      "Position": { "x": -8, "y": 3.5, "z": 22 }
+    }
+  ]
+}

@@ -6,27 +6,41 @@ using BattleTech;
 
 namespace MissionControl.ContractTypeBuilders {
   public abstract class NodeBuilder {
-    public void SetPosition(GameObject target, JObject position, bool preciseSpawnPoints = false) {
+    public void SetPosition(GameObject target, JObject position, bool preciseSpawnPoints = false, bool exactPosition = false) {
       string type = position.ContainsKey("Type") ? position["Type"].ToString() : "Local";
       JObject value = position.ContainsKey("Value") ? (JObject)position["Value"] : position;
 
       if (type == "World") {
         Vector3 worldPosition = new Vector3((float)value["x"], (float)value["y"], (float)value["z"]);
+
+        if (exactPosition) {
+          target.transform.position = worldPosition;
+          return;
+        }
+
         if (preciseSpawnPoints) {
           worldPosition.y = UnityGameInstance.BattleTechGame.Combat.MapMetaData.GetLerpedHeightAt(worldPosition);
         } else {
           worldPosition = worldPosition.GetClosestHexLerpedPointOnGrid();
         }
+
         target.transform.position = worldPosition;
       } else if (type == "Local") {
         Vector3 localPosition = new Vector3((float)value["x"], (float)value["y"], (float)value["z"]);
         target.transform.localPosition = localPosition;
         Vector3 worldPosition = target.transform.position;
+
+        if (exactPosition) {
+          target.transform.position = worldPosition;
+          return;
+        }
+
         if (preciseSpawnPoints) {
           worldPosition.y = UnityGameInstance.BattleTechGame.Combat.MapMetaData.GetLerpedHeightAt(worldPosition);
         } else {
           worldPosition = worldPosition.GetClosestHexLerpedPointOnGrid();
         }
+
         worldPosition.y += localPosition.y;
         target.transform.position = worldPosition;
       } else if (type == "SpawnProfile") {

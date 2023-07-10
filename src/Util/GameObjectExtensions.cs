@@ -9,6 +9,8 @@ using BattleTech;
 using BattleTech.Designed;
 using BattleTech.Framework;
 
+using MissionControl;
+
 public static class GameObjextExtensions {
   public static List<GameObject> FindAllContains(this GameObject go, string name) {
     List<GameObject> gameObjects = new List<GameObject>();
@@ -59,9 +61,11 @@ public static class GameObjextExtensions {
     List<BuildingRepresentation> buildings = new List<BuildingRepresentation>();
     BuildingRepresentation[] buildingsUnderGameObject = GameObject.Find("GAME").GetComponentsInChildren<BuildingRepresentation>(includeInactive);
     BuildingRepresentation[] buildingsUnderPlots = GameObject.Find("PlotParent").GetComponentsInChildren<BuildingRepresentation>(includeInactive);
+    BuildingRepresentation[] buildingsUnderEncounter = MissionControl.MissionControl.Instance.EncounterLayerData.GetComponentsInChildren<BuildingRepresentation>(includeInactive);
 
     buildings.AddRange(buildingsUnderGameObject);
     buildings.AddRange(buildingsUnderPlots);
+    buildings.AddRange(buildingsUnderEncounter);
 
     return buildings;
   }
@@ -71,6 +75,7 @@ public static class GameObjextExtensions {
     List<DestructibleObject> destructibles = new List<DestructibleObject>();
     DestructibleObject[] destructiblesUnderGameObject = GameObject.Find("GAME").GetComponentsInChildren<DestructibleObject>(includeInactive);
     DestructibleObject[] destructiblesUnderPlots = GameObject.Find("PlotParent").GetComponentsInChildren<DestructibleObject>(includeInactive);
+    DestructibleObject[] destructiblesUnderEncounter = MissionControl.MissionControl.Instance.EncounterLayerData.GetComponentsInChildren<DestructibleObject>(includeInactive);
 
     List<DestructibleObject> filteredDestructiblesUnderGameObject = destructiblesUnderGameObject.Where(destructible => {
       if (filterByName != null) {
@@ -90,8 +95,18 @@ public static class GameObjextExtensions {
       return destructible.GetComponent<LODGroup> != null;
     }).ToList();
 
+    List<DestructibleObject> filteredDestructiblesUnderEncounter = destructiblesUnderEncounter.Where(destructible => {
+      if (filterByName != null) {
+        Boolean startsWithFilterName = filterByName.Any(filterName => destructible.gameObject.name.StartsWith(filterName, StringComparison.OrdinalIgnoreCase));
+        if (!startsWithFilterName) return false;
+      }
+
+      return destructible.GetComponent<LODGroup> != null;
+    }).ToList();
+
     destructibles.AddRange(filteredDestructiblesUnderGameObject);
     destructibles.AddRange(filteredDestructiblesUnderPlots);
+    destructibles.AddRange(filteredDestructiblesUnderEncounter);
 
     return destructibles;
   }

@@ -53,6 +53,11 @@ namespace MissionControl {
 
     public TagSet EncounterTags { get; set; } = new TagSet();
 
+    // Custom Contract Generated Data
+    public List<string> CustomBuildingGuids = new List<string>();
+    public Dictionary<string, Material> GeneratedMaterials = new Dictionary<string, Material>();
+    // End Custom Contract GeneratedData
+
     // Only populated for custom contract types
     public EncounterLayer_MDD EncounterLayerMDD { get; private set; }
     public bool IsCustomContractType { get; set; } = false;
@@ -615,6 +620,13 @@ namespace MissionControl {
       PilotCastInterpolator.Instance.Reset();
       DataManager.Instance.ResetBetweenContracts();
       EncounterTags.Clear();
+      AssetBundleLoader.UnloadPropBundles();
+      CustomBuildingGuids.Clear();
+
+      foreach (Material mat in GeneratedMaterials.Values) {
+        MonoBehaviour.Destroy(mat);
+      }
+      GeneratedMaterials.Clear();
     }
   }
 }
