@@ -381,7 +381,7 @@ namespace MissionControl {
         Main.Logger.Log("[DataManager.LoadPropStructureDefs] Loaded LoadPropStructureDefs: " + propStructureDef.Key);
 
         Main.Logger.Log("[DataManager.LoadPropStructureDefs] Loaded LoadPropStructureDef MainModelKey: " + propStructureDef.MainModelKey);
-        Main.Logger.Log("[DataManager.LoadPropStructureDefs] Loaded LoadPropStructureDef FlimsyModels Count: " + propStructureDef.FlimsyModels.Count);
+        Main.Logger.Log("[DataManager.LoadPropStructureDefs] Loaded LoadPropStructureDef Destructibles Count: " + propStructureDef.DestructibleFlimsyModels.Count);
 
         if (!StructureDefs.ContainsKey(propStructureDef.Key)) {
           StructureDefs.Add(propStructureDef.Key, propStructureDef);

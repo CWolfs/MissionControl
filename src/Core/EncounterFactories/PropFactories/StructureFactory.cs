@@ -102,7 +102,7 @@ namespace MissionControl.EncounterFactories {
     // }
 
     private GameObject CreateFlimsies(GameObject structuregGO) {
-      List<PropDestructibleFlimsyDef> flimsyModels = PropStructureDef.FlimsyModels;
+      List<PropDestructibleFlimsyDef> flimsyModels = PropStructureDef.DestructibleFlimsyModels;
 
       if (flimsyModels.Count > 0) {
         GameObject flimsyParentGO = CreateGameObject(structuregGO, "_flimsy");
