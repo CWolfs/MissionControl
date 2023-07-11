@@ -370,7 +370,9 @@ namespace MissionControl.EncounterFactories {
           material.SetVector(propertyName, vector);
         } else if (propertyType == "shaderwords") {
           string[] shaderwords = propertyValue.ToString().Split(',');
-          material.SetShaderKeywords(shaderwords);
+          foreach (string shaderword in shaderwords) {
+            material.EnableKeyword(shaderword);
+          }
         }
       }
     }

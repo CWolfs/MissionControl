@@ -24,10 +24,6 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     public override void Build() {
-      if (!DataManager.Instance.StructureDefs.ContainsKey(structureName)) {
-        Main.Logger.LogError($"[StructureBuilder.Build] No PropStructureDef exists with the name '{structureName}'");
-      }
-
       Main.Logger.Log($"[StructureBuilder.Build] Building '{structureName}' Structure");
       if (!DataManager.Instance.StructureDefs.ContainsKey(structureName)) {
         Main.Logger.LogError($"[StructureBuilder.Build] PropStructureDef '{structureName}' does not exist");
@@ -46,8 +42,6 @@ namespace MissionControl.ContractTypeBuilders {
       if (this.rotation != null) {
         SetRotation(structureGo, this.rotation);
       }
-
-      // structureFactory.AddToCameraFadeGroup();
     }
   }
 }
