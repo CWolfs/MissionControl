@@ -11,6 +11,7 @@ namespace MissionControl.ContractTypeBuilders {
     private JObject structure;
 
     private string structureName;
+    private string structureKey;
     private JObject position;
     private JObject rotation;
 
@@ -19,21 +20,22 @@ namespace MissionControl.ContractTypeBuilders {
       this.structure = structure;
 
       structureName = structure["Name"].ToString();
+      structureKey = structure["Key"].ToString();
       position = structure.ContainsKey("Position") ? (JObject)structure["Position"] : null;
       rotation = structure.ContainsKey("Rotation") ? (JObject)structure["Rotation"] : null;
     }
 
     public override void Build() {
-      Main.Logger.Log($"[StructureBuilder.Build] Building '{structureName}' Structure");
-      if (!DataManager.Instance.StructureDefs.ContainsKey(structureName)) {
-        Main.Logger.LogError($"[StructureBuilder.Build] PropStructureDef '{structureName}' does not exist");
+      Main.Logger.Log($"[StructureBuilder.Build] Building '{structureKey}' Structure");
+      if (!DataManager.Instance.StructureDefs.ContainsKey(structureKey)) {
+        Main.Logger.LogError($"[StructureBuilder.Build] PropStructureDef '{structureKey}' does not exist");
         return;
       }
 
-      PropStructureDef propStructureDef = DataManager.Instance.StructureDefs[structureName];
+      PropStructureDef propStructureDef = DataManager.Instance.StructureDefs[structureKey];
 
       StructureFactory structureFactory = new StructureFactory(propStructureDef);
-      GameObject structureGo = structureFactory.CreateStructure(structureName);
+      GameObject structureGo = structureFactory.CreateStructure(structureKey);
 
       if (this.position != null) {
         SetPosition(structureGo, this.position, exactPosition: true);

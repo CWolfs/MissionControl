@@ -11,6 +11,7 @@ namespace MissionControl.ContractTypeBuilders {
     private JObject building;
 
     private string buildingName;
+    private string buildingKey;
     private JObject position;
     private JObject rotation;
 
@@ -19,21 +20,22 @@ namespace MissionControl.ContractTypeBuilders {
       this.building = building;
 
       buildingName = building["Name"].ToString();
+      buildingKey = building["Key"].ToString();
       position = building.ContainsKey("Position") ? (JObject)building["Position"] : null;
       rotation = building.ContainsKey("Rotation") ? (JObject)building["Rotation"] : null;
     }
 
     public override void Build() {
-      Main.Logger.Log($"[BuildingBuilder.Build] Building '{buildingName}' Building");
-      if (!DataManager.Instance.BuildingDefs.ContainsKey(buildingName)) {
-        Main.Logger.LogError($"[BuildingBuilder.Build] PropBuildingDef '{buildingName}' does not exist");
+      Main.Logger.Log($"[BuildingBuilder.Build] Building '{buildingKey}' Building");
+      if (!DataManager.Instance.BuildingDefs.ContainsKey(buildingKey)) {
+        Main.Logger.LogError($"[BuildingBuilder.Build] PropBuildingDef '{buildingKey}' does not exist");
         return;
       }
 
-      PropBuildingDef propBuildingDef = DataManager.Instance.BuildingDefs[buildingName];
+      PropBuildingDef propBuildingDef = DataManager.Instance.BuildingDefs[buildingKey];
 
       BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef);
-      GameObject facilityGo = buildingFactory.CreateFacility(buildingName);
+      GameObject facilityGo = buildingFactory.CreateFacility(buildingKey);
 
       DestructibleObject destructibleObject = facilityGo.GetComponentInChildren<DestructibleObject>();
       GameObject destructionParentGO = destructibleObject.destructionParent.gameObject;

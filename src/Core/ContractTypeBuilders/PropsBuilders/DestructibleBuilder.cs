@@ -41,14 +41,15 @@ namespace MissionControl.ContractTypeBuilders {
 
         foreach (JObject destructible in destructibles.Children<JObject>()) {
           string destructibleName = destructible["Name"].ToString();
+          string destructibleKey = destructible["Key"].ToString();
           JObject position = destructible.ContainsKey("Position") ? (JObject)destructible["Position"] : null;
           JObject rotation = destructible.ContainsKey("Rotation") ? (JObject)destructible["Rotation"] : null;
 
-          if (!DataManager.Instance.DestructibleDefs.ContainsKey(destructibleName)) {
-            Main.Logger.LogError($"[DestructibleBuilder.Build] No destructible exists with key '{destructibleName}'. Check a PropDestructionDef exists with that key in the 'props/destructible' folder");
+          if (!DataManager.Instance.DestructibleDefs.ContainsKey(destructibleKey)) {
+            Main.Logger.LogError($"[DestructibleBuilder.Build] No destructible exists with key '{destructibleKey}'. Check a PropDestructionDef exists with that key in the 'props/destructible' folder");
           }
 
-          PropDestructibleFlimsyDef propDestructibleDef = DataManager.Instance.DestructibleDefs[destructibleName];
+          PropDestructibleFlimsyDef propDestructibleDef = DataManager.Instance.DestructibleDefs[destructibleKey];
           DestructibleFactory destructibleFactory = new DestructibleFactory(propDestructibleDef);
 
           GameObject destructibleGO = destructibleFactory.CreateDestructible(destructiblesContainerGO, propDestructibleDef.Key);
