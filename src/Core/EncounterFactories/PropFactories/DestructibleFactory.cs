@@ -31,7 +31,11 @@ namespace MissionControl.EncounterFactories {
     }
 
     public GameObject CreateDestructibleFlimsyGroup(string name) {
-      this.destructibleFlimsyGroupGO = CreateGameObject(DestructibleFactory.MCDestructibleParent, $"DestructibleFlimsyGroup_{name}");
+      return CreateDestructibleFlimsyGroup(name, DestructibleFactory.MCDestructibleParent);
+    }
+
+    public GameObject CreateDestructibleFlimsyGroup(string name, GameObject parent) {
+      this.destructibleFlimsyGroupGO = CreateGameObject(parent, $"DestructibleFlimsyGroup_{name}");
       destructibleFlimsyGroupGO.SetActive(false);
 
       destructibleFlimsyGroupGO.AddComponent<SnapToTerrain>();

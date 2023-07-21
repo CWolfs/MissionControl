@@ -13,6 +13,19 @@ using Newtonsoft.Json.Linq;
 
 namespace MissionControl.EncounterFactories {
   public abstract class PropFactory {
+    private static GameObject mcPropGroupParent = null;
+    public static GameObject MCPropGroupParent {
+      get {
+        if (mcPropGroupParent == null) {
+          mcPropGroupParent = new GameObject("MCPropGroupParent");
+          mcPropGroupParent.transform.SetParent(MissionControl.Instance.EncounterLayerData.transform);
+          mcPropGroupParent.transform.position = Vector3.zero;
+        }
+
+        return mcPropGroupParent;
+      }
+    }
+
     private static GameObject mcBuildingParent = null;
     public static GameObject MCBuildingParent {
       get {
