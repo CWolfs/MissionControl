@@ -44,8 +44,12 @@ namespace MissionControl.EncounterFactories {
     }
 
     public GameObject CreateFacility(string name) {
+      return CreateFacility(name, BuildingFactory.MCBuildingParent);
+    }
+
+    public GameObject CreateFacility(string name, GameObject parent) {
       this.facilityName = name;
-      facilityGO = CreateGameObject(BuildingFactory.MCBuildingParent, name);
+      facilityGO = CreateGameObject(parent, name);
 
       CreateBuildingGroup(facilityGO, $"BuildingGroup_{facilityName}");
       facilityGO.AddComponent<FacilityParent>();

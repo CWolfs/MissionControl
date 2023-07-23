@@ -25,6 +25,7 @@ namespace MissionControl.ContractTypeBuilders {
     private const string TRIGGERS_ID = "Triggers";
     private const string GLOBAL_DATA_ID = "GlobalData";
     private const string PROPS_ID = "Props";
+    private const string PROP_GROUPS_ID = "PropGroups";
 
     private const string CONTRACT_OBJECTIVES_ID = "ContractObjectives";
     private const string BUILDINGS_ID = "Buildings";
@@ -48,7 +49,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       EncounterDataManager.Instance.HandlePlotsAndMapMetadataUpdate();
 
-      BuildProps(); // This might need to go above the HandlePlotsAndMapMetadataUpdate() call
+      BuildPropGroups(); // This might need to go above the HandlePlotsAndMapMetadataUpdate() call
       BuildChunks();
       BuildTriggers();
 
@@ -81,37 +82,13 @@ namespace MissionControl.ContractTypeBuilders {
       }
     }
 
-    public void BuildProps() {
-      if (ContractTypeBuild.ContainsKey(PROPS_ID)) {
-        JObject propsArray = (JObject)ContractTypeBuild[PROPS_ID];
+    public void BuildPropGroups() {
+      if (ContractTypeBuild.ContainsKey(PROP_GROUPS_ID)) {
+        JArray propGroupsArray = (JArray)ContractTypeBuild[PROP_GROUPS_ID];
 
-        if (propsArray.ContainsKey(BUILDINGS_ID)) {
-          JArray buildings = (JArray)propsArray[BUILDINGS_ID];
-          Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] There are '{buildings.Count}' building data entries defined.");
-
-          foreach (JObject building in buildings.Children<JObject>()) {
-            BuildingBuilder buildingBuilder = new BuildingBuilder(this, building);
-            buildingBuilder.Build();
-          }
-        }
-
-        if (propsArray.ContainsKey(STRUCTURES_ID)) {
-          JArray structures = (JArray)propsArray[STRUCTURES_ID];
-
-          foreach (JObject structure in structures.Children<JObject>()) {
-            StructureBuilder buildingBuilder = new StructureBuilder(this, structure);
-            buildingBuilder.Build();
-          }
-        }
-
-        if (propsArray.ContainsKey(DESTRUCTIBLE_GROUPS_ID)) {
-          JArray destructibleGroups = (JArray)propsArray[DESTRUCTIBLE_GROUPS_ID];
-          Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] There are '{destructibleGroups.Count}' destructible group data entries defined.");
-
-          foreach (JObject destructibleGroup in destructibleGroups.Children<JObject>()) {
-            DestructibleBuilder destructibleBuilder = new DestructibleBuilder(this, destructibleGroup);
-            destructibleBuilder.Build();
-          }
+        foreach (JObject propGroup in propGroupsArray.Children<JObject>()) {
+          PropGroupBuilder propGroupBuilder = new PropGroupBuilder(this, propGroup);
+          propGroupBuilder.Build();
         }
       }
     }

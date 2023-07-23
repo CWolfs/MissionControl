@@ -13,84 +13,80 @@ namespace MissionControl.ContractTypeBuilders {
     private string destructibleGroupName;
     private JObject position;
     private JObject rotation;
-    private JArray destructibles;
-    private JArray buildings;
+    private JArray props;
 
-    public DestructibleBuilder(ContractTypeBuilder contractTypeBuilder, JObject destructibleGroup) {
+    public GameObject Parent { get; set; }
+
+    public DestructibleBuilder(ContractTypeBuilder contractTypeBuilder, JObject destructibleGroup, GameObject parent) {
       this.contractTypeBuilder = contractTypeBuilder;
       this.destructibleGroup = destructibleGroup;
 
       destructibleGroupName = destructibleGroup["Name"].ToString();
       position = destructibleGroup.ContainsKey("Position") ? (JObject)destructibleGroup["Position"] : null;
       rotation = destructibleGroup.ContainsKey("Rotation") ? (JObject)destructibleGroup["Rotation"] : null;
-      destructibles = destructibleGroup.ContainsKey("Destructibles") ? (JArray)destructibleGroup["Destructibles"] : null;
-      buildings = destructibleGroup.ContainsKey("Buildings") ? (JArray)destructibleGroup["Buildings"] : null;
+      props = destructibleGroup.ContainsKey("Props") ? (JArray)destructibleGroup["Props"] : null;
+
+      Parent = parent;
     }
 
     public override void Build() {
       // Build the group parent
       DestructibleFactory destructibleGroupFactory = new DestructibleFactory();
-      GameObject destructibleGroupGO = destructibleGroupFactory.CreateDestructibleFlimsyGroup(destructibleGroupName);
+      GameObject destructibleGroupGO = destructibleGroupFactory.CreateDestructibleFlimsyGroup(destructibleGroupName, Parent);
 
       // Build all the flimsy destructibles
-      if (destructibles != null) {
-        GameObject destructiblesContainerGO = new GameObject("Destructibles");
-        destructiblesContainerGO.transform.SetParent(destructibleGroupGO.transform);
-        destructiblesContainerGO.transform.position = Vector3.zero;
-        destructiblesContainerGO.transform.rotation = Quaternion.identity;
+      if (props != null) {
+        foreach (JObject prop in props.Children<JObject>()) {
+          string type = prop["Type"].ToString();
 
-        foreach (JObject destructible in destructibles.Children<JObject>()) {
-          string destructibleName = destructible["Name"].ToString();
-          string destructibleKey = destructible["Key"].ToString();
-          JObject position = destructible.ContainsKey("Position") ? (JObject)destructible["Position"] : null;
-          JObject rotation = destructible.ContainsKey("Rotation") ? (JObject)destructible["Rotation"] : null;
+          switch (type) {
+            case "Building": {
+              string buildingName = prop["Name"].ToString();
+              JObject position = prop.ContainsKey("Position") ? (JObject)prop["Position"] : null;
+              JObject rotation = prop.ContainsKey("Rotation") ? (JObject)prop["Rotation"] : null;
 
-          if (!DataManager.Instance.DestructibleDefs.ContainsKey(destructibleKey)) {
-            Main.Logger.LogError($"[DestructibleBuilder.Build] No destructible exists with key '{destructibleKey}'. Check a PropDestructionDef exists with that key in the 'props/destructible' folder");
-          }
+              if (!DataManager.Instance.BuildingDefs.ContainsKey(buildingName)) {
+                Main.Logger.LogError($"[DestructibleBuilder.Build] No building exists with key '{buildingName}'. Check a PropBuildingDef exists with that key in the 'props/buildings' folder");
+              }
 
-          PropDestructibleFlimsyDef propDestructibleDef = DataManager.Instance.DestructibleDefs[destructibleKey];
-          DestructibleFactory destructibleFactory = new DestructibleFactory(propDestructibleDef);
+              PropBuildingDef propBuildingDef = DataManager.Instance.BuildingDefs[buildingName];
+              BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef);
 
-          GameObject destructibleGO = destructibleFactory.CreateDestructible(destructiblesContainerGO, propDestructibleDef.Key);
+              GameObject destructibleGO = buildingFactory.CreateBuilding(destructibleGroupGO, $"Building_{propBuildingDef.Key}", DestructibleObject.DestructType.flimsyStruct);
 
-          if (position != null) {
-            SetPosition(destructibleGO, position, exactPosition: true);
-          }
+              if (position != null) {
+                SetPosition(destructibleGO, position, exactPosition: true);
+              }
 
-          if (rotation != null) {
-            SetRotation(destructibleGO, rotation);
-          }
-        }
-      }
+              if (rotation != null) {
+                SetRotation(destructibleGO, rotation);
+              }
+              break;
+            }
+            case "Destructible": {
+              string destructibleName = prop["Name"].ToString();
+              string destructibleKey = prop["Key"].ToString();
+              JObject position = prop.ContainsKey("Position") ? (JObject)prop["Position"] : null;
+              JObject rotation = prop.ContainsKey("Rotation") ? (JObject)prop["Rotation"] : null;
 
-      // Build all the flimsy buildings
-      if (buildings != null) {
-        GameObject buildingsContainerGO = new GameObject("Buildings");
-        buildingsContainerGO.transform.SetParent(destructibleGroupGO.transform);
-        buildingsContainerGO.transform.position = Vector3.zero;
-        buildingsContainerGO.transform.rotation = Quaternion.identity;
+              if (!DataManager.Instance.DestructibleDefs.ContainsKey(destructibleKey)) {
+                Main.Logger.LogError($"[DestructibleBuilder.Build] No destructible exists with key '{destructibleKey}'. Check a PropDestructionDef exists with that key in the 'props/destructible' folder");
+              }
 
-        foreach (JObject building in buildings.Children<JObject>()) {
-          string buildingName = building["Name"].ToString();
-          JObject position = building.ContainsKey("Position") ? (JObject)building["Position"] : null;
-          JObject rotation = building.ContainsKey("Rotation") ? (JObject)building["Rotation"] : null;
+              PropDestructibleFlimsyDef propDestructibleDef = DataManager.Instance.DestructibleDefs[destructibleKey];
+              DestructibleFactory destructibleFactory = new DestructibleFactory(propDestructibleDef);
 
-          if (!DataManager.Instance.BuildingDefs.ContainsKey(buildingName)) {
-            Main.Logger.LogError($"[DestructibleBuilder.Build] No building exists with key '{buildingName}'. Check a PropBuildingDef exists with that key in the 'props/buildings' folder");
-          }
+              GameObject destructibleGO = destructibleFactory.CreateDestructible(destructibleGroupGO, propDestructibleDef.Key);
 
-          PropBuildingDef propBuildingDef = DataManager.Instance.BuildingDefs[buildingName];
-          BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef);
+              if (position != null) {
+                SetPosition(destructibleGO, position, exactPosition: true);
+              }
 
-          GameObject destructibleGO = buildingFactory.CreateBuilding(buildingsContainerGO, $"Building_{propBuildingDef.Key}", DestructibleObject.DestructType.flimsyStruct);
-
-          if (position != null) {
-            SetPosition(destructibleGO, position, exactPosition: true);
-          }
-
-          if (rotation != null) {
-            SetRotation(destructibleGO, rotation);
+              if (rotation != null) {
+                SetRotation(destructibleGO, rotation);
+              }
+              break;
+            }
           }
         }
       }

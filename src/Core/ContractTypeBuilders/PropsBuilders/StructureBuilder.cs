@@ -15,7 +15,9 @@ namespace MissionControl.ContractTypeBuilders {
     private JObject position;
     private JObject rotation;
 
-    public StructureBuilder(ContractTypeBuilder contractTypeBuilder, JObject structure) {
+    public GameObject Parent { get; set; }
+
+    public StructureBuilder(ContractTypeBuilder contractTypeBuilder, JObject structure, GameObject parent) {
       this.contractTypeBuilder = contractTypeBuilder;
       this.structure = structure;
 
@@ -23,6 +25,8 @@ namespace MissionControl.ContractTypeBuilders {
       structureKey = structure["Key"].ToString();
       position = structure.ContainsKey("Position") ? (JObject)structure["Position"] : null;
       rotation = structure.ContainsKey("Rotation") ? (JObject)structure["Rotation"] : null;
+
+      Parent = parent;
     }
 
     public override void Build() {
@@ -35,7 +39,7 @@ namespace MissionControl.ContractTypeBuilders {
       PropStructureDef propStructureDef = DataManager.Instance.StructureDefs[structureKey];
 
       StructureFactory structureFactory = new StructureFactory(propStructureDef);
-      GameObject structureGo = structureFactory.CreateStructure(structureKey);
+      GameObject structureGo = structureFactory.CreateStructure(structureKey, Parent);
 
       if (this.position != null) {
         SetPosition(structureGo, this.position, exactPosition: true);

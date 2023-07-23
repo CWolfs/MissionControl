@@ -15,7 +15,9 @@ namespace MissionControl.ContractTypeBuilders {
     private JObject position;
     private JObject rotation;
 
-    public BuildingBuilder(ContractTypeBuilder contractTypeBuilder, JObject building) {
+    public GameObject Parent { get; set; }
+
+    public BuildingBuilder(ContractTypeBuilder contractTypeBuilder, JObject building, GameObject parent) {
       this.contractTypeBuilder = contractTypeBuilder;
       this.building = building;
 
@@ -23,6 +25,8 @@ namespace MissionControl.ContractTypeBuilders {
       buildingKey = building["Key"].ToString();
       position = building.ContainsKey("Position") ? (JObject)building["Position"] : null;
       rotation = building.ContainsKey("Rotation") ? (JObject)building["Rotation"] : null;
+
+      Parent = parent;
     }
 
     public override void Build() {
@@ -35,7 +39,7 @@ namespace MissionControl.ContractTypeBuilders {
       PropBuildingDef propBuildingDef = DataManager.Instance.BuildingDefs[buildingKey];
 
       BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef);
-      GameObject facilityGo = buildingFactory.CreateFacility(buildingKey);
+      GameObject facilityGo = buildingFactory.CreateFacility(buildingKey, Parent);
 
       DestructibleObject destructibleObject = facilityGo.GetComponentInChildren<DestructibleObject>();
       GameObject destructionParentGO = destructibleObject.destructionParent.gameObject;
