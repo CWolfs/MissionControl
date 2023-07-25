@@ -14,7 +14,9 @@ namespace MissionControl.ContractTypeBuilders {
     private JObject rotation;
     private JArray props;
 
-    public PropGroupBuilder(ContractTypeBuilder contractTypeBuilder, JObject propGroup) {
+    public GameObject Parent { get; set; }
+
+    public PropGroupBuilder(ContractTypeBuilder contractTypeBuilder, JObject propGroup, GameObject parent = null) {
       this.contractTypeBuilder = contractTypeBuilder;
       this.propGroup = propGroup;
 
@@ -22,13 +24,15 @@ namespace MissionControl.ContractTypeBuilders {
       position = propGroup.ContainsKey("Position") ? (JObject)propGroup["Position"] : null;
       rotation = propGroup.ContainsKey("Rotation") ? (JObject)propGroup["Rotation"] : null;
       props = propGroup.ContainsKey("Props") ? (JArray)propGroup["Props"] : null;
+
+      Parent = parent;
     }
 
     public override void Build() {
       Main.Logger.Log($"[PropGroupBuilder.Build] Building '{name}' Prop Group");
 
       GameObject propGroupGO = new GameObject("PropGroup_" + name);
-      propGroupGO.transform.parent = PropFactory.MCPropGroupParent.transform;
+      propGroupGO.transform.parent = (Parent == null) ? PropFactory.MCPropGroupParent.transform : Parent.transform;
       propGroupGO.transform.localPosition = Vector3.zero;
 
       if (this.position != null) {
@@ -51,6 +55,11 @@ namespace MissionControl.ContractTypeBuilders {
         string type = prop["Type"].ToString();
 
         switch (type) {
+          case "PropGroup": {
+            PropGroupBuilder propGroupBuilder = new PropGroupBuilder(contractTypeBuilder, prop, propGroupParent);
+            propGroupBuilder.Build();
+            break;
+          }
           case "Building": {
             BuildingBuilder buildingBuilder = new BuildingBuilder(contractTypeBuilder, prop, propGroupParent);
             buildingBuilder.Build();

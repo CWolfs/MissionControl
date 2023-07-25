@@ -42,14 +42,15 @@ namespace MissionControl.ContractTypeBuilders {
           switch (type) {
             case "Building": {
               string buildingName = prop["Name"].ToString();
+              string buildingKey = prop["Key"].ToString();
               JObject position = prop.ContainsKey("Position") ? (JObject)prop["Position"] : null;
               JObject rotation = prop.ContainsKey("Rotation") ? (JObject)prop["Rotation"] : null;
 
-              if (!DataManager.Instance.BuildingDefs.ContainsKey(buildingName)) {
-                Main.Logger.LogError($"[DestructibleBuilder.Build] No building exists with key '{buildingName}'. Check a PropBuildingDef exists with that key in the 'props/buildings' folder");
+              if (!DataManager.Instance.BuildingDefs.ContainsKey(buildingKey)) {
+                Main.Logger.LogError($"[DestructibleBuilder.Build] No building exists with key '{buildingKey}'. Check a PropBuildingDef exists with that key in the 'props/buildings' folder");
               }
 
-              PropBuildingDef propBuildingDef = DataManager.Instance.BuildingDefs[buildingName];
+              PropBuildingDef propBuildingDef = DataManager.Instance.BuildingDefs[buildingKey];
               BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef);
 
               GameObject destructibleGO = buildingFactory.CreateBuilding(destructibleGroupGO, $"Building_{propBuildingDef.Key}", DestructibleObject.DestructType.flimsyStruct);
