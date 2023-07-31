@@ -1,6 +1,6 @@
 {
-  "Key": "ArenaLargeOneSideOpen",
-  "Mesh": "arenaLargeOneSideOpen",
+  "Key": "ArenaLargeOneSideOpenA",
+  "Mesh": "arenaLargeOneSideOpenA",
   "Materials": [
     {
       "Name": "envMatStct_darkMetal_generic"
