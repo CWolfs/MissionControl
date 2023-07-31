@@ -308,6 +308,11 @@ namespace MissionControl.EncounterFactories {
       buildingCOLGO.layer = 12; // so raycasts can hit it for highlight effect and selection
       // ApplyScale(buildingCOLGO);
 
+      if (propModelDef.MeshOffsets.ContainsKey("COL")) {
+        Main.Logger.Log("[PropFactory.CreateColAndLODs] Apply mesh offset for COL");
+        buildingCOLGO.transform.localPosition += propModelDef.MeshOffsets["COL"];
+      }
+
       GameObject buildingLOD0GO = CreateGameObject(buildingGO, $"{buildingGO.name}_LOD0");
       MeshFilter buildingLOD0MF = buildingLOD0GO.AddComponent<MeshFilter>();
       MeshRenderer buildingLOD0MR = buildingLOD0GO.AddComponent<MeshRenderer>();
@@ -316,6 +321,11 @@ namespace MissionControl.EncounterFactories {
       buildingLOD0MR.materials = materials;
       buildingLOD0MF.mesh = buildingLOD0Mesh;
       // ApplyScale(buildingLOD0GO);
+
+      if (propModelDef.MeshOffsets.ContainsKey("LOD0")) {
+        Main.Logger.Log("[PropFactory.CreateColAndLODs] Apply mesh offset for LOD0");
+        buildingCOLGO.transform.localPosition += propModelDef.MeshOffsets["LOD0"];
+      }
 
       if (buildingLOD1Mesh != null) {
         Main.Logger.Log($"[PropFactory.CreateColAndLODs] Check - LOD1 mesh " + buildingLOD1Mesh.name + " isFlimsyBase: " + isFlimsyBase);
@@ -332,6 +342,11 @@ namespace MissionControl.EncounterFactories {
           MeshRenderer buildingLOD1MR = buildingLOD1GO.AddComponent<MeshRenderer>();
           buildingLOD1MR.materials = materials;
           buildingLOD1MF.mesh = buildingLOD1Mesh;
+
+          if (propModelDef.MeshOffsets.ContainsKey("LOD1")) {
+            Main.Logger.Log("[PropFactory.CreateColAndLODs] Apply mesh offset for LOD1");
+            buildingCOLGO.transform.localPosition += propModelDef.MeshOffsets["LOD1"];
+          }
         } else {
           Main.Logger.Log($"[PropFactory.CreateColAndLODs] No LOD1 mesh found under name '{propModelDef.MeshName}_LOD1' so skipping LOD1 GO build");
         }
@@ -344,6 +359,11 @@ namespace MissionControl.EncounterFactories {
           MeshRenderer buildingLOD2MR = buildingLOD2GO.AddComponent<MeshRenderer>();
           buildingLOD2MR.materials = materials;
           buildingLOD2MF.mesh = buildingLOD2Mesh;
+
+          if (propModelDef.MeshOffsets.ContainsKey("LOD2")) {
+            Main.Logger.Log("[PropFactory.CreateColAndLODs] Apply mesh offset for LOD2");
+            buildingCOLGO.transform.localPosition += propModelDef.MeshOffsets["LOD2"];
+          }
         } else {
           Main.Logger.Log($"[PropFactory.CreateColAndLODs] No LOD2 mesh found under name '{propModelDef.MeshName}_LOD1' so skipping LOD2 GO build");
         }

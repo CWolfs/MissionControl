@@ -1,3 +1,5 @@
+using UnityEngine;
+
 using Newtonsoft.Json;
 
 using System;
@@ -34,6 +36,9 @@ namespace MissionControl.Data {
 
     [JsonProperty("DestructibleSize")]
     private string destructibleSize { get; set; } = "large";
+
+    [JsonProperty("MeshOffsets")]
+    public Dictionary<string, Vector3> MeshOffsets = new Dictionary<string, Vector3>();
 
     [JsonIgnore]
     public DestructibleObject.DestructibleSize DestructibleSize {
