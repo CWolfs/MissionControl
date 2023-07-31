@@ -1,0 +1,34 @@
+{
+  "Key": "ArenaLargeOneSideOpen",
+  "Mesh": "arenaLargeOneSideOpen",
+  "Materials": [
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    },
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_asphalt_generic"
+    },
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_concrete_generic"
+    }
+  ],
+  "IsMeshInBundle": true,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone",
+  "MeshOffsets": {
+    "COL": { "x": 49.4, "y": 37.6, "z": 429 }
+  }
+}
