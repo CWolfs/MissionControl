@@ -59,6 +59,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "ObjectiveStatuses": BuildObjectStatusesConditional(conditionalObject); break;
         case "EncounterObjectMatchesState": BuildEncounterObjectMatchesStateConditional(conditionalObject); break;
         case "DialogueMatches": BuildDialogueMatchesConditional(conditionalObject); break;
+        case "Region": BuildRegionConditional(conditionalObject); break;
         default:
           Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeKey}] No valid conditional was built for '{type}'");
           break;
@@ -66,13 +67,13 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     private void BuildAlwaysTrueConditional(JObject conditionalObject) {
-      Main.LogDebug("[BuildAlwaysTrueConditional] Building 'AlwaysTrueConditional' conditional");
+      Main.LogDebug("[BuildAlwaysTrueConditional] Building 'AlwaysTrue' conditional");
       AlwaysTrueConditional conditional = ScriptableObject.CreateInstance<AlwaysTrueConditional>();
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }
 
     private void BuildObjectiveStatusConditional(JObject conditionalObject) {
-      Main.LogDebug("[BuildObjectiveStatusConditional] Building 'ObjectiveStatusConditional' conditional");
+      Main.LogDebug("[BuildObjectiveStatusConditional] Building 'ObjectiveStatus' conditional");
       string guid = conditionalObject["Guid"].ToString();
       string status = conditionalObject["Status"].ToString();
       ObjectiveStatusEvaluationType statusType = (ObjectiveStatusEvaluationType)Enum.Parse(typeof(ObjectiveStatusEvaluationType), status);
@@ -88,7 +89,7 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     private void BuildObjectStatusesConditional(JObject conditionalObject) {
-      Main.LogDebug("[BuildObjectStatusesConditional] Building 'ObjectStatusesConditional' conditional");
+      Main.LogDebug("[BuildObjectStatusesConditional] Building 'ObjectStatuses' conditional");
       bool notInContractObjectivesAreSuccesses = conditionalObject.ContainsKey("NotInContractObjectivesAreSuccesses") ? (bool)conditionalObject["NotInContractObjectivesAreSuccesses"] : true;
       JArray statusesArray = (JArray)conditionalObject["Statuses"];
       Dictionary<string, ObjectiveStatusEvaluationType> statuses = new Dictionary<string, ObjectiveStatusEvaluationType>();
@@ -108,7 +109,7 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     private void BuildEncounterObjectMatchesStateConditional(JObject conditionalObject) {
-      Main.LogDebug("[BuildEncounterObjectMatchesStateConditional] Building 'EncounterObjectMatchesStateConditional' conditional");
+      Main.LogDebug("[BuildEncounterObjectMatchesStateConditional] Building 'EncounterObjectMatchesState' conditional");
       string guid = conditionalObject["Guid"].ToString();
       string status = conditionalObject["Status"].ToString();
       EncounterObjectStatus statusType = (EncounterObjectStatus)Enum.Parse(typeof(EncounterObjectStatus), status);
@@ -121,7 +122,7 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     private void BuildDialogueMatchesConditional(JObject conditionalObject) {
-      Main.LogDebug("[BuildDialogueMatchesConditional] Building 'DialogueMatchesConditional' conditional");
+      Main.LogDebug("[BuildDialogueMatchesConditional] Building 'DialogueMatches' conditional");
       string guid = conditionalObject["DialogueGuid"].ToString();
       DialogueMatchesConditional conditional = ScriptableObject.CreateInstance<DialogueMatchesConditional>();
 
@@ -129,6 +130,30 @@ namespace MissionControl.ContractTypeBuilders {
       dialogueRef.EncounterObjectGuid = guid;
 
       conditional.dialogue = dialogueRef;
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildRegionConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildRegionConditional] Building 'BuildRegion' conditional");
+      string regionGuid = conditionalObject.ContainsKey("RegionGuid") ? conditionalObject["RegionGuid"].ToString() : null;
+      string movementTypeRaw = conditionalObject["MovementType"].ToString();
+      List<string> regionTags = conditionalObject.ContainsKey("RegionTags") ? conditionalObject["RegionTags"].ToObject<List<string>>() : null;
+      List<string> unitTags = conditionalObject.ContainsKey("UnitTags") ? conditionalObject["UnitTags"].ToObject<List<string>>() : null;
+
+      RegionConditional conditional = ScriptableObject.CreateInstance<RegionConditional>();
+
+      if (regionGuid != null) {
+        RegionRef regionRef = new RegionRef();
+        regionRef.EncounterObjectGuid = regionGuid;
+        conditional.exactRegion = regionRef;
+      }
+
+      RegionMovementType movementType = (RegionMovementType)Enum.Parse(typeof(RegionMovementType), movementTypeRaw);
+      conditional.regionMovementType = movementType;
+
+      conditional.regionTagSet.AddRange(regionTags);
+      conditional.actingUnitTagSet.AddRange(unitTags);
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }
