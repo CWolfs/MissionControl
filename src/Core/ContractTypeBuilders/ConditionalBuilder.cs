@@ -52,7 +52,6 @@ namespace MissionControl.ContractTypeBuilders {
       // v2 upgrade path: Remove 'Conditional' from type of Conditionals.
       if (type.EndsWith("Conditional")) type = type.Substring(0, type.LastIndexOf("Conditional"));
 
-
       switch (type) {
         case "AlwaysTrue": BuildAlwaysTrueConditional(conditionalObject); break;
         case "ObjectiveStatus": BuildObjectiveStatusConditional(conditionalObject); break;
