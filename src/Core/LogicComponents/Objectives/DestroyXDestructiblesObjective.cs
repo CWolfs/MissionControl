@@ -96,6 +96,7 @@ namespace MissionControl.LogicComponents.Objectives {
           Main.Logger.LogWarning("[DestroyXDestructiblesObjective] Couldn't find enough destructibles to track for this objective so setting the NumberOfDestructiblesToDestroy to the max available");
           NumberOfDestructiblesToDestroy = TrackedDestructibles.Count;
         }
+        Main.Logger.Log($"[DestroyXDestructiblesObjective] Using number mode with amount of: {NumberOfDestructiblesToDestroy} destructibles");
       } else if (CountType == ObjectiveCountType.Percentage) {
         if (TrackedDestructibles.Count == 1) {
           NumberOfDestructiblesToDestroy = 1;
@@ -110,8 +111,6 @@ namespace MissionControl.LogicComponents.Objectives {
 
         Main.Logger.LogWarning($"[DestroyXDestructiblesObjective] Using percentage mode with value '{valueOfDestructiblesToDestroy}%' the number of destructibles to be destroyed will be {NumberOfDestructiblesToDestroy} / {TrackedDestructibles.Count}");
       }
-
-      Main.Logger.Log($"[DestroyXDestructiblesObjective] Tracking all destructibles found in region. Count of: {TrackedDestructibles.Count} destructibles");
     }
 
     public override Vector3 GetBeaconPosition() {
@@ -150,12 +149,12 @@ namespace MissionControl.LogicComponents.Objectives {
 
     public override void UpdateCounts() {
       base.UpdateCounts();
-
+      Main.Logger.Log($"[DestroyXDestructiblesObjective.UpdateCounts] Checking counts");
       int destructionCount = 0;
 
       for (int i = 0; i < TrackedDestructibles.Count; i++) {
         if (TrackedDestructibles[i].isCollapsed) {
-          Main.Logger.Log($"[DestroyXDestructiblesObjective.OnDestructibleDestroyed] Tracked Destructible '{TrackedDestructibles[i].gameObject}' collapsed");
+          Main.Logger.Log($"[DestroyXDestructiblesObjective.UpdateCounts] Tracked Destructible '{TrackedDestructibles[i].gameObject}' collapsed");
           destructionCount++;
         }
       }
