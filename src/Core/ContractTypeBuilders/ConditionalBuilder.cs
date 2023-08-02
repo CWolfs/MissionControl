@@ -59,6 +59,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "EncounterObjectMatchesState": BuildEncounterObjectMatchesStateConditional(conditionalObject); break;
         case "DialogueMatches": BuildDialogueMatchesConditional(conditionalObject); break;
         case "Region": BuildRegionConditional(conditionalObject); break;
+        case "RegionOccupyStatus": BuildRegionOccupyStatusConditional(conditionalObject); break;
         default:
           Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeKey}] No valid conditional was built for '{type}'");
           break;
@@ -153,6 +154,35 @@ namespace MissionControl.ContractTypeBuilders {
 
       conditional.regionTagSet.AddRange(regionTags);
       conditional.actingUnitTagSet.AddRange(unitTags);
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildRegionOccupyStatusConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildRegionOccupyStatusConditional] Building 'BuildRegionOccupyStatus' conditional");
+      string regionGuid = conditionalObject.ContainsKey("RegionGuid") ? conditionalObject["RegionGuid"].ToString() : null;
+      string lanceSpawnerGuid = conditionalObject.ContainsKey("LanceSpawnerGuid") ? conditionalObject["LanceSpawnerGuid"].ToString() : null;
+      List<string> unitTags = conditionalObject.ContainsKey("UnitTags") ? conditionalObject["UnitTags"].ToObject<List<string>>() : null;
+      string evaluationTypeRaw = conditionalObject["EvaluationType"].ToString();
+
+      RegionOccupyStatusConditional conditional = ScriptableObject.CreateInstance<RegionOccupyStatusConditional>();
+
+      if (regionGuid != null) {
+        RegionRef regionRef = new RegionRef();
+        regionRef.EncounterObjectGuid = regionGuid;
+        conditional.region = regionRef;
+      }
+
+      if (lanceSpawnerGuid != null) {
+        LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef();
+        lanceSpawnerRef.EncounterObjectGuid = lanceSpawnerGuid;
+        conditional.requiredLance = lanceSpawnerRef;
+      }
+
+      RegionOccupationEvaluationType evaluationType = (RegionOccupationEvaluationType)Enum.Parse(typeof(RegionOccupationEvaluationType), evaluationTypeRaw);
+      conditional.regionOccupation = evaluationType;
+
+      if (unitTags != null) conditional.requiredTagsOnUnit.AddRange(unitTags);
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }
