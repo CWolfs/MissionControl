@@ -12,6 +12,8 @@ using BattleTech.Designed;
 
 using MissionControl.Conditional;
 
+using HBS.Collections;
+
 namespace MissionControl.ContractTypeBuilders {
   public class ConditionalBuilder {
     private ContractTypeBuilder contractTypeBuilder;
@@ -182,7 +184,11 @@ namespace MissionControl.ContractTypeBuilders {
       RegionOccupationEvaluationType evaluationType = (RegionOccupationEvaluationType)Enum.Parse(typeof(RegionOccupationEvaluationType), evaluationTypeRaw);
       conditional.regionOccupation = evaluationType;
 
-      if (unitTags != null) conditional.requiredTagsOnUnit.AddRange(unitTags);
+      if (unitTags != null && unitTags.Count > 0) {
+        conditional.requiredTagsOnUnit = new TagSet(unitTags.ToArray());
+      } else {
+        conditional.requiredTagsOnUnit = new TagSet();
+      }
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }
