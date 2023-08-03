@@ -343,6 +343,12 @@ namespace MissionControl.ContractTypeBuilders {
       int rounds = resultObject.ContainsKey("Rounds") ? (int)resultObject["Rounds"] : -1;
       int phases = resultObject.ContainsKey("Phases") ? (int)resultObject["Phases"] : -1;
       JObject skipIfTrigger = resultObject.ContainsKey("SkipIf") ? (JObject)resultObject["SkipIf"] : null;
+      string skipIfType = "CheckSinceContractStart";
+
+      if (skipIfTrigger != null) {
+        skipIfType = skipIfTrigger.ContainsKey("Type") ? skipIfTrigger["Type"].ToString() : "CheckSinceContractStart";
+      }
+
       List<DesignConditional> childSkipIfConditionals = new List<DesignConditional>();
 
       JArray childResultsArray = (JArray)resultObject["Results"];
@@ -373,7 +379,8 @@ namespace MissionControl.ContractTypeBuilders {
         ActivateDelaySkipResultsResult triggerResult = ScriptableObject.CreateInstance<ActivateDelaySkipResultsResult>();
         triggerResult.DelayResult = result;
         genericTrigger.Results = new List<DesignResult>() { triggerResult };
-        genericTrigger.Build();
+
+        result.SetTrigger(skipIfType, genericTrigger.BuildTrigger());
       }
     }
 

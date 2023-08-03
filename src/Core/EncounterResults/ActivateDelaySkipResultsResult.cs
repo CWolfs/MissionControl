@@ -7,7 +7,7 @@ namespace MissionControl.Result {
 
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
       Main.LogDebug("[ActivateDelaySkipResultsResult] Triggering");
-      DelayResult.TriggerResultsIfSkipped();
+      DelayResult.SetUseSkippedState(true);
     }
   }
 }
