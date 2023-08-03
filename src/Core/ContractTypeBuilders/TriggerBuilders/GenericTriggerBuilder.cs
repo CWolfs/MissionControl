@@ -78,5 +78,17 @@ namespace MissionControl.ContractTypeBuilders {
         genericTrigger.Run(null);
       }
     }
+
+    public GenericTrigger BuildTrigger() {
+      Main.LogDebug("[GenericTriggerBuilder] Building 'Generic' trigger");
+
+      if (this.Results == null) {
+        Main.Logger.LogError("[GenericTriggerBuilder] Generic Triggers require 'Results'");
+      } else {
+        return new GenericTrigger(this.name, this.description, this.triggerMessageType, this.conditional, Results);
+      }
+
+      return null;
+    }
   }
 }

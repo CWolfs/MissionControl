@@ -18,6 +18,11 @@ namespace MissionControl.Trigger {
     private DesignConditional conditional;
     private List<DesignResultBox> results;
 
+    // TODO: Support 'SmartTriggerResponse.onlyTriggeredOnce' false to allow for triggers to run multiple times
+    // TODO: I don't think the Delay trigger for SkipIf should support it though (maybe?)
+
+    private SmartTriggerResponse trigger;
+
     public GenericTrigger(string name, string description, MessageCenterMessageType onMessage, DesignConditional conditional, List<DesignResult> results) {
       this.name = name;
       this.description = description;
@@ -31,15 +36,50 @@ namespace MissionControl.Trigger {
     }
 
     public override void Run(RunPayload payload) {
-      Main.LogDebug($"[GenericTrigger] Setting up trigger '{this.name}'");
+      GenericTriggerPayload genericTriggerPayload = payload as GenericTriggerPayload;
+
+      Main.LogDebug($"[GenericTrigger.Run] Setting up trigger '{this.name}'");
       EncounterLayerData encounterData = MissionControl.Instance.EncounterLayerData;
-      SmartTriggerResponse trigger = new SmartTriggerResponse();
+      trigger = new SmartTriggerResponse();
       trigger.inputMessage = onMessage;
       trigger.designName = $"{description} on {onMessage}";
       trigger.conditionalbox = new EncounterConditionalBox(conditional);
 
       trigger.resultList.contentsBox = this.results;
       encounterData.responseGroup.triggerList.Add(trigger);
+
+      if (genericTriggerPayload != null) {
+        if (genericTriggerPayload.ShouldManuallyInitialise) {
+          Main.LogDebug($"[GenericTrigger.Run] Manually initialising and listening for messages on trigger '{this.name}'");
+          trigger.AlwaysInit(MissionControl.Instance.EncounterLayerData.Combat);
+          trigger.ContractInitialize(MissionControl.Instance.EncounterLayerData);
+          trigger.ListenToMessages(MissionControl.Instance.EncounterLayerData.Combat.MessageCenter);
+        }
+      }
+    }
+
+    public SmartTriggerResponse BuildAndRunImmediately() {
+      Main.LogDebug($"[GenericTrigger.BuildAndRunImmediately] Setting up trigger '{this.name}'");
+      EncounterLayerData encounterData = MissionControl.Instance.EncounterLayerData;
+      trigger = new SmartTriggerResponse();
+      trigger.inputMessage = onMessage;
+      trigger.designName = $"{description} on {onMessage}";
+      trigger.conditionalbox = new EncounterConditionalBox(conditional);
+
+      trigger.resultList.contentsBox = this.results;
+
+      Main.LogDebug($"[GenericTrigger.BuildAndRunImmediately] Manually initialising and listening for messages on trigger '{this.name}'");
+      trigger.ContractInitialize(MissionControl.Instance.EncounterLayerData);
+
+      trigger.OnMessage(null);
+
+      return trigger;
+    }
+
+    public void Delete() {
+      Main.LogDebug($"[GenericTrigger] Deleting trigger '{this.name}'");
+      EncounterLayerData encounterData = MissionControl.Instance.EncounterLayerData;
+      encounterData.responseGroup.triggerList.Remove(trigger);
     }
   }
 }
