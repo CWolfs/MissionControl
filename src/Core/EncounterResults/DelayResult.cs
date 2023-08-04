@@ -54,8 +54,8 @@ namespace MissionControl.Result {
         return;
       }
 
-      if (Type == "CheckDuringDelay") {
-        Main.LogDebug($"[DelayResult.Trigger] Attaching trigger for SkipIf since 'CheckDuringDelay' is set");
+      if (Type == "WatchDuringDelay") {
+        Main.LogDebug($"[DelayResult.Trigger] Attaching trigger for SkipIf since 'WatchDuringDelay' is set");
         SkipIfTrigger.Run(new GenericTriggerPayload(shouldManuallyInitialise: true));
       }
 
@@ -73,7 +73,7 @@ namespace MissionControl.Result {
       Type = type;
       SkipIfTrigger = genericTrigger;
 
-      if (Type == "CheckSinceContractStart") {
+      if (Type == "WatchFromContractStart") {
         genericTrigger.Run(null);
       }
     }

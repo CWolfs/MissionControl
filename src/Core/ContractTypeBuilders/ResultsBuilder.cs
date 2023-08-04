@@ -343,11 +343,11 @@ namespace MissionControl.ContractTypeBuilders {
       int rounds = resultObject.ContainsKey("Rounds") ? (int)resultObject["Rounds"] : -1;
       int phases = resultObject.ContainsKey("Phases") ? (int)resultObject["Phases"] : -1;
       JObject skipIfTrigger = resultObject.ContainsKey("SkipIf") ? (JObject)resultObject["SkipIf"] : null;
-      string skipIfType = "CheckSinceContractStart";
+      string skipIfType = "WatchFromContractStart";
       string skipIfExecution = "ImmediateOnSuccess";
 
       if (skipIfTrigger != null) {
-        skipIfType = skipIfTrigger.ContainsKey("Type") ? skipIfTrigger["Type"].ToString() : "CheckSinceContractStart";
+        skipIfType = skipIfTrigger.ContainsKey("Type") ? skipIfTrigger["Type"].ToString() : "WatchFromContractStart";
         skipIfExecution = skipIfTrigger.ContainsKey("Execution") ? skipIfTrigger["Execution"].ToString() : "ImmediateOnSuccess";
       }
 
