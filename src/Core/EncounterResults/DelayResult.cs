@@ -31,10 +31,22 @@ namespace MissionControl.Result {
     private string Type { get; set; }
     private GenericTrigger SkipIfTrigger { get; set; }
 
+    private void InitResults() {
+      foreach (DesignResult result in Results) {
+        result.AlwaysInit(UnityGameInstance.Instance.Game.Combat);
+      }
+
+      foreach (DesignResult result in ResultsIfSkipped) {
+        result.AlwaysInit(UnityGameInstance.Instance.Game.Combat);
+      }
+    }
+
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
       Main.LogDebug($"[DelayResult] Delaying '{Name}' results for '{Time}' seconds, '{Rounds}' rounds and/or '{Phases}' phases");
       activated = true;
       SubscribeToMessages(true);
+
+      InitResults();
 
       if (useSkippedState) {
         // Ignore any delay and run the SkipIf logic
