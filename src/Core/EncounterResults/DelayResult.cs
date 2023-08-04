@@ -17,12 +17,15 @@ namespace MissionControl.Result {
     public int Phases { get; set; } = -1;
     public List<DesignResult> Results { get; set; }
     public List<DesignResult> ResultsIfSkipped { get; set; }
+    public string SkipIfExecution { get; set; }
+
     private int roundCount = 0;
     private int phaseCount = 0;
 
     private bool activated = false;
     private bool completed = false;
 
+    private bool waitingUntilAfterDelayToSkipIf = false;
     private bool useSkippedState = false;
 
     private string Type { get; set; }
@@ -33,8 +36,6 @@ namespace MissionControl.Result {
       activated = true;
       SubscribeToMessages(true);
 
-      // If the state has been set to skipped already due to the SkipIf trigger being set to 'CheckSinceContractStart' and passing its conditionals
-      // TODO: Possibly expose a 'Wait for full delay before SkipIf results' setting?
       if (useSkippedState) {
         // Ignore any delay and run the SkipIf logic
         TriggerResultsIfSkipped();
@@ -71,10 +72,10 @@ namespace MissionControl.Result {
       TriggerResults();
     }
 
-    public void SetUseSkippedState(bool flag) {
-      useSkippedState = flag;
+    public void UseSkippedState() {
+      useSkippedState = true;
 
-      if (activated && !completed && useSkippedState) {
+      if (activated && !completed) {
         TriggerResultsIfSkipped();
       }
     }
@@ -119,6 +120,12 @@ namespace MissionControl.Result {
 
       Main.LogDebug($"[DelayResult.TriggerResults] useSkippedState '{useSkippedState}'");
 
+      if (waitingUntilAfterDelayToSkipIf) {
+        // Final execution is to use the SkipIf results and not the normal results
+        TriggerResultsIfSkipped();
+        return;
+      }
+
       if (completed) return;
       completed = true;
       SubscribeToMessages(false);
@@ -137,6 +144,11 @@ namespace MissionControl.Result {
     }
 
     private void TriggerResultsIfSkipped() {
+      if (SkipIfExecution == "AfterDelay" && waitingUntilAfterDelayToSkipIf == false) {
+        waitingUntilAfterDelayToSkipIf = true;
+        return;
+      }
+
       if (completed) return;
       completed = true;
       SubscribeToMessages(false);
