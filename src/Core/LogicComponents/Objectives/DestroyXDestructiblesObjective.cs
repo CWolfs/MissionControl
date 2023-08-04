@@ -149,12 +149,12 @@ namespace MissionControl.LogicComponents.Objectives {
 
     public override void UpdateCounts() {
       base.UpdateCounts();
-      Main.Logger.Log($"[DestroyXDestructiblesObjective.UpdateCounts] Checking counts");
+      // Main.Logger.Log($"[DestroyXDestructiblesObjective.UpdateCounts] Checking counts");
       int destructionCount = 0;
 
       for (int i = 0; i < TrackedDestructibles.Count; i++) {
         if (TrackedDestructibles[i].isCollapsed) {
-          Main.Logger.Log($"[DestroyXDestructiblesObjective.UpdateCounts] Tracked Destructible '{TrackedDestructibles[i].gameObject}' collapsed");
+          // Main.Logger.Log($"[DestroyXDestructiblesObjective.UpdateCounts] Tracked Destructible '{TrackedDestructibles[i].gameObject}' collapsed");
           destructionCount++;
         }
       }
