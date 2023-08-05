@@ -68,7 +68,7 @@ namespace MissionControl.ContractTypeBuilders {
       GameObject regionGo = regionLogic.gameObject;
 
       if (position != null) SetPosition(regionGo, position);
-      if (rotation != null) SetRotation(regionGo, rotation);
+      // if (rotation != null) SetRotation(regionGo, rotation);
 
       regionLogic.Regenerate();
     }
