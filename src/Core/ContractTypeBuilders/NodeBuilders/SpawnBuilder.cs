@@ -138,7 +138,7 @@ namespace MissionControl.ContractTypeBuilders {
       UnitSpawnPointGameLogic[] unitSpawnPoints = spawnerGameLogic.unitSpawnPointGameLogicList;
       foreach (UnitSpawnPointGameLogic spawnPoint in unitSpawnPoints) {
         JObject position = spawnPointPositions.ContainsKey(spawnPoint.encounterObjectGuid) ? (JObject)spawnPointPositions[spawnPoint.encounterObjectGuid] : null;
-        if (position != null) SetPosition(spawnPoint.gameObject, position, this.preciseSpawnPoints);
+        if (position != null) SetPosition(spawnPoint.gameObject, position, exactPosition: this.preciseSpawnPoints);
       }
     }
 
