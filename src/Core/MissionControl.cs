@@ -52,6 +52,7 @@ namespace MissionControl {
     public float PlayerLanceDropTonnage { get; set; }
 
     public TagSet EncounterTags { get; set; } = new TagSet();
+    public StatCollection EncounterStats { get; set; } = new StatCollection();
 
     // Custom Contract Generated Data
     public List<string> CustomBuildingGuids = new List<string>();

@@ -289,6 +289,8 @@ namespace MissionControl.Interpolation {
       string modificationSubject = lookups[3];
       string modificationValue = lookups[4];
 
+      // TODO: Support Stats (including EncounterStats too)
+
       TagSet tags = null;
       if (modificationSubject == "EncounterTags") {
         tags = MissionControl.Instance.EncounterTags;

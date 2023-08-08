@@ -10,6 +10,7 @@ using BattleTech;
 using BattleTech.Framework;
 using BattleTech.Designed;
 
+using MissionControl.Data;
 using MissionControl.Conditional;
 
 using HBS.Collections;
@@ -62,6 +63,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "DialogueMatches": BuildDialogueMatchesConditional(conditionalObject); break;
         case "Region": BuildRegionConditional(conditionalObject); break;
         case "RegionOccupyStatus": BuildRegionOccupyStatusConditional(conditionalObject); break;
+        case "EvaluateStat": BuildEvaluateStatConditional(conditionalObject); break;
         default:
           Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeKey}] No valid conditional was built for '{type}'");
           break;
@@ -189,6 +191,24 @@ namespace MissionControl.ContractTypeBuilders {
       } else {
         conditional.requiredTagsOnUnit = new TagSet();
       }
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildEvaluateStatConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildEvaluateStatConditional] Building 'BuildEvaluateStat' conditional");
+      string scope = conditionalObject["Scope"].ToString();
+      string key = conditionalObject["Key"].ToString();
+      string dataType = conditionalObject["DataType"].ToString();
+      string operation = conditionalObject["Operation"].ToString();
+      string value = conditionalObject["Value"].ToString();
+
+      EvaluateStatConditional conditional = ScriptableObject.CreateInstance<EvaluateStatConditional>();
+      conditional.Scope = scope;
+      conditional.Key = key;
+      conditional.DataType = (DataType)Enum.Parse(typeof(DataType), dataType);
+      conditional.Operation = (EvaluateOperation)Enum.Parse(typeof(EvaluateOperation), operation);
+      conditional.Value = value;
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }

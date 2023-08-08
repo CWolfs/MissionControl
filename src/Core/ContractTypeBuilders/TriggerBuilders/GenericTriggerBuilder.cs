@@ -53,7 +53,7 @@ namespace MissionControl.ContractTypeBuilders {
       if (!Enum.TryParse(this.triggerOn, out triggerMessageType)) {
         MessageTypes messageType;
         if (!Enum.TryParse(this.triggerOn, out messageType)) {
-          Main.Logger.LogError("[GenericTriggerBuilder] Invalid 'TriggerOn' provided.");
+          Main.Logger.LogError($"[GenericTriggerBuilder] Invalid 'TriggerOn' provided of '{this.triggerOn}'.");
         } else {
           triggerMessageType = (MessageCenterMessageType)messageType;
         }
