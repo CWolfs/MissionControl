@@ -25,12 +25,12 @@ namespace MissionControl.Result {
         Dictionary<string, string> statValues = stats.GetStatKeyValues();
 
         foreach (var pair in statValues) {
-          Main.LogDebug($"[DebugStatLogger] Key: '{pair.Key} Value: '{pair.Value}'");
+          Main.LogDebug($"[DebugStatLogger][Scope: '{Scope}'] Key: '{pair.Key} Value: '{pair.Value}'");
         }
       } else {
         if (stats.ContainsStatistic(Key)) {
           Statistic stat = stats.GetStatistic(Key);
-          Main.LogDebug($"[DebugStatLogger] Key: '{Key} Value: '{stat.CurrentValue.objVal.ToString()}'");
+          Main.LogDebug($"[DebugStatLogger][Scope: '{Scope}'] Key: '{Key} Value: '{stat.CurrentValue.objVal.ToString()}'");
         } else {
           Main.Logger.LogWarning($"[DebugStatLogger] Stat with key '{Key}' could not be found in scope '{Scope}'");
         }

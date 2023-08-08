@@ -69,6 +69,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "IgnoreChunks": BuildIgnoreChunksResult(result); break;
         case "TriggerResultAtRandom": BuildTriggerResultAtRandomResult(result); break;
         case "DebugStatLogger": BuildDebugStatLoggerResult(result); break;
+        case "DebugTagLogger": BuildDebugTagLoggerResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -425,6 +426,20 @@ namespace MissionControl.ContractTypeBuilders {
       string key = resultObject.ContainsKey("Key") ? resultObject["Key"].ToString() : "All";
 
       DebugStatLogger result = ScriptableObject.CreateInstance<DebugStatLogger>();
+      result.Scope = scope;
+      result.Key = key;
+
+      results.Add(result);
+    }
+
+    private void BuildDebugTagLoggerResult(JObject resultObject) {
+      Main.LogDebug("[BuildDebugTagLoggerResult] Building 'BuildDebugTagLogger' result");
+      string scopeRaw = resultObject["Scope"].ToString();
+      Scope scope = (Scope)Enum.Parse(typeof(Scope), scopeRaw);
+
+      string key = resultObject.ContainsKey("Key") ? resultObject["Key"].ToString() : "All";
+
+      DebugTagLogger result = ScriptableObject.CreateInstance<DebugTagLogger>();
       result.Scope = scope;
       result.Key = key;
 
