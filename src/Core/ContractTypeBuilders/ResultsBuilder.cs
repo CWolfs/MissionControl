@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 
 using MissionControl.Result;
+using MissionControl.Data;
 
 namespace MissionControl.ContractTypeBuilders {
   public class ResultsBuilder {
@@ -67,6 +68,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "Delay": BuildDelayResult(result); break;
         case "IgnoreChunks": BuildIgnoreChunksResult(result); break;
         case "TriggerResultAtRandom": BuildTriggerResultAtRandomResult(result); break;
+        case "DebugStatLogger": BuildDebugStatLoggerResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -411,6 +413,20 @@ namespace MissionControl.ContractTypeBuilders {
 
       TriggerResultAtRandomResult result = ScriptableObject.CreateInstance<TriggerResultAtRandomResult>();
       result.Results = createdChildResults;
+
+      results.Add(result);
+    }
+
+    private void BuildDebugStatLoggerResult(JObject resultObject) {
+      Main.LogDebug("[BuildDebugStatLoggerResult] Building 'BuildDebugStatLogger' result");
+      string scopeRaw = resultObject["Scope"].ToString();
+      Scope scope = (Scope)Enum.Parse(typeof(Scope), scopeRaw);
+
+      string key = resultObject.ContainsKey("Key") ? resultObject["Key"].ToString() : "All";
+
+      DebugStatLogger result = ScriptableObject.CreateInstance<DebugStatLogger>();
+      result.Scope = scope;
+      result.Key = key;
 
       results.Add(result);
     }
