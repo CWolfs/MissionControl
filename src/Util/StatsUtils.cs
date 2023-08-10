@@ -1,5 +1,7 @@
 using BattleTech;
 
+using MissionControl.Data;
+
 public static class StatsUtils {
   public static StatCollection GetStats(string scope) {
     SimGameState simGame = UnityGameInstance.Instance.Game.Simulation;
@@ -19,5 +21,9 @@ public static class StatsUtils {
     }
 
     return stats;
+  }
+
+  public static StatCollection GetStats(Scope scope) {
+    return GetStats(scope.ToString());
   }
 }

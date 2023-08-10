@@ -70,6 +70,8 @@ namespace MissionControl.ContractTypeBuilders {
         case "TriggerResultAtRandom": BuildTriggerResultAtRandomResult(result); break;
         case "DebugStatLogger": BuildDebugStatLoggerResult(result); break;
         case "DebugTagLogger": BuildDebugTagLoggerResult(result); break;
+        case "SetStat": BuildSetStatResult(result); break;
+        case "SetTag": BuildSetTagResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -425,7 +427,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       string key = resultObject.ContainsKey("Key") ? resultObject["Key"].ToString() : "All";
 
-      DebugStatLogger result = ScriptableObject.CreateInstance<DebugStatLogger>();
+      DebugStatLoggerResult result = ScriptableObject.CreateInstance<DebugStatLoggerResult>();
       result.Scope = scope;
       result.Key = key;
 
@@ -439,9 +441,51 @@ namespace MissionControl.ContractTypeBuilders {
 
       string key = resultObject.ContainsKey("Key") ? resultObject["Key"].ToString() : "All";
 
-      DebugTagLogger result = ScriptableObject.CreateInstance<DebugTagLogger>();
+      DebugTagLoggerResult result = ScriptableObject.CreateInstance<DebugTagLoggerResult>();
       result.Scope = scope;
       result.Key = key;
+
+      results.Add(result);
+    }
+
+    private void BuildSetStatResult(JObject resultObject) {
+      Main.LogDebug("[BuildSetStatResult] Building 'BuildSetStat' result");
+      string scopeRaw = resultObject["Scope"].ToString();
+      Scope scope = (Scope)Enum.Parse(typeof(Scope), scopeRaw);
+
+      string key = resultObject["Key"].ToString();
+
+      string dataTypeRaw = resultObject["DataType"].ToString();
+      DataType dataType = (DataType)Enum.Parse(typeof(DataType), dataTypeRaw);
+
+      string operationRaw = resultObject["Operation"].ToString();
+      StatOperation operation = (StatOperation)Enum.Parse(typeof(StatOperation), operationRaw);
+
+      string value = resultObject.ContainsKey("Value") ? resultObject["Value"].ToString() : "";
+
+      SetStatResult result = ScriptableObject.CreateInstance<SetStatResult>();
+      result.Scope = scope;
+      result.Key = key;
+      result.DataType = dataType;
+      result.Operation = operation;
+      result.Value = value;
+
+      results.Add(result);
+    }
+
+    private void BuildSetTagResult(JObject resultObject) {
+      Main.LogDebug("[BuildSetTagResult] Building 'BuildSetTag' result");
+      string scopeRaw = resultObject["Scope"].ToString();
+      Scope scope = (Scope)Enum.Parse(typeof(Scope), scopeRaw);
+
+      string operationRaw = resultObject["Operation"].ToString();
+      TagOperation operation = (TagOperation)Enum.Parse(typeof(TagOperation), operationRaw);
+
+      string tag = resultObject["Tag"].ToString();
+
+      SetTagResult result = ScriptableObject.CreateInstance<SetTagResult>();
+      result.Scope = scope;
+      result.Operation = operation;
 
       results.Add(result);
     }

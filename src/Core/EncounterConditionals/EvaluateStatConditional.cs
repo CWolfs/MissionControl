@@ -62,7 +62,7 @@ namespace MissionControl.Conditional {
         return false;
       }
 
-      Main.LogDebug($"[EvaluateStatConditional.EvaluateStringStat] Testing test value '{testValue}' against stat value '{statValue}'");
+      Main.LogDebug($"[EvaluateStatConditional.EvaluateBooleanStat] Testing test value '{testValue}' against stat value '{statValue}'");
 
       switch (Operation) {
         case EvaluateOperation.Equals: return (statValue == testValue);
@@ -82,7 +82,7 @@ namespace MissionControl.Conditional {
         return false;
       }
 
-      Main.LogDebug($"[EvaluateStatConditional.EvaluateStringStat] Testing test value '{testValue}' against stat value '{statValue}'");
+      Main.LogDebug($"[EvaluateStatConditional.EvaluateIntegerStat] Testing test value '{testValue}' against stat value '{statValue}'");
 
       switch (Operation) {
         case EvaluateOperation.LessThanOrEqualsTo: return (statValue <= testValue);
@@ -106,7 +106,7 @@ namespace MissionControl.Conditional {
         return false;
       }
 
-      Main.LogDebug($"[EvaluateStatConditional.EvaluateStringStat] Testing test value '{testValue}' against stat value '{statValue}'");
+      Main.LogDebug($"[EvaluateStatConditional.EvaluateFloatStat] Testing test value '{testValue}' against stat value '{statValue}'");
 
       switch (Operation) {
         case EvaluateOperation.LessThanOrEqualsTo: return (statValue <= testValue);

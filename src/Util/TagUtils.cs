@@ -2,6 +2,8 @@ using BattleTech;
 
 using HBS.Collections;
 
+using MissionControl.Data;
+
 public static class TagUtils {
   public static TagSet GetTagSet(string scope) {
     SimGameState simGame = UnityGameInstance.Instance.Game.Simulation;
@@ -21,5 +23,9 @@ public static class TagUtils {
     }
 
     return tags;
+  }
+
+  public static TagSet GetTagSet(Scope scope) {
+    return GetTagSet(scope.ToString());
   }
 }

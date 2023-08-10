@@ -621,6 +621,7 @@ namespace MissionControl {
       PilotCastInterpolator.Instance.Reset();
       DataManager.Instance.ResetBetweenContracts();
       EncounterTags.Clear();
+      EncounterStats.Reset();
       AssetBundleLoader.UnloadPropBundles();
       CustomBuildingGuids.Clear();
 
