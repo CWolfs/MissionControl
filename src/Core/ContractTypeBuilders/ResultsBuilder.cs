@@ -486,6 +486,7 @@ namespace MissionControl.ContractTypeBuilders {
       SetTagResult result = ScriptableObject.CreateInstance<SetTagResult>();
       result.Scope = scope;
       result.Operation = operation;
+      result.Tag = tag;
 
       results.Add(result);
     }
