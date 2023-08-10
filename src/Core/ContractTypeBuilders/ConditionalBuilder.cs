@@ -64,6 +64,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "Region": BuildRegionConditional(conditionalObject); break;
         case "RegionOccupyStatus": BuildRegionOccupyStatusConditional(conditionalObject); break;
         case "EvaluateStat": BuildEvaluateStatConditional(conditionalObject); break;
+        case "EvaluateTag": BuildEvaluateTagConditional(conditionalObject); break;
         default:
           Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeKey}] No valid conditional was built for '{type}'");
           break;
@@ -209,6 +210,20 @@ namespace MissionControl.ContractTypeBuilders {
       conditional.DataType = (DataType)Enum.Parse(typeof(DataType), dataType);
       conditional.Operation = (EvaluateOperation)Enum.Parse(typeof(EvaluateOperation), operation);
       conditional.Value = value;
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildEvaluateTagConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildEvaluateTagConditional] Building 'BuildEvaluateTag' conditional");
+      string scope = conditionalObject["Scope"].ToString();
+      string operation = conditionalObject["Operation"].ToString();
+      string tag = conditionalObject["Tag"].ToString();
+
+      EvaluateTagConditional conditional = ScriptableObject.CreateInstance<EvaluateTagConditional>();
+      conditional.Scope = scope;
+      conditional.Operation = (ExistsOperation)Enum.Parse(typeof(ExistsOperation), operation);
+      conditional.Tag = tag;
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }
