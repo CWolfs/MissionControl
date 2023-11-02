@@ -1,0 +1,5 @@
+{
+  "Key": "SmallCivilianBuildingVariantB1",
+  "BuildingDefID": "buildingdef_Civilian_Small",
+  "MainModel": "BuildingCivilianSmallB"
+}
