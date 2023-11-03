@@ -43,6 +43,8 @@ namespace MissionControl.ContractTypeBuilders {
             case "Building": {
               string buildingName = prop["Name"].ToString();
               string buildingKey = prop["Key"].ToString();
+              string customName = prop.ContainsKey("CustomName") ? prop["CustomName"].ToString() : null;
+              int customStructurePoints = prop.ContainsKey("CustomStructurePoints") ? (int)prop["CustomStructurePoints"] : 0;
               JObject position = prop.ContainsKey("Position") ? (JObject)prop["Position"] : null;
               JObject rotation = prop.ContainsKey("Rotation") ? (JObject)prop["Rotation"] : null;
 
@@ -51,7 +53,7 @@ namespace MissionControl.ContractTypeBuilders {
               }
 
               PropBuildingDef propBuildingDef = DataManager.Instance.BuildingDefs[buildingKey];
-              BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef);
+              BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef, customName, customStructurePoints);
 
               GameObject destructibleGO = buildingFactory.CreateBuilding(destructibleGroupGO, $"Building_{propBuildingDef.Key}", DestructibleObject.DestructType.flimsyStruct);
 

@@ -15,6 +15,8 @@ namespace MissionControl.EncounterFactories {
     private string facilityName = "UNNAMED";
 
     private PropBuildingDef PropBuildingDef { get; set; }
+    private String CustomName { get; set; }
+    private int CustomStructurePoints { get; set; }
 
     private GameObject facilityGO;
     private GameObject buildingGroupGO;
@@ -31,8 +33,10 @@ namespace MissionControl.EncounterFactories {
     private StructureGroup fadeStructureGroup;
     private DestructibleObject fadeDestructibleObject;
 
-    public BuildingFactory(PropBuildingDef propBuildingDef) {
+    public BuildingFactory(PropBuildingDef propBuildingDef, string customName, int customStructurePoints) {
       PropBuildingDef = propBuildingDef;
+      CustomName = customName;
+      CustomStructurePoints = customStructurePoints;
     }
 
     private GameObject CreateGameObject(GameObject parent, string name = null) {
@@ -75,8 +79,8 @@ namespace MissionControl.EncounterFactories {
       // Track the custom buildings to bypass the min 8 cell hit count for buildings to be added to the proper building list of a MapEncounterLayerDataCell
       MissionControl.Instance.CustomBuildingGuids.Add(obstructionGuid);
 
-      // obstructionGameLogic.overrideBuildingName // keep here as a reminder they exist if needed
-      // obstructionGameLogic.overrideStructurePoints // keep here as a reminder they exist if needed
+      obstructionGameLogic.overrideBuildingName = CustomName;
+      obstructionGameLogic.overrideStructurePoints = CustomStructurePoints;
 
       // Health is set by buildingDefId, or a manual override 'overrideStructurePoints' on Building set via ObstructionGameLogic
       DestructibleObjectGroup destructibleObjectGroup = buildingGroupGO.AddComponent<DestructibleObjectGroup>();

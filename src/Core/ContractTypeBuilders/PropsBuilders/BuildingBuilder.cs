@@ -12,6 +12,8 @@ namespace MissionControl.ContractTypeBuilders {
 
     private string buildingName;
     private string buildingKey;
+    private string customName;
+    private int customStructurePoints;
     private JObject position;
     private JObject rotation;
 
@@ -23,6 +25,8 @@ namespace MissionControl.ContractTypeBuilders {
 
       buildingName = building["Name"].ToString();
       buildingKey = building["Key"].ToString();
+      customName = building.ContainsKey("CustomName") ? building["CustomName"].ToString() : null;
+      customStructurePoints = building.ContainsKey("CustomStructurePoints") ? (int)building["CustomStructurePoints"] : 0;
       position = building.ContainsKey("Position") ? (JObject)building["Position"] : null;
       rotation = building.ContainsKey("Rotation") ? (JObject)building["Rotation"] : null;
 
@@ -38,7 +42,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       PropBuildingDef propBuildingDef = DataManager.Instance.BuildingDefs[buildingKey];
 
-      BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef);
+      BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef, customName, customStructurePoints);
       GameObject facilityGo = buildingFactory.CreateFacility(buildingKey, Parent);
 
       DestructibleObject destructibleObject = facilityGo.GetComponentInChildren<DestructibleObject>();
