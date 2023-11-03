@@ -5,5 +5,6 @@ namespace MissionControl.Messages {
     OnEncounterStateChanged = 10002,
     OnLanceSpawned = 10003,
     OnDestructibleCollapsed = 10004,
+    OnLanceDestroyed = 10005,
   };
 }

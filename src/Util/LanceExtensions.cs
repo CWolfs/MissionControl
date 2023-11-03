@@ -18,4 +18,16 @@ public static class LanceExtensions {
 
     return lanceUnits;
   }
+
+  public static bool IsLanceDestroyed(this Lance lance) {
+    List<AbstractActor> lanceUnits = new List<AbstractActor>();
+    List<string> unitGuids = lance.unitGuids;
+
+    foreach (string unitGuid in unitGuids) {
+      AbstractActor actor = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<AbstractActor>(unitGuid);
+      if (!actor.IsDead) return false;
+    }
+
+    return true;
+  }
 }
