@@ -84,6 +84,7 @@ namespace MissionControl.ContractTypeBuilders {
         showProgress,
         ChunkLogic.ProgressFormat.PERCENTAGE_COMPLETE,
         "The primary objective to destroy the enemy lance",
+        isPrimaryObjectve,
         priority,
         displayToUser,
         ObjectiveMark.AttackTarget,
@@ -131,6 +132,7 @@ namespace MissionControl.ContractTypeBuilders {
         regionGuid,
         this.name,
         title,
+        isPrimaryObjectve,
         progressFormat,
         description,
         numberOfUnitsToOccupy,
@@ -153,10 +155,10 @@ namespace MissionControl.ContractTypeBuilders {
       string description = objective["Description"].ToString();
 
       if (durationToDefend <= 0) {
-        ObjectiveFactory.CreateDefendXUnitsForeverObjective(guid, parent, contractObjectiveGuid, name, title, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDefend);
+        ObjectiveFactory.CreateDefendXUnitsForeverObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDefend);
       } else {
         DurationType durationType = (DurationType)Enum.Parse(typeof(DurationType), durationTypeStr);
-        ObjectiveFactory.CreateDefendXUnitsObjective(guid, parent, contractObjectiveGuid, name, title, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDefend, durationToDefend, durationType);
+        ObjectiveFactory.CreateDefendXUnitsObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDefend, durationToDefend, durationType);
       }
     }
 
@@ -168,7 +170,7 @@ namespace MissionControl.ContractTypeBuilders {
       string progressFormat = (objective.ContainsKey("ProgressFormat")) ? objective["ProgressFormat"].ToString() : "";
       string description = objective["Description"].ToString();
 
-      ObjectiveFactory.CreateDestroyXUnitsObjective(guid, parent, contractObjectiveGuid, name, title, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDestroy);
+      ObjectiveFactory.CreateDestroyXUnitsObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDestroy);
     }
 
     private void BuildDestroyXDestructiblesObjective(GameObject parent, JObject objective, string name, string title, string guid,
@@ -183,7 +185,7 @@ namespace MissionControl.ContractTypeBuilders {
       ObjectiveCountType countTypeEnum = (ObjectiveCountType)Enum.Parse(typeof(ObjectiveCountType), countType);
 
 
-      ObjectiveFactory.CreateDestroyXDestructiblesObjective(guid, parent, contractObjectiveGuid, name, title, priority, progressFormat, description, regionGuid, countTypeEnum, valueOfDestructiblesToDestroy);
+      ObjectiveFactory.CreateDestroyXDestructiblesObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, regionGuid, countTypeEnum, valueOfDestructiblesToDestroy);
     }
   }
 }

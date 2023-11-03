@@ -47,6 +47,7 @@ namespace MissionControl.Logic {
           regionGameLogicGuid,
           "Withdraw",
           "Get to the Evac Zone",
+          isPrimaryObjectve: true,
           $"with {ProgressFormat.UNITS_OCCUPYING_SO_FAR}/{ProgressFormat.NUMBER_OF_UNITS_TO_OCCUPY} unit(s)",
           "The objective for the player to withdraw and complete, or withdraw, the mission",
           0,

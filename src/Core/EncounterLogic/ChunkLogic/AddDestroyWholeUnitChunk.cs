@@ -76,6 +76,7 @@ namespace MissionControl.Logic {
         showProgress,
         ProgressFormat.PERCENTAGE_COMPLETE,
         "The primary objective to destroy the enemy lance",
+        isPrimaryObjectve: true,
         priority,
         displayToUser,
         ObjectiveMark.AttackTarget,
