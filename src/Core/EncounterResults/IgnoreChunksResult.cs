@@ -1,5 +1,6 @@
 using BattleTech;
 
+using System;
 using System.Collections.Generic;
 
 /**
@@ -20,6 +21,7 @@ namespace MissionControl.Result {
 
         if (encounterChunkGameLogic != null) {
           encounterChunkGameLogic.SetObjectivesAsIgnored();
+          Array.ForEach(encounterChunkGameLogic.GetComponentsInChildren<RegionGameLogic>(), region => region.SetState(EncounterObjectStatus.Inactive));
           encounterChunkGameLogic.SetState(EncounterObjectStatus.Finished);
         } else {
           Main.LogDebug($"[SetChunkObjectivesAsPrimary] Cannot find EncounterChunkGameLogic with Guid '{encounterGuid}'");
