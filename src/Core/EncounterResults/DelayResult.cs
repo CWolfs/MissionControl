@@ -1,5 +1,6 @@
 using UnityEngine;
 
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -17,6 +18,7 @@ namespace MissionControl.Result {
     public int Phases { get; set; } = -1;
     public List<DesignResult> Results { get; set; }
     public List<DesignResult> ResultsIfSkipped { get; set; }
+
     public string SkipIfExecution { get; set; }
 
     private int roundCount = 0;
@@ -27,9 +29,12 @@ namespace MissionControl.Result {
 
     private bool waitingUntilAfterDelayToSkipIf = false;
     private bool useSkippedState = false;
+    private bool useCompleteEarlyState = false;
+    private bool useCancelState = false;
 
-    private string Type { get; set; }
-    private GenericTrigger SkipIfTrigger { get; set; }
+    private Dictionary<string, List<GenericTrigger>> SkipIfTriggers { get; set; } = new Dictionary<string, List<GenericTrigger>>();
+    public List<GenericTrigger> CompleteEarlyTriggers = new List<GenericTrigger>();
+    public List<GenericTrigger> CancelTriggers = new List<GenericTrigger>();
 
     private void InitResults() {
       foreach (DesignResult result in Results) {
@@ -48,19 +53,49 @@ namespace MissionControl.Result {
 
       InitResults();
 
+      if (useCancelState) {
+        Cancel();
+        return;
+      }
+
+      if (useCompleteEarlyState) {
+        // Ignore any delay and run the normal logic
+        TriggerResults();
+        return;
+      }
+
       if (useSkippedState) {
         // Ignore any delay and run the SkipIf logic
         TriggerResultsIfSkipped();
         return;
       }
 
-      if (Type == "WatchDuringDelay") {
-        Main.LogDebug($"[DelayResult.Trigger] Attaching trigger for SkipIf since 'WatchDuringDelay' is set");
-        SkipIfTrigger.Run(new GenericTriggerPayload(shouldManuallyInitialise: true));
-      }
+      Main.LogDebug($"[DelayResult.TriggerResults] About to build SkipIf triggers for 'WatchDuringDelay'");
+      BuildSkipIfTriggersForType("WatchDuringDelay");
+
+      Main.LogDebug($"[DelayResult.TriggerResults] About to build Other triggers for 'WatchDuringDelay'");
+      BuildOtherTriggers();
 
       if (IsTimeControlled()) {
         MissionControl.Instance.EncounterLayerParent.StartCoroutine(DelayResultsWithTime());
+      }
+    }
+
+    private void BuildOtherTriggers() {
+      CompleteEarlyTriggers.ForEach(trigger => trigger.BuildAndRunImmediately());
+      CancelTriggers.ForEach(trigger => trigger.BuildAndRunImmediately());
+    }
+
+    private void BuildSkipIfTriggersForType(string type) {
+      if (SkipIfTriggers.ContainsKey(type)) {
+        foreach (GenericTrigger trigger in SkipIfTriggers[type]) {
+          Main.LogDebug($"[DelayResult.Trigger] Attaching trigger DelayResult '{Name}' since type is '{type}'");
+          if (type == "BuildAndRunImmediately") {
+            trigger.BuildAndRunImmediately();
+          } else {
+            trigger.Run(new GenericTriggerPayload(shouldManuallyInitialise: true));
+          }
+        }
       }
     }
 
@@ -69,11 +104,12 @@ namespace MissionControl.Result {
       if (IsPhaseControlled()) UnityGameInstance.BattleTechGame.MessageCenter.Subscribe(MessageCenterMessageType.OnPhaseBegin, new ReceiveMessageCenterMessage(this.OnPhaseBegin), subscribe);
     }
 
-    public void SetTrigger(string type, GenericTrigger genericTrigger) {
-      Type = type;
-      SkipIfTrigger = genericTrigger;
+    public void AddSkipIfTrigger(string type, GenericTrigger genericTrigger) {
+      if (!SkipIfTriggers.ContainsKey(type)) SkipIfTriggers.Add(type, new List<GenericTrigger>());
+      SkipIfTriggers[type].Add(genericTrigger);
 
-      if (Type == "WatchFromContractStart") {
+      if (type == "WatchFromContractStart") {
+        Main.LogDebug($"[DelayResult.AddSkipIfTrigger] About to run SkipIf trigger for 'WatchFromContractStart'");
         genericTrigger.Run(null);
       }
     }
@@ -89,6 +125,22 @@ namespace MissionControl.Result {
 
       if (activated && !completed) {
         TriggerResultsIfSkipped();
+      }
+    }
+
+    public void UseCompleteEarlyState() {
+      useCompleteEarlyState = true;
+
+      if (activated && !completed) {
+        TriggerResults();
+      }
+    }
+
+    public void UseCancelState() {
+      useCancelState = true;
+
+      if (activated && !completed) {
+        Cancel();
       }
     }
 
@@ -125,10 +177,8 @@ namespace MissionControl.Result {
     }
 
     private void TriggerResults() {
-      if (Type == "CheckAtEndOfDelay") {
-        Main.LogDebug($"[DelayResult.TriggerResults] Checking SkipIf trigger since 'CheckAtEndOfDelay' is set");
-        SkipIfTrigger.BuildAndRunImmediately();
-      }
+      Main.LogDebug($"[DelayResult.TriggerResults] About to build SkipIf triggers and run immediately for 'CheckAtEndOfDelay'");
+      BuildSkipIfTriggersForType("CheckAtEndOfDelay");
 
       Main.LogDebug($"[DelayResult.TriggerResults] useSkippedState '{useSkippedState}'");
 
@@ -151,8 +201,7 @@ namespace MissionControl.Result {
         Main.Logger.LogError($"[DelayResult.TriggerResults] Results list is null. This is a serious issue with the contract builder. Check your custom contract type build file for errors.");
       }
 
-      // Delete trigger
-      if (SkipIfTrigger != null) SkipIfTrigger.Delete();
+      DeleteTriggers();
     }
 
     private void TriggerResultsIfSkipped() {
@@ -174,8 +223,25 @@ namespace MissionControl.Result {
         Main.Logger.LogDebug($"[DelayResult.TriggerResultsIfSkipped] Skip Results list is null. This means you've set up a 'SkipIf' trigger but with no results. This can be expected.");
       }
 
-      // Delete trigger
-      if (SkipIfTrigger != null) SkipIfTrigger.Delete();
+      DeleteTriggers();
+    }
+
+    private void DeleteTriggers() {
+      SkipIfTriggers.Values.ToList().ForEach(triggerList => triggerList.ForEach(trigger => trigger.Delete()));
+      SkipIfTriggers.Clear();
+
+      CompleteEarlyTriggers.ForEach(trigger => trigger.Delete());
+      CompleteEarlyTriggers.Clear();
+
+      CancelTriggers.ForEach(trigger => trigger.Delete());
+      CancelTriggers.Clear();
+    }
+
+    public void Cancel() {
+      Main.LogDebug($"[DelayResult.Cancel] Cancelling DelayResult '{Name}'");
+      completed = true;
+      SubscribeToMessages(false);
+      DeleteTriggers();
     }
   }
 }
