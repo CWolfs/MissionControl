@@ -16,8 +16,8 @@ namespace MissionControl.Result {
     public float Time { get; set; } = -1;
     public int Rounds { get; set; } = -1;
     public int Phases { get; set; } = -1;
-    public List<DesignResult> Results { get; set; }
-    public List<DesignResult> ResultsIfSkipped { get; set; }
+    public List<DesignResult> Results { get; set; } = new List<DesignResult>();
+    public List<DesignResult> ResultsIfSkipped { get; set; } = new List<DesignResult>();
 
     public string SkipIfExecution { get; set; }
 
