@@ -380,43 +380,49 @@ namespace MissionControl.ContractTypeBuilders {
       result.ResultsIfSkipped = createdChildResultsIfSkipped;
       result.SkipIfExecution = skipIfExecution;
 
-      results.Add(result);
-
       // Build SkipIf triggers
-      JArray childSkipIfTriggersArray = (JArray)skipIfTrigger["Triggers"];
-      foreach (JObject skipIfTriggerObject in childSkipIfTriggersArray.Children<JObject>()) {
-        GenericTriggerBuilder genericTrigger = new GenericTriggerBuilder(this.contractTypeBuilder, skipIfTriggerObject, "DelaySkipIfTrigger");
-        ActivateDelayTriggerResult triggerResult = ScriptableObject.CreateInstance<ActivateDelayTriggerResult>();
-        triggerResult.DelayResult = result;
-        triggerResult.Type = "SkipIf";
-        genericTrigger.Results = new List<DesignResult>() { triggerResult };
+      if (skipIfTrigger.ContainsKey("Triggers")) {
+        JArray childSkipIfTriggersArray = (JArray)skipIfTrigger["Triggers"];
+        foreach (JObject skipIfTriggerObject in childSkipIfTriggersArray.Children<JObject>()) {
+          GenericTriggerBuilder genericTrigger = new GenericTriggerBuilder(this.contractTypeBuilder, skipIfTriggerObject, "DelaySkipIfTrigger");
+          ActivateDelayTriggerResult triggerResult = ScriptableObject.CreateInstance<ActivateDelayTriggerResult>();
+          triggerResult.DelayResult = result;
+          triggerResult.Type = "SkipIf";
+          genericTrigger.Results = new List<DesignResult>() { triggerResult };
 
-        result.AddSkipIfTrigger(skipIfType, genericTrigger.BuildTrigger());
+          result.AddSkipIfTrigger(skipIfType, genericTrigger.BuildTrigger());
+        }
       }
 
       // Build Complete Early triggers
-      JArray completeEarlyTriggersArray = (JArray)skipIfTrigger["CompleteEarlyTriggers"];
-      foreach (JObject completeEarlyTriggerObject in completeEarlyTriggersArray.Children<JObject>()) {
-        GenericTriggerBuilder genericTrigger = new GenericTriggerBuilder(this.contractTypeBuilder, completeEarlyTriggerObject, "DelayCompleteEarlyTrigger");
-        ActivateDelayTriggerResult triggerResult = ScriptableObject.CreateInstance<ActivateDelayTriggerResult>();
-        triggerResult.DelayResult = result;
-        triggerResult.Type = "CompleteEarly";
-        genericTrigger.Results = new List<DesignResult>() { triggerResult };
+      if (resultObject.ContainsKey("CompleteEarlyTriggers")) {
+        JArray completeEarlyTriggersArray = (JArray)resultObject["CompleteEarlyTriggers"];
+        foreach (JObject completeEarlyTriggerObject in completeEarlyTriggersArray.Children<JObject>()) {
+          GenericTriggerBuilder genericTrigger = new GenericTriggerBuilder(this.contractTypeBuilder, completeEarlyTriggerObject, "DelayCompleteEarlyTrigger");
+          ActivateDelayTriggerResult triggerResult = ScriptableObject.CreateInstance<ActivateDelayTriggerResult>();
+          triggerResult.DelayResult = result;
+          triggerResult.Type = "CompleteEarly";
+          genericTrigger.Results = new List<DesignResult>() { triggerResult };
 
-        result.CompleteEarlyTriggers.Add(genericTrigger.BuildTrigger());
+          result.CompleteEarlyTriggers.Add(genericTrigger.BuildTrigger());
+        }
       }
 
       // Build Cancel triggers
-      JArray cancelTriggersArray = (JArray)skipIfTrigger["CancelTriggers"];
-      foreach (JObject cancelTriggerObject in cancelTriggersArray.Children<JObject>()) {
-        GenericTriggerBuilder genericTrigger = new GenericTriggerBuilder(this.contractTypeBuilder, cancelTriggerObject, "DelayCancelTrigger");
-        ActivateDelayTriggerResult triggerResult = ScriptableObject.CreateInstance<ActivateDelayTriggerResult>();
-        triggerResult.DelayResult = result;
-        triggerResult.Type = "Cancel";
-        genericTrigger.Results = new List<DesignResult>() { triggerResult };
+      if (resultObject.ContainsKey("CancelTriggers")) {
+        JArray cancelTriggersArray = (JArray)resultObject["CancelTriggers"];
+        foreach (JObject cancelTriggerObject in cancelTriggersArray.Children<JObject>()) {
+          GenericTriggerBuilder genericTrigger = new GenericTriggerBuilder(this.contractTypeBuilder, cancelTriggerObject, "DelayCancelTrigger");
+          ActivateDelayTriggerResult triggerResult = ScriptableObject.CreateInstance<ActivateDelayTriggerResult>();
+          triggerResult.DelayResult = result;
+          triggerResult.Type = "Cancel";
+          genericTrigger.Results = new List<DesignResult>() { triggerResult };
 
-        result.CancelTriggers.Add(genericTrigger.BuildTrigger());
+          result.CancelTriggers.Add(genericTrigger.BuildTrigger());
+        }
       }
+
+      results.Add(result);
     }
 
     private void BuildIgnoreChunksResult(JObject resultObject) {

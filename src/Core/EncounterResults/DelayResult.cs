@@ -82,8 +82,8 @@ namespace MissionControl.Result {
     }
 
     private void BuildOtherTriggers() {
-      CompleteEarlyTriggers.ForEach(trigger => trigger.BuildAndRunImmediately());
-      CancelTriggers.ForEach(trigger => trigger.BuildAndRunImmediately());
+      CompleteEarlyTriggers.ForEach(trigger => trigger.Run(new GenericTriggerPayload(shouldManuallyInitialise: true)));
+      CancelTriggers.ForEach(trigger => trigger.Run(new GenericTriggerPayload(shouldManuallyInitialise: true)));
     }
 
     private void BuildSkipIfTriggersForType(string type) {

@@ -17,6 +17,10 @@
     <Publicize Include="UnityEngine.CoreModule" />
   </ItemGroup>
 
+  <!-- <PropertyGroup>
+    <DebugType>full</DebugType>
+  </PropertyGroup> -->
+
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>D:\Program Files (x86)\Steam\steamapps\common\BATTLETECH\BattleTech_Data\Managed\0Harmony.dll</HintPath>

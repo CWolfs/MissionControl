@@ -22,7 +22,7 @@ namespace MissionControl.ContractTypeBuilders {
 
     private string triggerOn;
     private MessageCenterMessageType triggerMessageType;
-    private string description;
+    public string Description { get; set; } = "";
 
     private string conditionalEvaluationString;
     private LogicEvaluation conditionalEvaluation;
@@ -35,7 +35,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       this.Name = name;
       this.triggerOn = trigger["TriggerOn"].ToString();
-      this.description = (trigger.ContainsKey("Description")) ? trigger["Description"].ToString() : "";
+      this.Description = (trigger.ContainsKey("Description")) ? trigger["Description"].ToString() : "";
 
       this.conditionalEvaluationString = (trigger.ContainsKey("SucceedOn")) ? trigger["SucceedOn"].ToString() : "All";
       this.conditionalEvaluation = (LogicEvaluation)Enum.Parse(typeof(LogicEvaluation), conditionalEvaluationString);
@@ -65,7 +65,7 @@ namespace MissionControl.ContractTypeBuilders {
       this.Name = name;
       this.triggerMessageType = triggerMessageType;
       this.conditional = conditional;
-      this.description = description;
+      this.Description = description;
       this.Results = results;
     }
 
@@ -75,7 +75,7 @@ namespace MissionControl.ContractTypeBuilders {
       if (this.Results == null) {
         Main.Logger.LogError("[GenericTriggerBuilder] Generic Triggers require 'Results'");
       } else {
-        GenericTrigger genericTrigger = new GenericTrigger(this.Name, this.description, this.triggerMessageType, this.conditional, Results);
+        GenericTrigger genericTrigger = new GenericTrigger(this.Name, this.Description, this.triggerMessageType, this.conditional, Results);
         genericTrigger.Run(null);
       }
     }
@@ -86,7 +86,7 @@ namespace MissionControl.ContractTypeBuilders {
       if (this.Results == null) {
         Main.Logger.LogError("[GenericTriggerBuilder] Generic Triggers require 'Results'");
       } else {
-        return new GenericTrigger(this.Name, this.description, this.triggerMessageType, this.conditional, Results);
+        return new GenericTrigger(this.Name, this.Description, this.triggerMessageType, this.conditional, Results);
       }
 
       return null;
