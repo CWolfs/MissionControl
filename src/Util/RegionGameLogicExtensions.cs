@@ -37,6 +37,20 @@ public static class RegionGameLogicExtensions {
     collider.sharedMesh = mesh;
     mf.mesh = mesh;
 
+    // Reajust the height to factor in -30f fudge rotation. This works but I need to see if I can remove this and fix it properly
+    Vector3[] vertices = mesh.vertices;
+
+    for (int i = 0; i < vertices.Length; i++) {
+      Vector3 worldVertexPos = regionGo.transform.TransformPoint(vertices[i]);       // Convert local vertex position to world position
+      float height = combatState.MapMetaData.GetLerpedHeightAt(worldVertexPos);
+      worldVertexPos.y = height;
+      vertices[i] = regionGo.transform.InverseTransformPoint(worldVertexPos); // Convert the adjusted world position back to local position
+    }
+
+    // Apply the changes to the mesh
+    mesh.vertices = vertices;
+    mesh.RecalculateBounds();
+
     List<MapEncounterLayerDataCell> afterCells = SceneUtils.GetMapEncounterLayerDataCellsWithinCollider(regionGo);
     for (int i = 0; i < afterCells.Count; i++) {
       MapEncounterLayerDataCell cell = afterCells[i];
