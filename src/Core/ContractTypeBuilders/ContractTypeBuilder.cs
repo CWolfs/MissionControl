@@ -279,6 +279,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "SwapPlacement": nodeBuilder = new PlacementBuilder(this, parent, child); break;
         case "ContractEdit": nodeBuilder = new ContractEditBuilder(this, parent, child); break;
         case "CombatState": nodeBuilder = new CombatStateBuilder(this, parent, child); break;
+        case "Navigation": nodeBuilder = new NavigationBuilder(this, parent, child); break;
         default: break;
       }
 
