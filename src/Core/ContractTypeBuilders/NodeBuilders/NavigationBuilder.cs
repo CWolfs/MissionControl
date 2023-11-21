@@ -43,6 +43,10 @@ namespace MissionControl.ContractTypeBuilders {
       JObject routePointPositions = build.ContainsKey("RoutePointPositions") ? (JObject)build["RoutePointPositions"] : null;
 
       RouteGameLogic routeGameLogic = NavigationFactory.CreateRoute(this.parent, this.name, guid);
+      routeGameLogic.routeTransitType = (RouteTransitType)Enum.Parse(typeof(RouteTransitType), transitType);
+
+      if (position != null) SetPosition(routeGameLogic.gameObject, position);
+      if (rotation != null) SetRotation(routeGameLogic.gameObject, rotation);
 
       // Create route points
       for (int i = 0; i < routePointGUIDs.Count; i++) {
@@ -50,21 +54,6 @@ namespace MissionControl.ContractTypeBuilders {
         JObject routePointPosition = routePointPositions.ContainsKey(routePointGUID) ? (JObject)routePointPositions[routePointGUID] : null;
         RoutePointGameLogic routePointGameLogic = NavigationFactory.CreateRoutePoint(routeGameLogic.gameObject, $"RoutePoint{i + 1}", routePointGUID);
         if (routePointPosition != null) SetPosition(routePointGameLogic.gameObject, routePointPosition);
-      }
-
-      if (position != null) {
-        SetPosition(routeGameLogic.gameObject, position);
-
-        // Due to the route points being snapped to the terrain itself from the 'UpdateHexPosition' then we will anchor the route at 0
-        Vector3 p = routeGameLogic.gameObject.transform.position;
-        routeGameLogic.gameObject.transform.position = new Vector3(p.x, 0f, p.z);
-      }
-
-      if (rotation != null) SetRotation(routeGameLogic.gameObject, rotation);
-
-      // Update point hex position
-      foreach (RoutePointGameLogic routePointGameLogic in routeGameLogic.routePointList) {
-        routePointGameLogic.UpdateHexPosition();
       }
     }
   }
