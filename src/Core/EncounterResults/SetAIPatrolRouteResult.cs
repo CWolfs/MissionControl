@@ -6,7 +6,7 @@ using BattleTech;
 using MissionControl.Data;
 
 /**
-This result will issue the SetAIPatrolRoute AIOrder when triggered
+This result will issue the SetPatrolRoute AIOrder when triggered
 */
 namespace MissionControl.Result {
   public class SetAIPatrolRouteResult : EncounterResult {

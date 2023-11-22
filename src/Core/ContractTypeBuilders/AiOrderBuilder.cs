@@ -43,6 +43,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "MagicKnowledgeByTag": BuildMagicKnowledgeByTag(order); break;
         case "PrioritiseTaggedUnit": BuildPrioritiseTaggedUnit(order); break;
         case "SetPatrolRoute": BuildSetPatrolRoute(order); break;
+        case "SetBehaviourTree": BuildSetBehaviourTree(order); break;
         default:
           Main.Logger.LogError($"[AiOrderBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -98,6 +99,16 @@ namespace MissionControl.ContractTypeBuilders {
       order.forward = followForward;
       order.shouldSprint = shouldSprint;
       order.startAtClosestPoint = startAtClosestPoint;
+
+      orders.Add(new EncounterAIOrderBox(order));
+    }
+
+    private void BuildSetBehaviourTree(JObject orderBuild) {
+      string behaviourTreeRaw = orderBuild["BehaviourTree"].ToString();
+      BehaviorTreeIDEnum behaviourTree = (BehaviorTreeIDEnum)System.Enum.Parse(typeof(BehaviorTreeIDEnum), behaviourTreeRaw);
+
+      SetBehaviorTreeAIOrder order = ScriptableObject.CreateInstance<SetBehaviorTreeAIOrder>();
+      order.BehaviorTreeID = behaviourTree;
 
       orders.Add(new EncounterAIOrderBox(order));
     }

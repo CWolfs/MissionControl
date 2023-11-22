@@ -546,5 +546,22 @@ namespace MissionControl.ContractTypeBuilders {
 
       results.Add(result);
     }
+
+    private void BuildSetAIBehaviourTreeResult(JObject resultObject) {
+      Main.LogDebug("[BuildSetAIBehaviourTree] Building 'BuildSetAIBehaviourTree' result");
+      string unitGroupTypeRaw = resultObject["UnitGroupType"].ToString();
+      UnitGroupType unitGroupType = (UnitGroupType)Enum.Parse(typeof(UnitGroupType), unitGroupTypeRaw);
+
+      string unitTypeGUID = resultObject["UnitTypeGuid"].ToString();
+      string behaviourTreeRaw = resultObject["BehaviourTree"].ToString();
+      BehaviorTreeIDEnum behaviourTree = (BehaviorTreeIDEnum)Enum.Parse(typeof(BehaviorTreeIDEnum), behaviourTreeRaw);
+
+      SetAIBehaviourTreeResult result = ScriptableObject.CreateInstance<SetAIBehaviourTreeResult>();
+      result.UnitGroupType = unitGroupType;
+      result.UnitTypeGUID = unitTypeGUID;
+      result.BehaviourTree = behaviourTree;
+
+      results.Add(result);
+    }
   }
 }
