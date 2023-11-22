@@ -6,6 +6,7 @@ using BattleTech.Designed;
 using HBS.Collections;
 
 using System;
+using System.Linq;
 using System.Collections.Generic;
 
 using MissionControl.Rules;
@@ -35,6 +36,8 @@ namespace MissionControl.ContractTypeBuilders {
     private int defaultDetectionRange;
     private List<string> tags;
 
+    private BehaviorTreeIDEnum defaultBehaviourTree = BehaviorTreeIDEnum.CoreAITree;
+
     public SpawnBuilder(ContractTypeBuilder contractTypeBuilder, GameObject parent, JObject spawner) {
       this.contractTypeBuilder = contractTypeBuilder;
       this.parent = parent;
@@ -57,7 +60,21 @@ namespace MissionControl.ContractTypeBuilders {
 
       if (this.aiOrdersArray != null) {
         AiOrderBuilder orderBuilder = new AiOrderBuilder(contractTypeBuilder, aiOrdersArray, name);
-        orders = orderBuilder.Build();
+        List<AIOrderBox> builtOrders = orderBuilder.Build();
+
+        // Quick fix to get around issue with SetBehaiourTreeAIOrder not working when other AI orders run as the units aren't spawned in
+        // Set the default behaviour tree
+        List<AIOrderBox> remainingOrders = new List<AIOrderBox>();
+
+        foreach (AIOrderBox order in builtOrders) {
+          if (order.myCargoVTwo is SetBehaviorTreeAIOrder bto) {
+            defaultBehaviourTree = bto.BehaviorTreeID;
+          } else {
+            remainingOrders.Add(order);
+          }
+        }
+
+        orders = remainingOrders;
       }
     }
 
@@ -81,35 +98,35 @@ namespace MissionControl.ContractTypeBuilders {
         }
         case "Target": {
           teamId = TeamUtils.TARGET_TEAM_ID;
-          spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
+          spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids, defaultBehaviourTree);
           spawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
           if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
           break;
         }
         case "TargetAlly": {
           teamId = TeamUtils.TARGETS_ALLY_TEAM_ID;
-          spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
+          spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids, defaultBehaviourTree);
           spawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
           if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
           break;
         }
         case "Employer": {
           teamId = TeamUtils.EMPLOYER_TEAM_ID;
-          spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
+          spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids, defaultBehaviourTree);
           spawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
           if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
           break;
         }
         case "NeutralToAll": {
           teamId = TeamUtils.NEUTRAL_TO_ALL_TEAM_ID;
-          spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
+          spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids, defaultBehaviourTree);
           spawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
           if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
           break;
         }
         case "HostileToAll": {
           teamId = TeamUtils.HOSTILE_TO_ALL_TEAM_ID;
-          spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids);
+          spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids, defaultBehaviourTree);
           spawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
           if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
           break;
