@@ -73,6 +73,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetStat": BuildSetStatResult(result); break;
         case "SetTag": BuildSetTagResult(result); break;
         case "SetAIPatrolRoute": BuildSetAIPatrolRouteResult(result); break;
+        case "SetAIBehaviourTree": BuildSetAIBehaviourTreeResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
