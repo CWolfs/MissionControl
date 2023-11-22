@@ -9,7 +9,7 @@ using MissionControl.LogicComponents.Spawners;
 namespace MissionControl.EncounterFactories {
   public class LanceSpawnerFactory {
     public static LanceSpawnerGameLogic CreateLanceSpawner(GameObject parent, string name, string guid, string teamDefinitionGuid, bool spawnUnitsOnActivation,
-      SpawnUnitMethodType spawnMethod, List<string> unitGuids, List<string> tags = null, bool alertLanceOnSpawn = false) {
+      SpawnUnitMethodType spawnMethod, List<string> unitGuids, BehaviorTreeIDEnum defaultBehaviourTree = BehaviorTreeIDEnum.CoreAITree, List<string> tags = null, bool alertLanceOnSpawn = false) {
 
       GameObject lanceSpawnerGo = new GameObject(name);
       lanceSpawnerGo.transform.parent = parent.transform;
@@ -24,6 +24,8 @@ namespace MissionControl.EncounterFactories {
       lanceSpawnerGameLogic.spawnUnitsOnActivation = spawnUnitsOnActivation;
       lanceSpawnerGameLogic.alertLanceOnSpawn = alertLanceOnSpawn;
       lanceSpawnerGameLogic.encounterTags.AddRange(tags);
+
+      lanceSpawnerGameLogic.behaviorTree = defaultBehaviourTree;
 
       float x = 0;
       float z = 0;

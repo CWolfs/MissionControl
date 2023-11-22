@@ -62,6 +62,7 @@ namespace MissionControl.Logic {
         spawnOnActivation,
         SpawnUnitMethodType.InstantlyAtSpawnPoint,
         unitGuids,
+        BehaviorTreeIDEnum.CoreAITree,
         lanceTags
       );
       LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef(lanceSpawner);

@@ -46,6 +46,7 @@ namespace MissionControl.Logic {
         spawnOnActivation,
         SpawnUnitMethodType.InstantlyAtSpawnPoint,
         unitGuids,
+        BehaviorTreeIDEnum.CoreAITree,
         lanceTags,
         alertLanceOnSpawn: true
       );
