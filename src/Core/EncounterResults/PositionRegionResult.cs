@@ -1,12 +1,9 @@
 using UnityEngine;
 
 using BattleTech;
-using BattleTech.Framework;
 
 using System.Linq;
 using System.Collections.Generic;
-
-using MissionControl.Utils;
 
 /**
 	This result will reposition a region within a min and max threshold. 

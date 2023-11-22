@@ -42,14 +42,15 @@ namespace MissionControl.ContractTypeBuilders {
         case "StayInsideRegion": BuildStayInsideRegionOrder(order); break;
         case "MagicKnowledgeByTag": BuildMagicKnowledgeByTag(order); break;
         case "PrioritiseTaggedUnit": BuildPrioritiseTaggedUnit(order); break;
+        case "SetPatrolRoute": BuildSetPatrolRoute(order); break;
         default:
           Main.Logger.LogError($"[AiOrderBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
       }
     }
 
-    private void BuildStayInsideRegionOrder(JObject orderObj) {
-      string regionGuid = orderObj["RegionGuid"].ToString();
+    private void BuildStayInsideRegionOrder(JObject orderBuild) {
+      string regionGuid = orderBuild["RegionGuid"].ToString();
 
       StayInsideRegionAIOrder order = ScriptableObject.CreateInstance<StayInsideRegionAIOrder>();
       order.region.EncounterObjectGuid = regionGuid;
@@ -57,10 +58,10 @@ namespace MissionControl.ContractTypeBuilders {
       orders.Add(new EncounterAIOrderBox(order));
     }
 
-    private void BuildMagicKnowledgeByTag(JObject orderObj) {
-      JArray tags = (JArray)orderObj["Tags"];
-      string action = orderObj["Action"].ToString();
-      bool mustMatchAllTags = (orderObj.ContainsKey("MustMatchAll")) ? (bool)orderObj["MustMatchAll"] : false;
+    private void BuildMagicKnowledgeByTag(JObject orderBuild) {
+      JArray tags = (JArray)orderBuild["Tags"];
+      string action = orderBuild["Action"].ToString();
+      bool mustMatchAllTags = (orderBuild.ContainsKey("MustMatchAll")) ? (bool)orderBuild["MustMatchAll"] : false;
 
       AddMagicKnowledgeByTagAIOrder order = ScriptableObject.CreateInstance<AddMagicKnowledgeByTagAIOrder>();
       order.TargetTagSet = new TagSet(tags.ToObject<List<string>>());
@@ -70,10 +71,10 @@ namespace MissionControl.ContractTypeBuilders {
       orders.Add(new EncounterAIOrderBox(order));
     }
 
-    private void BuildPrioritiseTaggedUnit(JObject orderObj) {
-      JArray tags = (JArray)orderObj["Tags"];
-      int priority = (int)orderObj["Priority"];
-      bool mustMatchAllTags = (orderObj.ContainsKey("MustMatchAll")) ? (bool)orderObj["MustMatchAll"] : false;
+    private void BuildPrioritiseTaggedUnit(JObject orderBuild) {
+      JArray tags = (JArray)orderBuild["Tags"];
+      int priority = (int)orderBuild["Priority"];
+      bool mustMatchAllTags = (orderBuild.ContainsKey("MustMatchAll")) ? (bool)orderBuild["MustMatchAll"] : false;
 
       List<string> tagsList = tags.ToObject<List<string>>();
 
@@ -82,6 +83,21 @@ namespace MissionControl.ContractTypeBuilders {
       order.Priority = priority;
       order.MustMatchAllTags = mustMatchAllTags;
       order.name = string.Join(",", tagsList);
+
+      orders.Add(new EncounterAIOrderBox(order));
+    }
+
+    private void BuildSetPatrolRoute(JObject orderBuild) {
+      string routeGUID = orderBuild["RouteGuid"].ToString();
+      bool followForward = (bool)orderBuild["FollowForward"];
+      bool shouldSprint = (bool)orderBuild["ShouldSprint"];
+      bool startAtClosestPoint = (bool)orderBuild["StartAtClosestPoint"];
+
+      SetPatrolRouteAIOrder order = ScriptableObject.CreateInstance<SetPatrolRouteAIOrder>();
+      order.routeToFollow.EncounterObjectGuid = routeGUID;
+      order.forward = followForward;
+      order.shouldSprint = shouldSprint;
+      order.startAtClosestPoint = startAtClosestPoint;
 
       orders.Add(new EncounterAIOrderBox(order));
     }

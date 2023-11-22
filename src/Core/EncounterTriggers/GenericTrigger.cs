@@ -42,7 +42,7 @@ namespace MissionControl.Trigger {
       EncounterLayerData encounterData = MissionControl.Instance.EncounterLayerData;
       trigger = new SmartTriggerResponse();
       trigger.inputMessage = onMessage;
-      trigger.designName = $"{description} on {onMessage}";
+      trigger.designName = $"{(!string.IsNullOrEmpty(this.name) ? this.name : description)} on {onMessage}";
       trigger.conditionalbox = new EncounterConditionalBox(conditional);
 
       trigger.resultList.contentsBox = this.results;
@@ -63,7 +63,7 @@ namespace MissionControl.Trigger {
       EncounterLayerData encounterData = MissionControl.Instance.EncounterLayerData;
       trigger = new SmartTriggerResponse();
       trigger.inputMessage = onMessage;
-      trigger.designName = $"{description} on {onMessage}";
+      trigger.designName = $"{(!string.IsNullOrEmpty(this.name) ? this.name : description)} on {onMessage}";
       trigger.conditionalbox = new EncounterConditionalBox(conditional);
 
       trigger.resultList.contentsBox = this.results;

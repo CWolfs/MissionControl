@@ -18,6 +18,12 @@ public static class Vector3Extensions {
     return originOnGrid;
   }
 
+  public static Vector3 GetLerpedHeightAt(this Vector3 origin, bool terrainOnly = false) {
+    CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+    origin.y = combatState.MapMetaData.GetLerpedHeightAt(origin, terrainOnly);
+    return origin;
+  }
+
   // TODO: Find a better way to do this that caches things in a good way. Not so easy as new spawns can be created at any point
   public static bool IsTooCloseToAnotherSpawn(this Vector3 position, GameObject ignoreGo = null) {
     UnitSpawnPointGameLogic[] unitSpawns = MissionControl.MissionControl.Instance.EncounterLayerData.GetComponentsInChildren<UnitSpawnPointGameLogic>();

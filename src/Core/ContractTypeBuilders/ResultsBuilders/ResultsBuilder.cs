@@ -72,6 +72,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "DebugTagLogger": BuildDebugTagLoggerResult(result); break;
         case "SetStat": BuildSetStatResult(result); break;
         case "SetTag": BuildSetTagResult(result); break;
+        case "SetAIPatrolRoute": BuildSetAIPatrolRouteResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -520,6 +521,28 @@ namespace MissionControl.ContractTypeBuilders {
       result.Scope = scope;
       result.Operation = operation;
       result.Tag = tag;
+
+      results.Add(result);
+    }
+
+    private void BuildSetAIPatrolRouteResult(JObject resultObject) {
+      Main.LogDebug("[BuildSetAIPatrolRoute] Building 'BuildSetAIPatrolRoute' result");
+      string unitGroupTypeRaw = resultObject["UnitGroupType"].ToString();
+      UnitGroupType unitGroupType = (UnitGroupType)Enum.Parse(typeof(UnitGroupType), unitGroupTypeRaw);
+
+      string unitTypeGUID = resultObject["UnitTypeGuid"].ToString();
+      string routeGUID = resultObject["RouteGuid"].ToString();
+      bool followForward = (bool)resultObject["FollowForward"];
+      bool shouldSprint = (bool)resultObject["ShouldSprint"];
+      bool startAtClosestPoint = (bool)resultObject["StartAtClosestPoint"];
+
+      SetAIPatrolRouteResult result = ScriptableObject.CreateInstance<SetAIPatrolRouteResult>();
+      result.UnitGroupType = unitGroupType;
+      result.UnitTypeGUID = unitTypeGUID;
+      result.RouteGUID = routeGUID;
+      result.FollowForward = followForward;
+      result.ShouldSprint = shouldSprint;
+      result.StartAtClosestPoint = startAtClosestPoint;
 
       results.Add(result);
     }

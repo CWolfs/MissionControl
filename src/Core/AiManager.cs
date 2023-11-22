@@ -1,6 +1,3 @@
-using System.Linq;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
 
 using Harmony;
@@ -8,7 +5,7 @@ using Harmony;
 using BattleTech;
 
 using MissionControl.AI;
-using MissionControl.Utils;
+using MissionControl.Data;
 
 namespace MissionControl {
   public class AiManager {
@@ -152,12 +149,50 @@ namespace MissionControl {
       customBehaviourVariables.Clear();
     }
 
-    public void IssueAiOrder(string type, string ownerGuid, CustomAIOrder aiOrder) {
+    public void IssueCustomOrder(string type, string ownerGuid, CustomAIOrder aiOrder) {
       if (this.customBehaviourVariables.ContainsKey(type)) {
         Dictionary<string, CustomBehaviorVariableScope> typeScopes = this.customBehaviourVariables[type];
         if (typeScopes.ContainsKey(ownerGuid)) {
           CustomBehaviorVariableScope customScope = typeScopes[ownerGuid];
           customScope.IssueAIOrder(aiOrder);
+        }
+      }
+    }
+
+    public void IssueOrder(UnitGroupType unitGroupType, string unitTypeGUID, AIOrder aiOrder) {
+      Main.Logger.Log("[AiManager.IssueOrder] Issuing Order " + aiOrder.OrderType);
+      CombatGameState combat = UnityGameInstance.Instance.Game.Combat;
+
+      switch (unitGroupType) {
+        case UnitGroupType.Team: {
+          Team team = combat.ItemRegistry.GetItemByGUID<Team>(unitTypeGUID);
+          if (team == null) {
+            Main.Logger.LogError("[AiManager.IssueOrder] Team is null with GUID " + unitTypeGUID);
+            return;
+          }
+
+          team.IssueAIOrder(aiOrder);
+          break;
+        }
+        case UnitGroupType.Lance: {
+          Lance lance = combat.ItemRegistry.GetLanceFromLanceSpawnerGuid(unitTypeGUID);
+          if (lance == null) {
+            Main.Logger.LogError("[AiManager.IssueOrder] Lance is null with GUID " + unitTypeGUID);
+            return;
+          }
+
+          lance.IssueAIOrder(aiOrder);
+          break;
+        }
+        case UnitGroupType.Unit: {
+          AbstractActor actor = combat.ItemRegistry.GetItemByGUID<AbstractActor>(unitTypeGUID);
+          if (actor == null) {
+            Main.Logger.LogError("[AiManager.IssueOrder] Actor is null with GUID " + unitTypeGUID);
+            return;
+          }
+
+          actor.IssueAIOrder(aiOrder);
+          break;
         }
       }
     }

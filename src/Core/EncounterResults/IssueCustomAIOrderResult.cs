@@ -18,7 +18,7 @@ namespace MissionControl.Result {
         List<ITaggedItem> objectsOfTypeWithTagSet = this.combat.ItemRegistry.GetObjectsOfTypeWithTagSet(TaggedObjectType.Unit, this.requiredReceiverTags);
         for (int i = 0; i < objectsOfTypeWithTagSet.Count; i++) {
           AbstractActor abstractActor = objectsOfTypeWithTagSet[i] as AbstractActor;
-          AiManager.Instance.IssueAiOrder("UNIT", abstractActor.GUID, this.aiOrder);
+          AiManager.Instance.IssueCustomOrder("UNIT", abstractActor.GUID, this.aiOrder);
         }
       }
 
@@ -26,7 +26,7 @@ namespace MissionControl.Result {
         List<ITaggedItem> objectsOfTypeWithTagSet2 = this.combat.ItemRegistry.GetObjectsOfTypeWithTagSet(TaggedObjectType.Lance, this.requiredReceiverTags);
         for (int j = 0; j < objectsOfTypeWithTagSet2.Count; j++) {
           Lance lance = objectsOfTypeWithTagSet2[j] as Lance;
-          AiManager.Instance.IssueAiOrder("LANCE", lance.GUID, this.aiOrder);
+          AiManager.Instance.IssueCustomOrder("LANCE", lance.GUID, this.aiOrder);
         }
       }
 
@@ -34,7 +34,7 @@ namespace MissionControl.Result {
         List<ITaggedItem> objectsOfTypeWithTagSet3 = this.combat.ItemRegistry.GetObjectsOfTypeWithTagSet(TaggedObjectType.Team, this.requiredReceiverTags);
         for (int k = 0; k < objectsOfTypeWithTagSet3.Count; k++) {
           Team team = objectsOfTypeWithTagSet3[k] as Team;
-          AiManager.Instance.IssueAiOrder("TEAM", team.GUID, this.aiOrder);
+          AiManager.Instance.IssueCustomOrder("TEAM", team.GUID, this.aiOrder);
         }
       }
     }
