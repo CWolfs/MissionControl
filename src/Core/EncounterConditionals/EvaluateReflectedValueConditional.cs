@@ -41,7 +41,7 @@ namespace MissionControl.Conditional {
 
     private bool EvaluateMember(object value) {
       string valueAsString = ConvertToString(value);
-      if (valueAsString == ValueOfFieldToCheckEquality) {
+      if (valueAsString == ValueOfFieldToCheckEquality || valueAsString.ToLower() == ValueOfFieldToCheckEquality.ToLower()) {
         Main.LogDebug($"[EvaluateReflectedValueConditional] Matched '{FieldToCheck}' to '{ValueOfFieldToCheckEquality}'");
         return true;
       } else {
