@@ -42,10 +42,10 @@ namespace MissionControl.Conditional {
     private bool EvaluateMember(object value) {
       string valueAsString = ConvertToString(value);
       if (valueAsString == ValueOfFieldToCheckEquality || valueAsString.ToLower() == ValueOfFieldToCheckEquality.ToLower()) {
-        Main.LogDebug($"[EvaluateReflectedValueConditional] Matched '{FieldToCheck}' to '{ValueOfFieldToCheckEquality}'");
+        Main.LogDebug($"[EvaluateReflectedValueConditional] Matched field '{FieldToCheck}' value of '{valueAsString}'  to modder requested check value of '{ValueOfFieldToCheckEquality}'");
         return true;
       } else {
-        Main.LogDebug("[EvaluateReflectedValueConditional] There was no match");
+        Main.LogDebug($"[EvaluateReflectedValueConditional] There was no match between the field '{FieldToCheck}' value of '{valueAsString}' to modder requested check value of '{ValueOfFieldToCheckEquality}'");
         return false;
       }
     }

@@ -1,0 +1,25 @@
+{
+  "Key": "RampDoubleLongA",
+  "Mesh": "rampDoubleLongA",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lights_decal_generic"
+    },
+    {
+      "Name": "envMatStct_asphalt_generic"
+    },
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": true,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}
