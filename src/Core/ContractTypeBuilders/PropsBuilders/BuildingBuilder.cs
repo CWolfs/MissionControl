@@ -16,6 +16,7 @@ namespace MissionControl.ContractTypeBuilders {
     private int customStructurePoints;
     private JObject position;
     private JObject rotation;
+    private JObject scale;
 
     public GameObject Parent { get; set; }
 
@@ -29,6 +30,7 @@ namespace MissionControl.ContractTypeBuilders {
       customStructurePoints = building.ContainsKey("CustomStructurePoints") ? (int)building["CustomStructurePoints"] : 0;
       position = building.ContainsKey("Position") ? (JObject)building["Position"] : null;
       rotation = building.ContainsKey("Rotation") ? (JObject)building["Rotation"] : null;
+      scale = building.ContainsKey("Scale") ? (JObject)building["Scale"] : null;
 
       Parent = parent;
     }
@@ -56,6 +58,11 @@ namespace MissionControl.ContractTypeBuilders {
       if (this.rotation != null) {
         SetRotation(facilityGo, this.rotation);
         SetRotation(destructionParentGO, this.rotation);
+      }
+
+      if (this.scale != null) {
+        SetScale(facilityGo, this.scale);
+        SetScale(destructionParentGO, this.scale);
       }
 
       buildingFactory.AddToCameraFadeGroup();

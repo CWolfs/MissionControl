@@ -14,6 +14,7 @@ namespace MissionControl.ContractTypeBuilders {
     private string structureKey;
     private JObject position;
     private JObject rotation;
+    private JObject scale;
 
     public GameObject Parent { get; set; }
 
@@ -25,6 +26,7 @@ namespace MissionControl.ContractTypeBuilders {
       structureKey = structure["Key"].ToString();
       position = structure.ContainsKey("Position") ? (JObject)structure["Position"] : null;
       rotation = structure.ContainsKey("Rotation") ? (JObject)structure["Rotation"] : null;
+      scale = structure.ContainsKey("Scale") ? (JObject)structure["Scale"] : null;
 
       Parent = parent;
     }
@@ -47,6 +49,10 @@ namespace MissionControl.ContractTypeBuilders {
 
       if (this.rotation != null) {
         SetRotation(structureGo, this.rotation);
+      }
+
+      if (this.scale != null) {
+        SetScale(structureGo, this.scale);
       }
     }
   }

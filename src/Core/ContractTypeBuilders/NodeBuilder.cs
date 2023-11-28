@@ -60,6 +60,18 @@ namespace MissionControl.ContractTypeBuilders {
       }
     }
 
+    public void SetScale(GameObject target, JObject scale) {
+      string type = scale.ContainsKey("Type") ? scale["Type"].ToString() : "Local";
+      JObject value = scale.ContainsKey("Value") ? (JObject)scale["Value"] : scale;
+      Vector3 localScale = new Vector3((float)value["x"], (float)value["y"], (float)value["z"]);
+
+      if (type == "World") {
+        target.transform.localScale = localScale;
+      } else if (type == "Local") {
+        target.transform.localScale = localScale;
+      }
+    }
+
     public void SetMountOnPosition(GameObject target, string mountTargetPath) {
       MissionControl.Instance.QueuedBuildingMounts.Add(new object[] { target, mountTargetPath });
     }

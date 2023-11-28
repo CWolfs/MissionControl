@@ -13,6 +13,7 @@ namespace MissionControl.ContractTypeBuilders {
     private string destructibleGroupName;
     private JObject position;
     private JObject rotation;
+    private JObject scale;
     private JArray props;
 
     public GameObject Parent { get; set; }
@@ -24,6 +25,7 @@ namespace MissionControl.ContractTypeBuilders {
       destructibleGroupName = destructibleGroup["Name"].ToString();
       position = destructibleGroup.ContainsKey("Position") ? (JObject)destructibleGroup["Position"] : null;
       rotation = destructibleGroup.ContainsKey("Rotation") ? (JObject)destructibleGroup["Rotation"] : null;
+      scale = destructibleGroup.ContainsKey("Scale") ? (JObject)destructibleGroup["Scale"] : null;
       props = destructibleGroup.ContainsKey("Props") ? (JArray)destructibleGroup["Props"] : null;
 
       Parent = parent;
@@ -47,6 +49,7 @@ namespace MissionControl.ContractTypeBuilders {
               int customStructurePoints = prop.ContainsKey("CustomStructurePoints") ? (int)prop["CustomStructurePoints"] : 0;
               JObject position = prop.ContainsKey("Position") ? (JObject)prop["Position"] : null;
               JObject rotation = prop.ContainsKey("Rotation") ? (JObject)prop["Rotation"] : null;
+              JObject scale = prop.ContainsKey("Scale") ? (JObject)prop["Scale"] : null;
 
               if (!DataManager.Instance.BuildingDefs.ContainsKey(buildingKey)) {
                 Main.Logger.LogError($"[DestructibleBuilder.Build] No building exists with key '{buildingKey}'. Check a PropBuildingDef exists with that key in the 'props/buildings' folder");
@@ -64,6 +67,11 @@ namespace MissionControl.ContractTypeBuilders {
               if (rotation != null) {
                 SetRotation(destructibleGO, rotation);
               }
+
+              if (scale != null) {
+                SetScale(destructibleGO, scale);
+              }
+
               break;
             }
             case "Destructible": {
@@ -71,6 +79,7 @@ namespace MissionControl.ContractTypeBuilders {
               string destructibleKey = prop["Key"].ToString();
               JObject position = prop.ContainsKey("Position") ? (JObject)prop["Position"] : null;
               JObject rotation = prop.ContainsKey("Rotation") ? (JObject)prop["Rotation"] : null;
+              JObject scale = prop.ContainsKey("Scale") ? (JObject)prop["Scale"] : null;
 
               if (!DataManager.Instance.DestructibleDefs.ContainsKey(destructibleKey)) {
                 Main.Logger.LogError($"[DestructibleBuilder.Build] No destructible exists with key '{destructibleKey}'. Check a PropDestructionDef exists with that key in the 'props/destructible' folder");
@@ -88,6 +97,11 @@ namespace MissionControl.ContractTypeBuilders {
               if (rotation != null) {
                 SetRotation(destructibleGO, rotation);
               }
+
+              if (scale != null) {
+                SetScale(destructibleGO, scale);
+              }
+
               break;
             }
           }
@@ -103,6 +117,10 @@ namespace MissionControl.ContractTypeBuilders {
 
       if (this.rotation != null) {
         SetRotation(destructibleGroupGO, this.rotation);
+      }
+
+      if (this.scale != null) {
+        SetScale(destructibleGroupGO, this.scale);
       }
     }
   }

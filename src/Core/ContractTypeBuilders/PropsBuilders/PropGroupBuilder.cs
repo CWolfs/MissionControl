@@ -12,6 +12,7 @@ namespace MissionControl.ContractTypeBuilders {
     private string name;
     private JObject position;
     private JObject rotation;
+    private JObject scale;
     private JArray props;
 
     public GameObject Parent { get; set; }
@@ -23,6 +24,7 @@ namespace MissionControl.ContractTypeBuilders {
       name = propGroup["Name"].ToString();
       position = propGroup.ContainsKey("Position") ? (JObject)propGroup["Position"] : null;
       rotation = propGroup.ContainsKey("Rotation") ? (JObject)propGroup["Rotation"] : null;
+      scale = propGroup.ContainsKey("Scale") ? (JObject)propGroup["Scale"] : null;
       props = propGroup.ContainsKey("Props") ? (JArray)propGroup["Props"] : null;
 
       Parent = parent;
@@ -35,6 +37,8 @@ namespace MissionControl.ContractTypeBuilders {
       propGroupGO.transform.parent = (Parent == null) ? PropFactory.MCPropGroupParent.transform : Parent.transform;
       propGroupGO.transform.localPosition = Vector3.zero;
 
+      // TODO: Should position and rotation be set after the props are populated in? I think so as I need to do that for scale for it to make sense
+
       if (this.position != null) {
         SetPosition(propGroupGO, this.position, exactPosition: true);
       }
@@ -46,6 +50,11 @@ namespace MissionControl.ContractTypeBuilders {
       if (this.props != null) {
         BuildProps(props, propGroupGO);
       }
+
+      if (this.scale != null) {
+        SetScale(propGroupGO, this.scale);
+      }
+
     }
 
     private void BuildProps(JArray props, GameObject propGroupParent) {
