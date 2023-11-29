@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using Harmony;
 
 namespace MissionControl.Result {
-  public class SetTeamByLanceSpawnerGuid : EncounterResult {
+  public class SetTeamByLanceSpawnerGuidResult : EncounterResult {
     public string Team { get; set; }
     public string LanceSpawnerGuid { get; set; }
     public bool AlertLance { get; set; } = true;
