@@ -11,6 +11,7 @@ using System.Collections.Generic;
 */
 namespace MissionControl.Result {
   public class PositionRegionResult : EncounterResult {
+    // TODO: Replace this ideally with GUID and not name
     public string RegionName { get; set; } = "";
 
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
