@@ -1,6 +1,6 @@
 using UnityEngine;
 
-using MissionControl.LogicComponents.CombatStates;
+using MissionControl.EncounterNodes.CombatStates;
 using BattleTech;
 
 namespace MissionControl.EncounterFactories {

@@ -2,7 +2,7 @@ using UnityEngine;
 
 using BattleTech;
 
-using MissionControl.LogicComponents.Placers;
+using MissionControl.EncounterNodes.Placers;
 
 namespace MissionControl.EncounterFactories {
   public class PlacementFactory {

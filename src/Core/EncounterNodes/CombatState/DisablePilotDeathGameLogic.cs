@@ -6,7 +6,7 @@ using HBS.Util;
 
 using MissionControl.Data;
 
-namespace MissionControl.LogicComponents.CombatStates {
+namespace MissionControl.EncounterNodes.CombatStates {
   public class DisablePilotDeathGameLogic : EncounterObjectGameLogic {
     public static string DISABLE_PILOT_DEATH = "DISABLE_PILOT_DEATH";
     public static string DISABLE_PILOT_INJURY = "DISABLE_PILOT_INJURY";

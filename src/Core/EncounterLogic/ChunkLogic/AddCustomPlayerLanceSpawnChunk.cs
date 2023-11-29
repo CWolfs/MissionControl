@@ -28,7 +28,7 @@ namespace MissionControl.Logic {
       this.spawnerName = spawnerName;
       this.debugDescription = debugDescription;
     }
-    
+
     public AddCustomPlayerLanceSpawnChunk(string lanceGuid, List<string> unitGuids, string spawnerName, string debugDescription) {
       this.lanceGuid = lanceGuid;
       this.unitGuids = unitGuids;

@@ -13,7 +13,7 @@ using System.Collections.Generic;
 using MissionControl.Data;
 using MissionControl.Messages;
 
-namespace MissionControl.LogicComponents.Objectives {
+namespace MissionControl.EncounterNodes.Objectives {
   public class DestroyXDestructiblesObjective : ObjectiveGameLogic {
 
     [SerializeField]

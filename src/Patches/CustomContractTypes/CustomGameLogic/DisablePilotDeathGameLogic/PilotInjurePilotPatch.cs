@@ -2,7 +2,7 @@ using Harmony;
 
 using BattleTech;
 
-using MissionControl.LogicComponents.CombatStates;
+using MissionControl.EncounterNodes.CombatStates;
 
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(Pilot), "InjurePilot")]

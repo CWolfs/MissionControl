@@ -1,6 +1,6 @@
 using UnityEngine;
 
-using MissionControl.LogicComponents.ContractEdits;
+using MissionControl.EncounterNodes.ContractEdits;
 
 namespace MissionControl.EncounterFactories {
   public class ContractEditFactory {

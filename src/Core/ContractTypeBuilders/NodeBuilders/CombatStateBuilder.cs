@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 using System;
 
 using MissionControl.EncounterFactories;
-using MissionControl.LogicComponents.CombatStates;
+using MissionControl.EncounterNodes.CombatStates;
 
 namespace MissionControl.ContractTypeBuilders {
   public class CombatStateBuilder : NodeBuilder {

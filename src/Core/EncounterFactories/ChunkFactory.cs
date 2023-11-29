@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.Designed;
 
-using MissionControl.LogicComponents.Activators;
 using MissionControl.LogicComponents.Placers;
+using MissionControl.LogicComponents.Activators;
 
 namespace MissionControl.EncounterFactories {
   public class ChunkFactory {

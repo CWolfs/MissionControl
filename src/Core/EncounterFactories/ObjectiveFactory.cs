@@ -10,7 +10,7 @@ using BattleTech.Framework;
 using HBS.Collections;
 
 using MissionControl.Data;
-using MissionControl.LogicComponents.Objectives;
+using MissionControl.EncounterNodes.Objectives;
 
 namespace MissionControl.EncounterFactories {
   public class ObjectiveFactory {

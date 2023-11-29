@@ -6,8 +6,9 @@ using BattleTech.Framework;
 using HBS.Util;
 
 using MissionControl.Data;
+using MissionControl.LogicComponents;
 
-namespace MissionControl.LogicComponents.ContractEdits {
+namespace MissionControl.EncounterNodes.ContractEdits {
   /**
   * Ideally this would be a trigger, condition and result combination
   * - Enter region

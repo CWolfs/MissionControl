@@ -8,7 +8,7 @@ using HBS.Util;
 using MissionControl.Data;
 using MissionControl.Messages;
 
-namespace MissionControl.LogicComponents.Placers {
+namespace MissionControl.EncounterNodes.Placers {
   public class SwapPlacementGameLogic : EncounterObjectGameLogic {
 
     [SerializeField]
