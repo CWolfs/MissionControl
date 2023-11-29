@@ -616,6 +616,10 @@ namespace MissionControl {
       CustomGameLogicData.Remove(key);
     }
 
+    public void ResetGameLogicData() {
+      CustomGameLogicData.Clear();
+    }
+
     public void OnCombatDestroyed() {
       Main.LogDebug("[MissionControl.OnCombatDestroyed] Clearing specific data");
       PilotCastInterpolator.Instance.Reset();
@@ -624,6 +628,7 @@ namespace MissionControl {
       EncounterStats.Reset();
       AssetBundleLoader.UnloadPropBundles();
       CustomBuildingGuids.Clear();
+      ResetGameLogicData();
 
       foreach (Material mat in GeneratedMaterials.Values) {
         MonoBehaviour.Destroy(mat);
