@@ -54,9 +54,9 @@ namespace MissionControl.ContractTypeBuilders {
         case "Dialogue": BuildDialogueGameLogicResult(result); break;
         case "SetStatus": BuildSetStatusResult(result); break;
         case "SetStatusAtRandom": BuildSetStatusAtRandomResult(result); break;
-        case "TagUnitsInRegion": BuildTagUnitsInRegion(result); break;
-        case "SetTeamByTag": BuildSetTeamByTag(result); break;
-        case "SetTeamByLanceSpawnerGuid": BuildSetTeamByLanceSpawnerGuid(result); break;
+        case "TagUnitsInRegion": BuildTagUnitsInRegionResult(result); break;
+        case "SetTeamByTag": BuildSetTeamByTagResult(result); break;
+        case "SetTeamByLanceSpawnerGuid": BuildSetTeamByLanceSpawnerGuidResult(result); break;
         case "SetIsObjectiveTargetByTag": BuildSetIsObjectiveTargetByTag(result); break;
         case "SetUnitsInRegionToBeTaggedObjectiveTargets": BuildSetUnitsInRegionToBeTaggedObjectiveTargetsResult(result); break;
         case "CompleteObjective": BuildCompleteObjectiveResult(result); break;
@@ -74,6 +74,8 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetTag": BuildSetTagResult(result); break;
         case "SetAIPatrolRoute": BuildSetAIPatrolRouteResult(result); break;
         case "SetAIBehaviourTree": BuildSetAIBehaviourTreeResult(result); break;
+        case "SwapTeams": BuildSwapTeamsResult(result); break;
+        case "SetAllTeamsRelationship": BuildSetAllTeamsRelationshipResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -161,7 +163,7 @@ namespace MissionControl.ContractTypeBuilders {
       }
     }
 
-    private void BuildTagUnitsInRegion(JObject resultObject) {
+    private void BuildTagUnitsInRegionResult(JObject resultObject) {
       Main.LogDebug("[BuildTagUnitsInRegion] Building 'TagXUnitsInRegion' result");
       string regionGuid = resultObject["RegionGuid"].ToString();
       string unitType = resultObject["UnitType"].ToString();
@@ -181,7 +183,7 @@ namespace MissionControl.ContractTypeBuilders {
       }
     }
 
-    private void BuildSetTeamByTag(JObject resultObject) {
+    private void BuildSetTeamByTagResult(JObject resultObject) {
       Main.LogDebug("[BuildSetTeamByTag] Building 'SetTeamByTag' result");
       string team = resultObject["Team"].ToString();
       string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
@@ -197,14 +199,14 @@ namespace MissionControl.ContractTypeBuilders {
       results.Add(result);
     }
 
-    private void BuildSetTeamByLanceSpawnerGuid(JObject resultObject) {
+    private void BuildSetTeamByLanceSpawnerGuidResult(JObject resultObject) {
       Main.LogDebug("[BuildSetTeamByLanceSpawnerGuid] Building 'SetTeamByLanceSpawnerGuid' result");
       string team = resultObject["Team"].ToString();
       string lanceSpawnerGuid = resultObject["LanceSpawnerGuid"].ToString();
       bool alertLance = resultObject.ContainsKey("AlertLance") ? (bool)resultObject["AlertLance"] : true;
       string[] applyTags = resultObject.ContainsKey("ApplyTags") ? ((JArray)resultObject["ApplyTags"]).ToObject<string[]>() : null;
 
-      SetTeamByLanceSpawnerGuid result = ScriptableObject.CreateInstance<SetTeamByLanceSpawnerGuid>();
+      SetTeamByLanceSpawnerGuidResult result = ScriptableObject.CreateInstance<SetTeamByLanceSpawnerGuidResult>();
       result.Team = team;
       result.LanceSpawnerGuid = lanceSpawnerGuid;
       result.AlertLance = alertLance;
@@ -561,6 +563,30 @@ namespace MissionControl.ContractTypeBuilders {
       result.UnitGroupType = unitGroupType;
       result.UnitTypeGUID = unitTypeGUID;
       result.BehaviourTree = behaviourTree;
+
+      results.Add(result);
+    }
+
+    private void BuildSwapTeamsResult(JObject resultObject) {
+      Main.LogDebug("[BuildSwapTeams] Building 'BuildSwapTeams' result");
+      string team1GUID = resultObject["Team1Guid"].ToString();
+      string team2GUID = resultObject["Team2Guid"].ToString();
+
+      SwapTeamsResult result = ScriptableObject.CreateInstance<SwapTeamsResult>();
+      result.Team1GUID = team1GUID;
+      result.Team2GUID = team2GUID;
+
+      results.Add(result);
+    }
+
+    private void BuildSetAllTeamsRelationshipResult(JObject resultObject) {
+      Main.LogDebug("[BuildSetAllTeamsFriendly] Building 'BuildSetAllTeamsRelationship' result");
+      bool enabled = (bool)resultObject["Enabled"];
+      string relationship = resultObject["Relationship"].ToString();
+
+      SetAllTeamsRelationshipResult result = ScriptableObject.CreateInstance<SetAllTeamsRelationshipResult>();
+      result.Enabled = enabled;
+      result.Relationship = relationship;
 
       results.Add(result);
     }

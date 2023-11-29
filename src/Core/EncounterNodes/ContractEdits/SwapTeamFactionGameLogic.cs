@@ -37,7 +37,7 @@ namespace MissionControl.EncounterNodes.ContractEdits {
       int originalFaction1Id = faction1.ID;
       int originalFaction2Id = faction2.ID;
 
-      Main.LogDebug($"[SwapTeamFactionGameLogic.SwapTeamFactions]) Swapping factions '{team1Guid}:{faction1.Name}' with '{team2Guid}:{faction2.Name}'");
+      Main.LogDebug($"[SwapTeamFactionGameLogic.SwapTeamFactions] Swapping factions '{team1Guid}:{faction1.Name}' with '{team2Guid}:{faction2.Name}'");
       TeamOverride employer = contract.Override.employerTeam;
       TeamOverride target = contract.Override.targetTeam;
 
