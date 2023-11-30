@@ -53,27 +53,11 @@ namespace MissionControl.ContractTypeBuilders {
       BuildChunks();
       BuildTriggers();
 
-      AddSpecialTriggers();
-
       Validate();
 
       PropFactory.ResetStaticAssets();
 
       return true;
-    }
-
-    private void AddSpecialTriggers() {
-      // Ensure units spawned in front of the player are visible at game start
-      GenericCompoundConditional genericCompoundConditional = ScriptableObject.CreateInstance<GenericCompoundConditional>();
-      AlwaysTrueConditional conditional = ScriptableObject.CreateInstance<AlwaysTrueConditional>();
-      List<EncounterConditionalBox> conditionalBoxList = new List<EncounterConditionalBox>() { new EncounterConditionalBox(conditional) };
-      genericCompoundConditional.conditionalList = conditionalBoxList.ToArray();
-
-      ResetVisibilityResult result = ScriptableObject.CreateInstance<ResetVisibilityResult>();
-
-      GenericTriggerBuilder genericTrigger = new GenericTriggerBuilder(this, "ResetVisibilityWithOnEncounterIntroComplete", MessageCenterMessageType.OnEncounterIntroComplete,
-        genericCompoundConditional, "Ensures units spawned in front of the player are visible at game start", new List<DesignResult>() { result });
-      genericTrigger.Build();
     }
 
     private void BuildTeamsData() {
