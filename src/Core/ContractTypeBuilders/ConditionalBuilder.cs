@@ -66,6 +66,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "EvaluateStat": BuildEvaluateStatConditional(conditionalObject); break;
         case "EvaluateTag": BuildEvaluateTagConditional(conditionalObject); break;
         case "EvaluateReflectedValue": BuildEvaluateReflectedValueConditional(conditionalObject); break;
+        case "CanUnitsSeeTargetUnits": BuildCanUnitsSeeTargetUnitsConditional(conditionalObject); break;
         default:
           Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeKey}] No valid conditional was built for '{type}'");
           break;
@@ -237,6 +238,28 @@ namespace MissionControl.ContractTypeBuilders {
       EvaluateReflectedValueConditional conditional = ScriptableObject.CreateInstance<EvaluateReflectedValueConditional>();
       conditional.FieldToCheck = fieldToCheck;
       conditional.ValueOfFieldToCheckEquality = valueOfFieldToCheckEquality;
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildCanUnitsSeeTargetUnitsConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildCanUnitsSeeTargetUnitsConditional] Building 'CanUnitsSeeTargetUnits' conditional");
+      List<string> spotterTags = conditionalObject.ContainsKey("SpotterTags") ? conditionalObject["SpotterTags"].ToObject<List<string>>() : null;
+      List<string> targetTags = conditionalObject.ContainsKey("TargetTags") ? conditionalObject["TargetTags"].ToObject<List<string>>() : null;
+
+      CanUnitsSeeTargetUnitsConditional conditional = ScriptableObject.CreateInstance<CanUnitsSeeTargetUnitsConditional>();
+
+      if (spotterTags != null && spotterTags.Count > 0) {
+        conditional.requiredTagsOnSpotterUnits = new TagSet(spotterTags.ToArray());
+      } else {
+        conditional.requiredTagsOnSpotterUnits = new TagSet();
+      }
+
+      if (targetTags != null && targetTags.Count > 0) {
+        conditional.requiredTagsOnTargetUnits = new TagSet(targetTags.ToArray());
+      } else {
+        conditional.requiredTagsOnTargetUnits = new TagSet();
+      }
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }
