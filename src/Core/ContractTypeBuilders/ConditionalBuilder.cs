@@ -68,6 +68,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "EvaluateReflectedValue": BuildEvaluateReflectedValueConditional(conditionalObject); break;
         case "CanUnitsSeeTargetUnits": BuildCanUnitsSeeTargetUnitsConditional(conditionalObject); break;
         case "CheckTimerObjective": BuildCheckTimerObjectiveConditional(conditionalObject); break;
+        case "DefendXUnitsStatus": BuildDefendXUnitsStatusConditional(conditionalObject); break;
         default:
           Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeKey}] No valid conditional was built for '{type}'");
           break;
@@ -278,6 +279,23 @@ namespace MissionControl.ContractTypeBuilders {
       conditional.objective = objectiveRef;
 
       conditional.isDurationRemaining = durationRemaining;
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildDefendXUnitsStatusConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildDefendXUnitsStatusConditional] Building 'DefendXUnitsStatus' conditional");
+      string objectiveGUID = conditionalObject["ObjectiveGuid"].ToString();
+      int xOffset = (int)conditionalObject["xOffset"];
+      string operation = conditionalObject["Operation"].ToString();
+
+      DefendXUnitsObjectiveRef objectiveRef = new DefendXUnitsObjectiveRef();
+      objectiveRef.EncounterObjectGuid = objectiveGUID;
+
+      DefendXUnitsStatusConditional conditional = ScriptableObject.CreateInstance<DefendXUnitsStatusConditional>();
+      conditional.defendXUnitsObjective = objectiveRef;
+      conditional.relativeComparison = xOffset;
+      conditional.comparisonOperator = (Operator)Enum.Parse(typeof(Operator), operation);
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }
