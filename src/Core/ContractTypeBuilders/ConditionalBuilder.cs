@@ -67,6 +67,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "EvaluateTag": BuildEvaluateTagConditional(conditionalObject); break;
         case "EvaluateReflectedValue": BuildEvaluateReflectedValueConditional(conditionalObject); break;
         case "CanUnitsSeeTargetUnits": BuildCanUnitsSeeTargetUnitsConditional(conditionalObject); break;
+        case "CheckTimerObjective": BuildCheckTimerObjectiveConditional(conditionalObject); break;
         default:
           Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeKey}] No valid conditional was built for '{type}'");
           break;
@@ -260,6 +261,23 @@ namespace MissionControl.ContractTypeBuilders {
       } else {
         conditional.requiredTagsOnTargetUnits = new TagSet();
       }
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildCheckTimerObjectiveConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildCheckTimerObjectiveConditional] Building 'CheckTimerObjective' conditional");
+      string objectiveGUID = conditionalObject["ObjectiveGuid"].ToString();
+      int durationRemaining = (int)conditionalObject["DurationRemaining"];
+
+      CheckTimerObjectiveConditional conditional = ScriptableObject.CreateInstance<CheckTimerObjectiveConditional>();
+
+      ObjectiveRef objectiveRef = new ObjectiveRef();
+      objectiveRef.EncounterObjectGuid = objectiveGUID;
+
+      conditional.objective = objectiveRef;
+
+      conditional.isDurationRemaining = durationRemaining;
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }
