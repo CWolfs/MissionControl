@@ -61,6 +61,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "ObjectiveStatuses": BuildObjectStatusesConditional(conditionalObject); break;
         case "EncounterObjectMatchesState": BuildEncounterObjectMatchesStateConditional(conditionalObject); break;
         case "DialogueMatches": BuildDialogueMatchesConditional(conditionalObject); break;
+        case "DialoguePageIndexMatches": BuildDialoguePageIndexMatchesConditional(conditionalObject); break;
         case "Region": BuildRegionConditional(conditionalObject); break;
         case "RegionOccupyStatus": BuildRegionOccupyStatusConditional(conditionalObject); break;
         case "EvaluateStat": BuildEvaluateStatConditional(conditionalObject); break;
@@ -139,6 +140,22 @@ namespace MissionControl.ContractTypeBuilders {
       dialogueRef.EncounterObjectGuid = guid;
 
       conditional.dialogue = dialogueRef;
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildDialoguePageIndexMatchesConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildDialoguePageIndexMatchesConditional] Building 'DialoguePageIndexMatches' conditional");
+      string guid = conditionalObject["DialogueGuid"].ToString();
+      int index = (int)conditionalObject["PageIndex"];
+
+      DialoguePageIndexMatchesConditional conditional = ScriptableObject.CreateInstance<DialoguePageIndexMatchesConditional>();
+
+      DialogueRef dialogueRef = new DialogueRef();
+      dialogueRef.EncounterObjectGuid = guid;
+
+      conditional.dialogue = dialogueRef;
+      conditional.conversationIndex = index;
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }
