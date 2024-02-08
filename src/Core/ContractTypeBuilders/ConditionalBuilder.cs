@@ -71,6 +71,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "CanUnitsSeeTargetUnits": BuildCanUnitsSeeTargetUnitsConditional(conditionalObject); break;
         case "CheckTimerObjective": BuildCheckTimerObjectiveConditional(conditionalObject); break;
         case "DefendXUnitsStatus": BuildDefendXUnitsStatusConditional(conditionalObject); break;
+        case "ObjectInvolved": BuildObjectInvolvedConditional(conditionalObject); break;
         default:
           Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeKey}] No valid conditional was built for '{type}'");
           break;
@@ -327,6 +328,27 @@ namespace MissionControl.ContractTypeBuilders {
       conditional.defendXUnitsObjective = objectiveRef;
       conditional.relativeComparison = xOffset;
       conditional.comparisonOperator = (Operator)Enum.Parse(typeof(Operator), operation);
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildObjectInvolvedConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildObjectInvolvedConditional] Building 'ObjectInvolved' conditional");
+      string involvedObjectGUID = conditionalObject.ContainsKey("InvolvedObjectGuid") ? conditionalObject["InvolvedObjectGuid"].ToString() : null;
+      List<string> involvedObjectTags = conditionalObject.ContainsKey("InvolvedObjectTags") ? conditionalObject["InvolvedObjectTags"].ToObject<List<string>>() : null;
+
+      ObjectInvolvedConditional conditional = ScriptableObject.CreateInstance<ObjectInvolvedConditional>();
+
+      EncounterObjectRef encounterObjectRef = new EncounterObjectRef();
+      encounterObjectRef.EncounterObjectGuid = involvedObjectGUID;
+
+      conditional.involvedObject = encounterObjectRef;
+
+      if (involvedObjectTags != null && involvedObjectTags.Count > 0) {
+        conditional.involvedObjectRequiredTags = new TagSet(involvedObjectTags.ToArray());
+      } else {
+        conditional.involvedObjectRequiredTags = new TagSet();
+      }
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }
