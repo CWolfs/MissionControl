@@ -62,6 +62,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "EncounterObjectMatchesState": BuildEncounterObjectMatchesStateConditional(conditionalObject); break;
         case "DialogueMatches": BuildDialogueMatchesConditional(conditionalObject); break;
         case "DialoguePageIndexMatches": BuildDialoguePageIndexMatchesConditional(conditionalObject); break;
+        case "DialogueSequenceMatches": BuildDialogueSequenceMatchesConditional(conditionalObject); break;
         case "Region": BuildRegionConditional(conditionalObject); break;
         case "RegionOccupyStatus": BuildRegionOccupyStatusConditional(conditionalObject); break;
         case "EvaluateStat": BuildEvaluateStatConditional(conditionalObject); break;
@@ -156,6 +157,19 @@ namespace MissionControl.ContractTypeBuilders {
 
       conditional.dialogue = dialogueRef;
       conditional.conversationIndex = index;
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildDialogueSequenceMatchesConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildDialogueSequenceMatchesConditional] Building 'DialogueMatches' conditional");
+      string guid = conditionalObject["DialogueSequenceGuid"].ToString();
+      DialogueSequenceMatchesConditional conditional = ScriptableObject.CreateInstance<DialogueSequenceMatchesConditional>();
+
+      DialogueSequenceRef dialogueSequenceRef = new DialogueSequenceRef();
+      dialogueSequenceRef.EncounterObjectGuid = guid;
+
+      conditional.dialogueSequence = dialogueSequenceRef;
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }
