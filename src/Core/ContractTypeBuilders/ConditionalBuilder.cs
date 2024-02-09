@@ -72,6 +72,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "CheckTimerObjective": BuildCheckTimerObjectiveConditional(conditionalObject); break;
         case "DefendXUnitsStatus": BuildDefendXUnitsStatusConditional(conditionalObject); break;
         case "ObjectInvolved": BuildObjectInvolvedConditional(conditionalObject); break;
+        case "SeeWhoIsAlive": BuildSeeWhoIsAliveConditional(conditionalObject); break;
         default:
           Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeKey}] No valid conditional was built for '{type}'");
           break;
@@ -349,6 +350,26 @@ namespace MissionControl.ContractTypeBuilders {
       } else {
         conditional.involvedObjectRequiredTags = new TagSet();
       }
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildSeeWhoIsAliveConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildSeeWhoIsAliveConditional] Building 'SeeWhoIsAlive' conditional");
+      List<string> unitTags = conditionalObject.ContainsKey("UnitTags") ? conditionalObject["UnitTags"].ToObject<List<string>>() : null;
+      string operation = conditionalObject["Operation"].ToString();
+      int numberAlive = (int)conditionalObject["NumberAlive"];
+
+      SeeWhoIsAliveConditional conditional = ScriptableObject.CreateInstance<SeeWhoIsAliveConditional>();
+
+      if (unitTags != null && unitTags.Count > 0) {
+        conditional.requiredTagsOnUnit = new TagSet(unitTags.ToArray());
+      } else {
+        conditional.requiredTagsOnUnit = new TagSet();
+      }
+
+      conditional.comparisson = (Operator)Enum.Parse(typeof(Operator), operation);
+      conditional.numberOfAlive = numberAlive;
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }
