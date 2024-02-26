@@ -73,6 +73,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "DefendXUnitsStatus": BuildDefendXUnitsStatusConditional(conditionalObject); break;
         case "ObjectInvolved": BuildObjectInvolvedConditional(conditionalObject); break;
         case "SeeWhoIsAlive": BuildSeeWhoIsAliveConditional(conditionalObject); break;
+        case "TimerStatus": BuildTimerStatusConditional(conditionalObject); break;
         default:
           Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeKey}] No valid conditional was built for '{type}'");
           break;
@@ -370,6 +371,21 @@ namespace MissionControl.ContractTypeBuilders {
 
       conditional.comparisson = (Operator)Enum.Parse(typeof(Operator), operation);
       conditional.numberOfAlive = numberAlive;
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildTimerStatusConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildTimerStatusConditional] Building 'TimerStatus' conditional");
+      string objectiveGUID = conditionalObject["ObjectiveGuid"].ToString();
+      string status = conditionalObject["TimerStatus"].ToString();
+
+      TimerObjectiveRef objectiveRef = new TimerObjectiveRef();
+      objectiveRef.EncounterObjectGuid = objectiveGUID;
+
+      TimerStatusConditional conditional = ScriptableObject.CreateInstance<TimerStatusConditional>();
+      conditional.timerObjective = objectiveRef;
+      conditional.timerStatus = (TimerStatusType)Enum.Parse(typeof(TimerStatusType), status);
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }
