@@ -74,6 +74,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "ObjectInvolved": BuildObjectInvolvedConditional(conditionalObject); break;
         case "SeeWhoIsAlive": BuildSeeWhoIsAliveConditional(conditionalObject); break;
         case "TimerStatus": BuildTimerStatusConditional(conditionalObject); break;
+        case "WhoDied": BuildWhoDiedConditional(conditionalObject); break;
         default:
           Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeKey}] No valid conditional was built for '{type}'");
           break;
@@ -386,6 +387,21 @@ namespace MissionControl.ContractTypeBuilders {
       TimerStatusConditional conditional = ScriptableObject.CreateInstance<TimerStatusConditional>();
       conditional.timerObjective = objectiveRef;
       conditional.timerStatus = (TimerStatusType)Enum.Parse(typeof(TimerStatusType), status);
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildWhoDiedConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildWhoDiedConditional] Building 'WhoDied' conditional");
+      List<string> whoDiedTags = conditionalObject.ContainsKey("WhoDiedTags") ? conditionalObject["WhoDiedTags"].ToObject<List<string>>() : null;
+
+      WhoDiedConditional conditional = ScriptableObject.CreateInstance<WhoDiedConditional>();
+
+      if (whoDiedTags != null && whoDiedTags.Count > 0) {
+        conditional.killedUnitTagSet = new TagSet(whoDiedTags.ToArray());
+      } else {
+        conditional.killedUnitTagSet = new TagSet();
+      }
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }
