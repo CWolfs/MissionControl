@@ -393,14 +393,29 @@ namespace MissionControl.ContractTypeBuilders {
 
     private void BuildWhoDiedConditional(JObject conditionalObject) {
       Main.LogDebug("[BuildWhoDiedConditional] Building 'WhoDied' conditional");
-      List<string> whoDiedTags = conditionalObject.ContainsKey("WhoDiedTags") ? conditionalObject["WhoDiedTags"].ToObject<List<string>>() : null;
+      List<string> killedUnitTags = conditionalObject.ContainsKey("KilledUnitTags") ? conditionalObject["KilledUnitTags"].ToObject<List<string>>() : null;
 
       WhoDiedConditional conditional = ScriptableObject.CreateInstance<WhoDiedConditional>();
 
-      if (whoDiedTags != null && whoDiedTags.Count > 0) {
-        conditional.killedUnitTagSet = new TagSet(whoDiedTags.ToArray());
+      if (killedUnitTags != null && killedUnitTags.Count > 0) {
+        conditional.killedUnitTagSet = new TagSet(killedUnitTags.ToArray());
       } else {
         conditional.killedUnitTagSet = new TagSet();
+      }
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildWhoKilledConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildWhoKilledConditional] Building 'WhoKilled' conditional");
+      List<string> killingUnitTags = conditionalObject.ContainsKey("KillingUnitTags") ? conditionalObject["KillingUnitTags"].ToObject<List<string>>() : null;
+
+      WhoKilliedConditional conditional = ScriptableObject.CreateInstance<WhoKilliedConditional>();
+
+      if (killingUnitTags != null && killingUnitTags.Count > 0) {
+        conditional.killingUnitTagSet = new TagSet(killingUnitTags.ToArray());
+      } else {
+        conditional.killingUnitTagSet = new TagSet();
       }
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
