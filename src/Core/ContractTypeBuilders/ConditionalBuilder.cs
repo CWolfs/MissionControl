@@ -75,6 +75,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "SeeWhoIsAlive": BuildSeeWhoIsAliveConditional(conditionalObject); break;
         case "TimerStatus": BuildTimerStatusConditional(conditionalObject); break;
         case "WhoDied": BuildWhoDiedConditional(conditionalObject); break;
+        case "WhoKilled": BuildWhoKilledConditional(conditionalObject); break;
         default:
           Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeKey}] No valid conditional was built for '{type}'");
           break;
