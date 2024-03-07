@@ -308,5 +308,39 @@ namespace MissionControl.EncounterFactories {
 
       return defendXUnitsObjective;
     }
+
+    public static TimerObjective CreateTimerObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, bool isPrimaryObjectve, int priority,
+      string progressFormat, string description, DurationType durationType, int durationToCount, int repeatCount, DurationCompleteType durationToComplete, TimerStatusType startingStatus) {
+
+      GameObject timerObjectiveGo = CreateGameObject(parent, objectName);
+
+      TimerObjective timerObjective = timerObjectiveGo.AddComponent<TimerObjective>();
+      timerObjective.title = timerObjectiveGo.name;
+      timerObjective.encounterObjectGuid = objectiveGuid;
+
+      timerObjective.title = title;
+      timerObjective.showProgress = true;
+      timerObjective.progressFormat = progressFormat;
+      timerObjective.description = description;
+      timerObjective.priority = priority;
+
+      timerObjective.primary = isPrimaryObjectve;
+
+      timerObjective.displayToUser = true;
+      timerObjective.checkObjectiveFlag = false; // maybe true?
+      timerObjective.useBeacon = true;
+      timerObjective.markUnitsWith = ObjectiveMark.None;
+      timerObjective.enableObjectiveLogging = true;
+
+      timerObjective.durationType = durationType;
+      timerObjective.durationToCount = durationToCount;
+      timerObjective.restartTimerCount = repeatCount;
+      timerObjective.durationCompleteAction = durationToComplete;
+      timerObjective.timerStatus = startingStatus;
+
+      AttachRequiredReferences(timerObjective, contractObjectiveGuid);
+
+      return timerObjective;
+    }
   }
 }
