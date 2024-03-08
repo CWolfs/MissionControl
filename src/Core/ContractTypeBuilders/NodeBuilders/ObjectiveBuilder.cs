@@ -52,6 +52,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "DefendXUnits": BuildDefendXUnitsObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         case "DestroyXUnits": BuildDestroyXUnitsObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         case "DestroyXDestructibles": BuildDestroyXDestructiblesObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
+        case "Timer": BuildTimerObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         default: Main.LogDebug($"[ObjectiveBuilder.{contractTypeBuilder.ContractTypeKey}] No support for sub-type '{subType}'. Check for spelling mistakes."); break;
       }
     }
@@ -184,8 +185,23 @@ namespace MissionControl.ContractTypeBuilders {
 
       ObjectiveCountType countTypeEnum = (ObjectiveCountType)Enum.Parse(typeof(ObjectiveCountType), countType);
 
-
       ObjectiveFactory.CreateDestroyXDestructiblesObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, regionGuid, countTypeEnum, valueOfDestructiblesToDestroy);
+    }
+
+    private void BuildTimerObjective(GameObject parent, JObject objective, string name, string title, string guid,
+      bool isPrimaryObjectve, int priority, bool displayToUser, string contractObjectiveGuid) {
+
+      string durationTypeStr = (objective.ContainsKey("DurationType")) ? objective["DurationType"].ToString() : "Rounds";
+      int durationToCount = (objective.ContainsKey("DurationToCount")) ? (int)objective["DurationToCount"] : 1;
+      int repeatCount = (objective.ContainsKey("RepeatCount")) ? (int)objective["RepeatCount"] : 0;
+      string durationToCompleteStr = (objective.ContainsKey("DurationCompleteType")) ? objective["DurationCompleteType"].ToString() : "IgnoreObjective";
+      string progressFormat = (objective.ContainsKey("ProgressFormat")) ? objective["ProgressFormat"].ToString() : "";
+      string description = objective["Description"].ToString();
+
+      DurationType durationType = (DurationType)Enum.Parse(typeof(DurationType), durationTypeStr);
+      DurationCompleteType durationToComplete = (DurationCompleteType)Enum.Parse(typeof(DurationCompleteType), durationToCompleteStr);
+
+      ObjectiveFactory.CreateTimerObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, durationType, durationToCount, repeatCount, durationToComplete);
     }
   }
 }
