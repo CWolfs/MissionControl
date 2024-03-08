@@ -189,21 +189,19 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     private void BuildTimerObjective(GameObject parent, JObject objective, string name, string title, string guid,
-  bool isPrimaryObjectve, int priority, bool displayToUser, string contractObjectiveGuid) {
+      bool isPrimaryObjectve, int priority, bool displayToUser, string contractObjectiveGuid) {
 
       string durationTypeStr = (objective.ContainsKey("DurationType")) ? objective["DurationType"].ToString() : "Rounds";
       int durationToCount = (objective.ContainsKey("DurationToCount")) ? (int)objective["DurationToCount"] : 1;
       int repeatCount = (objective.ContainsKey("RepeatCount")) ? (int)objective["RepeatCount"] : 0;
-      string durationToCompleteStr = (objective.ContainsKey("DurationToComplete")) ? objective["DurationToComplete"].ToString() : "Rounds";
-      string startingStatusStr = (objective.ContainsKey("StartingStatus")) ? objective["StartingStatus"].ToString() : "Running";
+      string durationToCompleteStr = (objective.ContainsKey("DurationCompleteType")) ? objective["DurationCompleteType"].ToString() : "IgnoreObjective";
       string progressFormat = (objective.ContainsKey("ProgressFormat")) ? objective["ProgressFormat"].ToString() : "";
       string description = objective["Description"].ToString();
 
       DurationType durationType = (DurationType)Enum.Parse(typeof(DurationType), durationTypeStr);
       DurationCompleteType durationToComplete = (DurationCompleteType)Enum.Parse(typeof(DurationCompleteType), durationToCompleteStr);
-      TimerStatusType startingStatus = (TimerStatusType)Enum.Parse(typeof(TimerStatusType), startingStatusStr);
 
-      ObjectiveFactory.CreateTimerObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, durationType, durationToCount, repeatCount, durationToComplete, startingStatus);
+      ObjectiveFactory.CreateTimerObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, durationType, durationToCount, repeatCount, durationToComplete);
     }
   }
 }

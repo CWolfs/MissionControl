@@ -310,7 +310,7 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static TimerObjective CreateTimerObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, bool isPrimaryObjectve, int priority,
-      string progressFormat, string description, DurationType durationType, int durationToCount, int repeatCount, DurationCompleteType durationToComplete, TimerStatusType startingStatus) {
+      string progressFormat, string description, DurationType durationType, int durationToCount, int repeatCount, DurationCompleteType durationToComplete) {
 
       GameObject timerObjectiveGo = CreateGameObject(parent, objectName);
 
@@ -328,15 +328,14 @@ namespace MissionControl.EncounterFactories {
 
       timerObjective.displayToUser = true;
       timerObjective.checkObjectiveFlag = false; // maybe true?
-      timerObjective.useBeacon = true;
+      timerObjective.useBeacon = false;
       timerObjective.markUnitsWith = ObjectiveMark.None;
       timerObjective.enableObjectiveLogging = true;
 
       timerObjective.durationType = durationType;
-      timerObjective.durationToCount = durationToCount;
-      timerObjective.restartTimerCount = repeatCount;
+      timerObjective.durationToCount = durationToCount + 1; // When a timer starts it counts the initial duration as the first round and is confusing to the modder
+      timerObjective.restartTimerCount = repeatCount + 1; // When a timer starts it counts the initial run as the first repeat and is confusing to the modder
       timerObjective.durationCompleteAction = durationToComplete;
-      timerObjective.timerStatus = startingStatus;
 
       AttachRequiredReferences(timerObjective, contractObjectiveGuid);
 
