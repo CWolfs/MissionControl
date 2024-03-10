@@ -61,7 +61,7 @@ namespace MissionControl.ContractTypeBuilders {
 
     private void BuildSequenceDialogue(GameObject parent, JObject dialogue) {
       bool isInterrupt = dialogue.ContainsKey("IsInterrupt") ? (bool)dialogue["IsInterrupt"] : true;
-      List<string> dialogueGUIDs = dialogue.ContainsKey("DialogueGUIDs") ? dialogue["DialogueGUIDs"].ToObject<List<string>>() : null;
+      List<string> dialogueGUIDs = dialogue.ContainsKey("DialogueGuids") ? dialogue["DialogueGuids"].ToObject<List<string>>() : null;
 
       DialogueFactory.CreateDialogueSequenceLogic(parent, this.name, this.guid, isInterrupt, dialogueGUIDs);
     }

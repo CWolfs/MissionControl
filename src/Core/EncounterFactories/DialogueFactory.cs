@@ -104,13 +104,14 @@ namespace MissionControl.EncounterFactories {
       dialogueSequenceRef.EncounterObjectGuid = guid;
 
       foreach (string dialogueGuid in dialogueGuids) {
-        DialogueItem dialogueItem = new DialogueItem();
-
         DialogueRef dialogueRef = new DialogueRef();
         dialogueRef.EncounterObjectGuid = dialogueGuid;
-        dialogueItem.dialogue = dialogueRef;
 
+        DialogueItem dialogueItem = new DialogueItem();
+        dialogueItem.dialogue = dialogueRef;
         dialogueItem.dialogueSequence = dialogueSequenceRef;
+
+        dialogueSequenceGameLogic.dialogueList.Add(dialogueItem);
       }
 
       return dialogueSequenceGameLogic;
