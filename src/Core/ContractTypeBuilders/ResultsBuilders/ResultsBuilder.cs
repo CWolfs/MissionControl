@@ -50,8 +50,9 @@ namespace MissionControl.ContractTypeBuilders {
       // end update
 
       switch (type) {
-        case "ExecuteGameLogic": BuildExecuteGameLogicResult(result); break;
-        case "Dialogue": BuildDialogueGameLogicResult(result); break;
+        case "ExecuteGameLogic": BuildExecuteResult(result); break;
+        case "Dialogue": BuildDialogueResult(result); break;
+        case "DialogueSequence": BuildDialogueSequenceResult(result); break;
         case "SetStatus": BuildSetStatusResult(result); break;
         case "SetStatusAtRandom": BuildSetStatusAtRandomResult(result); break;
         case "TagUnitsInRegion": BuildTagUnitsInRegionResult(result); break;
@@ -82,8 +83,8 @@ namespace MissionControl.ContractTypeBuilders {
       }
     }
 
-    private void BuildExecuteGameLogicResult(JObject resultObject) {
-      Main.LogDebug("[BuildExecuteGameLogicResult] Building 'ExecuteGameLogic' result");
+    private void BuildExecuteResult(JObject resultObject) {
+      Main.LogDebug("[BuildExecuteResult] Building 'ExecuteGameLogic' result");
       string chunkGuid = (resultObject.ContainsKey("ChunkGuid")) ? resultObject["ChunkGuid"].ToString() : null;
       string encounterGuid = (resultObject.ContainsKey("EncounterGuid")) ? resultObject["EncounterGuid"].ToString() : null;
 
@@ -94,8 +95,8 @@ namespace MissionControl.ContractTypeBuilders {
       results.Add(result);
     }
 
-    private void BuildDialogueGameLogicResult(JObject resultObject) {
-      Main.LogDebug("[BuildDialogueGameLogicResult] Building 'Dialogue' result");
+    private void BuildDialogueResult(JObject resultObject) {
+      Main.LogDebug("[BuildDialogueResult] Building 'Dialogue' result");
       string dialogueGuid = (resultObject.ContainsKey("DialogueGuid")) ? resultObject["DialogueGuid"].ToString() : null;
       string dialogueSequenceGuid = (resultObject.ContainsKey("DialogueSequenceGuid")) ? resultObject["DialogueSequenceGuid"].ToString() : null;
       bool isInterrupt = (resultObject.ContainsKey("IsInterrupt")) ? (bool)resultObject["IsInterrupt"] : true;
@@ -111,6 +112,20 @@ namespace MissionControl.ContractTypeBuilders {
       result.dialogueRef = dialogueRef;
       result.dialogueSequenceRef = dialogueSequenceRef;
       result.isInterrupt = isInterrupt;
+
+      results.Add(result);
+    }
+
+    private void BuildDialogueSequenceResult(JObject resultObject) {
+      Main.LogDebug("[BuildDialogueSequenceResult] Building 'DialogueSequence' result");
+      string dialogueSequenceGuid = (resultObject.ContainsKey("DialogueSequenceGuid")) ? resultObject["DialogueSequenceGuid"].ToString() : null;
+
+      DialogResult result = ScriptableObject.CreateInstance<DialogResult>();
+
+      DialogueSequenceRef dialogueSequenceRef = new DialogueSequenceRef();
+      dialogueSequenceRef.EncounterObjectGuid = dialogueSequenceGuid;
+
+      result.dialogueSequenceRef = dialogueSequenceRef;
 
       results.Add(result);
     }
