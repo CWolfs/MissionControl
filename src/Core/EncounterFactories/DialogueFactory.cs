@@ -93,5 +93,27 @@ namespace MissionControl.EncounterFactories {
 
       return conversation;
     }
+
+    public static DialogueSequenceGameLogic CreateDialogueSequenceLogic(GameObject parent, string name, string guid, bool isInterrupt, List<string> dialogueGuids) {
+      GameObject dialogueSequenceGameLogicGo = CreateDialogLogicGameObject(parent, name);
+      DialogueSequenceGameLogic dialogueSequenceGameLogic = dialogueSequenceGameLogicGo.AddComponent<DialogueSequenceGameLogic>();
+      dialogueSequenceGameLogic.encounterObjectGuid = guid;
+      dialogueSequenceGameLogic.isInterruptDialogue = isInterrupt;
+
+      DialogueSequenceRef dialogueSequenceRef = new DialogueSequenceRef();
+      dialogueSequenceRef.EncounterObjectGuid = guid;
+
+      foreach (string dialogueGuid in dialogueGuids) {
+        DialogueItem dialogueItem = new DialogueItem();
+
+        DialogueRef dialogueRef = new DialogueRef();
+        dialogueRef.EncounterObjectGuid = dialogueGuid;
+        dialogueItem.dialogue = dialogueRef;
+
+        dialogueItem.dialogueSequence = dialogueSequenceRef;
+      }
+
+      return dialogueSequenceGameLogic;
+    }
   }
 }
