@@ -15,10 +15,12 @@ namespace MissionControl.Patches {
           string exceptionMessage = (string)message;
           if (
             exceptionMessage.Contains("Unable to serialize EncounterLayerData") ||
+            exceptionMessage.Contains("Unable to serialize AIOrderList") ||
             exceptionMessage.Contains("EncounterResultBox") ||
             exceptionMessage.Contains("DesignResultList") ||
             exceptionMessage.Contains("DestroyXDestructiblesObjective") ||
-            exceptionMessage.Contains("EmptyCustomChunkGameLogic")
+            exceptionMessage.Contains("EmptyCustomChunkGameLogic") ||
+            exceptionMessage.Contains("EncounterAIOrderBox")
           ) {
             // Main.Logger.Log("Skipping exception message that would otherwise say: " + exceptionMessage);
             return false;

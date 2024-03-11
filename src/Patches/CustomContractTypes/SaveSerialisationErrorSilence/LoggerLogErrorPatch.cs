@@ -16,8 +16,10 @@ namespace MissionControl.Patches {
 
           if (
             exceptionMessage.Contains("Unable to serialize EncounterLayerData") ||
+            exceptionMessage.Contains("Unable to serialize AIOrderList") ||
             exceptionMessage.Contains("MissionControl.LogicComponents.Objectives.DestroyXDestructiblesObjective") ||
-            exceptionMessage.Contains("MissionControl.Result.EncounterResultBox")
+            exceptionMessage.Contains("MissionControl.Result.EncounterResultBox") ||
+            exceptionMessage.Contains("MissionControl.AI.EncounterAIOrderBox")
           ) {
             // Main.Logger.Log("Skipping exception message that would otherwise say: " + exceptionMessage);
             return false;
