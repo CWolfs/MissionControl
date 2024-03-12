@@ -148,6 +148,11 @@
     "Search": true,
     "SearchType": "ShallowFromModsFolder"
   },
+  "CustomContractTypes": {
+    "Accessibility": {
+      "AllowCameraShake": true
+    }
+  },
   "Misc": {
     "LanceSelectionDivergenceOverride": {
       "Enable": true,

@@ -13,7 +13,12 @@ namespace MissionControl.Result {
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
       Main.LogDebug($"[CustomCameraShakeResult] Triggering for ShakeStrength '{ShakeStrength}' ShakeDuration '{ShakeDuration}' AudioEventDefID '{AudioEventDefID}' AudioEventEntry '{AudioEventEntry}'");
       AudioEventManager.PlayAudioEvent(AudioEventDefID, AudioEventEntry);
-      CameraControl.Instance.AddCameraShake(ShakeStrength, ShakeDuration, CameraControl.Instance.transform.position);
+
+      if (Main.Settings.CustomContractTypes.AccessibilitySettings.AllowCameraShake) {
+        CameraControl.Instance.AddCameraShake(ShakeStrength, ShakeDuration, CameraControl.Instance.transform.position);
+      } else {
+        Main.Logger.Log("[Accessibility.CustomCameraShakeResult] Camera shake is disabled in accessibility settings");
+      }
     }
   }
 }

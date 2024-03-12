@@ -78,6 +78,9 @@ namespace MissionControl.Config {
     [JsonProperty("CustomData")]
     public CustomDataSettings CustomData { get; set; } = new CustomDataSettings();
 
+    [JsonProperty("CustomContractTypes")]
+    public CustomContractTypesSettings CustomContractTypes { get; set; } = new CustomContractTypesSettings();
+
     [JsonProperty("Misc")]
     public MiscSettings Misc { get; set; } = new MiscSettings();
 
