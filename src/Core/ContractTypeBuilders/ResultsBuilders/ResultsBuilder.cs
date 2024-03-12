@@ -65,6 +65,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetUnitEvasionTicksByTag": BuildSetUnitEvasionTicksByTagResult(result); break;
         case "ModifyUnitEvasionTicksByTag": BuildModifyUnitEvasionTicksByTagResult(result); break;
         case "CameraFocus": BuildCameraFocusResult(result); break;
+        case "CameraShake": BuildCameraShakeResult(result); break;
         case "DestroyBuildingsAtLanceSpawns": BuildDestroyBuildingsAtLanceSpawnsResult(result); break;
         case "Delay": BuildDelayResult(result); break;
         case "IgnoreChunks": BuildIgnoreChunksResult(result); break;
@@ -344,6 +345,23 @@ namespace MissionControl.ContractTypeBuilders {
       result.cameraFocusTime = focusTime;
       result.cameraFocusRadius = focusRadius;
       result.isInterrupt = isInterrupt;
+
+      results.Add(result);
+    }
+
+    private void BuildCameraShakeResult(JObject resultObject) {
+      Main.LogDebug("[BuildCameraShakeResult] Building 'CameraShake' result");
+
+      float shakeStrength = resultObject.ContainsKey("ShakeStrength") ? (float)resultObject["ShakeStrength"] : 100;
+      float shakeDuration = resultObject.ContainsKey("ShakeDuration") ? (float)resultObject["ShakeDuration"] : 1;
+      string audioEventDefID = resultObject.ContainsKey("AudioEventDefId") ? resultObject["AudioEventDefId"].ToString() : "";
+      string audioEventEntry = resultObject.ContainsKey("AudioEventEntry") ? resultObject["AudioEventEntry"].ToString() : "";
+
+      CustomCameraShakeResult result = ScriptableObject.CreateInstance<CustomCameraShakeResult>();
+      result.ShakeStrength = shakeStrength;
+      result.ShakeDuration = shakeDuration;
+      result.AudioEventDefID = audioEventDefID;
+      result.AudioEventEntry = audioEventEntry;
 
       results.Add(result);
     }
