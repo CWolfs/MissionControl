@@ -121,6 +121,7 @@ namespace MissionControl.Config {
     public static string CustomData_Search = "CustomData.Search";
     public static string CustomData_SearchType = "CustomData.SearchType";
 
+    public static string CustomContractType_DeveloperMode = "CustomContractTypes.DeveloperMode";
     public static string CustomContractType_Accessibility_AllowCameraShake = "CustomContractTypes.Accessibility.AllowCameraShake";
 
     public static string Misc_LanceSelectionDivergenceOverride_Enable = "Misc.LanceSelectionDivergenceOverride.Enable";
@@ -350,6 +351,7 @@ namespace MissionControl.Config {
     }
 
     public void LoadCustomContractTypes(Settings settings) {
+      if (Has(CustomContractType_DeveloperMode)) settings.CustomContractTypes.DeveloperMode = GetBool(CustomContractType_DeveloperMode);
       if (Has(CustomContractType_Accessibility_AllowCameraShake)) settings.CustomContractTypes.AccessibilitySettings.AllowCameraShake = GetBool(CustomContractType_Accessibility_AllowCameraShake);
     }
 

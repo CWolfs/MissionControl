@@ -20,6 +20,7 @@ using System.Reflection;
 using MissionControl.Data;
 using MissionControl.Config;
 using MissionControl.Utils;
+using BattleTech.UI;
 
 namespace MissionControl {
   public class Main {
@@ -45,6 +46,14 @@ namespace MissionControl {
 
     public static void LogDebugWarning(string message) {
       if (Main.Settings.DebugMode) Main.Logger.LogWarning(message);
+    }
+
+    public static void LogDeveloperWarning(string message) {
+      Main.Logger.LogWarning(message);
+
+      if (Main.Settings.CustomContractTypes.DeveloperMode) {
+        GenericPopupBuilder.Create(GenericPopupType.Warning, message).AddButton("OK", null, true, null).Render();
+      }
     }
 
     public static void LoadAssetBundles() {
