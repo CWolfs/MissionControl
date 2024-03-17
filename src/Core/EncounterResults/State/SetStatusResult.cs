@@ -16,7 +16,6 @@ namespace MissionControl.Result {
           Main.LogDebug($"[SetStatusResult] Avoiding '{encounterGameLogic.gameObject.name}' due to it not being an active chunk in the contract overrides");
         } else {
           Main.LogDebug($"[SetStatusResult] Setting '{encounterGameLogic.gameObject.name}' state '{Status}'");
-          Main.LogDebug($"[SetStatusResult] Object is '{encounterGameLogic}' with state '{encounterGameLogic.GetState()}'");
 
           if (encounterGameLogic is EncounterChunkGameLogic encounterChunkGameLogic && encounterChunkGameLogic.IsState(EncounterObjectStatus.Finished)) {
             // If the encounter is finished it should not be reactivated - check if there are any objectives under it that are Ignored
