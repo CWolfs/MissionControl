@@ -19,7 +19,7 @@ namespace MissionControl.Result {
 
           if (encounterGameLogic is EncounterChunkGameLogic encounterChunkGameLogic && encounterChunkGameLogic.IsState(EncounterObjectStatus.Finished)) {
             // If the encounter is finished it should not be reactivated - check if there are any objectives under it that are Ignored
-            Main.LogDeveloperWarning($"[SetStatusResult] Setting the Chunk '{encounterGameLogic.gameObject.name}' Encounter Object state to '{Status}' but the Chunk status is 'Finished'. A 'Finished' Chunk should not be reactivated and will cause unexpected issues. This is often due to using the 'SetIgnoreChunk' result. You should only ignore chunks that are completely finished to prevent softlocks when trying to end a contract type. Or, it's a bug in your contract type. Check to see if your Trigger Conditionals are set correctly that run 'SetIgnoreChunk' results.");
+            Main.LogDeveloperWarning($"[SetStatusResult] Setting the Chunk '{encounterGameLogic.gameObject.name}' Encounter Object state to '{Status}' but the current Chunk state is 'Finished'. A 'Finished' Chunk should not be reactivated and will cause unexpected issues. This is often due to using the 'SetIgnoreChunk' result. You should only ignore chunks that are completely finished to prevent softlocks when trying to end a contract type. Or, it's a bug in your contract type. Check to see if your Trigger Conditionals are set correctly that run 'SetIgnoreChunk' results.");
           }
 
           // If the Objective is not active, we should not set it to anything other than 'Active'
