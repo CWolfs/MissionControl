@@ -78,6 +78,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetAIBehaviourTree": BuildSetAIBehaviourTreeResult(result); break;
         case "SwapTeams": BuildSwapTeamsResult(result); break;
         case "SetAllTeamsRelationship": BuildSetAllTeamsRelationshipResult(result); break;
+        case "EndCombatRetreat": BuildEndCombatRetreatResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -620,6 +621,17 @@ namespace MissionControl.ContractTypeBuilders {
       SetAllTeamsRelationshipResult result = ScriptableObject.CreateInstance<SetAllTeamsRelationshipResult>();
       result.Enabled = enabled;
       result.Relationship = relationship;
+
+      results.Add(result);
+    }
+
+    private void BuildEndCombatRetreatResult(JObject resultObject) {
+      Main.LogDebug("[BuildEndCombatRetreat] Building 'BuildEndCombatRetreat' result");
+      string effortOverrideRaw = resultObject["EffortOverride"].ToString();
+      ContractRetreatEffort effortOverride = (ContractRetreatEffort)Enum.Parse(typeof(ContractRetreatEffort), effortOverrideRaw);
+
+      EndCombatRetreatResult result = ScriptableObject.CreateInstance<EndCombatRetreatResult>();
+      result.EffortOverride = effortOverride;
 
       results.Add(result);
     }
