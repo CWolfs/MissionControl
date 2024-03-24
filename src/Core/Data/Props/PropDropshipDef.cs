@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace MissionControl.Data {
-  public class PropBuildingDef {
+  public class PropDropshipDef {
     [JsonProperty("Key")]
     public string Key { get; set; }
 
@@ -16,9 +16,6 @@ namespace MissionControl.Data {
 
     [JsonProperty("MainModel")]
     public string MainModelKey { get; set; }
-
-    [JsonProperty("Glass")]
-    public PropPositionalDef Glass { get; set; }
 
     [JsonProperty("Destructibles")]
     public JArray RawDestructibleFlimsyModels { get; set; }

@@ -26,45 +26,6 @@ namespace MissionControl.EncounterFactories {
       }
     }
 
-    private static GameObject mcBuildingParent = null;
-    public static GameObject MCBuildingParent {
-      get {
-        if (mcBuildingParent == null) {
-          mcBuildingParent = new GameObject("MCBuildingParent");
-          mcBuildingParent.transform.SetParent(MissionControl.Instance.EncounterLayerData.transform);
-          mcBuildingParent.transform.position = Vector3.zero;
-        }
-
-        return mcBuildingParent;
-      }
-    }
-
-    private static GameObject mcStructureParent = null;
-    public static GameObject MCStructureParent {
-      get {
-        if (mcStructureParent == null) {
-          mcStructureParent = new GameObject("MCStructureParent");
-          mcStructureParent.transform.SetParent(MissionControl.Instance.EncounterLayerData.transform);
-          mcStructureParent.transform.position = Vector3.zero;
-        }
-
-        return mcStructureParent;
-      }
-    }
-
-    private static GameObject mcDestructibleParent = null;
-    public static GameObject MCDestructibleParent {
-      get {
-        if (mcDestructibleParent == null) {
-          mcDestructibleParent = new GameObject("MCDestructibleParent");
-          mcDestructibleParent.transform.SetParent(MissionControl.Instance.EncounterLayerData.transform);
-          mcDestructibleParent.transform.position = Vector3.zero;
-        }
-
-        return mcDestructibleParent;
-      }
-    }
-
     private static GameObject mcGenericStaticDestruct = null;
     public static GameObject MCGenericStaticDestruct {
       get {

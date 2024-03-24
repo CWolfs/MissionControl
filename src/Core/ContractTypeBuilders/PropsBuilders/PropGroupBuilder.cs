@@ -69,6 +69,11 @@ namespace MissionControl.ContractTypeBuilders {
             propGroupBuilder.Build();
             break;
           }
+          case "Dropship": {
+            DropshipBuilder dropshipBuilder = new DropshipBuilder(contractTypeBuilder, prop, propGroupParent);
+            dropshipBuilder.Build();
+            break;
+          }
           case "Building": {
             BuildingBuilder buildingBuilder = new BuildingBuilder(contractTypeBuilder, prop, propGroupParent);
             buildingBuilder.Build();

@@ -5,38 +5,31 @@ using System.Linq;
 using System.Collections.Generic;
 
 using BattleTech;
-using BattleTech.Rendering;
+using BattleTech.Rendering.MechCustomization;
 
 using MissionControl.Data;
 using MissionControl.Utils;
+using BattleTech.Assetbundles;
 
 namespace MissionControl.EncounterFactories {
-  public class BuildingFactory : PropFactory {
-    private string facilityName = "UNNAMED";
-
-    private PropBuildingDef PropBuildingDef { get; set; }
+  public class DropshipFactory : PropFactory {
+    private PropDropshipDef PropDropshipDef { get; set; }
     private String CustomName { get; set; }
     private int CustomStructurePoints { get; set; }
+    private DropshipAnimationState StartingState { get; set; }
+    private string TeamGUID { get; set; }
 
-    private GameObject facilityGO;
-    private GameObject buildingGroupGO;
-    private GameObject buildingGO;
-    private GameObject glassParentGO;
-    private GameObject glassGO;
+    private GameObject dropshipGO;
 
-    // private GameObject destructDecalParent;
     private GameObject destructSplit;
     private GameObject destructShell;
 
-    // CameraFade variables
-    private LODGroup fadeLODGroup;
-    private StructureGroup fadeStructureGroup;
-    private DestructibleObject fadeDestructibleObject;
-
-    public BuildingFactory(PropBuildingDef propBuildingDef, string customName, int customStructurePoints) {
-      PropBuildingDef = propBuildingDef;
+    public DropshipFactory(PropDropshipDef propDropshipDef, string customName, int customStructurePoints, DropshipAnimationState startingState, string teamGUID) {
+      PropDropshipDef = propDropshipDef;
       CustomName = customName;
       CustomStructurePoints = customStructurePoints;
+      StartingState = startingState;
+      TeamGUID = teamGUID;
     }
 
     private GameObject CreateGameObject(GameObject parent, string name = null) {
@@ -47,181 +40,148 @@ namespace MissionControl.EncounterFactories {
       return gameObject;
     }
 
-    public GameObject CreateFacility(string name, GameObject parent) {
-      this.facilityName = name;
-      facilityGO = CreateGameObject(parent, name);
+    public GameObject CreateDropship(GameObject parentGO, string name) {
+      dropshipGO = CreateGameObject(parentGO, name);
+      PropModelDef propModelDef = PropDropshipDef.GetPropModelDef();
 
-      CreateBuildingGroup(facilityGO, $"BuildingGroup_{facilityName}");
-      facilityGO.AddComponent<FacilityParent>();
+      if (string.IsNullOrEmpty(propModelDef.CompleteBundleName)) {
+        CreateCustomDropship(dropshipGO);
+      } else {
+        CreateVanillaDropship(dropshipGO);
+      }
 
-      return facilityGO;
+      return dropshipGO;
     }
 
-    private GameObject CreateBuildingGroup(GameObject facilityGO, string name) {
-      buildingGroupGO = CreateGameObject(facilityGO, name);
+    // TODO: Finish this so it works for custom models/meshes/bundles
+    private GameObject CreateCustomDropship(GameObject parent) {
+      BuildingRepresentation buildingRepresentation = dropshipGO.AddComponent<BuildingRepresentation>();
 
-      CreateBuilding(buildingGroupGO, $"Building_{facilityName}", DestructibleObject.DestructType.targetStruct);
-
-      SnapToTerrain snapToTerrain = buildingGroupGO.AddComponent<SnapToTerrain>();
-      BuildingRepresentation buildingRepresentation = buildingGroupGO.AddComponent<BuildingRepresentation>();
-
-      ObstructionGameLogic obstructionGameLogic = buildingGroupGO.AddComponent<ObstructionGameLogic>();
-      obstructionGameLogic.buildingDefId = PropBuildingDef.BuildingDefID; // Supports direct BuildingDefIds (e.g. buildingdef_Military_Large) or general values (e.g. ObstructionGameLogic.buildingDef_SolidObstruction)
-      obstructionGameLogic.teamDefinitionGuid = TeamUtils.WORLD_TEAM_ID;
+      DropshipGameLogic dropshipGameLogic = dropshipGO.AddComponent<DropshipGameLogic>();
+      dropshipGameLogic.buildingDefId = PropDropshipDef.BuildingDefID; // Supports direct BuildingDefIds (e.g. buildingdef_Military_Large) or general values (e.g. ObstructionGameLogic.buildingDef_SolidObstruction)
+      dropshipGameLogic.teamDefinitionGuid = TeamUtils.WORLD_TEAM_ID;
+      dropshipGameLogic.currentAnimationState = StartingState;
 
       string obstructionGuid = Guid.NewGuid().ToString();
-      obstructionGameLogic.encounterObjectGuid = obstructionGuid;
+      dropshipGameLogic.encounterObjectGuid = obstructionGuid;
 
       // Track the custom buildings to bypass the min 8 cell hit count for buildings to be added to the proper building list of a MapEncounterLayerDataCell
       MissionControl.Instance.CustomBuildingGuids.Add(obstructionGuid);
 
-      obstructionGameLogic.overrideBuildingName = CustomName;
-      obstructionGameLogic.overrideStructurePoints = CustomStructurePoints;
+      dropshipGameLogic.overrideBuildingName = CustomName;
+      dropshipGameLogic.overrideStructurePoints = CustomStructurePoints;
 
       // Health is set by buildingDefId, or a manual override 'overrideStructurePoints' on Building set via ObstructionGameLogic
-      DestructibleObjectGroup destructibleObjectGroup = buildingGroupGO.AddComponent<DestructibleObjectGroup>();
+      DestructibleObjectGroup destructibleObjectGroup = dropshipGO.AddComponent<DestructibleObjectGroup>();
       destructibleObjectGroup.BakeDestructionAssets();
 
-      snapToTerrain.ForceCalculateCurrentHeightOffset();
+      dropshipGO.AddComponent<Animator>();
+      dropshipGO.AddComponent<MechCustomization>();
+      dropshipGO.AddComponent<MeshCollider>();
 
-      return buildingGroupGO;
+      return dropshipGO;
     }
 
-    public GameObject CreateBuilding(GameObject buildingGroupGO, string name, DestructibleObject.DestructType destructTypeOverride) {
-      PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
+    private void CreateVanillaDropship(GameObject parent) {
+      Main.Logger.Log("[DropshipFactory.CreateVanillaDropship] Creating vanilla dropship " + PropDropshipDef.Key);
+      PropModelDef propModelDef = PropDropshipDef.GetPropModelDef();
+      string completeBundleName = propModelDef.CompleteBundleName;
 
-      buildingGO = CreateGameObject(buildingGroupGO, name);
-      buildingGO.SetActive(false);
+      GameObject prefab = DataManager.Instance.SynchronouslyLoadPrefab(parent, completeBundleName);
 
-      CreateColAndLODs(buildingGO, propModelDef);
-      GameObject flimsyParentGO = CreateFlimsies(buildingGroupGO);
-      GameObject glassParentGO = CreateGlass(buildingGroupGO);
-      CreateGenericStaticDestruct(buildingGO);
+      if (prefab != null) {
+        prefab.transform.localPosition = Vector3.zero;
+        prefab.transform.localEulerAngles = Vector3.zero;
+        DropshipGameLogic dropshipGameLogic = prefab.GetComponentInChildren<DropshipGameLogic>();
+        dropshipGameLogic.currentAnimationState = DropshipAnimationState.Landed;
 
-      DestructibleObject destructibleObject = buildingGO.AddComponent<DestructibleObject>();
-      destructibleObject.destructType = destructTypeOverride;
+        dropshipGameLogic.encounterObjectGuid = Guid.NewGuid().ToString();
+        MissionControl.Instance.CustomDropshipsGuids.Add(dropshipGameLogic.GUID);
 
-      if (destructTypeOverride == DestructibleObject.DestructType.flimsyStruct) {
-        destructibleObject.isFlimsy = true;
-        destructibleObject.instantKillFlimsy = true;
-        destructibleObject.isDependentFlimsy = true;
-      }
-
-      destructibleObject.structSize = propModelDef.DestructibleSize;
-      destructibleObject.structMaterial = propModelDef.DestructibleMaterial;
-      destructibleObject.flimsyDestructType = propModelDef.FlimsyDestructibleType;
-      destructibleObject.dependentPersistentFX = new List<GameObject>();
-      destructibleObject.damagedInstance = destructSplit.GetComponent<PhysicsExplodeChildren>();
-      destructibleObject.embeddedFlimsyChildren = new List<DestructibleObject>();
-      destructibleObject.shellInstance = destructShell;
-      destructibleObject.damageAssetGroup = allDamageAssetGroups[UnityEngine.Random.Range(0, allDamageAssetGroups.Length)];
-      destructibleObject.decalObjects = new List<GameObject>();
-      destructibleObject.decalSpawners = new List<BTDecalSpawner>();
-      destructibleObject.flimsyChild = flimsyParentGO;
-      destructibleObject.glassChild = glassParentGO;
-      destructibleObject.dependentPersistentFX = new List<GameObject>();
-
-      // Setup LOD Group
-      LODGroup lodGroup = SetupLODGroup(buildingGO);
-
-      StructureGroup structureGroup = buildingGO.AddComponent<StructureGroup>();
-      structureGroup.lodGroup = lodGroup;
-      structureGroup.structureGroupRenderers = buildingGO.GetComponentsInChildren<MeshRenderer>();
-      structureGroup.destructibleObject = destructibleObject;
-      structureGroup.destructionParent = buildingGO;
-
-      destructibleObject.structureGroup = structureGroup;
-      destructibleObject.destructList = destructibleObject.GetComponentsInChildren<DestructibleObject>().ToList();
-
-      buildingGO.SetActive(true);
-
-      destructibleObject.destructionParent.transform.SetParent(MCGenericStaticDestruct.transform, true);
-
-      destructSplit.transform.SetParent(destructibleObject.destructionParent.transform, false);
-      destructSplit.transform.localPosition = Vector3.zero;
-      destructSplit.transform.localEulerAngles = Vector3.zero;
-      destructShell.transform.SetParent(destructibleObject.destructionParent.transform, false);
-      destructShell.transform.localPosition = Vector3.zero;
-      destructShell.transform.localEulerAngles = Vector3.zero;
-
-      if (glassGO != null) {
-        glassGO.transform.SetParent(glassParentGO.transform, false);
-        glassGO.transform.localPosition = PropBuildingDef.Glass != null ? PropBuildingDef.Glass.Position : Vector3.zero;
-        glassGO.transform.localEulerAngles = PropBuildingDef.Glass != null ? PropBuildingDef.Glass.Rotation : Vector3.zero;
-      }
-
-      if (!propModelDef.HasCustomShell) RandomiseShell(destructibleObject);
-
-      // Cache for adding to Camera Fade Manager
-      fadeLODGroup = lodGroup;
-      fadeStructureGroup = structureGroup;
-      fadeDestructibleObject = destructibleObject;
-
-      return buildingGO;
-    }
-
-    // Add to CameraFadeManager to allow for fading the building when the camera is too close
-    public void AddToCameraFadeGroup() {
-      CameraFadeManager instance = CameraFadeManager.Instance;
-      Renderer[] structureGroupRenderers = fadeStructureGroup.structureGroupRenderers;
-      CameraFadeManager.FadeGroup fadeGroup = instance.Add(fadeLODGroup, structureGroupRenderers);
-
-      fadeStructureGroup.destructibleObject.AddChildrenToFadeManager(fadeGroup);
-
-      // TODO: Include this when adding glass support
-      // if (structureGroup != null) {
-      // for (int i = 0; i < structureGroup.flimsyChildren.Length; i++) {
-      //   structureGroup.flimsyChildren[i].fadeGroup = fadeGroup;
-      //   if (glassRenderer != null) {
-      //     fadeGroup.AddRenderer(glassRenderer);
-      //   }
-
-      if (fadeDestructibleObject.damagedInstance != null) {
-        fadeDestructibleObject.damagedInstance.UpdateSnapshots(forceUpdate: true);
-        for (int j = 0; j < fadeDestructibleObject.damagedInstance.children.Length; j++) {
-          fadeDestructibleObject.damagedInstance.children[j].fadeGroup = fadeGroup;
+        if (TeamGUID != null) {
+          Main.Logger.Log("[DropshipFactory.CreateVanillaDropship] Adding to team " + TeamGUID);
+          dropshipGameLogic.teamDefinitionGuid = TeamGUID;
         }
-      }
-    }
-
-    private GameObject CreateGlass(GameObject buildingGroupGO) {
-      PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
-
-      if (propModelDef.IsMeshInBundle) {
-        LoadAssetBundle(propModelDef);
-
-        buildingGlassMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_glass");
       } else {
-        foreach (Mesh mesh in allGameMeshes) {
-          if (mesh.name == $"{propModelDef.MeshName}_glass") {
-            buildingGlassMesh = mesh;
-            break;
-          }
-        }
+        Main.Logger.LogError("[DropshipFactory.CreateVanillaDropship] Prefab is null");
       }
-
-      if (buildingGlassMesh == null) return null;
-
-      Main.Logger.Log("[PropFactory.CreateGlass] Glass Mesh is " + buildingGlassMesh.name);
-
-      glassParentGO = CreateGameObject(buildingGroupGO, "_glass");
-      glassParentGO.transform.rotation = Quaternion.identity;
-
-      glassGO = CreateGameObject(glassParentGO, buildingGlassMesh.name);
-      MeshFilter mf = glassGO.AddComponent<MeshFilter>();
-      MeshRenderer mr = glassGO.AddComponent<MeshRenderer>();
-
-      mf.sharedMesh = buildingGlassMesh;
-
-      if (matLookup.ContainsKey("envMatStct_glassA_decals_generic")) {
-        mr.sharedMaterial = matLookup["envMatStct_glassA_decals_generic"];
-      }
-
-      return glassParentGO;
     }
+
+    // public GameObject CreateBuilding(GameObject buildingGroupGO, string name, DestructibleObject.DestructType destructTypeOverride) {
+    //   PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
+
+    //   dropshipGO = CreateGameObject(buildingGroupGO, name);
+    //   dropshipGO.SetActive(false);
+
+    //   CreateColAndLODs(dropshipGO, propModelDef);
+    //   GameObject flimsyParentGO = CreateFlimsies(buildingGroupGO);
+    //   GameObject glassParentGO = CreateGlass(buildingGroupGO);
+    //   CreateGenericStaticDestruct(dropshipGO);
+
+    //   DestructibleObject destructibleObject = dropshipGO.AddComponent<DestructibleObject>();
+    //   destructibleObject.destructType = destructTypeOverride;
+
+    //   if (destructTypeOverride == DestructibleObject.DestructType.flimsyStruct) {
+    //     destructibleObject.isFlimsy = true;
+    //     destructibleObject.instantKillFlimsy = true;
+    //     destructibleObject.isDependentFlimsy = true;
+    //   }
+
+    //   destructibleObject.structSize = propModelDef.DestructibleSize;
+    //   destructibleObject.structMaterial = propModelDef.DestructibleMaterial;
+    //   destructibleObject.flimsyDestructType = propModelDef.FlimsyDestructibleType;
+    //   destructibleObject.dependentPersistentFX = new List<GameObject>();
+    //   destructibleObject.damagedInstance = destructSplit.GetComponent<PhysicsExplodeChildren>();
+    //   destructibleObject.embeddedFlimsyChildren = new List<DestructibleObject>();
+    //   destructibleObject.shellInstance = destructShell;
+    //   destructibleObject.damageAssetGroup = allDamageAssetGroups[UnityEngine.Random.Range(0, allDamageAssetGroups.Length)];
+    //   destructibleObject.decalObjects = new List<GameObject>();
+    //   destructibleObject.decalSpawners = new List<BTDecalSpawner>();
+    //   destructibleObject.flimsyChild = flimsyParentGO;
+    //   destructibleObject.glassChild = glassParentGO;
+    //   destructibleObject.dependentPersistentFX = new List<GameObject>();
+
+    //   // Setup LOD Group
+    //   LODGroup lodGroup = SetupLODGroup(dropshipGO);
+
+    //   StructureGroup structureGroup = dropshipGO.AddComponent<StructureGroup>();
+    //   structureGroup.lodGroup = lodGroup;
+    //   structureGroup.structureGroupRenderers = dropshipGO.GetComponentsInChildren<MeshRenderer>();
+    //   structureGroup.destructibleObject = destructibleObject;
+    //   structureGroup.destructionParent = dropshipGO;
+
+    //   destructibleObject.structureGroup = structureGroup;
+    //   destructibleObject.destructList = destructibleObject.GetComponentsInChildren<DestructibleObject>().ToList();
+
+    //   dropshipGO.SetActive(true);
+
+    //   destructibleObject.destructionParent.transform.SetParent(MCGenericStaticDestruct.transform, true);
+
+    //   destructSplit.transform.SetParent(destructibleObject.destructionParent.transform, false);
+    //   destructSplit.transform.localPosition = Vector3.zero;
+    //   destructSplit.transform.localEulerAngles = Vector3.zero;
+    //   destructShell.transform.SetParent(destructibleObject.destructionParent.transform, false);
+    //   destructShell.transform.localPosition = Vector3.zero;
+    //   destructShell.transform.localEulerAngles = Vector3.zero;
+
+    //   if (glassGO != null) {
+    //     glassGO.transform.SetParent(glassParentGO.transform, false);
+    //     glassGO.transform.localPosition = PropBuildingDef.Glass != null ? PropBuildingDef.Glass.Position : Vector3.zero;
+    //     glassGO.transform.localEulerAngles = PropBuildingDef.Glass != null ? PropBuildingDef.Glass.Rotation : Vector3.zero;
+    //   }
+
+    //   if (!propModelDef.HasCustomShell) RandomiseShell(destructibleObject);
+
+    //   // Cache for adding to Camera Fade Manager
+    //   fadeLODGroup = lodGroup;
+    //   fadeStructureGroup = structureGroup;
+    //   fadeDestructibleObject = destructibleObject;
+
+    //   return dropshipGO;
+    // }
 
     private GameObject CreateFlimsies(GameObject buildingGroupGO) {
-      List<PropDestructibleFlimsyDef> flimsyModels = PropBuildingDef.DestructibleFlimsyModels;
+      List<PropDestructibleFlimsyDef> flimsyModels = PropDropshipDef.DestructibleFlimsyModels;
 
       if (flimsyModels.Count > 0) {
         GameObject flimsyParentGO = CreateGameObject(buildingGroupGO, "_flimsy");
@@ -270,34 +230,6 @@ namespace MissionControl.EncounterFactories {
 
       flimsyGO.SetActive(true);
     }
-
-    // private void EnsureMiniumMeshSize(GameObject go) {
-    //   Vector3 minSize = new Vector3(4, 1, 4);
-    //   Transform transform = go.transform;
-    //   MeshFilter meshFilter = go.GetComponent<MeshFilter>();
-    //   if (meshFilter == null) {
-    //     Debug.LogError("MeshFilter component is missing.");
-    //     return;
-    //   }
-
-    //   Mesh mesh = meshFilter.mesh;
-    //   Vector3 meshSize = mesh.bounds.size;
-
-    //   Vector3 scale = transform.localScale;
-    //   if (meshSize.x < minSize.x) {
-    //     scale.x = minSize.x;
-    //   }
-
-    //   if (meshSize.y < minSize.y) {
-    //     scale.y = minSize.y;
-    //   }
-
-    //   if (meshSize.z < minSize.z) {
-    //     scale.z = minSize.z;
-    //   }
-
-    //   transform.localScale = scale;
-    // }
 
     private void AttachFlimsyMesh(GameObject flimsyGO, PropDestructibleFlimsyDef flimsyDef) {
       PropModelDef propModelDef = flimsyDef.GetPropModelDef();
@@ -355,7 +287,7 @@ namespace MissionControl.EncounterFactories {
     }
 
     private void CreateGenericStaticDestruct(GameObject buildingGO) {
-      PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
+      PropModelDef propModelDef = PropDropshipDef.GetPropModelDef();
 
       // SPLIT
       if (propModelDef.HasCustomSplits) {
@@ -373,7 +305,7 @@ namespace MissionControl.EncounterFactories {
           // FIXME: A manual process won't work here as splits can go up to the hundreds so some kind of workflow is required that works for both:
           //  - user custom bundled
           //  - original vanilla extracted and bundled
-          Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef, PropBuildingDef.GetPropModelDef().Materials, placeholderMaterial);
+          Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef, PropDropshipDef.GetPropModelDef().Materials, placeholderMaterial);
           splitPiece.GetComponent<MeshRenderer>().materials = materials;
         }
       } else {
@@ -390,7 +322,7 @@ namespace MissionControl.EncounterFactories {
           // FIXME: The fracture UV mapping and material assignment need more work. Fewer mats should be assign per split (e.g. in vanilla a building with 7 mats might have splits with 2-3 mats depending on how they were fractured )
           // FIXME: So we don't need to assign all 7 original ones to each split. Probably need a 3rd party lib or definitely a better script for fracturing.
           // FIXME: Having issues making good runtime fractures - just use a copy of LOD0 for now
-          Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef, PropBuildingDef.GetPropModelDef().Materials, placeholderMaterial);
+          Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef, PropDropshipDef.GetPropModelDef().Materials, placeholderMaterial);
           splitPiece.GetComponent<MeshRenderer>().materials = materials;
         }
       }
@@ -404,7 +336,7 @@ namespace MissionControl.EncounterFactories {
       destructShell.SetActive(false);
 
       if (propModelDef.HasCustomShell) {
-        Main.Logger.Log("[BuildingFactory.CreateGenericStaticDestruct] CustomShell has been set for " + PropBuildingDef.Key);
+        Main.Logger.Log("[BuildingFactory.CreateGenericStaticDestruct] CustomShell has been set for " + PropDropshipDef.Key);
 
         // Load from bundle
         LoadAssetBundle(propModelDef);
@@ -482,7 +414,7 @@ namespace MissionControl.EncounterFactories {
     }
 
     private void SetShellMaterials(GameObject shell) {
-      PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
+      PropModelDef propModelDef = PropDropshipDef.GetPropModelDef();
 
       // Setup materials
       Mesh mesh = shell.GetComponent<MeshFilter>().mesh;

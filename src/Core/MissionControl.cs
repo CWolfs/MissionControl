@@ -56,6 +56,7 @@ namespace MissionControl {
 
     // Custom Contract Generated Data
     public List<string> CustomBuildingGuids = new List<string>();
+    public List<string> CustomDropshipsGuids = new List<string>();
     public Dictionary<string, Material> GeneratedMaterials = new Dictionary<string, Material>();
     // End Custom Contract GeneratedData
 
@@ -628,6 +629,7 @@ namespace MissionControl {
       EncounterStats.Reset();
       AssetBundleLoader.UnloadPropBundles();
       CustomBuildingGuids.Clear();
+      CustomDropshipsGuids.Clear();
       ResetGameLogicData();
 
       foreach (Material mat in GeneratedMaterials.Values) {

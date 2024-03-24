@@ -33,10 +33,6 @@ namespace MissionControl.EncounterFactories {
       return gameObject;
     }
 
-    public GameObject CreateStructure(string name) {
-      return CreateStructure(name, StructureFactory.MCStructureParent);
-    }
-
     public GameObject CreateStructure(string name, GameObject parent) {
       this.structureName = name;
       structureParentGO = CreateGameObject(parent, name);

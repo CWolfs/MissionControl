@@ -15,6 +15,7 @@ using Newtonsoft.Json.Linq;
 using BattleTech;
 using BattleTech.Data;
 using BattleTech.Framework;
+using BattleTech.Assetbundles;
 
 using HBS.Data;
 
@@ -55,6 +56,7 @@ namespace MissionControl {
 
     // Props
     public Dictionary<string, PropModelDef> ModelDefs = new Dictionary<string, PropModelDef>();
+    public Dictionary<string, PropDropshipDef> DropshipDefs = new Dictionary<string, PropDropshipDef>();
     public Dictionary<string, PropBuildingDef> BuildingDefs = new Dictionary<string, PropBuildingDef>();
     public Dictionary<string, PropStructureDef> StructureDefs = new Dictionary<string, PropStructureDef>();
     public Dictionary<string, PropDestructibleFlimsyDef> DestructibleDefs = new Dictionary<string, PropDestructibleFlimsyDef>();
@@ -281,6 +283,10 @@ namespace MissionControl {
         LoadPropDestructibleDefs($"{propsPath}/destructibles");
       }
 
+      if (Directory.Exists($"{propsPath}/dropships")) {
+        LoadPropDropshipDefs($"{propsPath}/dropships");
+      }
+
       if (Directory.Exists($"{propsPath}/buildings")) {
         LoadPropBuildingDefs($"{propsPath}/buildings");
       }
@@ -355,13 +361,27 @@ namespace MissionControl {
       }
     }
 
+    private void LoadPropDropshipDefs(string dropshipsPath) {
+      foreach (string dropshipDefPaths in Directory.GetFiles(dropshipsPath, "*.json", SearchOption.AllDirectories)) {
+        string dropshipSource = File.ReadAllText(dropshipDefPaths);
+        PropDropshipDef propDropshipDef = JsonConvert.DeserializeObject<PropDropshipDef>(dropshipSource, serialiserSettings);
+        Main.Logger.Log("[DataManager.LoadPropDropshipDefs] Loaded LoadPropDropshipDefs: " + propDropshipDef.Key);
+        Main.Logger.Log("[DataManager.LoadPropDropshipDefs] Loaded PropDropshipDef MainModelKey: " + propDropshipDef.MainModelKey);
+        Main.Logger.Log("[DataManager.LoadPropDropshipDefs] Loaded PropDropshipDef Destructibles Count: " + propDropshipDef.DestructibleFlimsyModels.Count);
+
+        if (!DropshipDefs.ContainsKey(propDropshipDef.Key)) {
+          DropshipDefs.Add(propDropshipDef.Key, propDropshipDef);
+        } else {
+          Main.Logger.Log($"[DataManager.LoadPropDropshipDefs] A PropDropshipDef of key '{propDropshipDef.Key}' already exists. Dropship keys must be unique.");
+        }
+      }
+    }
+
     private void LoadPropBuildingDefs(string buildingsPath) {
       foreach (string buildingDefPaths in Directory.GetFiles(buildingsPath, "*.json", SearchOption.AllDirectories)) {
-        // Main.Logger.Log("[DataManager.LoadPropModelData] Loading model directory data " + modelDirectory);
         string buildingSource = File.ReadAllText(buildingDefPaths);
         PropBuildingDef propBuildingDef = JsonConvert.DeserializeObject<PropBuildingDef>(buildingSource, serialiserSettings);
         Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded LoadPropBuildingDefs: " + propBuildingDef.Key);
-
         Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded PropBuildingDef MainModelKey: " + propBuildingDef.MainModelKey);
         Main.Logger.Log("[DataManager.LoadPropBuildingDefs] Loaded PropBuildingDef Destructibles Count: " + propBuildingDef.DestructibleFlimsyModels.Count);
 
@@ -375,11 +395,9 @@ namespace MissionControl {
 
     private void LoadPropStructureDefs(string structuresPath) {
       foreach (string structureDefPaths in Directory.GetFiles(structuresPath, "*.json", SearchOption.AllDirectories)) {
-        // Main.Logger.Log("[DataManager.LoadPropModelData] Loading model directory data " + modelDirectory);
         string structureSource = File.ReadAllText(structureDefPaths);
         PropStructureDef propStructureDef = JsonConvert.DeserializeObject<PropStructureDef>(structureSource, serialiserSettings);
         Main.Logger.Log("[DataManager.LoadPropStructureDefs] Loaded LoadPropStructureDefs: " + propStructureDef.Key);
-
         Main.Logger.Log("[DataManager.LoadPropStructureDefs] Loaded LoadPropStructureDef MainModelKey: " + propStructureDef.MainModelKey);
         Main.Logger.Log("[DataManager.LoadPropStructureDefs] Loaded LoadPropStructureDef Destructibles Count: " + propStructureDef.DestructibleFlimsyModels.Count);
 
@@ -834,15 +852,71 @@ namespace MissionControl {
       }
     }
 
-    public void RequestResourcesAndProcess(BattleTechResourceType resourceType, string resourceId, bool filterByOwnership = false) {
+    public void RequestResourcesAndProcess(BattleTechResourceType resourceType, string resourceId, bool filterByOwnership = false, Action<string> callback = null) {
       LoadRequest loadRequest = UnityGameInstance.BattleTechGame.DataManager.CreateLoadRequest(delegate (LoadRequest request) {
         Main.LogDebug($"[RequestResourcesAndProcess] Finished load request for {resourceId}");
+        if (callback != null) callback(resourceId);
       }, filterByOwnership);
       loadRequest.AddBlindLoadRequest(resourceType, resourceId);
 
       // Without 1000u this does not work for my usecase
       // Data loading has been updated for the Main Menu loads so it no longer should cause deadlocks
       loadRequest.ProcessRequests(1000u);
+    }
+
+    public GameObject SynchronouslyLoadPrefab(GameObject parent, string manifestEntryID) {
+      Main.Logger.Log($"[DataManager.SynchronouslyLoadPrefab] Attempting to load Prefab '{manifestEntryID}'");
+
+      BattleTech.Assetbundles.AssetBundleManager assetBundleManager = UnityGameInstance.Instance.Game.DataManager.AssetBundleManager;
+
+      if (!UnityGameInstance.Instance.Game.DataManager.IsPrefabInPool(manifestEntryID)) {
+        Main.Logger.Log($"[DataManager.SynchronouslyLoadPrefab] Prefab '{manifestEntryID}' is not in pool so will force request it");
+        VersionManifestEntry versionManifestEntry = assetBundleManager.resourceLocator.EntryByID(manifestEntryID, BattleTechResourceType.Prefab);
+
+        if (versionManifestEntry != null) {
+          if (versionManifestEntry.IsAssetBundled) {
+            string assetBundleName = versionManifestEntry.AssetBundleName;
+            AssetBundleTracker bundleTracker;
+
+            if (!assetBundleManager.IsBundleLoaded(assetBundleName, out bundleTracker)) {
+              Main.Logger.Log("[DataManager.SynchronouslyLoadPrefab] Asset is bundled but not loaded yet so force sync loading");
+
+              // Force sync load
+              string bundlePath = BattleTech.Assetbundles.AssetBundleManager.AssetBundleNameToFilepath(assetBundleName);
+              uint version = (uint)((versionManifestEntry != null) ? versionManifestEntry.Version : 0u);
+              uint crc = versionManifestEntry?.AssetBundleCRC ?? 0;
+              bool persistent = versionManifestEntry?.IsAssetBundlePersistent ?? false;
+
+              AssetBundle bundle = AssetBundle.LoadFromFile(bundlePath);
+              AssetBundleTracker tracker = new AssetBundleTracker(bundle, persistent);
+              tracker.CurrentState = AssetBundleTracker.State.LoadFromBundle;
+              assetBundleManager.loadedBundles.Add(assetBundleName, tracker);
+            }
+
+            if (assetBundleManager.IsBundleLoaded(assetBundleName, out bundleTracker) && bundleTracker.ReadyForUse) {
+              Main.Logger.Log("[DataManager.SynchronouslyLoadPrefab] Asset is bundled and loaded so will load asset " + manifestEntryID);
+
+              if (assetBundleManager.loadedBundles.TryGetValue(assetBundleName, out bundleTracker)) {
+                GameObject p = bundleTracker.LoadAsset<GameObject>(manifestEntryID);
+
+                if (p != null) {
+                  Main.Logger.Log("[DataManager.SynchronouslyLoadPrefab] Adding prefab to pool " + manifestEntryID + ":" + p.name);
+                  UnityGameInstance.Instance.Game.DataManager.AddPrefabToPool(manifestEntryID, p);
+                } else {
+                  Main.Logger.LogError("[DataManager.SynchronouslyLoadPrefab] Prefab is null from bundle " + assetBundleName + " for " + manifestEntryID);
+                }
+              }
+            }
+          } else {
+            Main.Logger.LogError("[DropshipFactory.CreateVanillaDropship] Asset is not bundled");
+          }
+        }
+      } else {
+        Main.Logger.Log("[DropshipFactory.CreateVanillaDropship] Prefab is in pool");
+      }
+
+      GameObject prefab = UnityGameInstance.Instance.Game.DataManager.PooledInstantiate(manifestEntryID, BattleTechResourceType.Prefab, parent.transform.position, Quaternion.identity, parent.transform);
+      return prefab;
     }
 
     public DateTime? GetSimGameCurrentDate() {
