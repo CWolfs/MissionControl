@@ -47,10 +47,6 @@ namespace MissionControl.EncounterFactories {
         CreateVanillaDropship(dropshipGO);
       }
 
-      if (dropshipGO != null) {
-        dropshipGO.transform.localScale = propModelDef.Scale.Value;
-      }
-
       return dropshipGO;
     }
 
@@ -96,6 +92,8 @@ namespace MissionControl.EncounterFactories {
       if (prefab != null) {
         prefab.transform.localPosition = Vector3.zero;
         prefab.transform.localEulerAngles = Vector3.zero;
+        prefab.transform.localScale = propModelDef.Scale.Value;
+
         DropshipGameLogic dropshipGameLogic = prefab.GetComponentInChildren<DropshipGameLogic>();
         dropshipGameLogic.currentAnimationState = DropshipAnimationState.Landed;
 
