@@ -54,10 +54,6 @@ namespace MissionControl.EncounterFactories {
       CreateBuildingGroup(facilityGO, $"BuildingGroup_{facilityName}");
       facilityGO.AddComponent<FacilityParent>();
 
-      if (facilityGO != null) {
-        facilityGO.transform.localScale = PropBuildingDef.GetPropModelDef().Scale.Value;
-      }
-
       return facilityGO;
     }
 
@@ -137,6 +133,7 @@ namespace MissionControl.EncounterFactories {
       destructibleObject.structureGroup = structureGroup;
       destructibleObject.destructList = destructibleObject.GetComponentsInChildren<DestructibleObject>().ToList();
 
+      buildingGO.transform.localScale = propModelDef.Scale.Value; // Sets the Model's scale
       buildingGO.SetActive(true);
 
       destructibleObject.destructionParent.transform.SetParent(MCGenericStaticDestruct.transform, true);

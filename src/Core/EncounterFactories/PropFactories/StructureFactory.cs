@@ -87,6 +87,7 @@ namespace MissionControl.EncounterFactories {
       // structureGroup.destructibleObject = destructibleObject;
       structureGroup.destructionParent = structureGO;
 
+      structureGO.transform.localScale = propModelDef.Scale.Value; // Sets the Model's scale
       structureGO.SetActive(true);
 
       // Cache for adding to Camera Fade Manager

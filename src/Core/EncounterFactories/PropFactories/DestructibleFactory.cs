@@ -73,6 +73,7 @@ namespace MissionControl.EncounterFactories {
       // Setup LOD Group
       LODGroup lodGroup = SetupLODGroup(destructibleGO);
 
+      destructibleGO.transform.localScale = propModelDef.Scale.Value; // Sets the Model's scale
       destructibleGO.SetActive(true);
       return destructibleGO;
     }
