@@ -1,4 +1,12 @@
 {
   "Key": "DropshipLeopardA",
-  "CompleteBundle": "chrPrfVhcl_leopard"
+  "CompleteBundle": "chrPrfVhcl_leopard",
+  "Scale": {
+    "Type": "Local",
+    "Value": {
+      "x": 0.75,
+      "y": 0.75,
+      "z": 0.75
+    }
+  }
 }

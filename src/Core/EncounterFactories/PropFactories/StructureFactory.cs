@@ -40,6 +40,10 @@ namespace MissionControl.EncounterFactories {
       CreateStructureGroup(structureParentGO, $"StructureGroup_{structureName}");
       structureParentGO.AddComponent<FacilityParent>();
 
+      if (structureParentGO != null) {
+        structureParentGO.transform.localScale = PropStructureDef.GetPropModelDef().Scale.Value;
+      }
+
       return structureParentGO;
     }
 

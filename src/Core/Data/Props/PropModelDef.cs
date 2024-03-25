@@ -43,6 +43,9 @@ namespace MissionControl.Data {
     [JsonProperty("CompleteBundle")]
     public string CompleteBundleName { get; set; } = null;
 
+    [JsonProperty("Scale")]
+    public VectorData Scale { get; set; } = new VectorData(VectorData.VectorType.Local, Vector3.one);
+
     [JsonIgnore]
     public bool IsCompleteBundle {
       get {

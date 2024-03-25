@@ -349,6 +349,10 @@ namespace MissionControl {
 
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef BundlePath: " + propModelDef.BundlePath);
 
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef MeshOffsets: " + propModelDef.MeshOffsets.Count);
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef CompleteBundleName: " + propModelDef.CompleteBundleName);
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef Scale: " + propModelDef.Scale.ToString());
+
         if ((propModelDef.IsMeshInBundle || propModelDef.HasCustomShell || propModelDef.HasCustomSplits) && propModelDef.BundlePath == null) {
           Main.Logger.LogError($"[DataManager.LoadPropModelDefs] PropModelDef '{propModelDef.Key}' has settings that require a custom bundle but no custom bundle was provided or successfully loaded");
         }

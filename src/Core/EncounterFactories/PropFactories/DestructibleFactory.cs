@@ -37,6 +37,10 @@ namespace MissionControl.EncounterFactories {
       destructibleFlimsyGroupGO.AddComponent<SnapToTerrain>();
       this.destructibleFlimsyGroupGO.AddComponent<DestructibleFlimsyGroup>();
 
+      if (destructibleFlimsyGroupGO != null) {
+        destructibleFlimsyGroupGO.transform.localScale = PropFlimsyDef.GetPropModelDef().Scale.Value;
+      }
+
       destructibleFlimsyGroupGO.SetActive(true);
       return this.destructibleFlimsyGroupGO;
     }

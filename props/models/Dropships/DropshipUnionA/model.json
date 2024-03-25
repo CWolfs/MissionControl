@@ -1,4 +1,12 @@
 {
   "Key": "DropshipUnionA",
-  "CompleteBundle": "chrPrfVhcl_union"
+  "CompleteBundle": "chrPrfVhcl_union",
+  "Scale": {
+    "Type": "Local",
+    "Value": {
+      "x": 0.75,
+      "y": 0.75,
+      "z": 0.75
+    }
+  }
 }

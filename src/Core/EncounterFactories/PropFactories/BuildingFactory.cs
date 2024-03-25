@@ -54,6 +54,10 @@ namespace MissionControl.EncounterFactories {
       CreateBuildingGroup(facilityGO, $"BuildingGroup_{facilityName}");
       facilityGO.AddComponent<FacilityParent>();
 
+      if (facilityGO != null) {
+        facilityGO.transform.localScale = PropBuildingDef.GetPropModelDef().Scale.Value;
+      }
+
       return facilityGO;
     }
 
