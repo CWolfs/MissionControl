@@ -47,21 +47,17 @@ namespace MissionControl.EncounterFactories {
       return gameObject;
     }
 
-    public GameObject CreateFacility(string name) {
-      return CreateFacility(name, BuildingFactory.MCBuildingParent);
-    }
-
-    public GameObject CreateFacility(string name, GameObject parent) {
+    public GameObject CreateFacility(string name, GameObject parent, string teamGUID = null) {
       this.facilityName = name;
       facilityGO = CreateGameObject(parent, name);
 
-      CreateBuildingGroup(facilityGO, $"BuildingGroup_{facilityName}");
+      CreateBuildingGroup(facilityGO, $"BuildingGroup_{facilityName}", teamGUID);
       facilityGO.AddComponent<FacilityParent>();
 
       return facilityGO;
     }
 
-    private GameObject CreateBuildingGroup(GameObject facilityGO, string name) {
+    private GameObject CreateBuildingGroup(GameObject facilityGO, string name, string teamGUID) {
       buildingGroupGO = CreateGameObject(facilityGO, name);
 
       CreateBuilding(buildingGroupGO, $"Building_{facilityName}", DestructibleObject.DestructType.targetStruct);
@@ -71,7 +67,7 @@ namespace MissionControl.EncounterFactories {
 
       ObstructionGameLogic obstructionGameLogic = buildingGroupGO.AddComponent<ObstructionGameLogic>();
       obstructionGameLogic.buildingDefId = PropBuildingDef.BuildingDefID; // Supports direct BuildingDefIds (e.g. buildingdef_Military_Large) or general values (e.g. ObstructionGameLogic.buildingDef_SolidObstruction)
-      obstructionGameLogic.teamDefinitionGuid = TeamUtils.WORLD_TEAM_ID;
+      obstructionGameLogic.teamDefinitionGuid = teamGUID == null ? TeamUtils.WORLD_TEAM_ID : teamGUID;
 
       string obstructionGuid = Guid.NewGuid().ToString();
       obstructionGameLogic.encounterObjectGuid = obstructionGuid;
@@ -137,6 +133,7 @@ namespace MissionControl.EncounterFactories {
       destructibleObject.structureGroup = structureGroup;
       destructibleObject.destructList = destructibleObject.GetComponentsInChildren<DestructibleObject>().ToList();
 
+      buildingGO.transform.localScale = propModelDef.Scale.Value; // Sets the Model's scale
       buildingGO.SetActive(true);
 
       destructibleObject.destructionParent.transform.SetParent(MCGenericStaticDestruct.transform, true);

@@ -12,6 +12,7 @@ namespace MissionControl.ContractTypeBuilders {
 
     private string structureName;
     private string structureKey;
+    private string teamGUID;
     private JObject position;
     private JObject rotation;
     private JObject scale;
@@ -28,6 +29,9 @@ namespace MissionControl.ContractTypeBuilders {
       rotation = structure.ContainsKey("Rotation") ? (JObject)structure["Rotation"] : null;
       scale = structure.ContainsKey("Scale") ? (JObject)structure["Scale"] : null;
 
+      string teamRaw = structure.ContainsKey("Team") ? structure["Team"].ToString() : null;
+      teamGUID = teamRaw != null ? TeamUtils.GetTeamGuid(teamRaw) : TeamUtils.WORLD_TEAM_ID;
+
       Parent = parent;
     }
 
@@ -41,7 +45,7 @@ namespace MissionControl.ContractTypeBuilders {
       PropStructureDef propStructureDef = DataManager.Instance.StructureDefs[structureKey];
 
       StructureFactory structureFactory = new StructureFactory(propStructureDef);
-      GameObject structureGo = structureFactory.CreateStructure(structureKey, Parent);
+      GameObject structureGo = structureFactory.CreateStructure(structureKey, Parent, teamGUID);
 
       if (this.position != null) {
         SetPosition(structureGo, this.position, exactPosition: true);

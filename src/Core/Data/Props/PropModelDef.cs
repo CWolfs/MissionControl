@@ -40,6 +40,19 @@ namespace MissionControl.Data {
     [JsonProperty("MeshOffsets")]
     public Dictionary<string, Vector3> MeshOffsets = new Dictionary<string, Vector3>();
 
+    [JsonProperty("CompleteBundle")]
+    public string CompleteBundleName { get; set; } = null;
+
+    [JsonProperty("Scale")]
+    public VectorData Scale { get; set; } = new VectorData(VectorData.VectorType.Local, Vector3.one);
+
+    [JsonIgnore]
+    public bool IsCompleteBundle {
+      get {
+        return !string.IsNullOrEmpty(CompleteBundleName);
+      }
+    }
+
     [JsonIgnore]
     public DestructibleObject.DestructibleSize DestructibleSize {
       get {

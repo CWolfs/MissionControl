@@ -30,16 +30,16 @@ namespace MissionControl.EncounterFactories {
       return gameObject;
     }
 
-    public GameObject CreateDestructibleFlimsyGroup(string name) {
-      return CreateDestructibleFlimsyGroup(name, DestructibleFactory.MCDestructibleParent);
-    }
-
     public GameObject CreateDestructibleFlimsyGroup(string name, GameObject parent) {
       this.destructibleFlimsyGroupGO = CreateGameObject(parent, $"DestructibleFlimsyGroup_{name}");
       destructibleFlimsyGroupGO.SetActive(false);
 
       destructibleFlimsyGroupGO.AddComponent<SnapToTerrain>();
       this.destructibleFlimsyGroupGO.AddComponent<DestructibleFlimsyGroup>();
+
+      if (destructibleFlimsyGroupGO != null) {
+        destructibleFlimsyGroupGO.transform.localScale = PropFlimsyDef.GetPropModelDef().Scale.Value;
+      }
 
       destructibleFlimsyGroupGO.SetActive(true);
       return this.destructibleFlimsyGroupGO;
@@ -73,6 +73,7 @@ namespace MissionControl.EncounterFactories {
       // Setup LOD Group
       LODGroup lodGroup = SetupLODGroup(destructibleGO);
 
+      destructibleGO.transform.localScale = propModelDef.Scale.Value; // Sets the Model's scale
       destructibleGO.SetActive(true);
       return destructibleGO;
     }

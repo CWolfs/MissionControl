@@ -23,6 +23,10 @@ namespace MissionControl.Patches {
       PilotCastInterpolator.Instance.InterpolateContractDialogueCast();
     }
 
+    static void Postfix(EncounterLayerParent __instance) {
+      ApplyDropshipHeraldryToCustomContractDropships();
+    }
+
     /**
     * Sometimes the maps have bad data with some EncounterObjectGameLogics having no encounterObjectGuid.
     * The game has code to fix this but it runs too late and doesn't really fix problems caused by a lack of initial encounterObjectGuid
@@ -36,6 +40,16 @@ namespace MissionControl.Patches {
           string guid = GUIDFactory.GetGUID();
           Main.Logger.Log($"[FixEncounterObjectGameLogicsWithNoEncounterGUID] Generating new encounterObjectGuid for '{encounterObjectGameLogic.gameObject.name} in component '{encounterObjectGameLogic.GetType()}' using new GUID '{guid}'");
           encounterObjectGameLogic.encounterObjectGuid = guid;
+        }
+      }
+    }
+
+    private static void ApplyDropshipHeraldryToCustomContractDropships() {
+      if (MissionControl.Instance.IsCustomContractType) {
+        Main.Logger.Log($"[ApplyDropshipHeraldryToCustomContractDropships] Applying custom heraldry to custom contract dropships");
+        foreach (string guid in MissionControl.Instance.CustomDropshipsGuids) {
+          DropshipGameLogic dropshipGameLogic = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<DropshipGameLogic>(guid);
+          dropshipGameLogic.ApplyHeraldry(dropshipGameLogic.teamDefinitionGuid);
         }
       }
     }

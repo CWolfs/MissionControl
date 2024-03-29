@@ -14,6 +14,7 @@ namespace MissionControl.ContractTypeBuilders {
     private string buildingKey;
     private string customName;
     private int customStructurePoints;
+    private string teamGUID;
     private JObject position;
     private JObject rotation;
     private JObject scale;
@@ -32,6 +33,9 @@ namespace MissionControl.ContractTypeBuilders {
       rotation = building.ContainsKey("Rotation") ? (JObject)building["Rotation"] : null;
       scale = building.ContainsKey("Scale") ? (JObject)building["Scale"] : null;
 
+      string teamRaw = building.ContainsKey("Team") ? building["Team"].ToString() : null;
+      teamGUID = teamRaw != null ? TeamUtils.GetTeamGuid(teamRaw) : TeamUtils.WORLD_TEAM_ID;
+
       Parent = parent;
     }
 
@@ -45,7 +49,7 @@ namespace MissionControl.ContractTypeBuilders {
       PropBuildingDef propBuildingDef = DataManager.Instance.BuildingDefs[buildingKey];
 
       BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef, customName, customStructurePoints);
-      GameObject facilityGo = buildingFactory.CreateFacility(buildingKey, Parent);
+      GameObject facilityGo = buildingFactory.CreateFacility(buildingKey, Parent, teamGUID);
 
       DestructibleObject destructibleObject = facilityGo.GetComponentInChildren<DestructibleObject>();
       GameObject destructionParentGO = destructibleObject.destructionParent.gameObject;
