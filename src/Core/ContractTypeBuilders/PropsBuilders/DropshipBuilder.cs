@@ -38,7 +38,8 @@ namespace MissionControl.ContractTypeBuilders {
       string startingDropshipStateRaw = dropship.ContainsKey("StartingState") ? dropship["StartingState"].ToString() : null;
       startingDropshipState = startingDropshipStateRaw != null ? (DropshipAnimationState)Enum.Parse(typeof(DropshipAnimationState), startingDropshipStateRaw) : DropshipAnimationState.Landed;
 
-      teamGUID = dropship.ContainsKey("TeamGuid") ? dropship["TeamGuid"].ToString() : null;
+      string teamRaw = dropship.ContainsKey("Team") ? dropship["Team"].ToString() : null;
+      teamGUID = teamRaw != null ? TeamUtils.GetTeamGuid(teamRaw) : TeamUtils.WORLD_TEAM_ID;
 
       position = dropship.ContainsKey("Position") ? (JObject)dropship["Position"] : null;
       rotation = dropship.ContainsKey("Rotation") ? (JObject)dropship["Rotation"] : null;
