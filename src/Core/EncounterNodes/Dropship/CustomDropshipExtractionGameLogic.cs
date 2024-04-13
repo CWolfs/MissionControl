@@ -32,7 +32,7 @@ namespace MissionControl.EncounterNodes.Dropship {
       ObjectiveGameLogic callDropshipObjective = callDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry);
       ObjectiveGameLogic loadDropshipObjective = loadDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry);
 
-      switch (dropshipLandingSpot.dropshipStates) {
+      switch (dropshipLandingSpot.DropshipStates) {
         case StartingDropshipAnimationState.OffScreen:
           callDropshipObjective.SetState(EncounterObjectStatus.Active);
           break;
