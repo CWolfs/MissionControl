@@ -116,8 +116,20 @@ namespace MissionControl.EncounterNodes.Dropship {
       }
     }
 
+    public bool IsDropshipAlive(DropshipGameLogic dropship) {
+      return dropship.IsBuildingAlive();
+    }
+
     public bool IsDropshipAlive(DropshipRef dropshipRef) {
       return GetDropship(dropshipRef).IsBuildingAlive();
+    }
+
+    public void LandDropship(DropshipGameLogic dropship) {
+      if (IsDropshipAlive(dropship)) {
+        dropship.LandDropship();
+      } else {
+        LogWarning("Tried to land the dropship when it was dead. Ignoring command.");
+      }
     }
 
     public void LandDropship(DropshipRef dropshipRef) {
@@ -128,11 +140,27 @@ namespace MissionControl.EncounterNodes.Dropship {
       }
     }
 
+    public void TakeoffDropship(DropshipGameLogic dropship) {
+      if (IsDropshipAlive(dropship)) {
+        dropship.TakeoffDropship();
+      } else {
+        LogWarning("Tried to takeoff the dropship when it was dead. Ignoring command.");
+      }
+    }
+
     public void TakeoffDropship(DropshipRef dropshipRef) {
       if (IsDropshipAlive(dropshipRef)) {
         GetDropship(dropshipRef).TakeoffDropship();
       } else {
         LogWarning("Tried to takeoff the dropship when it was dead. Ignoring command.");
+      }
+    }
+
+    public void FlybyDropship(DropshipGameLogic dropship) {
+      if (IsDropshipAlive(dropship)) {
+        dropship.StartDropoff();
+      } else {
+        LogWarning("Tried to flyby the dropship when it was dead. Ignoring command.");
       }
     }
 

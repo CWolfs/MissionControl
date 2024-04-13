@@ -28,17 +28,17 @@ namespace MissionControl.EncounterNodes.Dropship {
     public override void OnEnterActive() {
       base.OnEnterActive();
 
-      CustomDropshipLandingSpotGameLogic encounterObject = dropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
-      ObjectiveGameLogic encounterObject2 = callDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry);
-      ObjectiveGameLogic encounterObject3 = loadDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry);
+      CustomDropshipLandingSpotGameLogic dropshipLandingSpot = dropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
+      ObjectiveGameLogic callDropshipObjective = callDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry);
+      ObjectiveGameLogic loadDropshipObjective = loadDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry);
 
-      switch (encounterObject.dropshipStates) {
+      switch (dropshipLandingSpot.dropshipStates) {
         case StartingDropshipAnimationState.OffScreen:
-          encounterObject2.SetState(EncounterObjectStatus.Active);
+          callDropshipObjective.SetState(EncounterObjectStatus.Active);
           break;
         case StartingDropshipAnimationState.Landed:
-          encounterObject2.IgnoreObjective();
-          encounterObject3.SetState(EncounterObjectStatus.Active);
+          callDropshipObjective.IgnoreObjective();
+          loadDropshipObjective.SetState(EncounterObjectStatus.Active);
           break;
       }
     }
@@ -71,8 +71,8 @@ namespace MissionControl.EncounterNodes.Dropship {
 
     private void OnObjectiveSucceeded(MessageCenterMessage message) {
       ObjectiveSucceeded obj = message as ObjectiveSucceeded;
-      CustomDropshipLandingSpotGameLogic encounterObject = dropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
-      List<DropshipGameLogic> dropships = encounterObject.GetDropships();
+      CustomDropshipLandingSpotGameLogic dropshipLandingSpot = dropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
+      List<DropshipGameLogic> dropships = dropshipLandingSpot.GetDropships();
 
       foreach (DropshipGameLogic dropship in dropships) {
         if (obj.ObjectiveGuid == callDropshipObjectiveRef.EncounterObjectGuid && dropship.currentAnimationState == DropshipAnimationState.OffScreen && extractViaDropship) {
