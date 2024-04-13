@@ -52,6 +52,9 @@ namespace MissionControl.EncounterFactories {
 
     public static DialogueGameLogic CreateDialogLogic(GameObject parent, string name, DialogueOverride dialogueOverride) {
       GameObject dialogueGameLogicGo = CreateDialogLogicGameObject(parent, name);
+
+      // TODO: This is probably CPU heavy, ideally a reference / cache should be grabbed from somewhere - otherwise generated as a last resort
+      // It depends on how recent the reference info is needed to be from the custom contract type system adding lots of custom data
       Dictionary<string, EncounterObjectGameLogic> encounterObjects = new Dictionary<string, EncounterObjectGameLogic>();
       MissionControl.Instance.EncounterLayerData.BuildEncounterObjectDictionary(encounterObjects);
 

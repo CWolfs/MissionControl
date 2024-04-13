@@ -47,6 +47,8 @@ namespace MissionControl {
     public GameObject EncounterLayerGameObject { get; private set; }
     public EncounterLayerData EncounterLayerData { get; private set; }
 
+    public Dictionary<string, EncounterObjectGameLogic> EncounterObjectDictionary { get; set; } = new Dictionary<string, EncounterObjectGameLogic>();
+
     public int PlayerLanceDropDifficultyValue { get; set; }
     public float PlayerLanceDropSkullRating { get; set; }
     public float PlayerLanceDropTonnage { get; set; }
