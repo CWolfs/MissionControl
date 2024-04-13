@@ -10,30 +10,29 @@ using MissionControl.EncounterNodes.Dropship;
 using System.Collections.Generic;
 
 namespace MissionControl.Result {
-  public class AnimateDropshipResult : DesignResult {
+  public class CustomAnimateDropshipResult : DesignResult {
     public enum DropshipAnimateCommand {
-      INVALID_UNSET,
       Land,
       Takeoff,
       Flyby
     }
 
     [SerializableMember(SerializationTarget.All)]
-    public CustomDropshipLandingSpotRef dropshipLandingSpotRef = new CustomDropshipLandingSpotRef();
+    public CustomDropshipLandingSpotRef DropshipLandingSpotRef { get; set; } = new CustomDropshipLandingSpotRef();
 
     [SerializableMember(SerializationTarget.All)]
-    public DropshipAnimateCommand animateCommand;
+    public DropshipAnimateCommand AnimateCommand { get; set; } = DropshipAnimateCommand.Takeoff;
 
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
       base.Trigger(inMessage, triggeringName);
-      CustomDropshipLandingSpotGameLogic dropshipLandingSpot = dropshipLandingSpotRef.GetEncounterObject(combat.ItemRegistry);
+      CustomDropshipLandingSpotGameLogic dropshipLandingSpot = DropshipLandingSpotRef.GetEncounterObject(combat.ItemRegistry);
       List<DropshipGameLogic> dropships = dropshipLandingSpot.GetDropships();
 
       foreach (DropshipGameLogic dropship in dropships) {
         if (!dropshipLandingSpot.IsDropshipAlive(dropship)) {
           dropshipLandingSpot.LogWarning("Tried to animate a dead dropship. Aborting animation.");
         } else if (dropshipLandingSpot != null) {
-          switch (animateCommand) {
+          switch (AnimateCommand) {
             case DropshipAnimateCommand.Land:
               dropshipLandingSpot.LandDropship(dropship);
               break;
@@ -49,23 +48,23 @@ namespace MissionControl.Result {
     }
 
     public override int Size() {
-      return base.Size() + dropshipLandingSpotRef.Size() + HBS.Util.Serialization.StorageSpaceEnum(animateCommand);
+      return base.Size() + DropshipLandingSpotRef.Size() + HBS.Util.Serialization.StorageSpaceEnum(AnimateCommand);
     }
 
     public override void Save(SerializationStream stream) {
       base.Save(stream);
-      dropshipLandingSpotRef.Save(stream);
-      stream.PutEnum(animateCommand);
+      DropshipLandingSpotRef.Save(stream);
+      stream.PutEnum(AnimateCommand);
     }
 
     public override void Load(SerializationStream stream) {
-      dropshipLandingSpotRef.Load(stream);
-      animateCommand = stream.GetEnum<DropshipAnimateCommand>();
+      DropshipLandingSpotRef.Load(stream);
+      AnimateCommand = stream.GetEnum<DropshipAnimateCommand>();
     }
 
     public override void ReattachReferences(Dictionary<string, EncounterObjectGameLogic> encounterObjectDictionary) {
       base.ReattachReferences(encounterObjectDictionary);
-      dropshipLandingSpotRef.ReattachReference(encounterObjectDictionary);
+      DropshipLandingSpotRef.ReattachReference(encounterObjectDictionary);
     }
   }
 }
