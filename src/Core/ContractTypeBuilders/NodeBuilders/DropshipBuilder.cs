@@ -64,8 +64,8 @@ namespace MissionControl.ContractTypeBuilders {
 
     private void BuildDropshipExtraction() {
       string dropshipLandingSpotGUID = build["DropshipLandingSpotGuid"].ToString();
-      string callDropshipObjectiveGUID = build["CallDropshipObjectiveGuid"].ToString();
-      string loadDropshipObjectiveGUID = build["LoadDropshipObjectiveGuid"].ToString();
+      string callDropshipObjectiveGUID = build.ContainsKey("CallDropshipObjectiveGuid") ? build["CallDropshipObjectiveGuid"].ToString() : null;
+      string loadDropshipObjectiveGUID = build.ContainsKey("LoadDropshipObjectiveGuid") ? build["LoadDropshipObjectiveGuid"].ToString() : null;
       List<string> requiredTagsOnLance = build.ContainsKey("RequiredTagsOnLance") ? build["RequiredTagsOnLance"].ToObject<List<string>>() : null;
       bool spawnLancesWhenLanded = build.ContainsKey("SpawnLancesWhenLanded") ? (bool)build["SpawnLancesWhenLanded"] : false;
       bool takeOffImmediately = build.ContainsKey("TakeOffImmediately") ? (bool)build["TakeOffImmediately"] : false;
