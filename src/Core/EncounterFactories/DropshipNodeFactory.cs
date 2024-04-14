@@ -5,8 +5,10 @@ using BattleTech.Framework;
 
 using MissionControl.EncounterNodes.Dropship;
 using MissionControl.Data;
+using MissionControl.Data.Refs;
 
 using System.Collections.Generic;
+using HBS.Collections;
 
 namespace MissionControl.EncounterFactories {
   public class DropshipNodeFactory {
@@ -24,7 +26,30 @@ namespace MissionControl.EncounterFactories {
       CustomDropshipLandingSpotGameLogic dropshipLandingSpotGameLogic = dropshipLandingSpoGameObject.AddComponent<CustomDropshipLandingSpotGameLogic>();
       dropshipLandingSpotGameLogic.encounterObjectGuid = guid;
 
+      dropshipLandingSpotGameLogic.DropshipStates = dropshipStates;
+      dropshipLandingSpotGameLogic.UseDropshipType = useDropshipType;
+      dropshipLandingSpotGameLogic.AutoMarkDropshipLandingZone = automarkLandingZone;
+      dropshipLandingSpotGameLogic.TeamGUID = teamGUID;
+      dropshipLandingSpotGameLogic.DropshipGameLogicList = dropshipRefs;
+
       return dropshipLandingSpotGameLogic;
+    }
+
+    public static CustomDropshipExtractionGameLogic CreateDropshipExtraction(GameObject parent, string name, string guid, CustomDropshipLandingSpotRef dropshipLandingSpotRef, ObjectiveRef callDropshipObjectiveRef, ObjectiveRef loadDropshipObjectiveRef, List<string> requiredTagsOnLance, bool spawnLancesWhenLanded, bool takeOffImmediately, bool extractViaDropship) {
+      GameObject dropshipExtractionGameObject = CreateGameObject(parent, name);
+
+      CustomDropshipExtractionGameLogic dropshipExtractionGameLogic = dropshipExtractionGameObject.AddComponent<CustomDropshipExtractionGameLogic>();
+      dropshipExtractionGameLogic.encounterObjectGuid = guid;
+
+      dropshipExtractionGameLogic.dropshipLandingSpotRef = dropshipLandingSpotRef;
+      dropshipExtractionGameLogic.callDropshipObjectiveRef = callDropshipObjectiveRef;
+      dropshipExtractionGameLogic.loadDropshipObjectiveRef = loadDropshipObjectiveRef;
+      dropshipExtractionGameLogic.requiredTagsOnLance = new TagSet(requiredTagsOnLance);
+      dropshipExtractionGameLogic.spawnLancesWhenLanded = spawnLancesWhenLanded;
+      dropshipExtractionGameLogic.takeOffImmediately = takeOffImmediately;
+      dropshipExtractionGameLogic.extractViaDropship = extractViaDropship;
+
+      return dropshipExtractionGameLogic;
     }
   }
 }

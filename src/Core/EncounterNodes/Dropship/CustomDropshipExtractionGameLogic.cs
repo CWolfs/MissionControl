@@ -15,7 +15,9 @@ namespace MissionControl.EncounterNodes.Dropship {
 
     public CustomDropshipLandingSpotRef dropshipLandingSpotRef = new CustomDropshipLandingSpotRef();
 
+    // OccupyRegionObjective - Used to call the dropshop to the landing spot on success & if it's offscreen & extractViaDropship is true
     public ObjectiveRef callDropshipObjectiveRef = new ObjectiveRef();
+    // OccupyRegionObjective - Used for getting units in region to despawn them (e.g. load them into the dropship)
     public ObjectiveRef loadDropshipObjectiveRef = new ObjectiveRef();
 
     public DespawnFloatieMessage despawnMessage = DespawnFloatieMessage.Escaped;

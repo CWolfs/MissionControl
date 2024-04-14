@@ -37,7 +37,7 @@ namespace MissionControl.ContractTypeBuilders {
       switch (subType) {
         case "DropshipLandingSpot": BuildDropshipLandingSpot(); break;
         case "DropshipExtraction": BuildDropshipExtraction(); break;
-        default: Main.LogDebug($"[CombatStateBuilder.{contractTypeBuilder.ContractTypeKey}] No support for sub-type '{subType}'. Check for spelling mistakes."); break;
+        default: Main.LogDebug($"[DropshipNodeBuilder.{contractTypeBuilder.ContractTypeKey}] No support for sub-type '{subType}'. Check for spelling mistakes."); break;
       }
     }
 
@@ -63,23 +63,24 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     private void BuildDropshipExtraction() {
-      /*
-        public CustomDropshipLandingSpotRef dropshipLandingSpotRef = new CustomDropshipLandingSpotRef();
-
-        public ObjectiveRef callDropshipObjectiveRef = new ObjectiveRef();
-        public ObjectiveRef loadDropshipObjectiveRef = new ObjectiveRef();
-
-        public DespawnFloatieMessage despawnMessage = DespawnFloatieMessage.Escaped;
-        public TagSet requiredTagsOnLance = new TagSet();
-
-        public bool spawnLancesWhenLanded = false;
-        public bool takeOffImmediately = false;
-        public bool extractViaDropship = true;
-      */
       string dropshipLandingSpotGUID = build["DropshipLandingSpotGuid"].ToString();
+      string callDropshipObjectiveGUID = build["CallDropshipObjectiveGuid"].ToString();
+      string loadDropshipObjectiveGUID = build["LoadDropshipObjectiveGuid"].ToString();
+      List<string> requiredTagsOnLance = build.ContainsKey("RequiredTagsOnLance") ? build["RequiredTagsOnLance"].ToObject<List<string>>() : null;
+      bool spawnLancesWhenLanded = build.ContainsKey("SpawnLancesWhenLanded") ? (bool)build["SpawnLancesWhenLanded"] : false;
+      bool takeOffImmediately = build.ContainsKey("TakeOffImmediately") ? (bool)build["TakeOffImmediately"] : false;
+      bool extractViaDropship = build.ContainsKey("ExtractViaDropship") ? (bool)build["ExtractViaDropship"] : true;
 
       CustomDropshipLandingSpotRef dropshipLandingSpotRef = new CustomDropshipLandingSpotRef();
       dropshipLandingSpotRef.EncounterObjectGuid = dropshipLandingSpotGUID;
+
+      ObjectiveRef callDropshipObjectiveRef = new ObjectiveRef();
+      callDropshipObjectiveRef.EncounterObjectGuid = callDropshipObjectiveGUID;
+
+      ObjectiveRef loadDropshipObjectiveRef = new ObjectiveRef();
+      loadDropshipObjectiveRef.EncounterObjectGuid = loadDropshipObjectiveGUID;
+
+      DropshipNodeFactory.CreateDropshipExtraction(this.parent, this.name, this.guid, dropshipLandingSpotRef, callDropshipObjectiveRef, loadDropshipObjectiveRef, requiredTagsOnLance, spawnLancesWhenLanded, takeOffImmediately, extractViaDropship);
     }
   }
 }

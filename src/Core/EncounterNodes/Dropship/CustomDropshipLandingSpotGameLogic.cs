@@ -13,7 +13,7 @@ namespace MissionControl.EncounterNodes.Dropship {
   public class CustomDropshipLandingSpotGameLogic : EncounterObjectGameLogic {
     public override TaggedObjectType Type => TaggedObjectType.DropshipLandingSpot;
 
-    public CustomDropshipType UseDropshipType = CustomDropshipType.Any;
+    public CustomDropshipType UseDropshipType { get; set; } = CustomDropshipType.Any;
     public StartingDropshipAnimationState DropshipStates { get; set; } = StartingDropshipAnimationState.Landed;
     public bool AutoMarkDropshipLandingZone { get; set; } = true;
     public string TeamGUID { get; set; } = string.Empty;
