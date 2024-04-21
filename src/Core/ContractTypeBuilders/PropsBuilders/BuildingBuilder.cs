@@ -5,6 +5,8 @@ using MissionControl.EncounterFactories;
 
 using Newtonsoft.Json.Linq;
 
+using System;
+
 namespace MissionControl.ContractTypeBuilders {
   public class BuildingBuilder : NodeBuilder {
     private ContractTypeBuilder contractTypeBuilder;
@@ -12,6 +14,7 @@ namespace MissionControl.ContractTypeBuilders {
 
     private string buildingName;
     private string buildingKey;
+    private string guid;
     private string customName;
     private int customStructurePoints;
     private string teamGUID;
@@ -24,7 +27,7 @@ namespace MissionControl.ContractTypeBuilders {
     public BuildingBuilder(ContractTypeBuilder contractTypeBuilder, JObject building, GameObject parent) {
       this.contractTypeBuilder = contractTypeBuilder;
       this.building = building;
-
+      this.guid = building.ContainsKey("GUID") ? building["GUID"].ToString() : Guid.NewGuid().ToString();
       buildingName = building["Name"].ToString();
       buildingKey = building["Key"].ToString();
       customName = building.ContainsKey("CustomName") ? building["CustomName"].ToString() : null;
@@ -48,7 +51,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       PropBuildingDef propBuildingDef = DataManager.Instance.BuildingDefs[buildingKey];
 
-      BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef, customName, customStructurePoints);
+      BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef, guid, customName, customStructurePoints);
       GameObject facilityGo = buildingFactory.CreateFacility(buildingKey, Parent, teamGUID);
 
       DestructibleObject destructibleObject = facilityGo.GetComponentInChildren<DestructibleObject>();

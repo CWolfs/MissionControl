@@ -5,11 +5,13 @@ using MissionControl.EncounterFactories;
 
 using Newtonsoft.Json.Linq;
 
+using System;
+
 namespace MissionControl.ContractTypeBuilders {
   public class StructureBuilder : NodeBuilder {
     private ContractTypeBuilder contractTypeBuilder;
     private JObject structure;
-
+    private string guid;
     private string structureName;
     private string structureKey;
     private string teamGUID;
@@ -25,6 +27,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       structureName = structure["Name"].ToString();
       structureKey = structure["Key"].ToString();
+      guid = structure.ContainsKey("GUID") ? structure["GUID"].ToString() : Guid.NewGuid().ToString();
       position = structure.ContainsKey("Position") ? (JObject)structure["Position"] : null;
       rotation = structure.ContainsKey("Rotation") ? (JObject)structure["Rotation"] : null;
       scale = structure.ContainsKey("Scale") ? (JObject)structure["Scale"] : null;
@@ -45,7 +48,7 @@ namespace MissionControl.ContractTypeBuilders {
       PropStructureDef propStructureDef = DataManager.Instance.StructureDefs[structureKey];
 
       StructureFactory structureFactory = new StructureFactory(propStructureDef);
-      GameObject structureGo = structureFactory.CreateStructure(structureKey, Parent, teamGUID);
+      GameObject structureGo = structureFactory.CreateStructure(structureKey, Parent, guid, teamGUID);
 
       if (this.position != null) {
         SetPosition(structureGo, this.position, exactPosition: true);

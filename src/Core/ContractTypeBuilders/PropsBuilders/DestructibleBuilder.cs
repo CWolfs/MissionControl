@@ -56,7 +56,7 @@ namespace MissionControl.ContractTypeBuilders {
               }
 
               PropBuildingDef propBuildingDef = DataManager.Instance.BuildingDefs[buildingKey];
-              BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef, customName, customStructurePoints);
+              BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef, null, customName, customStructurePoints);
 
               GameObject destructibleGO = buildingFactory.CreateBuilding(destructibleGroupGO, $"Building_{propBuildingDef.Key}", DestructibleObject.DestructType.flimsyStruct);
 

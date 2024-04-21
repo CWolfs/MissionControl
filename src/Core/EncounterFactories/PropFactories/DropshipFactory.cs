@@ -14,6 +14,7 @@ using BattleTech.Assetbundles;
 namespace MissionControl.EncounterFactories {
   public class DropshipFactory : PropFactory {
     private PropDropshipDef PropDropshipDef { get; set; }
+    private String GUID { get; set; }
     private String CustomName { get; set; }
     private int CustomStructurePoints { get; set; }
     private DropshipAnimationState StartingState { get; set; }
@@ -21,8 +22,9 @@ namespace MissionControl.EncounterFactories {
 
     private GameObject dropshipGO;
 
-    public DropshipFactory(PropDropshipDef propDropshipDef, string customName, int customStructurePoints, DropshipAnimationState startingState, string teamGUID) {
+    public DropshipFactory(PropDropshipDef propDropshipDef, string guid, string customName, int customStructurePoints, DropshipAnimationState startingState, string teamGUID) {
       PropDropshipDef = propDropshipDef;
+      GUID = guid;
       CustomName = customName;
       CustomStructurePoints = customStructurePoints;
       StartingState = startingState;
@@ -97,7 +99,7 @@ namespace MissionControl.EncounterFactories {
         DropshipGameLogic dropshipGameLogic = prefab.GetComponentInChildren<DropshipGameLogic>();
         dropshipGameLogic.currentAnimationState = DropshipAnimationState.Landed;
 
-        dropshipGameLogic.encounterObjectGuid = Guid.NewGuid().ToString();
+        dropshipGameLogic.encounterObjectGuid = GUID ?? Guid.NewGuid().ToString();
         MissionControl.Instance.CustomDropshipsGuids.Add(dropshipGameLogic.GUID);
 
         if (TeamGUID != null) {

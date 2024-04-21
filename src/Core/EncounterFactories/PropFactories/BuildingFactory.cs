@@ -15,6 +15,7 @@ namespace MissionControl.EncounterFactories {
     private string facilityName = "UNNAMED";
 
     private PropBuildingDef PropBuildingDef { get; set; }
+    private String GUID { get; set; }
     private String CustomName { get; set; }
     private int CustomStructurePoints { get; set; }
 
@@ -33,8 +34,9 @@ namespace MissionControl.EncounterFactories {
     private StructureGroup fadeStructureGroup;
     private DestructibleObject fadeDestructibleObject;
 
-    public BuildingFactory(PropBuildingDef propBuildingDef, string customName, int customStructurePoints) {
+    public BuildingFactory(PropBuildingDef propBuildingDef, string guid, string customName, int customStructurePoints) {
       PropBuildingDef = propBuildingDef;
+      GUID = guid;
       CustomName = customName;
       CustomStructurePoints = customStructurePoints;
     }
@@ -69,7 +71,7 @@ namespace MissionControl.EncounterFactories {
       obstructionGameLogic.buildingDefId = PropBuildingDef.BuildingDefID; // Supports direct BuildingDefIds (e.g. buildingdef_Military_Large) or general values (e.g. ObstructionGameLogic.buildingDef_SolidObstruction)
       obstructionGameLogic.teamDefinitionGuid = teamGUID == null ? TeamUtils.WORLD_TEAM_ID : teamGUID;
 
-      string obstructionGuid = Guid.NewGuid().ToString();
+      string obstructionGuid = GUID ?? Guid.NewGuid().ToString();
       obstructionGameLogic.encounterObjectGuid = obstructionGuid;
 
       // Track the custom buildings to bypass the min 8 cell hit count for buildings to be added to the proper building list of a MapEncounterLayerDataCell
