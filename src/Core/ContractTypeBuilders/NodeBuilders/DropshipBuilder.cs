@@ -35,8 +35,8 @@ namespace MissionControl.ContractTypeBuilders {
 
     public override void Build() {
       switch (subType) {
-        case "DropshipLandingSpot": BuildDropshipLandingSpot(); break;
-        case "DropshipExtraction": BuildDropshipExtraction(); break;
+        case "LandingSpot": BuildDropshipLandingSpot(); break;
+        case "Extraction": BuildDropshipExtraction(); break;
         default: Main.LogDebug($"[DropshipNodeBuilder.{contractTypeBuilder.ContractTypeKey}] No support for sub-type '{subType}'. Check for spelling mistakes."); break;
       }
     }
@@ -44,22 +44,15 @@ namespace MissionControl.ContractTypeBuilders {
     private void BuildDropshipLandingSpot() {
       string dropshipStatesRaw = build.ContainsKey("DropshipStates") ? build["DropshipStates"].ToString() : "Landed";
       string useDropshipTypeRaw = build.ContainsKey("UseDropshipType") ? build["UseDropshipType"].ToString() : "Any";
-      bool automarkLandingZone = build.ContainsKey("AutoMarkLandingZone") ? (bool)build["AutoMarkLandingZone"] : true;
-      string teamGUID = build["Team"].ToString();
-      List<string> dropshipGUIDs = ((JArray)build["DropshipGameLogicList"]).ToObject<List<string>>();
+      bool automarkLandingZone = build.ContainsKey("AutomarkLandingZone") ? (bool)build["AutomarkLandingZone"] : true;
+      string team = build["Team"].ToString();
+      List<string> dropshipTags = ((JArray)build["DropshipTags"]).ToObject<List<string>>();
 
+      string teamGUID = TeamUtils.GetTeamGuid(team);
       StartingDropshipAnimationState dropshipStates = (StartingDropshipAnimationState)Enum.Parse(typeof(StartingDropshipAnimationState), dropshipStatesRaw);
       CustomDropshipType useDropshipType = (CustomDropshipType)Enum.Parse(typeof(CustomDropshipType), useDropshipTypeRaw);
 
-      List<DropshipRef> dropshipRefs = new List<DropshipRef>();
-
-      foreach (string dropshipGUID in dropshipGUIDs) {
-        DropshipRef dropshipRef = new DropshipRef();
-        dropshipRef.EncounterObjectGuid = dropshipGUID;
-        dropshipRefs.Add(dropshipRef);
-      }
-
-      CustomDropshipLandingSpotGameLogic customDropshipLandingSpotGameLogic = DropshipNodeFactory.CreateDropshipLandingSpot(this.parent, this.name, this.guid, dropshipStates, useDropshipType, automarkLandingZone, teamGUID, dropshipRefs);
+      CustomDropshipLandingSpotGameLogic customDropshipLandingSpotGameLogic = DropshipNodeFactory.CreateDropshipLandingSpot(this.parent, this.name, this.guid, dropshipStates, useDropshipType, automarkLandingZone, teamGUID, dropshipTags);
     }
 
     private void BuildDropshipExtraction() {

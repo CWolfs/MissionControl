@@ -280,6 +280,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "ContractEdit": nodeBuilder = new ContractEditBuilder(this, parent, child); break;
         case "CombatState": nodeBuilder = new CombatStateBuilder(this, parent, child); break;
         case "Navigation": nodeBuilder = new NavigationBuilder(this, parent, child); break;
+        case "Dropship": nodeBuilder = new DropshipNodeBuilder(this, parent, child); break;
         default: break;
       }
 

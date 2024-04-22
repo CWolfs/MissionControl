@@ -26,7 +26,7 @@ namespace MissionControl.Result {
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
       base.Trigger(inMessage, triggeringName);
       CustomDropshipLandingSpotGameLogic dropshipLandingSpot = DropshipLandingSpotRef.GetEncounterObject(combat.ItemRegistry);
-      List<DropshipGameLogic> dropships = dropshipLandingSpot.GetDropships();
+      List<DropshipGameLogic> dropships = dropshipLandingSpot.DropshipGameLogicList;
 
       foreach (DropshipGameLogic dropship in dropships) {
         if (!dropshipLandingSpot.IsDropshipAlive(dropship)) {

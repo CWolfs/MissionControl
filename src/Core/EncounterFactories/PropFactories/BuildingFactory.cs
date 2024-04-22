@@ -16,6 +16,7 @@ namespace MissionControl.EncounterFactories {
 
     private PropBuildingDef PropBuildingDef { get; set; }
     private String GUID { get; set; }
+    private List<string> Tags { get; set; } = new List<string>();
     private String CustomName { get; set; }
     private int CustomStructurePoints { get; set; }
 
@@ -34,9 +35,10 @@ namespace MissionControl.EncounterFactories {
     private StructureGroup fadeStructureGroup;
     private DestructibleObject fadeDestructibleObject;
 
-    public BuildingFactory(PropBuildingDef propBuildingDef, string guid, string customName, int customStructurePoints) {
+    public BuildingFactory(PropBuildingDef propBuildingDef, string guid, List<string> tags, string customName, int customStructurePoints) {
       PropBuildingDef = propBuildingDef;
       GUID = guid;
+      Tags = tags;
       CustomName = customName;
       CustomStructurePoints = customStructurePoints;
     }
@@ -66,6 +68,7 @@ namespace MissionControl.EncounterFactories {
 
       SnapToTerrain snapToTerrain = buildingGroupGO.AddComponent<SnapToTerrain>();
       BuildingRepresentation buildingRepresentation = buildingGroupGO.AddComponent<BuildingRepresentation>();
+      buildingRepresentation.ParentBuilding.encounterTags.AddRange(Tags);
 
       ObstructionGameLogic obstructionGameLogic = buildingGroupGO.AddComponent<ObstructionGameLogic>();
       obstructionGameLogic.buildingDefId = PropBuildingDef.BuildingDefID; // Supports direct BuildingDefIds (e.g. buildingdef_Military_Large) or general values (e.g. ObstructionGameLogic.buildingDef_SolidObstruction)

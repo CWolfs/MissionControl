@@ -3,11 +3,10 @@ using BattleTech.Data;
 
 using HBS.Util;
 
-using BattleTech.Framework;
-
 using System.Collections.Generic;
 
 using MissionControl.Data;
+using HBS.Collections;
 
 namespace MissionControl.EncounterNodes.Dropship {
   public class CustomDropshipLandingSpotGameLogic : EncounterObjectGameLogic {
@@ -17,68 +16,40 @@ namespace MissionControl.EncounterNodes.Dropship {
     public StartingDropshipAnimationState DropshipStates { get; set; } = StartingDropshipAnimationState.Landed;
     public bool AutoMarkDropshipLandingZone { get; set; } = true;
     public string TeamGUID { get; set; } = string.Empty;
-    public List<DropshipRef> DropshipGameLogicList { get; set; } = new List<DropshipRef>();
+
+    public List<string> DropshipTags { get; set; } = new List<string>();
+
+    public List<DropshipGameLogic> DropshipGameLogicList { get; set; } = new List<DropshipGameLogic>();
 
     public override void BuildItemRegistry(CombatGameState combat) {
       base.BuildItemRegistry(combat);
-      List<DropshipRef> dropshipGameLogicList = this.DropshipGameLogicList;
-
-      for (int i = 0; i < dropshipGameLogicList.Count; i++) {
-        GetDropship(dropshipGameLogicList[i]).BuildItemRegistry(combat);
-      }
     }
 
-    public List<string> GetDropshipGUIDs() {
-      List<string> dropshipGUIDs = new List<string>();
+    private void PopulateDropships() {
+      List<ITaggedItem> potentialDropships = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetObjectsOfTypeWithTagSet(TaggedObjectType.ObstructionGameLogic, new TagSet(DropshipTags));
 
-      for (int i = 0; i < DropshipGameLogicList.Count; i++) {
-        dropshipGUIDs.Add(DropshipGameLogicList[i].EncounterObjectGuid);
-      }
-
-      return dropshipGUIDs;
-    }
-
-    public List<DropshipGameLogic> GetDropships() {
-      List<DropshipGameLogic> dropships = new List<DropshipGameLogic>();
-
-      for (int i = 0; i < DropshipGameLogicList.Count; i++) {
-        dropships.Add(GetDropship(DropshipGameLogicList[i]));
-      }
-
-      return dropships;
-    }
-
-    public DropshipGameLogic GetDropship(DropshipRef dropshipRef) {
-      return dropshipRef.GetEncounterObject(base.Combat.ItemRegistry);
-    }
-
-    public override void BuildEncounterObjectDictionary(Dictionary<string, EncounterObjectGameLogic> encounterObjectDictionary) {
-      base.BuildEncounterObjectDictionary(encounterObjectDictionary);
-    }
-
-    public void TurnOffDropshipLanding() {
-      AutoMarkDropshipLandingZone = false;
-
-      for (int i = 0; i < DropshipGameLogicList.Count; i++) {
-        DropshipGameLogic dropship = GetDropship(DropshipGameLogicList[i]);
-        dropship.autoMarkDropshipLandingZone = false;
-        dropship.MarkDropshipLandingZone(markAsDropshipLandingZone: false);
+      foreach (ITaggedItem potentialDropship in potentialDropships) {
+        DropshipGameLogic dropshipGameLogic = potentialDropship as DropshipGameLogic;
+        if (dropshipGameLogic != null) {
+          DropshipGameLogicList.Add(dropshipGameLogic);
+          Main.Logger.LogDebug("[CustomDropshipLandingSpotGameLogic.PopulateDropships] Found dropship: " + dropshipGameLogic.encounterObjectGuid);
+        }
       }
     }
 
     public override void ContractInitialize() {
       base.ContractInitialize();
-      List<DropshipRef> dropshipGameLogicList = this.DropshipGameLogicList;
 
-      foreach (DropshipRef dropshipRef in dropshipGameLogicList) {
-        DropshipGameLogic dropshipGameLogic = GetDropship(dropshipRef);
+      PopulateDropships();
 
+      foreach (DropshipGameLogic dropshipGameLogic in DropshipGameLogicList) {
         if (!base.Combat.IsLoadingFromSave) {
           if (TeamGUID != string.Empty) {
             dropshipGameLogic.ApplyHeraldry(TeamGUID);
           }
 
           if (UseDropshipType != CustomDropshipType.Any && dropshipGameLogic.dropshipType.ToString() != UseDropshipType.ToString()) {
+            Main.Logger.LogDebug("[CustomDropshipLandingSpotGameLogic.ContractInitialize] Ignoring dropship: " + dropshipGameLogic.encounterObjectGuid);
             dropshipGameLogic.IgnoreDropship();
             continue;
           }
@@ -91,42 +62,62 @@ namespace MissionControl.EncounterNodes.Dropship {
       }
     }
 
+    public override void EncounterStart() {
+      base.EncounterStart();
+      for (int i = 0; i < DropshipGameLogicList.Count; i++) {
+        DropshipGameLogicList[i].EncounterStart();
+      }
+    }
+
     public override void EncounterResume(LoadRequest loadRequest) {
       base.EncounterResume(loadRequest);
-      List<DropshipRef> dropshipGameLogicList = this.DropshipGameLogicList;
 
-      foreach (DropshipRef dropshipRef in dropshipGameLogicList) {
-        DropshipGameLogic dropshipGameLogic = GetDropship(dropshipRef);
-
+      foreach (DropshipGameLogic dropshipGameLogic in DropshipGameLogicList) {
         if (TeamGUID != string.Empty) {
           dropshipGameLogic.ApplyHeraldry(TeamGUID);
         }
       }
     }
 
-    public override void EncounterStart() {
-      base.EncounterStart();
-      List<DropshipRef> dropshipGameLogicList = this.DropshipGameLogicList;
-
-      for (int i = 0; i < dropshipGameLogicList.Count; i++) {
-        GetDropship(dropshipGameLogicList[i]).EncounterStart();
-      }
-    }
-
     public override void LoadComplete() {
       base.LoadComplete();
-      List<DropshipRef> dropshipGameLogicList = this.DropshipGameLogicList;
-      for (int i = 0; i < dropshipGameLogicList.Count; i++) {
-        dropshipGameLogicList[i].LoadComplete();
+
+      for (int i = 0; i < DropshipGameLogicList.Count; i++) {
+        DropshipGameLogicList[i].LoadComplete();
       }
     }
+
+    public List<string> GetDropshipGUIDs() {
+      List<string> dropshipGUIDs = new List<string>();
+
+      for (int i = 0; i < DropshipGameLogicList.Count; i++) {
+        dropshipGUIDs.Add(DropshipGameLogicList[i].encounterObjectGuid);
+      }
+
+      return dropshipGUIDs;
+    }
+
+    private List<DropshipGameLogic> FindDropships() {
+      return DropshipGameLogicList;
+    }
+
+    public override void BuildEncounterObjectDictionary(Dictionary<string, EncounterObjectGameLogic> encounterObjectDictionary) {
+      base.BuildEncounterObjectDictionary(encounterObjectDictionary);
+    }
+
+    public void TurnOffDropshipLanding() {
+      AutoMarkDropshipLandingZone = false;
+
+      for (int i = 0; i < DropshipGameLogicList.Count; i++) {
+        DropshipGameLogic dropship = DropshipGameLogicList[i];
+        dropship.autoMarkDropshipLandingZone = false;
+        dropship.MarkDropshipLandingZone(markAsDropshipLandingZone: false);
+      }
+    }
+
 
     public bool IsDropshipAlive(DropshipGameLogic dropship) {
       return dropship.IsBuildingAlive();
-    }
-
-    public bool IsDropshipAlive(DropshipRef dropshipRef) {
-      return GetDropship(dropshipRef).IsBuildingAlive();
     }
 
     public void LandDropship(DropshipGameLogic dropship) {
@@ -134,14 +125,6 @@ namespace MissionControl.EncounterNodes.Dropship {
         dropship.LandDropship();
       } else {
         Main.Logger.LogWarning("[CustomDropshipLandingSpotGameLogic] Tried to land the dropship when it was dead. Ignoring command.");
-      }
-    }
-
-    public void LandDropship(DropshipRef dropshipRef) {
-      if (IsDropshipAlive(dropshipRef)) {
-        GetDropship(dropshipRef).LandDropship();
-      } else {
-        Main.Logger.LogWarning("Tried to land the dropship when it was dead. Ignoring command.");
       }
     }
 
@@ -153,25 +136,9 @@ namespace MissionControl.EncounterNodes.Dropship {
       }
     }
 
-    public void TakeoffDropship(DropshipRef dropshipRef) {
-      if (IsDropshipAlive(dropshipRef)) {
-        GetDropship(dropshipRef).TakeoffDropship();
-      } else {
-        Main.Logger.LogWarning("Tried to takeoff the dropship when it was dead. Ignoring command.");
-      }
-    }
-
     public void FlybyDropship(DropshipGameLogic dropship) {
       if (IsDropshipAlive(dropship)) {
         dropship.StartDropoff();
-      } else {
-        Main.Logger.LogWarning("Tried to flyby the dropship when it was dead. Ignoring command.");
-      }
-    }
-
-    public void FlybyDropship(DropshipRef dropshipRef) {
-      if (IsDropshipAlive(dropshipRef)) {
-        GetDropship(dropshipRef).StartDropoff();
       } else {
         Main.Logger.LogWarning("Tried to flyby the dropship when it was dead. Ignoring command.");
       }

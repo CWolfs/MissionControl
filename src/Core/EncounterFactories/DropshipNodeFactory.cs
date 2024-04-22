@@ -20,7 +20,7 @@ namespace MissionControl.EncounterFactories {
       return go;
     }
 
-    public static CustomDropshipLandingSpotGameLogic CreateDropshipLandingSpot(GameObject parent, string name, string guid, StartingDropshipAnimationState dropshipStates, CustomDropshipType useDropshipType, bool automarkLandingZone, string teamGUID, List<DropshipRef> dropshipRefs) {
+    public static CustomDropshipLandingSpotGameLogic CreateDropshipLandingSpot(GameObject parent, string name, string guid, StartingDropshipAnimationState dropshipStates, CustomDropshipType useDropshipType, bool automarkLandingZone, string teamGUID, List<string> dropshipTags) {
       GameObject dropshipLandingSpoGameObject = CreateGameObject(parent, name);
 
       CustomDropshipLandingSpotGameLogic dropshipLandingSpotGameLogic = dropshipLandingSpoGameObject.AddComponent<CustomDropshipLandingSpotGameLogic>();
@@ -30,7 +30,7 @@ namespace MissionControl.EncounterFactories {
       dropshipLandingSpotGameLogic.UseDropshipType = useDropshipType;
       dropshipLandingSpotGameLogic.AutoMarkDropshipLandingZone = automarkLandingZone;
       dropshipLandingSpotGameLogic.TeamGUID = teamGUID;
-      dropshipLandingSpotGameLogic.DropshipGameLogicList = dropshipRefs;
+      dropshipLandingSpotGameLogic.DropshipTags = dropshipTags;
 
       return dropshipLandingSpotGameLogic;
     }

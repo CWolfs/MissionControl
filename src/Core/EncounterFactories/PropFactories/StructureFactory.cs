@@ -33,11 +33,11 @@ namespace MissionControl.EncounterFactories {
       return gameObject;
     }
 
-    public GameObject CreateStructure(string name, GameObject parent, string guid, string teamGUID = null) {
+    public GameObject CreateStructure(string name, GameObject parent, string guid, List<string> tags, string teamGUID = null) {
       this.structureName = name;
       structureParentGO = CreateGameObject(parent, name);
 
-      CreateStructureGroup(structureParentGO, $"StructureGroup_{structureName}", guid, teamGUID);
+      CreateStructureGroup(structureParentGO, $"StructureGroup_{structureName}", guid, tags, teamGUID);
       structureParentGO.AddComponent<FacilityParent>();
 
       if (structureParentGO != null) {
@@ -47,7 +47,7 @@ namespace MissionControl.EncounterFactories {
       return structureParentGO;
     }
 
-    private GameObject CreateStructureGroup(GameObject facilityGO, string name, string guid, string teamGUID) {
+    private GameObject CreateStructureGroup(GameObject facilityGO, string name, string guid, List<string> tags, string teamGUID) {
       structureGroupGO = CreateGameObject(facilityGO, name);
 
       CreateStructure(structureGroupGO, $"Structure_{structureName}");
@@ -57,6 +57,8 @@ namespace MissionControl.EncounterFactories {
       ObstructionGameLogic obstructionGameLogic = structureGroupGO.AddComponent<ObstructionGameLogic>();
       obstructionGameLogic.buildingDefId = ObstructionGameLogic.buildingDef_SolidObstruction;
       obstructionGameLogic.teamDefinitionGuid = teamGUID == null ? TeamUtils.WORLD_TEAM_ID : teamGUID;
+
+      obstructionGameLogic.encounterTags.AddRange(tags);
 
       string obstructionGuid = guid ?? Guid.NewGuid().ToString();
       obstructionGameLogic.encounterObjectGuid = obstructionGuid;

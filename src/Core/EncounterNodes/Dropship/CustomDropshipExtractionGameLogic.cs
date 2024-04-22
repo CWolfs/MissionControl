@@ -74,7 +74,7 @@ namespace MissionControl.EncounterNodes.Dropship {
     private void OnObjectiveSucceeded(MessageCenterMessage message) {
       ObjectiveSucceeded obj = message as ObjectiveSucceeded;
       CustomDropshipLandingSpotGameLogic dropshipLandingSpot = dropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
-      List<DropshipGameLogic> dropships = dropshipLandingSpot.GetDropships();
+      List<DropshipGameLogic> dropships = dropshipLandingSpot.DropshipGameLogicList;
 
       foreach (DropshipGameLogic dropship in dropships) {
         if (obj.ObjectiveGuid == callDropshipObjectiveRef.EncounterObjectGuid && dropship.currentAnimationState == DropshipAnimationState.OffScreen && extractViaDropship) {
@@ -142,7 +142,7 @@ namespace MissionControl.EncounterNodes.Dropship {
       }
 
       CustomDropshipLandingSpotGameLogic encounterObject = dropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
-      List<DropshipGameLogic> dropships = encounterObject.GetDropships();
+      List<DropshipGameLogic> dropships = encounterObject.DropshipGameLogicList;
 
       foreach (DropshipGameLogic dropship in dropships) {
         dropship.TakeoffDropship();

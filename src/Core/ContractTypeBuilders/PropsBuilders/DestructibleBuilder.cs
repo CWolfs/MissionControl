@@ -5,6 +5,8 @@ using MissionControl.EncounterFactories;
 
 using Newtonsoft.Json.Linq;
 
+using System.Collections.Generic;
+
 namespace MissionControl.ContractTypeBuilders {
   public class DestructibleBuilder : NodeBuilder {
     private ContractTypeBuilder contractTypeBuilder;
@@ -56,7 +58,7 @@ namespace MissionControl.ContractTypeBuilders {
               }
 
               PropBuildingDef propBuildingDef = DataManager.Instance.BuildingDefs[buildingKey];
-              BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef, null, customName, customStructurePoints);
+              BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef, null, new List<string>(), customName, customStructurePoints);
 
               GameObject destructibleGO = buildingFactory.CreateBuilding(destructibleGroupGO, $"Building_{propBuildingDef.Key}", DestructibleObject.DestructType.flimsyStruct);
 
