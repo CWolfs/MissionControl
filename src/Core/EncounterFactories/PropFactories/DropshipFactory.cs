@@ -112,6 +112,13 @@ namespace MissionControl.EncounterFactories {
           Main.Logger.Log("[DropshipFactory.CreateVanillaDropship] Adding to team " + TeamGUID);
           dropshipGameLogic.teamDefinitionGuid = TeamGUID;
         }
+
+        if (propModelDef.CompleteBundleName == "chrPrfVhcl_union") {
+          Main.Logger.LogDebug("[DropshipFactory.CreateVanillaDropship] Removing problematic particle system that causes insane slowdown");
+          prefab.transform.Find("j_Root/vfxPrfPrtl_unionLanding/superhot exhaust (1)/exhaust1_outward")?.gameObject.SetActive(false);
+          prefab.transform.Find("j_Root/vfxPrfPrtl_unionTakeoff/superhot exhaust (1)/exhaust1_outward")?.gameObject.SetActive(false);
+          prefab.transform.Find("j_Root/vfxPrfPrtl_unionDropoff/superhot exhaust (1)/exhaust1_outward")?.gameObject.SetActive(false);
+        }
       } else {
         Main.Logger.LogError("[DropshipFactory.CreateVanillaDropship] Prefab is null");
       }
