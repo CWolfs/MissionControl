@@ -641,16 +641,16 @@ namespace MissionControl.ContractTypeBuilders {
     private void BuildAnimateDropshipResult(JObject resultObject) {
       Main.LogDebug("[BuildAnimateDropship] Building 'BuildAnimateDropship' result");
       string dropshipLandingSpotGUID = resultObject["DropshipLandingSpotGUID"].ToString();
-      string animateCommandRaw = resultObject["AnimateCommand"].ToString();
+      string animateCommandRaw = resultObject["AnimationType"].ToString();
 
       CustomDropshipLandingSpotRef dropshipLandingSpotRef = new CustomDropshipLandingSpotRef();
       dropshipLandingSpotRef.EncounterObjectGuid = dropshipLandingSpotGUID;
 
-      CustomAnimateDropshipResult.DropshipAnimateCommand animateCommand = (CustomAnimateDropshipResult.DropshipAnimateCommand)Enum.Parse(typeof(CustomAnimateDropshipResult.DropshipAnimateCommand), animateCommandRaw);
+      CustomAnimateDropshipResult.DropshipAnimateCommand animationType = (CustomAnimateDropshipResult.DropshipAnimateCommand)Enum.Parse(typeof(CustomAnimateDropshipResult.DropshipAnimateCommand), animateCommandRaw);
 
       CustomAnimateDropshipResult result = ScriptableObject.CreateInstance<CustomAnimateDropshipResult>();
       result.DropshipLandingSpotRef = dropshipLandingSpotRef;
-      result.AnimateCommand = animateCommand;
+      result.AnimationType = animationType;
 
       results.Add(result);
     }

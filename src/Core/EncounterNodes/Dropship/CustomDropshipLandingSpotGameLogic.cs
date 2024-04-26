@@ -64,6 +64,7 @@ namespace MissionControl.EncounterNodes.Dropship {
 
     public override void EncounterStart() {
       base.EncounterStart();
+
       for (int i = 0; i < DropshipGameLogicList.Count; i++) {
         DropshipGameLogicList[i].EncounterStart();
       }
@@ -114,7 +115,6 @@ namespace MissionControl.EncounterNodes.Dropship {
         dropship.MarkDropshipLandingZone(markAsDropshipLandingZone: false);
       }
     }
-
 
     public bool IsDropshipAlive(DropshipGameLogic dropship) {
       return dropship.IsBuildingAlive();

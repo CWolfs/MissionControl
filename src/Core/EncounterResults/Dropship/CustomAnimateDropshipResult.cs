@@ -21,7 +21,7 @@ namespace MissionControl.Result {
     public CustomDropshipLandingSpotRef DropshipLandingSpotRef { get; set; } = new CustomDropshipLandingSpotRef();
 
     [SerializableMember(SerializationTarget.All)]
-    public DropshipAnimateCommand AnimateCommand { get; set; } = DropshipAnimateCommand.Takeoff;
+    public DropshipAnimateCommand AnimationType { get; set; } = DropshipAnimateCommand.Takeoff;
 
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
       base.Trigger(inMessage, triggeringName);
@@ -32,7 +32,7 @@ namespace MissionControl.Result {
         if (!dropshipLandingSpot.IsDropshipAlive(dropship)) {
           dropshipLandingSpot.LogWarning("Tried to animate a dead dropship. Aborting animation.");
         } else if (dropshipLandingSpot != null) {
-          switch (AnimateCommand) {
+          switch (AnimationType) {
             case DropshipAnimateCommand.Land:
               dropshipLandingSpot.LandDropship(dropship);
               break;
@@ -48,18 +48,18 @@ namespace MissionControl.Result {
     }
 
     public override int Size() {
-      return base.Size() + DropshipLandingSpotRef.Size() + HBS.Util.Serialization.StorageSpaceEnum(AnimateCommand);
+      return base.Size() + DropshipLandingSpotRef.Size() + HBS.Util.Serialization.StorageSpaceEnum(AnimationType);
     }
 
     public override void Save(SerializationStream stream) {
       base.Save(stream);
       DropshipLandingSpotRef.Save(stream);
-      stream.PutEnum(AnimateCommand);
+      stream.PutEnum(AnimationType);
     }
 
     public override void Load(SerializationStream stream) {
       DropshipLandingSpotRef.Load(stream);
-      AnimateCommand = stream.GetEnum<DropshipAnimateCommand>();
+      AnimationType = stream.GetEnum<DropshipAnimateCommand>();
     }
 
     public override void ReattachReferences(Dictionary<string, EncounterObjectGameLogic> encounterObjectDictionary) {
