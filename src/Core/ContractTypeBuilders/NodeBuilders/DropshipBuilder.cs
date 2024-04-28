@@ -59,10 +59,11 @@ namespace MissionControl.ContractTypeBuilders {
       string dropshipLandingSpotGUID = build["DropshipLandingSpotGuid"].ToString();
       string callDropshipObjectiveGUID = build.ContainsKey("CallDropshipObjectiveGuid") ? build["CallDropshipObjectiveGuid"].ToString() : null;
       string loadDropshipObjectiveGUID = build.ContainsKey("LoadDropshipObjectiveGuid") ? build["LoadDropshipObjectiveGuid"].ToString() : null;
-      List<string> requiredTagsOnLance = build.ContainsKey("RequiredTagsOnLance") ? build["RequiredTagsOnLance"].ToObject<List<string>>() : null;
+      List<string> requiredTagsOnLance = build.ContainsKey("RequiredTagsOnLance") ? build["RequiredTagsOnLance"].ToObject<List<string>>() : new List<string>();
       bool spawnLancesWhenLanded = build.ContainsKey("SpawnLancesWhenLanded") ? (bool)build["SpawnLancesWhenLanded"] : false;
       bool takeOffImmediately = build.ContainsKey("TakeOffImmediately") ? (bool)build["TakeOffImmediately"] : false;
       bool extractViaDropship = build.ContainsKey("ExtractViaDropship") ? (bool)build["ExtractViaDropship"] : true;
+      bool showEscapeMessage = build.ContainsKey("ShowEscapeMessage") ? (bool)build["ShowEscapeMessage"] : false;
 
       CustomDropshipLandingSpotRef dropshipLandingSpotRef = new CustomDropshipLandingSpotRef();
       dropshipLandingSpotRef.EncounterObjectGuid = dropshipLandingSpotGUID;
@@ -73,7 +74,7 @@ namespace MissionControl.ContractTypeBuilders {
       ObjectiveRef loadDropshipObjectiveRef = new ObjectiveRef();
       loadDropshipObjectiveRef.EncounterObjectGuid = loadDropshipObjectiveGUID;
 
-      DropshipNodeFactory.CreateDropshipExtraction(this.parent, this.name, this.guid, dropshipLandingSpotRef, callDropshipObjectiveRef, loadDropshipObjectiveRef, requiredTagsOnLance, spawnLancesWhenLanded, takeOffImmediately, extractViaDropship);
+      DropshipNodeFactory.CreateDropshipExtraction(this.parent, this.name, this.guid, dropshipLandingSpotRef, callDropshipObjectiveRef, loadDropshipObjectiveRef, requiredTagsOnLance, spawnLancesWhenLanded, takeOffImmediately, extractViaDropship, showEscapeMessage);
     }
   }
 }

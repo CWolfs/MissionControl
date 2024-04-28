@@ -12,27 +12,28 @@ using System.Collections.Generic;
 namespace MissionControl.EncounterNodes.Dropship {
   public class CustomDropshipExtractionGameLogic : EncounterObjectGameLogic {
     public override TaggedObjectType Type => TaggedObjectType.Logic;
+    public DespawnFloatieMessage despawnMessage = DespawnFloatieMessage.Escaped;
 
-    public CustomDropshipLandingSpotRef dropshipLandingSpotRef = new CustomDropshipLandingSpotRef();
+    public CustomDropshipLandingSpotRef DropshipLandingSpotRef { get; set; } = new CustomDropshipLandingSpotRef();
 
     // OccupyRegionObjective - Used to call the dropshop to the landing spot on success & if it's offscreen & extractViaDropship is true
-    public ObjectiveRef callDropshipObjectiveRef = new ObjectiveRef();
+    public ObjectiveRef CallDropshipObjectiveRef { get; set; } = new ObjectiveRef();
     // OccupyRegionObjective - Used for getting units in region to despawn them (e.g. load them into the dropship)
-    public ObjectiveRef loadDropshipObjectiveRef = new ObjectiveRef();
+    public ObjectiveRef LoadDropshipObjectiveRef { get; set; } = new ObjectiveRef();
 
-    public DespawnFloatieMessage despawnMessage = DespawnFloatieMessage.Escaped;
-    public TagSet requiredTagsOnLance = new TagSet();
+    public TagSet RequiredTagsOnLance { get; set; } = new TagSet();
 
-    public bool spawnLancesWhenLanded = false;
-    public bool takeOffImmediately = false;
-    public bool extractViaDropship = true;
+    public bool SpawnLancesWhenLanded { get; set; } = false;
+    public bool TakeOffImmediately { get; set; } = false;
+    public bool ExtractViaDropship { get; set; } = true;
+    public bool ShowEscapeMessage { get; set; } = true;
 
     public override void OnEnterActive() {
       base.OnEnterActive();
 
-      CustomDropshipLandingSpotGameLogic dropshipLandingSpot = dropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
-      ObjectiveGameLogic callDropshipObjective = callDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry);
-      ObjectiveGameLogic loadDropshipObjective = loadDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry);
+      CustomDropshipLandingSpotGameLogic dropshipLandingSpot = DropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
+      ObjectiveGameLogic callDropshipObjective = CallDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry);
+      ObjectiveGameLogic loadDropshipObjective = LoadDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry);
 
       switch (dropshipLandingSpot.DropshipStates) {
         case StartingDropshipAnimationState.OffScreen:
@@ -42,6 +43,10 @@ namespace MissionControl.EncounterNodes.Dropship {
           callDropshipObjective.IgnoreObjective();
           loadDropshipObjective.SetState(EncounterObjectStatus.Active);
           break;
+      }
+
+      if (!ShowEscapeMessage) {
+        despawnMessage = DespawnFloatieMessage.NoMessage;
       }
     }
 
@@ -62,29 +67,29 @@ namespace MissionControl.EncounterNodes.Dropship {
     public override void ContractInitialize() {
       base.ContractInitialize();
 
-      if (!extractViaDropship) {
-        dropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry).TurnOffDropshipLanding();
+      if (!ExtractViaDropship) {
+        DropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry).TurnOffDropshipLanding();
       }
     }
 
     public void ApplyExtractionOverride(ExtractionOverride extractionOverride) {
-      extractViaDropship = extractionOverride.extractViaDropship;
+      ExtractViaDropship = extractionOverride.extractViaDropship;
     }
 
     private void OnObjectiveSucceeded(MessageCenterMessage message) {
       ObjectiveSucceeded obj = message as ObjectiveSucceeded;
-      CustomDropshipLandingSpotGameLogic dropshipLandingSpot = dropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
+      CustomDropshipLandingSpotGameLogic dropshipLandingSpot = DropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
       List<DropshipGameLogic> dropships = dropshipLandingSpot.DropshipGameLogicList;
 
       foreach (DropshipGameLogic dropship in dropships) {
-        if (obj.ObjectiveGuid == callDropshipObjectiveRef.EncounterObjectGuid && dropship.currentAnimationState == DropshipAnimationState.OffScreen && extractViaDropship) {
+        if (obj.ObjectiveGuid == CallDropshipObjectiveRef.EncounterObjectGuid && dropship.currentAnimationState == DropshipAnimationState.OffScreen && ExtractViaDropship) {
           dropship.LandDropship();
         }
 
-        if (obj.ObjectiveGuid == loadDropshipObjectiveRef.EncounterObjectGuid) {
+        if (obj.ObjectiveGuid == LoadDropshipObjectiveRef.EncounterObjectGuid) {
           DespawnUnits();
 
-          if (dropship.currentAnimationState == DropshipAnimationState.Landed && extractViaDropship) {
+          if (dropship.currentAnimationState == DropshipAnimationState.Landed && ExtractViaDropship) {
             dropship.TakeoffDropship();
           }
         }
@@ -92,7 +97,7 @@ namespace MissionControl.EncounterNodes.Dropship {
     }
 
     private void DespawnUnits() {
-      OccupyRegionObjective occupyRegionObjective = loadDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry) as OccupyRegionObjective;
+      OccupyRegionObjective occupyRegionObjective = LoadDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry) as OccupyRegionObjective;
 
       if (occupyRegionObjective != null) {
         foreach (ICombatant targetUnit in occupyRegionObjective.GetTargetUnits()) {
@@ -105,17 +110,17 @@ namespace MissionControl.EncounterNodes.Dropship {
 
     private void OnDropshipLanded(MessageCenterMessage message) {
       DropshipLandedMessage obj = message as DropshipLandedMessage;
-      CustomDropshipLandingSpotGameLogic dropshipLandingSpot = dropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
+      CustomDropshipLandingSpotGameLogic dropshipLandingSpot = DropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
 
       List<string> dropshipGUIDs = dropshipLandingSpot.GetDropshipGUIDs();
 
       foreach (string dropshipGUID in dropshipGUIDs) {
         if (obj.DropshipGuid == dropshipGUID) {
-          if (spawnLancesWhenLanded) {
+          if (SpawnLancesWhenLanded) {
             TriggerSpawnLances();
           }
 
-          if (takeOffImmediately) {
+          if (TakeOffImmediately) {
             TriggerDropshipTakeOff();
           } else {
             TriggerWaitToTakeOff();
@@ -124,24 +129,24 @@ namespace MissionControl.EncounterNodes.Dropship {
       }
     }
 
-    private void TriggerSpawnLances() {
-      List<ITaggedItem> objectsOfTypeWithTagSet = base.Combat.ItemRegistry.GetObjectsOfTypeWithTagSet(TaggedObjectType.LanceSpawner, requiredTagsOnLance);
+    public void TriggerSpawnLances() {
+      List<ITaggedItem> objectsOfTypeWithTagSet = base.Combat.ItemRegistry.GetObjectsOfTypeWithTagSet(TaggedObjectType.LanceSpawner, RequiredTagsOnLance);
 
       for (int i = 0; i < objectsOfTypeWithTagSet.Count; i++) {
         EncounterLayerParent.EnqueueLoadAwareMessage(new TriggerSpawn(objectsOfTypeWithTagSet[i].GUID));
       }
     }
 
-    private void TriggerWaitToTakeOff() {
-      (loadDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry) as OccupyRegionObjective).SetState(EncounterObjectStatus.Active);
+    public void TriggerWaitToTakeOff() {
+      (LoadDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry) as OccupyRegionObjective).SetState(EncounterObjectStatus.Active);
     }
 
     public void TriggerDropshipTakeOff() {
-      foreach (ICombatant targetUnit in (callDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry) as OccupyRegionObjective).GetTargetUnits()) {
+      foreach (ICombatant targetUnit in (CallDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry) as OccupyRegionObjective).GetTargetUnits()) {
         EncounterLayerParent.EnqueueLoadAwareMessage(new DespawnActorMessage(encounterObjectGuid, targetUnit.GUID, (DeathMethod)despawnMessage));
       }
 
-      CustomDropshipLandingSpotGameLogic encounterObject = dropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
+      CustomDropshipLandingSpotGameLogic encounterObject = DropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
       List<DropshipGameLogic> dropships = encounterObject.DropshipGameLogicList;
 
       foreach (DropshipGameLogic dropship in dropships) {

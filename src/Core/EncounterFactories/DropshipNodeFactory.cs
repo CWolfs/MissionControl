@@ -35,19 +35,20 @@ namespace MissionControl.EncounterFactories {
       return dropshipLandingSpotGameLogic;
     }
 
-    public static CustomDropshipExtractionGameLogic CreateDropshipExtraction(GameObject parent, string name, string guid, CustomDropshipLandingSpotRef dropshipLandingSpotRef, ObjectiveRef callDropshipObjectiveRef, ObjectiveRef loadDropshipObjectiveRef, List<string> requiredTagsOnLance, bool spawnLancesWhenLanded, bool takeOffImmediately, bool extractViaDropship) {
+    public static CustomDropshipExtractionGameLogic CreateDropshipExtraction(GameObject parent, string name, string guid, CustomDropshipLandingSpotRef dropshipLandingSpotRef, ObjectiveRef callDropshipObjectiveRef, ObjectiveRef loadDropshipObjectiveRef, List<string> requiredTagsOnLance, bool spawnLancesWhenLanded, bool takeOffImmediately, bool extractViaDropship, bool showEscapeMessage) {
       GameObject dropshipExtractionGameObject = CreateGameObject(parent, name);
 
       CustomDropshipExtractionGameLogic dropshipExtractionGameLogic = dropshipExtractionGameObject.AddComponent<CustomDropshipExtractionGameLogic>();
       dropshipExtractionGameLogic.encounterObjectGuid = guid;
 
-      dropshipExtractionGameLogic.dropshipLandingSpotRef = dropshipLandingSpotRef;
-      dropshipExtractionGameLogic.callDropshipObjectiveRef = callDropshipObjectiveRef;
-      dropshipExtractionGameLogic.loadDropshipObjectiveRef = loadDropshipObjectiveRef;
-      dropshipExtractionGameLogic.requiredTagsOnLance = new TagSet(requiredTagsOnLance);
-      dropshipExtractionGameLogic.spawnLancesWhenLanded = spawnLancesWhenLanded;
-      dropshipExtractionGameLogic.takeOffImmediately = takeOffImmediately;
-      dropshipExtractionGameLogic.extractViaDropship = extractViaDropship;
+      dropshipExtractionGameLogic.DropshipLandingSpotRef = dropshipLandingSpotRef;
+      dropshipExtractionGameLogic.CallDropshipObjectiveRef = callDropshipObjectiveRef;
+      dropshipExtractionGameLogic.LoadDropshipObjectiveRef = loadDropshipObjectiveRef;
+      dropshipExtractionGameLogic.RequiredTagsOnLance = new TagSet(requiredTagsOnLance);
+      dropshipExtractionGameLogic.SpawnLancesWhenLanded = spawnLancesWhenLanded;
+      dropshipExtractionGameLogic.TakeOffImmediately = takeOffImmediately;
+      dropshipExtractionGameLogic.ExtractViaDropship = extractViaDropship;
+      dropshipExtractionGameLogic.ShowEscapeMessage = showEscapeMessage;
 
       return dropshipExtractionGameLogic;
     }
