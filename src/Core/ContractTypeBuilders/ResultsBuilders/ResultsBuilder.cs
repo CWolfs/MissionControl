@@ -11,6 +11,7 @@ using System.Collections.Generic;
 
 using MissionControl.Result;
 using MissionControl.Data;
+using MissionControl.Data.Refs;
 
 namespace MissionControl.ContractTypeBuilders {
   public class ResultsBuilder {
@@ -79,6 +80,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "SwapTeams": BuildSwapTeamsResult(result); break;
         case "SetAllTeamsRelationship": BuildSetAllTeamsRelationshipResult(result); break;
         case "EndCombatRetreat": BuildEndCombatRetreatResult(result); break;
+        case "AnimateDropship": BuildAnimateDropshipResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -632,6 +634,23 @@ namespace MissionControl.ContractTypeBuilders {
 
       EndCombatRetreatResult result = ScriptableObject.CreateInstance<EndCombatRetreatResult>();
       result.EffortOverride = effortOverride;
+
+      results.Add(result);
+    }
+
+    private void BuildAnimateDropshipResult(JObject resultObject) {
+      Main.LogDebug("[BuildAnimateDropship] Building 'BuildAnimateDropship' result");
+      string dropshipLandingSpotGUID = resultObject["DropshipLandingSpotGUID"].ToString();
+      string animateCommandRaw = resultObject["AnimationType"].ToString();
+
+      CustomDropshipLandingSpotRef dropshipLandingSpotRef = new CustomDropshipLandingSpotRef();
+      dropshipLandingSpotRef.EncounterObjectGuid = dropshipLandingSpotGUID;
+
+      CustomAnimateDropshipResult.DropshipAnimateCommand animationType = (CustomAnimateDropshipResult.DropshipAnimateCommand)Enum.Parse(typeof(CustomAnimateDropshipResult.DropshipAnimateCommand), animateCommandRaw);
+
+      CustomAnimateDropshipResult result = ScriptableObject.CreateInstance<CustomAnimateDropshipResult>();
+      result.DropshipLandingSpotRef = dropshipLandingSpotRef;
+      result.AnimationType = animationType;
 
       results.Add(result);
     }

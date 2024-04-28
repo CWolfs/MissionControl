@@ -14,6 +14,8 @@ using BattleTech.Assetbundles;
 namespace MissionControl.EncounterFactories {
   public class DropshipFactory : PropFactory {
     private PropDropshipDef PropDropshipDef { get; set; }
+    private String GUID { get; set; }
+    private List<string> Tags { get; set; }
     private String CustomName { get; set; }
     private int CustomStructurePoints { get; set; }
     private DropshipAnimationState StartingState { get; set; }
@@ -21,8 +23,10 @@ namespace MissionControl.EncounterFactories {
 
     private GameObject dropshipGO;
 
-    public DropshipFactory(PropDropshipDef propDropshipDef, string customName, int customStructurePoints, DropshipAnimationState startingState, string teamGUID) {
+    public DropshipFactory(PropDropshipDef propDropshipDef, string guid, List<string> tags, string customName, int customStructurePoints, DropshipAnimationState startingState, string teamGUID) {
       PropDropshipDef = propDropshipDef;
+      GUID = guid;
+      Tags = tags;
       CustomName = customName;
       CustomStructurePoints = customStructurePoints;
       StartingState = startingState;
@@ -96,13 +100,24 @@ namespace MissionControl.EncounterFactories {
 
         DropshipGameLogic dropshipGameLogic = prefab.GetComponentInChildren<DropshipGameLogic>();
         dropshipGameLogic.currentAnimationState = DropshipAnimationState.Landed;
+        dropshipGameLogic.encounterTags.AddRange(Tags);
 
-        dropshipGameLogic.encounterObjectGuid = Guid.NewGuid().ToString();
+        // BuildingRepresentation buildingRep = prefab.GetComponentInChildren<BuildingRepresentation>();
+        // buildingRep.ParentBuilding.encounterTags.AddRange(Tags);
+
+        dropshipGameLogic.encounterObjectGuid = GUID ?? Guid.NewGuid().ToString();
         MissionControl.Instance.CustomDropshipsGuids.Add(dropshipGameLogic.GUID);
 
         if (TeamGUID != null) {
           Main.Logger.Log("[DropshipFactory.CreateVanillaDropship] Adding to team " + TeamGUID);
           dropshipGameLogic.teamDefinitionGuid = TeamGUID;
+        }
+
+        if (propModelDef.CompleteBundleName == "chrPrfVhcl_union") {
+          Main.Logger.LogDebug("[DropshipFactory.CreateVanillaDropship] Removing problematic particle system that causes insane slowdown");
+          prefab.transform.Find("j_Root/vfxPrfPrtl_unionLanding/superhot exhaust (1)/exhaust1_outward")?.gameObject.SetActive(false);
+          prefab.transform.Find("j_Root/vfxPrfPrtl_unionTakeoff/superhot exhaust (1)/exhaust1_outward")?.gameObject.SetActive(false);
+          prefab.transform.Find("j_Root/vfxPrfPrtl_unionDropoff/superhot exhaust (1)/exhaust1_outward")?.gameObject.SetActive(false);
         }
       } else {
         Main.Logger.LogError("[DropshipFactory.CreateVanillaDropship] Prefab is null");

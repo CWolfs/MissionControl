@@ -1,15 +1,9 @@
 using UnityEngine;
 
 using BattleTech;
-using BattleTech.Designed;
 
-using HBS.Collections;
-
-using System;
-using System.Linq;
 using System.Collections.Generic;
 
-using MissionControl.Rules;
 using MissionControl.EncounterFactories;
 
 using Newtonsoft.Json.Linq;

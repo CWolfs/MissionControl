@@ -1,6 +1,7 @@
 using UnityEngine;
 
 using System;
+using System.Collections.Generic;
 
 using BattleTech;
 
@@ -16,6 +17,8 @@ namespace MissionControl.ContractTypeBuilders {
 
     private string dropshipName;
     private string dropshipKey;
+    private string guid;
+    private List<string> tags;
     private string customName;
     private int customStructurePoints;
     private DropshipAnimationState startingDropshipState;
@@ -32,6 +35,8 @@ namespace MissionControl.ContractTypeBuilders {
 
       dropshipName = dropship["Name"].ToString();
       dropshipKey = dropship["Key"].ToString();
+      this.guid = dropship.ContainsKey("GUID") ? dropship["GUID"].ToString() : Guid.NewGuid().ToString();
+      tags = dropship.ContainsKey("Tags") ? dropship["Tags"].ToObject<List<string>>() : new List<string>();
       customName = dropship.ContainsKey("CustomName") ? dropship["CustomName"].ToString() : null;
       customStructurePoints = dropship.ContainsKey("CustomStructurePoints") ? (int)dropship["CustomStructurePoints"] : 0;
 
@@ -57,7 +62,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       PropDropshipDef propDropshipDef = DataManager.Instance.DropshipDefs[dropshipKey];
 
-      DropshipFactory buildingFactory = new DropshipFactory(propDropshipDef, customName, customStructurePoints, startingDropshipState, teamGUID);
+      DropshipFactory buildingFactory = new DropshipFactory(propDropshipDef, guid, tags, customName, customStructurePoints, startingDropshipState, teamGUID);
       GameObject dropshipGO = buildingFactory.CreateDropship(Parent, dropshipKey);
 
       if (dropshipGO == null) {

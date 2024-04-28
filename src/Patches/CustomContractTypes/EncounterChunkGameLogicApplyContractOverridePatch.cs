@@ -4,6 +4,7 @@ using BattleTech;
 using BattleTech.Framework;
 
 using System;
+using System.Collections.Generic;
 
 namespace MissionControl.Patches {
   [HarmonyPatch(typeof(EncounterChunkGameLogic), "ApplyContractOverride")]
@@ -11,6 +12,7 @@ namespace MissionControl.Patches {
     static bool Prefix(EncounterChunkGameLogic __instance, ChunkOverride chunkOverride) {
       Main.LogDebug($"[EncounterChunkGameLogicApplyContractOverridePatch.Prefix] Running EncounterChunkGameLogicApplyContractOverridePatch - {chunkOverride.name}");
       EncounterObjectStatus startingStatus = EncounterObjectStatus.Active;
+
       if (chunkOverride.enableChunkFromContract) {
         if (chunkOverride.controlledByContractChunkGroupList.Count > 0) {
 
@@ -20,6 +22,7 @@ namespace MissionControl.Patches {
         }
         __instance.startingStatus = startingStatus;
       }
+
       return false;
     }
   }

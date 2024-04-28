@@ -5,6 +5,9 @@ using MissionControl.EncounterFactories;
 
 using Newtonsoft.Json.Linq;
 
+using System;
+using System.Collections.Generic;
+
 namespace MissionControl.ContractTypeBuilders {
   public class BuildingBuilder : NodeBuilder {
     private ContractTypeBuilder contractTypeBuilder;
@@ -12,6 +15,8 @@ namespace MissionControl.ContractTypeBuilders {
 
     private string buildingName;
     private string buildingKey;
+    private string guid;
+    private List<string> tags;
     private string customName;
     private int customStructurePoints;
     private string teamGUID;
@@ -24,7 +29,7 @@ namespace MissionControl.ContractTypeBuilders {
     public BuildingBuilder(ContractTypeBuilder contractTypeBuilder, JObject building, GameObject parent) {
       this.contractTypeBuilder = contractTypeBuilder;
       this.building = building;
-
+      this.guid = building.ContainsKey("GUID") ? building["GUID"].ToString() : Guid.NewGuid().ToString();
       buildingName = building["Name"].ToString();
       buildingKey = building["Key"].ToString();
       customName = building.ContainsKey("CustomName") ? building["CustomName"].ToString() : null;
@@ -32,6 +37,7 @@ namespace MissionControl.ContractTypeBuilders {
       position = building.ContainsKey("Position") ? (JObject)building["Position"] : null;
       rotation = building.ContainsKey("Rotation") ? (JObject)building["Rotation"] : null;
       scale = building.ContainsKey("Scale") ? (JObject)building["Scale"] : null;
+      tags = building.ContainsKey("Tags") ? building["Tags"].ToObject<List<string>>() : new List<string>();
 
       string teamRaw = building.ContainsKey("Team") ? building["Team"].ToString() : null;
       teamGUID = teamRaw != null ? TeamUtils.GetTeamGuid(teamRaw) : TeamUtils.WORLD_TEAM_ID;
@@ -48,7 +54,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       PropBuildingDef propBuildingDef = DataManager.Instance.BuildingDefs[buildingKey];
 
-      BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef, customName, customStructurePoints);
+      BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef, guid, tags, customName, customStructurePoints);
       GameObject facilityGo = buildingFactory.CreateFacility(buildingKey, Parent, teamGUID);
 
       DestructibleObject destructibleObject = facilityGo.GetComponentInChildren<DestructibleObject>();

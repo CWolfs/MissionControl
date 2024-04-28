@@ -33,11 +33,11 @@ namespace MissionControl.EncounterFactories {
       return gameObject;
     }
 
-    public GameObject CreateStructure(string name, GameObject parent, string teamGUID = null) {
+    public GameObject CreateStructure(string name, GameObject parent, string guid, List<string> tags, string teamGUID = null) {
       this.structureName = name;
       structureParentGO = CreateGameObject(parent, name);
 
-      CreateStructureGroup(structureParentGO, $"StructureGroup_{structureName}", teamGUID);
+      CreateStructureGroup(structureParentGO, $"StructureGroup_{structureName}", guid, tags, teamGUID);
       structureParentGO.AddComponent<FacilityParent>();
 
       if (structureParentGO != null) {
@@ -47,7 +47,7 @@ namespace MissionControl.EncounterFactories {
       return structureParentGO;
     }
 
-    private GameObject CreateStructureGroup(GameObject facilityGO, string name, string teamGUID) {
+    private GameObject CreateStructureGroup(GameObject facilityGO, string name, string guid, List<string> tags, string teamGUID) {
       structureGroupGO = CreateGameObject(facilityGO, name);
 
       CreateStructure(structureGroupGO, $"Structure_{structureName}");
@@ -58,7 +58,9 @@ namespace MissionControl.EncounterFactories {
       obstructionGameLogic.buildingDefId = ObstructionGameLogic.buildingDef_SolidObstruction;
       obstructionGameLogic.teamDefinitionGuid = teamGUID == null ? TeamUtils.WORLD_TEAM_ID : teamGUID;
 
-      string obstructionGuid = Guid.NewGuid().ToString();
+      obstructionGameLogic.encounterTags.AddRange(tags);
+
+      string obstructionGuid = guid ?? Guid.NewGuid().ToString();
       obstructionGameLogic.encounterObjectGuid = obstructionGuid;
 
       // Track the custom buildings to bypass the min 8 cell hit count for buildings to be added to the proper building list of a MapEncounterLayerDataCell
