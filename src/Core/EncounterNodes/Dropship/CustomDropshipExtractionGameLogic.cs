@@ -40,7 +40,7 @@ namespace MissionControl.EncounterNodes.Dropship {
           callDropshipObjective.SetState(EncounterObjectStatus.Active);
           break;
         case StartingDropshipAnimationState.Landed:
-          callDropshipObjective.IgnoreObjective();
+          if (callDropshipObjective.encounterObjectGuid != loadDropshipObjective.encounterObjectGuid) callDropshipObjective.IgnoreObjective();
           loadDropshipObjective.SetState(EncounterObjectStatus.Active);
           break;
       }
