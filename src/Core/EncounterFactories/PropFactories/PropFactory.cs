@@ -337,7 +337,7 @@ namespace MissionControl.EncounterFactories {
         string[] propertyNameAndTypeSplit = kvPair.Key.Split('.');
 
         string propertyName = propertyNameAndTypeSplit[0];
-        string propertyType = propertyNameAndTypeSplit[1].ToLower();
+        string propertyType = propertyName == "shaderwords" ? null : propertyNameAndTypeSplit[1].ToLower();
         JToken propertyValue = kvPair.Value;
 
         if (propertyType == "texture") {
@@ -362,7 +362,7 @@ namespace MissionControl.EncounterFactories {
           JArray propertyValueArray = propertyValue.ToObject<JArray>();
           Vector4 vector = new Vector4((float)propertyValueArray[0], (float)propertyValueArray[1], (float)propertyValueArray[2], (float)propertyValueArray[3]);
           material.SetVector(propertyName, vector);
-        } else if (propertyType == "shaderwords") {
+        } else if (propertyName == "shaderwords") {
           string[] shaderwords = propertyValue.ToString().Split(',');
           foreach (string shaderword in shaderwords) {
             material.EnableKeyword(shaderword);
