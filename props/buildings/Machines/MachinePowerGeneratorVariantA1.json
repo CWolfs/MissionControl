@@ -30,7 +30,11 @@
     },
     {
       "Key": "GearStraightShortVariantA",
-      "Position": { "x": -6.75, "y": 3.5, "z": 1.185 }
+      "Position": { "x": -6.75, "y": 3.5, "z": 1.86 }
+    },
+    {
+      "Key": "GearStraightShortVariantB",
+      "Position": { "x": -6.75, "y": 3.5, "z": -2.08 }
     }
   ]
 }
