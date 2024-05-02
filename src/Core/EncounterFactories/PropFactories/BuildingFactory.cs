@@ -219,9 +219,8 @@ namespace MissionControl.EncounterFactories {
 
       mf.sharedMesh = buildingGlassMesh;
 
-      if (matLookup.ContainsKey("envMatStct_glassA_decals_generic")) {
-        mr.sharedMaterial = matLookup["envMatStct_glassA_decals_generic"];
-      }
+      Material material = BuildMaterialForRenderer(buildingGlassMesh, propModelDef, propModelDef.GlassMaterial);
+      mr.sharedMaterial = material;
 
       return glassParentGO;
     }

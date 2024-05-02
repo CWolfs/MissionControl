@@ -11,5 +11,9 @@ namespace MissionControl.Data {
 
     [JsonProperty("Shader")]
     public string Shader { get; set; }
+
+    public PropMaterialDef(string name) {
+      Name = name;
+    }
   }
 }

@@ -19,6 +19,9 @@ namespace MissionControl.Data {
     [JsonProperty("Materials")]
     public List<PropMaterialDef> Materials { get; set; } = new List<PropMaterialDef>();
 
+    [JsonProperty("GlassMaterial")]
+    public PropMaterialDef GlassMaterial { get; set; } = new PropMaterialDef("envMatStct_glassA_decals_generic");
+
     [JsonProperty("IsMeshInBundle")]
     public bool IsMeshInBundle { get; set; } = false;
 

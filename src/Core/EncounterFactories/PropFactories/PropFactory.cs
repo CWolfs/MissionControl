@@ -371,6 +371,10 @@ namespace MissionControl.EncounterFactories {
       }
     }
 
+    protected Material BuildMaterialForRenderer(Mesh mesh, PropModelDef propModelDef, PropMaterialDef materialDefs) {
+      return BuildMaterialsForRenderer(mesh, propModelDef, new List<PropMaterialDef> { materialDefs }, placeholderMaterial)[0];
+    }
+
     protected Material[] BuildMaterialsForRenderer(Mesh mesh, PropModelDef propModelDef, List<PropMaterialDef> materialDefs, Material placeholderMaterial) {
       Material[] materials = new Material[mesh.subMeshCount];
 
