@@ -11,6 +11,26 @@
     {
       "Key": "PipeOneBentVariantB",
       "Position": { "x": -5, "y": 4, "z": 0.75 }
+    },
+    {
+      "Key": "PipeOneShortVariantA",
+      "Position": { "x": -8, "y": 4.2, "z": -0.6 }
+    },
+    {
+      "Key": "PipeOneShortVariantA",
+      "Position": { "x": -8, "y": 4.2, "z": 0.35 }
+    },
+    {
+      "Key": "PipeOneShortVariantA",
+      "Position": { "x": -1.5, "y": 3.9, "z": -1.35 }
+    },
+    {
+      "Key": "PipeOneShortVariantA",
+      "Position": { "x": -1.5, "y": 3.9, "z": 1.1 }
+    },
+    {
+      "Key": "GearStraightShortVariantA",
+      "Position": { "x": -6.75, "y": 3.5, "z": 1.185 }
     }
   ]
 }
