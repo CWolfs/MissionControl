@@ -1,0 +1,38 @@
+{
+  "Key": "MachinePowerGeneratorA",
+  "Mesh": "machinePowerGeneratorA",
+  "Materials": [
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    },
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    },
+    {
+      "Name": "envMatStct_redPaintedMetal_generic",
+      "MaterialProperties": {
+        "_MainTex.texture": "envTxrStct_redPaintedMetal_generic_alb",
+        "_BumpMap.texture": "envTxrStct_redPaintedMetal_generic_nrm",
+        "_OcclusionMap.texture": "envTxrStct_redPaintedMetal_generic_amb",
+        "_MetallicGlossMap.texture": "envTxrStct_redPaintedMetal_generic_mtl",
+        "_Metallic.float": 0.5,
+        "shaderwords": "DIRECTIONAL,_NORMALMAP,_METALLICGLOSSMAP"
+      }
+    }
+  ],
+  "GlassMaterial": {
+    "Name": "envMatStct_lights_decal_generic"
+  },
+  "IsMeshInBundle": true,
+  "HasCustomSplits": false,
+  "HasCustomShell": true,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
+}
