@@ -6,27 +6,27 @@
   "Destructibles": [
     {
       "Key": "PipeOneBentVariantA",
-      "Position": { "x": -5, "y": 4, "z": -1 }
+      "Position": { "x": -5, "y": 4.25, "z": -1.05 }
     },
     {
       "Key": "PipeOneBentVariantB",
-      "Position": { "x": -5, "y": 4, "z": 0.75 }
+      "Position": { "x": -5, "y": 4.25, "z": 0.8 }
     },
     {
       "Key": "PipeOneShortVariantA",
-      "Position": { "x": -8, "y": 4.2, "z": -0.6 }
+      "Position": { "x": -8, "y": 4.45, "z": -0.65 }
     },
     {
       "Key": "PipeOneShortVariantA",
-      "Position": { "x": -8, "y": 4.2, "z": 0.35 }
+      "Position": { "x": -8, "y": 4.45, "z": 0.4 }
     },
     {
       "Key": "PipeOneShortVariantA",
-      "Position": { "x": -1.5, "y": 3.9, "z": -1.35 }
+      "Position": { "x": -1.5, "y": 4.1, "z": -1.4 }
     },
     {
       "Key": "PipeOneShortVariantA",
-      "Position": { "x": -1.5, "y": 3.9, "z": 1.1 }
+      "Position": { "x": -1.5, "y": 4.15, "z": 1.15 }
     },
     {
       "Key": "GearStraightShortVariantA",
@@ -35,6 +35,35 @@
     {
       "Key": "GearStraightShortVariantB",
       "Position": { "x": -6.75, "y": 3.5, "z": -2.08 }
+    },
+    {
+      "Key": "BlocksSmallCuboidVariantA",
+      "Position": { "x": -6.75, "y": 3.5, "z": -0.1 }
+    },
+    {
+      "Key": "PipeOneLongBentVariantA",
+      "Description": "Long Pipe Centre",
+      "Position": { "x": 1, "y": 3, "z": -0.1 }
+    },
+    {
+      "Key": "PipeOneLongBentVariantA",
+      "Description": "Long Pipe Right",
+      "Position": { "x": 1, "y": 3, "z": 0.35 }
+    },
+    {
+      "Key": "PipeOneLongBentVariantA",
+      "Description": "Long Pipe Left",
+      "Position": { "x": 1, "y": 3, "z": -0.55 }
+    },
+    {
+      "Key": "PipeOneLongBentVariantA",
+      "Description": "Long Pipe Far Right",
+      "Position": { "x": 1, "y": 3, "z": 0.8 }
+    },
+    {
+      "Key": "PipeOneLongBentVariantA",
+      "Description": "Long Pipe Far Left",
+      "Position": { "x": 1, "y": 3, "z": -0.97 }
     }
   ]
 }
