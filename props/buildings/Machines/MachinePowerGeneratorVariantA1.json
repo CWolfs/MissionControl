@@ -64,6 +64,16 @@
       "Key": "PipeOneLongBentVariantA",
       "Description": "Long Pipe Far Left",
       "Position": { "x": 1, "y": 3, "z": -0.97 }
+    },
+    {
+      "Key": "GearHalfCylinderWithBaseA",
+      "Description": "Right Turbine Gear",
+      "Position": { "x": 2.72, "y": 2, "z": 5 }
+    },
+    {
+      "Key": "GearHalfCylinderWithBaseA",
+      "Description": "Left Turbine Gear",
+      "Position": { "x": 2.72, "y": 2, "z": -5 }
     }
   ]
 }
