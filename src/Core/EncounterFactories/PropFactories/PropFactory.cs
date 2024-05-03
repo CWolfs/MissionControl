@@ -285,7 +285,7 @@ namespace MissionControl.EncounterFactories {
 
       if (propModelDef.MeshOffsets.ContainsKey("LOD0")) {
         Main.Logger.Log("[PropFactory.CreateColAndLODs] Apply mesh offset for LOD0");
-        buildingCOLGO.transform.localPosition += propModelDef.MeshOffsets["LOD0"];
+        buildingLOD0GO.transform.localPosition += propModelDef.MeshOffsets["LOD0"];
       }
 
       if (buildingLOD1Mesh != null) {
@@ -306,7 +306,7 @@ namespace MissionControl.EncounterFactories {
 
           if (propModelDef.MeshOffsets.ContainsKey("LOD1")) {
             Main.Logger.Log("[PropFactory.CreateColAndLODs] Apply mesh offset for LOD1");
-            buildingCOLGO.transform.localPosition += propModelDef.MeshOffsets["LOD1"];
+            buildingLOD1GO.transform.localPosition += propModelDef.MeshOffsets["LOD1"];
           }
         } else {
           Main.Logger.Log($"[PropFactory.CreateColAndLODs] No LOD1 mesh found under name '{propModelDef.MeshName}_LOD1' so skipping LOD1 GO build");
@@ -323,7 +323,7 @@ namespace MissionControl.EncounterFactories {
 
           if (propModelDef.MeshOffsets.ContainsKey("LOD2")) {
             Main.Logger.Log("[PropFactory.CreateColAndLODs] Apply mesh offset for LOD2");
-            buildingCOLGO.transform.localPosition += propModelDef.MeshOffsets["LOD2"];
+            buildingLOD2GO.transform.localPosition += propModelDef.MeshOffsets["LOD2"];
           }
         } else {
           Main.Logger.Log($"[PropFactory.CreateColAndLODs] No LOD2 mesh found under name '{propModelDef.MeshName}_LOD1' so skipping LOD2 GO build");
