@@ -42,6 +42,7 @@ namespace MissionControl.Data {
         string key = destructibleFlimsy["Key"].ToString();
         JObject position = destructibleFlimsy.ContainsKey("Position") ? (JObject)destructibleFlimsy["Position"] : null;
         JObject rotation = destructibleFlimsy.ContainsKey("Rotation") ? (JObject)destructibleFlimsy["Rotation"] : null;
+        bool allowModelMeshOffsets = destructibleFlimsy.ContainsKey("AllowModelMeshOffsets") ? (bool)destructibleFlimsy["AllowModelMeshOffsets"] : true;
 
         if (DataManager.Instance.DestructibleDefs.ContainsKey(key)) {
           PropDestructibleFlimsyDef propDestructibleFlimsyDef = DataManager.Instance.DestructibleDefs[key].Clone();
@@ -53,10 +54,12 @@ namespace MissionControl.Data {
           }
 
           if (rotation != null) {
-
             Vector3 rot = new Vector3((float)rotation["x"], (float)rotation["y"], (float)rotation["z"]);
             propDestructibleFlimsyDef.Rotation = rot;
           }
+
+          propDestructibleFlimsyDef.AllowModelMeshOffsets = allowModelMeshOffsets;
+
 
           DestructibleFlimsyModels.Add(propDestructibleFlimsyDef);
         } else {

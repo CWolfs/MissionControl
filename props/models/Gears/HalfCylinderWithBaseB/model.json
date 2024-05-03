@@ -17,6 +17,6 @@
   "DestructibleMaterial": "metal",
   "FlimsyDestructibleType": "smallMetal",
   "MeshOffsets": {
-    "LOD0": { "x": 0, "y": 1.5, "z": 0 }
+    "LOD0": { "x": 0, "y": 1.9, "z": 0 }
   }
 }

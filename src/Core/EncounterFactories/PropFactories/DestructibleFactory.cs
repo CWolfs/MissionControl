@@ -109,7 +109,7 @@ namespace MissionControl.EncounterFactories {
       flimsyGO.transform.localPosition = propFlimsyDef.Position;
       flimsyGO.transform.localEulerAngles = propFlimsyDef.Rotation;
 
-      if (propModelDef.MeshOffsets.ContainsKey("LOD0")) {
+      if (propFlimsyDef.AllowModelMeshOffsets && propModelDef.MeshOffsets.ContainsKey("LOD0")) {
         flimsyGO.transform.localPosition += propModelDef.MeshOffsets["LOD0"];
       }
 
