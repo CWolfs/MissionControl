@@ -7,9 +7,6 @@
     },
     {
       "Name": "envMatStct_concrete_generic"
-    },
-    {
-      "Name": "lambert2"
     }
   ],
   "IsMeshInBundle": true,
