@@ -1,0 +1,13 @@
+{
+  "Key": "blockSmallCuboidA",
+  "Mesh": "blockSmallCuboidA",
+  "Materials": [
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": true,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

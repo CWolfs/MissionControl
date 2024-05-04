@@ -1,0 +1,95 @@
+{
+  "Key": "MachinePowerGeneratorVariantA1",
+  "BuildingDefID": "buildingdef_turretGenerator",
+  "MainModel": "MachinePowerGeneratorA",
+  "FriendlyName": "Power Generator",
+  "Destructibles": [
+    {
+      "Key": "PipeOneBentVariantA",
+      "Position": { "x": -5, "y": 4.25, "z": -1.05 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "PipeOneBentVariantB",
+      "Position": { "x": -5, "y": 4.25, "z": 0.8 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "PipeOneShortVariantA",
+      "Position": { "x": -8, "y": 4.45, "z": -0.65 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "PipeOneShortVariantA",
+      "Position": { "x": -8, "y": 4.45, "z": 0.4 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "PipeOneShortVariantA",
+      "Position": { "x": -1.5, "y": 4.1, "z": -1.4 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "PipeOneShortVariantA",
+      "Position": { "x": -1.5, "y": 4.15, "z": 1.15 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "GearStraightShortVariantA",
+      "Position": { "x": -6.75, "y": 3.5, "z": 1.86 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "GearStraightShortVariantB",
+      "Position": { "x": -6.75, "y": 3.5, "z": -2.08 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "BlocksSmallCuboidVariantA",
+      "Position": { "x": -6.75, "y": 3.5, "z": -0.1 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "PipeOneLongBentVariantA",
+      "Description": "Long Pipe Centre",
+      "Position": { "x": 1, "y": 3, "z": -0.1 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "PipeOneLongBentVariantA",
+      "Description": "Long Pipe Right",
+      "Position": { "x": 1, "y": 3, "z": 0.35 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "PipeOneLongBentVariantA",
+      "Description": "Long Pipe Left",
+      "Position": { "x": 1, "y": 3, "z": -0.55 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "PipeOneLongBentVariantA",
+      "Description": "Long Pipe Far Right",
+      "Position": { "x": 1, "y": 3, "z": 0.8 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "PipeOneLongBentVariantA",
+      "Description": "Long Pipe Far Left",
+      "Position": { "x": 1, "y": 3, "z": -0.97 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "GearHalfCylinderWithBaseA",
+      "Description": "Right Turbine Gear",
+      "Position": { "x": 2.72, "y": 2, "z": 5 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "GearHalfCylinderWithBaseA",
+      "Description": "Left Turbine Gear",
+      "Position": { "x": 2.72, "y": 2, "z": -5 },
+      "AllowModelMeshOffsets": false
+    }
+  ]
+}

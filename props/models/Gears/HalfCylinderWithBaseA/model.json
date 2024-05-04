@@ -1,0 +1,22 @@
+{
+  "Key": "gearHalfCylinderWithBaseA",
+  "Mesh": "gearHalfCylinderWithBaseA",
+  "Materials": [
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    },
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "lambert2"
+    }
+  ],
+  "IsMeshInBundle": true,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal",
+  "MeshOffsets": {
+    "LOD0": { "x": 0, "y": 1.5, "z": 0 }
+  }
+}

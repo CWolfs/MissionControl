@@ -16,6 +16,9 @@ namespace MissionControl.Data {
     [JsonProperty("Rotation")]
     public Vector3 Rotation { get; set; } = Vector3.zero;
 
+    [JsonProperty("AllowModelMeshOffsets")]
+    public bool AllowModelMeshOffsets { get; set; } = true;
+
     [JsonProperty("Mass")]
     public float Mass { get; set; } = 1000;
 
