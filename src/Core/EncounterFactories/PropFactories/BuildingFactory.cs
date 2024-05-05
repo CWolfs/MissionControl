@@ -101,6 +101,7 @@ namespace MissionControl.EncounterFactories {
       CreateColAndLODs(buildingGO, propModelDef);
       GameObject flimsyParentGO = CreateFlimsies(buildingGroupGO);
       GameObject glassParentGO = CreateGlass(buildingGroupGO);
+      GameObject decalParentGO = CreateDecals(buildingGroupGO);
       CreateGenericStaticDestruct(buildingGO);
 
       DestructibleObject destructibleObject = buildingGO.AddComponent<DestructibleObject>();
@@ -225,6 +226,43 @@ namespace MissionControl.EncounterFactories {
       return glassParentGO;
     }
 
+    private GameObject CreateDecals(GameObject buildingGroupGO) {
+      List<PropDecalDef> decals = PropBuildingDef.Decals;
+
+      if (decals.Count > 0) {
+        GameObject decalParentGO = CreateGameObject(buildingGroupGO, "_decals");
+
+        foreach (PropDecalDef propDecalDef in decals) {
+          CreateDecal(decalParentGO, propDecalDef);
+        }
+
+        return decalParentGO;
+      }
+
+      return null;
+    }
+
+    private void CreateDecal(GameObject decalParentGO, PropDecalDef propDecalDef) {
+      Main.Logger.Log("[BuildingFactory.CreateDecal] About to create decal " + propDecalDef.Key);
+      GameObject decalGO = CreateGameObject(decalParentGO, propDecalDef.Key);
+      decalGO.SetActive(false);
+
+      BTDecal btDecal = decalGO.AddComponent<BTDecal>();
+      Material material = BuildMaterialForRenderer(null, propDecalDef, propDecalDef.Material);
+
+      btDecal.decalMaterial = material;
+      btDecal.sheetXCoord = propDecalDef.SheetXCoordinate;
+      btDecal.sheetYCoord = propDecalDef.SheetYCoordinate;
+      btDecal.alpha = propDecalDef.Alpha;
+      btDecal.priority = propDecalDef.Priority;
+
+      decalGO.transform.localPosition = propDecalDef.Position.Value;
+      decalGO.transform.localEulerAngles = propDecalDef.Rotation.Value;
+      decalGO.transform.localScale = propDecalDef.Scale.Value;
+
+      decalGO.SetActive(true);
+    }
+
     private GameObject CreateFlimsies(GameObject buildingGroupGO) {
       List<PropDestructibleFlimsyDef> flimsyModels = PropBuildingDef.DestructibleFlimsyModels;
 
@@ -331,7 +369,6 @@ namespace MissionControl.EncounterFactories {
           // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
           Mesh flimsyFormattedMesh = flimsyLOD0Mesh;
           if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
-            Main.Logger.Log($"[BuildingFactory.AttachFlimsyMesh] Found a flimsy base for '{propModelDef.Key}'");
             flimsyFormattedMesh = CenterMeshPivot(flimsyLOD0Mesh);
             flimsyLOD0Mesh = flimsyFormattedMesh;
           }

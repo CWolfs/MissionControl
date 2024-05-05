@@ -60,6 +60,7 @@ namespace MissionControl {
     public Dictionary<string, PropBuildingDef> BuildingDefs = new Dictionary<string, PropBuildingDef>();
     public Dictionary<string, PropStructureDef> StructureDefs = new Dictionary<string, PropStructureDef>();
     public Dictionary<string, PropDestructibleFlimsyDef> DestructibleDefs = new Dictionary<string, PropDestructibleFlimsyDef>();
+    public Dictionary<string, PropDecalDef> DecalDefs = new Dictionary<string, PropDecalDef>();
 
     // Data backup
     private Dictionary<string, List<LanceOverride>> ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
@@ -279,6 +280,10 @@ namespace MissionControl {
         LoadPropModelDefs($"{propsPath}/models");
       }
 
+      if (Directory.Exists($"{propsPath}/decals")) {
+        LoadPropDecalDefs($"{propsPath}/decals");
+      }
+
       if (Directory.Exists($"{propsPath}/destructibles")) {
         LoadPropDestructibleDefs($"{propsPath}/destructibles");
       }
@@ -408,7 +413,7 @@ namespace MissionControl {
         if (!StructureDefs.ContainsKey(propStructureDef.Key)) {
           StructureDefs.Add(propStructureDef.Key, propStructureDef);
         } else {
-          Main.Logger.Log($"[DataManager.LoadPropStructureDefs] A LoadPropStructureDef of key '{propStructureDef.Key}' already exists. Structure keys must be unique.");
+          Main.Logger.Log($"[DataManager.LoadPropStructureDefs] A PropStructureDef of key '{propStructureDef.Key}' already exists. Structure keys must be unique.");
         }
       }
     }
@@ -417,8 +422,6 @@ namespace MissionControl {
       foreach (string destructibleDefPaths in Directory.GetFiles(destructiblesPath, "*.json", SearchOption.AllDirectories)) {
         string destructibleSource = File.ReadAllText(destructibleDefPaths);
         PropDestructibleFlimsyDef propDestructibleDef = JsonConvert.DeserializeObject<PropDestructibleFlimsyDef>(destructibleSource, serialiserSettings);
-        Main.Logger.Log("[DataManager.LoadPropDestructibleDefs] Loaded LoadPropDestructibleDefs: " + propDestructibleDef.Key);
-
         Main.Logger.Log("[DataManager.LoadPropDestructibleDefs] Loaded LoadPropDestructibleDefs Key: " + propDestructibleDef.Key);
         Main.Logger.Log("[DataManager.LoadPropDestructibleDefs] Loaded LoadPropDestructibleDefs Model: " + propDestructibleDef.ModelKey);
         Main.Logger.Log("[DataManager.LoadPropDestructibleDefs] Loaded LoadPropDestructibleDefs Mass: " + propDestructibleDef.Mass);
@@ -426,7 +429,22 @@ namespace MissionControl {
         if (!DestructibleDefs.ContainsKey(propDestructibleDef.Key)) {
           DestructibleDefs.Add(propDestructibleDef.Key, propDestructibleDef);
         } else {
-          Main.Logger.Log($"[DataManager.LoadPropDestructibleDefs] A LoadPropStructureDef of key '{propDestructibleDef.Key}' already exists. Destructible keys must be unique.");
+          Main.Logger.Log($"[DataManager.LoadPropDestructibleDefs] A PropDestructibleDef of key '{propDestructibleDef.Key}' already exists. Destructible keys must be unique.");
+        }
+      }
+    }
+
+    private void LoadPropDecalDefs(string decalsPath) {
+      foreach (string decalDefPaths in Directory.GetFiles(decalsPath, "*.json", SearchOption.AllDirectories)) {
+        string decalSource = File.ReadAllText(decalDefPaths);
+        PropDecalDef propDecalDef = JsonConvert.DeserializeObject<PropDecalDef>(decalSource, serialiserSettings);
+        Main.Logger.Log("[DataManager.LoadPropDecalDefs] Loaded LoadPropDecalDefs Key: " + propDecalDef.Key);
+        Main.Logger.Log("[DataManager.LoadPropDecalDefs] Loaded LoadPropDecalDefs Material: " + propDecalDef.Material.Name);
+
+        if (!DecalDefs.ContainsKey(propDecalDef.Key)) {
+          DecalDefs.Add(propDecalDef.Key, propDecalDef);
+        } else {
+          Main.Logger.Log($"[DataManager.LoadPropDecalDefs] A PropDecalDef of key '{propDecalDef.Key}' already exists. Decal keys must be unique.");
         }
       }
     }
