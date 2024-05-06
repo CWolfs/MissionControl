@@ -68,11 +68,11 @@ namespace MissionControl.EncounterFactories {
 
       SnapToTerrain snapToTerrain = buildingGroupGO.AddComponent<SnapToTerrain>();
       BuildingRepresentation buildingRepresentation = buildingGroupGO.AddComponent<BuildingRepresentation>();
-      buildingRepresentation.ParentBuilding.encounterTags.AddRange(Tags);
 
       ObstructionGameLogic obstructionGameLogic = buildingGroupGO.AddComponent<ObstructionGameLogic>();
       obstructionGameLogic.buildingDefId = PropBuildingDef.BuildingDefID; // Supports direct BuildingDefIds (e.g. buildingdef_Military_Large) or general values (e.g. ObstructionGameLogic.buildingDef_SolidObstruction)
       obstructionGameLogic.teamDefinitionGuid = teamGUID == null ? TeamUtils.WORLD_TEAM_ID : teamGUID;
+      obstructionGameLogic.encounterTags.AddRange(Tags);
 
       string obstructionGuid = GUID ?? Guid.NewGuid().ToString();
       obstructionGameLogic.encounterObjectGuid = obstructionGuid;
@@ -457,6 +457,13 @@ namespace MissionControl.EncounterFactories {
 
         Mesh shellMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_shell");
         Mesh shellCOLMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_shell_COL");
+
+        if (shellMesh == null) {
+          Main.Logger.LogError($"[BuildingFactory.CreateGenericStaticDestruct] Shell Mesh is null for {propModelDef.Key}");
+          throw new Exception($"[BuildingFactory.CreateGenericStaticDestruct] Model '{propModelDef.Key}' is missing a custom shell mesh even though it's set to use one");
+        } else {
+          Main.Logger.Log("[BuildingFactory.CreateGenericStaticDestruct] Shell Mesh is " + shellMesh.name);
+        }
 
         GameObject shellGO = new GameObject(shellMesh.name);
         shellGO.transform.SetParent(destructShell.transform);
