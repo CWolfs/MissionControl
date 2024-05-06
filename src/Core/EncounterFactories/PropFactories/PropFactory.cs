@@ -234,6 +234,8 @@ namespace MissionControl.EncounterFactories {
         }
       } else {
         foreach (Mesh mesh in allGameMeshes) {
+          if (mesh == null) continue;
+
           // If a flimsy base (e.g. no COL, LOD0, LOD1, LOD2) then set them all to the flimsy mesh
           if (mesh.name == propModelDef.MeshName) {
             Main.Logger.Log($"[PropFactory.CreateColAndLODs] Found a flimsy base for '{propModelDef.Key}' so using that for COL, LOD0, LOD1, LOD2");
@@ -263,6 +265,11 @@ namespace MissionControl.EncounterFactories {
         }
       }
 
+      if (buildingCOLMesh == null || buildingLOD0Mesh == null) {
+        Main.Logger.LogError("[PropFactory.CreateColAndLODs] COL or LOD0 Mesh is null for '" + buildingGO.name + "'. If attempting to use mesh inbuilt into the map ensure it's actually available for this map.");
+        throw new Exception("COL or LOD0 Mesh is null for '" + buildingGO.name + "'. If attempting to use mesh inbuilt into the map ensure it's actually available for this map.");
+      }
+
       GameObject buildingCOLGO = CreateGameObject(buildingGO, $"{buildingGO.name}_COL");
       MeshCollider buildingCOLCollider = buildingCOLGO.AddComponent<MeshCollider>();
       buildingCOLCollider.sharedMesh = buildingCOLMesh;
@@ -277,11 +284,6 @@ namespace MissionControl.EncounterFactories {
       GameObject buildingLOD0GO = CreateGameObject(buildingGO, $"{buildingGO.name}_LOD0");
       MeshFilter buildingLOD0MF = buildingLOD0GO.AddComponent<MeshFilter>();
       MeshRenderer buildingLOD0MR = buildingLOD0GO.AddComponent<MeshRenderer>();
-
-      if (buildingLOD0Mesh == null) {
-        Main.Logger.LogError("[PropFactory.CreateColAndLODs] LOD0 Mesh is null for '" + buildingGO.name + "'. If attempting to use mesh inbuilt into the map ensure it's actually available for this map.");
-        throw new Exception("LOD0 Mesh is null for '" + buildingGO.name + "'. If attempting to use mesh inbuilt into the map ensure it's actually available for this map.");
-      }
 
       Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef, propModelDef.Materials, placeholderMaterial);
       buildingLOD0MR.materials = materials;
