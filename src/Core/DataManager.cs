@@ -442,7 +442,7 @@ namespace MissionControl {
         Main.Logger.Log("[DataManager.LoadPropDecalDefs] Loaded LoadPropDecalDefs Material: " + propDecalDef.Material.Name);
 
         // Get bundle path
-        string bundleFile = Directory.GetFiles(decalDefPath, "*-bundle").FirstOrDefault();
+        string bundleFile = Directory.GetFiles(Path.GetDirectoryName(decalDefPath), "*-bundle").FirstOrDefault();
         if (bundleFile != null) {
           Main.Logger.Log("[DataManager.LoadPropDecalDefs] Bundle exists for  " + propDecalDef.Key);
           propDecalDef.BundlePath = bundleFile;
