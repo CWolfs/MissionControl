@@ -228,7 +228,7 @@ namespace MissionControl.EncounterFactories {
         }
 
         if (buildingCOLMesh == null) {
-          Main.Logger.LogError("[PropFactory.CreateColAndLODs] Bundle COL Mesh is is null. It's possible LOD0, LOD1 and LOD2 might also be null. Check the names of the Meshes in the bundle match the Mesh in the MC PropModelDef");
+          Main.Logger.LogError("[PropFactory.CreateColAndLODs] Bundle COL Mesh is null. It's possible LOD0, LOD1 and LOD2 might also be null. Check the names of the Meshes in the bundle match the Mesh in the MC PropModelDef");
         } else {
           Main.Logger.Log("[PropFactory.CreateColAndLODs] Bundle COL Mesh is " + buildingCOLMesh.name);
         }
