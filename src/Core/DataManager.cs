@@ -435,11 +435,18 @@ namespace MissionControl {
     }
 
     private void LoadPropDecalDefs(string decalsPath) {
-      foreach (string decalDefPaths in Directory.GetFiles(decalsPath, "*.json", SearchOption.AllDirectories)) {
-        string decalSource = File.ReadAllText(decalDefPaths);
+      foreach (string decalDefPath in Directory.GetFiles(decalsPath, "*.json", SearchOption.AllDirectories)) {
+        string decalSource = File.ReadAllText(decalDefPath);
         PropDecalDef propDecalDef = JsonConvert.DeserializeObject<PropDecalDef>(decalSource, serialiserSettings);
         Main.Logger.Log("[DataManager.LoadPropDecalDefs] Loaded LoadPropDecalDefs Key: " + propDecalDef.Key);
         Main.Logger.Log("[DataManager.LoadPropDecalDefs] Loaded LoadPropDecalDefs Material: " + propDecalDef.Material.Name);
+
+        // Get bundle path
+        string bundleFile = Directory.GetFiles(decalDefPath, "*-bundle").FirstOrDefault();
+        if (bundleFile != null) {
+          Main.Logger.Log("[DataManager.LoadPropDecalDefs] Bundle exists for  " + propDecalDef.Key);
+          propDecalDef.BundlePath = bundleFile;
+        }
 
         if (!DecalDefs.ContainsKey(propDecalDef.Key)) {
           DecalDefs.Add(propDecalDef.Key, propDecalDef);
