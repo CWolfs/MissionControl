@@ -68,11 +68,11 @@ namespace MissionControl.EncounterFactories {
 
       SnapToTerrain snapToTerrain = buildingGroupGO.AddComponent<SnapToTerrain>();
       BuildingRepresentation buildingRepresentation = buildingGroupGO.AddComponent<BuildingRepresentation>();
-      buildingRepresentation.ParentBuilding.encounterTags.AddRange(Tags);
 
       ObstructionGameLogic obstructionGameLogic = buildingGroupGO.AddComponent<ObstructionGameLogic>();
       obstructionGameLogic.buildingDefId = PropBuildingDef.BuildingDefID; // Supports direct BuildingDefIds (e.g. buildingdef_Military_Large) or general values (e.g. ObstructionGameLogic.buildingDef_SolidObstruction)
       obstructionGameLogic.teamDefinitionGuid = teamGUID == null ? TeamUtils.WORLD_TEAM_ID : teamGUID;
+      obstructionGameLogic.encounterTags.AddRange(Tags);
 
       string obstructionGuid = GUID ?? Guid.NewGuid().ToString();
       obstructionGameLogic.encounterObjectGuid = obstructionGuid;
@@ -101,6 +101,7 @@ namespace MissionControl.EncounterFactories {
       CreateColAndLODs(buildingGO, propModelDef);
       GameObject flimsyParentGO = CreateFlimsies(buildingGroupGO);
       GameObject glassParentGO = CreateGlass(buildingGroupGO);
+      GameObject decalParentGO = CreateDecals(buildingGroupGO);
       CreateGenericStaticDestruct(buildingGO);
 
       DestructibleObject destructibleObject = buildingGO.AddComponent<DestructibleObject>();
@@ -225,6 +226,43 @@ namespace MissionControl.EncounterFactories {
       return glassParentGO;
     }
 
+    private GameObject CreateDecals(GameObject buildingGroupGO) {
+      List<PropDecalDef> decals = PropBuildingDef.Decals;
+
+      if (decals.Count > 0) {
+        GameObject decalParentGO = CreateGameObject(buildingGroupGO, "_decals");
+
+        foreach (PropDecalDef propDecalDef in decals) {
+          CreateDecal(decalParentGO, propDecalDef);
+        }
+
+        return decalParentGO;
+      }
+
+      return null;
+    }
+
+    private void CreateDecal(GameObject decalParentGO, PropDecalDef propDecalDef) {
+      Main.Logger.Log("[BuildingFactory.CreateDecal] About to create decal " + propDecalDef.Key);
+      GameObject decalGO = CreateGameObject(decalParentGO, propDecalDef.Key);
+      decalGO.SetActive(false);
+
+      BTDecal btDecal = decalGO.AddComponent<BTDecal>();
+      Material material = BuildMaterialForRenderer(null, propDecalDef, propDecalDef.Material);
+
+      btDecal.decalMaterial = material;
+      btDecal.sheetXCoord = propDecalDef.SheetXCoordinate;
+      btDecal.sheetYCoord = propDecalDef.SheetYCoordinate;
+      btDecal.alpha = propDecalDef.Alpha;
+      btDecal.priority = propDecalDef.Priority;
+
+      decalGO.transform.localPosition = propDecalDef.Position.Value;
+      decalGO.transform.localEulerAngles = propDecalDef.Rotation.Value;
+      decalGO.transform.localScale = propDecalDef.Scale.Value;
+
+      decalGO.SetActive(true);
+    }
+
     private GameObject CreateFlimsies(GameObject buildingGroupGO) {
       List<PropDestructibleFlimsyDef> flimsyModels = PropBuildingDef.DestructibleFlimsyModels;
 
@@ -331,7 +369,6 @@ namespace MissionControl.EncounterFactories {
           // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
           Mesh flimsyFormattedMesh = flimsyLOD0Mesh;
           if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
-            Main.Logger.Log($"[BuildingFactory.AttachFlimsyMesh] Found a flimsy base for '{propModelDef.Key}'");
             flimsyFormattedMesh = CenterMeshPivot(flimsyLOD0Mesh);
             flimsyLOD0Mesh = flimsyFormattedMesh;
           }
@@ -420,6 +457,13 @@ namespace MissionControl.EncounterFactories {
 
         Mesh shellMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_shell");
         Mesh shellCOLMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_shell_COL");
+
+        if (shellMesh == null) {
+          Main.Logger.LogError($"[BuildingFactory.CreateGenericStaticDestruct] Shell Mesh is null for {propModelDef.Key}");
+          throw new Exception($"[BuildingFactory.CreateGenericStaticDestruct] Model '{propModelDef.Key}' is missing a custom shell mesh even though it's set to use one");
+        } else {
+          Main.Logger.Log("[BuildingFactory.CreateGenericStaticDestruct] Shell Mesh is " + shellMesh.name);
+        }
 
         GameObject shellGO = new GameObject(shellMesh.name);
         shellGO.transform.SetParent(destructShell.transform);

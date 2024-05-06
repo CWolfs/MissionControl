@@ -91,5 +91,17 @@
       "Position": { "x": 2.72, "y": 2, "z": -5 },
       "AllowModelMeshOffsets": false
     }
+  ],
+  "Decals": [
+    {
+      "Key": "Generic",
+      "Position": { "x": -0.48, "y": 5.07, "z": -0.04 },
+      "Rotation": { "x": 0, "y": 0, "z": 0 },
+      "Scale": { "x": 1.996391, "y": 0.4886147, "z": 4.562912 },
+      "SheetXCoordinate": 0,
+      "SheetYCoordinate": 3,
+      "Alpha": 1,
+      "Priority": 100
+    }
   ]
 }

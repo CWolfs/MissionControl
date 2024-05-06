@@ -108,6 +108,10 @@ namespace MissionControl.EncounterFactories {
     //   fadeStructureGroup.destructibleObject.AddChildrenToFadeManager(fadeGroup);
     // }
 
+    // private GameObject CreateDecals(GameObject structureGO) {
+
+    // }
+
     private GameObject CreateFlimsies(GameObject structuregGO) {
       List<PropDestructibleFlimsyDef> flimsyModels = PropStructureDef.DestructibleFlimsyModels;
 

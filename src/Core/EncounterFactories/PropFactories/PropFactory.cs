@@ -234,6 +234,8 @@ namespace MissionControl.EncounterFactories {
         }
       } else {
         foreach (Mesh mesh in allGameMeshes) {
+          if (mesh == null) continue;
+
           // If a flimsy base (e.g. no COL, LOD0, LOD1, LOD2) then set them all to the flimsy mesh
           if (mesh.name == propModelDef.MeshName) {
             Main.Logger.Log($"[PropFactory.CreateColAndLODs] Found a flimsy base for '{propModelDef.Key}' so using that for COL, LOD0, LOD1, LOD2");
@@ -261,6 +263,11 @@ namespace MissionControl.EncounterFactories {
 
           if (buildingCOLMesh != null && buildingLOD0Mesh != null && buildingLOD1Mesh != null && buildingLOD2Mesh != null) break;
         }
+      }
+
+      if (buildingCOLMesh == null || buildingLOD0Mesh == null) {
+        Main.Logger.LogError("[PropFactory.CreateColAndLODs] COL or LOD0 Mesh is null for '" + buildingGO.name + "'. If attempting to use mesh inbuilt into the map ensure it's actually available for this map.");
+        throw new Exception("COL or LOD0 Mesh is null for '" + buildingGO.name + "'. If attempting to use mesh inbuilt into the map ensure it's actually available for this map.");
       }
 
       GameObject buildingCOLGO = CreateGameObject(buildingGO, $"{buildingGO.name}_COL");
@@ -331,7 +338,7 @@ namespace MissionControl.EncounterFactories {
       }
     }
 
-    private void SetMaterialProperties(PropModelDef propModelDef, Material material, JObject materialProperties) {
+    private void SetMaterialProperties(IBundleItem bundleItem, Material material, JObject materialProperties) {
       foreach (KeyValuePair<string, JToken> kvPair in materialProperties) {
         string propertyNameAndType = kvPair.Key;
         string[] propertyNameAndTypeSplit = kvPair.Key.Split('.');
@@ -344,7 +351,7 @@ namespace MissionControl.EncounterFactories {
           // Grab, load and set texture
           // First look for Texture in bundle
           string textureName = propertyValue.ToString();
-          Texture texture = propModelDef.BundlePath != null ? AssetBundleLoader.GetAsset<Texture>(propModelDef.BundlePath, textureName) : null;
+          Texture texture = bundleItem.BundlePath != null ? AssetBundleLoader.GetAsset<Texture>(bundleItem.BundlePath, textureName) : null;
 
           // Otherwise look for texture in game
           if (texture == null) texture = UnityGameInstance.Instance.Game.DataManager.TextureManager.GetLoadedTexture(textureName);
@@ -371,15 +378,24 @@ namespace MissionControl.EncounterFactories {
       }
     }
 
-    protected Material BuildMaterialForRenderer(Mesh mesh, PropModelDef propModelDef, PropMaterialDef materialDefs) {
-      return BuildMaterialsForRenderer(mesh, propModelDef, new List<PropMaterialDef> { materialDefs }, placeholderMaterial)[0];
+    protected Material BuildMaterialForRenderer(Mesh mesh, IBundleItem bundleItem, PropMaterialDef materialDef) {
+      return BuildMaterialsForRenderer(mesh, bundleItem, new List<PropMaterialDef> { materialDef }, placeholderMaterial)[0];
     }
 
-    protected Material[] BuildMaterialsForRenderer(Mesh mesh, PropModelDef propModelDef, List<PropMaterialDef> materialDefs, Material placeholderMaterial) {
-      Material[] materials = new Material[mesh.subMeshCount];
+    protected Material[] BuildMaterialsForRenderer(Mesh mesh, IBundleItem bundleItem, List<PropMaterialDef> materialDefs, Material placeholderMaterial) {
+      Material[] materials = null;
+      int meshSubcount = 1;
 
-      Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] mesh.subMeshCount for '{mesh.name}' is '{mesh.subMeshCount}'");
-      for (int i = 0; i < mesh.subMeshCount; i++) {
+      if (mesh == null) {
+        Main.Logger.Log("[PropFactory.BuildMaterialsForRenderer] No mesh provided. Decal usage mode. Using placeholder material");
+        materials = new Material[1] { placeholderMaterial };
+      } else {
+        Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] mesh.subMeshCount for '{mesh.name}' is '{mesh.subMeshCount}'");
+        materials = new Material[mesh.subMeshCount];
+        meshSubcount = mesh.subMeshCount;
+      }
+
+      for (int i = 0; i < meshSubcount; i++) {
         if (i >= materialDefs.Count) {
           Main.Logger.LogWarning($"[PropFactory.BuildMaterialsForRenderer] Not enough supplied material identifiers in prop data to use for submesh '{i}' for mesh '{mesh.name}'. Duplicating existing mat references.");
           materialDefs.Add(materialDefs[UnityEngine.Random.Range(0, materialDefs.Count)]);
@@ -390,8 +406,7 @@ namespace MissionControl.EncounterFactories {
         if (propMaterialDef.Shader != null) {
           Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Shader provided for PropMaterialDef '{propMaterialDef.Name}' so building Material with specific shader '{propMaterialDef.Shader}' and MaterialProperties '{propMaterialDef.MaterialProperties}'");
           // Build whole material with specific shader and texture
-          if (propModelDef.BundlePath == null) Main.Logger.LogWarning("[PropFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef Shader name but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
-          if (propModelDef.BundlePath == null) Main.Logger.LogWarning("[PropFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef Texture name but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
+          if (bundleItem.BundlePath == null) Main.Logger.LogWarning("[PropFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef Shader name but you have not included a bundle for this IBundledItem. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
 
           Material material = null;
 
@@ -403,15 +418,16 @@ namespace MissionControl.EncounterFactories {
             Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Generating cached runtime generated material '{propMaterialDef.Name}'");
 
             // First look for Shader in bundle
-            Shader shader = propModelDef.BundlePath != null ? AssetBundleLoader.GetAsset<Shader>(propModelDef.BundlePath, propMaterialDef.Shader) : null;
+            Shader shader = bundleItem.BundlePath != null ? AssetBundleLoader.GetAsset<Shader>(bundleItem.BundlePath, propMaterialDef.Shader) : null;
 
             // Otherwise look for Shader in game
             if (shader == null) shader = Shader.Find(propMaterialDef.Shader);
+            if (shader == null) Main.Logger.LogError("[PropFactory.BuildMaterialsForRenderer] Couldn't find Shader in bundle or game data for PropMaterialDef " + propMaterialDef.Name + ". It's possible this Map does not have it loaded in memory.");
 
             material = new Material(shader);
             material.name = propMaterialDef.Name;
             JObject materialProperties = propMaterialDef.MaterialProperties;
-            SetMaterialProperties(propModelDef, material, materialProperties);
+            SetMaterialProperties(bundleItem, material, materialProperties);
 
             MissionControl.Instance.GeneratedMaterials.Add(propMaterialDef.Name, material);
           }
@@ -419,7 +435,7 @@ namespace MissionControl.EncounterFactories {
           materials[i] = material;
         } else if (propMaterialDef.MaterialProperties != null) {
           Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Texture but no Shader provided for PropMaterialDef '{propMaterialDef.Name}' so building Material with default shader 'BattleTech Standard' and MaterialProperties '{propMaterialDef.MaterialProperties.ToString()}'");
-          if (propModelDef.BundlePath == null) Main.Logger.LogWarning("[PropFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef MaterialProperties but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
+          if (bundleItem.BundlePath == null) Main.Logger.LogWarning("[PropFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef MaterialProperties but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
 
           Material material = null;
 
@@ -436,7 +452,7 @@ namespace MissionControl.EncounterFactories {
             material = new Material(shader);
             material.name = propMaterialDef.Name;
             JObject materialProperties = propMaterialDef.MaterialProperties;
-            SetMaterialProperties(propModelDef, material, materialProperties);
+            SetMaterialProperties(bundleItem, material, materialProperties);
 
             MissionControl.Instance.GeneratedMaterials.Add(propMaterialDef.Name, material);
           }
@@ -446,7 +462,7 @@ namespace MissionControl.EncounterFactories {
           // Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Only material name provided in PropMaterialDef '{propMaterialDef.Name}' so looking for material in bundle first then game data");
 
           // Look first at bundle for custom bundled Material
-          Material mat = propModelDef.BundlePath != null ? AssetBundleLoader.GetAsset<Material>(propModelDef.BundlePath, propMaterialDef.Name) : null;
+          Material mat = bundleItem.BundlePath != null ? AssetBundleLoader.GetAsset<Material>(bundleItem.BundlePath, propMaterialDef.Name) : null;
           if (mat != null) Main.Logger.Log("[PropFactory.BuildMaterialsForRenderer] Found Material in bundle " + mat.name + " after looking for: " + propMaterialDef.Name);
 
           // Otherwise look at all game Materials

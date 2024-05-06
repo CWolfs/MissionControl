@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 
 namespace MissionControl.Data {
-  public class PropModelDef {
+  public class PropModelDef : IBundleItem {
     [JsonProperty("Key")]
     public string Key { get; set; }
 
@@ -49,6 +49,8 @@ namespace MissionControl.Data {
     [JsonProperty("Scale")]
     public VectorData Scale { get; set; } = new VectorData(VectorData.VectorType.Local, Vector3.one);
 
+    public string BundlePath { get; set; }
+
     [JsonIgnore]
     public bool IsCompleteBundle {
       get {
@@ -82,7 +84,5 @@ namespace MissionControl.Data {
         return (FlimsyDestructType)Enum.Parse(typeof(FlimsyDestructType), flimsyDestructibleType);
       }
     }
-
-    public string BundlePath { get; set; }
   }
 }
