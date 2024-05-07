@@ -179,7 +179,7 @@ namespace MissionControl.EncounterNodes.Dropship {
     }
 
     public override string GenerateJSONTemplate() {
-      return JSONSerializationUtility.ToJSON(new DropshipExtractionChunkGameLogic());
+      return JSONSerializationUtility.ToJSON(new CustomDropshipExtractionGameLogic());
     }
   }
 }
