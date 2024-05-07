@@ -430,6 +430,8 @@ namespace MissionControl.EncounterFactories {
         List<GameObject> splitPieceGOs = MeshFracturer.Fracture(buildingGO, 1);
         foreach (GameObject splitPiece in splitPieceGOs) {
           splitPiece.transform.SetParent(destructSplit.transform);
+          splitPiece.transform.localPosition = Vector3.zero;
+          splitPiece.transform.localRotation = Quaternion.identity;
           splitPiece.layer = 8;
 
           // Apply material

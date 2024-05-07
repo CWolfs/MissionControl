@@ -62,7 +62,18 @@ namespace MissionControl.ContractTypeBuilders {
 
       if (this.position != null) {
         SetPosition(facilityGo, this.position, exactPosition: true);
-        SetPosition(destructionParentGO, this.position, exactPosition: true);
+
+        JObject destructionPosition = new JObject();
+        destructionPosition.Add("Type", "World");
+
+        JObject positionValue = new JObject();
+        positionValue.Add("x", facilityGo.transform.position.x);
+        positionValue.Add("y", facilityGo.transform.position.y);
+        positionValue.Add("z", facilityGo.transform.position.z);
+
+        destructionPosition.Add("Value", positionValue);
+
+        SetPosition(destructionParentGO, destructionPosition, exactPosition: true);
       }
 
       if (this.rotation != null) {
