@@ -1,0 +1,13 @@
+{
+  "Key": "FoundationRaisedLargeSquareA",
+  "Mesh": "foundationRaisedLargeSquare",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": true,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}
