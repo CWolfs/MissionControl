@@ -223,7 +223,7 @@ namespace MissionControl.EncounterFactories {
 
             isFlimsyBase = true;
           } else {
-            Main.Logger.LogError("[PropFactory.CreateColAndLODs] IsMeshInBundle was true but couldn't find the mesh in either COL/LOD0/LOD1/LOD2 or fimsey (pure name) format");
+            Main.Logger.LogError("[PropFactory.CreateColAndLODs] IsMeshInBundle was true but couldn't find the mesh in either COL/LOD0/LOD1/LOD2 or flimsey (pure name) format");
           }
         }
 

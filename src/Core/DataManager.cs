@@ -311,11 +311,20 @@ namespace MissionControl {
         PropModelDef propModelDef = JsonConvert.DeserializeObject<PropModelDef>(modelSource, serialiserSettings);
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef: " + propModelDef.Key);
 
-        // Get bundle path
-        string bundleFile = Directory.GetFiles(modelDirectory, "*-bundle").FirstOrDefault();
-        if (bundleFile != null) {
-          Main.Logger.Log("[DataManager.LoadPropModelData] Bundle exists for  " + propModelDef.Key);
-          propModelDef.BundlePath = bundleFile;
+        // If the propModelDef.BundleOverride exists then look through all directories in the modelsPath for the bundle file
+        Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef BundleOverride: " + propModelDef.BundleOverride);
+        if (propModelDef.BundleOverride != null) {
+          string bundleOverrideFile = Directory.GetFiles(modelsPath, propModelDef.BundleOverride, SearchOption.AllDirectories).FirstOrDefault();
+          if (bundleOverrideFile != null) {
+            Main.Logger.Log("[DataManager.LoadPropModelData] Bundle override found for '" + propModelDef.Key + "' with path " + bundleOverrideFile);
+            propModelDef.BundlePath = bundleOverrideFile;
+          }
+        } else {
+          string bundleFile = Directory.GetFiles(modelDirectory, "*-bundle").FirstOrDefault();
+          if (bundleFile != null) {
+            Main.Logger.Log("[DataManager.LoadPropModelData] Bundle exists for  " + propModelDef.Key);
+            propModelDef.BundlePath = bundleFile;
+          }
         }
 
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef MeshName: " + propModelDef.MeshName);

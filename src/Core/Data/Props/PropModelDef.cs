@@ -10,6 +10,9 @@ namespace MissionControl.Data {
     [JsonProperty("Key")]
     public string Key { get; set; }
 
+    [JsonProperty("BundleOverride")]
+    public string BundleOverride { get; set; }
+
     [JsonProperty("Mesh")]
     public string MeshName { get; set; }
 
