@@ -1,0 +1,16 @@
+{
+  "Key": "FoundationLowFlatWithEntranceA",
+  "Mesh": "foundationLowFlatWithEntranceA",
+  "Materials": [
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_asphalt_generic"
+    }
+  ],
+  "IsMeshInBundle": true,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "smallStone"
+}

@@ -1,0 +1,17 @@
+{
+  "Key": "FoundationMediumFlatWithEntranceB",
+  "BundleOverride": "prop-model-foundation-medium-flat-with-entrance-a-bundle",
+  "Mesh": "foundationMediumFlatWithEntranceA",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_concrete_generic"
+    }
+  ],
+  "IsMeshInBundle": true,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "smallStone"
+}
