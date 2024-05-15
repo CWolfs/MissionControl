@@ -1,6 +1,6 @@
 {
-  "Key": "GearHalfCylinderWithBaseA",
-  "MainModel": "gearHalfCylinderWithBaseA",
+  "Key": "GearHalfCylinderWithBaseVariantA1",
+  "MainModel": "GearHalfCylinderWithBaseA",
   "FriendlyName": "Half Cylinder With Base A",
   "Mass": 100
 }

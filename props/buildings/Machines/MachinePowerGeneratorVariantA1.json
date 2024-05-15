@@ -80,13 +80,13 @@
       "AllowModelMeshOffsets": false
     },
     {
-      "Key": "GearHalfCylinderWithBaseA",
+      "Key": "GearHalfCylinderWithBaseVariantA1",
       "Description": "Right Turbine Gear",
       "Position": { "x": 2.72, "y": 2, "z": 5 },
       "AllowModelMeshOffsets": false
     },
     {
-      "Key": "GearHalfCylinderWithBaseA",
+      "Key": "GearHalfCylinderWithBaseVariantA1",
       "Description": "Left Turbine Gear",
       "Position": { "x": 2.72, "y": 2, "z": -5 },
       "AllowModelMeshOffsets": false

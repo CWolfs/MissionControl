@@ -1,9 +1,12 @@
 {
-  "Key": "GearStraightShortA",
-  "Mesh": "gearStraightShortA",
+  "Key": "FenceShortStraightA",
+  "Mesh": "fenceShortStraightA",
   "Materials": [
     {
-      "Name": "envMatStct_mediumMetal_generic"
+      "Name": "envMatStct_lightMetal_generic"
+    },
+    {
+      "Name": "envMatStct_darkMetal_generic"
     }
   ],
   "IsMeshInBundle": true,
