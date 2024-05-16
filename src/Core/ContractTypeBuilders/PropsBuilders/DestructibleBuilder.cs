@@ -38,6 +38,10 @@ namespace MissionControl.ContractTypeBuilders {
       DestructibleFactory destructibleGroupFactory = new DestructibleFactory();
       GameObject destructibleGroupGO = destructibleGroupFactory.CreateDestructibleFlimsyGroup(destructibleGroupName, Parent);
 
+      if (destructibleGroupGO != null && scale != null) {
+        SetScale(destructibleGroupGO, scale);
+      }
+
       // Build all the flimsy destructibles
       if (props != null) {
         foreach (JObject prop in props.Children<JObject>()) {

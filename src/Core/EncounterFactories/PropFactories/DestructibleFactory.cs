@@ -31,15 +31,12 @@ namespace MissionControl.EncounterFactories {
     }
 
     public GameObject CreateDestructibleFlimsyGroup(string name, GameObject parent) {
+      Main.Logger.Log("[BuildingFactory.CreateFlimsyGroup] About to create flimsy group " + name);
       this.destructibleFlimsyGroupGO = CreateGameObject(parent, $"DestructibleFlimsyGroup_{name}");
       destructibleFlimsyGroupGO.SetActive(false);
 
       destructibleFlimsyGroupGO.AddComponent<SnapToTerrain>();
       this.destructibleFlimsyGroupGO.AddComponent<DestructibleFlimsyGroup>();
-
-      if (destructibleFlimsyGroupGO != null) {
-        destructibleFlimsyGroupGO.transform.localScale = PropFlimsyDef.GetPropModelDef().Scale.Value;
-      }
 
       destructibleFlimsyGroupGO.SetActive(true);
       return this.destructibleFlimsyGroupGO;
