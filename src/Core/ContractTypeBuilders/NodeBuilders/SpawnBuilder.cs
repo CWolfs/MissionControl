@@ -128,7 +128,7 @@ namespace MissionControl.ContractTypeBuilders {
         default: Main.Logger.LogError($"[SpawnBuilder.{contractTypeBuilder.ContractTypeKey}] No support for team '{team}'. Check for spelling mistakes."); break;
       }
 
-      if (this.position != null) SetPosition(spawnerGameLogic.gameObject, this.position);
+      if (this.position != null) SetPosition(spawnerGameLogic.gameObject, this.position, exactPosition: this.preciseSpawnPoints);
       if (this.rotation != null) SetRotation(spawnerGameLogic.gameObject, this.rotation);
       if (this.mountOnTargets != null) SetMountOnPositions(spawnerGameLogic, this.mountOnTargets);
       if (this.spawnPointPositions != null) SetSpawnPointPositions(spawnerGameLogic);
