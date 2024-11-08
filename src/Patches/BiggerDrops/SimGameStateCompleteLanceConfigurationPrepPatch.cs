@@ -1,13 +1,8 @@
-using UnityEngine;
-using System;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Collections.Generic;
+
 using Harmony;
 
 using BattleTech;
-using BattleTech.Designed;
 using BattleTech.Framework;
 
 

@@ -68,6 +68,7 @@ namespace MissionControl {
     public List<object[]> QueuedBuildingMounts { get; set; } = new List<object[]>();
 
     private Dictionary<string, string> CustomGameLogicData { get; set; } = new Dictionary<string, string>();
+    public bool IsNextContractUseExactLastUnits { get; set; } = false;
 
     public HexGrid HexGrid { get; private set; }
 
