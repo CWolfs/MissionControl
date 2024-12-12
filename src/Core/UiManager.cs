@@ -263,7 +263,7 @@ namespace MissionControl {
     }
 
     public void ProceedToCreateContractTypeCredits() {
-      ContractTypeMetadata metaddata = DataManager.Instance.AvailableContractTypeMetadata[MissionControl.Instance.CurrentContractType];
+      ContractTypeMetadata metadata = DataManager.Instance.AvailableContractTypeMetadata[MissionControl.Instance.CurrentContractType];
       Transform parentGo = GameObject.Find("uixPrfPanl_combatMissionLoad-overlay_V2-MANAGED").transform;
       GameObject creditsGo = CreatePrefab(CreditsPrefabName, parentGo.Find("Representation"));
       if (creditsGo == null) return;
@@ -286,15 +286,21 @@ namespace MissionControl {
       // Set text and alignment for Author
       GameObject authorTextGo = creditsGo.FindRecursive("Author");
       TextMeshProUGUI authorText = authorTextGo.GetComponent<TextMeshProUGUI>();
-      authorText.text = $"Created by: {metaddata.Author}";
+
+      if (metadata.Authors.Count > 0) {
+        authorText.text = $"Created by: {String.Join(", ", metadata.Authors)}";
+      } else {
+        authorText.text = $"Created by: {metadata.Author}";
+
+      }
       authorText.alignment = TextAlignmentOptions.TopRight;
 
       // Set text and alignment for Contributors
       GameObject contributorsTextGo = null;
-      if (metaddata.Contributors != null && metaddata.Contributors.Count > 0) {
+      if (metadata.Contributors != null && metadata.Contributors.Count > 0) {
         contributorsTextGo = creditsGo.FindRecursive("Contributors");
         TextMeshProUGUI contributorsText = contributorsTextGo.GetComponent<TextMeshProUGUI>();
-        contributorsText.text = $"Contributed: {String.Join(", ", metaddata.Contributors)}";
+        contributorsText.text = $"Contributed: {String.Join(", ", metadata.Contributors)}";
         contributorsText.alignment = TextAlignmentOptions.TopRight;
       } else {
         GameObject.Destroy(creditsGo.FindRecursive("Contributors"));
