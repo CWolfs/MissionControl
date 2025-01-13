@@ -868,13 +868,13 @@ namespace MissionControl {
       Main.Logger.Log($"[MissionControl] Restoring original ContractOverride data for: " + MissionControl.Instance.CurrentContract.Name);
       ContractOverride contractOverride = MissionControl.Instance.CurrentContract.Override;
 
-      RestoreOverrideList<LanceOverride>(contractOverride.player1Team.lanceOverrideList, ContractOverrideLanceOverrideBackup["Player1"]);
-      RestoreOverrideList<LanceOverride>(contractOverride.employerTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["Employer"]);
-      RestoreOverrideList<LanceOverride>(contractOverride.employersAllyTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["EmployerAlly"]);
-      RestoreOverrideList<LanceOverride>(contractOverride.targetTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["Target"]);
-      RestoreOverrideList<LanceOverride>(contractOverride.targetsAllyTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["TargetAlly"]);
-      RestoreOverrideList<LanceOverride>(contractOverride.neutralToAllTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["NeutralToAll"]);
-      RestoreOverrideList<LanceOverride>(contractOverride.hostileToAllTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["HostileToAll"]);
+      if (ContractOverrideLanceOverrideBackup.ContainsKey("Player1")) RestoreOverrideList<LanceOverride>(contractOverride.player1Team.lanceOverrideList, ContractOverrideLanceOverrideBackup["Player1"]);
+      if (ContractOverrideLanceOverrideBackup.ContainsKey("Employer")) RestoreOverrideList<LanceOverride>(contractOverride.employerTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["Employer"]);
+      if (ContractOverrideLanceOverrideBackup.ContainsKey("EmployerAlly")) RestoreOverrideList<LanceOverride>(contractOverride.employersAllyTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["EmployerAlly"]);
+      if (ContractOverrideLanceOverrideBackup.ContainsKey("Target")) RestoreOverrideList<LanceOverride>(contractOverride.targetTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["Target"]);
+      if (ContractOverrideLanceOverrideBackup.ContainsKey("TargetAlly")) RestoreOverrideList<LanceOverride>(contractOverride.targetsAllyTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["TargetAlly"]);
+      if (ContractOverrideLanceOverrideBackup.ContainsKey("NeutralToAll")) RestoreOverrideList<LanceOverride>(contractOverride.neutralToAllTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["NeutralToAll"]);
+      if (ContractOverrideLanceOverrideBackup.ContainsKey("HostileToAll")) RestoreOverrideList<LanceOverride>(contractOverride.hostileToAllTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["HostileToAll"]);
 
       RestoreOverrideList<ObjectiveOverride>(contractOverride.objectiveList, ContractOverrideObjectiveOverrideBackup);
 
