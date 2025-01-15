@@ -1,5 +1,5 @@
 {
-  "Key": "BuildingMediumMilitaryVariantA1",
+  "Key": "BuildingMediumMilitaryVariantB2",
   "BuildingDefID": "buildingdef_Military_Medium",
   "MainModel": "MediumMilitaryBuildingB",
   "Destructibles": [
