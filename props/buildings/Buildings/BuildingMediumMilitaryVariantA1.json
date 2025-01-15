@@ -1,0 +1,32 @@
+{
+  "Key": "BuildingMediumMilitaryVariantA1",
+  "BuildingDefID": "buildingdef_Military_Medium",
+  "MainModel": "MediumMilitaryBuildingB",
+  "Destructibles": [
+    {
+      "Key": "GearHalfCylinderWithBaseVariantC1",
+      "Position": { "x": 0, "y": 7, "z": -10.5 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "GearHalfCylinderWithBaseVariantC1",
+      "Position": { "x": 0, "y": 7, "z": 1 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "GearHalfCylinderWithBaseVariantC1",
+      "Position": { "x": 0, "y": 7, "z": 12 },
+      "AllowModelMeshOffsets": false
+    },
+    {
+      "Key": "PipeOneBentVariantB",
+      "Position": { "x": 0, "y": 6.2, "z": 7 },
+      "Rotation": { "x": 10, "y": 275, "z": 180 }
+    },
+    {
+      "Key": "PipeOneBentVariantB",
+      "Position": { "x": 1, "y": 6.2, "z": -5 },
+      "Rotation": { "x": 350, "y": 90, "z": 0 }
+    }
+  ]
+}
