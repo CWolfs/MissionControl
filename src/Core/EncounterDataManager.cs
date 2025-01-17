@@ -187,11 +187,18 @@ namespace MissionControl {
                   }
 
                   ObstructionGameLogic obstructionGameLogicInParent = raycastHits[m].transform.GetComponentInParent<ObstructionGameLogic>();
-                  if (obstructionGameLogicInParent != null && raycastHits[m].point.y > mapMetaData.mapTerrainDataCells[zCellIndex, xCellIndex].terrainHeight) {
+                  MapTerrainDataCell cell = mapMetaData.mapTerrainDataCells[zCellIndex, xCellIndex];
+
+                  if (obstructionGameLogicInParent != null && raycastHits[m].point.y > cell.terrainHeight) {
                     if (obstructionGameLogicInParent.IsBuildingHitAddWorthy) {
                       if (!obstructionGameObjectList.Contains(obstructionGameLogicInParent)) {
                         obstructionGameObjectList.Add(obstructionGameLogicInParent);
                       }
+                    }
+
+                    // This is added to remove the terrain mask where a prop is so it doesn't cause weird effects like water effects on a bridge prop
+                    if (MissionControl.Instance.CustomBuildingGuids.Contains(obstructionGameLogicInParent.GUID)) {  // Is a Prop Building or Structure
+                      cell.terrainMask = obstructionGameLogicInParent.buildingDestroyed ? obstructionGameLogicInParent.terrainMaskLeftWhenDestroyed : obstructionGameLogicInParent.TerrainMask;
                     }
 
                     Vector3 normal = raycastHits[m].normal;
