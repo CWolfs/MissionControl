@@ -111,6 +111,13 @@ namespace MissionControl.ContractTypeBuilders {
           if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
           break;
         }
+        case "EmployersAlly": {
+          teamId = TeamUtils.EMPLOYER_ALLY_TEAM_ID;
+          spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids, defaultBehaviourTree);
+          spawnerGameLogic.alertLanceOnSpawn = this.alertLanceOnSpawn;
+          if (orders != null) spawnerGameLogic.aiOrderList.contentsBox = orders;
+          break;
+        }
         case "NeutralToAll": {
           teamId = TeamUtils.NEUTRAL_TO_ALL_TEAM_ID;
           spawnerGameLogic = LanceSpawnerFactory.CreateLanceSpawner(parent, name, guid, teamId, true, spawnMethodType, spawnPointGuids, defaultBehaviourTree);
