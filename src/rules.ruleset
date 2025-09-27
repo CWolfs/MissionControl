@@ -22,6 +22,8 @@
     <Rule Id="CA1720" Action="None" /> <!-- Identifier contains type name -->
     <Rule Id="CA1056" Action="None" /> <!-- URI properties should not be strings -->
     <Rule Id="CA1054" Action="None" /> <!-- URI parameters should not be strings -->
+    <Rule Id="CA1507" Action="None" /> <!-- Use nameof in place of string literal - flexible JSON naming needed -->
+    <Rule Id="CA1050" Action="None" /> <!-- Declare types in namespaces - extension methods often global -->
   </Rules>
   
   <!-- Roslynator rules for code quality -->
@@ -30,5 +32,6 @@
     <Rule Id="RCS1146" Action="Info" /> <!-- Use conditional access -->
     <Rule Id="RCS1179" Action="Info" /> <!-- Use return instead of assignment -->
     <Rule Id="RCS1197" Action="Info" /> <!-- Optimize StringBuilder.Append/AppendLine call -->
+    <Rule Id="RCS1110" Action="None" /> <!-- Declare types in namespaces - extension methods often global -->
   </Rules>
 </RuleSet>
