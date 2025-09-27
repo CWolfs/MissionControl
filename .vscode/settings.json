@@ -7,5 +7,8 @@
           "overviewRulerColor": "grey" 
       }
   ],
-  "git.ignoreLimitWarning": true
+  "git.ignoreLimitWarning": true,
+  "dotnet.server.useOmnisharp": true,
+  "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
+  "dotnet.preferCSharpExtension": true
 }
