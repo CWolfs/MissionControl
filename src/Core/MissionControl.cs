@@ -599,14 +599,12 @@ namespace MissionControl {
       if (units.Length > 0) return true;
 
       units = CurrentContract.Lances.GetLanceUnits(EncounterRules.PLAYER_TEAM_ID);
-      if (units.Length > 4) return true;
-
-      return false;
+      return units.Length > 4;
     }
 
     public string GetGameLogicData(string key) {
-      if (CustomGameLogicData.ContainsKey(key)) {
-        return CustomGameLogicData[key];
+      if (CustomGameLogicData.TryGetValue(key, out string value)) {
+        return value;
       }
       return null;
     }

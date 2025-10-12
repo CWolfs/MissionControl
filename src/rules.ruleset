@@ -7,11 +7,12 @@
   
   <Rules AnalyzerId="Microsoft.CodeAnalysis.NetAnalyzers" RuleNamespace="Microsoft.CodeAnalysis.NetAnalyzers">
     <!-- Performance & Bug Detection -->
-    <Rule Id="CA1031" Action="Info" /> <!-- Don't catch general exceptions (helpful for mod debugging) -->
-    <Rule Id="CA1822" Action="Info" /> <!-- Mark members as static (performance) -->
+    <Rule Id="CA1031" Action="None" /> <!-- Don't catch general exceptions (helpful for mod debugging) -->
+    <Rule Id="CA1822" Action="None" /> <!-- Mark members as static (performance) -->
     <Rule Id="CA2000" Action="Warning" /> <!-- Dispose objects before losing scope (memory leaks) -->
     <Rule Id="CA1835" Action="Info" /> <!-- Prefer Memory/Span-based overloads (performance) -->
     <Rule Id="CA1851" Action="Info" /> <!-- Possible multiple enumerations (performance) -->
+    <Rule Id="CA1854" Action="None" /> <!-- Prefer Dictionary.TryGetValue -->
     <Rule Id="CA1860" Action="Info" /> <!-- Avoid using 'Enumerable.Any()' extension method (performance) -->
     
     <!-- Turn off rules that don't matter for modding -->

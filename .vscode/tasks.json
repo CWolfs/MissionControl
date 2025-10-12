@@ -5,7 +5,7 @@
       "label": "build",
       "type": "process",
       "command": "dotnet",
-      "args": ["build", "K:/Modding/Battletech/MissionControl/src/MissionControl.csproj"],
+      "args": ["build", "src/MissionControl.csproj"],
       "problemMatcher": "$msCompile"
     },
     {
