@@ -4,7 +4,9 @@
     "DesignerVersion": "1.0",
     "MinCompatibleMCVersion": "1.4.2",
     "ContractTypeVersion": "0",
-    "Author": "CWolf"
+    "Authors": [
+      "CWolf"
+    ]
   },
   "Chunks": [
     {
@@ -157,7 +159,10 @@
           "Description": "",
           "Guid": "e7e9f35b-7ed8-404e-9dae-69be61de2dd3",
           "Radius": 110.0,
-          "RegionDefId": "regionDef_TargetZone"
+          "RegionDefId": "regionDef_TargetZone",
+          "ShowPreviewOfRegionWhenInactive": false,
+          "ShowHexWhenActive": true,
+          "AlwaysShowRegionWhenActive": false
         }
       ]
     },
@@ -175,7 +180,8 @@
       "OnActiveExecute": [
         {
           "Type": "Dialogue",
-          "EncounterGuid": "e0ca3227-ffbf-4088-a261-3d4e9ab7d4c5"
+          "EncounterGuid": "e0ca3227-ffbf-4088-a261-3d4e9ab7d4c5",
+          "IsInterrupt": true
         },
         {
           "Type": "SetChunkStateAtRandom",
@@ -209,7 +215,8 @@
       "OnActiveExecute": [
         {
           "Type": "Dialogue",
-          "EncounterGuid": "f404adfd-7613-4fc3-ae55-f025ac6d8213"
+          "EncounterGuid": "f404adfd-7613-4fc3-ae55-f025ac6d8213",
+          "IsInterrupt": true
         }
       ],
       "Children": [
@@ -250,7 +257,8 @@
       "OnActiveExecute": [
         {
           "Type": "Dialogue",
-          "EncounterGuid": "47c75ee8-8af6-46a8-98a3-418f754616c5"
+          "EncounterGuid": "47c75ee8-8af6-46a8-98a3-418f754616c5",
+          "IsInterrupt": true
         }
       ],
       "Children": [
@@ -314,7 +322,8 @@
       "OnActiveExecute": [
         {
           "Type": "Dialogue",
-          "EncounterGuid": "399d54e8-522a-4576-b01f-14d705dc9d6b"
+          "EncounterGuid": "399d54e8-522a-4576-b01f-14d705dc9d6b",
+          "IsInterrupt": true
         },
         {
           "Type": "SetChunkStateAtRandom",
@@ -343,7 +352,8 @@
       "OnActiveExecute": [
         {
           "Type": "Dialogue",
-          "EncounterGuid": "e090fbc3-13e3-4829-9093-1000b4e50dbd"
+          "EncounterGuid": "e090fbc3-13e3-4829-9093-1000b4e50dbd",
+          "IsInterrupt": true
         },
         {
           "Type": "SetChunkStateAtRandom",
@@ -400,7 +410,10 @@
           "Description": "",
           "Guid": "21a03616-c88b-4edd-a9a9-b4dd54b46d6c",
           "Radius": 140.0,
-          "RegionDefId": "regionDef_TargetZone"
+          "RegionDefId": "regionDef_TargetZone",
+          "ShowPreviewOfRegionWhenInactive": false,
+          "ShowHexWhenActive": true,
+          "AlwaysShowRegionWhenActive": false
         }
       ]
     },
@@ -414,7 +427,8 @@
       "OnActiveExecute": [
         {
           "Type": "Dialogue",
-          "EncounterGuid": "4ef16b5e-1486-4399-8835-b81026b22cac"
+          "EncounterGuid": "4ef16b5e-1486-4399-8835-b81026b22cac",
+          "IsInterrupt": true
         }
       ],
       "Children": [
@@ -482,7 +496,8 @@
       "OnActiveExecute": [
         {
           "Type": "Dialogue",
-          "EncounterGuid": "5b3c49fe-d2a6-46ba-b0b7-21a43fd254a9"
+          "EncounterGuid": "5b3c49fe-d2a6-46ba-b0b7-21a43fd254a9",
+          "IsInterrupt": true
         }
       ],
       "Children": [
@@ -522,7 +537,8 @@
       "OnActiveExecute": [
         {
           "Type": "Dialogue",
-          "EncounterGuid": "ebfc6319-b365-478d-af8c-cfa8a38ad1e4"
+          "EncounterGuid": "ebfc6319-b365-478d-af8c-cfa8a38ad1e4",
+          "IsInterrupt": true
         }
       ],
       "Children": [
@@ -550,7 +566,8 @@
       "OnActiveExecute": [
         {
           "Type": "Dialogue",
-          "EncounterGuid": "d530f8a5-ce14-4af8-8da3-2020dab6def1"
+          "EncounterGuid": "d530f8a5-ce14-4af8-8da3-2020dab6def1",
+          "IsInterrupt": true
         }
       ],
       "Children": [
@@ -944,6 +961,11 @@
           "Type": "Delay",
           "Description": "",
           "Time": 2,
+          "SkipIf": {
+            "Type": "WatchFromContractStart",
+            "Execution": "ImmediateOnSuccess",
+            "Triggers": []
+          },
           "Results": [
             {
               "Name": "",
@@ -960,15 +982,22 @@
           "Description": "If the 'Destroy Invading Lance' objective is completed before the turrets activate then immediately activate the enemy turret event for Phase 2 OR just end the game. There's no need to have friendly turrets activate then.",
           "Rounds": 2,
           "SkipIf": {
-            "TriggerOn": "OnObjectiveUpdated",
-            "SucceedOn": "All",
-            "Conditionals": [
+            "Type": "WatchFromContractStart",
+            "Execution": "ImmediateOnSuccess",
+            "Triggers": [
               {
-                "Name": "",
-                "Type": "ObjectiveStatus",
-                "Description": "",
-                "Guid": "bfa3d339-c304-4fba-87db-ac725acb4c10",
-                "Status": "Success"
+                "Name": "Trigger - Skip If",
+                "TriggerOn": "OnObjectiveUpdated",
+                "SucceedOn": "All",
+                "Conditionals": [
+                  {
+                    "Name": "",
+                    "Type": "ObjectiveStatus",
+                    "Description": "",
+                    "Guid": "bfa3d339-c304-4fba-87db-ac725acb4c10",
+                    "Status": "Success"
+                  }
+                ]
               }
             ]
           },

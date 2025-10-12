@@ -4,7 +4,9 @@
     "DesignerVersion": "1.0",
     "MinCompatibleMCVersion": "1.4.2",
     "ContractTypeVersion": "0",
-    "Author": "CWolf"
+    "Authors": [
+      "CWolf"
+    ]
   },
   "Overrides": [
     {
@@ -21,6 +23,13 @@
       }
     },
     {
+      "Path": "$",
+      "Action": "ObjectMerge",
+      "Value": {
+        "PropGroups": []
+      }
+    },
+    {
       "Path": "Chunks[?(@.Name == 'Chunk_PlayerLance')].Children[?(@.Name == 'Spawner_PlayerLance')]",
       "Action": "ObjectMerge",
       "Value": {
@@ -28,7 +37,7 @@
           "Type": "World",
           "Value": {
             "x": -840.0,
-            "y": 0.0,
+            "y": 271.065,
             "z": 623.538
           }
         },
@@ -232,8 +241,8 @@
             "z": 103.769
           },
           "23e3c6ad-31e3-459b-9f0c-a7f5614e4662": {
-            "x": -133.0,
-            "y": -0.187,
+            "x": -132.5,
+            "y": -11.956,
             "z": -220.231
           }
         },
@@ -270,14 +279,6 @@
             "x": -324.0,
             "y": 204.262,
             "z": 270.2
-          }
-        },
-        "Rotation": {
-          "Type": "World",
-          "Value": {
-            "x": 0.0,
-            "y": 0.0,
-            "z": 0.0
           }
         }
       }
@@ -429,14 +430,6 @@
             "x": 180.0,
             "y": 265.956,
             "z": -311.769
-          }
-        },
-        "Rotation": {
-          "Type": "World",
-          "Value": {
-            "x": 0.0,
-            "y": 0.0,
-            "z": 0.0
           }
         }
       }

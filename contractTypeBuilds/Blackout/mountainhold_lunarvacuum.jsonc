@@ -4,7 +4,9 @@
     "DesignerVersion": "1.0",
     "MinCompatibleMCVersion": "1.4.2",
     "ContractTypeVersion": "0",
-    "Author": "CWolf"
+    "Authors": [
+      "CWolf"
+    ]
   },
   "Overrides": [
     {
@@ -98,6 +100,13 @@
             "IsActive": true
           }
         ]
+      }
+    },
+    {
+      "Path": "$",
+      "Action": "ObjectMerge",
+      "Value": {
+        "PropGroups": []
       }
     },
     {
@@ -320,14 +329,6 @@
             "y": 217.225,
             "z": 166.277
           }
-        },
-        "Rotation": {
-          "Type": "World",
-          "Value": {
-            "x": 0.0,
-            "y": 0.0,
-            "z": 0.0
-          }
         }
       }
     },
@@ -478,14 +479,6 @@
             "x": 24.0,
             "y": 299.106,
             "z": 124.708
-          }
-        },
-        "Rotation": {
-          "Type": "World",
-          "Value": {
-            "x": 0.0,
-            "y": 0.0,
-            "z": 0.0
           }
         }
       }

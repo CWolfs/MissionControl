@@ -4,7 +4,9 @@
     "DesignerVersion": "1.0",
     "MinCompatibleMCVersion": "1.4.2",
     "ContractTypeVersion": "0",
-    "Author": "CWolf"
+    "Authors": [
+      "CWolf"
+    ]
   },
   "Overrides": [
     {
@@ -58,6 +60,13 @@
             "IsActive": true
           }
         ]
+      }
+    },
+    {
+      "Path": "$",
+      "Action": "ObjectMerge",
+      "Value": {
+        "PropGroups": []
       }
     },
     {
@@ -175,7 +184,7 @@
         "SpawnPointPositions": {
           "6826832c-83d5-4287-b349-33008dc1fac5": {
             "x": -10.0,
-            "y": 1.954,
+            "y": 27.447,
             "z": 99.523
           },
           "0329e03f-9d9c-4a5d-99df-ccdb6afe2bb5": {
@@ -185,13 +194,13 @@
           },
           "e76ef06a-bd08-4c83-85f3-d8863acb3956": {
             "x": -160.0,
-            "y": -0.154,
+            "y": 12.447,
             "z": -10.477
           },
           "0044f994-2b5b-4185-a7d6-dc3f50f561ba": {
-            "x": 50.0,
-            "y": -0.578,
-            "z": -180.477
+            "x": 34.426,
+            "y": 0.947,
+            "z": -196.455
           }
         },
         "SpawnPointRotations": {
@@ -290,14 +299,6 @@
             "x": -468.0,
             "y": 263.553,
             "z": 436.477
-          }
-        },
-        "Rotation": {
-          "Type": "World",
-          "Value": {
-            "x": 0.0,
-            "y": 0.0,
-            "z": 0.0
           }
         }
       }
@@ -449,14 +450,6 @@
             "x": -480.0,
             "y": 140.287,
             "z": -332.554
-          }
-        },
-        "Rotation": {
-          "Type": "World",
-          "Value": {
-            "x": 0.0,
-            "y": 0.0,
-            "z": 0.0
           }
         }
       }
