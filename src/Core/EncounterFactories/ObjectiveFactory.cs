@@ -2,6 +2,7 @@ using UnityEngine;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using BattleTech;
 using BattleTech.Designed;
@@ -15,7 +16,7 @@ using MissionControl.EncounterNodes.Objectives;
 namespace MissionControl.EncounterFactories {
   public class ObjectiveFactory {
     private static GameObject CreateGameObject(GameObject parent, string name = null) {
-      GameObject go = new GameObject((name == null) ? "Objective" : name);
+      GameObject go = new GameObject(name ?? "Objective");
       go.transform.parent = parent.transform;
       go.transform.localPosition = Vector3.zero;
       return go;
@@ -340,6 +341,51 @@ namespace MissionControl.EncounterFactories {
       AttachRequiredReferences(timerObjective, contractObjectiveGuid);
 
       return timerObjective;
+    }
+
+    public static ArtilleryObjective CreateArtilleryObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, bool isPrimaryObjectve, int priority, bool displayToUser,
+      string progressFormat, string description, DurationType durationType, int durationCount, int repeatAmount, DurationCompleteType durationCompleteType, bool startTimerAtRoundEnd,
+      int damage, int heatDamage, int stabilityDamage, string[] regionIDs, BattleTech.ArtilleryVFXType vfxType, bool automarkRegionAsDangerous, bool forceShowRegionWhenActive) {
+
+      GameObject artilleryObjectiveGo = CreateGameObject(parent, objectName);
+
+      ArtilleryObjective artilleryObjective = artilleryObjectiveGo.AddComponent<ArtilleryObjective>();
+      artilleryObjective.title = artilleryObjectiveGo.name;
+      artilleryObjective.encounterObjectGuid = objectiveGuid;
+
+      artilleryObjective.title = title;
+      artilleryObjective.showProgress = true;
+      artilleryObjective.progressFormat = progressFormat;
+      artilleryObjective.description = description;
+      artilleryObjective.priority = priority;
+
+      artilleryObjective.primary = isPrimaryObjectve;
+
+      artilleryObjective.displayToUser = displayToUser;
+      artilleryObjective.checkObjectiveFlag = false;
+      artilleryObjective.useBeacon = false;
+      artilleryObjective.markUnitsWith = ObjectiveMark.None;
+      artilleryObjective.enableObjectiveLogging = true;
+
+      artilleryObjective.durationType = durationType;
+      artilleryObjective.durationToCount = durationCount + 1; // When a timer starts it counts the initial duration as the first round and is confusing to the modder
+      artilleryObjective.restartTimerCount = repeatAmount + 1; // When a timer starts it counts the initial run as the first repeat and is confusing to the modder
+      artilleryObjective.durationCompleteAction = durationCompleteType;
+
+      artilleryObjective.startTimerAtRoundEnd = startTimerAtRoundEnd;
+      artilleryObjective.damage = damage;
+      artilleryObjective.heatDamage = heatDamage;
+      artilleryObjective.stabilityDamage = stabilityDamage;
+
+      artilleryObjective.regionRefList = regionIDs.Select(id => new RegionRef() { EncounterObjectGuid = id }).ToList();
+
+      artilleryObjective.artilleryVFXType = vfxType;
+      artilleryObjective.autoMarkRegionAsDangerous = automarkRegionAsDangerous;
+      artilleryObjective.forceShowRegionWhenActive = forceShowRegionWhenActive;
+
+      AttachRequiredReferences(artilleryObjective, contractObjectiveGuid);
+
+      return artilleryObjective;
     }
   }
 }
