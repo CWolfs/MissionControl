@@ -335,7 +335,7 @@ namespace MissionControl.EncounterFactories {
 
       timerObjective.durationType = durationType;
       timerObjective.durationToCount = durationToCount + 1; // When a timer starts it counts the initial duration as the first round and is confusing to the modder
-      timerObjective.restartTimerCount = repeatCount - 1; // Needs minus one to correct for misconception of how many times it will repeat
+      timerObjective.restartTimerCount = repeatCount;
       timerObjective.durationCompleteAction = durationToComplete;
 
       AttachRequiredReferences(timerObjective, contractObjectiveGuid);
@@ -370,7 +370,7 @@ namespace MissionControl.EncounterFactories {
 
       artilleryObjective.durationType = durationType;
       artilleryObjective.durationToCount = durationCount + 1; // When a timer starts it counts the initial duration as the first round and is confusing to the modder
-      artilleryObjective.restartTimerCount = repeatAmount - 1; // Needs minus one to correct for misconception of how many times it will repeat
+      artilleryObjective.restartTimerCount = repeatAmount;
       artilleryObjective.durationCompleteAction = durationCompleteType;
 
       artilleryObjective.startTimerAtRoundEnd = startTimerAtRoundEnd;
