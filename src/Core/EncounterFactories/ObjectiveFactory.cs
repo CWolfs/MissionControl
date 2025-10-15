@@ -335,7 +335,7 @@ namespace MissionControl.EncounterFactories {
 
       timerObjective.durationType = durationType;
       timerObjective.durationToCount = durationToCount + 1; // When a timer starts it counts the initial duration as the first round and is confusing to the modder
-      timerObjective.restartTimerCount = repeatCount + 1; // When a timer starts it counts the initial run as the first repeat and is confusing to the modder
+      timerObjective.restartTimerCount = repeatCount - 1; // Needs minus one to correct for misconception of how many times it will repeat
       timerObjective.durationCompleteAction = durationToComplete;
 
       AttachRequiredReferences(timerObjective, contractObjectiveGuid);
@@ -345,11 +345,12 @@ namespace MissionControl.EncounterFactories {
 
     public static ArtilleryObjective CreateArtilleryObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, bool isPrimaryObjectve, int priority, bool displayToUser,
       string progressFormat, string description, DurationType durationType, int durationCount, int repeatAmount, DurationCompleteType durationCompleteType, bool startTimerAtRoundEnd,
-      int damage, int heatDamage, int stabilityDamage, string[] regionIDs, BattleTech.ArtilleryVFXType vfxType, bool automarkRegionAsDangerous, bool forceShowRegionWhenActive) {
+      int damage, int heatDamage, int stabilityDamage, string[] regionIDs, ArtilleryVFXType vfxType, bool automarkRegionAsDangerous, bool forceShowRegionWhenActive) {
 
       GameObject artilleryObjectiveGo = CreateGameObject(parent, objectName);
 
       ArtilleryObjective artilleryObjective = artilleryObjectiveGo.AddComponent<ArtilleryObjective>();
+      artilleryObjective.artilleryObjectiveVersion = 1;
       artilleryObjective.title = artilleryObjectiveGo.name;
       artilleryObjective.encounterObjectGuid = objectiveGuid;
 
@@ -369,7 +370,7 @@ namespace MissionControl.EncounterFactories {
 
       artilleryObjective.durationType = durationType;
       artilleryObjective.durationToCount = durationCount + 1; // When a timer starts it counts the initial duration as the first round and is confusing to the modder
-      artilleryObjective.restartTimerCount = repeatAmount + 1; // When a timer starts it counts the initial run as the first repeat and is confusing to the modder
+      artilleryObjective.restartTimerCount = repeatAmount - 1; // Needs minus one to correct for misconception of how many times it will repeat
       artilleryObjective.durationCompleteAction = durationCompleteType;
 
       artilleryObjective.startTimerAtRoundEnd = startTimerAtRoundEnd;
