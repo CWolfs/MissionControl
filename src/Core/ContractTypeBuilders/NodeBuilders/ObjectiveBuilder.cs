@@ -53,6 +53,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "DestroyXUnits": BuildDestroyXUnitsObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         case "DestroyXDestructibles": BuildDestroyXDestructiblesObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         case "Timer": BuildTimerObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
+        case "Artillery": BuildArtilleryObjective(parent, objective, name, title, guid, isPrimaryObjectve, priority, displayToUser, contractObjectiveGuid); break;
         default: Main.LogDebug($"[ObjectiveBuilder.{contractTypeBuilder.ContractTypeKey}] No support for sub-type '{subType}'. Check for spelling mistakes."); break;
       }
     }
@@ -191,17 +192,45 @@ namespace MissionControl.ContractTypeBuilders {
     private void BuildTimerObjective(GameObject parent, JObject objective, string name, string title, string guid,
       bool isPrimaryObjectve, int priority, bool displayToUser, string contractObjectiveGuid) {
 
-      string durationTypeStr = (objective.ContainsKey("DurationType")) ? objective["DurationType"].ToString() : "Rounds";
-      int durationToCount = (objective.ContainsKey("DurationToCount")) ? (int)objective["DurationToCount"] : 1;
-      int repeatCount = (objective.ContainsKey("RepeatCount")) ? (int)objective["RepeatCount"] : 0;
-      string durationToCompleteStr = (objective.ContainsKey("DurationCompleteType")) ? objective["DurationCompleteType"].ToString() : "IgnoreObjective";
-      string progressFormat = (objective.ContainsKey("ProgressFormat")) ? objective["ProgressFormat"].ToString() : "";
+      string durationTypeStr = objective.ContainsKey("DurationType") ? objective["DurationType"].ToString() : "Rounds";
+      int durationToCount = objective.ContainsKey("DurationToCount") ? (int)objective["DurationToCount"] : 1;
+      int repeatCount = objective.ContainsKey("RepeatCount") ? (int)objective["RepeatCount"] : 0;
+      string durationToCompleteStr = objective.ContainsKey("DurationCompleteType") ? objective["DurationCompleteType"].ToString() : "IgnoreObjective";
+      string progressFormat = objective.ContainsKey("ProgressFormat") ? objective["ProgressFormat"].ToString() : "";
       string description = objective["Description"].ToString();
 
       DurationType durationType = (DurationType)Enum.Parse(typeof(DurationType), durationTypeStr);
       DurationCompleteType durationToComplete = (DurationCompleteType)Enum.Parse(typeof(DurationCompleteType), durationToCompleteStr);
 
       ObjectiveFactory.CreateTimerObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, durationType, durationToCount, repeatCount, durationToComplete);
+    }
+
+    private void BuildArtilleryObjective(GameObject parent, JObject objective, string name, string title, string guid,
+      bool isPrimaryObjectve, int priority, bool displayToUser, string contractObjectiveGuid) {
+
+      string durationTypeStr = objective.ContainsKey("DurationType") ? objective["DurationType"].ToString() : "Rounds";
+      int durationCount = objective.ContainsKey("DurationCount") ? (int)objective["DurationCount"] : 1;
+      int repeatAmount = objective.ContainsKey("RepeatAmount") ? (int)objective["RepeatAmount"] : 0;
+      string durationCompleteTypeStr = objective.ContainsKey("DurationCompleteType") ? objective["DurationCompleteType"].ToString() : "SucceedObjective";
+      string progressFormat = objective.ContainsKey("ProgressFormat") ? objective["ProgressFormat"].ToString() : "";
+      string description = objective.ContainsKey("Description") ? objective["Description"].ToString() : "";
+      bool startTimerAtRoundEnd = objective.ContainsKey("StartTimerAtRoundEnd") && (bool)objective["StartTimerAtRoundEnd"];
+
+      int damage = objective.ContainsKey("Damage") ? (int)objective["Damage"] : 0;
+      int heatDamage = objective.ContainsKey("HeatDamage") ? (int)objective["HeatDamage"] : 0;
+      int stabilityDamage = objective.ContainsKey("StabilityDamage") ? (int)objective["StabilityDamage"] : 0;
+
+      string[] regionIDs = objective.ContainsKey("RegionIDs") ? ((JArray)objective["RegionIDs"]).ToObject<string[]>() : new string[0];
+      string vfxTypeStr = objective.ContainsKey("VFXType") ? objective["VFXType"].ToString() : "None";
+      bool automarkRegionAsDangerous = objective.ContainsKey("AutomarkRegionAsDangerous") && (bool)objective["AutomarkRegionAsDangerous"];
+      bool forceShowRegionWhenActive = objective.ContainsKey("ForceShowRegionWhenActive") && (bool)objective["ForceShowRegionWhenActive"];
+
+      DurationType durationType = (DurationType)Enum.Parse(typeof(DurationType), durationTypeStr);
+      DurationCompleteType durationCompleteType = (DurationCompleteType)Enum.Parse(typeof(DurationCompleteType), durationCompleteTypeStr);
+      BattleTech.ArtilleryVFXType vfxType = (BattleTech.ArtilleryVFXType)Enum.Parse(typeof(BattleTech.ArtilleryVFXType), vfxTypeStr);
+
+      ObjectiveFactory.CreateArtilleryObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, displayToUser, progressFormat, description,
+        durationType, durationCount, repeatAmount, durationCompleteType, startTimerAtRoundEnd, damage, heatDamage, stabilityDamage, regionIDs, vfxType, automarkRegionAsDangerous, forceShowRegionWhenActive);
     }
   }
 }
