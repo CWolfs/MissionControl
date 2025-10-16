@@ -81,6 +81,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetAllTeamsRelationship": BuildSetAllTeamsRelationshipResult(result); break;
         case "EndCombatRetreat": BuildEndCombatRetreatResult(result); break;
         case "AnimateDropship": BuildAnimateDropshipResult(result); break;
+        case "Artillery": BuildArtilleryResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -651,6 +652,32 @@ namespace MissionControl.ContractTypeBuilders {
       CustomAnimateDropshipResult result = ScriptableObject.CreateInstance<CustomAnimateDropshipResult>();
       result.DropshipLandingSpotRef = dropshipLandingSpotRef;
       result.AnimationType = animationType;
+
+      results.Add(result);
+    }
+
+    private void BuildArtilleryResult(JObject resultObject) {
+      Main.LogDebug("[BuildArtilleryResult] Building 'Artillery' result");
+      string name = resultObject.ContainsKey("Name") ? resultObject["Name"].ToString() : "Unnamed Artillery";
+      string description = resultObject.ContainsKey("Description") ? resultObject["Description"].ToString() : "";
+      List<string> regionIDs = resultObject.ContainsKey("RegionIDs") ? resultObject["RegionIDs"].ToObject<List<string>>() : new List<string>();
+      bool shotsFireAtAllRegions = resultObject.ContainsKey("ShotsFireAtAllRegions") ? (bool)resultObject["ShotsFireAtAllRegions"] : true;
+      float damage = resultObject.ContainsKey("Damage") ? (float)resultObject["Damage"] : 0f;
+      float heatDamage = resultObject.ContainsKey("HeatDamage") ? (float)resultObject["HeatDamage"] : 0f;
+      float stabilityDamage = resultObject.ContainsKey("StabilityDamage") ? (float)resultObject["StabilityDamage"] : 0f;
+
+      string artilleryVFXTypeStr = resultObject.ContainsKey("ArtilleryVFXType") ? resultObject["ArtilleryVFXType"].ToString() : "ArtilleryShellBarrage";
+      ArtilleryVFXType artilleryVFXType = (ArtilleryVFXType)Enum.Parse(typeof(ArtilleryVFXType), artilleryVFXTypeStr);
+
+      ArtilleryResult result = ScriptableObject.CreateInstance<ArtilleryResult>();
+      result.Name = name;
+      result.Description = description;
+      result.RegionIDs = regionIDs;
+      result.ShotsFireAtAllRegions = shotsFireAtAllRegions;
+      result.Damage = damage;
+      result.HeatDamage = heatDamage;
+      result.StabilityDamage = stabilityDamage;
+      result.ArtilleryVFXType = artilleryVFXType;
 
       results.Add(result);
     }
