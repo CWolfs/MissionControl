@@ -12,9 +12,9 @@ namespace MissionControl.Result {
     public string Description { get; set; }
     public List<string> RegionIDs { get; set; }
     public bool ShotsFireAtAllRegions { get; set; } = true;
-    public float Damage { get; set; }
-    public float HeatDamage { get; set; }
-    public float StabilityDamage { get; set; }
+    public int Damage { get; set; }
+    public int HeatDamage { get; set; }
+    public int StabilityDamage { get; set; }
     public ArtilleryVFXType ArtilleryVFXType { get; set; } = ArtilleryVFXType.ArtilleryShellBarrage;
 
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
@@ -100,9 +100,9 @@ namespace MissionControl.Result {
         targetPositions,
         ArtilleryVFXType,
         allTargets,
-        Damage,
-        (int)HeatDamage,
-        (int)StabilityDamage,
+        (float)Damage,
+        HeatDamage,
+        StabilityDamage,
         TerrainMaskFlags.None
       );
 
