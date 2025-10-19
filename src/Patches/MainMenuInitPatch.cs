@@ -12,7 +12,7 @@ namespace MissionControl.Patches {
 
       if (Main.Settings.DebugSkirmishMode && UiManager.Instance.ShouldPatchMainMenu) {
         Main.Logger.Log($"[MainMenuInitPatch Postfix] Patching Init");
-        UnityEngine.Random.InitState(DateTime.Now.Millisecond);
+        UnityEngine.Random.InitState((int)(DateTime.Now.Ticks & 0x7FFFFFFF));
         UiManager.Instance.SetupQuickSkirmishMenu();
         UiManager.Instance.ShouldPatchMainMenu = false;
       }

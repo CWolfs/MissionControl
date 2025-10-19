@@ -34,6 +34,7 @@
     <Rule Id="RCS1146" Action="Info" /> <!-- Use conditional access -->
     <Rule Id="RCS1156" Action="None" /> <!-- Use string.Length instead of comparison with empty string -->
     <Rule Id="RCS1169" Action="None" /> <!-- Make field read-only -->
+    <Rule Id="RCS1170" Action="None" /> <!-- Use read-only auto-property -->
     <Rule Id="RCS1179" Action="Info" /> <!-- Use return instead of assignment -->
     <Rule Id="RCS1197" Action="Info" /> <!-- Optimize StringBuilder.Append/AppendLine call -->
     <Rule Id="RCS1110" Action="None" /> <!-- Declare types in namespaces - extension methods often global -->

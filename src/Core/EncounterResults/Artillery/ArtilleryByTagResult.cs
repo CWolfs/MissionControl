@@ -8,10 +8,18 @@ using BattleTech.Framework;
 
 using HBS.Collections;
 
+using MissionControl.Utils;
+
 namespace MissionControl.Result {
+  public enum ArtilleryTargetPriority {
+    None,
+    Units,
+    Buildings
+  }
+
   public class ArtilleryByTagResult : EncounterResult {
-    private const float MISS_DISTANCE = 30.0f;
-    private const float MISS_DISTANCE_VARIANCE = 10.0f;
+    private const float MISS_DISTANCE = 72.0f;
+    private const float MISS_DISTANCE_VARIANCE = 24.0f;
 
     public string Name { get; set; }
     public string Description { get; set; }
@@ -22,6 +30,7 @@ namespace MissionControl.Result {
     public int HeatDamage { get; set; }
     public int StabilityDamage { get; set; }
     public ArtilleryVFXType ArtilleryVFXType { get; set; } = ArtilleryVFXType.ArtilleryShellBarrage;
+    public ArtilleryTargetPriority TargetPriority { get; set; } = ArtilleryTargetPriority.None;
 
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
       Main.LogDebug($"[ArtilleryByTagResult] Triggering artillery strike '{Name}' - {Description}");
@@ -50,6 +59,34 @@ namespace MissionControl.Result {
 
       Main.LogDebug($"[ArtilleryByTagResult] Found {taggedCombatants.Count} combatants with tags: {String.Join(", ", TargetTags)}");
 
+      // Filter by TargetPriority
+      if (TargetPriority != ArtilleryTargetPriority.None) {
+        List<ICombatant> filteredCombatants = new List<ICombatant>();
+
+        foreach (ICombatant combatant in taggedCombatants) {
+          if (TargetPriority == ArtilleryTargetPriority.Units) {
+            // Include only units (AbstractActor: mechs, vehicles, turrets)
+            if (combatant is AbstractActor) {
+              filteredCombatants.Add(combatant);
+            }
+          } else if (TargetPriority == ArtilleryTargetPriority.Buildings) {
+            // Include only buildings
+            if (combatant is BattleTech.Building) {
+              filteredCombatants.Add(combatant);
+            }
+          }
+        }
+
+        if (filteredCombatants.Count > 0) {
+          // Use priority targets if found
+          taggedCombatants = filteredCombatants;
+          Main.LogDebug($"[ArtilleryByTagResult] After filtering by TargetPriority '{TargetPriority}': {taggedCombatants.Count} priority combatants found");
+        } else {
+          // Fall back to all tagged combatants if no priority targets found
+          Main.LogDebug($"[ArtilleryByTagResult] No priority targets found for '{TargetPriority}', falling back to all {taggedCombatants.Count} tagged combatants");
+        }
+      }
+
       // Determine which combatants to engage
       List<ICombatant> combatantsToEngage = new List<ICombatant>();
 
@@ -57,8 +94,8 @@ namespace MissionControl.Result {
         combatantsToEngage.AddRange(taggedCombatants);
         Main.LogDebug($"[ArtilleryByTagResult] Engaging all {combatantsToEngage.Count} targets");
       } else {
-        // Pick a random target
-        int randomIndex = UnityEngine.Random.Range(0, taggedCombatants.Count);
+        // Pick a random target using combat-safe random to avoid deterministic selection
+        int randomIndex = RandomUtils.GetCombatSafeRandomIndex(combat, taggedCombatants.Count);
         combatantsToEngage.Add(taggedCombatants[randomIndex]);
         Main.LogDebug($"[ArtilleryByTagResult] Engaging 1 random target (index {randomIndex})");
       }
@@ -79,7 +116,7 @@ namespace MissionControl.Result {
 
       // Edge case: If ChanceToHit is 1, all shots will hit (no need to roll)
       if (ChanceToHit >= 1.0f) {
-        Main.LogDebug($"[ArtilleryByTagResult] ChanceToHit is 1, all shots will hit");
+        Main.LogDebug("[ArtilleryByTagResult] ChanceToHit is 1, all shots will hit");
 
         foreach (ICombatant combatant in combatantsToEngage) {
           Vector3 position = combatant.CurrentPosition.GetLerpedHeightAt();

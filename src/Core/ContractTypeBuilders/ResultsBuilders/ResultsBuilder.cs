@@ -697,6 +697,9 @@ namespace MissionControl.ContractTypeBuilders {
       string artilleryVFXTypeStr = resultObject.ContainsKey("ArtilleryVFXType") ? resultObject["ArtilleryVFXType"].ToString() : "ArtilleryShellBarrage";
       ArtilleryVFXType artilleryVFXType = (ArtilleryVFXType)Enum.Parse(typeof(ArtilleryVFXType), artilleryVFXTypeStr);
 
+      string targetPriorityStr = resultObject.ContainsKey("TargetPriority") ? resultObject["TargetPriority"].ToString() : "None";
+      ArtilleryTargetPriority targetPriority = (ArtilleryTargetPriority)Enum.Parse(typeof(ArtilleryTargetPriority), targetPriorityStr);
+
       ArtilleryByTagResult result = ScriptableObject.CreateInstance<ArtilleryByTagResult>();
       result.Name = name;
       result.Description = description;
@@ -707,6 +710,7 @@ namespace MissionControl.ContractTypeBuilders {
       result.HeatDamage = heatDamage;
       result.StabilityDamage = stabilityDamage;
       result.ArtilleryVFXType = artilleryVFXType;
+      result.TargetPriority = targetPriority;
 
       results.Add(result);
     }
