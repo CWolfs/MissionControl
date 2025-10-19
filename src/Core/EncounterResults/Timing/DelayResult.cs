@@ -70,10 +70,10 @@ namespace MissionControl.Result {
         return;
       }
 
-      Main.LogDebug($"[DelayResult.TriggerResults] About to build SkipIf triggers for 'WatchDuringDelay'");
+      Main.LogDebug("[DelayResult.TriggerResults] About to build SkipIf triggers for 'WatchDuringDelay'");
       BuildSkipIfTriggersForType("WatchDuringDelay");
 
-      Main.LogDebug($"[DelayResult.TriggerResults] About to build Other triggers for 'WatchDuringDelay'");
+      Main.LogDebug("[DelayResult.TriggerResults] About to build Other triggers for 'WatchDuringDelay'");
       BuildOtherTriggers();
 
       if (IsTimeControlled()) {
@@ -109,7 +109,7 @@ namespace MissionControl.Result {
       SkipIfTriggers[type].Add(genericTrigger);
 
       if (type == "WatchFromContractStart") {
-        Main.LogDebug($"[DelayResult.AddSkipIfTrigger] About to run SkipIf trigger for 'WatchFromContractStart'");
+        Main.LogDebug("[DelayResult.AddSkipIfTrigger] About to run SkipIf trigger for 'WatchFromContractStart'");
         genericTrigger.Run(null);
       }
     }
@@ -145,22 +145,22 @@ namespace MissionControl.Result {
     }
 
     private bool IsTimeControlled() {
-      return Time > 0 ? true : false;
+      return Time > 0;
     }
 
     private bool IsRoundControlled() {
-      return Rounds > 0 ? true : false;
+      return Rounds > 0;
     }
 
     private bool IsPhaseControlled() {
-      return Phases > 0 ? true : false;
+      return Phases > 0;
     }
 
     private void OnRoundBegin(MessageCenterMessage message) {
       if (completed || !IsRoundControlled()) return;
       roundCount++;
 
-      if (roundCount >= Rounds) {
+      if (roundCount > Rounds) {
         Main.LogDebug($"[DelayResult] Triggering '{Name}' with OnRoundBegin");
         TriggerResults();
       }
@@ -170,14 +170,14 @@ namespace MissionControl.Result {
       if (completed || !IsPhaseControlled()) return;
       phaseCount++;
 
-      if (phaseCount >= Phases) {
+      if (phaseCount > Phases) {
         Main.LogDebug($"[DelayResult] Triggering '{Name}' with OnPhaseBegin");
         TriggerResults();
       }
     }
 
     private void TriggerResults() {
-      Main.LogDebug($"[DelayResult.TriggerResults] About to build SkipIf triggers and run immediately for 'CheckAtEndOfDelay'");
+      Main.LogDebug("[DelayResult.TriggerResults] About to build SkipIf triggers and run immediately for 'CheckAtEndOfDelay'");
       BuildSkipIfTriggersForType("CheckAtEndOfDelay");
 
       Main.LogDebug($"[DelayResult.TriggerResults] useSkippedState '{useSkippedState}'");
@@ -198,14 +198,14 @@ namespace MissionControl.Result {
           result.Trigger(null, null);
         }
       } else {
-        Main.Logger.LogError($"[DelayResult.TriggerResults] Results list is null. This is a serious issue with the contract builder. Check your custom contract type build file for errors.");
+        Main.Logger.LogError("[DelayResult.TriggerResults] Results list is null. This is a serious issue with the contract builder. Check your custom contract type build file for errors.");
       }
 
       DeleteTriggers();
     }
 
     private void TriggerResultsIfSkipped() {
-      if (SkipIfExecution == "AfterDelay" && waitingUntilAfterDelayToSkipIf == false) {
+      if (SkipIfExecution == "AfterDelay" && !waitingUntilAfterDelayToSkipIf) {
         waitingUntilAfterDelayToSkipIf = true;
         return;
       }
@@ -220,7 +220,7 @@ namespace MissionControl.Result {
           result.Trigger(null, null);
         }
       } else {
-        Main.Logger.LogDebug($"[DelayResult.TriggerResultsIfSkipped] Skip Results list is null. This means you've set up a 'SkipIf' trigger but with no results. This can be expected.");
+        Main.Logger.LogDebug("[DelayResult.TriggerResultsIfSkipped] Skip Results list is null. This means you've set up a 'SkipIf' trigger but with no results. This can be expected.");
       }
 
       DeleteTriggers();
