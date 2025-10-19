@@ -82,6 +82,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "EndCombatRetreat": BuildEndCombatRetreatResult(result); break;
         case "AnimateDropship": BuildAnimateDropshipResult(result); break;
         case "Artillery": BuildArtilleryResult(result); break;
+        case "ArtilleryByTag": BuildArtilleryByTagResult(result); break;
         default:
           Main.Logger.LogError($"[ResultsBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
           break;
@@ -662,9 +663,9 @@ namespace MissionControl.ContractTypeBuilders {
       string description = resultObject.ContainsKey("Description") ? resultObject["Description"].ToString() : "";
       List<string> regionIDs = resultObject.ContainsKey("RegionIDs") ? resultObject["RegionIDs"].ToObject<List<string>>() : new List<string>();
       bool shotsFireAtAllRegions = resultObject.ContainsKey("ShotsFireAtAllRegions") ? (bool)resultObject["ShotsFireAtAllRegions"] : true;
-      float damage = resultObject.ContainsKey("Damage") ? (float)resultObject["Damage"] : 0f;
-      float heatDamage = resultObject.ContainsKey("HeatDamage") ? (float)resultObject["HeatDamage"] : 0f;
-      float stabilityDamage = resultObject.ContainsKey("StabilityDamage") ? (float)resultObject["StabilityDamage"] : 0f;
+      int damage = resultObject.ContainsKey("Damage") ? (int)resultObject["Damage"] : 0;
+      int heatDamage = resultObject.ContainsKey("HeatDamage") ? (int)resultObject["HeatDamage"] : 0;
+      int stabilityDamage = resultObject.ContainsKey("StabilityDamage") ? (int)resultObject["StabilityDamage"] : 0;
 
       string artilleryVFXTypeStr = resultObject.ContainsKey("ArtilleryVFXType") ? resultObject["ArtilleryVFXType"].ToString() : "ArtilleryShellBarrage";
       ArtilleryVFXType artilleryVFXType = (ArtilleryVFXType)Enum.Parse(typeof(ArtilleryVFXType), artilleryVFXTypeStr);
@@ -678,6 +679,38 @@ namespace MissionControl.ContractTypeBuilders {
       result.HeatDamage = heatDamage;
       result.StabilityDamage = stabilityDamage;
       result.ArtilleryVFXType = artilleryVFXType;
+
+      results.Add(result);
+    }
+
+    private void BuildArtilleryByTagResult(JObject resultObject) {
+      Main.LogDebug("[BuildArtilleryByTagResult] Building 'ArtilleryByTag' result");
+      string name = resultObject.ContainsKey("Name") ? resultObject["Name"].ToString() : "Unnamed Artillery by Tag";
+      string description = resultObject.ContainsKey("Description") ? resultObject["Description"].ToString() : "";
+      string[] targetTags = resultObject.ContainsKey("TargetTags") ? ((JArray)resultObject["TargetTags"]).ToObject<string[]>() : new string[0];
+      bool shotsFireAtAllTargets = resultObject.ContainsKey("ShotsFireAtAllTargets") ? (bool)resultObject["ShotsFireAtAllTargets"] : true;
+      float chanceToHit = resultObject.ContainsKey("ChanceToHit") ? (float)resultObject["ChanceToHit"] : 1.0f;
+      int damage = resultObject.ContainsKey("Damage") ? (int)resultObject["Damage"] : 0;
+      int heatDamage = resultObject.ContainsKey("HeatDamage") ? (int)resultObject["HeatDamage"] : 0;
+      int stabilityDamage = resultObject.ContainsKey("StabilityDamage") ? (int)resultObject["StabilityDamage"] : 0;
+
+      string artilleryVFXTypeStr = resultObject.ContainsKey("ArtilleryVFXType") ? resultObject["ArtilleryVFXType"].ToString() : "ArtilleryShellBarrage";
+      ArtilleryVFXType artilleryVFXType = (ArtilleryVFXType)Enum.Parse(typeof(ArtilleryVFXType), artilleryVFXTypeStr);
+
+      string targetPriorityStr = resultObject.ContainsKey("TargetPriority") ? resultObject["TargetPriority"].ToString() : "None";
+      ArtilleryTargetPriority targetPriority = (ArtilleryTargetPriority)Enum.Parse(typeof(ArtilleryTargetPriority), targetPriorityStr);
+
+      ArtilleryByTagResult result = ScriptableObject.CreateInstance<ArtilleryByTagResult>();
+      result.Name = name;
+      result.Description = description;
+      result.TargetTags = targetTags;
+      result.ShotsFireAtAllTargets = shotsFireAtAllTargets;
+      result.ChanceToHit = chanceToHit;
+      result.Damage = damage;
+      result.HeatDamage = heatDamage;
+      result.StabilityDamage = stabilityDamage;
+      result.ArtilleryVFXType = artilleryVFXType;
+      result.TargetPriority = targetPriority;
 
       results.Add(result);
     }
