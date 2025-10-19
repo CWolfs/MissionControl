@@ -40,7 +40,11 @@ namespace MissionControl.Result {
       List<ICombatant> taggedCombatants = ValidateAndGetTaggedCombatants(combat);
       if (taggedCombatants == null) return;
 
-      List<ICombatant> filteredCombatants = FilterTargetsByPriority(taggedCombatants);
+      // Only apply priority filtering if we're selecting a single random target
+      // If ShotsFireAtAllTargets is true, we should engage ALL tagged combatants
+      List<ICombatant> filteredCombatants = ShotsFireAtAllTargets
+        ? taggedCombatants
+        : FilterTargetsByPriority(taggedCombatants);
       List<ICombatant> combatantsToEngage = SelectTargetsToEngage(combat, filteredCombatants);
 
       ExecuteArtilleryStrikes(combatantsToEngage);
@@ -68,6 +72,7 @@ namespace MissionControl.Result {
       }
 
       Main.LogDebug($"[ArtilleryByTagResult] Found {taggedCombatants.Count} combatants with tags: {String.Join(", ", TargetTags)}");
+      taggedCombatants.Shuffle();
       return taggedCombatants;
     }
 
