@@ -26,6 +26,8 @@ namespace MissionControl.Result {
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
       Main.LogDebug($"[ArtilleryByTagResult] Triggering artillery strike '{Name}' - {Description}");
 
+      CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
+
       // Validate ChanceToHit
       if (ChanceToHit < 0.0f || ChanceToHit > 1.0f) {
         Main.Logger.LogError($"[ArtilleryByTagResult] ChanceToHit must be between 0.0 and 1.0. Got: {ChanceToHit}. Clamping to valid range.");
@@ -39,7 +41,6 @@ namespace MissionControl.Result {
       }
 
       // Get all combatants with the specified tags
-      CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
       List<ICombatant> taggedCombatants = ObjectiveGameLogic.GetTaggedCombatants(combat, new TagSet(TargetTags));
 
       if (taggedCombatants == null || taggedCombatants.Count == 0) {
@@ -67,7 +68,7 @@ namespace MissionControl.Result {
         Main.LogDebug($"[ArtilleryByTagResult] ChanceToHit is 0, all shots will miss");
 
         foreach (ICombatant combatant in combatantsToEngage) {
-          Vector3 position = GetCombatantPosition(combatant);
+          Vector3 position = combatant.CurrentPosition.GetLerpedHeightAt();
           Vector3 missPosition = CalculateMissPosition(position);
           LaunchSingleArtilleryStrike(missPosition, null); // No damage
         }
@@ -81,7 +82,7 @@ namespace MissionControl.Result {
         Main.LogDebug($"[ArtilleryByTagResult] ChanceToHit is 1, all shots will hit");
 
         foreach (ICombatant combatant in combatantsToEngage) {
-          Vector3 position = GetCombatantPosition(combatant);
+          Vector3 position = combatant.CurrentPosition.GetLerpedHeightAt();
           LaunchSingleArtilleryStrike(position, combatant); // With damage
         }
 
@@ -97,7 +98,7 @@ namespace MissionControl.Result {
         float roll = UnityEngine.Random.value; // Returns 0.0 to 1.0
         bool isHit = roll <= ChanceToHit;
 
-        Vector3 position = GetCombatantPosition(combatant);
+        Vector3 position = combatant.CurrentPosition.GetLerpedHeightAt();
 
         if (isHit) {
           // Hit: Launch artillery at exact position with damage
@@ -146,28 +147,6 @@ namespace MissionControl.Result {
       EncounterLayerParent.EnqueueLoadAwareMessage(new AddSequenceToStackMessage(artillerySequence));
     }
 
-    private Vector3 GetCombatantPosition(ICombatant combatant) {
-      Vector3 position = Vector3.zero;
-
-      if (combatant is AbstractActor) {
-        AbstractActor actor = combatant as AbstractActor;
-        position = actor.CurrentPosition;
-      } else if (combatant is BattleTech.Building) {
-        BattleTech.Building building = combatant as BattleTech.Building;
-        position = building.CurrentPosition;
-      } else {
-        // Fallback - use GameRep position if available
-        position = combatant.GameRep?.transform?.position ?? Vector3.zero;
-      }
-
-      // Get terrain height for the position
-      CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
-      float terrainHeight = combat.MapMetaData.GetLerpedHeightAt(position);
-      position.y = terrainHeight;
-
-      return position;
-    }
-
     private Vector3 CalculateMissPosition(Vector3 targetPosition) {
       // Generate a random angle (0 to 360 degrees)
       float randomAngle = UnityEngine.Random.Range(0f, 360f) * Mathf.Deg2Rad;
@@ -190,11 +169,7 @@ namespace MissionControl.Result {
       );
 
       // Get terrain height for the miss position
-      CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
-      float terrainHeight = combat.MapMetaData.GetLerpedHeightAt(missPosition);
-      missPosition.y = terrainHeight;
-
-      return missPosition;
+      return missPosition.GetLerpedHeightAt();
     }
   }
 }
