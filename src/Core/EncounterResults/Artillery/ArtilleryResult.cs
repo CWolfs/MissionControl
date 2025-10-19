@@ -100,7 +100,7 @@ namespace MissionControl.Result {
         targetPositions,
         ArtilleryVFXType,
         allTargets,
-        (float)Damage,
+        Damage,
         HeatDamage,
         StabilityDamage,
         TerrainMaskFlags.None
