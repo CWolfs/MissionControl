@@ -37,6 +37,16 @@ namespace MissionControl.Result {
 
       CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
 
+      List<ICombatant> taggedCombatants = ValidateAndGetTaggedCombatants(combat);
+      if (taggedCombatants == null) return;
+
+      List<ICombatant> filteredCombatants = FilterTargetsByPriority(taggedCombatants);
+      List<ICombatant> combatantsToEngage = SelectTargetsToEngage(combat, filteredCombatants);
+
+      ExecuteArtilleryStrikes(combatantsToEngage);
+    }
+
+    private List<ICombatant> ValidateAndGetTaggedCombatants(CombatGameState combat) {
       // Validate ChanceToHit
       if (ChanceToHit < 0.0f || ChanceToHit > 1.0f) {
         Main.Logger.LogError($"[ArtilleryByTagResult] ChanceToHit must be between 0.0 and 1.0. Got: {ChanceToHit}. Clamping to valid range.");
@@ -46,7 +56,7 @@ namespace MissionControl.Result {
       // Validate TargetTags
       if (TargetTags == null || TargetTags.Length == 0) {
         Main.Logger.LogError($"[ArtilleryByTagResult] No target tags specified for artillery strike '{Name}'");
-        return;
+        return null;
       }
 
       // Get all combatants with the specified tags
@@ -54,52 +64,63 @@ namespace MissionControl.Result {
 
       if (taggedCombatants == null || taggedCombatants.Count == 0) {
         Main.Logger.LogWarning($"[ArtilleryByTagResult] No combatants found with tags: {String.Join(", ", TargetTags)}");
-        return;
+        return null;
       }
 
       Main.LogDebug($"[ArtilleryByTagResult] Found {taggedCombatants.Count} combatants with tags: {String.Join(", ", TargetTags)}");
+      return taggedCombatants;
+    }
 
-      // Filter by TargetPriority
-      if (TargetPriority != ArtilleryTargetPriority.None) {
-        List<ICombatant> filteredCombatants = new List<ICombatant>();
+    private List<ICombatant> FilterTargetsByPriority(List<ICombatant> taggedCombatants) {
+      // No filtering needed if priority is None
+      if (TargetPriority == ArtilleryTargetPriority.None) {
+        return taggedCombatants;
+      }
 
-        foreach (ICombatant combatant in taggedCombatants) {
-          if (TargetPriority == ArtilleryTargetPriority.Units) {
-            // Include only units (AbstractActor: mechs, vehicles, turrets)
-            if (combatant is AbstractActor) {
-              filteredCombatants.Add(combatant);
-            }
-          } else if (TargetPriority == ArtilleryTargetPriority.Buildings) {
-            // Include only buildings
-            if (combatant is BattleTech.Building) {
-              filteredCombatants.Add(combatant);
-            }
+      List<ICombatant> filteredCombatants = new List<ICombatant>();
+
+      foreach (ICombatant combatant in taggedCombatants) {
+        if (TargetPriority == ArtilleryTargetPriority.Units) {
+          // Include only units (AbstractActor: mechs, vehicles, turrets)
+          if (combatant is AbstractActor) {
+            filteredCombatants.Add(combatant);
           }
-        }
-
-        if (filteredCombatants.Count > 0) {
-          // Use priority targets if found
-          taggedCombatants = filteredCombatants;
-          Main.LogDebug($"[ArtilleryByTagResult] After filtering by TargetPriority '{TargetPriority}': {taggedCombatants.Count} priority combatants found");
-        } else {
-          // Fall back to all tagged combatants if no priority targets found
-          Main.LogDebug($"[ArtilleryByTagResult] No priority targets found for '{TargetPriority}', falling back to all {taggedCombatants.Count} tagged combatants");
+        } else if (TargetPriority == ArtilleryTargetPriority.Buildings) {
+          // Include only buildings
+          if (combatant is BattleTech.Building) {
+            filteredCombatants.Add(combatant);
+          }
         }
       }
 
-      // Determine which combatants to engage
+      if (filteredCombatants.Count > 0) {
+        // Use priority targets if found
+        Main.LogDebug($"[ArtilleryByTagResult] After filtering by TargetPriority '{TargetPriority}': {filteredCombatants.Count} priority combatants found");
+        return filteredCombatants;
+      } else {
+        // Fall back to all tagged combatants if no priority targets found
+        Main.LogDebug($"[ArtilleryByTagResult] No priority targets found for '{TargetPriority}', falling back to all {taggedCombatants.Count} tagged combatants");
+        return taggedCombatants;
+      }
+    }
+
+    private List<ICombatant> SelectTargetsToEngage(CombatGameState combat, List<ICombatant> availableTargets) {
       List<ICombatant> combatantsToEngage = new List<ICombatant>();
 
       if (ShotsFireAtAllTargets) {
-        combatantsToEngage.AddRange(taggedCombatants);
+        combatantsToEngage.AddRange(availableTargets);
         Main.LogDebug($"[ArtilleryByTagResult] Engaging all {combatantsToEngage.Count} targets");
       } else {
         // Pick a random target using combat-safe random to avoid deterministic selection
-        int randomIndex = RandomUtils.GetCombatSafeRandomIndex(combat, taggedCombatants.Count);
-        combatantsToEngage.Add(taggedCombatants[randomIndex]);
+        int randomIndex = RandomUtils.GetCombatSafeRandomIndex(combat, availableTargets.Count);
+        combatantsToEngage.Add(availableTargets[randomIndex]);
         Main.LogDebug($"[ArtilleryByTagResult] Engaging 1 random target (index {randomIndex})");
       }
 
+      return combatantsToEngage;
+    }
+
+    private void ExecuteArtilleryStrikes(List<ICombatant> combatantsToEngage) {
       // Edge case: If ChanceToHit is 0, all shots will miss
       if (ChanceToHit <= 0.0f) {
         Main.LogDebug($"[ArtilleryByTagResult] ChanceToHit is 0, all shots will miss");
