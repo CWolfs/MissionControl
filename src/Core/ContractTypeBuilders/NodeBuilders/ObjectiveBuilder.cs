@@ -95,11 +95,7 @@ namespace MissionControl.ContractTypeBuilders {
         rewards.Count > 0
       );
 
-      if (isPrimaryObjectve) {
-        objectiveLogic.primary = true;
-      } else {
-        objectiveLogic.primary = false;
-      }
+      objectiveLogic.primary = isPrimaryObjectve;
 
       DestroyLanceObjectiveRef destroyLanceObjectiveRef = new DestroyLanceObjectiveRef();
       destroyLanceObjectiveRef.encounterObject = objectiveLogic;
