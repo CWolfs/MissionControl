@@ -14,6 +14,7 @@ namespace MissionControl.Trigger {
   public class GenericTrigger : EncounterTrigger {
     private string name;
     private string description;
+    private bool triggerOnlyOnce;
     private MessageCenterMessageType onMessage;
     private DesignConditional conditional;
     private List<DesignResultBox> results;
@@ -23,12 +24,13 @@ namespace MissionControl.Trigger {
 
     private SmartTriggerResponse trigger;
 
-    public GenericTrigger(string name, string description, MessageCenterMessageType onMessage, DesignConditional conditional, List<DesignResult> results) {
+    public GenericTrigger(string name, string description, MessageCenterMessageType onMessage, DesignConditional conditional, bool triggerOnlyOnce, List<DesignResult> results) {
       this.name = name;
       this.description = description;
       this.onMessage = onMessage;
       this.conditional = conditional;
       this.results = results.Select(r => (DesignResultBox)new EncounterResultBox(r)).ToList();
+      this.triggerOnlyOnce = triggerOnlyOnce;
 
       if (this.conditional == null) {
         this.conditional = ScriptableObject.CreateInstance<AlwaysTrueConditional>();
@@ -44,6 +46,7 @@ namespace MissionControl.Trigger {
       trigger.inputMessage = onMessage;
       trigger.designName = $"{(!string.IsNullOrEmpty(this.name) ? this.name : description)} on {onMessage}";
       trigger.conditionalbox = new EncounterConditionalBox(conditional);
+      trigger.onlyTriggerOnce = this.triggerOnlyOnce;
 
       trigger.resultList.contentsBox = this.results;
       encounterData.responseGroup.triggerList.Add(trigger);
@@ -65,6 +68,7 @@ namespace MissionControl.Trigger {
       trigger.inputMessage = onMessage;
       trigger.designName = $"{(!string.IsNullOrEmpty(this.name) ? this.name : description)} on {onMessage}";
       trigger.conditionalbox = new EncounterConditionalBox(conditional);
+      trigger.onlyTriggerOnce = this.triggerOnlyOnce;
 
       trigger.resultList.contentsBox = this.results;
 

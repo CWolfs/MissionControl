@@ -229,7 +229,7 @@ namespace MissionControl.ContractTypeBuilders {
           result.Primary = false;
 
           GenericTriggerBuilder genericTrigger = new GenericTriggerBuilder(this, "ConflictAvoidanceTrigger", (MessageCenterMessageType)MessageTypes.OnEncounterStateChanged,
-            genericCompoundConditional, "Avoids a conflicting chunk's objectives by making them secondary", new List<DesignResult>() { result });
+            genericCompoundConditional, "Avoids a conflicting chunk's objectives by making them secondary", triggerOnlyOnce: true, new List<DesignResult>() { result });
           genericTrigger.Build();
         }
       }

@@ -40,6 +40,13 @@ namespace MissionControl.Result {
       List<ICombatant> taggedCombatants = ValidateAndGetTaggedCombatants(combat);
       if (taggedCombatants == null) return;
 
+      // Filter dead
+      taggedCombatants.RemoveAll(c => c.IsDead);
+      if (taggedCombatants.Count == 0) {
+        Main.Logger.Log($"[ArtilleryByTagResult] No valid (alive) combatants found with tags: {String.Join(", ", TargetTags)}");
+        return;
+      }
+
       // Only apply priority filtering if we're selecting a single random target
       // If ShotsFireAtAllTargets is true, we should engage ALL tagged combatants
       List<ICombatant> filteredCombatants = ShotsFireAtAllTargets
