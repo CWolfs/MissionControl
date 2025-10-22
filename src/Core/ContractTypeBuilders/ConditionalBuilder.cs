@@ -227,7 +227,7 @@ namespace MissionControl.ContractTypeBuilders {
       RegionOccupationEvaluationType evaluationType = (RegionOccupationEvaluationType)Enum.Parse(typeof(RegionOccupationEvaluationType), evaluationTypeRaw);
       conditional.regionOccupation = evaluationType;
 
-      if (unitTags != null && unitTags.Count > 0) {
+      if (unitTags?.Count > 0) {
         conditional.requiredTagsOnUnit = new TagSet(unitTags.ToArray());
       } else {
         conditional.requiredTagsOnUnit = new TagSet();
@@ -348,7 +348,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       conditional.involvedObject = encounterObjectRef;
 
-      if (involvedObjectTags != null && involvedObjectTags.Count > 0) {
+      if (involvedObjectTags?.Count > 0) {
         conditional.involvedObjectRequiredTags = new TagSet(involvedObjectTags.ToArray());
       } else {
         conditional.involvedObjectRequiredTags = new TagSet();
