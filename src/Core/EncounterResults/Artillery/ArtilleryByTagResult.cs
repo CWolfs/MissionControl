@@ -33,6 +33,7 @@ namespace MissionControl.Result {
     public ArtilleryTargetPriority TargetPriority { get; set; } = ArtilleryTargetPriority.None;
     public float SplashRange { get; set; }
     public bool SplashRequiresTags { get; set; }
+    public float VFXScale { get; set; } = 1f;
 
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
       Main.LogDebug($"[ArtilleryByTagResult] Triggering artillery strike '{Name}' - {Description}");
@@ -202,10 +203,10 @@ namespace MissionControl.Result {
       }
       // Else: Miss - empty target list means no damage
 
-      // Create individual artillery sequence
+      // Create individual artillery sequence with VFX scaling
       // Each sequence will play independently, creating a staggered effect
       // when multiple sequences are enqueued in order
-      ArtilleryObjectiveSequence artillerySequence = new ArtilleryObjectiveSequence(
+      ScalableArtilleryObjectiveSequence artillerySequence = new ScalableArtilleryObjectiveSequence(
         combat,
         positions,
         ArtilleryVFXType,
@@ -213,7 +214,8 @@ namespace MissionControl.Result {
         Damage,
         HeatDamage,
         StabilityDamage,
-        TerrainMaskFlags.None
+        TerrainMaskFlags.None,
+        VFXScale
       );
 
       EncounterLayerParent.EnqueueLoadAwareMessage(new AddSequenceToStackMessage(artillerySequence));

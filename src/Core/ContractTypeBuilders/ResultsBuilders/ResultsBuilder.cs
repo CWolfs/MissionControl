@@ -702,6 +702,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       float splashRange = resultObject.ContainsKey("SplashRange") ? (float)resultObject["SplashRange"] : 0f;
       bool splashRequiresTags = resultObject.ContainsKey("SplashRequiresTags") ? (bool)resultObject["SplashRequiresTags"] : false;
+      float vfxScale = resultObject.ContainsKey("VFXScale") ? (float)resultObject["VFXScale"] : 1f;
 
       ArtilleryByTagResult result = ScriptableObject.CreateInstance<ArtilleryByTagResult>();
       result.Name = name;
@@ -716,6 +717,7 @@ namespace MissionControl.ContractTypeBuilders {
       result.TargetPriority = targetPriority;
       result.SplashRange = splashRange;
       result.SplashRequiresTags = splashRequiresTags;
+      result.VFXScale = vfxScale;
 
       results.Add(result);
     }
