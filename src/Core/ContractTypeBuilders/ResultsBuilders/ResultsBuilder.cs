@@ -687,7 +687,7 @@ namespace MissionControl.ContractTypeBuilders {
       Main.LogDebug("[BuildArtilleryByTagResult] Building 'ArtilleryByTag' result");
       string name = resultObject.ContainsKey("Name") ? resultObject["Name"].ToString() : "Unnamed Artillery by Tag";
       string description = resultObject.ContainsKey("Description") ? resultObject["Description"].ToString() : "";
-      string[] targetTags = resultObject.ContainsKey("TargetTags") ? ((JArray)resultObject["TargetTags"]).ToObject<string[]>() : new string[0];
+      string[] targetTags = resultObject.ContainsKey("TargetTags") ? resultObject["TargetTags"].ToObject<string[]>() : Array.Empty<string>();
       bool shotsFireAtAllTargets = resultObject.ContainsKey("ShotsFireAtAllTargets") ? (bool)resultObject["ShotsFireAtAllTargets"] : true;
       float chanceToHit = resultObject.ContainsKey("ChanceToHit") ? (float)resultObject["ChanceToHit"] : 1.0f;
       int damage = resultObject.ContainsKey("Damage") ? (int)resultObject["Damage"] : 0;
@@ -700,6 +700,9 @@ namespace MissionControl.ContractTypeBuilders {
       string targetPriorityStr = resultObject.ContainsKey("TargetPriority") ? resultObject["TargetPriority"].ToString() : "None";
       ArtilleryTargetPriority targetPriority = (ArtilleryTargetPriority)Enum.Parse(typeof(ArtilleryTargetPriority), targetPriorityStr);
 
+      float splashRange = resultObject.ContainsKey("SplashRange") ? (float)resultObject["SplashRange"] : 0f;
+      bool splashRequiresTags = resultObject.ContainsKey("SplashRequiresTags") ? (bool)resultObject["SplashRequiresTags"] : false;
+
       ArtilleryByTagResult result = ScriptableObject.CreateInstance<ArtilleryByTagResult>();
       result.Name = name;
       result.Description = description;
@@ -711,6 +714,8 @@ namespace MissionControl.ContractTypeBuilders {
       result.StabilityDamage = stabilityDamage;
       result.ArtilleryVFXType = artilleryVFXType;
       result.TargetPriority = targetPriority;
+      result.SplashRange = splashRange;
+      result.SplashRequiresTags = splashRequiresTags;
 
       results.Add(result);
     }

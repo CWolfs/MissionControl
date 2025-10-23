@@ -31,6 +31,8 @@ namespace MissionControl.Result {
     public int StabilityDamage { get; set; }
     public ArtilleryVFXType ArtilleryVFXType { get; set; } = ArtilleryVFXType.ArtilleryShellBarrage;
     public ArtilleryTargetPriority TargetPriority { get; set; } = ArtilleryTargetPriority.None;
+    public float SplashRange { get; set; }
+    public bool SplashRequiresTags { get; set; }
 
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
       Main.LogDebug($"[ArtilleryByTagResult] Triggering artillery strike '{Name}' - {Description}");
@@ -208,13 +210,69 @@ namespace MissionControl.Result {
         positions,
         ArtilleryVFXType,
         targets,            // Empty for misses, single target for hits
-        (float)Damage,
+        Damage,
         HeatDamage,
         StabilityDamage,
         TerrainMaskFlags.None
       );
 
       EncounterLayerParent.EnqueueLoadAwareMessage(new AddSequenceToStackMessage(artillerySequence));
+
+      // Apply splash damage if configured and there was a hit
+      if (target != null && SplashRange > 0f) {
+        Main.LogDebug($"[ArtilleryByTagResult] Splash damage enabled - Range: {SplashRange}, RequiresTags: {SplashRequiresTags}");
+        ApplySplashDamage(position, target);
+      } else {
+        Main.LogDebug($"[ArtilleryByTagResult] Splash damage skipped - Target is null: {target == null}, SplashRange: {SplashRange}");
+      }
+    }
+
+    private void ApplySplashDamage(Vector3 position, ICombatant primaryTarget) {
+      Main.LogDebug($"[ArtilleryByTagResult] ApplySplashDamage called for primary target '{primaryTarget.DisplayName}' at position {position}");
+
+      // Get all combatants in splash range
+      List<ICombatant> splashTargets = GetCombatantsInSplashRange(position, primaryTarget);
+
+      if (splashTargets.Count == 0) {
+        Main.LogDebug("[ArtilleryByTagResult] No combatants found in splash range");
+        return;
+      }
+
+      Main.LogDebug($"[ArtilleryByTagResult] Found {splashTargets.Count} potential splash targets before tag filtering");
+
+      // Filter by tags if required
+      splashTargets = FilterSplashTargetsByTags(splashTargets);
+
+      if (splashTargets.Count == 0) {
+        Main.LogDebug("[ArtilleryByTagResult] No valid splash targets after filtering");
+        return;
+      }
+
+      // Calculate splash damage (half of main damage)
+      int splashDamage = Damage / 2;
+      int splashHeatDamage = HeatDamage / 2;
+      int splashStabilityDamage = StabilityDamage / 2;
+
+      Main.LogDebug($"[ArtilleryByTagResult] Applying splash damage to {splashTargets.Count} targets: Damage={splashDamage}, Heat={splashHeatDamage}, Stability={splashStabilityDamage}");
+
+      // Apply damage directly to splash targets without visual effects
+      CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
+
+      foreach (ICombatant splashTarget in splashTargets) {
+        Main.LogDebug($"[ArtilleryByTagResult] Applying splash damage to '{splashTarget.DisplayName}'");
+
+        if (splashDamage > 0) {
+          DamageOrderUtility.ApplyDamageToAllLocations("ArtillerySplash", combat.StackManager.NextStackUID, combat.StackManager.NextStackUID, splashTarget, splashDamage, splashDamage, AttackDirection.FromArtillery, DamageType.Artillery);
+        }
+
+        if (splashHeatDamage > 0) {
+          DamageOrderUtility.ApplyHeatDamage(combat.StackManager.NextStackUID, splashTarget, splashHeatDamage);
+        }
+
+        if (splashStabilityDamage > 0) {
+          DamageOrderUtility.ApplyStabilityDamage(combat.StackManager.NextStackUID, splashTarget, splashStabilityDamage);
+        }
+      }
     }
 
     private Vector3 CalculateMissPosition(Vector3 targetPosition) {
@@ -240,6 +298,67 @@ namespace MissionControl.Result {
 
       // Get terrain height for the miss position
       return missPosition.GetLerpedHeightAt();
+    }
+
+    private List<ICombatant> GetCombatantsInSplashRange(Vector3 position, ICombatant primaryTarget) {
+      if (SplashRange <= 0f) {
+        Main.LogDebug("[ArtilleryByTagResult] SplashRange is 0 or negative, returning empty list");
+        return new List<ICombatant>();
+      }
+
+      Main.LogDebug($"[ArtilleryByTagResult] Searching for combatants within {SplashRange} meters of position {position}");
+
+      CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
+      List<ICombatant> splashTargets = new List<ICombatant>();
+
+      // Get all living combatants in the combat
+      List<ICombatant> allLivingCombatants = combat.GetAllLivingCombatants();
+      Main.LogDebug($"[ArtilleryByTagResult] Total living combatants in combat: {allLivingCombatants.Count}");
+
+      foreach (ICombatant combatant in allLivingCombatants) {
+        // Skip the primary target (already taking full damage)
+        if (combatant == primaryTarget) {
+          Main.LogDebug($"[ArtilleryByTagResult] Skipping primary target '{combatant.DisplayName}'");
+          continue;
+        }
+
+        // Check if combatant is within splash range
+        float distance = Vector3.Distance(position, combatant.CurrentPosition);
+        if (distance <= SplashRange) {
+          splashTargets.Add(combatant);
+          Main.LogDebug($"[ArtilleryByTagResult] '{combatant.DisplayName}' is within range at distance {distance:F2}m");
+        } else {
+          Main.LogDebug($"[ArtilleryByTagResult] '{combatant.DisplayName}' is out of range at distance {distance:F2}m");
+        }
+      }
+
+      Main.LogDebug($"[ArtilleryByTagResult] Found {splashTargets.Count} combatants within splash range {SplashRange}");
+      return splashTargets;
+    }
+
+    private List<ICombatant> FilterSplashTargetsByTags(List<ICombatant> splashTargets) {
+      if (!SplashRequiresTags || TargetTags == null || TargetTags.Length == 0) {
+        Main.LogDebug($"[ArtilleryByTagResult] Tag filtering disabled - SplashRequiresTags: {SplashRequiresTags}, TargetTags: {(TargetTags == null ? "null" : TargetTags.Length.ToString())}");
+        return splashTargets;
+      }
+
+      Main.LogDebug($"[ArtilleryByTagResult] Filtering splash targets by tags: {String.Join(", ", TargetTags)}");
+
+      List<ICombatant> filteredTargets = new List<ICombatant>();
+      TagSet requiredTags = new TagSet(TargetTags);
+
+      foreach (ICombatant combatant in splashTargets) {
+        bool hasTags = combatant.EncounterTags.ContainsAll(requiredTags);
+        if (hasTags) {
+          filteredTargets.Add(combatant);
+          Main.LogDebug($"[ArtilleryByTagResult] '{combatant.DisplayName}' has required tags - included");
+        } else {
+          Main.LogDebug($"[ArtilleryByTagResult] '{combatant.DisplayName}' missing required tags - excluded");
+        }
+      }
+
+      Main.LogDebug($"[ArtilleryByTagResult] After tag filtering: {filteredTargets.Count} splash targets (from {splashTargets.Count})");
+      return filteredTargets;
     }
   }
 }
