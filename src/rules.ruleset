@@ -3,6 +3,8 @@
   <!-- Rules focused on catching actual bugs and performance issues, not style -->
   <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp" RuleNamespace="Microsoft.CodeAnalysis.CSharp">
     <Rule Id="CS1591" Action="None" /> <!-- Missing XML comment - not needed for mods -->
+    <Rule Id="IDE0044" Action="None" /> <!-- Add readonly modifier -->
+    <Rule Id="IDE0075" Action="None" /> <!-- Simplify conditional expression -->
     <Rule Id="IDE0090" Action="None" /> <!-- Use 'new(...)' -->
   </Rules>
   
@@ -31,6 +33,7 @@
   <!-- Roslynator rules for code quality -->
   <Rules AnalyzerId="Roslynator.CSharp.Analyzers" RuleNamespace="Roslynator.CSharp.Analyzers">
     <Rule Id="RCS1077" Action="Info" /> <!-- Optimize LINQ method call -->
+    <Rule Id="RCS1104" Action="None" /> <!-- Simplify conditional expression -->
     <Rule Id="RCS1110" Action="None" /> <!-- Declare types in namespaces - extension methods often global -->
     <Rule Id="RCS1124" Action="None" /> <!-- Inline local variable -->
     <Rule Id="RCS1146" Action="Info" /> <!-- Use conditional access -->
@@ -39,5 +42,6 @@
     <Rule Id="RCS1170" Action="None" /> <!-- Use read-only auto-property -->
     <Rule Id="RCS1179" Action="Info" /> <!-- Use return instead of assignment -->
     <Rule Id="RCS1197" Action="Info" /> <!-- Optimize StringBuilder.Append/AppendLine call -->
+    <Rule Id="RCS1213" Action="None" /> <!-- Unused member declaration -->
   </Rules>
 </RuleSet>

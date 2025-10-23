@@ -103,9 +103,9 @@ namespace MissionControl.ContractTypeBuilders {
 
     private void BuildDialogueResult(JObject resultObject) {
       Main.LogDebug("[BuildDialogueResult] Building 'Dialogue' result");
-      string dialogueGuid = (resultObject.ContainsKey("DialogueGuid")) ? resultObject["DialogueGuid"].ToString() : null;
-      string dialogueSequenceGuid = (resultObject.ContainsKey("DialogueSequenceGuid")) ? resultObject["DialogueSequenceGuid"].ToString() : null;
-      bool isInterrupt = (resultObject.ContainsKey("IsInterrupt")) ? (bool)resultObject["IsInterrupt"] : true;
+      string dialogueGuid = resultObject.ContainsKey("DialogueGuid") ? resultObject["DialogueGuid"].ToString() : null;
+      string dialogueSequenceGuid = resultObject.ContainsKey("DialogueSequenceGuid") ? resultObject["DialogueSequenceGuid"].ToString() : null;
+      bool isInterrupt = resultObject.ContainsKey("IsInterrupt") ? (bool)resultObject["IsInterrupt"] : true;
 
       DialogResult result = ScriptableObject.CreateInstance<DialogResult>();
 

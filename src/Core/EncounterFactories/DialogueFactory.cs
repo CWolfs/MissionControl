@@ -22,10 +22,11 @@ namespace MissionControl.EncounterFactories {
       return dialogueGameLogicGo;
     }
 
-    public static DialogueActivator CreateDialogueActivator(GameObject parent, string guid) {
+    public static DialogueActivator CreateDialogueActivator(GameObject parent, string guid, bool isInterrupt) {
       DialogueActivator dialogueActivator = parent.AddComponent<DialogueActivator>();
       dialogueActivator.encounterObjectGuid = Guid.NewGuid().ToString();
-      dialogueActivator.dialogueGuid = guid;
+      dialogueActivator.DialogueGuid = guid;
+      dialogueActivator.IsInterrupt = isInterrupt;
       return dialogueActivator;
     }
 

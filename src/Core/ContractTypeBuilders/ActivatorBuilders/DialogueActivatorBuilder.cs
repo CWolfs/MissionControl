@@ -11,6 +11,7 @@ namespace MissionControl.ContractTypeBuilders {
 
     private GameObject parent;
     private string dialogueGuid;
+    private bool isInterrupt = true;
 
     public DialogueActivatorBuilder(ContractTypeBuilder contractTypeBuilder, GameObject parent, JObject activator) {
       this.contractTypeBuilder = contractTypeBuilder;
@@ -18,10 +19,11 @@ namespace MissionControl.ContractTypeBuilders {
 
       this.parent = parent;
       this.dialogueGuid = activator["EncounterGuid"].ToString();
+      this.isInterrupt = activator.ContainsKey("IsInterrupt") ? activator["IsInterrupt"].ToObject<bool>() : true;
     }
 
     public override void Build() {
-      DialogueFactory.CreateDialogueActivator(this.parent, this.dialogueGuid);
+      DialogueFactory.CreateDialogueActivator(this.parent, this.dialogueGuid, this.isInterrupt);
     }
   }
 }

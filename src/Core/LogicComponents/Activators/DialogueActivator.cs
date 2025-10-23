@@ -10,10 +10,13 @@ namespace MissionControl.LogicComponents.Activators {
   public class DialogueActivator : EncounterObjectGameLogic, ExecutableGameLogic {
 
     [SerializeField]
-    public string dialogueGuid { get; set; }
+    public string DialogueGuid { get; set; }
 
     [SerializeField]
-    public EncounterChunkGameLogic chunk { get; set; }
+    public bool IsInterrupt { get; set; } = true;
+
+    [SerializeField]
+    public EncounterChunkGameLogic Chunk { get; set; }
 
     [SerializeField]
     public bool HasActivated { get; set; } = false;
@@ -25,12 +28,12 @@ namespace MissionControl.LogicComponents.Activators {
     }
 
     void Start() {
-      chunk = this.GetComponent<EncounterChunkGameLogic>();
+      Chunk = this.GetComponent<EncounterChunkGameLogic>();
     }
 
     void Update() {
-      if (chunk != null && !HasActivated) {
-        if (chunk.GetState() == EncounterObjectStatus.Active) {
+      if (Chunk != null && !HasActivated) {
+        if (Chunk.GetState() == EncounterObjectStatus.Active) {
           HasActivated = true;
           ActivateDialogue();
         }
@@ -39,11 +42,11 @@ namespace MissionControl.LogicComponents.Activators {
 
     private void ActivateDialogue() {
       Main.LogDebug($"[DialogueActivator.ActivateDialogue]) Activating dialogue...");
-      EncounterObjectGameLogic dialogue = MissionControl.Instance.EncounterLayerData.gameObject.GetEncounterObjectGameLogic(dialogueGuid);
+      EncounterObjectGameLogic dialogue = MissionControl.Instance.EncounterLayerData.gameObject.GetEncounterObjectGameLogic(DialogueGuid);
 
       if (dialogue is DialogueGameLogic) {
-        Main.LogDebug($"[DialogueActivator.ActivateDialogue]) Activating dialogue for '{dialogueGuid}:{dialogue.gameObject.name}'");
-        ((DialogueGameLogic)dialogue).TriggerDialogue(true);
+        Main.LogDebug($"[DialogueActivator.ActivateDialogue]) Activating dialogue for '{DialogueGuid}:{dialogue.gameObject.name}' and isInterrupt={IsInterrupt}");
+        ((DialogueGameLogic)dialogue).TriggerDialogue(IsInterrupt);
       }
     }
 
