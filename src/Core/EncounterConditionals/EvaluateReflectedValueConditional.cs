@@ -41,8 +41,20 @@ namespace MissionControl.Conditional {
 
     private bool EvaluateMember(object value) {
       string valueAsString = ConvertToString(value);
-      if (valueAsString == ValueOfFieldToCheckEquality || valueAsString.ToLower() == ValueOfFieldToCheckEquality.ToLower()) {
-        Main.LogDebug($"[EvaluateReflectedValueConditional] Matched field '{FieldToCheck}' value of '{valueAsString}'  to modder requested check value of '{ValueOfFieldToCheckEquality}'");
+
+      if (valueAsString == null) {
+        // Allow modders to check for null values using the special string "null"
+        bool isMatch = ValueOfFieldToCheckEquality != null && ValueOfFieldToCheckEquality.Equals("null", StringComparison.OrdinalIgnoreCase);
+        if (isMatch) {
+          Main.LogDebug($"[EvaluateReflectedValueConditional] Matched field '{FieldToCheck}' null value to modder requested check value of '{ValueOfFieldToCheckEquality}'");
+        } else {
+          Main.LogDebug($"[EvaluateReflectedValueConditional] Field '{FieldToCheck}' is null but modder requested check value is '{ValueOfFieldToCheckEquality}'");
+        }
+        return isMatch;
+      }
+
+      if (valueAsString.Equals(ValueOfFieldToCheckEquality, StringComparison.OrdinalIgnoreCase)) {
+        Main.LogDebug($"[EvaluateReflectedValueConditional] Matched field '{FieldToCheck}' value of '{valueAsString}' to modder requested check value of '{ValueOfFieldToCheckEquality}'");
         return true;
       } else {
         Main.LogDebug($"[EvaluateReflectedValueConditional] There was no match between the field '{FieldToCheck}' value of '{valueAsString}' to modder requested check value of '{ValueOfFieldToCheckEquality}'");
