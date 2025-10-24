@@ -76,6 +76,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "TimerStatus": BuildTimerStatusConditional(conditionalObject); break;
         case "WhoDied": BuildWhoDiedConditional(conditionalObject); break;
         case "WhoKilled": BuildWhoKilledConditional(conditionalObject); break;
+        case "PlayerTonnage": BuildPlayerTonnageConditional(conditionalObject); break;
         default:
           Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeKey}] No valid conditional was built for '{type}'");
           break;
@@ -418,6 +419,22 @@ namespace MissionControl.ContractTypeBuilders {
       } else {
         conditional.killingUnitTagSet = new TagSet();
       }
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildPlayerTonnageConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildPlayerTonnageConditional] Building 'PlayerTonnage' conditional");
+      string operation = conditionalObject["Operation"].ToString();
+      float tonnageValue = (float)conditionalObject["TonnageValue"];
+      bool onlyAliveUnits = conditionalObject.ContainsKey("OnlyAliveUnits") ? (bool)conditionalObject["OnlyAliveUnits"] : true;
+      bool includeAllies = conditionalObject.ContainsKey("IncludeAllies") ? (bool)conditionalObject["IncludeAllies"] : false;
+
+      PlayerTonnageConditional conditional = ScriptableObject.CreateInstance<PlayerTonnageConditional>();
+      conditional.Operation = (TonnageOperation)Enum.Parse(typeof(TonnageOperation), operation);
+      conditional.TonnageValue = tonnageValue;
+      conditional.OnlyAliveUnits = onlyAliveUnits;
+      conditional.IncludeAllies = includeAllies;
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }
