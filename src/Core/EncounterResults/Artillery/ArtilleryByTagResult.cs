@@ -220,8 +220,8 @@ namespace MissionControl.Result {
 
       EncounterLayerParent.EnqueueLoadAwareMessage(new AddSequenceToStackMessage(artillerySequence));
 
-      // Apply splash damage if configured and there was a hit
-      if (target != null && SplashRange > 0f) {
+      // Apply splash damage if configured
+      if (SplashRange > 0f) {
         Main.LogDebug($"[ArtilleryByTagResult] Splash damage enabled - Range: {SplashRange}, RequiresTags: {SplashRequiresTags}");
         ApplySplashDamage(position, target);
       } else {
