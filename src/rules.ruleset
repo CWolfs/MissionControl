@@ -20,6 +20,7 @@
     
     <!-- Turn off rules that don't matter for modding -->
     <Rule Id="CA2007" Action="None" /> <!-- ConfigureAwait not needed in mods -->
+    <Rule Id="CA2211" Action="None" /> <!-- Non-constant static fields -->
     <Rule Id="CA1303" Action="None" /> <!-- Localization not needed for mods -->
     <Rule Id="CA1307" Action="None" /> <!-- StringComparison often not relevant -->
     <Rule Id="CA1716" Action="None" /> <!-- Identifier conflicts with keyword -->
