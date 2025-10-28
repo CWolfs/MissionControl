@@ -79,6 +79,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetAIBehaviourTree": BuildSetAIBehaviourTreeResult(result); break;
         case "SwapTeams": BuildSwapTeamsResult(result); break;
         case "SetAllTeamsRelationship": BuildSetAllTeamsRelationshipResult(result); break;
+        case "SetRelationship": BuildSetRelationshipResult(result); break;
         case "EndCombatRetreat": BuildEndCombatRetreatResult(result); break;
         case "AnimateDropship": BuildAnimateDropshipResult(result); break;
         case "Artillery": BuildArtilleryResult(result); break;
@@ -625,6 +626,21 @@ namespace MissionControl.ContractTypeBuilders {
       SetAllTeamsRelationshipResult result = ScriptableObject.CreateInstance<SetAllTeamsRelationshipResult>();
       result.Enabled = enabled;
       result.Relationship = relationship;
+
+      results.Add(result);
+    }
+
+    private void BuildSetRelationshipResult(JObject resultObject) {
+      Main.LogDebug("[BuildSetRelationship] Building 'SetRelationship' result");
+
+      string[] teams = resultObject.ContainsKey("Teams") ? ((JArray)resultObject["Teams"]).ToObject<string[]>() : null;
+      string relationship = resultObject["Relationship"].ToString();
+      string targetTeam = resultObject["TargetTeam"].ToString();
+
+      SetRelationshipResult result = ScriptableObject.CreateInstance<SetRelationshipResult>();
+      if (teams != null) result.Teams = teams;
+      result.Relationship = relationship;
+      result.TargetTeam = targetTeam;
 
       results.Add(result);
     }
