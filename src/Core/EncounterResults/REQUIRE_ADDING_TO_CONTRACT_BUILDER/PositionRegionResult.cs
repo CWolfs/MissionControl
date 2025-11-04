@@ -2,7 +2,6 @@ using UnityEngine;
 
 using BattleTech;
 
-using System.Linq;
 using System.Collections.Generic;
 
 /**
@@ -14,20 +13,42 @@ namespace MissionControl.Result {
     // TODO: Replace this ideally with GUID and not name
     public string RegionName { get; set; } = "";
 
+    private const int MAX_ATTEMPTS = 100;
+
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
       Main.LogDebug("[PositionRegion] Positioning Region...");
       GameObject regionGo = GameObject.Find(RegionName);
+
+      if (regionGo == null) {
+        Main.Logger.LogError($"[PositionRegion] Cannot find region GameObject with name '{RegionName}'. Aborting region positioning.");
+        return;
+      }
+
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       Team playerTeam = combatState.LocalPlayerTeam;
 
       Vector3 centerOfTeamMass = GetCenterOfTeamMass(playerTeam, true);
       Vector3 possiblePosition = Vector3.zero;
-      AbstractActor actor = combatState.AllActors.First((AbstractActor x) => x.TeamId == playerTeam.GUID);
+      AbstractActor actor = combatState.AllActors.Find(x => x.TeamId == playerTeam.GUID);
+
+      if (actor == null) {
+        Main.Logger.LogError($"[PositionRegion] Cannot find any actors for player team '{playerTeam.GUID}'. Aborting region positioning.");
+        return;
+      }
+
+      int attempts = 0;
 
       while (possiblePosition == Vector3.zero || !PathFinderManager.Instance.IsSpawnValid(regionGo, possiblePosition, actor.GameRep.transform.position, UnitType.Mech, $"PositionRegionResult.{RegionName}")) {
         Main.LogDebug($"[PositionRegion] {(possiblePosition == Vector3.zero ? "Finding possible position..." : "Trying again to find a possible position...")}");
         possiblePosition = SceneUtils.GetRandomPositionFromTarget(centerOfTeamMass, Main.Settings.DynamicWithdraw.MinDistanceForZone, Main.Settings.DynamicWithdraw.MaxDistanceForZone);
+
+        attempts++;
+        if (attempts >= MAX_ATTEMPTS) {
+          Main.Logger.LogError($"[PositionRegion] Failed to find valid position for region '{RegionName}' after {maxAttempts} attempts. Aborting region positioning.");
+          return;
+        }
       }
+
       regionGo.transform.position = possiblePosition;
 
       // Debug
@@ -35,6 +56,12 @@ namespace MissionControl.Result {
       // GameObjextExtensions.CreateDebugPoint("DEBUGDynamicWithdrawCenter", regionGo.transform.position, Color.blue);
 
       RegionGameLogic regionGameLogic = regionGo.GetComponent<RegionGameLogic>();
+
+      if (regionGameLogic == null) {
+        Main.Logger.LogError($"[PositionRegion] Region GameObject '{RegionName}' does not have a RegionGameLogic component. Cannot regenerate.");
+        return;
+      }
+
       regionGameLogic.Regenerate();
     }
 
