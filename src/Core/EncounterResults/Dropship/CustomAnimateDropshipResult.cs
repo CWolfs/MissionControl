@@ -26,12 +26,18 @@ namespace MissionControl.Result {
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
       base.Trigger(inMessage, triggeringName);
       CustomDropshipLandingSpotGameLogic dropshipLandingSpot = DropshipLandingSpotRef.GetEncounterObject(combat.ItemRegistry);
+
+      if (dropshipLandingSpot == null) {
+        Main.Logger.LogError("[CustomAnimateDropshipResult] Cannot find CustomDropshipLandingSpotGameLogic. Aborting animation.");
+        return;
+      }
+
       List<DropshipGameLogic> dropships = dropshipLandingSpot.DropshipGameLogicList;
 
       foreach (DropshipGameLogic dropship in dropships) {
         if (!dropshipLandingSpot.IsDropshipAlive(dropship)) {
           dropshipLandingSpot.LogWarning("Tried to animate a dead dropship. Aborting animation.");
-        } else if (dropshipLandingSpot != null) {
+        } else {
           switch (AnimationType) {
             case DropshipAnimateCommand.Land:
               dropshipLandingSpot.LandDropship(dropship);
