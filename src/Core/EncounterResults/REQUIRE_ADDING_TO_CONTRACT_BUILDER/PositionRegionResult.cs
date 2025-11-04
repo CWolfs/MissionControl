@@ -44,7 +44,7 @@ namespace MissionControl.Result {
 
         attempts++;
         if (attempts >= MAX_ATTEMPTS) {
-          Main.Logger.LogError($"[PositionRegion] Failed to find valid position for region '{RegionName}' after {maxAttempts} attempts. Aborting region positioning.");
+          Main.Logger.LogError($"[PositionRegion] Failed to find valid position for region '{RegionName}' after {MAX_ATTEMPTS} attempts. Aborting region positioning.");
           return;
         }
       }
