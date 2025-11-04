@@ -45,7 +45,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "SetPatrolRoute": BuildSetPatrolRoute(order); break;
         case "SetBehaviourTree": BuildSetBehaviourTree(order); break;
         default:
-          Main.Logger.LogError($"[AiOrderBuilder.{contractTypeBuilder.ContractTypeKey}] No valid result was built for '{type}'");
+          Main.Logger.LogError($"[AiOrderBuilder.{contractTypeBuilder.ContractTypeKey}] No valid order was built for '{type}'");
           break;
       }
     }
