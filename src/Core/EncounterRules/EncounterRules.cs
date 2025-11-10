@@ -443,9 +443,21 @@ namespace MissionControl.Rules {
         Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. IncreaseBoundarySizeByPercentage will be '{size}'.");
       }
 
-      Main.Logger.Log($"[{this.GetType().Name}] Maximising Boundary Size for '{mapId}.{contractTypeName}' to '{size}'");
+      int version = Main.Settings.ExtendedBoundaries.Version;
 
-      this.EncounterLogic.Add(new MaximiseBoundarySize(this, size));
+      // Allow contract-specific settings overrides for version
+      if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedBoundaries_Version)) {
+        version = Main.Settings.ActiveContractSettings.GetInt(ContractSettingsOverrides.ExtendedBoundaries_Version);
+        Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. Version will be '{version}'.");
+      }
+
+      Main.Logger.Log($"[{this.GetType().Name}] Maximising Boundary Size for '{mapId}.{contractTypeName}' to '{size}' using Version {version}");
+
+      if (version == 2) {
+        this.EncounterLogic.Add(new MaximiseBoundarySizeV2(this, size));
+      } else {
+        this.EncounterLogic.Add(new MaximiseBoundarySize(this, size));
+      }
     }
 
     private void BuildAi() {
