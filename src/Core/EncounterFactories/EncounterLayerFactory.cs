@@ -4,12 +4,9 @@ using System.Collections.Generic;
 
 using BattleTech;
 using BattleTech.Data;
-using BattleTech.Framework;
-
-using Harmony;
 
 namespace MissionControl.EncounterFactories {
-  public class EncounterLayerFactory {
+  public static class EncounterLayerFactory {
     public static EncounterLayerData CreateEncounterLayer(Contract contract) {
       EncounterLayer_MDD encounterLayerMDD = MissionControl.Instance.EncounterLayerMDD;
 

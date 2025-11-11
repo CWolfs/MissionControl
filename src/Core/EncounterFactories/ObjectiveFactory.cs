@@ -14,7 +14,7 @@ using MissionControl.Data;
 using MissionControl.EncounterNodes.Objectives;
 
 namespace MissionControl.EncounterFactories {
-  public class ObjectiveFactory {
+  public static class ObjectiveFactory {
     private static GameObject CreateGameObject(GameObject parent, string name = null) {
       GameObject go = new GameObject(name ?? "Objective");
       go.transform.parent = parent.transform;
@@ -35,7 +35,7 @@ namespace MissionControl.EncounterFactories {
         }
 
         ObjectiveRef objectiveRef = new ObjectiveRef(objectiveGameLogic);
-        if (contractObjectiveGameLogic != null) contractObjectiveGameLogic.objectiveRefList.Add(objectiveRef);
+        contractObjectiveGameLogic?.objectiveRefList.Add(objectiveRef);
       }
 
       objectiveGameLogic.onSuccessDialogue = new DialogueRef();
@@ -49,9 +49,7 @@ namespace MissionControl.EncounterFactories {
       return contractObjectiveGameLogic;
     }
 
-    public static EmptyObjectiveObjective CreateEmptyObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, string description,
-      bool isPrimaryObjectve, int priority, bool displayToUser) {
-
+    public static EmptyObjectiveObjective CreateEmptyObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, string description, bool isPrimaryObjectve, int priority, bool displayToUser) {
       GameObject emptyObjectiveGo = CreateGameObject(parent, objectName);
 
       EmptyObjectiveObjective emptyObjective = emptyObjectiveGo.AddComponent<EmptyObjectiveObjective>();
@@ -67,7 +65,6 @@ namespace MissionControl.EncounterFactories {
 
     public static DestroyLanceObjective CreateDestroyLanceObjective(string objectiveGuid, GameObject parent, LanceSpawnerRef lanceToDestroy, string lanceGuid, string title, bool showProgress,
       string progressFormat, string description, bool isPrimaryObjectve, int priority, bool displayToUser, ObjectiveMark markUnitsWith, string contractObjectiveGameLogicGuid, Dictionary<string, float> rewards, bool createObjectiveOverride = true) {
-
       // TODO: Probably want to split out these two main chunks into their own methods
       // OBJECTIVE OBJECTIVE GAME LOGIC
       GameObject destroyWholeLanceObjectiveGo = CreateGameObject(parent, $"Objective_DestroyLance_{lanceGuid}");
@@ -245,7 +242,6 @@ namespace MissionControl.EncounterFactories {
 
       return destroyXUnitsObjective;
     }
-
 
     public static DestroyXDestructiblesObjective CreateDestroyXDestructiblesObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, bool isPrimaryObjectve, int priority,
       string progressFormat, string description, string regionGuid, ObjectiveCountType countType, int valueOfDestructiblesToDestroy) {

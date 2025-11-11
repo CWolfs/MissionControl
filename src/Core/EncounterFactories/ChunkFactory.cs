@@ -10,11 +10,11 @@ using MissionControl.LogicComponents.Placers;
 using MissionControl.LogicComponents.Activators;
 
 namespace MissionControl.EncounterFactories {
-  public class ChunkFactory {
+  public static class ChunkFactory {
     private static GameObject CreateGameObjectWithParent(string name, Transform parent = null) {
       GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
       GameObject go = new GameObject(name);
-      go.transform.parent = (parent != null) ? parent : encounterLayerGameObject.transform;
+      go.transform.parent = parent ?? encounterLayerGameObject.transform;
       go.transform.localPosition = Vector3.zero;
       return go;
     }

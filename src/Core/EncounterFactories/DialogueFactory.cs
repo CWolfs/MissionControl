@@ -11,9 +11,8 @@ using MissionControl.RuntimeCast;
 using MissionControl.LogicComponents.Activators;
 
 namespace MissionControl.EncounterFactories {
-  public class DialogueFactory {
+  public static class DialogueFactory {
     private static GameObject CreateDialogLogicGameObject(GameObject parent, string name) {
-      GameObject encounterLayerGameObject = MissionControl.Instance.EncounterLayerGameObject;
       name = (!name.StartsWith("Dialogue_")) ? $"Dialogue_{name}" : name;
       GameObject dialogueGameLogicGo = new GameObject(name);
       dialogueGameLogicGo.transform.parent = parent.transform;
@@ -84,7 +83,7 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static ConversationContent CreateConversationContent(string presetDialogue, string cameraTargetGuid, CastDef cast = null) {
-      CastDef castDef = (cast == null) ? RuntimeCastFactory.CreateCast() : cast;
+      CastDef castDef = cast ?? RuntimeCastFactory.CreateCast();
 
       if (MissionControl.Instance.IsSkirmish()) presetDialogue = Regex.Replace(presetDialogue, "{COMMANDER\\..+}", "Commander");
 

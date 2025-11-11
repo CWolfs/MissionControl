@@ -5,9 +5,9 @@ using BattleTech;
 using MissionControl.EncounterNodes.Placers;
 
 namespace MissionControl.EncounterFactories {
-  public class PlacementFactory {
+  public static class PlacementFactory {
     private static GameObject CreateGameObject(GameObject parent, string name = null) {
-      GameObject go = new GameObject((name == null) ? "SwapPlacement" : name);
+      GameObject go = new GameObject(name ?? "SwapPlacement");
       go.transform.parent = parent.transform;
       go.transform.localPosition = Vector3.zero;
 

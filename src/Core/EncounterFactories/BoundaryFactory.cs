@@ -1,16 +1,11 @@
 using UnityEngine;
 
-using System.Collections.Generic;
-
 using BattleTech;
-using BattleTech.Framework;
-
-using MissionControl.Utils;
 
 namespace MissionControl.EncounterFactories {
-  public class BoundaryFactory {
+  public static class BoundaryFactory {
     private static GameObject CreateGameObject(GameObject parent, string name = null) {
-      GameObject escapeRegionGo = new GameObject((name == null) ? "EncounterBoundaryRect" : name);
+      GameObject escapeRegionGo = new GameObject(name ?? "EncounterBoundaryRect");
       escapeRegionGo.transform.parent = parent.transform;
       escapeRegionGo.transform.localPosition = Vector3.zero;
 

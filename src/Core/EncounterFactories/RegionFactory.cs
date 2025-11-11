@@ -8,11 +8,11 @@ using BattleTech;
 using MissionControl.Utils;
 
 namespace MissionControl.EncounterFactories {
-  public class RegionFactory {
+  public static class RegionFactory {
     private static float DEFAULT_REGION_RADIUS = 70.71068f;
 
     private static GameObject CreateRegionGameObject(GameObject parent, string name = null) {
-      GameObject escapeRegionGo = new GameObject((name == null) ? "Region" : name);
+      GameObject escapeRegionGo = new GameObject(name ?? "Region");
       escapeRegionGo.transform.parent = parent.transform;
       escapeRegionGo.transform.localPosition = Vector3.zero;
 
@@ -20,7 +20,7 @@ namespace MissionControl.EncounterFactories {
     }
 
     private static RegionPointGameLogic CreateRegionPointGameObject(GameObject parent, string name, Vector3 localPosition) {
-      GameObject regionPointGo = new GameObject((name == null) ? "RegionPoint" : name);
+      GameObject regionPointGo = new GameObject(name ?? "RegionPoint");
       regionPointGo.transform.parent = parent.transform;
       regionPointGo.transform.localPosition = localPosition;
 
@@ -34,8 +34,8 @@ namespace MissionControl.EncounterFactories {
       float x = point.x;
       float z = point.z;
 
-      point.x = x * Mathf.Cos(theta) + z * Mathf.Sin(theta);
-      point.z = -x * Mathf.Sin(theta) + z * Mathf.Cos(theta);
+      point.x = (x * Mathf.Cos(theta)) + (z * Mathf.Sin(theta));
+      point.z = (-x * Mathf.Sin(theta)) + (z * Mathf.Cos(theta));
     }
 
     public static RegionGameLogic CreateRegion(GameObject parent, string regionGameLogicGuid, string objectiveGuid, string name, string regionDefId, float radius = 0, bool showRegionHexWhenActive = true, bool alwaysShowRegionWhenActive = false, bool showPreviewOfRegion = false) {

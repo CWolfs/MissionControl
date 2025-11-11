@@ -7,7 +7,7 @@ using BattleTech;
 using MissionControl.LogicComponents.Spawners;
 
 namespace MissionControl.EncounterFactories {
-  public class LanceSpawnerFactory {
+  public static class LanceSpawnerFactory {
     public static LanceSpawnerGameLogic CreateLanceSpawner(GameObject parent, string name, string guid, string teamDefinitionGuid, bool spawnUnitsOnActivation,
       SpawnUnitMethodType spawnMethod, List<string> unitGuids, BehaviorTreeIDEnum defaultBehaviourTree = BehaviorTreeIDEnum.CoreAITree, List<string> tags = null, bool alertLanceOnSpawn = false) {
 

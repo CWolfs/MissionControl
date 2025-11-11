@@ -8,9 +8,9 @@ using System.Collections.Generic;
 using HBS.Collections;
 
 namespace MissionControl.EncounterFactories {
-  public class GeneratorFactory {
+  public static class GeneratorFactory {
     private static GameObject CreateGameObject(GameObject parent, string name = null) {
-      GameObject go = new GameObject((name == null) ? "Generator" : name);
+      GameObject go = new GameObject(name ?? "Generator");
       go.transform.parent = parent.transform;
       go.transform.localPosition = Vector3.zero;
 

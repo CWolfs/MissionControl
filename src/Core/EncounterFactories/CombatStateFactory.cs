@@ -3,9 +3,9 @@ using UnityEngine;
 using MissionControl.EncounterNodes.CombatStates;
 
 namespace MissionControl.EncounterFactories {
-  public class CombatStateFactory {
+  public static class CombatStateFactory {
     private static GameObject CreateGameObject(GameObject parent, string name = null) {
-      GameObject go = new GameObject((name == null) ? "CombatState" : name);
+      GameObject go = new GameObject(name ?? "CombatState");
       go.transform.parent = parent.transform;
       go.transform.localPosition = Vector3.zero;
 

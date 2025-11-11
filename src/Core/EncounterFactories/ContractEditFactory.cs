@@ -3,9 +3,9 @@ using UnityEngine;
 using MissionControl.EncounterNodes.ContractEdits;
 
 namespace MissionControl.EncounterFactories {
-  public class ContractEditFactory {
+  public static class ContractEditFactory {
     private static GameObject CreateGameObject(GameObject parent, string name = null) {
-      GameObject go = new GameObject((name == null) ? "ContractEdit" : name);
+      GameObject go = new GameObject(name ?? "ContractEdit");
       go.transform.parent = parent.transform;
       go.transform.localPosition = Vector3.zero;
 

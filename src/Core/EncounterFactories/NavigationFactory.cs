@@ -1,12 +1,11 @@
 using UnityEngine;
 
-using MissionControl.EncounterNodes.CombatStates;
 using BattleTech;
 
 namespace MissionControl.EncounterFactories {
-  public class NavigationFactory {
+  public static class NavigationFactory {
     private static GameObject CreateGameObject(GameObject parent, string name = null) {
-      GameObject go = new GameObject((name == null) ? "Navigation" : name);
+      GameObject go = new GameObject(name ?? "Navigation");
       go.transform.parent = parent.transform;
       go.transform.localPosition = Vector3.zero;
 

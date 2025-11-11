@@ -11,9 +11,9 @@ using System.Collections.Generic;
 using HBS.Collections;
 
 namespace MissionControl.EncounterFactories {
-  public class DropshipNodeFactory {
+  public static class DropshipNodeFactory {
     private static GameObject CreateGameObject(GameObject parent, string name = null) {
-      GameObject go = new GameObject((name == null) ? "Dropship" : name);
+      GameObject go = new GameObject(name ?? "Dropship");
       go.transform.parent = parent.transform;
       go.transform.localPosition = Vector3.zero;
 
