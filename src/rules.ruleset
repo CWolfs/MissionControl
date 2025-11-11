@@ -33,6 +33,7 @@
   
   <!-- Roslynator rules for code quality -->
   <Rules AnalyzerId="Roslynator.CSharp.Analyzers" RuleNamespace="Roslynator.CSharp.Analyzers">
+    <Rule Id="RCS1058" Action="None" /> <!-- Use compound assignment -->
     <Rule Id="RCS1077" Action="Info" /> <!-- Optimize LINQ method call -->
     <Rule Id="RCS1104" Action="None" /> <!-- Simplify conditional expression -->
     <Rule Id="RCS1110" Action="None" /> <!-- Declare types in namespaces - extension methods often global -->

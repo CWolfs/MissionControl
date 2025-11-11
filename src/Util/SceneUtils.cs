@@ -21,7 +21,7 @@ public static class SceneUtils {
 
   public static Vector3 GetRandomPositionFromTarget(Vector3 targPosition, float minDistance, float maxDistance, int attemptCount = 0) {
     if (attemptCount > 5) {
-      maxDistance *= 2;
+      maxDistance = maxDistance * 2;
     }
 
     Vector3 targetPosition = targPosition.GetClosestHexLerpedPointOnGrid();
