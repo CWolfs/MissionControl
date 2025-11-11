@@ -38,7 +38,7 @@ namespace MissionControl.Logic {
 
         RegionFactory.CreateRegion(escapeChunkGo, regionGameLogicGuid, objectiveGuid, "Region_Withdraw", "regionDef_EvacZone");
 
-        bool useDropship = true;
+        const bool useDropship = true;
         OccupyRegionObjective occupyRegionObjective = ObjectiveFactory.CreateOccupyRegionObjective(
           objectiveGuid,
           escapeChunkGo,

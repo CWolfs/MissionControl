@@ -124,8 +124,8 @@
     "EnableForFlashpoints": true,
     "EnableForStory": false,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
-    "MinDistanceForZone": 50,
-    "MaxDistanceForZone": 288,
+    "MinDistanceForZone": 200,
+    "MaxDistanceForZone": 300,
     "DisorderlyWithdrawalCompatibility": false
   },
   "AI": {
