@@ -39,7 +39,11 @@ namespace MissionControl.Result {
         return;
       }
 
-      Vector3 centerOfTeamMass = GetCenterOfTeamMass(playerTeam, true);
+      // Debug: Show actual center of player units (without enemy bias)
+      // Vector3 actualPlayerCenter = GetCenterOfTeamMass(playerTeam, false).GetLerpedHeightAt();
+      // GameObjextExtensions.CreateDebugPoint("DEBUGActualPlayerCenter", actualPlayerCenter, Color.green);
+
+      Vector3 centerOfTeamMass = GetCenterOfTeamMass(playerTeam, true).GetLerpedHeightAt();
       Vector3 awayDirection = GetAwayFromEnemiesDirection(playerTeam);
       Vector3 possiblePosition = Vector3.zero;
       int attempts = 0;

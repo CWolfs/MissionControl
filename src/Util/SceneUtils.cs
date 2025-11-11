@@ -149,7 +149,7 @@ public static class SceneUtils {
       Vector3 position = actor.GameRep.transform.position;
       position.y = 0; // Zero out Y to prevent height pollution
 
-      float weight = 2; // Use same weight as players for balance
+      const float weight = 2; // Use same weight as players for balance
 
       enemyCentroid += position * weight;
       enemyTotalMass += weight;
