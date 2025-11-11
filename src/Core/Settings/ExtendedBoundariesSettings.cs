@@ -10,7 +10,7 @@ namespace MissionControl.Config {
     public float IncreaseBoundarySizeByPercentage { get; set; } = 0.2f;
 
     [JsonProperty("Version")]
-    public int Version { get; set; } = 1;
+    public int Version { get; set; } = 2;
 
     [JsonProperty("Overrides")]
     public List<ExtendedBoundariesOverride> Overrides { get; set; } = new List<ExtendedBoundariesOverride>();
