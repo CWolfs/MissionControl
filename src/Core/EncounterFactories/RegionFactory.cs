@@ -65,7 +65,7 @@ namespace MissionControl.EncounterFactories {
       regionGameLogic.ShowPreviewOfRegion(showPreviewOfRegion); // This displays the region's 'Future Target' mouse over label if it's not an active region
 
       // Theta is -30 degrees converted to radians
-      float theta = -30f * Mathf.Deg2Rad;
+      const float theta = -30f * Mathf.Deg2Rad;
       Vector3 armPoint1 = new Vector3(0, 0, regionRadius);                      // North
       Vector3 armPoint2 = new Vector3(regionRadius, 0, regionRadius / 2f);      // NorthEast
       Vector3 armPoint3 = new Vector3(regionRadius, 0, -(regionRadius / 2f));   // SouthEast
