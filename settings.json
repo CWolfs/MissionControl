@@ -87,6 +87,7 @@
     "EnableForStory": false,
     "ExcludeContractTypes": ["SoloDuel", "DuoDuel"],
     "IncreaseBoundarySizeByPercentage": 0.3,
+    "Version": 2,
     "Overrides": [
       {
         "MapId": "mapGeneral_frigidSteppes_iTnd",

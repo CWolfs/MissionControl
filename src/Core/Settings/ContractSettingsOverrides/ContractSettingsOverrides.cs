@@ -36,6 +36,7 @@ namespace MissionControl.Config {
 
     public static string ExtendedBoundaries_Enable = "ExtendedBoundaries.Enable";
     public static string ExtendedBoundaries_IncreaseBoundarySizeByPercentage = "ExtendedBoundaries.IncreaseBoundarySizeByPercentage";
+    public static string ExtendedBoundaries_Version = "ExtendedBoundaries.Version";
 
     public static string AdditionalPlayerMechs_Enable = "AdditionalPlayerMechs.Enable";
 

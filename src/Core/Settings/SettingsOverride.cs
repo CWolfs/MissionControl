@@ -96,6 +96,7 @@ namespace MissionControl.Config {
     public static string ExtendedBoundaries_IncludeContractTypes = "ExtendedBoundaries.IncludeContractTypes";
     public static string ExtendedBoundaries_ExcludeContractTypes = "ExtendedBoundaries.ExcludeContractTypes";
     public static string ExtendedBoundaries_IncreaseBoundarySizeByPercentage = "ExtendedBoundaries.IncreaseBoundarySizeByPercentage";
+    public static string ExtendedBoundaries_Version = "ExtendedBoundaries.Version";
     public static string ExtendedBoundaries_Overrides = "ExtendedBoundaries.Overrides";
 
     public static string DynamicWithdraw_Enable = "DynamicWithdraw.Enable";
@@ -311,6 +312,7 @@ namespace MissionControl.Config {
       if (Has(ExtendedBoundaries_IncludeContractTypes)) settings.ExtendedBoundaries.IncludeContractTypes = GetStringList(ExtendedBoundaries_IncludeContractTypes);
       if (Has(ExtendedBoundaries_ExcludeContractTypes)) settings.ExtendedBoundaries.ExcludeContractTypes = GetStringList(ExtendedBoundaries_ExcludeContractTypes);
       if (Has(ExtendedBoundaries_IncreaseBoundarySizeByPercentage)) settings.ExtendedBoundaries.IncreaseBoundarySizeByPercentage = GetFloat(ExtendedBoundaries_IncreaseBoundarySizeByPercentage);
+      if (Has(ExtendedBoundaries_Version)) settings.ExtendedBoundaries.Version = GetInt(ExtendedBoundaries_Version);
 
       if (Has(ExtendedBoundaries_Overrides)) {
         JArray boundaryOverridesObject = (JArray)Properties.SelectToken(ExtendedBoundaries_Overrides);

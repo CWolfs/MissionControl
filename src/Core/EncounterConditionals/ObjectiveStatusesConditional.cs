@@ -55,6 +55,11 @@ namespace MissionControl.Conditional {
       ObjectiveGameLogic objectiveGameLogic = this.combat.ItemRegistry.GetItemByGUID<ObjectiveGameLogic>(guid);
       ObjectiveStatusEvaluationType objectiveStatus = Statuses[guid];
 
+      if (objectiveGameLogic == null) {
+        Main.Logger.LogError($"[ObjectiveStatusesConditional] Could not find objective with GUID '{guid}'");
+        return;
+      }
+
       if (objectiveGameLogic.IsAnInactiveContractControlledObjective()) {
         Main.LogDebug($"[ObjectiveStatusesConditional] '{objectiveGameLogic.gameObject.name}' is an objective in an inactive contract controlled chunk. Auto-suceeeding objective for this check");
         completedStatus[guid] = true;
@@ -104,6 +109,7 @@ namespace MissionControl.Conditional {
             message2 = string.Format("Objective[{0}] is Failed.", objectiveGameLogic.DisplayName);
             base.LogEvaluationPassed(message2, responseName);
             completedStatus[guid] = true;
+            return;
           }
           message2 = string.Format("Objective[{0}] is NOT Failed.", objectiveGameLogic.DisplayName);
           base.LogEvaluationFailed(message2, responseName);

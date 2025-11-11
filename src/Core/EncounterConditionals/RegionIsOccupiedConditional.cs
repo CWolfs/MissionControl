@@ -34,7 +34,9 @@ namespace MissionControl.Conditional {
         List<ITaggedItem> objectsOfTypeWithTagSet = this.combat.ItemRegistry.GetObjectsOfTypeWithTagSet(TaggedObjectType.Unit, new HBS.Collections.TagSet(UnitTags.ToArray()));
         for (int i = 0; i < objectsOfTypeWithTagSet.Count; i++) {
           AbstractActor abstractActor = objectsOfTypeWithTagSet[i] as AbstractActor;
-          actors.Add(abstractActor);
+          if (abstractActor != null) {
+            actors.Add(abstractActor);
+          }
         }
       } else {
         actors = UnityGameInstance.Instance.Game.Combat.AllActors;
@@ -42,7 +44,7 @@ namespace MissionControl.Conditional {
 
       foreach (AbstractActor actor in actors) {
         if (actor.IsInRegion(RegionGuid)) {
-          Main.Logger.LogError($"[RegionIsOccupiedConditional] AbstractActor '{actor.DisplayName}' is occupying region");
+          Main.LogDebug($"[RegionIsOccupiedConditional] AbstractActor '{actor.DisplayName}' is occupying region");
           return true;
         }
       }
