@@ -30,6 +30,9 @@ namespace MissionControl.Config {
       }
 
       if (IncludeContractTypes.Count > 0) {
+        if (ExcludeContractTypes.Count > 0) {
+          Main.Logger.LogWarning($"[{this.GetType().Name}] Both IncludeContractTypes and ExcludeContractTypes are configured. IncludeContractTypes takes precedence and ExcludeContractTypes will be ignored.");
+        }
         useExclude = false;
         useInclude = true;
       }
