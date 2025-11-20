@@ -292,7 +292,7 @@ namespace MissionControl {
             string[] modDirectoryNames = modDirectoryFullPaths.Select(d => Path.GetFileName(d)).ToArray();
 
             if (modDirectoryNames.Contains("mcData")) {
-              string reservedIdsPath = $"{modDirectory}/mcData/reserved-ids.json";
+              string reservedIdsPath = $"{modDirectory}/mcData/contractTypeBuilds/reserved-ids.json";
               if (File.Exists(reservedIdsPath)) {
                 Main.LogDebug($"[DataManager.LoadReservedIds] Found reserved-ids.json in mod '{modName}'");
                 LoadReservedIdsFile(reservedIdsPath, modName);
