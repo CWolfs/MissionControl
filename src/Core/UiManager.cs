@@ -148,6 +148,42 @@ namespace MissionControl {
         .AddButton("OK", null, true, null).Render();
     }
 
+    public void ShowReservedIdClashWarning(List<ReservedIdEntry> clashes) {
+      if (clashes == null || clashes.Count == 0) return;
+
+      // Group clashes by ID
+      Dictionary<string, List<ReservedIdEntry>> clashesByIdMap = new Dictionary<string, List<ReservedIdEntry>>();
+      foreach (var entry in clashes) {
+        if (!clashesByIdMap.ContainsKey(entry.Id)) {
+          clashesByIdMap[entry.Id] = new List<ReservedIdEntry>();
+        }
+        clashesByIdMap[entry.Id].Add(entry);
+      }
+
+      // Build the warning message
+      System.Text.StringBuilder message = new System.Text.StringBuilder();
+      message.AppendLine("WARNING: Reserved ID Clashes Detected!");
+      message.AppendLine();
+      message.AppendLine("The following contract type IDs are claimed by multiple mods:");
+      message.AppendLine();
+
+      foreach (var kvp in clashesByIdMap) {
+        string id = kvp.Key;
+        List<ReservedIdEntry> entries = kvp.Value;
+
+        message.AppendLine($"ID: {id}");
+        foreach (var entry in entries) {
+          message.AppendLine($"  - {entry.ModName}: {entry.ContractTypeName}");
+        }
+        message.AppendLine();
+      }
+
+      message.AppendLine("This WILL cause conflicts. Please check your mod configuration. Contact the mod authors if necessary.");
+
+      GenericPopupBuilder.Create(GenericPopupType.Warning, message.ToString())
+        .AddButton("OK", null, true, null).Render();
+    }
+
     public bool HasUI(string prefabName) {
       if (UIPool.transform.Find(prefabName) != null) return true;
       return false;
