@@ -62,6 +62,10 @@ namespace MissionControl {
     public Dictionary<string, PropDestructibleFlimsyDef> DestructibleDefs = new Dictionary<string, PropDestructibleFlimsyDef>();
     public Dictionary<string, PropDecalDef> DecalDefs = new Dictionary<string, PropDecalDef>();
 
+    // Reserved IDs tracking
+    private Dictionary<string, List<ReservedIdEntry>> ReservedIdMap = new Dictionary<string, List<ReservedIdEntry>>();
+    public List<ReservedIdEntry> DetectedClashes { get; private set; } = new List<ReservedIdEntry>();
+
     // Data backup
     private Dictionary<string, List<LanceOverride>> ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
     private List<ObjectiveOverride> ContractOverrideObjectiveOverrideBackup = new List<ObjectiveOverride>();
@@ -128,6 +132,14 @@ namespace MissionControl {
         LoadCustomContractTypes();
       }
 
+      LoadReservedIds();
+      ValidateReservedIdClashes();
+
+      // Display popup if clashes detected
+      if (DetectedClashes.Count > 0) {
+        UiManager.Instance.ShowReservedIdClashWarning(DetectedClashes);
+      }
+
       HasLoadedDeferredDefs = true;
     }
 
@@ -188,7 +200,12 @@ namespace MissionControl {
 
             if (modDirectoryNames.Contains("mcData")) {
               Main.LogDebug($"[DataManager] Found mod with 'mcData' folder. Loading from mod '{Path.GetFileName(modDirectory)}'");
-              LoadCustomContractTypeBuilds($"{modDirectory}/mcData/contractTypeBuilds/");
+
+              string contractTypeBuildsPath = $"{modDirectory}/mcData/contractTypeBuilds/";
+              if (Directory.Exists(contractTypeBuildsPath)) {
+                LoadCustomContractTypeBuilds(contractTypeBuildsPath);
+              }
+
               LoadContractConfigOverrides($"{modDirectory}/mcData");
             }
           }
@@ -260,6 +277,87 @@ namespace MissionControl {
       return customContractTypeNames;
     }
 
+    private void LoadReservedIds() {
+      if (Main.Settings.CustomData.Search) {
+        Main.LogDebug("[DataManager.LoadReservedIds] Searching for reserved-ids.json in other mods");
+
+        // Get the 'Mods' folder
+        string btModsPath = ModDirectory.Substring(0, ModDirectory.LastIndexOf("Mods") + 4);
+
+        if (Main.Settings.CustomData.SearchType.StartsWith("Shallow")) {
+          string[] modDirectories = Directory.GetDirectories(btModsPath);
+          foreach (string modDirectory in modDirectories) {
+            string modName = Path.GetFileName(modDirectory);
+            string[] modDirectoryFullPaths = Directory.GetDirectories(modDirectory);
+            string[] modDirectoryNames = modDirectoryFullPaths.Select(d => Path.GetFileName(d)).ToArray();
+
+            if (modDirectoryNames.Contains("mcData")) {
+              string reservedIdsPath = $"{modDirectory}/mcData/reserved-ids.json";
+              if (File.Exists(reservedIdsPath)) {
+                Main.LogDebug($"[DataManager.LoadReservedIds] Found reserved-ids.json in mod '{modName}'");
+                LoadReservedIdsFile(reservedIdsPath, modName);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    private void LoadReservedIdsFile(string filePath, string modName) {
+      try {
+        string jsonContent = File.ReadAllText(filePath);
+        Dictionary<string, string> reservedIds = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonContent, serialiserSettings);
+
+        if (reservedIds == null) {
+          Main.Logger.LogWarning($"[DataManager.LoadReservedIdsFile] Failed to parse reserved-ids.json for mod '{modName}'");
+          return;
+        }
+
+        Main.LogDebug($"[DataManager.LoadReservedIdsFile] Loading {reservedIds.Count} reserved ID(s) from mod '{modName}'");
+
+        foreach (var kvp in reservedIds) {
+          string id = kvp.Key;
+          string contractTypeName = kvp.Value;
+
+          if (!ReservedIdMap.ContainsKey(id)) {
+            ReservedIdMap[id] = new List<ReservedIdEntry>();
+          }
+
+          ReservedIdEntry entry = new ReservedIdEntry(modName, id, contractTypeName);
+          ReservedIdMap[id].Add(entry);
+
+          Main.LogDebug($"[DataManager.LoadReservedIdsFile] Registered ID '{id}' -> '{contractTypeName}' for mod '{modName}'");
+        }
+      } catch (Exception e) {
+        Main.Logger.LogError($"[DataManager.LoadReservedIdsFile] Error loading reserved-ids.json from '{filePath}': {e.Message}");
+      }
+    }
+
+    public void ValidateReservedIdClashes() {
+      Main.LogDebug("[DataManager.ValidateReservedIdClashes] Checking for reserved ID clashes");
+      DetectedClashes.Clear();
+
+      foreach (var kvp in ReservedIdMap) {
+        string id = kvp.Key;
+        List<ReservedIdEntry> entries = kvp.Value;
+
+        // Any duplicate ID is a clash, regardless of contract type name
+        if (entries.Count > 1) {
+          Main.Logger.LogWarning($"[DataManager.ValidateReservedIdClashes] CLASH DETECTED for ID '{id}':");
+          foreach (var entry in entries) {
+            Main.Logger.LogWarning($"  - {entry.ModName}: {entry.ContractTypeName}");
+            DetectedClashes.Add(entry);
+          }
+        }
+      }
+
+      if (DetectedClashes.Count > 0) {
+        int clashingIdCount = ReservedIdMap.Count(kvp => kvp.Value.Count > 1);
+        Main.Logger.LogWarning($"[DataManager.ValidateReservedIdClashes] Found {clashingIdCount} clashing ID(s) involving {DetectedClashes.Count} entries");
+      } else {
+        Main.LogDebug("[DataManager.ValidateReservedIdClashes] No reserved ID clashes detected");
+      }
+    }
 
     public List<string> GetStoryContractTypes() {
       List<string> storyContractTypeNames = new List<string>();
