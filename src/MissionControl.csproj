@@ -91,6 +91,9 @@
     <Reference Include="InControl">
       <HintPath>$(DLLPath)\InControl.dll</HintPath>
     </Reference>
+    <Reference Include="ShadowrunDTO">
+      <HintPath>$(DLLPath)\ShadowrunDTO.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(DLLPath)\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>

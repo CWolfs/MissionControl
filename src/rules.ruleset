@@ -3,6 +3,7 @@
   <!-- Rules focused on catching actual bugs and performance issues, not style -->
   <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp" RuleNamespace="Microsoft.CodeAnalysis.CSharp">
     <Rule Id="CS1591" Action="None" /> <!-- Missing XML comment - not needed for mods -->
+    <Rule Id="IDE0019" Action="None" /> <!-- Use pattern matching -->
     <Rule Id="IDE0044" Action="None" /> <!-- Add readonly modifier -->
     <Rule Id="IDE0075" Action="None" /> <!-- Simplify conditional expression -->
     <Rule Id="IDE0090" Action="None" /> <!-- Use 'new(...)' -->
@@ -45,5 +46,6 @@
     <Rule Id="RCS1179" Action="Info" /> <!-- Use return instead of assignment -->
     <Rule Id="RCS1197" Action="Info" /> <!-- Optimize StringBuilder.Append/AppendLine call -->
     <Rule Id="RCS1213" Action="None" /> <!-- Unused member declaration -->
+    <Rule Id="RCS1221" Action="None" /> <!-- Use pattern matching instead of combination of 'is' operator and cast operator -->
   </Rules>
 </RuleSet>
