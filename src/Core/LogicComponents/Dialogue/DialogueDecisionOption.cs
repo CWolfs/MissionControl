@@ -14,7 +14,7 @@ namespace MissionControl.Logic {
     /// <summary>
     /// Text displayed on the button
     /// </summary>
-    public string ButtonText { get; set; }
+    public string ResponseText { get; set; }
 
     /// <summary>
     /// Results/actions to execute when button is clicked
@@ -51,8 +51,8 @@ namespace MissionControl.Logic {
       Results = new List<DesignResult>();
     }
 
-    public DialogueDecisionOption(string buttonText, List<DesignResult> results, bool closeOnClick = true) {
-      ButtonText = buttonText;
+    public DialogueDecisionOption(string responseText, List<DesignResult> results, bool closeOnClick = true) {
+      ResponseText = responseText;
       Results = results ?? new List<DesignResult>();
       CloseOnClick = closeOnClick;
     }

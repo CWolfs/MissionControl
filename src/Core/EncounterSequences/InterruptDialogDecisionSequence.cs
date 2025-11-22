@@ -199,7 +199,7 @@ namespace MissionControl.EncounterSequences {
         SimGameConversationManager.ResponseData responseData = new SimGameConversationManager.ResponseData();
         responseData.index = i;
         responseData.link = new ConversationLink();
-        responseData.link.responseText = option.ButtonText;
+        responseData.link.responseText = option.ResponseText;
         responseData.link.idRef = new IDRef(); // Empty IDRef
 
         responses.Add(responseData);
@@ -218,7 +218,7 @@ namespace MissionControl.EncounterSequences {
       }
 
       DialogueDecisionOption selectedOption = visibleOptions[responseIndex];
-      Main.Logger.Log($"[InterruptDialogDecisionSequence.OnResponseSelected] Response selected: '{selectedOption.ButtonText}'");
+      Main.Logger.Log($"[InterruptDialogDecisionSequence.OnResponseSelected] Response selected: '{selectedOption.ResponseText}'");
 
       // Execute results for the selected option
       if (selectedOption.Results?.Count > 0) {

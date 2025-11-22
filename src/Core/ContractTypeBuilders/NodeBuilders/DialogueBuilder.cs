@@ -86,12 +86,12 @@ namespace MissionControl.ContractTypeBuilders {
 
       foreach (JToken optionToken in optionsArray) {
         JObject option = (JObject)optionToken;
-        if (!option.ContainsKey("ButtonText")) {
-          Main.Logger.LogError($"[DialogueBuilder.{contractTypeBuilder.ContractTypeKey}] Decision option missing 'ButtonText'");
+        if (!option.ContainsKey("Text")) {
+          Main.Logger.LogError($"[DialogueBuilder.{contractTypeBuilder.ContractTypeKey}] Decision option missing 'Text'");
           continue;
         }
 
-        string buttonText = option["ButtonText"].ToString();
+        string responseText = option["Text"].ToString();
         List<DesignResult> results = new List<DesignResult>();
 
         // Parse results for this option if they exist
@@ -119,14 +119,14 @@ namespace MissionControl.ContractTypeBuilders {
         int nextContentIndex = option.ContainsKey("NextContentIndex") ? (int)option["NextContentIndex"] : -1;
 
         // Create decision option
-        DialogueDecisionOption decisionOption = new DialogueDecisionOption(buttonText, results, closeOnClick);
+        DialogueDecisionOption decisionOption = new DialogueDecisionOption(responseText, results, closeOnClick);
         decisionOption.Conditional = conditional;
         decisionOption.NextDialogueGuid = nextDialogueGuid;
         decisionOption.NextContentIndex = nextContentIndex;
 
         options.Add(decisionOption);
 
-        Main.Logger.Log($"[DialogueBuilder.{contractTypeBuilder.ContractTypeKey}] Added decision option: {buttonText} with {results.Count} results");
+        Main.Logger.Log($"[DialogueBuilder.{contractTypeBuilder.ContractTypeKey}] Added decision option: {responseText} with {results.Count} results");
       }
 
       // Build encounter objects dictionary for ApplyContractOverride
