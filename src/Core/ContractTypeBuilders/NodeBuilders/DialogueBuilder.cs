@@ -100,8 +100,6 @@ namespace MissionControl.ContractTypeBuilders {
           results = resultsBuilder.Build();
         }
 
-        bool closeOnClick = option.ContainsKey("CloseOnClick") ? (bool)option["CloseOnClick"] : true;
-
         // Parse optional conditional for show/hide logic
         DesignConditional conditional = null;
         if (option.ContainsKey("Conditional")) {
@@ -119,7 +117,7 @@ namespace MissionControl.ContractTypeBuilders {
         int nextContentIndex = option.ContainsKey("NextContentIndex") ? (int)option["NextContentIndex"] : -1;
 
         // Create decision option
-        DialogueDecisionOption decisionOption = new DialogueDecisionOption(responseText, results, closeOnClick);
+        DialogueDecisionOption decisionOption = new DialogueDecisionOption(responseText, results);
         decisionOption.Conditional = conditional;
         decisionOption.NextDialogueGuid = nextDialogueGuid;
         decisionOption.NextContentIndex = nextContentIndex;

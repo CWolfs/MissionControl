@@ -239,13 +239,11 @@ namespace MissionControl.EncounterSequences {
       }
 
       // Handle branching
-      bool shouldClose = selectedOption.CloseOnClick;
-
       if (!string.IsNullOrEmpty(selectedOption.NextDialogueGuid)) {
         // Branch to different dialogue
         Main.Logger.Log($"[InterruptDialogDecisionSequence] Branching to dialogue: {selectedOption.NextDialogueGuid}");
         combat.MessageCenter.PublishMessage(new TriggerDialog(selectedOption.NextDialogueGuid, false));
-        shouldClose = true; // Always close when branching to another dialogue
+        SetState(DialogState.Finished);
       } else if (selectedOption.NextContentIndex >= 0 && selectedOption.NextContentIndex < decisionLogic.conversationContent.contents.Length) {
         // Jump to specific content index within same dialogue
         Main.Logger.Log($"[InterruptDialogDecisionSequence] Jumping to content index: {selectedOption.NextContentIndex}");
@@ -264,11 +262,8 @@ namespace MissionControl.EncounterSequences {
         );
 
         return SimGameConversationManager.ConversationState.NODE;
-      }
-      // else: sequential (default) - just close and complete
-
-      // Close dialogue if specified
-      if (shouldClose) {
+      } else {
+        // Sequential (default) - close and complete
         SetState(DialogState.Finished);
       }
 

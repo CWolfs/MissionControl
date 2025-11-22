@@ -22,11 +22,6 @@ namespace MissionControl.Logic {
     public List<DesignResult> Results { get; set; }
 
     /// <summary>
-    /// Whether to close the dialogue after clicking this button (default: true)
-    /// </summary>
-    public bool CloseOnClick { get; set; } = true;
-
-    /// <summary>
     /// Optional conditional for show/hide button logic
     /// If null or evaluates to true, button is shown
     /// If evaluates to false, button is hidden
@@ -51,10 +46,9 @@ namespace MissionControl.Logic {
       Results = new List<DesignResult>();
     }
 
-    public DialogueDecisionOption(string responseText, List<DesignResult> results, bool closeOnClick = true) {
+    public DialogueDecisionOption(string responseText, List<DesignResult> results) {
       ResponseText = responseText;
       Results = results ?? new List<DesignResult>();
-      CloseOnClick = closeOnClick;
     }
   }
 }
