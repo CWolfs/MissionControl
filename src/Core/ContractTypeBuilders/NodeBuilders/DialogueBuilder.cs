@@ -49,11 +49,9 @@ namespace MissionControl.ContractTypeBuilders {
 
       DialogueFactory.CreateDialogLogic(parent, this.name, this.guid, showOnlyOnce);
 
-      MessageCenterMessageType messageType;
       if (trigger != null) {
-        if (!Enum.TryParse(trigger, out messageType)) {
-          MessageTypes customMessageType;
-          if (!Enum.TryParse(trigger, out customMessageType)) {
+        if (!Enum.TryParse(trigger, out MessageCenterMessageType messageType)) {
+          if (!Enum.TryParse(trigger, out MessageTypes customMessageType)) {
             Main.Logger.LogError("[DialogueBuilder] Invalid 'Trigger' provided.");
           } else {
             messageType = (MessageCenterMessageType)customMessageType;
@@ -75,7 +73,6 @@ namespace MissionControl.ContractTypeBuilders {
     private void BuildDecisionDialogue(GameObject parent, JObject dialogue) {
       Main.Logger.Log($"[DialogueBuilder.{contractTypeBuilder.ContractTypeKey}] Building Decision dialogue: {this.name}");
 
-      // Parse decision options from the JSON
       if (!dialogue.ContainsKey("Options")) {
         Main.Logger.LogError($"[DialogueBuilder.{contractTypeBuilder.ContractTypeKey}] Decision dialogue '{this.name}' is missing 'Options' array");
         return;
@@ -94,13 +91,11 @@ namespace MissionControl.ContractTypeBuilders {
         string responseText = option["Text"].ToString();
         List<DesignResult> results = new List<DesignResult>();
 
-        // Parse results for this option if they exist
         if (option.ContainsKey("Results")) {
           ResultsBuilder resultsBuilder = new ResultsBuilder(contractTypeBuilder, (JArray)option["Results"]);
           results = resultsBuilder.Build();
         }
 
-        // Parse optional conditional for show/hide logic
         DesignConditional conditional = null;
         if (option.ContainsKey("Conditional")) {
           JArray conditionalArray = new JArray();
@@ -112,11 +107,9 @@ namespace MissionControl.ContractTypeBuilders {
           }
         }
 
-        // Parse optional branching fields
         string nextDialogueGuid = option.ContainsKey("NextDialogueGuid") ? option["NextDialogueGuid"].ToString() : null;
         int nextContentIndex = option.ContainsKey("NextContentIndex") ? (int)option["NextContentIndex"] : -1;
 
-        // Create decision option
         DialogueDecisionOption decisionOption = new DialogueDecisionOption(responseText, results);
         decisionOption.Conditional = conditional;
         decisionOption.NextDialogueGuid = nextDialogueGuid;
@@ -127,11 +120,9 @@ namespace MissionControl.ContractTypeBuilders {
         Main.Logger.Log($"[DialogueBuilder.{contractTypeBuilder.ContractTypeKey}] Added decision option: {responseText} with {results.Count} results");
       }
 
-      // Build encounter objects dictionary for ApplyContractOverride
       Dictionary<string, EncounterObjectGameLogic> encounterObjects = new Dictionary<string, EncounterObjectGameLogic>();
       MissionControl.Instance.EncounterLayerData.BuildEncounterObjectDictionary(encounterObjects);
 
-      // Create the DialogueDecisionGameLogic
       // Note: dialogueOverride is null here - it will be applied later by the contract override system
       DialogueFactory.CreateDialogueDecisionLogic(parent, this.name, this.guid, null, options, encounterObjects);
     }

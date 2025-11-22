@@ -5,6 +5,7 @@
     <Rule Id="CS1591" Action="None" /> <!-- Missing XML comment - not needed for mods -->
     <Rule Id="IDE0017" Action="None" /> <!-- Use object initializers -->
     <Rule Id="IDE0019" Action="None" /> <!-- Use pattern matching -->
+    <Rule Id="IDE0028" Action="None" /> <!-- Use collection initializers -->
     <Rule Id="IDE0044" Action="None" /> <!-- Add readonly modifier -->
     <Rule Id="IDE0075" Action="None" /> <!-- Simplify conditional expression -->
     <Rule Id="IDE0090" Action="None" /> <!-- Use 'new(...)' -->
