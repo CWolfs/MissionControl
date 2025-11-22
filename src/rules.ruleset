@@ -3,6 +3,7 @@
   <!-- Rules focused on catching actual bugs and performance issues, not style -->
   <Rules AnalyzerId="Microsoft.CodeAnalysis.CSharp" RuleNamespace="Microsoft.CodeAnalysis.CSharp">
     <Rule Id="CS1591" Action="None" /> <!-- Missing XML comment - not needed for mods -->
+    <Rule Id="IDE0017" Action="None" /> <!-- Use object initializers -->
     <Rule Id="IDE0019" Action="None" /> <!-- Use pattern matching -->
     <Rule Id="IDE0044" Action="None" /> <!-- Add readonly modifier -->
     <Rule Id="IDE0075" Action="None" /> <!-- Simplify conditional expression -->
@@ -34,6 +35,7 @@
   
   <!-- Roslynator rules for code quality -->
   <Rules AnalyzerId="Roslynator.CSharp.Analyzers" RuleNamespace="Roslynator.CSharp.Analyzers">
+    <Rule Id="RCS1036" Action="None" /> <!-- Remove unnecessary blank line -->
     <Rule Id="RCS1058" Action="None" /> <!-- Use compound assignment -->
     <Rule Id="RCS1077" Action="Info" /> <!-- Optimize LINQ method call -->
     <Rule Id="RCS1104" Action="None" /> <!-- Simplify conditional expression -->

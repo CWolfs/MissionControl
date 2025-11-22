@@ -21,6 +21,7 @@ namespace MissionControl.EncounterSequences {
     private CombatGameState combat;
     private List<DialogueDecisionOption> visibleOptions;
     private DialogState state;
+    private SimGameState originalSim;
 
     private bool isInterruptable;
     private bool isCancelable;
@@ -64,20 +65,26 @@ namespace MissionControl.EncounterSequences {
     }
 
     private void ShowDecisionDialogue() {
+      Main.Logger.Log("[InterruptDialogDecisionSequence.ShowDecisionDialogue] STEP 1: Method entered");
+
       if (decisionLogic.conversationContent == null || decisionLogic.conversationContent.contents.Length == 0) {
         Main.Logger.LogWarning($"[InterruptDialogDecisionSequence] Decision dialogue '{decisionLogic.encounterObjectGuid}' has no content, skipping");
         SetState(DialogState.Finished);
         return;
       }
 
+      Main.Logger.Log("[InterruptDialogDecisionSequence.ShowDecisionDialogue] STEP 2: Content validation passed");
+
       // Mark as shown
       decisionLogic.dialogueShownStatus = DialogueShownStatus.Shown;
 
       // Get first dialogue content
       DialogueContent content = decisionLogic.conversationContent.contents[0];
+      Main.Logger.Log($"[InterruptDialogDecisionSequence.ShowDecisionDialogue] STEP 3: Got content, words='{content.words?.Substring(0, Math.Min(50, content.words?.Length ?? 0))}'");
 
       // Filter options by Conditionals
       visibleOptions = FilterVisibleOptions();
+      Main.Logger.Log($"[InterruptDialogDecisionSequence.ShowDecisionDialogue] STEP 4: Filtered options, visible count={visibleOptions.Count}");
 
       if (visibleOptions.Count == 0) {
         Main.Logger.LogWarning($"[InterruptDialogDecisionSequence] No visible options for decision dialogue '{decisionLogic.encounterObjectGuid}', skipping");
@@ -87,12 +94,54 @@ namespace MissionControl.EncounterSequences {
 
       // Create response data for SGDialogWidget
       List<SimGameConversationManager.ResponseData> responses = CreateResponses();
+      Main.Logger.Log($"[InterruptDialogDecisionSequence.ShowDecisionDialogue] STEP 5: Created {responses.Count} responses");
+
+      // Check for null parameters before Show() call
+      Main.Logger.Log($"[InterruptDialogDecisionSequence.ShowDecisionDialogue] STEP 6: Null checks:");
+      Main.Logger.Log($"  - content.words: {(content.words == null ? "NULL" : "OK")}");
+      Main.Logger.Log($"  - content.CastDef: {(content.CastDef == null ? "NULL" : "OK")}");
+      Main.Logger.Log($"  - dialogWidget: {(dialogWidget == null ? "NULL" : "OK")}");
+      Main.Logger.Log($"  - responses: {(responses == null ? "NULL" : $"OK ({responses.Count} items)")}");
+
+      // Ensure CastDef is not null (create default if needed)
+      CastDef castDef = content.CastDef;
+      if (castDef == null) {
+        Main.Logger.LogWarning("[InterruptDialogDecisionSequence.ShowDecisionDialogue] STEP 7: CastDef is NULL, creating default");
+        castDef = new CastDef();
+        castDef.firstName = "Unknown";
+        castDef.lastName = "";
+        castDef.rank = "";
+        castDef.sgCharType = SimGameState.SimGameCharacterType.UNSET;
+      } else {
+        Main.Logger.Log("[InterruptDialogDecisionSequence.ShowDecisionDialogue] STEP 7: CastDef is valid");
+      }
+
+      // Get game context
+      GameContext gameContext = UnityGameInstance.BattleTechGame.GetActiveContext();
+      Main.Logger.Log($"[InterruptDialogDecisionSequence.ShowDecisionDialogue] STEP 8: GameContext: {(gameContext == null ? "NULL" : "OK")}");
+
+      // Set Sim to fix null reference crash in Show() (lines 328 & 414)
+      // Store original so we can restore it later (dialogWidget is reused)
+      originalSim = dialogWidget.Sim;
+      var simGame = UnityGameInstance.BattleTechGame.Simulation;
+      if (simGame != null) {
+        Main.Logger.Log($"[InterruptDialogDecisionSequence.ShowDecisionDialogue] STEP 8a: Setting dialogWidget.Sim, UXAttached={simGame.UXAttached}");
+        dialogWidget.Sim = simGame;
+
+        if (simGame.UXAttached) {
+          Main.Logger.LogWarning("[InterruptDialogDecisionSequence.ShowDecisionDialogue] WARNING: Sim.UXAttached is TRUE in combat - animations may use wrong mode!");
+        }
+      } else {
+        Main.Logger.LogWarning("[InterruptDialogDecisionSequence.ShowDecisionDialogue] STEP 8a: Could not get Simulation from BattleTechGame!");
+      }
+
+      Main.Logger.Log("[InterruptDialogDecisionSequence.ShowDecisionDialogue] STEP 9: About to call dialogWidget.Show()");
 
       // Show dialogue with responses
       dialogWidget.Show(
         content.words,
-        UnityGameInstance.BattleTechGame.GetActiveContext(),
-        content.CastDef,
+        gameContext,
+        castDef,
         content.emote,
         null, // no continue callback
         OnResponseSelected,
@@ -100,14 +149,22 @@ namespace MissionControl.EncounterSequences {
         false // not end of convo
       );
 
+      Main.Logger.Log("[InterruptDialogDecisionSequence.ShowDecisionDialogue] STEP 10: dialogWidget.Show() completed successfully");
+
       LazySingletonBehavior<UIManager>.Instance.ToggleUINode = false;
       LazySingletonBehavior<UIManager>.Instance.ToggleInWorldNode = false;
+      Main.Logger.Log("[InterruptDialogDecisionSequence.ShowDecisionDialogue] STEP 11: UI toggles set");
 
       // Play audio if specified
       if (content.HasAudioEvent()) {
+        Main.Logger.Log("[InterruptDialogDecisionSequence.ShowDecisionDialogue] STEP 12: Playing audio");
         AudioEventManager.DialogSequencePlaying = true;
         DialogueAudioEvent.Play(combat, content, null);
+      } else {
+        Main.Logger.Log("[InterruptDialogDecisionSequence.ShowDecisionDialogue] STEP 12: No audio to play");
       }
+
+      Main.Logger.Log("[InterruptDialogDecisionSequence.ShowDecisionDialogue] STEP 13: Method completed successfully");
     }
 
     private List<DialogueDecisionOption> FilterVisibleOptions() {
@@ -152,24 +209,33 @@ namespace MissionControl.EncounterSequences {
     }
 
     private SimGameConversationManager.ConversationState OnResponseSelected(int responseIndex) {
+      Main.Logger.Log($"[InterruptDialogDecisionSequence.OnResponseSelected] Button clicked, responseIndex={responseIndex}");
+
       if (responseIndex < 0 || responseIndex >= visibleOptions.Count) {
-        Main.Logger.LogError($"[InterruptDialogDecisionSequence] Invalid response index: {responseIndex}");
+        Main.Logger.LogError($"[InterruptDialogDecisionSequence] Invalid response index: {responseIndex}, visibleOptions.Count={visibleOptions.Count}");
         SetState(DialogState.Finished);
         return SimGameConversationManager.ConversationState.NODE;
       }
 
       DialogueDecisionOption selectedOption = visibleOptions[responseIndex];
-      Main.Logger.Log($"[InterruptDialogDecisionSequence] Response selected: {selectedOption.ButtonText}");
+      Main.Logger.Log($"[InterruptDialogDecisionSequence.OnResponseSelected] Response selected: '{selectedOption.ButtonText}'");
 
       // Execute results for the selected option
-      if (selectedOption.Results != null) {
+      if (selectedOption.Results?.Count > 0) {
+        Main.Logger.Log($"[InterruptDialogDecisionSequence.OnResponseSelected] Executing {selectedOption.Results.Count} result(s)");
+        int resultIndex = 0;
         foreach (var result in selectedOption.Results) {
           try {
+            Main.Logger.Log($"[InterruptDialogDecisionSequence.OnResponseSelected] Executing result {resultIndex}: {result.GetType().Name}");
             result.Trigger(null, decisionLogic.encounterObjectGuid);
+            Main.Logger.Log($"[InterruptDialogDecisionSequence.OnResponseSelected] Result {resultIndex} executed successfully");
+            resultIndex++;
           } catch (Exception e) {
-            Main.Logger.LogError($"[InterruptDialogDecisionSequence] Error executing result: {e.Message}\n{e.StackTrace}");
+            Main.Logger.LogError($"[InterruptDialogDecisionSequence.OnResponseSelected] Error executing result {resultIndex}: {e.Message}\n{e.StackTrace}");
           }
         }
+      } else {
+        Main.Logger.Log("[InterruptDialogDecisionSequence.OnResponseSelected] No results to execute");
       }
 
       // Handle branching
@@ -222,6 +288,14 @@ namespace MissionControl.EncounterSequences {
 
     public override void OnComplete() {
       base.OnComplete();
+
+      // Restore original Sim value (dialogWidget is reused)
+      // Do this AFTER button clicks are processed to avoid null reference in ResponseClicked
+      if (originalSim != dialogWidget.Sim) {
+        dialogWidget.Sim = originalSim;
+        Main.Logger.Log("[InterruptDialogDecisionSequence.OnComplete] Restored original Sim value");
+      }
+
       AudioEventManager.DialogSequencePlaying = false;
       combat.MessageCenter.PublishMessage(new DialogComplete(decisionLogic.encounterObjectGuid));
     }
@@ -238,6 +312,13 @@ namespace MissionControl.EncounterSequences {
 
     public override void OnCanceled() {
       base.OnCanceled();
+
+      // Restore original Sim value when canceled
+      if (originalSim != dialogWidget.Sim) {
+        dialogWidget.Sim = originalSim;
+        Main.Logger.Log("[InterruptDialogDecisionSequence.OnCanceled] Restored original Sim value");
+      }
+
       HideDialogWidget();
       SetState(DialogState.Finished);
     }
