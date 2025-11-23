@@ -36,10 +36,10 @@ namespace MissionControl.ContractTypeBuilders {
 
       this.Name = name;
       this.triggerOn = trigger["TriggerOn"].ToString();
-      this.Description = (trigger.ContainsKey("Description")) ? trigger["Description"].ToString() : "";
-      this.TriggerOnlyOnce = (trigger.ContainsKey("TriggerOnlyOnce")) ? trigger["TriggerOnlyOnce"].ToObject<bool>() : true;
+      this.Description = trigger.ContainsKey("Description") ? trigger["Description"].ToString() : "";
+      this.TriggerOnlyOnce = trigger.ContainsKey("TriggerOnlyOnce") ? trigger["TriggerOnlyOnce"].ToObject<bool>() : true;
 
-      this.conditionalEvaluationString = (trigger.ContainsKey("SucceedOn")) ? trigger["SucceedOn"].ToString() : "All";
+      this.conditionalEvaluationString = trigger.ContainsKey("SucceedOn") ? trigger["SucceedOn"].ToString() : "All";
       this.conditionalEvaluation = (LogicEvaluation)Enum.Parse(typeof(LogicEvaluation), conditionalEvaluationString);
 
       if (trigger.ContainsKey("Conditionals")) {
@@ -54,8 +54,7 @@ namespace MissionControl.ContractTypeBuilders {
       }
 
       if (!Enum.TryParse(this.triggerOn, out triggerMessageType)) {
-        MessageTypes messageType;
-        if (!Enum.TryParse(this.triggerOn, out messageType)) {
+        if (!Enum.TryParse(this.triggerOn, out MessageTypes messageType)) {
           Main.Logger.LogError($"[GenericTriggerBuilder] Invalid 'TriggerOn' provided of '{this.triggerOn}'.");
         } else {
           triggerMessageType = (MessageCenterMessageType)messageType;

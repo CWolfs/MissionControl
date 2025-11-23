@@ -22,11 +22,12 @@ namespace MissionControl.Logic {
     public List<DesignResult> Results { get; set; }
 
     /// <summary>
-    /// Optional conditional for show/hide button logic
+    /// Optional compound conditional for show/hide button logic
+    /// Supports multiple conditionals with LogicEvaluation (ANY/ALL/NONE)
     /// If null or evaluates to true, button is shown
     /// If evaluates to false, button is hidden
     /// </summary>
-    public DesignConditional Conditional { get; set; }
+    public GenericCompoundConditional Conditional { get; set; }
 
     /// <summary>
     /// Optional GUID of next dialogue to branch to

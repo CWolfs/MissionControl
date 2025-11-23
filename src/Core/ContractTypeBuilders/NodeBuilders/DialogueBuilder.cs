@@ -96,14 +96,19 @@ namespace MissionControl.ContractTypeBuilders {
           results = resultsBuilder.Build();
         }
 
-        DesignConditional conditional = null;
-        if (option.ContainsKey("Conditional")) {
-          JArray conditionalArray = new JArray();
-          conditionalArray.Add(option["Conditional"]);
-          ConditionalBuilder conditionalBuilder = new ConditionalBuilder(contractTypeBuilder, conditionalArray);
-          List<DesignConditional> conditionals = conditionalBuilder.BuildAsDesignConditionals();
-          if (conditionals.Count > 0) {
-            conditional = conditionals[0];
+        GenericCompoundConditional conditional = null;
+
+        // Parse SucceedOn (LogicEvaluation) - default to "All"
+        string succeedOnString = option.ContainsKey("SucceedOn") ? option["SucceedOn"].ToString() : "All";
+        LogicEvaluation logicEvaluation = (LogicEvaluation)Enum.Parse(typeof(LogicEvaluation), succeedOnString);
+
+        // Parse conditionals array
+        if (option.ContainsKey("Conditionals")) {
+          JArray conditionalArray = (JArray)option["Conditionals"];
+          if (conditionalArray.Count > 0) {
+            ConditionalBuilder conditionalBuilder = new ConditionalBuilder(contractTypeBuilder, conditionalArray);
+            conditional = conditionalBuilder.Build();
+            conditional.whichMustBeTrue = logicEvaluation;
           }
         }
 

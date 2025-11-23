@@ -180,8 +180,9 @@ namespace MissionControl.EncounterSequences {
       return visible;
     }
 
-    private bool EvaluateConditional(DesignConditional conditional) {
+    private bool EvaluateConditional(GenericCompoundConditional conditional) {
       try {
+        // GenericCompoundConditional.Evaluate() handles ANY/ALL/NONE logic based on whichMustBeTrue
         return conditional.Evaluate(null, decisionLogic.encounterObjectGuid);
       } catch (Exception e) {
         Main.Logger.LogError($"[InterruptDialogDecisionSequence] Error evaluating conditional: {e.Message}");
