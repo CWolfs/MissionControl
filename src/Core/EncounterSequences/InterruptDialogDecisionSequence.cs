@@ -202,6 +202,7 @@ namespace MissionControl.EncounterSequences {
         responseData.link = new ConversationLink();
         responseData.link.responseText = option.ResponseText;
         responseData.link.idRef = new IDRef(); // Empty IDRef
+        responseData.link.idRef.id = Guid.NewGuid().ToString(); // Unique ID to avoid conflicts
 
         responses.Add(responseData);
       }

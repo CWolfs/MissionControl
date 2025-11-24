@@ -95,7 +95,7 @@ namespace MissionControl.Result {
       Main.LogDebug($"[ArtilleryResult] Damage: {Damage}, Heat: {HeatDamage}, Stability: {StabilityDamage}, VFX: {ArtilleryVFXType}");
 
       // Create and enqueue the artillery sequence
-      ArtilleryObjectiveSequence artillerySequence = new ArtilleryObjectiveSequence(
+      ScalableArtilleryObjectiveSequence artillerySequence = new ScalableArtilleryObjectiveSequence(
         combat,
         targetPositions,
         ArtilleryVFXType,
@@ -103,7 +103,8 @@ namespace MissionControl.Result {
         Damage,
         HeatDamage,
         StabilityDamage,
-        TerrainMaskFlags.None
+        TerrainMaskFlags.None,
+        vfxScale: 1.0f
       );
 
       EncounterLayerParent.EnqueueLoadAwareMessage(new AddSequenceToStackMessage(artillerySequence));
