@@ -9,6 +9,7 @@ using BattleTech.Framework;
 
 using MissionControl.RuntimeCast;
 using MissionControl.LogicComponents.Activators;
+using MissionControl.Logic;
 
 namespace MissionControl.EncounterFactories {
   public static class DialogueFactory {
@@ -118,6 +119,23 @@ namespace MissionControl.EncounterFactories {
       }
 
       return dialogueSequenceGameLogic;
+    }
+
+    public static DialogueDecisionGameLogic CreateDialogueDecisionLogic(GameObject parent, string name, string guid, DialogueOverride dialogueOverride,
+      List<DialogueDecisionOption> options, Dictionary<string, EncounterObjectGameLogic> encounterObjects) {
+
+      GameObject decisionGo = CreateDialogLogicGameObject(parent, name);
+
+      DialogueDecisionGameLogic decision = decisionGo.AddComponent<DialogueDecisionGameLogic>();
+      decision.encounterObjectGuid = guid;
+      decision.decisionOptions = options ?? new List<DialogueDecisionOption>();
+
+      // Apply dialogue text from contract override
+      if (dialogueOverride != null) {
+        decision.ApplyContractOverride(dialogueOverride, encounterObjects);
+      }
+
+      return decision;
     }
   }
 }

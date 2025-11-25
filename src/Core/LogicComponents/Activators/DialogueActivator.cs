@@ -42,11 +42,11 @@ namespace MissionControl.LogicComponents.Activators {
 
     private void ActivateDialogue() {
       Main.LogDebug($"[DialogueActivator.ActivateDialogue]) Activating dialogue...");
-      EncounterObjectGameLogic dialogue = MissionControl.Instance.EncounterLayerData.gameObject.GetEncounterObjectGameLogic(DialogueGuid);
+      EncounterObjectGameLogic logic = MissionControl.Instance.EncounterLayerData.gameObject.GetEncounterObjectGameLogic(DialogueGuid);
 
-      if (dialogue is DialogueGameLogic) {
+      if (logic is DialogueGameLogic dialogue) {
         Main.LogDebug($"[DialogueActivator.ActivateDialogue]) Activating dialogue for '{DialogueGuid}:{dialogue.gameObject.name}' and isInterrupt={IsInterrupt}");
-        ((DialogueGameLogic)dialogue).TriggerDialogue(IsInterrupt);
+        dialogue.TriggerDialogue(IsInterrupt);
       }
     }
 
