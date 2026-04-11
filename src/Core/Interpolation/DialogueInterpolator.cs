@@ -205,6 +205,15 @@ namespace MissionControl.Interpolation {
 
       // Continue with interpolation
       if (unitKey.StartsWith(DialogueInterpolationConstants.TeamPilot_Random)) {
+        // Rebind if the referenced pilot is dead or ejected, keep trying until a live one is found
+        int textRebindAttempts = 0;
+        int maxTextRebindAttempts = MissionControl.Instance.CurrentContract.Lances.GetLanceUnits(TeamUtils.GetTeamGuid("Player1")).Length + 1;
+        while (unit != null && unit.IsDead && PilotCastInterpolator.Instance.BoundAbstractActors.ContainsKey(unitKey) && textRebindAttempts < maxTextRebindAttempts) {
+          textRebindAttempts++;
+          PilotCastInterpolator.Instance.RebindDeadUnit(unitKey);
+          unit = GetBoundUnit(unitKey);
+        }
+
         if (unitDataKey == "DisplayName") {
           if (PilotCastInterpolator.Instance.DynamicCastDefs.ContainsKey(unitKey)) {
             string castDefId = PilotCastInterpolator.Instance.DynamicCastDefs[unitKey];
