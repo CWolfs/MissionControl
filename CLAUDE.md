@@ -12,8 +12,8 @@ Website: https://www.missioncontrolmod.com/
 
 ## GitHub
 
-- **Repository**: CWolfs/SpawnVariation (historical name - NOT "MissionControl")
-- **Primary branch**: `develop` (not master - master is for releases)
+- **Repository**: CWolfs/MissionControl
+- **Branches**: `master` (release branch), `develop` (active development). All work goes on `develop`, PRs into `master` for releases.
 
 ## Build
 
@@ -102,8 +102,7 @@ workflow, which checks out the `develop` branch and builds it alongside Designer
 
 ## Gotchas
 
-- GitHub repo is "SpawnVariation", not "MissionControl"
-- Primary branch is `develop`, NOT master
+- All dev work happens on `develop` branch — `master` is the release branch
 - The `docs/` folder contains a built Docusaurus website (HTML/JS), not source documentation
 - settings.json uses `TypeNameHandling.All` which is critical for polymorphic deserialization
 - Contract type builds use JSONC (JSON with comments) - standard JSON parsers will choke on them
