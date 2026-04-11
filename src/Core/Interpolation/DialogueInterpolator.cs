@@ -685,14 +685,20 @@ namespace MissionControl.Interpolation {
         }
       } else {  // Attempt to see if a unit exists against the castDef pilot (PureRandom units)
         AbstractActor unit = GetSpeakerUnit(RuntimeCastFactory.GetPilotDefIDFromCastDefID(castDef.id));
-        int pureRandomRebindAttempts = 0;
         Contract pureRandomContract = MissionControl.Instance.CurrentContract;
         SpawnableUnit[] pureRandomLanceConfigUnits = pureRandomContract.Lances.GetLanceUnits(TeamUtils.GetTeamGuid("Player1"));
-        int maxPureRandomRebindAttempts = pureRandomLanceConfigUnits.Length + 1;
-        while (unit != null && unit.IsDead && pureRandomRebindAttempts < maxPureRandomRebindAttempts) {
-          pureRandomRebindAttempts++;
-          int randomPosition = UnityEngine.Random.Range(0, pureRandomLanceConfigUnits.Length);
-          string pilotDefID = pureRandomLanceConfigUnits[randomPosition].PilotId;
+
+        // Shuffle positions to sample without replacement — guarantees finding a survivor if one exists
+        List<int> shuffledPositions = Enumerable.Range(0, pureRandomLanceConfigUnits.Length).ToList();
+        for (int i = shuffledPositions.Count - 1; i > 0; i--) {
+          int j = UnityEngine.Random.Range(0, i + 1);
+          (shuffledPositions[i], shuffledPositions[j]) = (shuffledPositions[j], shuffledPositions[i]);
+        }
+
+        int positionIndex = 0;
+        while (unit != null && unit.IsDead && positionIndex < shuffledPositions.Count) {
+          string pilotDefID = pureRandomLanceConfigUnits[shuffledPositions[positionIndex]].PilotId;
+          positionIndex++;
 
           string pilotCastDefID = RuntimeCastFactory.GetCastDefIDFromPilotDefID(pilotDefID);
           CastDef updatedCastDef = RuntimeCastFactory.GetCastDef(pilotCastDefID);
@@ -718,7 +724,7 @@ namespace MissionControl.Interpolation {
           }
         }
 
-        if (pureRandomRebindAttempts >= maxPureRandomRebindAttempts) {
+        if (positionIndex >= shuffledPositions.Count && unit != null && unit.IsDead) {
           Main.Logger.LogWarning($"[HandleDeadActorFromDialogueContent] Exhausted PureRandom rebind attempts. Falling back to Darius.");
           castDef = RuntimeCastFactory.GetCastDef(CustomCastDef.castDef_Darius);
         }
