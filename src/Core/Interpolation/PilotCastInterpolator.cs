@@ -90,6 +90,7 @@ namespace MissionControl.Interpolation {
       if (IsBindableRandomCastDefID(selectedCastDefID)) {
         string bindingKey = GetBindingKey(selectedCastDefID);
         PilotCastInterpolator.Instance.DynamicCastDefs[bindingKey] = fallbackCastDefID;
+        PilotCastInterpolator.Instance.BoundAbstractActorsFullIndex.Remove(bindingKey);
       }
 
       return fallbackCastDefID;
@@ -170,9 +171,27 @@ namespace MissionControl.Interpolation {
       List<AbstractActor> units = lance.GetLanceUnits();
 
       foreach (KeyValuePair<string, int> entry in BoundAbstractActorsFullIndex) {
-        AbstractActor actor = units[entry.Value - 1];
-        // Main.LogDebug($"[PilotCastInterpolator.BindAbstractActorToBindingKey] Binding AbstractActor '{actor.UnitName}' with pilot '{actor.GetPilot().Name}' using '{entry.Key}:{entry.Value - 1}'");
-        BoundAbstractActors[entry.Key] = actor;
+        AbstractActor matchedActor = null;
+
+        // Primary: match by pilot identity (robust against other mods injecting temporary actors into the lance)
+        if (DynamicCastDefs.TryGetValue(entry.Key, out string castDefId)) {
+          string pilotDefId = RuntimeCastFactory.GetPilotDefIDFromCastDefID(castDefId);
+          matchedActor = units.FirstOrDefault(u =>
+            u.GetPilot().pilotDef.Description.Id.ToUpperFirst() == pilotDefId.ToUpperFirst());
+        }
+
+        // Fallback: index-based with bounds checking
+        if (matchedActor == null) {
+          int index = entry.Value - 1;
+          if (index >= 0 && index < units.Count) {
+            matchedActor = units[index];
+          }
+        }
+
+        if (matchedActor != null) {
+          // Main.LogDebug($"[PilotCastInterpolator.BindAbstractActorToBindingKey] Binding AbstractActor '{matchedActor.UnitName}' with pilot '{matchedActor.GetPilot().Name}' using '{entry.Key}'");
+          BoundAbstractActors[entry.Key] = matchedActor;
+        }
       }
 
       // Bind the commander if they are in combat
@@ -209,7 +228,7 @@ namespace MissionControl.Interpolation {
       int pilotPosition = FindNonUsedPilotPosition("Player1", lanceConfigUnits);
 
       if (!IsPilotPositionValid(pilotPosition)) {
-        return HandleFallback(pilotPosition, bindKey);
+        return HandleFallback(pilotPosition, GetDynamicCastDefIDFromBindKey(bindKey));
       }
 
       return BindCastDefAndActorIndex(pilotPosition, GetDynamicCastDefIDFromBindKey(bindKey), lanceConfigUnits, fullLanceConfigUnits);
