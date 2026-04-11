@@ -205,6 +205,15 @@ namespace MissionControl.Interpolation {
 
       // Continue with interpolation
       if (unitKey.StartsWith(DialogueInterpolationConstants.TeamPilot_Random)) {
+        // Rebind if the referenced pilot is dead or ejected, keep trying until a live one is found
+        int textRebindAttempts = 0;
+        int maxTextRebindAttempts = MissionControl.Instance.CurrentContract.Lances.GetLanceUnits(TeamUtils.GetTeamGuid("Player1")).Length + 1;
+        while (unit != null && unit.IsDead && PilotCastInterpolator.Instance.BoundAbstractActors.ContainsKey(unitKey) && textRebindAttempts < maxTextRebindAttempts) {
+          textRebindAttempts++;
+          PilotCastInterpolator.Instance.RebindDeadUnit(unitKey);
+          unit = GetBoundUnit(unitKey);
+        }
+
         if (unitDataKey == "DisplayName") {
           if (PilotCastInterpolator.Instance.DynamicCastDefs.ContainsKey(unitKey)) {
             string castDefId = PilotCastInterpolator.Instance.DynamicCastDefs[unitKey];
@@ -667,7 +676,10 @@ namespace MissionControl.Interpolation {
       // Handle bound units
       if (bindingKey != null) {
         AbstractActor unit = DialogueInterpolator.Instance.GetBoundUnit(bindingKey);
-        while (unit != null && unit.IsDead) {
+        int rebindAttempts = 0;
+        int maxRebindAttempts = MissionControl.Instance.CurrentContract.Lances.GetLanceUnits(TeamUtils.GetTeamGuid("Player1")).Length + 1;
+        while (unit != null && unit.IsDead && rebindAttempts < maxRebindAttempts) {
+          rebindAttempts++;
           string reboundCastDefID = PilotCastInterpolator.Instance.RebindDeadUnit(bindingKey);
           Main.LogDebug($"[Interpolate.HandleDeadActorFromDialogueContent] Unit '{unit.UnitName} with pilot '{unit.GetPilot().Name}' is dead (or ejected). Rebinding all castdefs and references for unit key '{reboundCastDefID}'");
           CastDef reboundCastDef = UnityGameInstance.Instance.Game.DataManager.CastDefs.Get(reboundCastDefID);
@@ -675,13 +687,27 @@ namespace MissionControl.Interpolation {
           castDef = reboundCastDef;
           unit = GetBoundUnit(bindingKey == DialogueInterpolationConstants.Commander ? DialogueInterpolationConstants.Darius : bindingKey);
         }
+
+        if (rebindAttempts >= maxRebindAttempts) {
+          Main.Logger.LogWarning($"[HandleDeadActorFromDialogueContent] Exhausted rebind attempts for '{bindingKey}'. Falling back to Darius.");
+          castDef = RuntimeCastFactory.GetCastDef(CustomCastDef.castDef_Darius);
+        }
       } else {  // Attempt to see if a unit exists against the castDef pilot (PureRandom units)
         AbstractActor unit = GetSpeakerUnit(RuntimeCastFactory.GetPilotDefIDFromCastDefID(castDef.id));
-        while (unit != null && unit.IsDead) {
-          Contract contract = MissionControl.Instance.CurrentContract;
-          SpawnableUnit[] lanceConfigUnits = contract.Lances.GetLanceUnits(TeamUtils.GetTeamGuid("Player1"));
-          int randomPosition = UnityEngine.Random.Range(0, lanceConfigUnits.Length);
-          string pilotDefID = lanceConfigUnits[randomPosition].PilotId;
+        Contract pureRandomContract = MissionControl.Instance.CurrentContract;
+        SpawnableUnit[] pureRandomLanceConfigUnits = pureRandomContract.Lances.GetLanceUnits(TeamUtils.GetTeamGuid("Player1"));
+
+        // Shuffle positions to sample without replacement — guarantees finding a survivor if one exists
+        List<int> shuffledPositions = Enumerable.Range(0, pureRandomLanceConfigUnits.Length).ToList();
+        for (int i = shuffledPositions.Count - 1; i > 0; i--) {
+          int j = UnityEngine.Random.Range(0, i + 1);
+          (shuffledPositions[i], shuffledPositions[j]) = (shuffledPositions[j], shuffledPositions[i]);
+        }
+
+        int positionIndex = 0;
+        while (unit != null && unit.IsDead && positionIndex < shuffledPositions.Count) {
+          string pilotDefID = pureRandomLanceConfigUnits[shuffledPositions[positionIndex]].PilotId;
+          positionIndex++;
 
           string pilotCastDefID = RuntimeCastFactory.GetCastDefIDFromPilotDefID(pilotDefID);
           CastDef updatedCastDef = RuntimeCastFactory.GetCastDef(pilotCastDefID);
@@ -705,6 +731,11 @@ namespace MissionControl.Interpolation {
             castDef = RuntimeCastFactory.GetCastDef(CustomCastDef.castDef_Darius);
             unit = null;
           }
+        }
+
+        if (positionIndex >= shuffledPositions.Count && unit != null && unit.IsDead) {
+          Main.Logger.LogWarning($"[HandleDeadActorFromDialogueContent] Exhausted PureRandom rebind attempts. Falling back to Darius.");
+          castDef = RuntimeCastFactory.GetCastDef(CustomCastDef.castDef_Darius);
         }
       }
     }
