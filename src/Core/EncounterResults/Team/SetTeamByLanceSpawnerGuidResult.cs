@@ -29,6 +29,13 @@ namespace MissionControl.Result {
       Team oldTeam = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(spawnerGameLogic.teamDefinitionGuid);
       Team newTeam = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(TeamUtils.GetTeamGuid(Team));
 
+      // MC-711 diagnostic: capture turn-system context on every team swap so an intermittent soft-lock
+      // can be diagnosed against the preceding game state without needing to reproduce.
+      TurnDirector turnDirector = UnityGameInstance.BattleTechGame.Combat.TurnDirector;
+      Main.LogDebug($"[SetTeamByLanceSpawnerGuid][MC-711] round={turnDirector.CurrentRound} phase={turnDirector.CurrentPhase} activeTurnActorGuid={turnDirector.ActiveTurnActor?.GUID ?? "<null>"}");
+      Main.LogDebug($"[SetTeamByLanceSpawnerGuid][MC-711] oldTeam name='{oldTeam.Name}' guid={oldTeam.GUID} isActive={oldTeam.IsActive} activationSequenceSet={oldTeam.ActivationSequence != null} unitsCount={oldTeam.units.Count}");
+      Main.LogDebug($"[SetTeamByLanceSpawnerGuid][MC-711] newTeam name='{newTeam.Name}' guid={newTeam.GUID} isActive={newTeam.IsActive} activationSequenceSet={newTeam.ActivationSequence != null} unitsCount={newTeam.units.Count}");
+
       spawnerGameLogic.teamDefinitionGuid = TeamUtils.GetTeamGuid(Team);
       spawnerGameLogic.encounterTags.Remove(oldTeam.Name);
       spawnerGameLogic.encounterTags.Add(newTeam.Name);
@@ -37,6 +44,8 @@ namespace MissionControl.Result {
       newTeam.lances.Add(lance);
 
       foreach (AbstractActor actor in lanceUnits) {
+        Main.LogDebug($"[SetTeamByLanceSpawnerGuid][MC-711] actor {actor.LogDisplayName} currentTeam='{actor.team?.Name}' isInterruptActor={actor.IsInterruptActor} hasBegunActivation={actor.HasBegunActivation} hasActivatedThisRound={actor.HasActivatedThisRound} initiative={actor.Initiative}");
+
         oldTeam.RemoveUnit(actor);
         actor.AddToTeam(newTeam);
         newTeam.AddUnit(actor);

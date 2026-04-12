@@ -17,11 +17,17 @@ namespace MissionControl.Result {
       List<ICombatant> combatants = ObjectiveGameLogic.GetTaggedCombatants(UnityGameInstance.BattleTechGame.Combat, new TagSet(Tags));
 
       Main.LogDebug($"[SetTemporaryUnitPhaseInitiativeByTagResult] Found '{combatants.Count}' units");
+      TurnDirector turnDirector = UnityGameInstance.BattleTechGame.Combat.TurnDirector;
       foreach (ICombatant combatant in combatants) {
         AbstractActor actor = combatant as AbstractActor;
         if (actor != null) {
           int oldInitiative = actor.Initiative;
           int initiativeDiff = Initiative - oldInitiative;
+
+          // MC-711 diagnostic: log per-actor context so a later soft-lock can be traced back
+          // to the round/phase/team in which the initiative flipped.
+          Main.LogDebug($"[SetTemporaryUnitPhaseInitiativeByTagResult][MC-711] actor {actor.LogDisplayName} team='{actor.team?.Name}' round={turnDirector.CurrentRound} phase={turnDirector.CurrentPhase} oldInitiative={oldInitiative} newInitiative={Initiative} initiativeDiff={initiativeDiff} hasBegunActivation={actor.HasBegunActivation} hasActivatedThisRound={actor.HasActivatedThisRound}");
+
           actor.Initiative = Initiative;
           UnityGameInstance.BattleTechGame.Combat.MessageCenter.PublishMessage(new ActorPhaseInfoChanged(actor.GUID));
           actor.StatCollection.Set<int>(AbstractActorConstants.STAT_PHASEMOD, initiativeDiff);
