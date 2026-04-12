@@ -224,7 +224,7 @@ namespace MissionControl {
           Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loading contract type build '{contractTypeName}'");
 
           JObject metadataObject = contractTypeCommonBuild.ContainsKey("Metadata") ? (JObject)contractTypeCommonBuild["Metadata"] : null;
-          ContractTypeMetadata metadata = metadataObject.ToObject<ContractTypeMetadata>();
+          ContractTypeMetadata metadata = metadataObject?.ToObject<ContractTypeMetadata>();
           AvailableContractTypeMetadata.Add(contractTypeName, metadata);
           if (metadata == null) {
             Main.Logger.LogError($"[VIOLATION] !!!! CONTRACT TYPE '{contractTypeName}' HAS NO METADATA. THIS IS INVALID! ALL CONTRACT TYPES SHOULD CLEARLY DISPLAY METADATA INCLUDING AUTHORS AND CONTRIBUTORS !!!!");

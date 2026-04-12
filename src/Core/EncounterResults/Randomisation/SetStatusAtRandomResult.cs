@@ -35,7 +35,7 @@ namespace MissionControl.Result {
           encounterGameLogic.SetState(Status);
         }
       } else {
-        Main.LogDebug($"[SetStatusAtRandomResult] Cannot find EncounterObjectGameLogic with Guid '{encounterGuid}'");
+        Main.Logger.LogWarning($"[SetStatusAtRandomResult] Cannot find EncounterObjectGameLogic with Guid '{encounterGuid}'. Status '{Status}' will not be applied for this chunk. This can be expected if the GUID belongs to a conditionally-disabled chunk or a chunk that hasn't been registered yet.");
       }
     }
   }

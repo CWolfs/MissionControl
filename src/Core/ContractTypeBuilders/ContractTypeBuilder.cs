@@ -32,9 +32,27 @@ namespace MissionControl.ContractTypeBuilders {
     private const string STRUCTURES_ID = "Structures";
     private const string DESTRUCTIBLE_GROUPS_ID = "DestructibleGroups";
 
-    public ContractTypeBuilder(GameObject encounterLayerGo, JObject contractTypeBuild) {
+    public ContractTypeBuilder(GameObject encounterLayerGo, JObject contractTypeBuild, string contractTypeNameHint = null) {
       this.ContractTypeBuild = contractTypeBuild;
       this.EncounterLayerGo = encounterLayerGo;
+
+      if (contractTypeBuild?["Key"] == null) {
+        string nameHint = contractTypeNameHint ?? "<unknown>";
+        string layerHint = encounterLayerGo?.name ?? "<unknown>";
+        string encounterLayerIdHint = (string)contractTypeBuild?["EncounterLayerId"] ?? "<not set>";
+
+        Main.Logger.LogError(
+          $"[ContractTypeBuilder] Contract type build JSON is missing required 'Key' field. " +
+          $"ContractType (from DataManager registration) = '{nameHint}'. " +
+          $"EncounterLayer GameObject = '{layerHint}'. " +
+          $"EncounterLayerId in JSON = '{encounterLayerIdHint}'. " +
+          $"Check the common.jsonc / map-specific JSONC for this contract type."
+        );
+        throw new System.ArgumentException(
+          $"Contract type build JSON is missing required 'Key' field (contractType='{nameHint}', encounterLayer='{layerHint}')."
+        );
+      }
+
       ContractTypeKey = contractTypeBuild["Key"].ToString();
     }
 

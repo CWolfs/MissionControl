@@ -201,7 +201,7 @@ namespace MissionControl {
 
       if (DataManager.Instance.AvailableCustomContractTypeBuilds.ContainsKey(contractTypeName)) {
         JObject contractTypeBuild = DataManager.Instance.GetAvailableCustomContractTypeBuilds(contractTypeName, EncounterLayerMDD.EncounterLayerID);
-        ContractTypeBuilder contractTypeBuilder = new ContractTypeBuilder(encounterLayerGo, contractTypeBuild);
+        ContractTypeBuilder contractTypeBuilder = new ContractTypeBuilder(encounterLayerGo, contractTypeBuild, contractTypeName);
         contractTypeBuilder.Build();
       } else {
         Main.Logger.LogError($"[MissionControl] Cannot build contract type of '{contractTypeName}'. No contract type build file exists.");
