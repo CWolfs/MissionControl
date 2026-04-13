@@ -2,16 +2,22 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "build",
+      "label": "MC: Build",
       "type": "process",
       "command": "dotnet",
       "args": ["build", "src/MissionControl.csproj"],
       "problemMatcher": "$msCompile"
     },
     {
-      "label": "copy (assets)",
+      "label": "MC: Copy Assets",
       "type": "shell",
       "command": "./copy-assets.sh"
+    },
+    {
+      "label": "MC: Build + Deploy",
+      "dependsOn": ["MC: Build", "MC: Copy Assets"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
     }
   ]
 }
