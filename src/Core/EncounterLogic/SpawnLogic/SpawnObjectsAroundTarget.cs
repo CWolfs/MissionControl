@@ -13,6 +13,7 @@ namespace MissionControl.Logic {
   public class SpawnObjectsAroundTarget : SpawnLogic {
     private LogicState state;
 
+    private List<string> configuredObjectKeys = new List<string>();
     private List<string> objectKeys = new List<string>();
     private List<string> orientationTargetKeys = new List<string>();
     private Dictionary<string, string> keyLookup = new Dictionary<string, string>();
@@ -31,16 +32,14 @@ namespace MissionControl.Logic {
     private int TotalAttemptMax { get; set; } = 3;
     private int TotalAttemptCount { get; set; } = 0;
 
-    private Vector3 validOrientationTargetPosition;
-
     public SpawnObjectsAroundTarget(EncounterRules encounterRules, string objectKey, string orientationTargetKey, LookDirection lookDirection) : base(encounterRules) {
-      this.objectKeys = new List<string> { objectKey };
+      this.configuredObjectKeys = new List<string> { objectKey };
       this.defaultOrientationTargetKey = orientationTargetKey;
       this.lookDirection = lookDirection;
     }
 
     public SpawnObjectsAroundTarget(EncounterRules encounterRules, string objectKey, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) : base(encounterRules) {
-      this.objectKeys = new List<string> { objectKey };
+      this.configuredObjectKeys = new List<string> { objectKey };
       this.defaultOrientationTargetKey = orientationTargetKey;
       this.minDistanceFromTarget = minDistance;
       this.maxDistanceFromTarget = maxDistance;
@@ -48,13 +47,13 @@ namespace MissionControl.Logic {
     }
 
     public SpawnObjectsAroundTarget(EncounterRules encounterRules, List<string> objectKeys, string orientationTargetKey, LookDirection lookDirection) : base(encounterRules) {
-      this.objectKeys = objectKeys;
+      this.configuredObjectKeys = new List<string>(objectKeys);
       this.defaultOrientationTargetKey = orientationTargetKey;
       this.lookDirection = lookDirection;
     }
 
     public SpawnObjectsAroundTarget(EncounterRules encounterRules, List<string> objectKeys, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance) : base(encounterRules) {
-      this.objectKeys = objectKeys;
+      this.configuredObjectKeys = new List<string>(objectKeys);
       this.defaultOrientationTargetKey = orientationTargetKey;
       this.minDistanceFromTarget = minDistance;
       this.maxDistanceFromTarget = maxDistance;
@@ -101,7 +100,7 @@ namespace MissionControl.Logic {
         string orientationTargetKey = orientationTargetKeys[i];
         Main.Logger.LogDebug($"[SpawnObjectsAroundTarget] And orientation target '{orientationTargetKey}'");
 
-        if (!orientationTargets.ContainsKey(orientationTargetKey)) {
+        if (!orientationTargets.ContainsKey(orientationTargetKey) || orientationTargets[orientationTargetKey] == null) {
           Main.Logger.LogError($"[SpawnObjectsAroundTarget] Orientation target with key '{orientationTargetKey}' does not exist. This is required for this spawner to work correctly.");
           return;
         }
@@ -109,28 +108,20 @@ namespace MissionControl.Logic {
         GameObject orientationTarget = orientationTargets[orientationTargetKey];
         Main.Logger.LogDebug($"[SpawnObjectsAroundTarget] Using orientation target key '{orientationTargetKey}' and Go name '{orientationTarget.transform.name}'");
 
-        SaveSpawnPosition(objectGo);
+        SpawnObjectAroundTarget(objectGo, orientationTarget);
+      }
+    }
 
-        CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
-        MissionControl encounterManager = MissionControl.Instance;
+    private void SpawnObjectAroundTarget(GameObject objectGo, GameObject orientationTarget) {
+      SaveSpawnPosition(objectGo);
 
-        if (validOrientationTargetPositions.ContainsKey(orientationTarget)) {
-          validOrientationTargetPosition = validOrientationTargetPositions[orientationTarget];
-          Main.LogDebug($"[SpawnObjectsAroundTarget] Reusing cached orientation target of '{orientationTarget.name}' at '{validOrientationTargetPosition}'.");
-        } else {
-          Main.LogDebug($"[SpawnObjectsAroundTarget] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
-          validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget, orientationTarget.transform.position, $"OrientationTarget.{orientationTarget.name}");
-        }
+      Vector3 validOrientationTargetPosition = GetValidOrientationTargetPosition(orientationTarget);
 
-        if (TotalAttemptCount >= TotalAttemptMax) {
-          RestoreSpawnPosition(objectGo);
-          return;
-        }
-
+      while (TotalAttemptCount < TotalAttemptMax) {
         Vector3 newSpawnPosition = GetRandomPositionFromTarget(validOrientationTargetPosition, minDistanceFromTarget, maxDistanceFromTarget);
         newSpawnPosition = GetClosestValidPathFindingHex(objectGo, newSpawnPosition, $"NewRandomSpawnPositionFromOrientationTarget.{orientationTarget.name}", 2);
 
-        if (encounterManager.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
+        if (MissionControl.Instance.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
           objectGo.transform.position = newSpawnPosition;
 
           if (lookDirection == LookDirection.TOWARDS_TARGET) {
@@ -141,18 +132,33 @@ namespace MissionControl.Logic {
 
           if (IsSpawnValid(objectGo, validOrientationTargetPosition)) {
             Main.Logger.Log("[SpawnObjectsAroundTarget] Object spawn complete");
-            AttemptCount = 0;
-            TotalAttemptCount = 0;
-          } else {
-            CheckAttempts();
-            Run(payload);
+            ResetAttempts();
+            return;
           }
         } else {
           Main.LogDebugWarning("[SpawnObjectsAroundTarget] Selected object spawn point is outside of the boundary. Select a new object spawn point.");
-          CheckAttempts();
-          Run(payload);
         }
+
+        CheckAttempts();
       }
+
+      Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] Could not find a valid spawn for '{objectGo.name}' after '{TotalAttemptCount}' attempts. Restoring its original position.");
+      RestoreSpawnPosition(objectGo);
+      ResetAttempts();
+    }
+
+    private Vector3 GetValidOrientationTargetPosition(GameObject orientationTarget) {
+      if (validOrientationTargetPositions.ContainsKey(orientationTarget)) {
+        Vector3 validPosition = validOrientationTargetPositions[orientationTarget];
+        Main.LogDebug($"[SpawnObjectsAroundTarget] Reusing cached orientation target of '{orientationTarget.name}' at '{validPosition}'.");
+        return validPosition;
+      }
+
+      Main.LogDebug($"[SpawnObjectsAroundTarget] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
+      Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget, orientationTarget.transform.position, $"OrientationTarget.{orientationTarget.name}");
+      validOrientationTargetPositions[orientationTarget] = validOrientationTargetPosition;
+
+      return validOrientationTargetPosition;
     }
 
     private void CheckAttempts() {
@@ -168,7 +174,18 @@ namespace MissionControl.Logic {
       }
     }
 
+    private void ResetAttempts() {
+      AttemptCount = 0;
+      TotalAttemptCount = 0;
+    }
+
     protected override bool GetObjectReferences() {
+      objectKeys.Clear();
+      orientationTargetKeys.Clear();
+      keyLookup.Clear();
+      objectGos.Clear();
+      orientationTargets.Clear();
+
       if (state != null) {
         List<string[]> extraLanceKeys = (List<string[]>)state.GetObject("ExtraLanceSpawnKeys");
         for (int i = 0; i < extraLanceKeys.Count; i++) {
@@ -211,6 +228,14 @@ namespace MissionControl.Logic {
           } else {
             Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] ExtraLanceSpawnKeys provides a first key set but the keyset is null or empty");
           }
+        }
+      } else {
+        for (int i = 0; i < configuredObjectKeys.Count; i++) {
+          string objectKey = configuredObjectKeys[i];
+
+          objectKeys.Add(objectKey);
+          orientationTargetKeys.Add(defaultOrientationTargetKey);
+          keyLookup[objectKey] = defaultOrientationTargetKey;
         }
       }
 
