@@ -2,6 +2,8 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
+using BattleTech;
+using MissionControl.Conditional;
 using MissionControl.Rules;
 using MissionControl.Trigger;
 using MissionControl.Messages;
@@ -27,7 +29,9 @@ namespace MissionControl.Logic {
         SpawnLogic.LookDirection.AWAY_FROM_TARGET, minDistance, maxDistance));
 
       if (showObjectiveOnLanceDetected) {
-        encounterRules.EncounterLogic.Add(new ShowObjectiveTrigger(MessageCenterMessageType.OnLanceDetected, lanceGuid, objectiveGuid, false));
+        LanceVisibleToPlayerConditional lanceVisibleToPlayerConditional = ScriptableObject.CreateInstance<LanceVisibleToPlayerConditional>();
+        lanceVisibleToPlayerConditional.TargetLanceGuid = lanceGuid;
+        encounterRules.EncounterLogic.Add(new ShowObjectiveTrigger(MessageCenterMessageType.OnVisibilityIncreased, lanceGuid, objectiveGuid, false, lanceVisibleToPlayerConditional));
       }
 
       encounterRules.ObjectReferenceQueue.Add(spawnerName);
