@@ -68,7 +68,9 @@ namespace MissionControl {
         LoadSettings(modDirectory);
         LoadAssetBundles();
         LoadData(modDirectory);
-        VersionCheck();
+        if (Settings.VersionCheck) {
+          VersionCheck();
+        }
       } catch (Exception e) {
         Logger.LogError(e);
         Logger.Log("Error loading mod settings - using defaults.");
