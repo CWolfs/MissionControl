@@ -76,6 +76,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "TimerStatus": BuildTimerStatusConditional(conditionalObject); break;
         case "WhoDied": BuildWhoDiedConditional(conditionalObject); break;
         case "WhoKilled": BuildWhoKilledConditional(conditionalObject); break;
+        case "LanceVisibleToPlayer": BuildLanceVisibleToPlayerConditional(conditionalObject); break;
         case "PlayerTonnage": BuildPlayerTonnageConditional(conditionalObject); break;
         default:
           Main.Logger.LogError($"[ChunkTypeBuilder.{contractTypeKey}] No valid conditional was built for '{type}'");
@@ -419,6 +420,22 @@ namespace MissionControl.ContractTypeBuilders {
       } else {
         conditional.killingUnitTagSet = new TagSet();
       }
+
+      conditionalList.Add(new EncounterConditionalBox(conditional));
+    }
+
+    private void BuildLanceVisibleToPlayerConditional(JObject conditionalObject) {
+      Main.LogDebug("[BuildLanceVisibleToPlayerConditional] Building 'LanceVisibleToPlayer' conditional");
+      string targetLanceGuid = conditionalObject.ContainsKey("TargetLanceGuid") ? conditionalObject["TargetLanceGuid"].ToString() : null;
+      if (targetLanceGuid == null && conditionalObject.ContainsKey("LanceGuid")) targetLanceGuid = conditionalObject["LanceGuid"].ToString();
+
+      if (string.IsNullOrEmpty(targetLanceGuid)) {
+        Main.Logger.LogError("[BuildLanceVisibleToPlayerConditional] You have not provided a 'TargetLanceGuid' or 'LanceGuid'.");
+        return;
+      }
+
+      LanceVisibleToPlayerConditional conditional = ScriptableObject.CreateInstance<LanceVisibleToPlayerConditional>();
+      conditional.TargetLanceGuid = targetLanceGuid;
 
       conditionalList.Add(new EncounterConditionalBox(conditional));
     }
