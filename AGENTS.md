@@ -59,6 +59,13 @@ dotnet build src/MissionControl.csproj
 - `bundles/` - Asset bundles (common-assets-bundle)
 - `lances/`, `cast/`, `dialogue/`, `sprites/` - Supporting data
 
+### Other mods' data (`mcData`)
+With `CustomData.Search` on, `DataManager` scans every mod folder for an `mcData` folder and loads its
+`contractTypeBuilds/`, `reserved-ids.json` and contract config overrides. Those mod folders are kept in
+`DataManager.CustomDataModDirectories`. `DataManager.ResolveModFilePath` resolves a mod-relative path against MissionControl
+first and then those mods - `EmotePortraitLoadPortraitPatch` uses it, so a castDef in another mod can point
+`portraitAssetPath` at `sprites/Portraits/<file>.png` inside that mod.
+
 ### Initialization flow
 1. `Main.Init()` - Load settings, mod.json, create Harmony instance
 2. `DataManager.Init()` - Load contract configs, lance data, props

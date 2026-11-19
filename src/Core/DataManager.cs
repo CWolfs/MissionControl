@@ -39,6 +39,7 @@ namespace MissionControl {
 
     public bool HasLoadedDeferredDefs { get; private set; } = false;
     public string ModDirectory { get; private set; }
+    public List<string> CustomDataModDirectories { get; private set; } = new List<string>(); // Other mods with an 'mcData' folder
     private Dictionary<string, MLanceOverride> LanceOverrides { get; set; } = new Dictionary<string, MLanceOverride>();
 
     private List<string> Genders = new List<string> { "Male", "Female", "Unspecified" };
@@ -200,6 +201,7 @@ namespace MissionControl {
 
             if (modDirectoryNames.Contains("mcData")) {
               Main.LogDebug($"[DataManager] Found mod with 'mcData' folder. Loading from mod '{Path.GetFileName(modDirectory)}'");
+              if (!CustomDataModDirectories.Contains(modDirectory)) CustomDataModDirectories.Add(modDirectory);
 
               string contractTypeBuildsPath = $"{modDirectory}/mcData/contractTypeBuilds/";
               if (Directory.Exists(contractTypeBuildsPath)) {
@@ -213,6 +215,21 @@ namespace MissionControl {
           // Deep
         }
       }
+    }
+
+    // Resolves a mod-relative path (e.g. 'sprites/Portraits/my_portrait.png') against MissionControl first, then any mod with an 'mcData' folder
+    public string ResolveModFilePath(string relativePath) {
+      if (string.IsNullOrEmpty(relativePath)) return null;
+
+      string path = Utilities.PathUtils.AppendPath(ModDirectory, relativePath, false);
+      if (File.Exists(path)) return path;
+
+      foreach (string modDirectory in CustomDataModDirectories) {
+        path = Utilities.PathUtils.AppendPath(modDirectory, relativePath, false);
+        if (File.Exists(path)) return path;
+      }
+
+      return null;
     }
 
     private void LoadCustomContractTypeBuilds(string path) {

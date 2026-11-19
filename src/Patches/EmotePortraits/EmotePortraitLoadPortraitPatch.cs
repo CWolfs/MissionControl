@@ -27,8 +27,9 @@ namespace MissionControl.Patches {
     }
 
     public static void Postfix(EmotePortrait __instance, ref Sprite __result) {
-      string path = Utilities.PathUtils.AppendPath(Main.Path, __instance.portraitAssetPath, false);
-      if (File.Exists(path)) {
+      // Portraits shipped in MissionControl or in any mod with an 'mcData' folder (e.g. 'sprites/Portraits/my_portrait.png')
+      string path = DataManager.Instance.ResolveModFilePath(__instance.portraitAssetPath);
+      if (path != null) {
         __result = Utilities.ImageUtils.LoadSprite(path);
       }
     }
