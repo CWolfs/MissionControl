@@ -220,8 +220,8 @@ namespace MissionControl.Result {
 
       EncounterLayerParent.EnqueueLoadAwareMessage(new AddSequenceToStackMessage(artillerySequence));
 
-      // Apply splash damage if configured
-      if (SplashRange > 0f) {
+      // Apply splash damage if configured. A miss lands away from the target and does no damage, so it gets no splash either
+      if (SplashRange > 0f && target != null) {
         Main.LogDebug($"[ArtilleryByTagResult] Splash damage enabled - Range: {SplashRange}, RequiresTags: {SplashRequiresTags}");
         ApplySplashDamage(position, target);
       } else {
@@ -230,7 +230,7 @@ namespace MissionControl.Result {
     }
 
     private void ApplySplashDamage(Vector3 position, ICombatant primaryTarget) {
-      Main.LogDebug($"[ArtilleryByTagResult] ApplySplashDamage called for primary target '{primaryTarget.DisplayName}' at position {position}");
+      Main.LogDebug($"[ArtilleryByTagResult] ApplySplashDamage called for primary target '{primaryTarget?.DisplayName}' at position {position}");
 
       // Get all combatants in splash range
       List<ICombatant> splashTargets = GetCombatantsInSplashRange(position, primaryTarget);
