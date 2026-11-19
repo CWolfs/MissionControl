@@ -7,11 +7,11 @@ namespace MissionControl.ContractTypeBuilders {
     /*
     * Builds a contract objective from the Designer data
     */
-    public static ContractObjectiveGameLogic BuildContractObjective(ContractTypeBuilder contractTypeBuilder, string name, string description, string guid, bool isPrimary, bool displayToUser,
+    public static ContractObjectiveGameLogic BuildContractObjective(ContractTypeBuilder contractTypeBuilder, string name, string title, string description, string guid, bool isPrimary, bool displayToUser,
       bool forDisplayPurposesOnly, ObjectiveStatus startingStatus, bool mustCompleteAll) {
 
       ContractObjectiveGameLogic contractObjectiveGameLogic = MissionControl.Instance.EncounterLayerData.gameObject.AddComponent<ContractObjectiveGameLogic>();
-      contractObjectiveGameLogic.title = name;
+      contractObjectiveGameLogic.title = title;
       contractObjectiveGameLogic.description = description;
       contractObjectiveGameLogic.encounterObjectGuid = guid;
       contractObjectiveGameLogic.primary = isPrimary;

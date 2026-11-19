@@ -90,7 +90,7 @@ namespace MissionControl.Result {
       if (SkipIfTriggers.ContainsKey(type)) {
         foreach (GenericTrigger trigger in SkipIfTriggers[type]) {
           Main.LogDebug($"[DelayResult.Trigger] Attaching trigger DelayResult '{Name}' since type is '{type}'");
-          if (type == "BuildAndRunImmediately") {
+          if (type == "CheckAtEndOfDelay") {
             trigger.BuildAndRunImmediately();
           } else {
             trigger.Run(new GenericTriggerPayload(shouldManuallyInitialise: true));

@@ -323,7 +323,7 @@ namespace MissionControl.ContractTypeBuilders {
     private void BuildDefendXUnitsStatusConditional(JObject conditionalObject) {
       Main.LogDebug("[BuildDefendXUnitsStatusConditional] Building 'DefendXUnitsStatus' conditional");
       string objectiveGUID = conditionalObject["ObjectiveGuid"].ToString();
-      int xOffset = (int)conditionalObject["xOffset"];
+      int xOffset = (int)conditionalObject["XOffset"];
       string operation = conditionalObject["Operation"].ToString();
 
       DefendXUnitsObjectiveRef objectiveRef = new DefendXUnitsObjectiveRef();

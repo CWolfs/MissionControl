@@ -159,6 +159,7 @@ namespace MissionControl.ContractTypeBuilders {
     public void BuildContractObjective(JObject contractObjectiveBuild) {
       Main.LogDebug($"[ContractTypeBuild.{ContractTypeKey}] Contract Objective is '{contractObjectiveBuild["Name"]}'");
       string name = contractObjectiveBuild["Name"].ToString();
+      string title = (contractObjectiveBuild.ContainsKey("Title") && !string.IsNullOrEmpty(contractObjectiveBuild["Title"].ToString())) ? contractObjectiveBuild["Title"].ToString() : name;
       string description = (contractObjectiveBuild.ContainsKey("Description")) ? contractObjectiveBuild["Description"].ToString() : "";
       string guid = contractObjectiveBuild["Guid"].ToString();
       bool isPrimary = (contractObjectiveBuild.ContainsKey("IsPrimary")) ? (bool)contractObjectiveBuild["IsPrimary"] : true;
@@ -169,7 +170,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       ObjectiveStatus startingStatus = (ObjectiveStatus)Enum.Parse(typeof(ObjectiveStatus), status);
 
-      GlobalDataBuilder.BuildContractObjective(this, name, description, guid, isPrimary, displayToUser, forDisplayPurposesOnly, startingStatus, mustCompleteAll);
+      GlobalDataBuilder.BuildContractObjective(this, name, title, description, guid, isPrimary, displayToUser, forDisplayPurposesOnly, startingStatus, mustCompleteAll);
     }
 
     public void BuildContractObjectivesFromContractOverride() {
