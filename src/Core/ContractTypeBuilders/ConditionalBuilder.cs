@@ -154,7 +154,7 @@ namespace MissionControl.ContractTypeBuilders {
     private void BuildDialoguePageIndexMatchesConditional(JObject conditionalObject) {
       Main.LogDebug("[BuildDialoguePageIndexMatchesConditional] Building 'DialoguePageIndexMatches' conditional");
       string guid = conditionalObject["DialogueGuid"].ToString();
-      int index = (int)conditionalObject["PageIndex"];
+      int index = conditionalObject.ContainsKey("PageIndex") ? (int)conditionalObject["PageIndex"] : (int)conditionalObject["Index"];
 
       DialoguePageIndexMatchesConditional conditional = ScriptableObject.CreateInstance<DialoguePageIndexMatchesConditional>();
 
@@ -323,7 +323,7 @@ namespace MissionControl.ContractTypeBuilders {
     private void BuildDefendXUnitsStatusConditional(JObject conditionalObject) {
       Main.LogDebug("[BuildDefendXUnitsStatusConditional] Building 'DefendXUnitsStatus' conditional");
       string objectiveGUID = conditionalObject["ObjectiveGuid"].ToString();
-      int xOffset = (int)conditionalObject["xOffset"];
+      int xOffset = conditionalObject.ContainsKey("XOffset") ? (int)conditionalObject["XOffset"] : (int)conditionalObject["xOffset"];
       string operation = conditionalObject["Operation"].ToString();
 
       DefendXUnitsObjectiveRef objectiveRef = new DefendXUnitsObjectiveRef();
