@@ -120,8 +120,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       bool useDropship = (objective.ContainsKey("UseDropship")) ? (bool)objective["UseDropship"] : false;
       string[] requiredTagsOnUnit = (objective.ContainsKey("RequiredTagsOnUnit")) ? ((JArray)objective["RequiredTagsOnUnit"]).ToObject<string[]>() : null;
-      string[] requiredTagsOnOpposingUnits = (objective.ContainsKey("RequiredTagsOpposingUnits")) ? ((JArray)objective["RequiredTagsOpposingUnits"]).ToObject<string[]>() :
-        (objective.ContainsKey("RequiredTagsOnOpposingUnit")) ? ((JArray)objective["RequiredTagsOnOpposingUnit"]).ToObject<string[]>() : null;
+      string[] requiredTagsOnOpposingUnits = (objective.ContainsKey("RequiredTagsOpposingUnits")) ? ((JArray)objective["RequiredTagsOpposingUnits"]).ToObject<string[]>() : null;
 
       OccupyRegionObjective occupyRegionObjective = ObjectiveFactory.CreateOccupyRegionObjective(
         guid,
@@ -190,8 +189,8 @@ namespace MissionControl.ContractTypeBuilders {
       bool isPrimaryObjectve, int priority, bool displayToUser, string contractObjectiveGuid) {
 
       string durationTypeStr = objective.ContainsKey("DurationType") ? objective["DurationType"].ToString() : "Rounds";
-      int durationToCount = objective.ContainsKey("DurationCount") ? (int)objective["DurationCount"] : (objective.ContainsKey("DurationToCount") ? (int)objective["DurationToCount"] : 1);
-      int repeatCount = objective.ContainsKey("RepeatAmount") ? (int)objective["RepeatAmount"] : (objective.ContainsKey("RepeatCount") ? (int)objective["RepeatCount"] : 0);
+      int durationToCount = objective.ContainsKey("DurationCount") ? (int)objective["DurationCount"] : 1;
+      int repeatCount = objective.ContainsKey("RepeatAmount") ? (int)objective["RepeatAmount"] : 0;
       string durationToCompleteStr = objective.ContainsKey("DurationCompleteType") ? objective["DurationCompleteType"].ToString() : "IgnoreObjective";
       string progressFormat = objective.ContainsKey("ProgressFormat") ? objective["ProgressFormat"].ToString() : "";
       string description = objective["Description"].ToString();

@@ -398,7 +398,6 @@ namespace MissionControl.ContractTypeBuilders {
 
       if (skipIfTrigger != null) {
         skipIfType = skipIfTrigger.ContainsKey("Type") ? skipIfTrigger["Type"].ToString() : "WatchFromContractStart";
-        if (skipIfType == "CheckAfterDelay") skipIfType = "CheckAtEndOfDelay"; // Older Designer builds used this name
         skipIfExecution = skipIfTrigger.ContainsKey("Execution") ? skipIfTrigger["Execution"].ToString() : "ImmediateOnSuccess";
       }
 
