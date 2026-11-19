@@ -120,7 +120,9 @@ namespace MissionControl.ContractTypeBuilders {
 
       bool useDropship = (objective.ContainsKey("UseDropship")) ? (bool)objective["UseDropship"] : false;
       string[] requiredTagsOnUnit = (objective.ContainsKey("RequiredTagsOnUnit")) ? ((JArray)objective["RequiredTagsOnUnit"]).ToObject<string[]>() : null;
-      string[] requiredTagsOnOpposingUnits = (objective.ContainsKey("RequiredTagsOpposingUnits")) ? ((JArray)objective["RequiredTagsOpposingUnits"]).ToObject<string[]>() : null;
+      // 'RequiredTagsOpposingUnits' and 'RequiredTagsOnOpposingUnit' are older released names
+      JArray requiredTagsOnOpposingUnitsRaw = (JArray)(objective["RequiredTagsOnOpposingUnits"] ?? objective["RequiredTagsOpposingUnits"] ?? objective["RequiredTagsOnOpposingUnit"]);
+      string[] requiredTagsOnOpposingUnits = requiredTagsOnOpposingUnitsRaw?.ToObject<string[]>();
 
       OccupyRegionObjective occupyRegionObjective = ObjectiveFactory.CreateOccupyRegionObjective(
         guid,
