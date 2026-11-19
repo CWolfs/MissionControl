@@ -72,7 +72,8 @@ namespace MissionControl.Trigger {
 
       trigger.resultList.contentsBox = this.results;
 
-      Main.LogDebug($"[GenericTrigger.BuildAndRunImmediately] Manually initialising and listening for messages on trigger '{this.name}'");
+      Main.LogDebug($"[GenericTrigger.BuildAndRunImmediately] Manually initialising and evaluating trigger '{this.name}'");
+      trigger.AlwaysInit(MissionControl.Instance.EncounterLayerData.Combat);
       trigger.ContractInitialize(MissionControl.Instance.EncounterLayerData);
 
       trigger.OnMessage(null);

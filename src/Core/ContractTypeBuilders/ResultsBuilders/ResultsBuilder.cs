@@ -398,6 +398,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       if (skipIfTrigger != null) {
         skipIfType = skipIfTrigger.ContainsKey("Type") ? skipIfTrigger["Type"].ToString() : "WatchFromContractStart";
+        if (skipIfType == "CheckAfterDelay") skipIfType = "CheckAtEndOfDelay"; // Older Designer builds used this name
         skipIfExecution = skipIfTrigger.ContainsKey("Execution") ? skipIfTrigger["Execution"].ToString() : "ImmediateOnSuccess";
       }
 
@@ -424,7 +425,7 @@ namespace MissionControl.ContractTypeBuilders {
       result.SkipIfExecution = skipIfExecution;
 
       // Build SkipIf triggers
-      if (skipIfTrigger.ContainsKey("Triggers")) {
+      if (skipIfTrigger != null && skipIfTrigger.ContainsKey("Triggers")) {
         JArray childSkipIfTriggersArray = (JArray)skipIfTrigger["Triggers"];
         foreach (JObject skipIfTriggerObject in childSkipIfTriggersArray.Children<JObject>()) {
           GenericTriggerBuilder genericTrigger = new GenericTriggerBuilder(this.contractTypeBuilder, skipIfTriggerObject, "DelaySkipIfTrigger");
