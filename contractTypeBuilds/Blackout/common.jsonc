@@ -145,7 +145,7 @@
           "RequiredTagsOnUnit": [
             "Player 1"
           ],
-          "RequiredTagsOnOpposingUnit": [],
+          "RequiredTagsOpposingUnits": [],
           "NumberOfUnitsToOccupy": 2,
           "DurationToOccupy": 0,
           "DurationType": "AfterMoveComplete",
@@ -396,7 +396,7 @@
           "RequiredTagsOnUnit": [
             "Player 1"
           ],
-          "RequiredTagsOnOpposingUnit": [],
+          "RequiredTagsOpposingUnits": [],
           "NumberOfUnitsToOccupy": 1,
           "DurationToOccupy": 0,
           "DurationType": "AfterMoveComplete",
