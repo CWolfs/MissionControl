@@ -35,7 +35,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       dropshipName = dropship["Name"].ToString();
       dropshipKey = dropship["Key"].ToString();
-      this.guid = dropship.ContainsKey("GUID") ? dropship["GUID"].ToString() : Guid.NewGuid().ToString();
+      this.guid = dropship.ContainsKey("Guid") ? dropship["Guid"].ToString() : (dropship.ContainsKey("GUID") ? dropship["GUID"].ToString() : Guid.NewGuid().ToString());
       tags = dropship.ContainsKey("Tags") ? dropship["Tags"].ToObject<List<string>>() : new List<string>();
       customName = dropship.ContainsKey("CustomName") ? dropship["CustomName"].ToString() : null;
       customStructurePoints = dropship.ContainsKey("CustomStructurePoints") ? (int)dropship["CustomStructurePoints"] : 0;

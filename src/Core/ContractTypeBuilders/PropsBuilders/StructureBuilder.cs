@@ -29,7 +29,7 @@ namespace MissionControl.ContractTypeBuilders {
 
       structureName = structure["Name"].ToString();
       structureKey = structure["Key"].ToString();
-      guid = structure.ContainsKey("GUID") ? structure["GUID"].ToString() : Guid.NewGuid().ToString();
+      guid = structure.ContainsKey("Guid") ? structure["Guid"].ToString() : (structure.ContainsKey("GUID") ? structure["GUID"].ToString() : Guid.NewGuid().ToString());
       position = structure.ContainsKey("Position") ? (JObject)structure["Position"] : null;
       rotation = structure.ContainsKey("Rotation") ? (JObject)structure["Rotation"] : null;
       scale = structure.ContainsKey("Scale") ? (JObject)structure["Scale"] : null;

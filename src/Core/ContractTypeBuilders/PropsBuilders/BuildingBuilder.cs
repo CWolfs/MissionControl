@@ -29,7 +29,7 @@ namespace MissionControl.ContractTypeBuilders {
     public BuildingBuilder(ContractTypeBuilder contractTypeBuilder, JObject building, GameObject parent) {
       this.contractTypeBuilder = contractTypeBuilder;
       this.building = building;
-      this.guid = building.ContainsKey("GUID") ? building["GUID"].ToString() : Guid.NewGuid().ToString();
+      this.guid = building.ContainsKey("Guid") ? building["Guid"].ToString() : (building.ContainsKey("GUID") ? building["GUID"].ToString() : Guid.NewGuid().ToString());
       buildingName = building["Name"].ToString();
       buildingKey = building["Key"].ToString();
       customName = building.ContainsKey("CustomName") ? building["CustomName"].ToString() : null;
