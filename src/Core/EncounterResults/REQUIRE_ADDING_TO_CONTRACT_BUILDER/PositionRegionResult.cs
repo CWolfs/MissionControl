@@ -46,27 +46,32 @@ namespace MissionControl.Result {
       Vector3 centerOfTeamMass = GetCenterOfTeamMass(playerTeam, true).GetLerpedHeightAt();
       Vector3 awayDirection = GetAwayFromEnemiesDirection(playerTeam);
       Vector3 possiblePosition = Vector3.zero;
-      int attempts = 0;
+      bool foundPosition = false;
       bool useDirectionalBias = awayDirection != Vector3.zero;
 
       // Retry logic with fallback strategies
-      while (possiblePosition == Vector3.zero || !IsPositionAccessibleByPlayers(regionGo, possiblePosition, livingPlayerActors, attempts)) {
-        Main.LogDebug($"[PositionRegion] {(possiblePosition == Vector3.zero ? "Finding possible position..." : "Trying again to find a possible position...")} (Attempt {attempts + 1}/{MAX_ATTEMPTS})");
+      for (int attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+        Main.LogDebug($"[PositionRegion] {(attempt == 0 ? "Finding possible position..." : "Trying again to find a possible position...")} (Attempt {attempt + 1}/{MAX_ATTEMPTS})");
+
+        Vector3 candidate;
 
         // Attempt 1-30: Use directional bias away from enemies
-        if (attempts < 30 && useDirectionalBias) {
-          possiblePosition = SceneUtils.GetRandomPositionInDirection(
+        if (attempt < 30 && useDirectionalBias) {
+          if (!SceneUtils.TryGetRandomPositionInDirection(
             centerOfTeamMass,
             awayDirection,
             Main.Settings.DynamicWithdraw.MinDistanceForZone,
             Main.Settings.DynamicWithdraw.MaxDistanceForZone,
+            out candidate,
             90f // 90 degree cone
-          );
+          )) {
+            continue;
+          }
         }
         // Attempt 31-60: Fallback to non-directional (wider search)
-        else if (attempts < 60) {
-          if (attempts == 30) Main.Logger.LogWarning($"[PositionRegion] Falling back to non-directional search for region '{RegionName}'.");
-          possiblePosition = SceneUtils.GetRandomPositionFromTarget(
+        else if (attempt < 60) {
+          if (attempt == 30) Main.Logger.LogWarning($"[PositionRegion] Falling back to non-directional search for region '{RegionName}'.");
+          candidate = SceneUtils.GetRandomPositionFromTarget(
             centerOfTeamMass,
             Main.Settings.DynamicWithdraw.MinDistanceForZone,
             Main.Settings.DynamicWithdraw.MaxDistanceForZone
@@ -74,19 +79,24 @@ namespace MissionControl.Result {
         }
         // Attempt 61-100: Increase search radius
         else {
-          if (attempts == 60) Main.Logger.LogWarning($"[PositionRegion] Increasing search radius for region '{RegionName}'.");
-          possiblePosition = SceneUtils.GetRandomPositionFromTarget(
+          if (attempt == 60) Main.Logger.LogWarning($"[PositionRegion] Increasing search radius for region '{RegionName}'.");
+          candidate = SceneUtils.GetRandomPositionFromTarget(
             centerOfTeamMass,
             Main.Settings.DynamicWithdraw.MinDistanceForZone * 0.5f,  // Reduce min distance
             Main.Settings.DynamicWithdraw.MaxDistanceForZone * 1.5f   // Increase max distance
           );
         }
 
-        attempts++;
-        if (attempts >= MAX_ATTEMPTS) {
-          Main.Logger.LogError($"[PositionRegion] Failed to find valid position for region '{RegionName}' after {MAX_ATTEMPTS} attempts. Aborting region positioning.");
-          return;
+        if (IsPositionAccessibleByPlayers(regionGo, candidate, livingPlayerActors, attempt)) {
+          possiblePosition = candidate;
+          foundPosition = true;
+          break;
         }
+      }
+
+      if (!foundPosition) {
+        Main.Logger.LogError($"[PositionRegion] Failed to find valid position for region '{RegionName}' after {MAX_ATTEMPTS} attempts. Aborting region positioning.");
+        return;
       }
 
       regionGo.transform.position = possiblePosition;

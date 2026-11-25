@@ -43,10 +43,18 @@ public static class SceneUtils {
   // Gets a random position within a cone/sector in the specified direction
   // Useful for biasing position selection away from enemies
   public static Vector3 GetRandomPositionInDirection(Vector3 origin, Vector3 direction, float minDistance, float maxDistance, float coneAngleDegrees = 90f) {
+    if (TryGetRandomPositionInDirection(origin, direction, minDistance, maxDistance, out Vector3 position, coneAngleDegrees)) {
+      return position;
+    }
+    return Vector3.zero;
+  }
+
+  public static bool TryGetRandomPositionInDirection(Vector3 origin, Vector3 direction, float minDistance, float maxDistance, out Vector3 result, float coneAngleDegrees = 90f) {
+    result = Vector3.zero;
     EncounterBoundaryChunkGameLogic chunkBoundary = MissionControl.MissionControl.Instance.EncounterLayerGameObject.GetComponentInChildren<EncounterBoundaryChunkGameLogic>();
     if (chunkBoundary == null) {
-      MissionControl.Main.Logger.LogError("[GetRandomPositionInDirection] Cannot find EncounterBoundaryChunkGameLogic. Returning origin.");
-      return origin;
+      MissionControl.Main.Logger.LogError("[TryGetRandomPositionInDirection] Cannot find EncounterBoundaryChunkGameLogic.");
+      return false;
     }
     Rect boundaryRec = chunkBoundary.GetEncounterBoundaryRectBounds();
 
@@ -84,11 +92,12 @@ public static class SceneUtils {
     toPosition.y = 0;
     float actualDistance = toPosition.magnitude;
     if (actualDistance < minDistance || actualDistance > maxDistance) {
-      MissionControl.Main.LogDebugWarning($"[GetRandomPositionInDirection] Boundary clamping broke distance requirements ({actualDistance} not in [{minDistance}, {maxDistance}]). Returning origin to trigger retry.");
-      return origin; // Return origin to signal retry needed
+      MissionControl.Main.LogDebugWarning($"[TryGetRandomPositionInDirection] Boundary clamping broke distance requirements ({actualDistance} not in [{minDistance}, {maxDistance}]). Triggering retry.");
+      return false;
     }
 
-    return position.GetClosestHexLerpedPointOnGrid();
+    result = position.GetClosestHexLerpedPointOnGrid();
+    return true;
   }
 
   public static bool IsWithinBoundedDistanceOfTarget(Vector3 origin, Vector3 target, float minDistance, float maxDistance) {
