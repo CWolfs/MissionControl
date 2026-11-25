@@ -26,6 +26,8 @@ namespace MissionControl.EncounterNodes.Dropship {
     }
 
     private void PopulateDropships() {
+      DropshipGameLogicList.Clear();
+
       List<ITaggedItem> potentialDropships = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetObjectsOfTypeWithTagSet(TaggedObjectType.ObstructionGameLogic, new TagSet(DropshipTags));
 
       foreach (ITaggedItem potentialDropship in potentialDropships) {
@@ -42,24 +44,32 @@ namespace MissionControl.EncounterNodes.Dropship {
 
       PopulateDropships();
 
+      List<DropshipGameLogic> activeDropships = new List<DropshipGameLogic>();
+
       foreach (DropshipGameLogic dropshipGameLogic in DropshipGameLogicList) {
+        if (UseDropshipType != CustomDropshipType.Any && dropshipGameLogic.dropshipType.ToString() != UseDropshipType.ToString()) {
+          Main.Logger.LogDebug("[CustomDropshipLandingSpotGameLogic.ContractInitialize] Ignoring dropship: " + dropshipGameLogic.encounterObjectGuid);
+          if (!base.Combat.IsLoadingFromSave) {
+            dropshipGameLogic.IgnoreDropship();
+          }
+          continue;
+        }
+
         if (!base.Combat.IsLoadingFromSave) {
-          if (TeamGUID != string.Empty) {
+          if (!string.IsNullOrEmpty(TeamGUID)) {
             dropshipGameLogic.ApplyHeraldry(TeamGUID);
           }
 
-          if (UseDropshipType != CustomDropshipType.Any && dropshipGameLogic.dropshipType.ToString() != UseDropshipType.ToString()) {
-            Main.Logger.LogDebug("[CustomDropshipLandingSpotGameLogic.ContractInitialize] Ignoring dropship: " + dropshipGameLogic.encounterObjectGuid);
-            dropshipGameLogic.IgnoreDropship();
-            continue;
-          }
-
           dropshipGameLogic.startingAnimationState = (DropshipAnimationState)DropshipStates;
+          dropshipGameLogic.autoMarkDropshipLandingZone = AutoMarkDropshipLandingZone;
           dropshipGameLogic.encounterTags.AddRange(encounterTags);
         }
 
+        activeDropships.Add(dropshipGameLogic);
         dropshipGameLogic.ContractInitialize();
       }
+
+      DropshipGameLogicList = activeDropships;
     }
 
     public override void EncounterStart() {
@@ -74,7 +84,7 @@ namespace MissionControl.EncounterNodes.Dropship {
       base.EncounterResume(loadRequest);
 
       foreach (DropshipGameLogic dropshipGameLogic in DropshipGameLogicList) {
-        if (TeamGUID != string.Empty) {
+        if (!string.IsNullOrEmpty(TeamGUID)) {
           dropshipGameLogic.ApplyHeraldry(TeamGUID);
         }
       }

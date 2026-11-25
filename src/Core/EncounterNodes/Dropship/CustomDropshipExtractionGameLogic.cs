@@ -32,22 +32,31 @@ namespace MissionControl.EncounterNodes.Dropship {
       base.OnEnterActive();
 
       CustomDropshipLandingSpotGameLogic dropshipLandingSpot = DropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
-      ObjectiveGameLogic callDropshipObjective = CallDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry);
-      ObjectiveGameLogic loadDropshipObjective = LoadDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry);
+      ObjectiveGameLogic callDropshipObjective = CallDropshipObjectiveRef.HasGuid ? CallDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry) : null;
+      ObjectiveGameLogic loadDropshipObjective = LoadDropshipObjectiveRef.HasGuid ? LoadDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry) : null;
+
+      if (dropshipLandingSpot == null) {
+        Main.Logger.LogError($"[CustomDropshipExtractionGameLogic.OnEnterActive] DropshipLandingSpot '{DropshipLandingSpotRef.EncounterObjectGuid}' not found");
+        return;
+      }
 
       switch (dropshipLandingSpot.DropshipStates) {
         case StartingDropshipAnimationState.OffScreen:
-          callDropshipObjective.SetState(EncounterObjectStatus.Active);
+          if (callDropshipObjective != null) {
+            callDropshipObjective.SetState(EncounterObjectStatus.Active);
+          }
           break;
         case StartingDropshipAnimationState.Landed:
-          if (callDropshipObjective.encounterObjectGuid != loadDropshipObjective.encounterObjectGuid) callDropshipObjective.IgnoreObjective();
-          loadDropshipObjective.SetState(EncounterObjectStatus.Active);
+          if (callDropshipObjective != null && (loadDropshipObjective == null || callDropshipObjective.encounterObjectGuid != loadDropshipObjective.encounterObjectGuid)) {
+            callDropshipObjective.IgnoreObjective();
+          }
+          if (loadDropshipObjective != null) {
+            loadDropshipObjective.SetState(EncounterObjectStatus.Active);
+          }
           break;
       }
 
-      if (!ShowEscapeMessage) {
-        despawnMessage = DespawnFloatieMessage.NoMessage;
-      }
+      despawnMessage = ShowEscapeMessage ? DespawnFloatieMessage.Escaped : DespawnFloatieMessage.NoMessage;
     }
 
     public override void AlwaysInit(CombatGameState combat) {
@@ -68,7 +77,10 @@ namespace MissionControl.EncounterNodes.Dropship {
       base.ContractInitialize();
 
       if (!ExtractViaDropship) {
-        DropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry).TurnOffDropshipLanding();
+        CustomDropshipLandingSpotGameLogic dropshipLandingSpot = DropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
+        if (dropshipLandingSpot != null) {
+          dropshipLandingSpot.TurnOffDropshipLanding();
+        }
       }
     }
 
@@ -78,25 +90,34 @@ namespace MissionControl.EncounterNodes.Dropship {
 
     private void OnObjectiveSucceeded(MessageCenterMessage message) {
       ObjectiveSucceeded obj = message as ObjectiveSucceeded;
+      if (obj == null) return;
+
       CustomDropshipLandingSpotGameLogic dropshipLandingSpot = DropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
-      List<DropshipGameLogic> dropships = dropshipLandingSpot.DropshipGameLogicList;
 
-      foreach (DropshipGameLogic dropship in dropships) {
-        if (obj.ObjectiveGuid == CallDropshipObjectiveRef.EncounterObjectGuid && dropship.currentAnimationState == DropshipAnimationState.OffScreen && ExtractViaDropship) {
-          dropship.LandDropship();
+      if (CallDropshipObjectiveRef.HasGuid && obj.ObjectiveGuid == CallDropshipObjectiveRef.EncounterObjectGuid && ExtractViaDropship && dropshipLandingSpot != null) {
+        foreach (DropshipGameLogic dropship in dropshipLandingSpot.DropshipGameLogicList) {
+          if (dropship.currentAnimationState == DropshipAnimationState.OffScreen) {
+            dropship.LandDropship();
+          }
         }
+      }
 
-        if (obj.ObjectiveGuid == LoadDropshipObjectiveRef.EncounterObjectGuid) {
-          DespawnUnits();
+      if (LoadDropshipObjectiveRef.HasGuid && obj.ObjectiveGuid == LoadDropshipObjectiveRef.EncounterObjectGuid) {
+        DespawnUnits();
 
-          if (dropship.currentAnimationState == DropshipAnimationState.Landed && ExtractViaDropship) {
-            dropship.TakeoffDropship();
+        if (ExtractViaDropship && dropshipLandingSpot != null) {
+          foreach (DropshipGameLogic dropship in dropshipLandingSpot.DropshipGameLogicList) {
+            if (dropship.currentAnimationState == DropshipAnimationState.Landed) {
+              dropship.TakeoffDropship();
+            }
           }
         }
       }
     }
 
     private void DespawnUnits() {
+      if (!LoadDropshipObjectiveRef.HasGuid) return;
+
       OccupyRegionObjective occupyRegionObjective = LoadDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry) as OccupyRegionObjective;
 
       if (occupyRegionObjective != null) {
@@ -110,7 +131,10 @@ namespace MissionControl.EncounterNodes.Dropship {
 
     private void OnDropshipLanded(MessageCenterMessage message) {
       DropshipLandedMessage obj = message as DropshipLandedMessage;
+      if (obj == null) return;
+
       CustomDropshipLandingSpotGameLogic dropshipLandingSpot = DropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
+      if (dropshipLandingSpot == null) return;
 
       List<string> dropshipGUIDs = dropshipLandingSpot.GetDropshipGUIDs();
 
@@ -138,15 +162,29 @@ namespace MissionControl.EncounterNodes.Dropship {
     }
 
     public void TriggerWaitToTakeOff() {
-      (LoadDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry) as OccupyRegionObjective).SetState(EncounterObjectStatus.Active);
+      if (!LoadDropshipObjectiveRef.HasGuid) return;
+
+      OccupyRegionObjective loadObjective = LoadDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry) as OccupyRegionObjective;
+      if (loadObjective != null) {
+        loadObjective.SetState(EncounterObjectStatus.Active);
+      }
     }
 
     public void TriggerDropshipTakeOff() {
-      foreach (ICombatant targetUnit in (CallDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry) as OccupyRegionObjective).GetTargetUnits()) {
-        EncounterLayerParent.EnqueueLoadAwareMessage(new DespawnActorMessage(encounterObjectGuid, targetUnit.GUID, (DeathMethod)despawnMessage));
+      despawnMessage = ShowEscapeMessage ? DespawnFloatieMessage.Escaped : DespawnFloatieMessage.NoMessage;
+
+      if (CallDropshipObjectiveRef.HasGuid) {
+        OccupyRegionObjective callObjective = CallDropshipObjectiveRef.GetEncounterObject(base.Combat.ItemRegistry) as OccupyRegionObjective;
+        if (callObjective != null) {
+          foreach (ICombatant targetUnit in callObjective.GetTargetUnits()) {
+            EncounterLayerParent.EnqueueLoadAwareMessage(new DespawnActorMessage(encounterObjectGuid, targetUnit.GUID, (DeathMethod)despawnMessage));
+          }
+        }
       }
 
       CustomDropshipLandingSpotGameLogic encounterObject = DropshipLandingSpotRef.GetEncounterObject(base.Combat.ItemRegistry);
+      if (encounterObject == null) return;
+
       List<DropshipGameLogic> dropships = encounterObject.DropshipGameLogicList;
 
       foreach (DropshipGameLogic dropship in dropships) {

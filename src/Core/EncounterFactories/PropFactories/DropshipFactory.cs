@@ -99,8 +99,22 @@ namespace MissionControl.EncounterFactories {
         prefab.transform.localScale = propModelDef.Scale.Value;
 
         DropshipGameLogic dropshipGameLogic = prefab.GetComponentInChildren<DropshipGameLogic>();
-        dropshipGameLogic.currentAnimationState = DropshipAnimationState.Landed;
+        if (dropshipGameLogic == null) {
+          Main.Logger.LogError($"[DropshipFactory.CreateVanillaDropship] Prefab '{completeBundleName}' has no DropshipGameLogic component");
+          return;
+        }
+
+        dropshipGameLogic.startingAnimationState = StartingState;
+        dropshipGameLogic.currentAnimationState = StartingState;
         dropshipGameLogic.encounterTags.AddRange(Tags);
+
+        if (!string.IsNullOrEmpty(CustomName)) {
+          dropshipGameLogic.overrideBuildingName = CustomName;
+        }
+
+        if (CustomStructurePoints > 0) {
+          dropshipGameLogic.overrideStructurePoints = CustomStructurePoints;
+        }
 
         // BuildingRepresentation buildingRep = prefab.GetComponentInChildren<BuildingRepresentation>();
         // buildingRep.ParentBuilding.encounterTags.AddRange(Tags);
