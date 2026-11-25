@@ -240,6 +240,11 @@ namespace MissionControl {
           string contractTypeName = (string)contractTypeCommonBuild["Key"];
           Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loading contract type build '{contractTypeName}'");
 
+          if (AvailableCustomContractTypeBuilds.ContainsKey(contractTypeName)) {
+            Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Duplicate contract type build key of '{contractTypeName}' was detected. Skipping duplicate in '{directory}'.");
+            continue;
+          }
+
           JObject metadataObject = contractTypeCommonBuild.ContainsKey("Metadata") ? (JObject)contractTypeCommonBuild["Metadata"] : null;
           ContractTypeMetadata metadata = metadataObject?.ToObject<ContractTypeMetadata>();
           AvailableContractTypeMetadata.Add(contractTypeName, metadata);
@@ -247,11 +252,6 @@ namespace MissionControl {
             Main.Logger.LogError($"[VIOLATION] !!!! CONTRACT TYPE '{contractTypeName}' HAS NO METADATA. THIS IS INVALID! ALL CONTRACT TYPES SHOULD CLEARLY DISPLAY METADATA INCLUDING AUTHORS AND CONTRIBUTORS !!!!");
           } else {
             Main.Logger.Log($"[DataManager] Loaded metadata for '{contractTypeName}'");
-          }
-
-          if (AvailableCustomContractTypeBuilds.ContainsKey(contractTypeName)) {
-            Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Duplicate contract type build key of '{contractTypeName}' was detected. FATAL ERROR!!!");
-            return;
           }
 
           Dictionary<string, JObject> contractTypeMapBuilds = new Dictionary<string, JObject>();
@@ -267,8 +267,8 @@ namespace MissionControl {
               Main.LogDebug($"[DataManager.LoadCustomContractTypeBuilds] Loaded contract type map build '{contractTypeName}/{fileName}' with encounterLayerId '{encounterLayerId}'");
 
               if (contractTypeMapBuilds.ContainsKey(encounterLayerId)) {
-                Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Duplicate contract type override build key of '{encounterLayerId}' in file '{file}' was detected. FATAL ERROR!!!");
-                return;
+                Main.Logger.LogError($"[DataManager.LoadCustomContractTypeBuilds] Duplicate contract type override build key of '{encounterLayerId}' in file '{file}' was detected. Skipping duplicate.");
+                continue;
               }
 
               contractTypeMapBuilds.Add(encounterLayerId, contractTypeMapBuild);
