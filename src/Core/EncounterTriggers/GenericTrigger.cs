@@ -92,6 +92,12 @@ namespace MissionControl.Trigger {
 
     public void Delete() {
       Main.LogDebug($"[GenericTrigger] Deleting trigger '{this.name}'");
+      if (trigger == null) return;
+
+      if (trigger.messageMemory != null && trigger.messageMemory.subscribedMessages != null) {
+        trigger.messageMemory.RemoveSubscription(trigger.inputMessage, trigger.OnMessage);
+      }
+
       EncounterLayerData encounterData = MissionControl.Instance.EncounterLayerData;
       encounterData.responseGroup.triggerList.Remove(trigger);
     }

@@ -65,9 +65,9 @@ namespace MissionControl.Result {
       }
 
       if (useSkippedState) {
-        // Ignore any delay and run the SkipIf logic
+        // Ignore any delay and run the SkipIf logic (or arm AfterDelay and continue starting the delay)
         TriggerResultsIfSkipped();
-        return;
+        if (completed) return;
       }
 
       Main.LogDebug("[DelayResult.TriggerResults] About to build SkipIf triggers for 'WatchDuringDelay'");
@@ -184,7 +184,7 @@ namespace MissionControl.Result {
 
       if (waitingUntilAfterDelayToSkipIf) {
         // Final execution is to use the SkipIf results and not the normal results
-        TriggerResultsIfSkipped();
+        TriggerResultsIfSkipped(delayEnded: true);
         return;
       }
 
@@ -204,8 +204,8 @@ namespace MissionControl.Result {
       DeleteTriggers();
     }
 
-    private void TriggerResultsIfSkipped() {
-      if (SkipIfExecution == "AfterDelay" && !waitingUntilAfterDelayToSkipIf) {
+    private void TriggerResultsIfSkipped(bool delayEnded = false) {
+      if (SkipIfExecution == "AfterDelay" && !delayEnded) {
         waitingUntilAfterDelayToSkipIf = true;
         return;
       }
