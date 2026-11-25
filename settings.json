@@ -150,7 +150,7 @@
     "SearchType": "ShallowFromModsFolder"
   },
   "CustomContractTypes": {
-    "DeveloperMode": true,
+    "DeveloperMode": false,
     "Accessibility": {
       "AllowCameraShake": true
     }
