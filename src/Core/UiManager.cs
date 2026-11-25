@@ -299,7 +299,10 @@ namespace MissionControl {
     }
 
     public void ProceedToCreateContractTypeCredits() {
-      ContractTypeMetadata metadata = DataManager.Instance.AvailableContractTypeMetadata[MissionControl.Instance.CurrentContractType];
+      if (!DataManager.Instance.AvailableContractTypeMetadata.TryGetValue(MissionControl.Instance.CurrentContractType, out ContractTypeMetadata metadata) || metadata == null) {
+        Main.Logger.LogWarning($"[UiManager.ProceedToCreateContractTypeCredits] No metadata found for contract type '{MissionControl.Instance.CurrentContractType}'. Skipping credits.");
+        return;
+      }
       Transform parentGo = GameObject.Find("uixPrfPanl_combatMissionLoad-overlay_V2-MANAGED").transform;
       GameObject creditsGo = CreatePrefab(CreditsPrefabName, parentGo.Find("Representation"));
       if (creditsGo == null) return;
@@ -323,11 +326,10 @@ namespace MissionControl {
       GameObject authorTextGo = creditsGo.FindRecursive("Author");
       TextMeshProUGUI authorText = authorTextGo.GetComponent<TextMeshProUGUI>();
 
-      if (metadata.Authors.Count > 0) {
+      if (metadata.Authors != null && metadata.Authors.Count > 0) {
         authorText.text = $"Created by: {String.Join(", ", metadata.Authors)}";
       } else {
         authorText.text = $"Created by: {metadata.Author}";
-
       }
       authorText.alignment = TextAlignmentOptions.TopRight;
 
