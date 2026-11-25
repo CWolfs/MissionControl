@@ -113,3 +113,7 @@ workflow, which checks out the `develop` branch and builds it alongside Designer
 - The `docs/` folder contains a built Docusaurus website (HTML/JS), not source documentation
 - settings.json uses `TypeNameHandling.All` which is critical for polymorphic deserialization
 - Contract type builds use JSONC (JSON with comments) - standard JSON parsers will choke on them
+- In-combat MC state (`EncounterTags`, `EncounterStats` and the game logic data behind `SetRelationship`/`SetAllTeamsRelationship`)
+  lives on `MissionControl` in memory. `CombatStatePersistence` copies it into the `MC_CombatState` company stat when the game
+  saves during combat, restores it in `GameInstanceLaunchContractFromSavePatch` and removes it in `OnCombatDestroyed`. New
+  in-combat state that must survive a save needs adding there.

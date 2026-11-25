@@ -621,12 +621,17 @@ namespace MissionControl {
       CustomGameLogicData.Clear();
     }
 
+    public Dictionary<string, string> GetAllGameLogicData() {
+      return new Dictionary<string, string>(CustomGameLogicData);
+    }
+
     public void OnCombatDestroyed() {
       Main.LogDebug("[MissionControl.OnCombatDestroyed] Clearing specific data");
       PilotCastInterpolator.Instance.Reset();
       DataManager.Instance.ResetBetweenContracts();
       EncounterTags.Clear();
       EncounterStats.Reset();
+      SaveSupport.CombatStatePersistence.Clear(UnityGameInstance.BattleTechGame.Simulation);
       AssetBundleLoader.UnloadPropBundles();
       CustomBuildingGuids.Clear();
       CustomDropshipsGuids.Clear();

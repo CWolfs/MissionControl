@@ -8,6 +8,7 @@ namespace MissionControl.Patches {
     public static void Postfix(GameInstance __instance, CombatGameState combat) {
       MissionControl.Instance.CurrentContract = combat.ActiveContract;
       MissionControl.Instance.SetContractSettingsOverride();
+      SaveSupport.CombatStatePersistence.Restore(__instance.Simulation);
     }
   }
 }
