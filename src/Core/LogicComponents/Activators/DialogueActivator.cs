@@ -33,11 +33,22 @@ namespace MissionControl.LogicComponents.Activators {
 
     void Update() {
       if (Chunk != null && !HasActivated) {
+        string activationKey = GetActivationKey();
+        if (MissionControl.Instance.GetGameLogicData(activationKey) == "true") {
+          HasActivated = true;
+          return;
+        }
+
         if (Chunk.GetState() == EncounterObjectStatus.Active) {
           HasActivated = true;
+          MissionControl.Instance.SetGameLogicData(activationKey, "true");
           ActivateDialogue();
         }
       }
+    }
+
+    private string GetActivationKey() {
+      return $"DIALOGUE_ACTIVATOR_{Chunk.encounterObjectGuid}_{DialogueGuid}";
     }
 
     private void ActivateDialogue() {
