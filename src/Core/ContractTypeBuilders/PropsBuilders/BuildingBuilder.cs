@@ -57,34 +57,19 @@ namespace MissionControl.ContractTypeBuilders {
       BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef, guid, tags, customName, customStructurePoints);
       GameObject facilityGo = buildingFactory.CreateFacility(buildingKey, Parent, teamGUID);
 
-      DestructibleObject destructibleObject = facilityGo.GetComponentInChildren<DestructibleObject>();
-      GameObject destructionParentGO = destructibleObject.destructionParent.gameObject;
-
       if (this.position != null) {
         SetPosition(facilityGo, this.position, exactPosition: true);
-
-        JObject destructionPosition = new JObject();
-        destructionPosition.Add("Type", "World");
-
-        JObject positionValue = new JObject();
-        positionValue.Add("x", facilityGo.transform.position.x);
-        positionValue.Add("y", facilityGo.transform.position.y);
-        positionValue.Add("z", facilityGo.transform.position.z);
-
-        destructionPosition.Add("Value", positionValue);
-
-        SetPosition(destructionParentGO, destructionPosition, exactPosition: true);
       }
 
       if (this.rotation != null) {
         SetRotation(facilityGo, this.rotation);
-        SetRotation(destructionParentGO, this.rotation);
       }
 
       if (this.scale != null) {
         SetScale(facilityGo, this.scale);
-        SetScale(destructionParentGO, this.scale);
       }
+
+      BuildingFactory.SyncAllDestructionParents(facilityGo);
 
       buildingFactory.AddToCameraFadeGroup();
     }

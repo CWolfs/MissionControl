@@ -18,7 +18,7 @@ namespace MissionControl.EncounterFactories {
       get {
         if (mcPropGroupParent == null) {
           mcPropGroupParent = new GameObject("MCPropGroupParent");
-          mcPropGroupParent.transform.SetParent(MissionControl.Instance.EncounterLayerData.transform);
+          mcPropGroupParent.transform.SetParent(MissionControl.Instance.EncounterLayerData.transform, true);
           mcPropGroupParent.transform.position = Vector3.zero;
         }
 
@@ -31,7 +31,7 @@ namespace MissionControl.EncounterFactories {
       get {
         if (mcGenericStaticDestruct == null) {
           mcGenericStaticDestruct = new GameObject("MCGenericStaticDestruct");
-          mcGenericStaticDestruct.transform.SetParent(MissionControl.Instance.EncounterLayerData.transform);
+          mcGenericStaticDestruct.transform.SetParent(MissionControl.Instance.EncounterLayerData.transform, true);
           mcGenericStaticDestruct.transform.position = Vector3.zero;
         }
 
@@ -83,8 +83,7 @@ namespace MissionControl.EncounterFactories {
 
     private GameObject CreateGameObject(GameObject parent, string name = null) {
       GameObject gameObject = new GameObject((name == null) ? "CustomName" : name);
-      gameObject.transform.parent = parent.transform;
-      gameObject.transform.localPosition = Vector3.zero;
+      gameObject.transform.SetParent(parent.transform, false);
 
       return gameObject;
     }
@@ -148,22 +147,11 @@ namespace MissionControl.EncounterFactories {
     }
 
     protected void CalculateBounds(MeshFilter mf, BoxCollider boxCollider) {
-      Mesh mesh = mf.sharedMesh;
-      Matrix4x4 localToWorld = mf.transform.localToWorldMatrix;
-      Bounds bounds = new Bounds(localToWorld.MultiplyPoint3x4(mesh.vertices[0]), Vector3.zero);
+      if (mf == null || mf.sharedMesh == null || boxCollider == null) return;
 
-      for (int i = 1; i < mesh.vertices.Length; i++) {
-        bounds.Encapsulate(localToWorld.MultiplyPoint3x4(mesh.vertices[i]));
-      }
-
-      // Convert bounds back into local space
-      Bounds localBounds = new Bounds(
-          mf.transform.InverseTransformPoint(bounds.center),
-          mf.transform.InverseTransformDirection(bounds.size)
-      );
-
-      boxCollider.size = localBounds.size;
-      boxCollider.center = localBounds.center;
+      Bounds meshBounds = mf.sharedMesh.bounds;
+      boxCollider.center = meshBounds.center;
+      boxCollider.size = meshBounds.size;
     }
 
     protected void LoadAssetBundle(PropModelDef propModelDef) {

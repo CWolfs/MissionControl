@@ -34,8 +34,7 @@ namespace MissionControl.ContractTypeBuilders {
       Main.Logger.Log($"[PropGroupBuilder.Build] Building '{name}' Prop Group");
 
       GameObject propGroupGO = new GameObject("PropGroup_" + name);
-      propGroupGO.transform.parent = (Parent == null) ? PropFactory.MCPropGroupParent.transform : Parent.transform;
-      propGroupGO.transform.localPosition = Vector3.zero;
+      propGroupGO.transform.SetParent((Parent == null) ? PropFactory.MCPropGroupParent.transform : Parent.transform, false);
 
       // TODO: Should position and rotation be set after the props are populated in? I think so as I need to do that for scale for it to make sense
 
@@ -55,6 +54,7 @@ namespace MissionControl.ContractTypeBuilders {
         SetScale(propGroupGO, this.scale);
       }
 
+      BuildingFactory.SyncAllDestructionParents(propGroupGO);
     }
 
     private void BuildProps(JArray props, GameObject propGroupParent) {

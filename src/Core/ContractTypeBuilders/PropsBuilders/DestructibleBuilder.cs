@@ -34,12 +34,22 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     public override void Build() {
-      // Build the group parent
+      // Build the group parent and apply its transform before children so both Local and World child positions resolve accurately
       DestructibleFactory destructibleGroupFactory = new DestructibleFactory();
       GameObject destructibleGroupGO = destructibleGroupFactory.CreateDestructibleFlimsyGroup(destructibleGroupName, Parent);
 
-      if (destructibleGroupGO != null && scale != null) {
-        SetScale(destructibleGroupGO, scale);
+      if (destructibleGroupGO != null) {
+        if (this.position != null) {
+          SetPosition(destructibleGroupGO, this.position, exactPosition: true);
+        }
+
+        if (this.rotation != null) {
+          SetRotation(destructibleGroupGO, this.rotation);
+        }
+
+        if (this.scale != null) {
+          SetScale(destructibleGroupGO, this.scale);
+        }
       }
 
       // Build all the flimsy destructibles
@@ -65,18 +75,21 @@ namespace MissionControl.ContractTypeBuilders {
               PropBuildingDef propBuildingDef = DataManager.Instance.BuildingDefs[buildingKey];
               BuildingFactory buildingFactory = new BuildingFactory(propBuildingDef, null, new List<string>(), customName, customStructurePoints);
 
-              GameObject destructibleGO = buildingFactory.CreateBuilding(destructibleGroupGO, $"Building_{propBuildingDef.Key}", DestructibleObject.DestructType.flimsyStruct);
+              GameObject buildingContainerGO = new GameObject($"BuildingContainer_{buildingName}");
+              buildingContainerGO.transform.SetParent(destructibleGroupGO.transform, false);
+
+              buildingFactory.CreateBuilding(buildingContainerGO, $"Building_{propBuildingDef.Key}", DestructibleObject.DestructType.flimsyStruct);
 
               if (position != null) {
-                SetPosition(destructibleGO, position, exactPosition: true);
+                SetPosition(buildingContainerGO, position, exactPosition: true);
               }
 
               if (rotation != null) {
-                SetRotation(destructibleGO, rotation);
+                SetRotation(buildingContainerGO, rotation);
               }
 
               if (scale != null) {
-                SetScale(destructibleGO, scale);
+                SetScale(buildingContainerGO, scale);
               }
 
               break;
@@ -119,17 +132,7 @@ namespace MissionControl.ContractTypeBuilders {
       DestructibleFlimsyGroup destructibleFlimsyGroup = destructibleGroupGO.GetComponent<DestructibleFlimsyGroup>();
       if (destructibleFlimsyGroup != null) destructibleFlimsyGroup.BakeDestructionAssets();
 
-      if (this.position != null) {
-        SetPosition(destructibleGroupGO, this.position, exactPosition: true);
-      }
-
-      if (this.rotation != null) {
-        SetRotation(destructibleGroupGO, this.rotation);
-      }
-
-      if (this.scale != null) {
-        SetScale(destructibleGroupGO, this.scale);
-      }
+      BuildingFactory.SyncAllDestructionParents(destructibleGroupGO);
     }
   }
 }

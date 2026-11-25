@@ -45,10 +45,29 @@ namespace MissionControl.EncounterFactories {
 
     private GameObject CreateGameObject(GameObject parent, string name = null) {
       GameObject gameObject = new GameObject((name == null) ? "CustomName" : name);
-      gameObject.transform.parent = parent.transform;
-      gameObject.transform.localPosition = Vector3.zero;
+      gameObject.transform.SetParent(parent.transform, false);
 
       return gameObject;
+    }
+
+    public static void SyncDestructionParent(DestructibleObject destructibleObject) {
+      if (destructibleObject == null || destructibleObject.destructionParent == null) return;
+
+      Transform src = destructibleObject.transform;
+      Transform dst = destructibleObject.destructionParent.transform;
+      dst.position = src.position;
+      dst.rotation = src.rotation;
+      // Use ancestor/instance scale only - PropModelDef.Scale is already baked into footprint-based rubble/decals and applied directly to split/custom shell meshes
+      dst.localScale = src.parent != null ? src.parent.lossyScale : Vector3.one;
+    }
+
+    public static void SyncAllDestructionParents(GameObject root) {
+      if (root == null) return;
+
+      DestructibleObject[] destructibles = root.GetComponentsInChildren<DestructibleObject>(true);
+      foreach (DestructibleObject destructible in destructibles) {
+        SyncDestructionParent(destructible);
+      }
     }
 
     public GameObject CreateFacility(string name, GameObject parent, string teamGUID = null) {
@@ -147,9 +166,13 @@ namespace MissionControl.EncounterFactories {
       destructSplit.transform.SetParent(destructibleObject.destructionParent.transform, false);
       destructSplit.transform.localPosition = Vector3.zero;
       destructSplit.transform.localEulerAngles = Vector3.zero;
+      destructSplit.transform.localScale = propModelDef.Scale.Value;
       destructShell.transform.SetParent(destructibleObject.destructionParent.transform, false);
       destructShell.transform.localPosition = Vector3.zero;
       destructShell.transform.localEulerAngles = Vector3.zero;
+      if (propModelDef.HasCustomShell) {
+        destructShell.transform.localScale = propModelDef.Scale.Value;
+      }
 
       if (glassGO != null) {
         glassGO.transform.SetParent(glassParentGO.transform, false);
@@ -212,7 +235,7 @@ namespace MissionControl.EncounterFactories {
       Main.Logger.Log("[PropFactory.CreateGlass] Glass Mesh is " + buildingGlassMesh.name);
 
       glassParentGO = CreateGameObject(buildingGroupGO, "_glass");
-      glassParentGO.transform.rotation = Quaternion.identity;
+      glassParentGO.transform.localRotation = Quaternion.identity;
 
       glassGO = CreateGameObject(glassParentGO, buildingGlassMesh.name);
       MeshFilter mf = glassGO.AddComponent<MeshFilter>();
@@ -268,7 +291,7 @@ namespace MissionControl.EncounterFactories {
 
       if (flimsyModels.Count > 0) {
         GameObject flimsyParentGO = CreateGameObject(buildingGroupGO, "_flimsy");
-        flimsyParentGO.transform.rotation = Quaternion.identity;
+        flimsyParentGO.transform.localRotation = Quaternion.identity;
 
         foreach (PropDestructibleFlimsyDef propFlimsyModel in flimsyModels) {
           CreateFlimsy(flimsyParentGO, propFlimsyModel);
@@ -432,7 +455,7 @@ namespace MissionControl.EncounterFactories {
 
         List<GameObject> splitPieceGOs = MeshFracturer.Fracture(buildingGO, 1);
         foreach (GameObject splitPiece in splitPieceGOs) {
-          splitPiece.transform.SetParent(destructSplit.transform);
+          splitPiece.transform.SetParent(destructSplit.transform, false);
           splitPiece.transform.localPosition = Vector3.zero;
           splitPiece.transform.localRotation = Quaternion.identity;
           splitPiece.layer = 8;
@@ -471,7 +494,7 @@ namespace MissionControl.EncounterFactories {
         }
 
         GameObject shellGO = new GameObject(shellMesh.name);
-        shellGO.transform.SetParent(destructShell.transform);
+        shellGO.transform.SetParent(destructShell.transform, false);
         shellGO.transform.localPosition = Vector3.zero;
 
         MeshFilter mf = shellGO.AddComponent<MeshFilter>();

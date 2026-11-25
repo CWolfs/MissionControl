@@ -24,8 +24,7 @@ namespace MissionControl.EncounterFactories {
 
     private GameObject CreateGameObject(GameObject parent, string name = null) {
       GameObject gameObject = new GameObject((name == null) ? "CustomName" : name);
-      gameObject.transform.parent = parent.transform;
-      gameObject.transform.localPosition = Vector3.zero;
+      gameObject.transform.SetParent(parent.transform, false);
 
       return gameObject;
     }

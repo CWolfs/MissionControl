@@ -27,8 +27,7 @@ namespace MissionControl.EncounterFactories {
 
     private GameObject CreateGameObject(GameObject parent, string name = null) {
       GameObject gameObject = new GameObject((name == null) ? "CustomName" : name);
-      gameObject.transform.parent = parent.transform;
-      gameObject.transform.localPosition = Vector3.zero;
+      gameObject.transform.SetParent(parent.transform, false);
 
       return gameObject;
     }
@@ -117,7 +116,7 @@ namespace MissionControl.EncounterFactories {
 
       if (flimsyModels.Count > 0) {
         GameObject flimsyParentGO = CreateGameObject(structuregGO, "_flimsy");
-        flimsyParentGO.transform.rotation = Quaternion.identity;
+        flimsyParentGO.transform.localRotation = Quaternion.identity;
 
         foreach (PropDestructibleFlimsyDef propFlimsyModel in flimsyModels) {
           CreateFlimsy(flimsyParentGO, propFlimsyModel);
