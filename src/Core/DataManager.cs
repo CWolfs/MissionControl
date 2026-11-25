@@ -68,6 +68,7 @@ namespace MissionControl {
     public List<ReservedIdEntry> DetectedClashes { get; private set; } = new List<ReservedIdEntry>();
 
     // Data backup
+    private ContractOverride BackedUpContractOverride = null;
     private Dictionary<string, List<LanceOverride>> ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
     private List<ObjectiveOverride> ContractOverrideObjectiveOverrideBackup = new List<ObjectiveOverride>();
 
@@ -915,7 +916,14 @@ namespace MissionControl {
 
     public void BackupContractOverriddeData() {
       if (Main.Settings.Misc.ContractOverrideDataCleanupMethod == "RestoreFromCopy") {
-        Main.Logger.Log($"[MissionControl] Backing up original ContractOverride data for: " + MissionControl.Instance.CurrentContract.Name);
+        Contract currentContract = MissionControl.Instance.CurrentContract;
+        if (currentContract == null || currentContract.Override == null) {
+          Main.Logger.LogWarning("[MissionControl] Cannot backup ContractOverride data because CurrentContract or Override is null.");
+          return;
+        }
+
+        Main.Logger.Log($"[MissionControl] Backing up original ContractOverride data for: " + currentContract.Name);
+        BackedUpContractOverride = currentContract.Override;
 
         // Lance Overrides
         ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
@@ -965,8 +973,11 @@ namespace MissionControl {
 
     // OLD METHOD FOR POSSIBLE COMPATIBILITY ISSUES WITH OTHER MODS
     private void DataScrubContractOverrideData() {
+      Contract currentContract = MissionControl.Instance.CurrentContract;
+      if (currentContract == null || currentContract.Override == null) return;
+
       Main.Logger.Log($"[MissionControl] Clearing old contract data");
-      ContractOverride contractOverride = MissionControl.Instance.CurrentContract.Override;
+      ContractOverride contractOverride = currentContract.Override;
 
       // Old Lances
       contractOverride.targetTeam.lanceOverrideList =
@@ -976,12 +987,24 @@ namespace MissionControl {
 
       // Old Objectives
       contractOverride.contractObjectiveList =
-       contractOverride.contractObjectiveList.Where(contractObjective => !contractObjective.description.StartsWith("MC")).ToList();
+        contractOverride.contractObjectiveList.Where(contractObjective => contractObjective.description == null || !contractObjective.description.StartsWith("MC")).ToList();
+      contractOverride.objectiveList =
+        contractOverride.objectiveList.Where(objective => objective.description == null || !objective.description.StartsWith("MC")).ToList();
     }
 
     private void RestoreContractOverriddeData() {
-      Main.Logger.Log($"[MissionControl] Restoring original ContractOverride data for: " + MissionControl.Instance.CurrentContract.Name);
-      ContractOverride contractOverride = MissionControl.Instance.CurrentContract.Override;
+      Contract currentContract = MissionControl.Instance.CurrentContract;
+      ContractOverride contractOverride = currentContract?.Override;
+
+      if (contractOverride == null || BackedUpContractOverride == null || !object.ReferenceEquals(contractOverride, BackedUpContractOverride)) {
+        Main.LogDebug("[MissionControl] Skipping ContractOverride restore because no matching backup exists for this contract (e.g. loaded from a mid-combat save).");
+        BackedUpContractOverride = null;
+        ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
+        ContractOverrideObjectiveOverrideBackup = new List<ObjectiveOverride>();
+        return;
+      }
+
+      Main.Logger.Log($"[MissionControl] Restoring original ContractOverride data for: " + currentContract.Name);
 
       if (ContractOverrideLanceOverrideBackup.ContainsKey("Player1")) RestoreOverrideList<LanceOverride>(contractOverride.player1Team.lanceOverrideList, ContractOverrideLanceOverrideBackup["Player1"]);
       if (ContractOverrideLanceOverrideBackup.ContainsKey("Employer")) RestoreOverrideList<LanceOverride>(contractOverride.employerTeam.lanceOverrideList, ContractOverrideLanceOverrideBackup["Employer"]);
@@ -993,6 +1016,7 @@ namespace MissionControl {
 
       RestoreOverrideList<ObjectiveOverride>(contractOverride.objectiveList, ContractOverrideObjectiveOverrideBackup);
 
+      BackedUpContractOverride = null;
       ContractOverrideLanceOverrideBackup = new Dictionary<string, List<LanceOverride>>();
       ContractOverrideObjectiveOverrideBackup = new List<ObjectiveOverride>();
     }

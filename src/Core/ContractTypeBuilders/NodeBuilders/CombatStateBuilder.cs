@@ -33,9 +33,12 @@ namespace MissionControl.ContractTypeBuilders {
     }
 
     private void BuildDisablePilotDeath() {
+      string guid = (state.ContainsKey("Guid") && state["Guid"].Type != JTokenType.Null && !string.IsNullOrEmpty(state["Guid"].ToString()))
+        ? state["Guid"].ToString()
+        : Guid.NewGuid().ToString();
       bool disableInjuries = state.ContainsKey("DisableInjuries") ? (bool)state["DisableInjuries"] : false;
 
-      DisablePilotDeathGameLogic disablePilotDeathGameLogic = CombatStateFactory.CreateDisablePilotDeath(this.parent, this.name, Guid.NewGuid().ToString(), disableInjuries);
+      DisablePilotDeathGameLogic disablePilotDeathGameLogic = CombatStateFactory.CreateDisablePilotDeath(this.parent, this.name, guid, disableInjuries);
     }
   }
 }

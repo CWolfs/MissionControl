@@ -240,6 +240,22 @@ namespace MissionControl {
       ClearOldCaches();
     }
 
+    public void SetContractFromSave(Contract contract) {
+      CurrentContract = contract;
+      EncounterRules = null;
+      EncounterRulesName = null;
+
+      if (contract != null) {
+        ContractMapName = contract.mapName;
+        CurrentContractTypeValue = contract.ContractTypeValue;
+        CurrentContractType = contract.ContractTypeValue != null ? contract.ContractTypeValue.Name : "INVALID_UNSET";
+      } else {
+        ContractMapName = null;
+        CurrentContractTypeValue = null;
+        CurrentContractType = "INVALID_UNSET";
+      }
+    }
+
     private void CheckIfCommanderCastDefUsedInThisCombat() {
       PilotCastInterpolator.Instance.DynamicTakenLanceUnitPositions.Clear();
       List<DialogueOverride> dialogueOverrides = CurrentContract.Override.dialogueList;
@@ -635,7 +651,18 @@ namespace MissionControl {
       AssetBundleLoader.UnloadPropBundles();
       CustomBuildingGuids.Clear();
       CustomDropshipsGuids.Clear();
+      EncounterObjectDictionary.Clear();
+      QueuedBuildingMounts.Clear();
       ResetGameLogicData();
+
+      EncounterRules = null;
+      EncounterRulesName = null;
+      CurrentContract = null;
+      ContractMapName = null;
+      CurrentContractType = "INVALID_UNSET";
+      CurrentContractTypeValue = null;
+      EncounterLayerMDD = null;
+      IsCustomContractType = false;
 
       foreach (Material mat in GeneratedMaterials.Values) {
         MonoBehaviour.Destroy(mat);
