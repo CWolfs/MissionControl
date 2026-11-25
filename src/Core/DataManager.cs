@@ -183,6 +183,47 @@ namespace MissionControl {
       userSettingsOverrides.LoadOverrides(settings);
     }
 
+    private string GetModsFolderPath() {
+      if (string.IsNullOrEmpty(ModDirectory)) return null;
+
+      DirectoryInfo current = new DirectoryInfo(ModDirectory).Parent;
+      while (current != null) {
+        if (string.Equals(current.Name, "Mods", StringComparison.OrdinalIgnoreCase)) {
+          return current.FullName;
+        }
+        current = current.Parent;
+      }
+
+      return new DirectoryInfo(ModDirectory).Parent?.FullName;
+    }
+
+    private List<string> FindCustomDataDirectories(string btModsPath) {
+      List<string> mcDataDirectories = new List<string>();
+      if (string.IsNullOrEmpty(btModsPath) || !Directory.Exists(btModsPath)) return mcDataDirectories;
+
+      string searchType = Main.Settings.CustomData.SearchType ?? "ShallowFromModsFolder";
+
+      if (searchType.StartsWith("Shallow", StringComparison.OrdinalIgnoreCase)) {
+        foreach (string modDirectory in Directory.EnumerateDirectories(btModsPath)) {
+          foreach (string subDir in Directory.EnumerateDirectories(modDirectory)) {
+            if (string.Equals(Path.GetFileName(subDir), "mcData", StringComparison.OrdinalIgnoreCase)) {
+              mcDataDirectories.Add(subDir);
+            }
+          }
+        }
+      } else if (searchType.StartsWith("Deep", StringComparison.OrdinalIgnoreCase)) {
+        foreach (string subDir in Directory.EnumerateDirectories(btModsPath, "*", SearchOption.AllDirectories)) {
+          if (string.Equals(Path.GetFileName(subDir), "mcData", StringComparison.OrdinalIgnoreCase)) {
+            mcDataDirectories.Add(subDir);
+          }
+        }
+      } else {
+        Main.Logger.LogWarning($"[DataManager] Unknown CustomData.SearchType '{searchType}'");
+      }
+
+      return mcDataDirectories;
+    }
+
     private void LoadCustomContractTypeBuilds() {
       LoadCustomContractTypeBuilds($"{ModDirectory}/contractTypeBuilds/");
 
@@ -190,30 +231,26 @@ namespace MissionControl {
       if (Main.Settings.CustomData.Search) {
         Main.LogDebug("[DataManager] Searching for custom 'mcData' folders in other mods");
 
-        // Get the 'Mods' folder
-        string btModsPath = ModDirectory.Substring(0, ModDirectory.LastIndexOf("Mods") + 4);
+        string btModsPath = GetModsFolderPath();
+        if (string.IsNullOrEmpty(btModsPath) || !Directory.Exists(btModsPath)) {
+          Main.Logger.LogWarning($"[DataManager] Could not resolve Mods folder path from '{ModDirectory}'");
+          return;
+        }
         Main.LogDebug("[DataManager] Found mods folder path at: " + btModsPath);
 
-        if (Main.Settings.CustomData.SearchType.StartsWith("Shallow")) {
-          string[] modDirectories = Directory.GetDirectories(btModsPath);
-          foreach (string modDirectory in modDirectories) {
-            string[] modDirectoryFullPaths = Directory.GetDirectories(modDirectory);
-            string[] modDirectoryNames = modDirectoryFullPaths.Select(d => Path.GetFileName(d)).ToArray();
+        foreach (string mcDataPath in FindCustomDataDirectories(btModsPath)) {
+          string modDirectory = Directory.GetParent(mcDataPath)?.FullName;
+          if (string.IsNullOrEmpty(modDirectory)) continue;
 
-            if (modDirectoryNames.Contains("mcData")) {
-              Main.LogDebug($"[DataManager] Found mod with 'mcData' folder. Loading from mod '{Path.GetFileName(modDirectory)}'");
-              if (!CustomDataModDirectories.Contains(modDirectory)) CustomDataModDirectories.Add(modDirectory);
+          Main.LogDebug($"[DataManager] Found mod with 'mcData' folder. Loading from mod '{Path.GetFileName(modDirectory)}'");
+          if (!CustomDataModDirectories.Contains(modDirectory)) CustomDataModDirectories.Add(modDirectory);
 
-              string contractTypeBuildsPath = $"{modDirectory}/mcData/contractTypeBuilds/";
-              if (Directory.Exists(contractTypeBuildsPath)) {
-                LoadCustomContractTypeBuilds(contractTypeBuildsPath);
-              }
-
-              LoadContractConfigOverrides($"{modDirectory}/mcData");
-            }
+          string contractTypeBuildsPath = Path.Combine(mcDataPath, "contractTypeBuilds");
+          if (Directory.Exists(contractTypeBuildsPath)) {
+            LoadCustomContractTypeBuilds(contractTypeBuildsPath);
           }
-        } else {
-          // Deep
+
+          LoadContractConfigOverrides(mcDataPath);
         }
       }
     }
@@ -234,6 +271,7 @@ namespace MissionControl {
     }
 
     private void LoadCustomContractTypeBuilds(string path) {
+      if (!Directory.Exists(path)) return;
       foreach (string directory in Directory.GetDirectories(path)) {
         if (File.Exists($"{directory}/common.jsonc")) {
           string contractTypeBuildCommonSource = File.ReadAllText($"{directory}/common.jsonc");
@@ -261,7 +299,7 @@ namespace MissionControl {
           foreach (string file in Directory.GetFiles(directory, "*.json*", SearchOption.AllDirectories)) {
             string contractTypeBuildMapSource = File.ReadAllText(file);
             JObject contractTypeMapBuild = JsonConvert.DeserializeObject<JObject>(contractTypeBuildMapSource, serialiserSettings);
-            string fileName = Path.GetFileNameWithoutExtension(file.Substring(file.LastIndexOf("/")));
+            string fileName = Path.GetFileNameWithoutExtension(file);
 
             if (fileName == "common" || contractTypeMapBuild.ContainsKey("EncounterLayerId")) {
               string encounterLayerId = (fileName == "common") ? fileName : (string)contractTypeMapBuild["EncounterLayerId"];
@@ -299,23 +337,19 @@ namespace MissionControl {
       if (Main.Settings.CustomData.Search) {
         Main.LogDebug("[DataManager.LoadReservedIds] Searching for reserved-ids.json in other mods");
 
-        // Get the 'Mods' folder
-        string btModsPath = ModDirectory.Substring(0, ModDirectory.LastIndexOf("Mods") + 4);
+        string btModsPath = GetModsFolderPath();
+        if (string.IsNullOrEmpty(btModsPath) || !Directory.Exists(btModsPath)) {
+          Main.Logger.LogWarning($"[DataManager.LoadReservedIds] Could not resolve Mods folder path from '{ModDirectory}'");
+          return;
+        }
 
-        if (Main.Settings.CustomData.SearchType.StartsWith("Shallow")) {
-          string[] modDirectories = Directory.GetDirectories(btModsPath);
-          foreach (string modDirectory in modDirectories) {
-            string modName = Path.GetFileName(modDirectory);
-            string[] modDirectoryFullPaths = Directory.GetDirectories(modDirectory);
-            string[] modDirectoryNames = modDirectoryFullPaths.Select(d => Path.GetFileName(d)).ToArray();
-
-            if (modDirectoryNames.Contains("mcData")) {
-              string reservedIdsPath = $"{modDirectory}/mcData/contractTypeBuilds/reserved-ids.json";
-              if (File.Exists(reservedIdsPath)) {
-                Main.LogDebug($"[DataManager.LoadReservedIds] Found reserved-ids.json in mod '{modName}'");
-                LoadReservedIdsFile(reservedIdsPath, modName);
-              }
-            }
+        foreach (string mcDataPath in FindCustomDataDirectories(btModsPath)) {
+          string modDirectory = Directory.GetParent(mcDataPath)?.FullName;
+          string modName = !string.IsNullOrEmpty(modDirectory) ? Path.GetFileName(modDirectory) : mcDataPath;
+          string reservedIdsPath = Path.Combine(mcDataPath, "contractTypeBuilds", "reserved-ids.json");
+          if (File.Exists(reservedIdsPath)) {
+            Main.LogDebug($"[DataManager.LoadReservedIds] Found reserved-ids.json in mod '{modName}'");
+            LoadReservedIdsFile(reservedIdsPath, modName);
           }
         }
       }
