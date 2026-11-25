@@ -20,6 +20,11 @@ namespace MissionControl.Patches {
         }
 
         foreach (List<BuildingRaycastHit> value in __instance.tempBuildingCellHits.Values) {
+          // Vanilla AverageTheBuildingHits handles >= minBuildingHits; only handle custom buildings below that threshold so value[0] isn't double-averaged
+          if (value == null || value.Count == 0 || value.Count >= MapEncounterLayerDataCell.minBuildingHits) {
+            continue;
+          }
+
           BuildingRaycastHit buildingRaycastHit = value[0];
 
           if (MissionControl.Instance.CustomBuildingGuids.Contains(buildingRaycastHit.buildingGuid)) {
@@ -40,23 +45,6 @@ namespace MissionControl.Patches {
             }
           }
         }
-      }
-    }
-
-    static void Postfix(MapEncounterLayerDataCell __instance) {
-      if (MissionControl.Instance.IsCustomContractType && MissionControl.Instance.CustomBuildingGuids.Count > 0) {
-        if (__instance.buildingList == null) {
-          return;
-        }
-
-
-        // Remove duplicates
-        var distinctList = __instance.buildingList
-            .GroupBy(buildingRaycastHit => buildingRaycastHit.buildingGuid)
-            .Select(group => group.First())
-            .ToList();
-
-        __instance.buildingList = distinctList;
       }
     }
   }
