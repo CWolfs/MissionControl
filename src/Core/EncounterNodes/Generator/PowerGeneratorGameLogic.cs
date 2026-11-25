@@ -19,13 +19,16 @@ namespace MissionControl.EncounterNodes.Generator {
 
     public override void OnEnterActive() {
       base.OnEnterActive();
+      FindGeneratorBuilding();
+    }
 
+    private void FindGeneratorBuilding() {
       List<ITaggedItem> validGenerators = Combat.ItemRegistry.GetObjectsOfTypeWithTagSet(TaggedObjectType.Building, GeneratorTags);
       if (validGenerators.Count > 0) {
         GeneratorBuilding = validGenerators[0] as BattleTech.Building;
-        Main.LogDebug($"[PowerGeneratorGameLogic.OnEnterActive] Found valid generator '{GeneratorBuilding.DisplayName}' for tags '{GeneratorTags}'.");
+        Main.LogDebug($"[PowerGeneratorGameLogic.FindGeneratorBuilding] Found valid generator '{GeneratorBuilding.DisplayName}' for tags '{GeneratorTags}'.");
       } else {
-        Main.LogDebug($"[PowerGeneratorGameLogic.OnEnterActive] No valid generator found for tags '{GeneratorTags}'.");
+        Main.Logger.LogWarning($"[PowerGeneratorGameLogic.FindGeneratorBuilding] No valid generator found for tags '{GeneratorTags}' on '{name}'.");
       }
     }
 
@@ -47,6 +50,9 @@ namespace MissionControl.EncounterNodes.Generator {
 
       ActorDestroyedMessage actorDestroyedMessage = message as ActorDestroyedMessage;
       if (actorDestroyedMessage == null) return;
+
+      if (GeneratorBuilding == null) FindGeneratorBuilding();
+      if (GeneratorBuilding == null) return;
 
       if (actorDestroyedMessage.DestroyedGuid == GeneratorBuilding.GUID) {
         Main.LogDebug($"[PowerGeneratorGameLogic.OnActorDestroyed] Generator building '{GeneratorBuilding}' was destroyed.");
