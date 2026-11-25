@@ -112,8 +112,8 @@ namespace MissionControl.ContractTypeBuilders {
           }
         }
 
-        string nextDialogueGuid = option.ContainsKey("NextDialogueGuid") ? option["NextDialogueGuid"].ToString() : null;
-        int nextContentIndex = option.ContainsKey("NextContentIndex") ? (int)option["NextContentIndex"] : -1;
+        string nextDialogueGuid = (option.ContainsKey("NextDialogueGuid") && option["NextDialogueGuid"].Type != JTokenType.Null) ? option["NextDialogueGuid"].ToString() : null;
+        int nextContentIndex = (option.ContainsKey("NextContentIndex") && option["NextContentIndex"].Type != JTokenType.Null) ? (int)option["NextContentIndex"] : -1;
 
         DialogueDecisionOption decisionOption = new DialogueDecisionOption(responseText, results);
         decisionOption.Conditional = conditional;
@@ -125,11 +125,13 @@ namespace MissionControl.ContractTypeBuilders {
         Main.Logger.Log($"[DialogueBuilder.{contractTypeBuilder.ContractTypeKey}] Added decision option: {responseText} with {results.Count} results");
       }
 
+      bool showOnlyOnce = dialogue.ContainsKey("ShowOnlyOnce") ? (bool)dialogue["ShowOnlyOnce"] : false;
+
       Dictionary<string, EncounterObjectGameLogic> encounterObjects = new Dictionary<string, EncounterObjectGameLogic>();
       MissionControl.Instance.EncounterLayerData.BuildEncounterObjectDictionary(encounterObjects);
 
       // Note: dialogueOverride is null here - it will be applied later by the contract override system
-      DialogueFactory.CreateDialogueDecisionLogic(parent, this.name, this.guid, null, options, encounterObjects);
+      DialogueFactory.CreateDialogueDecisionLogic(parent, this.name, this.guid, null, options, encounterObjects, showOnlyOnce);
     }
   }
 }

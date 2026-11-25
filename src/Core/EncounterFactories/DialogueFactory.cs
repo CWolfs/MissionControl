@@ -122,12 +122,13 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static DialogueDecisionGameLogic CreateDialogueDecisionLogic(GameObject parent, string name, string guid, DialogueOverride dialogueOverride,
-      List<DialogueDecisionOption> options, Dictionary<string, EncounterObjectGameLogic> encounterObjects) {
+      List<DialogueDecisionOption> options, Dictionary<string, EncounterObjectGameLogic> encounterObjects, bool showOnlyOnce = false) {
 
       GameObject decisionGo = CreateDialogLogicGameObject(parent, name);
 
       DialogueDecisionGameLogic decision = decisionGo.AddComponent<DialogueDecisionGameLogic>();
       decision.encounterObjectGuid = guid;
+      decision.showOnlyOnce = showOnlyOnce;
       decision.decisionOptions = options ?? new List<DialogueDecisionOption>();
 
       // Apply dialogue text from contract override

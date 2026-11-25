@@ -22,6 +22,11 @@ namespace MissionControl.EncounterSequences {
     private List<DialogueDecisionOption> visibleOptions;
     private DialogState state;
     private SimGameState originalSim;
+    private bool hasOverriddenSim;
+    private bool hasShownWidget;
+    private int currentContentIndex = -1;
+    private int pendingContentIndex = -1;
+    private string pendingNextDialogueGuid;
 
     private bool isInterruptable;
     private bool isCancelable;
@@ -86,26 +91,27 @@ namespace MissionControl.EncounterSequences {
         return;
       }
 
+      if (dialogWidget.ResponseOptions != null && visibleOptions.Count > dialogWidget.ResponseOptions.Count) {
+        Main.Logger.LogWarning($"[InterruptDialogDecisionSequence] Decision dialogue '{decisionLogic.encounterObjectGuid}' has {visibleOptions.Count} visible options but SGDialogWidget only supports {dialogWidget.ResponseOptions.Count}; clamping");
+        visibleOptions = visibleOptions.GetRange(0, dialogWidget.ResponseOptions.Count);
+      }
+
       // Create response data for SGDialogWidget
       List<SimGameConversationManager.ResponseData> responses = CreateResponses();
 
       // Ensure CastDef is not null (create default if needed)
-      CastDef castDef = content.CastDef;
-      if (castDef == null) {
-        Main.Logger.LogWarning("[InterruptDialogDecisionSequence] CastDef is NULL, creating default");
-        castDef = new CastDef();
-        castDef.firstName = "Unknown";
-        castDef.lastName = "";
-        castDef.rank = "";
-        castDef.sgCharType = SimGameState.SimGameCharacterType.UNSET;
-      }
+      CastDef castDef = GetOrCreateCastDef(content);
 
       // Get game context
       GameContext gameContext = UnityGameInstance.BattleTechGame.GetActiveContext();
 
       // Set Sim to fix null reference crash in Show() (lines 328 & 414)
-      // Store original so we can restore it later (dialogWidget is reused)
-      originalSim = dialogWidget.Sim;
+      // Store original once so we can restore it later (dialogWidget is reused)
+      if (!hasOverriddenSim) {
+        originalSim = dialogWidget.Sim;
+        hasOverriddenSim = true;
+      }
+
       var simGame = UnityGameInstance.BattleTechGame.Simulation;
       if (simGame != null) {
         dialogWidget.Sim = simGame;
@@ -113,8 +119,12 @@ namespace MissionControl.EncounterSequences {
         if (simGame.UXAttached) {
           Main.Logger.LogWarning("[InterruptDialogDecisionSequence] Sim.UXAttached is TRUE in combat - animations may use wrong mode!");
         }
-      } else {
-        Main.Logger.LogWarning("[InterruptDialogDecisionSequence] Could not get Simulation from BattleTechGame!");
+      }
+
+      if (dialogWidget.Sim == null) {
+        Main.Logger.LogWarning($"[InterruptDialogDecisionSequence] Simulation is null (e.g. Skirmish mode) - cannot show response buttons for '{decisionLogic.encounterObjectGuid}', skipping");
+        SetState(DialogState.Finished);
+        return;
       }
 
       // Show dialogue with responses
@@ -128,6 +138,7 @@ namespace MissionControl.EncounterSequences {
         responses,
         false // not end of convo
       );
+      hasShownWidget = true;
 
       LazySingletonBehavior<UIManager>.Instance.ToggleUINode = false;
       LazySingletonBehavior<UIManager>.Instance.ToggleInWorldNode = false;
@@ -136,6 +147,62 @@ namespace MissionControl.EncounterSequences {
       if (content.HasAudioEvent()) {
         AudioEventManager.DialogSequencePlaying = true;
         DialogueAudioEvent.Play(combat, content, null);
+      }
+    }
+
+    private CastDef GetOrCreateCastDef(DialogueContent content) {
+      if (content.CastDef != null) {
+        return content.CastDef;
+      }
+
+      Main.Logger.LogWarning("[InterruptDialogDecisionSequence] CastDef is NULL, creating default");
+      CastDef castDef = new CastDef();
+      castDef.firstName = "Unknown";
+      castDef.lastName = "";
+      castDef.rank = "";
+      castDef.sgCharType = SimGameState.SimGameCharacterType.UNSET;
+      return castDef;
+    }
+
+    private void ShowJumpedContent(int contentIndex) {
+      if (decisionLogic.conversationContent == null || contentIndex < 0 || contentIndex >= decisionLogic.conversationContent.contents.Length) {
+        Main.Logger.LogWarning($"[InterruptDialogDecisionSequence] Invalid jumped content index {contentIndex} for '{decisionLogic.encounterObjectGuid}', finishing");
+        SetState(DialogState.Finished);
+        return;
+      }
+
+      DialogueContent nextContent = decisionLogic.conversationContent.contents[contentIndex];
+      CastDef castDef = GetOrCreateCastDef(nextContent);
+
+      dialogWidget.Show(
+        nextContent.words,
+        UnityGameInstance.BattleTechGame.GetActiveContext(),
+        castDef,
+        nextContent.emote,
+        AfterJumpedContentHide,
+        null,
+        null,
+        true // end of convo
+      );
+      hasShownWidget = true;
+
+      LazySingletonBehavior<UIManager>.Instance.ToggleUINode = false;
+      LazySingletonBehavior<UIManager>.Instance.ToggleInWorldNode = false;
+
+      if (nextContent.HasAudioEvent()) {
+        AudioEventManager.DialogSequencePlaying = true;
+        DialogueAudioEvent.Play(combat, nextContent, null);
+      }
+    }
+
+    public override void OnUpdate() {
+      base.OnUpdate();
+
+      if (state == DialogState.Talking && pendingContentIndex >= 0) {
+        int targetIndex = pendingContentIndex;
+        pendingContentIndex = -1;
+        currentContentIndex = targetIndex;
+        ShowJumpedContent(targetIndex);
       }
     }
 
@@ -205,29 +272,16 @@ namespace MissionControl.EncounterSequences {
         }
       }
 
-      // Handle branching
+      // Handle branching (deferred until after SGDialogOption.OnClick -> ResponseClicked finishes)
       if (!string.IsNullOrEmpty(selectedOption.NextDialogueGuid)) {
-        // Branch to different dialogue
+        // Branch to different dialogue on OnComplete so ResponseClicked / HideDialogWidget don't close it
         Main.Logger.Log($"[InterruptDialogDecisionSequence] Branching to dialogue: {selectedOption.NextDialogueGuid}");
-        combat.MessageCenter.PublishMessage(new TriggerDialog(selectedOption.NextDialogueGuid, false));
+        pendingNextDialogueGuid = selectedOption.NextDialogueGuid;
         SetState(DialogState.Finished);
       } else if (selectedOption.NextContentIndex >= 0 && selectedOption.NextContentIndex < decisionLogic.conversationContent.contents.Length) {
-        // Jump to specific content index within same dialogue
-        Main.Logger.Log($"[InterruptDialogDecisionSequence] Jumping to content index: {selectedOption.NextContentIndex}");
-
-        // Show the next content
-        DialogueContent nextContent = decisionLogic.conversationContent.contents[selectedOption.NextContentIndex];
-        dialogWidget.Show(
-          nextContent.words,
-          UnityGameInstance.BattleTechGame.GetActiveContext(),
-          nextContent.CastDef,
-          nextContent.emote,
-          AfterJumpedContentHide,
-          null,
-          null,
-          true // end of convo
-        );
-
+        // Defer Show() to next frame in OnUpdate() so SGDialogWidget.ResponseClicked() doesn't immediately hide it
+        Main.Logger.Log($"[InterruptDialogDecisionSequence] Queueing jump to content index: {selectedOption.NextContentIndex}");
+        pendingContentIndex = selectedOption.NextContentIndex;
         return SimGameConversationManager.ConversationState.NODE;
       } else {
         // Sequential (default) - close and complete
@@ -243,9 +297,18 @@ namespace MissionControl.EncounterSequences {
     }
 
     private void HideDialogWidget() {
+      if (!hasShownWidget) return;
+      hasShownWidget = false;
       dialogWidget.Hide();
       LazySingletonBehavior<UIManager>.Instance.ToggleUINode = true;
       LazySingletonBehavior<UIManager>.Instance.ToggleInWorldNode = true;
+    }
+
+    private void RestoreSim() {
+      if (hasOverriddenSim) {
+        dialogWidget.Sim = originalSim;
+        hasOverriddenSim = false;
+      }
     }
 
     public override void OnComplete() {
@@ -253,12 +316,16 @@ namespace MissionControl.EncounterSequences {
 
       // Restore original Sim value (dialogWidget is reused)
       // Do this AFTER button clicks are processed to avoid null reference in ResponseClicked
-      if (originalSim != dialogWidget.Sim) {
-        dialogWidget.Sim = originalSim;
-      }
+      RestoreSim();
 
       AudioEventManager.DialogSequencePlaying = false;
       combat.MessageCenter.PublishMessage(new DialogComplete(decisionLogic.encounterObjectGuid));
+
+      if (!string.IsNullOrEmpty(pendingNextDialogueGuid)) {
+        string nextDialogueGuid = pendingNextDialogueGuid;
+        pendingNextDialogueGuid = null;
+        combat.MessageCenter.PublishMessage(new TriggerDialog(nextDialogueGuid, false));
+      }
     }
 
     public override void OnSuspend() {
@@ -268,16 +335,23 @@ namespace MissionControl.EncounterSequences {
 
     public override void OnResume() {
       base.OnResume();
-      ShowDecisionDialogue();
+      if (state == DialogState.Finished) {
+        return;
+      }
+
+      if (currentContentIndex >= 0) {
+        ShowJumpedContent(currentContentIndex);
+      } else {
+        ShowDecisionDialogue();
+      }
     }
 
     public override void OnCanceled() {
       base.OnCanceled();
 
-      // Restore original Sim value when canceled
-      if (originalSim != dialogWidget.Sim) {
-        dialogWidget.Sim = originalSim;
-      }
+      RestoreSim();
+      pendingContentIndex = -1;
+      pendingNextDialogueGuid = null;
 
       HideDialogWidget();
       SetState(DialogState.Finished);
