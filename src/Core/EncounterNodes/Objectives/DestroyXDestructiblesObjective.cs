@@ -1,4 +1,5 @@
 using BattleTech;
+using BattleTech.Data;
 using BattleTech.Framework;
 
 using HBS.Util;
@@ -39,17 +40,15 @@ namespace MissionControl.EncounterNodes.Objectives {
       base.AlwaysInit(combat);
       Main.LogDebug($"[DestroyXDestructiblesObjective.AlwaysInit] AlwaysInit");
 
-      MessageCenter messageCenter = UnityGameInstance.BattleTechGame.MessageCenter;
-      messageCenter.AddSubscriber((MessageCenterMessageType)MessageTypes.OnDestructibleCollapsed, new ReceiveMessageCenterMessage(this.OnDestructibleDestroyed));
+      messageMemory.TrackMethod((MessageCenterMessageType)MessageTypes.OnDestructibleCollapsed, OnDestructibleDestroyed);
 
       Validate();
     }
 
     public override void SubscribeToMessages(bool shouldAdd) {
-      Main.LogDebug($"[DestroyXDestructiblesObjective.SubscribeToMessages] SubscribeToMessages");
+      Main.LogDebug($"[DestroyXDestructiblesObjective.SubscribeToMessages] SubscribeToMessages: {shouldAdd}");
 
-      MessageCenter messageCenter = UnityGameInstance.BattleTechGame.MessageCenter;
-      messageCenter.AddSubscriber((MessageCenterMessageType)MessageTypes.OnDestructibleCollapsed, new ReceiveMessageCenterMessage(this.OnDestructibleDestroyed));
+      messageMemory.Subscribe((MessageCenterMessageType)MessageTypes.OnDestructibleCollapsed, OnDestructibleDestroyed, shouldAdd);
 
       base.SubscribeToMessages(shouldAdd);
     }
@@ -62,21 +61,39 @@ namespace MissionControl.EncounterNodes.Objectives {
       AttachRegionToObjective(regionRef);
     }
 
+    public override void EncounterResume(LoadRequest loadRequest) {
+      base.EncounterResume(loadRequest);
+
+      if (GetState() == EncounterObjectStatus.Active && TrackedDestructibles.Count == 0) {
+        if (CollectTrackedDestructibles()) {
+          CalculateNumberOfDestructiblesToDestroy();
+        }
+      }
+    }
+
     public void OnDestroy() {
       Main.LogDebug($"[DestroyXDestructiblesObjective.OnDestroy] OnDestroy");
-      MessageCenter messageCenter = UnityGameInstance.BattleTechGame.MessageCenter;
-      messageCenter.RemoveSubscriber((MessageCenterMessageType)MessageTypes.OnDestructibleCollapsed, new ReceiveMessageCenterMessage(this.OnDestructibleDestroyed));
+      UnityGameInstance.BattleTechGame?.MessageCenter?.RemoveSubscriber((MessageCenterMessageType)MessageTypes.OnDestructibleCollapsed, OnDestructibleDestroyed);
     }
 
     public override void ActivateObjective() {
       base.ActivateObjective();
 
-      // Collect the targets from the region
+      if (!CollectTrackedDestructibles()) {
+        return;
+      }
+
+      CalculateNumberOfDestructiblesToDestroy();
+    }
+
+    private bool CollectTrackedDestructibles() {
+      TrackedDestructibles.Clear();
+
       RegionGameLogic regionGameLogic = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<RegionGameLogic>(RegionGuid);
 
       if (regionGameLogic == null) {
         Main.Logger.LogError($"[DestroyXDestructiblesObjective] Region Not Found for Guid '{RegionGuid}'");
-        return;
+        return false;
       }
 
       List<DestructibleObject> destructibles = GameObjextExtensions.GetDestructiblesWithLODComponents(new List<string>() { "envPrfGrbl_", "envPrfDeco_" }); // Pick the bigger destructible props
@@ -91,7 +108,18 @@ namespace MissionControl.EncounterNodes.Objectives {
         }
       }
 
+      return true;
+    }
+
+    private void CalculateNumberOfDestructiblesToDestroy() {
+      if (TrackedDestructibles.Count == 0) {
+        NumberOfDestructiblesToDestroy = 0;
+        Main.Logger.LogError($"[DestroyXDestructiblesObjective] Found 0 destructibles in region '{RegionGuid}'");
+        return;
+      }
+
       if (CountType == ObjectiveCountType.Number) {
+        NumberOfDestructiblesToDestroy = valueOfDestructiblesToDestroy;
         if (TrackedDestructibles.Count < NumberOfDestructiblesToDestroy) {
           Main.Logger.LogWarning("[DestroyXDestructiblesObjective] Couldn't find enough destructibles to track for this objective so setting the NumberOfDestructiblesToDestroy to the max available");
           NumberOfDestructiblesToDestroy = TrackedDestructibles.Count;
@@ -109,12 +137,16 @@ namespace MissionControl.EncounterNodes.Objectives {
           NumberOfDestructiblesToDestroy = 1;
         }
 
-        Main.Logger.LogWarning($"[DestroyXDestructiblesObjective] Using percentage mode with value '{valueOfDestructiblesToDestroy}%' the number of destructibles to be destroyed will be {NumberOfDestructiblesToDestroy} / {TrackedDestructibles.Count}");
+        Main.Logger.Log($"[DestroyXDestructiblesObjective] Using percentage mode with value '{valueOfDestructiblesToDestroy}%' the number of destructibles to be destroyed will be {NumberOfDestructiblesToDestroy} / {TrackedDestructibles.Count}");
       }
     }
 
     public override Vector3 GetBeaconPosition() {
-      Vector3 position = base.Combat.ItemRegistry.GetItemByGUID<RegionGameLogic>(RegionGuid).Position;
+      RegionGameLogic region = base.Combat.ItemRegistry.GetItemByGUID<RegionGameLogic>(RegionGuid);
+      if (region == null) {
+        return base.GetBeaconPosition();
+      }
+      Vector3 position = region.Position;
       position.y = base.Combat.MapMetaData.GetLerpedHeightAt(position) + ObjectiveGameLogic.BEACON_OFFSET;
       return position;
     }
@@ -125,24 +157,25 @@ namespace MissionControl.EncounterNodes.Objectives {
         return;
       }
 
-      if (NumberOfDestructiblesToDestroy <= 0) {
-        Main.Logger.LogError($"[DestroyXDestructiblesObjective] NumberOfDestructiblesToDestroy must be 1 or higher'");
+      if (valueOfDestructiblesToDestroy <= 0) {
+        Main.Logger.LogError($"[DestroyXDestructiblesObjective] valueOfDestructiblesToDestroy must be 1 or higher");
         return;
       }
     }
 
     public override Text GetProgressText() {
       Text progressText = base.GetProgressText();
+      float percentageComplete = NumberOfDestructiblesToDestroy > 0 ? (float)destroyedDestructiblesSoFar / (float)NumberOfDestructiblesToDestroy : 0f;
+      int remaining = Mathf.Max(0, NumberOfDestructiblesToDestroy - destroyedDestructiblesSoFar);
       progressText.Replace("[destroyedDestructiblesSoFar]", destroyedDestructiblesSoFar.ToString());
       progressText.Replace("[numberOfDestructiblesToDestroy]", NumberOfDestructiblesToDestroy.ToString());
-      progressText.Replace("[percentageComplete]", ((float)destroyedDestructiblesSoFar / (float)NumberOfDestructiblesToDestroy).ToString("P0", CultureInfo.InvariantCulture));
-      progressText.Replace("[destructiblesStillNeededToMeetThreshold]", (NumberOfDestructiblesToDestroy - destroyedDestructiblesSoFar).ToString());
+      progressText.Replace("[percentageComplete]", percentageComplete.ToString("P0", CultureInfo.InvariantCulture));
+      progressText.Replace("[destructiblesStillNeededToMeetThreshold]", remaining.ToString());
       return progressText;
     }
 
     public void OnDestructibleDestroyed(MessageCenterMessage message) {
       if (message is DestructibleCollapsedMessage) {
-        DestructibleCollapsedMessage destructibleCollapsedMessage = (DestructibleCollapsedMessage)message;
         QueueCheckObjective();
       }
     }
@@ -153,7 +186,8 @@ namespace MissionControl.EncounterNodes.Objectives {
       int destructionCount = 0;
 
       for (int i = 0; i < TrackedDestructibles.Count; i++) {
-        if (TrackedDestructibles[i].isCollapsed) {
+        DestructibleObject destructible = TrackedDestructibles[i];
+        if (destructible == null || destructible.isCollapsed || !destructible.gameObject.activeInHierarchy) {
           // Main.Logger.Log($"[DestroyXDestructiblesObjective.UpdateCounts] Tracked Destructible '{TrackedDestructibles[i].gameObject}' collapsed");
           destructionCount++;
         }
@@ -164,6 +198,9 @@ namespace MissionControl.EncounterNodes.Objectives {
 
     public override bool CheckForSuccess() {
       base.CheckForSuccess();
+      if (TrackedDestructibles.Count == 0 || NumberOfDestructiblesToDestroy <= 0) {
+        return false;
+      }
       if (destroyedDestructiblesSoFar >= NumberOfDestructiblesToDestroy) {
         LogObjective($"Objective Successful: destroyedDestructiblesSoFar[{destroyedDestructiblesSoFar}] >= NumberOfDestructiblesToDestroy[{NumberOfDestructiblesToDestroy}]");
         return true;

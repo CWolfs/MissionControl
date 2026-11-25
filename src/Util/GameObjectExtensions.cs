@@ -83,7 +83,7 @@ public static class GameObjextExtensions {
         if (!startsWithFilterName) return false;
       }
 
-      return destructible.GetComponent<LODGroup> != null;
+      return destructible.GetComponent<LODGroup>() != null;
     }).ToList();
 
     List<DestructibleObject> filteredDestructiblesUnderPlots = destructiblesUnderPlots.Where(destructible => {
@@ -92,7 +92,7 @@ public static class GameObjextExtensions {
         if (!startsWithFilterName) return false;
       }
 
-      return destructible.GetComponent<LODGroup> != null;
+      return destructible.GetComponent<LODGroup>() != null;
     }).ToList();
 
     List<DestructibleObject> filteredDestructiblesUnderEncounter = destructiblesUnderEncounter.Where(destructible => {
@@ -101,7 +101,7 @@ public static class GameObjextExtensions {
         if (!startsWithFilterName) return false;
       }
 
-      return destructible.GetComponent<LODGroup> != null;
+      return destructible.GetComponent<LODGroup>() != null;
     }).ToList();
 
     destructibles.AddRange(filteredDestructiblesUnderGameObject);
