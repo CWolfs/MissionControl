@@ -184,8 +184,8 @@ namespace MissionControl.ContractTypeBuilders {
       Main.LogDebug("[BuildRegionConditional] Building 'BuildRegion' conditional");
       string regionGuid = conditionalObject.ContainsKey("RegionGuid") ? conditionalObject["RegionGuid"].ToString() : null;
       string movementTypeRaw = conditionalObject["MovementType"].ToString();
-      List<string> regionTags = conditionalObject.ContainsKey("RegionTags") ? conditionalObject["RegionTags"].ToObject<List<string>>() : null;
-      List<string> unitTags = conditionalObject.ContainsKey("UnitTags") ? conditionalObject["UnitTags"].ToObject<List<string>>() : null;
+      List<string> regionTags = conditionalObject.ContainsKey("RegionTags") ? conditionalObject["RegionTags"].ToObject<List<string>>() : new List<string>();
+      List<string> unitTags = conditionalObject.ContainsKey("UnitTags") ? conditionalObject["UnitTags"].ToObject<List<string>>() : new List<string>();
 
       RegionConditional conditional = ScriptableObject.CreateInstance<RegionConditional>();
 
