@@ -646,7 +646,7 @@ namespace MissionControl {
       PilotCastInterpolator.Instance.Reset();
       DataManager.Instance.ResetBetweenContracts();
       EncounterTags.Clear();
-      EncounterStats.Reset();
+      EncounterStats.Reset(true);
       SaveSupport.CombatStatePersistence.Clear(UnityGameInstance.BattleTechGame.Simulation);
       AssetBundleLoader.UnloadPropBundles();
       CustomBuildingGuids.Clear();
