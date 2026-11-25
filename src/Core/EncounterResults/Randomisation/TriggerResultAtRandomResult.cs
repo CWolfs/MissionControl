@@ -13,7 +13,7 @@ namespace MissionControl.Result {
 
     private void TriggerResultAtRandom() {
       DesignResult result = Results.GetRandom();
-      result.Trigger(null, null);
+      result?.Trigger(null, null);
     }
   }
 }

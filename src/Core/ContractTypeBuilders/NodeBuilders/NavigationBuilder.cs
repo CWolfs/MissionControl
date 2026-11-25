@@ -51,7 +51,7 @@ namespace MissionControl.ContractTypeBuilders {
       // Create route points
       for (int i = 0; i < routePointGUIDs.Count; i++) {
         string routePointGUID = routePointGUIDs[i];
-        JObject routePointPosition = routePointPositions.ContainsKey(routePointGUID) ? (JObject)routePointPositions[routePointGUID] : null;
+        JObject routePointPosition = (routePointPositions != null && routePointPositions.ContainsKey(routePointGUID)) ? (JObject)routePointPositions[routePointGUID] : null;
         RoutePointGameLogic routePointGameLogic = NavigationFactory.CreateRoutePoint(routeGameLogic.gameObject, $"RoutePoint{i + 1}", routePointGUID);
         if (routePointPosition != null) SetPosition(routePointGameLogic.gameObject, routePointPosition);
       }

@@ -39,7 +39,8 @@ namespace MissionControl.ContractTypeBuilders {
     private void BuildPowerGenerator() {
       List<string> generatorTags = ((JArray)build["GeneratorTags"]).ToObject<List<string>>();
       List<string> powerConsumersTags = ((JArray)build["PowerConsumersTags"]).ToObject<List<string>>();
-      string onGeneratorDestructionTypeRaw = build.ContainsKey("OnGeneratorDestructionType") ? build["OnGeneratorDestructionType"].ToString() : "DestroyConsumers";
+      string onGeneratorDestructionTypeRaw = (build.ContainsKey("OnGeneratorDestructionType") && build["OnGeneratorDestructionType"].Type != JTokenType.Null) ? build["OnGeneratorDestructionType"].ToString() : "DestroyConsumers";
+      if (string.IsNullOrWhiteSpace(onGeneratorDestructionTypeRaw)) onGeneratorDestructionTypeRaw = "DestroyConsumers";
 
       OnGeneratorDestructionType onGeneratorDestructionType = (OnGeneratorDestructionType)Enum.Parse(typeof(OnGeneratorDestructionType), onGeneratorDestructionTypeRaw);
 

@@ -93,7 +93,7 @@ namespace MissionControl.EncounterFactories {
       destroyLanceObjective.onFailureDialogue = new DialogueRef();
 
       ContractObjectiveGameLogic contractObjectiveGameLogic = null;
-      if (contractObjectiveGameLogicGuid == null) {
+      if (string.IsNullOrEmpty(contractObjectiveGameLogicGuid)) {
         // For ease of user we track objectives, by default, against the first contract objective
         contractObjectiveGameLogic = MissionControl.Instance.EncounterLayerData.GetComponent<ContractObjectiveGameLogic>();
       } else {
@@ -102,10 +102,10 @@ namespace MissionControl.EncounterFactories {
 
       if (contractObjectiveGameLogic == null) {
         Main.Logger.LogError($"[CreateDestroyLanceObjective] Contract Objective is null!");
+      } else {
+        ObjectiveRef objectiveRef = new ObjectiveRef(destroyLanceObjective);
+        contractObjectiveGameLogic.objectiveRefList.Add(objectiveRef);
       }
-
-      ObjectiveRef objectiveRef = new ObjectiveRef(destroyLanceObjective);
-      contractObjectiveGameLogic.objectiveRefList.Add(objectiveRef);
 
       // OBJECTIVE OVERRIDE - This is needed otherwise the results don't apply in the 'End Contract' screen
       // IF - the objective override is not specified in the contract override .json
