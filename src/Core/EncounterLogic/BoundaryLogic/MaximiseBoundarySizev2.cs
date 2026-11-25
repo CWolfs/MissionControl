@@ -34,7 +34,7 @@ namespace MissionControl.Logic {
 
         const float mapBorderSize = 50f;
         const float mapSize = 2048f;
-        const int mapSide = (int)(mapSize - mapBorderSize);
+        const int mapSide = (int)(mapSize - (mapBorderSize * 2f));
         const float halfMapSide = mapSide / 2f;
 
         for (int i = 0; i < childEncounterObjectGameLogicList.Length; i++) {
@@ -86,12 +86,12 @@ namespace MissionControl.Logic {
     private void MatchBoundarySizeToMapSize(EncounterLayerData encounterLayerData) {
       EncounterBoundaryChunkGameLogic encounterBoundaryChunk = encounterLayerData.GetComponentInChildren<EncounterBoundaryChunkGameLogic>();
       if (encounterBoundaryChunk != null) {
-        Main.Logger.Log($"[MaximiseBoundarySizeV2.SetBoundarySizeToMedium] Setting Boundary Size to Maximum Map Size");
+        Main.Logger.Log($"[MaximiseBoundarySizeV2.MatchBoundarySizeToMapSize] Setting Boundary Size to Maximum Map Size");
         EncounterObjectGameLogic[] childEncounterObjectGameLogicList = encounterBoundaryChunk.childEncounterObjectGameLogicList;
 
         const float mapBorderSize = 50f;
         const float mapSize = 2048f;
-        const int mapSide = (int)(mapSize - mapBorderSize);
+        const int mapSide = (int)(mapSize - (mapBorderSize * 2f));
 
         for (int i = 0; i < childEncounterObjectGameLogicList.Length; i++) {
           EncounterBoundaryRectGameLogic encounterBoundaryRectGameLogic = childEncounterObjectGameLogicList[i] as EncounterBoundaryRectGameLogic;
