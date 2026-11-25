@@ -203,7 +203,25 @@ namespace MissionControl.Result {
       }
       // Else: Miss - empty target list means no damage
 
-      // Create individual artillery sequence with VFX scaling
+      // Collect splash targets if configured. A miss lands away from the target and does no damage, so it gets no splash either
+      List<ICombatant> splashTargets = null;
+      int splashDamage = 0;
+      int splashHeatDamage = 0;
+      int splashStabilityDamage = 0;
+
+      if (SplashRange > 0f && target != null) {
+        Main.LogDebug($"[ArtilleryByTagResult] Splash damage enabled - Range: {SplashRange}, RequiresTags: {SplashRequiresTags}");
+        splashTargets = GetSplashTargets(position, target);
+        if (splashTargets.Count > 0) {
+          splashDamage = Damage / 2;
+          splashHeatDamage = HeatDamage / 2;
+          splashStabilityDamage = StabilityDamage / 2;
+        }
+      } else {
+        Main.LogDebug($"[ArtilleryByTagResult] Splash damage skipped - Target is null: {target == null}, SplashRange: {SplashRange}");
+      }
+
+      // Create individual artillery sequence with VFX scaling and impact-timed splash damage
       // Each sequence will play independently, creating a staggered effect
       // when multiple sequences are enqueued in order
       ScalableArtilleryObjectiveSequence artillerySequence = new ScalableArtilleryObjectiveSequence(
@@ -215,29 +233,25 @@ namespace MissionControl.Result {
         HeatDamage,
         StabilityDamage,
         TerrainMaskFlags.None,
-        VFXScale
+        VFXScale,
+        splashTargets,
+        splashDamage,
+        splashHeatDamage,
+        splashStabilityDamage
       );
 
       EncounterLayerParent.EnqueueLoadAwareMessage(new AddSequenceToStackMessage(artillerySequence));
-
-      // Apply splash damage if configured. A miss lands away from the target and does no damage, so it gets no splash either
-      if (SplashRange > 0f && target != null) {
-        Main.LogDebug($"[ArtilleryByTagResult] Splash damage enabled - Range: {SplashRange}, RequiresTags: {SplashRequiresTags}");
-        ApplySplashDamage(position, target);
-      } else {
-        Main.LogDebug($"[ArtilleryByTagResult] Splash damage skipped - Target is null: {target == null}, SplashRange: {SplashRange}");
-      }
     }
 
-    private void ApplySplashDamage(Vector3 position, ICombatant primaryTarget) {
-      Main.LogDebug($"[ArtilleryByTagResult] ApplySplashDamage called for primary target '{primaryTarget?.DisplayName}' at position {position}");
+    private List<ICombatant> GetSplashTargets(Vector3 position, ICombatant primaryTarget) {
+      Main.LogDebug($"[ArtilleryByTagResult] Collecting splash targets for primary target '{primaryTarget?.DisplayName}' at position {position}");
 
       // Get all combatants in splash range
       List<ICombatant> splashTargets = GetCombatantsInSplashRange(position, primaryTarget);
 
       if (splashTargets.Count == 0) {
         Main.LogDebug("[ArtilleryByTagResult] No combatants found in splash range");
-        return;
+        return splashTargets;
       }
 
       Main.LogDebug($"[ArtilleryByTagResult] Found {splashTargets.Count} potential splash targets before tag filtering");
@@ -247,34 +261,9 @@ namespace MissionControl.Result {
 
       if (splashTargets.Count == 0) {
         Main.LogDebug("[ArtilleryByTagResult] No valid splash targets after filtering");
-        return;
       }
 
-      // Calculate splash damage (half of main damage)
-      int splashDamage = Damage / 2;
-      int splashHeatDamage = HeatDamage / 2;
-      int splashStabilityDamage = StabilityDamage / 2;
-
-      Main.LogDebug($"[ArtilleryByTagResult] Applying splash damage to {splashTargets.Count} targets: Damage={splashDamage}, Heat={splashHeatDamage}, Stability={splashStabilityDamage}");
-
-      // Apply damage directly to splash targets without visual effects
-      CombatGameState combat = UnityGameInstance.BattleTechGame.Combat;
-
-      foreach (ICombatant splashTarget in splashTargets) {
-        Main.LogDebug($"[ArtilleryByTagResult] Applying splash damage to '{splashTarget.DisplayName}'");
-
-        if (splashDamage > 0) {
-          DamageOrderUtility.ApplyDamageToAllLocations("ArtillerySplash", combat.StackManager.NextStackUID, combat.StackManager.NextStackUID, splashTarget, splashDamage, splashDamage, AttackDirection.FromArtillery, DamageType.Artillery);
-        }
-
-        if (splashHeatDamage > 0) {
-          DamageOrderUtility.ApplyHeatDamage(combat.StackManager.NextStackUID, splashTarget, splashHeatDamage);
-        }
-
-        if (splashStabilityDamage > 0) {
-          DamageOrderUtility.ApplyStabilityDamage(combat.StackManager.NextStackUID, splashTarget, splashStabilityDamage);
-        }
-      }
+      return splashTargets;
     }
 
     private Vector3 CalculateMissPosition(Vector3 targetPosition) {

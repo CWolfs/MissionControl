@@ -61,15 +61,15 @@ namespace MissionControl.Result {
 
         Main.LogDebug($"[ArtilleryResult] Checking region '{regionGuid}' for targets");
 
-        // Find all actors in the region
+        // Find all living actors in the region
         foreach (AbstractActor actor in combat.AllActors) {
-          if (actor.IsInRegion(regionGuid)) {
+          if (!actor.IsDead && actor.IsInRegion(regionGuid)) {
             allTargets.Add(actor);
             Main.LogDebug($"[ArtilleryResult] Found actor '{actor.DisplayName}' in region");
           }
         }
 
-        // Find all buildings in the region
+        // Find all living buildings in the region
         foreach (string buildingGuid in region.buildingGuidsInRegion) {
           ObstructionGameLogic obstruction = combat.ItemRegistry.GetItemByGUID<ObstructionGameLogic>(buildingGuid);
 
@@ -83,12 +83,17 @@ namespace MissionControl.Result {
 
             if (building == null) {
               Main.LogDebug($"[ArtilleryResult] No building rep for obstruction with guid [{buildingGuid}]");
-            } else {
+            } else if (!building.IsDead) {
               allTargets.Add(building);
               Main.LogDebug($"[ArtilleryResult] Found building in region");
             }
           }
         }
+      }
+
+      if (targetPositions.Count == 0) {
+        Main.Logger.LogWarning($"[ArtilleryResult] No valid regions found for artillery strike '{Name}', skipping");
+        return;
       }
 
       Main.LogDebug($"[ArtilleryResult] Artillery strike on {targetPositions.Count} positions with {allTargets.Count} targets");
