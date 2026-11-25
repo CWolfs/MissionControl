@@ -50,7 +50,11 @@ namespace MissionControl.EncounterFactories {
       destructibleGO.SetActive(false);
 
       // CreateColAndLODs(destructibleGO, propModelDef);
-      CreateDestructibleFlimsy(destructibleGO, PropFlimsyDef);
+      if (CreateDestructibleFlimsy(destructibleGO, PropFlimsyDef) == null) {
+        destructibleGO.transform.SetParent(null, false);
+        MonoBehaviour.Destroy(destructibleGO);
+        return null;
+      }
 
       DestructibleObject destructibleObject = destructibleGO.AddComponent<DestructibleObject>();
       destructibleObject.destructType = DestructibleObject.DestructType.flimsyGroup;
@@ -99,7 +103,11 @@ namespace MissionControl.EncounterFactories {
       destructibleObject.dependentPersistentFX = new List<GameObject>();
       destructibleObject.pieceSize = DestructibleObject.PieceSize.small; // TODO: Expose this
 
-      AttachFlimsyMesh(flimsyGO, propFlimsyDef);
+      if (!AttachFlimsyMesh(flimsyGO, propFlimsyDef)) {
+        flimsyGO.transform.SetParent(null, false);
+        MonoBehaviour.Destroy(flimsyGO);
+        return null;
+      }
       CalculateBounds(mf, boxCollider);
 
       flimsyGO.transform.localPosition = propFlimsyDef.Position;
@@ -113,7 +121,7 @@ namespace MissionControl.EncounterFactories {
       return flimsyGO;
     }
 
-    private void AttachFlimsyMesh(GameObject flimsyGO, PropDestructibleFlimsyDef flimsyDef) {
+    private bool AttachFlimsyMesh(GameObject flimsyGO, PropDestructibleFlimsyDef flimsyDef) {
       PropModelDef propModelDef = flimsyDef.GetPropModelDef();
       Mesh flimsyLOD0Mesh = null;
 
@@ -125,19 +133,19 @@ namespace MissionControl.EncounterFactories {
         if (flimsyLOD0Mesh == null) flimsyLOD0Mesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}");
 
         if (flimsyLOD0Mesh == null) {
-          Main.Logger.LogError("[BuildingFactory.AttachFlimsyMesh] Bundle LOD Mesh is null. It's possible LOD0, LOD1 and LOD2 might also be null. Check the names of the Meshes in the bundle match the Mesh in the MC PropModelDef");
+          Main.Logger.LogError("[DestructibleFactory.AttachFlimsyMesh] Bundle LOD Mesh is null. It's possible LOD0, LOD1 and LOD2 might also be null. Check the names of the Meshes in the bundle match the Mesh in the MC PropModelDef");
         } else {
-          Main.Logger.Log("[BuildingFactory.AttachFlimsyMesh] Bundle LOD Mesh is " + flimsyLOD0Mesh.name);
-        }
+          Main.Logger.Log("[DestructibleFactory.AttachFlimsyMesh] Bundle LOD Mesh is " + flimsyLOD0Mesh.name);
 
-        if (flimsyLOD0Mesh.name == propModelDef.MeshName) {
-          Main.Logger.Log($"[BuildingFactory.AttachFlimsyMesh] Found a flimsy base for '{propModelDef.Key}'");
+          if (flimsyLOD0Mesh.name == propModelDef.MeshName) {
+            Main.Logger.Log($"[DestructibleFactory.AttachFlimsyMesh] Found a flimsy base for '{propModelDef.Key}'");
 
-          // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
-          Mesh flimsyFormattedMesh = flimsyLOD0Mesh;
-          if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
-            flimsyFormattedMesh = CenterMeshPivot(flimsyLOD0Mesh);
-            flimsyLOD0Mesh = flimsyFormattedMesh;
+            // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
+            Mesh flimsyFormattedMesh = flimsyLOD0Mesh;
+            if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
+              flimsyFormattedMesh = CenterMeshPivot(flimsyLOD0Mesh);
+              flimsyLOD0Mesh = flimsyFormattedMesh;
+            }
           }
         }
       } else {
@@ -159,12 +167,18 @@ namespace MissionControl.EncounterFactories {
           if (mesh.name == $"{propModelDef.MeshName}_LOD0") flimsyLOD0Mesh = mesh;
         }
       }
+
+      if (flimsyLOD0Mesh == null) {
+        return false;
+      }
+
       MeshFilter flimsyLOD0MF = flimsyGO.GetComponent<MeshFilter>();
       MeshRenderer flimsyLOD0MR = flimsyGO.GetComponent<MeshRenderer>();
 
       Material[] materials = BuildMaterialsForRenderer(flimsyLOD0Mesh, propModelDef, propModelDef.Materials, placeholderMaterial);
       flimsyLOD0MR.materials = materials;
       flimsyLOD0MF.mesh = flimsyLOD0Mesh;
+      return true;
     }
   }
 }

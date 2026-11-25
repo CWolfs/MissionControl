@@ -328,7 +328,11 @@ namespace MissionControl.EncounterFactories {
       destructibleObject.dependentPersistentFX = new List<GameObject>();
       destructibleObject.pieceSize = DestructibleObject.PieceSize.small; // TODO: Expose this
 
-      AttachFlimsyMesh(flimsyGO, propFlimsyDef);
+      if (!AttachFlimsyMesh(flimsyGO, propFlimsyDef)) {
+        flimsyGO.transform.SetParent(null, false);
+        MonoBehaviour.Destroy(flimsyGO);
+        return;
+      }
       CalculateBounds(mf, boxCollider);
 
       flimsyGO.transform.localPosition = propFlimsyDef.Position;
@@ -369,7 +373,7 @@ namespace MissionControl.EncounterFactories {
     //   transform.localScale = scale;
     // }
 
-    private void AttachFlimsyMesh(GameObject flimsyGO, PropDestructibleFlimsyDef flimsyDef) {
+    private bool AttachFlimsyMesh(GameObject flimsyGO, PropDestructibleFlimsyDef flimsyDef) {
       PropModelDef propModelDef = flimsyDef.GetPropModelDef();
       Mesh flimsyLOD0Mesh = null;
 
@@ -384,16 +388,16 @@ namespace MissionControl.EncounterFactories {
           Main.Logger.LogError("[BuildingFactory.AttachFlimsyMesh] Bundle LOD Mesh is null. It's possible LOD0, LOD1 and LOD2 might also be null. Check the names of the Meshes in the bundle match the Mesh in the MC PropModelDef");
         } else {
           Main.Logger.Log("[BuildingFactory.AttachFlimsyMesh] Bundle LOD Mesh is " + flimsyLOD0Mesh.name);
-        }
 
-        if (flimsyLOD0Mesh.name == propModelDef.MeshName) {
-          Main.Logger.Log($"[BuildingFactory.AttachFlimsyMesh] Found a flimsy base for '{propModelDef.Key}'");
+          if (flimsyLOD0Mesh.name == propModelDef.MeshName) {
+            Main.Logger.Log($"[BuildingFactory.AttachFlimsyMesh] Found a flimsy base for '{propModelDef.Key}'");
 
-          // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
-          Mesh flimsyFormattedMesh = flimsyLOD0Mesh;
-          if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
-            flimsyFormattedMesh = CenterMeshPivot(flimsyLOD0Mesh);
-            flimsyLOD0Mesh = flimsyFormattedMesh;
+            // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
+            Mesh flimsyFormattedMesh = flimsyLOD0Mesh;
+            if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
+              flimsyFormattedMesh = CenterMeshPivot(flimsyLOD0Mesh);
+              flimsyLOD0Mesh = flimsyFormattedMesh;
+            }
           }
         }
       } else {
@@ -415,12 +419,18 @@ namespace MissionControl.EncounterFactories {
           if (mesh.name == $"{propModelDef.MeshName}_LOD0") flimsyLOD0Mesh = mesh;
         }
       }
+
+      if (flimsyLOD0Mesh == null) {
+        return false;
+      }
+
       MeshFilter flimsyLOD0MF = flimsyGO.GetComponent<MeshFilter>();
       MeshRenderer flimsyLOD0MR = flimsyGO.GetComponent<MeshRenderer>();
 
       Material[] materials = BuildMaterialsForRenderer(flimsyLOD0Mesh, propModelDef, propModelDef.Materials, placeholderMaterial);
       flimsyLOD0MR.materials = materials;
       flimsyLOD0MF.mesh = flimsyLOD0Mesh;
+      return true;
     }
 
     private void CreateGenericStaticDestruct(GameObject buildingGO) {
@@ -569,11 +579,11 @@ namespace MissionControl.EncounterFactories {
       Mesh mesh = shell.GetComponent<MeshFilter>().mesh;
       MeshRenderer mr = shell.GetComponent<MeshRenderer>();
 
-      Material[] shellMaterials = BuildMaterialsForRenderer(mesh, propModelDef, propModelDef.Materials.Where(mat => !mat.Name.Contains("glass") && !mat.Name.Contains("lights") && !mat.Name.Contains("decals")).ToList(), null);
+      Material[] shellMaterials = BuildMaterialsForRenderer(mesh, propModelDef, propModelDef.Materials.Where(mat => !mat.Name.Contains("glass") && !mat.Name.Contains("lights") && !mat.Name.Contains("decals")).ToList(), placeholderMaterial);
 
       Material[] shellMaterialToUse = new Material[mesh.subMeshCount];
       for (int i = 0; i < mesh.subMeshCount; i++) {
-        shellMaterialToUse[i] = shellMaterials[UnityEngine.Random.Range(0, shellMaterials.Length)];
+        shellMaterialToUse[i] = shellMaterials.Length > 0 ? shellMaterials[UnityEngine.Random.Range(0, shellMaterials.Length)] : placeholderMaterial;
       }
 
       mr.materials = shellMaterialToUse;

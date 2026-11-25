@@ -110,6 +110,9 @@ namespace MissionControl.ContractTypeBuilders {
               DestructibleFactory destructibleFactory = new DestructibleFactory(propDestructibleDef);
 
               GameObject destructibleGO = destructibleFactory.CreateDestructible(destructibleGroupGO, propDestructibleDef.Key);
+              if (destructibleGO == null) {
+                continue;
+              }
 
               if (position != null) {
                 SetPosition(destructibleGO, position, exactPosition: true);

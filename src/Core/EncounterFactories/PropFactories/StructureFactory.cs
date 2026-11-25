@@ -39,10 +39,6 @@ namespace MissionControl.EncounterFactories {
       CreateStructureGroup(structureParentGO, $"StructureGroup_{structureName}", guid, tags, teamGUID);
       structureParentGO.AddComponent<FacilityParent>();
 
-      if (structureParentGO != null) {
-        structureParentGO.transform.localScale = PropStructureDef.GetPropModelDef().Scale.Value;
-      }
-
       return structureParentGO;
     }
 
@@ -140,7 +136,11 @@ namespace MissionControl.EncounterFactories {
 
       BoxCollider boxCollider = flimsyGO.AddComponent<BoxCollider>();
 
-      AttachFlimsyMesh(flimsyGO, propFlimsyDef);
+      if (!AttachFlimsyMesh(flimsyGO, propFlimsyDef)) {
+        flimsyGO.transform.SetParent(null, false);
+        MonoBehaviour.Destroy(flimsyGO);
+        return;
+      }
       CalculateBounds(mf, boxCollider);
 
       flimsyGO.transform.localPosition = propFlimsyDef.Position;
@@ -153,7 +153,7 @@ namespace MissionControl.EncounterFactories {
       flimsyGO.SetActive(true);
     }
 
-    private void AttachFlimsyMesh(GameObject flimsyGO, PropDestructibleFlimsyDef flimsyDef) {
+    private bool AttachFlimsyMesh(GameObject flimsyGO, PropDestructibleFlimsyDef flimsyDef) {
       PropModelDef propModelDef = flimsyDef.GetPropModelDef();
       Mesh flimsyLOD0Mesh = null;
 
@@ -168,6 +168,14 @@ namespace MissionControl.EncounterFactories {
           Main.Logger.LogError("[StructureFactory.AttachFlimsyMesh] Bundle LOD Mesh is null. It's possible LOD0, LOD1 and LOD2 might also be null. Check the names of the Meshes in the bundle match the Mesh in the MC PropModelDef");
         } else {
           Main.Logger.Log("[StructureFactory.AttachFlimsyMesh] Bundle LOD Mesh is " + flimsyLOD0Mesh.name);
+
+          if (flimsyLOD0Mesh.name == propModelDef.MeshName) {
+            Main.Logger.Log($"[StructureFactory.AttachFlimsyMesh] Found a flimsy base for '{propModelDef.Key}'");
+
+            if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
+              flimsyLOD0Mesh = CenterMeshPivot(flimsyLOD0Mesh);
+            }
+          }
         }
       } else {
         foreach (Mesh mesh in allGameMeshes) {
@@ -188,12 +196,18 @@ namespace MissionControl.EncounterFactories {
           if (mesh.name == $"{propModelDef.MeshName}_LOD0") flimsyLOD0Mesh = mesh;
         }
       }
+
+      if (flimsyLOD0Mesh == null) {
+        return false;
+      }
+
       MeshFilter flimsyLOD0MF = flimsyGO.GetComponent<MeshFilter>();
       MeshRenderer flimsyLOD0MR = flimsyGO.GetComponent<MeshRenderer>();
 
       Material[] materials = BuildMaterialsForRenderer(flimsyLOD0Mesh, propModelDef, propModelDef.Materials, placeholderMaterial);
       flimsyLOD0MR.materials = materials;
       flimsyLOD0MF.mesh = flimsyLOD0Mesh;
+      return true;
     }
   }
 }

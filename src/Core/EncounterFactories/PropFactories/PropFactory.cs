@@ -39,6 +39,10 @@ namespace MissionControl.EncounterFactories {
       }
     }
 
+    public static bool IsCustomDestructionObject(GameObject obj) {
+      return obj != null && mcGenericStaticDestruct != null && obj.transform.IsChildOf(mcGenericStaticDestruct.transform);
+    }
+
     protected static string GenericStaticDestructName { get; set; } = "generic_static_destruct";
 
     // Rebuilt at start of custom contract type building and reset after the build has completed
@@ -130,7 +134,7 @@ namespace MissionControl.EncounterFactories {
         lods[1] = new LOD(lodRanges[1], lod1Renderers);
       }
 
-      if (lod2MR != null) {
+      if (lod1MR != null && lod2MR != null) {
         Renderer[] lod2Renderers = new Renderer[1];
         lod2Renderers[0] = lod2MR;
         lods[2] = new LOD(lodRanges[2], lod2Renderers);
@@ -161,6 +165,12 @@ namespace MissionControl.EncounterFactories {
     }
 
     protected Mesh CenterMeshPivot(Mesh oldMesh) {
+      if (oldMesh == null) return null;
+      if (!oldMesh.isReadable) {
+        Main.Logger.LogWarning($"[PropFactory.CenterMeshPivot] Mesh '{oldMesh.name}' is not readable; skipping pivot centering");
+        return oldMesh;
+      }
+
       Main.Logger.Log($"[BuildingFactory.AttachFlimsyMesh] Centering pivot on mesh");
 
       // Copy the mesh to not alter the original one
@@ -307,8 +317,8 @@ namespace MissionControl.EncounterFactories {
           Main.Logger.Log($"[PropFactory.CreateColAndLODs] No LOD1 mesh found under name '{propModelDef.MeshName}_LOD1' so skipping LOD1 GO build");
         }
 
-        if (buildingLOD2Mesh != null) {
-          Main.Logger.Log($"[PropFactory.CreateColAndLODs] Building LOD2 with mesh '{propModelDef.MeshName}_LOD1'");
+        if (buildingLOD1Mesh != null && buildingLOD2Mesh != null) {
+          Main.Logger.Log($"[PropFactory.CreateColAndLODs] Building LOD2 with mesh '{propModelDef.MeshName}_LOD2'");
 
           GameObject buildingLOD2GO = CreateGameObject(buildingGO, $"{buildingGO.name}_LOD2");
           MeshFilter buildingLOD2MF = buildingLOD2GO.AddComponent<MeshFilter>();
@@ -327,6 +337,8 @@ namespace MissionControl.EncounterFactories {
     }
 
     private void SetMaterialProperties(IBundleItem bundleItem, Material material, JObject materialProperties) {
+      if (materialProperties == null) return;
+
       foreach (KeyValuePair<string, JToken> kvPair in materialProperties) {
         string propertyNameAndType = kvPair.Key;
         string[] propertyNameAndTypeSplit = kvPair.Key.Split('.');
@@ -367,29 +379,45 @@ namespace MissionControl.EncounterFactories {
     }
 
     protected Material BuildMaterialForRenderer(Mesh mesh, IBundleItem bundleItem, PropMaterialDef materialDef) {
+      if (materialDef == null) return placeholderMaterial;
       return BuildMaterialsForRenderer(mesh, bundleItem, new List<PropMaterialDef> { materialDef }, placeholderMaterial)[0];
     }
 
     protected Material[] BuildMaterialsForRenderer(Mesh mesh, IBundleItem bundleItem, List<PropMaterialDef> materialDefs, Material placeholderMaterial) {
+      Material fallbackMaterial = placeholderMaterial ?? PropFactory.placeholderMaterial;
       Material[] materials = null;
       int meshSubcount = 1;
 
       if (mesh == null) {
         Main.Logger.Log("[PropFactory.BuildMaterialsForRenderer] No mesh provided. Decal usage mode. Using placeholder material");
-        materials = new Material[1] { placeholderMaterial };
+        materials = new Material[1] { fallbackMaterial };
       } else {
         Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] mesh.subMeshCount for '{mesh.name}' is '{mesh.subMeshCount}'");
         materials = new Material[mesh.subMeshCount];
         meshSubcount = mesh.subMeshCount;
       }
 
+      if (materialDefs == null || materialDefs.Count == 0) {
+        Main.Logger.LogWarning($"[PropFactory.BuildMaterialsForRenderer] No material definitions supplied for mesh '{mesh?.name ?? "null"}'. Using placeholder material.");
+        for (int i = 0; i < meshSubcount; i++) {
+          materials[i] = fallbackMaterial;
+        }
+        return materials;
+      }
+
       for (int i = 0; i < meshSubcount; i++) {
-        if (i >= materialDefs.Count) {
-          Main.Logger.LogWarning($"[PropFactory.BuildMaterialsForRenderer] Not enough supplied material identifiers in prop data to use for submesh '{i}' for mesh '{mesh.name}'. Duplicating existing mat references.");
-          materialDefs.Add(materialDefs[UnityEngine.Random.Range(0, materialDefs.Count)]);
+        PropMaterialDef propMaterialDef;
+        if (i < materialDefs.Count) {
+          propMaterialDef = materialDefs[i];
+        } else {
+          Main.Logger.LogWarning($"[PropFactory.BuildMaterialsForRenderer] Not enough supplied material identifiers in prop data to use for submesh '{i}' for mesh '{mesh?.name ?? "null"}'. Duplicating existing mat references.");
+          propMaterialDef = materialDefs[UnityEngine.Random.Range(0, materialDefs.Count)];
         }
 
-        PropMaterialDef propMaterialDef = materialDefs[i];
+        if (propMaterialDef == null) {
+          materials[i] = fallbackMaterial;
+          continue;
+        }
 
         if (propMaterialDef.Shader != null) {
           Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Shader provided for PropMaterialDef '{propMaterialDef.Name}' so building Material with specific shader '{propMaterialDef.Shader}' and MaterialProperties '{propMaterialDef.MaterialProperties}'");
@@ -410,14 +438,17 @@ namespace MissionControl.EncounterFactories {
 
             // Otherwise look for Shader in game
             if (shader == null) shader = Shader.Find(propMaterialDef.Shader);
-            if (shader == null) Main.Logger.LogError("[PropFactory.BuildMaterialsForRenderer] Couldn't find Shader in bundle or game data for PropMaterialDef " + propMaterialDef.Name + ". It's possible this Map does not have it loaded in memory.");
+            if (shader == null) {
+              Main.Logger.LogError("[PropFactory.BuildMaterialsForRenderer] Couldn't find Shader in bundle or game data for PropMaterialDef " + propMaterialDef.Name + ". It's possible this Map does not have it loaded in memory.");
+              material = fallbackMaterial;
+            } else {
+              material = new Material(shader);
+              material.name = propMaterialDef.Name;
+              JObject materialProperties = propMaterialDef.MaterialProperties;
+              SetMaterialProperties(bundleItem, material, materialProperties);
 
-            material = new Material(shader);
-            material.name = propMaterialDef.Name;
-            JObject materialProperties = propMaterialDef.MaterialProperties;
-            SetMaterialProperties(bundleItem, material, materialProperties);
-
-            MissionControl.Instance.GeneratedMaterials.Add(propMaterialDef.Name, material);
+              MissionControl.Instance.GeneratedMaterials.Add(propMaterialDef.Name, material);
+            }
           }
 
           materials[i] = material;
@@ -454,8 +485,8 @@ namespace MissionControl.EncounterFactories {
           if (mat != null) Main.Logger.Log("[PropFactory.BuildMaterialsForRenderer] Found Material in bundle " + mat.name + " after looking for: " + propMaterialDef.Name);
 
           // Otherwise look at all game Materials
-          if (mat == null) mat = matLookup.ContainsKey(propMaterialDef.Name) ? matLookup[propMaterialDef.Name] : placeholderMaterial;
-          Main.Logger.Log("[PropFactory.BuildMaterialsForRenderer] Using Material " + mat.name + " after looking for: " + propMaterialDef.Name);
+          if (mat == null) mat = matLookup.ContainsKey(propMaterialDef.Name) ? matLookup[propMaterialDef.Name] : fallbackMaterial;
+          Main.Logger.Log("[PropFactory.BuildMaterialsForRenderer] Using Material " + (mat != null ? mat.name : "null") + " after looking for: " + propMaterialDef.Name);
 
           materials[i] = mat;
         }
