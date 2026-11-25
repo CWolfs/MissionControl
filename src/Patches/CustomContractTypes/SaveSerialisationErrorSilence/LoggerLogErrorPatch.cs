@@ -9,7 +9,7 @@ namespace MissionControl.Patches {
   [HarmonyPatch("LogError")]
   [HarmonyPatch(new Type[] { typeof(object) })]
   public class LoggerLogErrorPatch {
-    static bool Prefix(Logger __instance, object message) {
+    static bool Prefix(object message) {
       if (message is string) {
         if (MissionControl.Instance.IsCustomContractType) {
           string exceptionMessage = (string)message;
