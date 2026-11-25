@@ -31,23 +31,7 @@ namespace MissionControl.EncounterNodes.ContractEdits {
     }
 
     private void SwapTeamFactions() {
-      Contract contract = MissionControl.Instance.CurrentContract;
-      FactionValue faction1 = contract.GetTeamFaction(team1Guid);
-      FactionValue faction2 = contract.GetTeamFaction(team2Guid);
-      int originalFaction1Id = faction1.ID;
-      int originalFaction2Id = faction2.ID;
-
-      Main.LogDebug($"[SwapTeamFactionGameLogic.SwapTeamFactions] Swapping factions '{team1Guid}:{faction1.Name}' with '{team2Guid}:{faction2.Name}'");
-      TeamOverride employer = contract.Override.employerTeam;
-      TeamOverride target = contract.Override.targetTeam;
-
-      contract.Override.employerTeam = target;
-      contract.Override.targetTeam = employer;
-
-      MissionControl.Instance.CurrentContract.SetTeamFaction(team1Guid, originalFaction2Id);
-      MissionControl.Instance.CurrentContract.SetTeamFaction(team2Guid, originalFaction1Id);
-
-      contract.Override.RunMadLibs(UnityGameInstance.BattleTechGame.DataManager);
+      TeamUtils.SwapTeamFactions(MissionControl.Instance.CurrentContract, team1Guid, team2Guid);
     }
 
     public override void FromJSON(string json) {
