@@ -80,6 +80,13 @@
         "EncounterObjectGuid": "ed007c52-f4cb-4bfc-842a-a50454d8a82a"
       },
       "enableChunkFromContract": false
+    },
+    {
+      "name": "Chunk_DisablePilotDeath",
+      "encounterChunk": {
+        "EncounterObjectGuid": "953a5930-06d0-4a2d-9840-e9a70c2a63ea"
+      },
+      "enableChunkFromContract": true
     }
   ],
   "cameraFocusHelperList": [
@@ -94,13 +101,6 @@
       "encounterObject": {
         "EncounterObjectGuid": "f426f0dc-969d-477d-81a9-d02f9e1eff79"
       }
-    },
-    {
-      "name": "Chunk_DisablePilotDeath",
-      "encounterChunk": {
-        "EncounterObjectGuid": "953a5930-06d0-4a2d-9840-e9a70c2a63ea"
-      },
-      "enableChunkFromContract": true
     }
   ],
   "dialogueList": [

@@ -25,7 +25,7 @@ namespace MissionControl.Patches {
       return true;
     }
 
-    static void Postfix(Pilot __instance) {
+    static void Postfix() {
       MissionControl.Instance.RemoveGameLogicData(DisablePilotDeathGameLogic.DISABLE_PILOT_DEATH);
       MissionControl.Instance.RemoveGameLogicData(DisablePilotDeathGameLogic.DISABLE_PILOT_INJURY);
     }
