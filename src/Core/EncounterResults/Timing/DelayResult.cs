@@ -47,6 +47,11 @@ namespace MissionControl.Result {
     }
 
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
+      if (activated || completed) {
+        Main.LogDebug($"[DelayResult] Ignoring re-trigger of '{Name}' (activated={activated}, completed={completed})");
+        return;
+      }
+
       Main.LogDebug($"[DelayResult] Delaying '{Name}' results for '{Time}' seconds, '{Rounds}' rounds and/or '{Phases}' phases");
       activated = true;
       SubscribeToMessages(true);
