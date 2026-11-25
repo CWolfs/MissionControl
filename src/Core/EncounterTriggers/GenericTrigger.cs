@@ -76,7 +76,16 @@ namespace MissionControl.Trigger {
       trigger.AlwaysInit(MissionControl.Instance.EncounterLayerData.Combat);
       trigger.ContractInitialize(MissionControl.Instance.EncounterLayerData);
 
-      trigger.OnMessage(null);
+      if (trigger.Evaluate(null)) {
+        Main.LogDebug($"[GenericTrigger.BuildAndRunImmediately] Conditional passed for '{this.name}', firing {trigger.resultList.Count} result(s)");
+        trigger.triggered = true;
+
+        if (trigger.resultList != null) {
+          for (int i = 0; i < trigger.resultList.Count; i++) {
+            trigger.resultList[i].Trigger(null, trigger.designName);
+          }
+        }
+      }
 
       return trigger;
     }
