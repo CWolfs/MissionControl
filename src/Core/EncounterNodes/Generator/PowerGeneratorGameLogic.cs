@@ -82,7 +82,25 @@ namespace MissionControl.EncounterNodes.Generator {
       List<ITaggedItem> validPowerConsumers = Combat.ItemRegistry.GetObjectsWithTagSet(PowerConsumersTags);
       Main.LogDebug($"[PowerGeneratorGameLogic.DisablePowerConsumers] Found '{validPowerConsumers.Count}' valid power consumers for tags '{PowerConsumersTags}'.");
 
-      Main.LogDebugWarning($"[PowerGeneratorGameLogic.DisablePowerConsumers] Disabling power consumers not supported yet.");
+      foreach (ITaggedItem powerConsumer in validPowerConsumers) {
+        AbstractActor actor = powerConsumer as AbstractActor;
+
+        if (actor == null) {
+          Main.Logger.LogWarning($"[PowerGeneratorGameLogic.DisablePowerConsumers] Power consumer '{powerConsumer.DisplayName}' on '{name}' is not a unit so it can't be disabled. Only turrets and vehicles are supported.");
+          continue;
+        }
+
+        if (actor is Mech) {
+          Main.Logger.LogWarning($"[PowerGeneratorGameLogic.DisablePowerConsumers] Power consumer '{actor.DisplayName}' on '{name}' is a mech so it can't be disabled. Only turrets and vehicles are supported.");
+          continue;
+        }
+
+        if (actor.IsDead || actor.IsFlaggedForDeath || actor.IsShutDown) continue;
+
+        Main.LogDebug($"[PowerGeneratorGameLogic.DisablePowerConsumers] Disabling power consumer '{actor.DisplayName}'.");
+        actor.IsShutDown = true;
+        Combat.MessageCenter.PublishMessage(new FloatieMessage(GeneratorBuilding.GUID, actor.GUID, "POWER LOST", FloatieMessage.MessageNature.Debuff));
+      }
     }
 
     public override string ToJSON() {
