@@ -66,6 +66,11 @@ namespace MissionControl.Config {
       return (int)token;
     }
 
+    public float GetFloat(string path) {
+      JToken token = Properties.SelectToken(path);
+      return (float)token;
+    }
+
     public List<T> GetList<T>(string path) {
       JToken token = Properties.SelectToken(path);
       return token.ToObject<List<T>>();

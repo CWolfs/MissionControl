@@ -439,7 +439,7 @@ namespace MissionControl.Rules {
 
       // Allow contract-specific settings overrides to force their respective setting
       if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.ExtendedBoundaries_IncreaseBoundarySizeByPercentage)) {
-        size = Main.Settings.ActiveContractSettings.GetInt(ContractSettingsOverrides.ExtendedBoundaries_IncreaseBoundarySizeByPercentage);
+        size = Main.Settings.ActiveContractSettings.GetFloat(ContractSettingsOverrides.ExtendedBoundaries_IncreaseBoundarySizeByPercentage);
         Main.Logger.Log($"[{this.GetType().Name}] Using contract-specific settings override for contract '{MissionControl.Instance.CurrentContract.Name}'. IncreaseBoundarySizeByPercentage will be '{size}'.");
       }
 
