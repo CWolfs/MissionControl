@@ -7,7 +7,6 @@ namespace MissionControl.Result {
   public class SetRelationshipResult : EncounterResult {
     public static string RELATIONSHIP_DATA_PREFIX = "SET_RELATIONSHIP_";
     public static string RELATIONSHIP_COUNTER = "SET_RELATIONSHIP_COUNTER";
-    private static int relationshipCounter = 0;
 
     public string[] Teams { get; set; } // Team names like "Player1", "Employer", etc.
     public string Relationship { get; set; }
@@ -21,16 +20,6 @@ namespace MissionControl.Result {
         Main.Logger.LogError("[SetRelationshipResult] TargetTeam is required but was not specified!");
         return;
       }
-
-      // Get and increment counter
-      string counterStr = MissionControl.Instance.GetGameLogicData(RELATIONSHIP_COUNTER);
-      if (counterStr != null) {
-        _ = int.TryParse(counterStr, out relationshipCounter);
-      }
-      relationshipId = $"{RELATIONSHIP_DATA_PREFIX}{relationshipCounter}";
-      MissionControl.Instance.SetGameLogicData(RELATIONSHIP_COUNTER, (relationshipCounter + 1).ToString());
-
-      Main.LogDebug($"[SetRelationshipResult] Setting relationship '{Relationship}' to target '{TargetTeam}' with ID '{relationshipId}'");
 
       // Handle special ALL keywords, otherwise resolve to actual team GUID
       string targetTeamGuid;
@@ -68,6 +57,17 @@ namespace MissionControl.Result {
         Main.Logger.LogError("[SetRelationshipResult] No valid teams found!");
         return;
       }
+
+      // Get and increment counter only after validation succeeds
+      int relationshipCounter = 0;
+      string counterStr = MissionControl.Instance.GetGameLogicData(RELATIONSHIP_COUNTER);
+      if (counterStr != null) {
+        _ = int.TryParse(counterStr, out relationshipCounter);
+      }
+      relationshipId = $"{RELATIONSHIP_DATA_PREFIX}{relationshipCounter}";
+      MissionControl.Instance.SetGameLogicData(RELATIONSHIP_COUNTER, (relationshipCounter + 1).ToString());
+
+      Main.LogDebug($"[SetRelationshipResult] Setting relationship '{Relationship}' to target '{TargetTeam}' with ID '{relationshipId}'");
 
       // Store relationship data
       StoreRelationshipData("TEAM", string.Join(",", teamGuids), targetTeamGuid);
