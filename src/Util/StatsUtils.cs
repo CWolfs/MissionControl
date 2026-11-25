@@ -8,10 +8,10 @@ public static class StatsUtils {
     StatCollection stats = null;
 
     switch (scope) {
-      case "Commander": stats = simGame.CommanderStats; break;
-      case "Company": stats = simGame.CompanyStats; break;
-      case "System": stats = simGame.CurSystem?.Stats; break;
-      case "Flashpoint": stats = simGame.ActiveFlashpoint?.Stats; break;
+      case "Commander": stats = simGame?.CommanderStats; break;
+      case "Company": stats = simGame?.CompanyStats; break;
+      case "System": stats = simGame?.CurSystem?.Stats; break;
+      case "Flashpoint": stats = simGame?.ActiveFlashpoint?.Stats; break;
       case "Encounter": stats = MissionControl.MissionControl.Instance.EncounterStats; break;
       default: MissionControl.Main.Logger.LogWarning($"[StatsUtils.GetStats] Unknown scope provided of '{scope}'"); break;
     }

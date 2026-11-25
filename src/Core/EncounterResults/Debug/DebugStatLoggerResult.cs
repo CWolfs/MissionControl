@@ -19,6 +19,7 @@ namespace MissionControl.Result {
 
       if (stats == null) {
         Main.Logger.LogWarning($"[DebugStatLoggerResult] Stat collection with scope '{Scope}' could not be found. Maybe there is no active flashpoint or no current system if it's trying to get that.");
+        return;
       }
 
       if (Key == "All") {
@@ -31,7 +32,7 @@ namespace MissionControl.Result {
       } else {
         if (stats.ContainsStatistic(Key)) {
           Statistic stat = stats.GetStatistic(Key);
-          Main.LogDebug($"[DebugStatLoggerResult][Scope: '{Scope}'] Key: '{Key} Value: '{stat.CurrentValue.objVal.ToString()}'");
+          Main.LogDebug($"[DebugStatLoggerResult][Scope: '{Scope}'] Key: '{Key} Value: '{stat.CurrentValue?.objVal?.ToString()}'");
         } else {
           Main.Logger.LogWarning($"[DebugStatLoggerResult] Stat with key '{Key}' could not be found in scope '{Scope}'");
         }

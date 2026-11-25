@@ -16,6 +16,7 @@ namespace MissionControl.Result {
 
       if (tags == null) {
         Main.Logger.LogWarning($"[DebugTagLoggerResult] TagSet with scope '{Scope}' could not be found. Maybe there is no active flashpoint or no current system if it's trying to get that.");
+        return;
       }
 
       if (Key == "All") {

@@ -12,8 +12,9 @@ namespace MissionControl.Result {
     public string Tag { get; set; }
 
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
-      Main.LogDebug($"[SetStatResult] Triggering for Scope '{Scope}' Operation '{Operation}' Tag '{Tag}'");
+      Main.LogDebug($"[SetTagResult] Triggering for Scope '{Scope}' Operation '{Operation}' Tag '{Tag}'");
       TagSet tags = TagUtils.GetTagSet(Scope);
+      if (tags == null) return;
 
       switch (Operation) {
         case TagOperation.Add: tags.Add(Tag); break;

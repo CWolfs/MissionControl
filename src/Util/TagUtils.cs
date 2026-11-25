@@ -10,10 +10,10 @@ public static class TagUtils {
     TagSet tags = null;
 
     switch (scope) {
-      case "Commander": tags = simGame.CommanderTags; break;
-      case "Company": tags = simGame.CompanyTags; break;
-      case "System": tags = simGame.CurSystem?.Tags; break;
-      case "Flashpoint": tags = simGame.ActiveFlashpoint?.Tags; break;
+      case "Commander": tags = simGame?.CommanderTags; break;
+      case "Company": tags = simGame?.CompanyTags; break;
+      case "System": tags = simGame?.CurSystem?.Tags; break;
+      case "Flashpoint": tags = simGame?.ActiveFlashpoint?.Tags; break;
       case "Encounter": tags = MissionControl.MissionControl.Instance.EncounterTags; break;
       default: MissionControl.Main.Logger.LogWarning($"[TagUtils.GetTagSet] Unknown scope provided of '{scope}'"); break;
     }

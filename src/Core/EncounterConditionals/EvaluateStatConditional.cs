@@ -1,3 +1,5 @@
+using System.Globalization;
+
 using BattleTech;
 using BattleTech.Framework;
 
@@ -16,6 +18,7 @@ namespace MissionControl.Conditional {
 
       Main.LogDebug($"[EvaluateStatConditional] Evaluating Scope '{Scope}' Key '{Key}' DataType '{DataType}' Operation '{Operation}' Value '{Value}'");
       StatCollection stats = StatsUtils.GetStats(Scope);
+      if (stats == null) return false;
       if (stats.ContainsStatistic(Key)) {
         switch (DataType) {
           case DataType.String: return EvaluateStringStat(stats);
@@ -99,7 +102,7 @@ namespace MissionControl.Conditional {
     private bool EvaluateFloatStat(StatCollection stats) {
       float statValue = stats.GetValue<float>(Key);
       float testValue = 0;
-      bool success = float.TryParse(Value, out testValue);
+      bool success = float.TryParse(Value, NumberStyles.Float, CultureInfo.InvariantCulture, out testValue);
 
       if (!success) {
         Main.Logger.LogError($"[EvaluateStatConditional.EvaluateFloatStat] The incoming Value '{Value}' is not a valid float.");

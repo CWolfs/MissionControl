@@ -16,6 +16,7 @@ namespace MissionControl.Conditional {
 
       Main.LogDebug($"[EvaluateTagConditional] Evaluating Scope '{Scope}' Operation '{Operation}' Tag '{Tag}'");
       TagSet tags = TagUtils.GetTagSet(Scope);
+      if (tags == null) return false;
 
       switch (Operation) {
         case ExistsOperation.IsSet: return tags.Contains(Tag);
