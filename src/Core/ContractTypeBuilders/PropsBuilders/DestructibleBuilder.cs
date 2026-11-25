@@ -59,6 +59,7 @@ namespace MissionControl.ContractTypeBuilders {
 
               if (!DataManager.Instance.BuildingDefs.ContainsKey(buildingKey)) {
                 Main.Logger.LogError($"[DestructibleBuilder.Build] No building exists with key '{buildingKey}'. Check a PropBuildingDef exists with that key in the 'props/buildings' folder");
+                continue;
               }
 
               PropBuildingDef propBuildingDef = DataManager.Instance.BuildingDefs[buildingKey];
@@ -89,6 +90,7 @@ namespace MissionControl.ContractTypeBuilders {
 
               if (!DataManager.Instance.DestructibleDefs.ContainsKey(destructibleKey)) {
                 Main.Logger.LogError($"[DestructibleBuilder.Build] No destructible exists with key '{destructibleKey}'. Check a PropDestructionDef exists with that key in the 'props/destructible' folder");
+                continue;
               }
 
               PropDestructibleFlimsyDef propDestructibleDef = DataManager.Instance.DestructibleDefs[destructibleKey];

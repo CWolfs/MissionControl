@@ -35,12 +35,12 @@
       "AllowModelMeshOffsets": false
     },
     {
-      "Key": "GearStraightShortVariantA",
+      "Key": "GearStraightShortVariantA1",
       "Position": { "x": -6.75, "y": 3.5, "z": 1.86 },
       "AllowModelMeshOffsets": false
     },
     {
-      "Key": "GearStraightShortVariantB",
+      "Key": "GearStraightShortVariantB1",
       "Position": { "x": -6.75, "y": 3.5, "z": -2.08 },
       "AllowModelMeshOffsets": false
     },

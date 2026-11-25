@@ -412,7 +412,7 @@ namespace MissionControl.EncounterFactories {
         destructSplit = GameObject.Instantiate(destructSplitPrefab, Vector3.zero, new Quaternion(), buildingGO.transform);
         LayerTools.SetLayerRecursively(destructSplit, 8);
 
-        foreach (GameObject splitPiece in destructSplit.transform) {
+        foreach (Transform splitPiece in destructSplit.transform) {
           // Apply Material
           // FIXME: This is a hack that reuses the materials of the original model and only assigns the first sequential materials from that original mesh into the splits
           // FIXME: This will result in some split pieces having the wrong material but it's only intended as a placeholder for now until I figure out what to do with this usecase
@@ -420,7 +420,10 @@ namespace MissionControl.EncounterFactories {
           //  - user custom bundled
           //  - original vanilla extracted and bundled
           Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef, PropBuildingDef.GetPropModelDef().Materials, placeholderMaterial);
-          splitPiece.GetComponent<MeshRenderer>().materials = materials;
+          MeshRenderer splitRenderer = splitPiece.GetComponent<MeshRenderer>();
+          if (splitRenderer != null) {
+            splitRenderer.materials = materials;
+          }
         }
       } else {
         // Split
