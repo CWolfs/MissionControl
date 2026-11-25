@@ -36,7 +36,9 @@ namespace MissionControl.ContractTypeBuilders {
       string teamGuid1 = objective["TeamGuid1"].ToString();
       string teamGuid2 = objective["TeamGuid2"].ToString();
 
-      SwapTeamFactionGameLogic swapFactionGameLogic = ContractEditFactory.CreateSwapFaction(this.parent, this.name, Guid.NewGuid().ToString(), teamGuid1, teamGuid2);
+      string guid = objective.ContainsKey("Guid") ? objective["Guid"].ToString() : Guid.NewGuid().ToString();
+
+      SwapTeamFactionGameLogic swapFactionGameLogic = ContractEditFactory.CreateSwapFaction(this.parent, this.name, guid, teamGuid1, teamGuid2);
     }
   }
 }
