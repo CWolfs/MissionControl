@@ -8,9 +8,7 @@ namespace MissionControl.Patches {
   [HarmonyPatch(typeof(ObjectiveGameLogic), "ApplyContractOverride")]
   public static class ObjectiveGameLogicApplyContractOverridePatch {
     public static void Postfix(ObjectiveOverride objectiveOverride, ref bool ___primary) {
-      if (Main.Settings.Misc.LanceSelectionDivergenceOverride.Enable) {
-        ___primary = objectiveOverride.isPrimary;
-      }
+      ___primary = objectiveOverride.isPrimary;
     }
   }
 }
