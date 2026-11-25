@@ -29,7 +29,7 @@ namespace MissionControl.Logic {
 
     private int AttemptCountMax { get; set; } = 3;
     private int AttemptCount { get; set; } = 0;
-    private int TotalAttemptMax { get; set; } = 3;
+    private int TotalAttemptMax { get; set; } = 9;
     private int TotalAttemptCount { get; set; } = 0;
 
     public SpawnObjectsAroundTarget(EncounterRules encounterRules, string objectKey, string orientationTargetKey, LookDirection lookDirection) : base(encounterRules) {
@@ -102,7 +102,7 @@ namespace MissionControl.Logic {
 
         if (!orientationTargets.ContainsKey(orientationTargetKey) || orientationTargets[orientationTargetKey] == null) {
           Main.Logger.LogError($"[SpawnObjectsAroundTarget] Orientation target with key '{orientationTargetKey}' does not exist. This is required for this spawner to work correctly.");
-          return;
+          continue;
         }
 
         GameObject orientationTarget = orientationTargets[orientationTargetKey];
@@ -116,9 +116,11 @@ namespace MissionControl.Logic {
       SaveSpawnPosition(objectGo);
 
       Vector3 validOrientationTargetPosition = GetValidOrientationTargetPosition(orientationTarget);
+      float currentMinDistance = minDistanceFromTarget;
+      float currentMaxDistance = maxDistanceFromTarget;
 
       while (TotalAttemptCount < TotalAttemptMax) {
-        Vector3 newSpawnPosition = GetRandomPositionFromTarget(validOrientationTargetPosition, minDistanceFromTarget, maxDistanceFromTarget);
+        Vector3 newSpawnPosition = GetRandomPositionFromTarget(validOrientationTargetPosition, currentMinDistance, currentMaxDistance);
         newSpawnPosition = GetClosestValidPathFindingHex(objectGo, newSpawnPosition, $"NewRandomSpawnPositionFromOrientationTarget.{orientationTarget.name}", 2);
 
         if (MissionControl.Instance.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
@@ -139,7 +141,7 @@ namespace MissionControl.Logic {
           Main.LogDebugWarning("[SpawnObjectsAroundTarget] Selected object spawn point is outside of the boundary. Select a new object spawn point.");
         }
 
-        CheckAttempts();
+        CheckAttempts(ref currentMinDistance, ref currentMaxDistance);
       }
 
       Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] Could not find a valid spawn for '{objectGo.name}' after '{TotalAttemptCount}' attempts. Restoring its original position.");
@@ -161,16 +163,16 @@ namespace MissionControl.Logic {
       return validOrientationTargetPosition;
     }
 
-    private void CheckAttempts() {
+    private void CheckAttempts(ref float currentMinDistance, ref float currentMaxDistance) {
       AttemptCount++;
       TotalAttemptCount++;
 
-      if (AttemptCount > AttemptCountMax) {
+      if (AttemptCount >= AttemptCountMax && TotalAttemptCount < TotalAttemptMax) {
         AttemptCount = 0;
-        Main.LogDebug($"[SpawnObjectsAroundTarget] Cannot find a suitable object spawn within the boundaries of {minDistanceFromTarget} and {maxDistanceFromTarget}. Widening search");
-        minDistanceFromTarget -= 10;
-        if (minDistanceFromTarget <= 10) minDistanceFromTarget = 10;
-        maxDistanceFromTarget += 25;
+        Main.LogDebug($"[SpawnObjectsAroundTarget] Cannot find a suitable object spawn within the boundaries of {currentMinDistance} and {currentMaxDistance}. Widening search");
+        currentMinDistance -= 10;
+        if (currentMinDistance <= 10) currentMinDistance = 10;
+        currentMaxDistance += 25;
       }
     }
 
@@ -188,6 +190,10 @@ namespace MissionControl.Logic {
 
       if (state != null) {
         List<string[]> extraLanceKeys = (List<string[]>)state.GetObject("ExtraLanceSpawnKeys");
+        if (extraLanceKeys == null) {
+          Main.Logger.LogWarning("[SpawnObjectsAroundTarget] ExtraLanceSpawnKeys was not found in state.");
+          return false;
+        }
         for (int i = 0; i < extraLanceKeys.Count; i++) {
           string[] keys = extraLanceKeys[i];
 
@@ -215,7 +221,7 @@ namespace MissionControl.Logic {
 
               GameObject orientationObjectKeyGO = GameObject.Find(orientationObjectKey.Substring(orientationObjectKey.IndexOf(".") + 1));
               if (orientationObjectKeyGO == null) {
-                Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] GameObject for orientation target with key '{orientationObjectKeyGO}' was not found. This is unexpected.");
+                Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] GameObject for orientation target with key '{orientationObjectKey}' was not found. This is unexpected.");
                 continue;
               }
 
