@@ -26,12 +26,10 @@ namespace MissionControl.EncounterFactories {
       if (contractObjectiveGuid != null) {
         ContractObjectiveGameLogic contractObjectiveGameLogic = MissionControl.Instance.EncounterLayerData.GetContractObjectiveGameLogicByGUID(contractObjectiveGuid);
 
-        if (contractObjectiveGuid == null) {
-          Main.Logger.LogWarning($"[MissionControl.ObjectiveFactory] [{objectiveGameLogic.Name}] Contract objective of GUID '{contractObjectiveGuid}' could not be found. If you want the objective to be linked to a contract objective you need to specify the GUID and ensure the contract override (contract json) sets the same GUID under the 'contractObjectiveList' section");
-        }
-
         if (contractObjectiveGuid == "") {
           Main.Logger.LogWarning($"[MissionControl.ObjectiveFactory] [{objectiveGameLogic.Name}] Contract objective of GUID was empty so it cannot link to a contract object. If you want the objective to be linked to a contract objective you need to specify the GUID and ensure the contract override (contract json) sets the same GUID under the 'contractObjectiveList' section");
+        } else if (contractObjectiveGameLogic == null) {
+          Main.Logger.LogWarning($"[MissionControl.ObjectiveFactory] [{objectiveGameLogic.Name}] Contract objective of GUID '{contractObjectiveGuid}' could not be found. If you want the objective to be linked to a contract objective you need to specify the GUID and ensure the contract override (contract json) sets the same GUID under the 'contractObjectiveList' section");
         }
 
         ObjectiveRef objectiveRef = new ObjectiveRef(objectiveGameLogic);
@@ -53,8 +51,10 @@ namespace MissionControl.EncounterFactories {
       GameObject emptyObjectiveGo = CreateGameObject(parent, objectName);
 
       EmptyObjectiveObjective emptyObjective = emptyObjectiveGo.AddComponent<EmptyObjectiveObjective>();
+      emptyObjective.encounterObjectGuid = objectiveGuid;
       emptyObjective.title = title;
       emptyObjective.description = description;
+      emptyObjective.primary = isPrimaryObjectve;
       emptyObjective.priority = priority;
       emptyObjective.displayToUser = displayToUser;
 
@@ -134,7 +134,7 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static OccupyRegionObjective CreateOccupyRegionObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string requiredLanceSpawnerGuid, string regionGameLogicGuid,
-    string objectName, string title, bool isPrimaryObjectve, string progressFormat, string description, int numberOfUnitsToOccupy, int durationToOccupy, DurationType durationType, bool useDropship, string[] requiredTagsOnUnit, string[] requiredTagsOnOpposingUnits) {
+    string objectName, string title, bool isPrimaryObjectve, string progressFormat, string description, int numberOfUnitsToOccupy, int durationToOccupy, DurationType durationType, bool useDropship, string[] requiredTagsOnUnit, string[] requiredTagsOnOpposingUnits, int priority = 3, bool displayToUser = true) {
       GameObject occupyRegionObjectiveGo = CreateGameObject(parent, objectName);
 
       OccupyRegionObjective occupyRegionObjective = occupyRegionObjectiveGo.AddComponent<OccupyRegionObjective>();
@@ -167,8 +167,8 @@ namespace MissionControl.EncounterFactories {
       occupyRegionObjective.showProgress = true;
       occupyRegionObjective.progressFormat = progressFormat;
       occupyRegionObjective.description = description;
-      occupyRegionObjective.priority = 3;
-      occupyRegionObjective.displayToUser = true;
+      occupyRegionObjective.priority = priority;
+      occupyRegionObjective.displayToUser = displayToUser;
       occupyRegionObjective.checkObjectiveFlag = false;
       occupyRegionObjective.useBeacon = true;
       occupyRegionObjective.markUnitsWith = ObjectiveMark.None;
@@ -180,14 +180,14 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static DefendXUnitsObjective CreateDefendXUnitsObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, bool isPrimaryObjectve, int priority,
-      string progressFormat, string description, string[] requiredTagsOnUnit, int numberOfUnitsToDefend, int durationToDefend, DurationType durationType) {
+      string progressFormat, string description, string[] requiredTagsOnUnit, int numberOfUnitsToDefend, int durationToDefend, DurationType durationType, bool displayToUser = true) {
 
       GameObject defendXUnitsObjectiveGo = CreateGameObject(parent, objectName);
 
       DefendXUnitsObjective defendXUnitsObjective = defendXUnitsObjectiveGo.AddComponent<DefendXUnitsObjective>();
       defendXUnitsObjective.title = defendXUnitsObjectiveGo.name;
       defendXUnitsObjective.encounterObjectGuid = objectiveGuid;
-      defendXUnitsObjective.requiredTagsOnUnit = new TagSet(requiredTagsOnUnit);
+      defendXUnitsObjective.requiredTagsOnUnit = (requiredTagsOnUnit == null) ? new TagSet() : new TagSet(requiredTagsOnUnit);
 
       defendXUnitsObjective.numberOfUnitsToDefend = numberOfUnitsToDefend;
       defendXUnitsObjective.durationToOccupy = durationToDefend;
@@ -201,7 +201,7 @@ namespace MissionControl.EncounterFactories {
 
       defendXUnitsObjective.primary = isPrimaryObjectve;
 
-      defendXUnitsObjective.displayToUser = true;
+      defendXUnitsObjective.displayToUser = displayToUser;
       defendXUnitsObjective.checkObjectiveFlag = false; // maybe true?
       defendXUnitsObjective.useBeacon = true;
       defendXUnitsObjective.markUnitsWith = ObjectiveMark.DefendTarget;
@@ -213,14 +213,14 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static DestroyXUnitsObjective CreateDestroyXUnitsObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, bool isPrimaryObjectve, int priority,
-      string progressFormat, string description, string[] requiredTagsOnUnit, int numberOfUnitsToDestroy) {
+      string progressFormat, string description, string[] requiredTagsOnUnit, int numberOfUnitsToDestroy, bool displayToUser = true) {
 
       GameObject destroyXUnitsObjectiveGo = CreateGameObject(parent, objectName);
 
       DestroyXUnitsObjective destroyXUnitsObjective = destroyXUnitsObjectiveGo.AddComponent<DestroyXUnitsObjective>();
       destroyXUnitsObjective.title = destroyXUnitsObjectiveGo.name;
       destroyXUnitsObjective.encounterObjectGuid = objectiveGuid;
-      destroyXUnitsObjective.requiredTagsOnUnit = new TagSet(requiredTagsOnUnit);
+      destroyXUnitsObjective.requiredTagsOnUnit = (requiredTagsOnUnit == null) ? new TagSet() : new TagSet(requiredTagsOnUnit);
 
       destroyXUnitsObjective.numberOfUnitsToKill = numberOfUnitsToDestroy;
 
@@ -232,7 +232,7 @@ namespace MissionControl.EncounterFactories {
 
       destroyXUnitsObjective.primary = isPrimaryObjectve;
 
-      destroyXUnitsObjective.displayToUser = true;
+      destroyXUnitsObjective.displayToUser = displayToUser;
       destroyXUnitsObjective.checkObjectiveFlag = false; // maybe true?
       destroyXUnitsObjective.useBeacon = false;
       destroyXUnitsObjective.markUnitsWith = ObjectiveMark.AttackTarget;
@@ -244,7 +244,7 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static DestroyXDestructiblesObjective CreateDestroyXDestructiblesObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, bool isPrimaryObjectve, int priority,
-      string progressFormat, string description, string regionGuid, ObjectiveCountType countType, int valueOfDestructiblesToDestroy) {
+      string progressFormat, string description, string regionGuid, ObjectiveCountType countType, int valueOfDestructiblesToDestroy, bool displayToUser = true) {
 
       GameObject destroyXUnitsObjectiveGo = CreateGameObject(parent, objectName);
 
@@ -264,7 +264,7 @@ namespace MissionControl.EncounterFactories {
 
       destroyXDestructiblesObjective.primary = isPrimaryObjectve;
 
-      destroyXDestructiblesObjective.displayToUser = true;
+      destroyXDestructiblesObjective.displayToUser = displayToUser;
       destroyXDestructiblesObjective.checkObjectiveFlag = false; // maybe true?
       destroyXDestructiblesObjective.useBeacon = true;
       destroyXDestructiblesObjective.markUnitsWith = ObjectiveMark.None;
@@ -276,14 +276,14 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static DefendXUnitsForeverObjective CreateDefendXUnitsForeverObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, bool isPrimaryObjectve, int priority,
-      string progressFormat, string description, string[] requiredTagsOnUnit, int numberOfUnitsToDefend) {
+      string progressFormat, string description, string[] requiredTagsOnUnit, int numberOfUnitsToDefend, bool displayToUser = true) {
 
       GameObject defendXUnitsObjectiveGo = CreateGameObject(parent, objectName);
 
       DefendXUnitsForeverObjective defendXUnitsObjective = defendXUnitsObjectiveGo.AddComponent<DefendXUnitsForeverObjective>();
       defendXUnitsObjective.title = defendXUnitsObjectiveGo.name;
       defendXUnitsObjective.encounterObjectGuid = objectiveGuid;
-      defendXUnitsObjective.requiredTagsOnUnit = new TagSet(requiredTagsOnUnit);
+      defendXUnitsObjective.requiredTagsOnUnit = (requiredTagsOnUnit == null) ? new TagSet() : new TagSet(requiredTagsOnUnit);
 
       defendXUnitsObjective.numberOfUnitsToDefend = numberOfUnitsToDefend;
 
@@ -295,7 +295,7 @@ namespace MissionControl.EncounterFactories {
 
       defendXUnitsObjective.primary = isPrimaryObjectve;
 
-      defendXUnitsObjective.displayToUser = true;
+      defendXUnitsObjective.displayToUser = displayToUser;
       defendXUnitsObjective.checkObjectiveFlag = false; // maybe true?
       defendXUnitsObjective.useBeacon = false;
       defendXUnitsObjective.markUnitsWith = ObjectiveMark.DefendTarget;
@@ -307,7 +307,7 @@ namespace MissionControl.EncounterFactories {
     }
 
     public static TimerObjective CreateTimerObjective(string objectiveGuid, GameObject parent, string contractObjectiveGuid, string objectName, string title, bool isPrimaryObjectve, int priority,
-      string progressFormat, string description, DurationType durationType, int durationToCount, int repeatCount, DurationCompleteType durationToComplete) {
+      string progressFormat, string description, DurationType durationType, int durationToCount, int repeatCount, DurationCompleteType durationToComplete, bool displayToUser = true) {
 
       GameObject timerObjectiveGo = CreateGameObject(parent, objectName);
 
@@ -323,7 +323,7 @@ namespace MissionControl.EncounterFactories {
 
       timerObjective.primary = isPrimaryObjectve;
 
-      timerObjective.displayToUser = true;
+      timerObjective.displayToUser = displayToUser;
       timerObjective.checkObjectiveFlag = false; // maybe true?
       timerObjective.useBeacon = false;
       timerObjective.markUnitsWith = ObjectiveMark.None;

@@ -39,7 +39,7 @@ namespace MissionControl.ContractTypeBuilders {
       this.guid = objective["Guid"].ToString();
       this.isPrimaryObjectve = (bool)objective["IsPrimaryObjective"];
       this.title = objective["Title"].ToString();
-      this.priority = (int)objective["Priority"];
+      this.priority = objective.ContainsKey("Priority") ? (int)objective["Priority"] : 0;
       this.displayToUser = objective.ContainsKey("DisplayToUser") ? (bool)objective["DisplayToUser"] : true;
       this.contractObjectiveGuid = objective.ContainsKey("ContractObjectiveGuid") ? objective["ContractObjectiveGuid"].ToString() : "";
     }
@@ -112,7 +112,7 @@ namespace MissionControl.ContractTypeBuilders {
       string lanceToUseRegionGuid = objective["LanceToUseRegionGuid"].ToString();
       string regionGuid = objective["RegionGuid"].ToString();
       string progressFormat = (objective.ContainsKey("ProgressFormat")) ? objective["ProgressFormat"].ToString() : "";
-      string description = objective["Description"].ToString();
+      string description = (objective.ContainsKey("Description")) ? objective["Description"].ToString() : "";
       int numberOfUnitsToOccupy = (objective.ContainsKey("NumberOfUnitsToOccupy")) ? (int)objective["NumberOfUnitsToOccupy"] : 0;
       int durationToOccupy = (objective.ContainsKey("DurationToOccupy")) ? (int)objective["DurationToOccupy"] : 0;
       string durationTypeStr = (objective.ContainsKey("DurationType")) ? objective["DurationType"].ToString() : "Rounds";
@@ -140,7 +140,9 @@ namespace MissionControl.ContractTypeBuilders {
         durationType,
         useDropship,
         requiredTagsOnUnit,
-        requiredTagsOnOpposingUnits
+        requiredTagsOnOpposingUnits,
+        priority,
+        displayToUser
       );
     }
 
@@ -152,13 +154,13 @@ namespace MissionControl.ContractTypeBuilders {
       int durationToDefend = (objective.ContainsKey("DurationToDefend")) ? (int)objective["DurationToDefend"] : 0;
       string durationTypeStr = (objective.ContainsKey("DurationType")) ? objective["DurationType"].ToString() : "Rounds";
       string progressFormat = (objective.ContainsKey("ProgressFormat")) ? objective["ProgressFormat"].ToString() : "";
-      string description = objective["Description"].ToString();
+      string description = (objective.ContainsKey("Description")) ? objective["Description"].ToString() : "";
 
       if (durationToDefend <= 0) {
-        ObjectiveFactory.CreateDefendXUnitsForeverObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDefend);
+        ObjectiveFactory.CreateDefendXUnitsForeverObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDefend, displayToUser);
       } else {
         DurationType durationType = (DurationType)Enum.Parse(typeof(DurationType), durationTypeStr);
-        ObjectiveFactory.CreateDefendXUnitsObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDefend, durationToDefend, durationType);
+        ObjectiveFactory.CreateDefendXUnitsObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDefend, durationToDefend, durationType, displayToUser);
       }
     }
 
@@ -168,9 +170,9 @@ namespace MissionControl.ContractTypeBuilders {
       string[] requiredTagsOnUnit = (objective.ContainsKey("RequiredTagsOnUnit")) ? ((JArray)objective["RequiredTagsOnUnit"]).ToObject<string[]>() : null;
       int numberOfUnitsToDestroy = (objective.ContainsKey("NumberOfUnitsToDestroy")) ? ((int)objective["NumberOfUnitsToDestroy"]) : 1;
       string progressFormat = (objective.ContainsKey("ProgressFormat")) ? objective["ProgressFormat"].ToString() : "";
-      string description = objective["Description"].ToString();
+      string description = (objective.ContainsKey("Description")) ? objective["Description"].ToString() : "";
 
-      ObjectiveFactory.CreateDestroyXUnitsObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDestroy);
+      ObjectiveFactory.CreateDestroyXUnitsObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, requiredTagsOnUnit, numberOfUnitsToDestroy, displayToUser);
     }
 
     private void BuildDestroyXDestructiblesObjective(GameObject parent, JObject objective, string name, string title, string guid,
@@ -180,11 +182,11 @@ namespace MissionControl.ContractTypeBuilders {
       string countType = (objective.ContainsKey("CountType")) ? objective["CountType"].ToString() : "Number";
       int valueOfDestructiblesToDestroy = (objective.ContainsKey("ValueOfDestructiblesToDestroy")) ? ((int)objective["ValueOfDestructiblesToDestroy"]) : 1;
       string progressFormat = (objective.ContainsKey("ProgressFormat")) ? objective["ProgressFormat"].ToString() : "";
-      string description = objective["Description"].ToString();
+      string description = (objective.ContainsKey("Description")) ? objective["Description"].ToString() : "";
 
       ObjectiveCountType countTypeEnum = (ObjectiveCountType)Enum.Parse(typeof(ObjectiveCountType), countType);
 
-      ObjectiveFactory.CreateDestroyXDestructiblesObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, regionGuid, countTypeEnum, valueOfDestructiblesToDestroy);
+      ObjectiveFactory.CreateDestroyXDestructiblesObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, regionGuid, countTypeEnum, valueOfDestructiblesToDestroy, displayToUser);
     }
 
     private void BuildTimerObjective(GameObject parent, JObject objective, string name, string title, string guid,
@@ -195,12 +197,12 @@ namespace MissionControl.ContractTypeBuilders {
       int repeatCount = objective.ContainsKey("RepeatAmount") ? (int)objective["RepeatAmount"] : 0;
       string durationToCompleteStr = objective.ContainsKey("DurationCompleteType") ? objective["DurationCompleteType"].ToString() : "IgnoreObjective";
       string progressFormat = objective.ContainsKey("ProgressFormat") ? objective["ProgressFormat"].ToString() : "";
-      string description = objective["Description"].ToString();
+      string description = objective.ContainsKey("Description") ? objective["Description"].ToString() : "";
 
       DurationType durationType = (DurationType)Enum.Parse(typeof(DurationType), durationTypeStr);
       DurationCompleteType durationToComplete = (DurationCompleteType)Enum.Parse(typeof(DurationCompleteType), durationToCompleteStr);
 
-      ObjectiveFactory.CreateTimerObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, durationType, durationToCount, repeatCount, durationToComplete);
+      ObjectiveFactory.CreateTimerObjective(guid, parent, contractObjectiveGuid, name, title, isPrimaryObjectve, priority, progressFormat, description, durationType, durationToCount, repeatCount, durationToComplete, displayToUser);
     }
 
     private void BuildArtilleryObjective(GameObject parent, JObject objective, string name, string title, string guid,
