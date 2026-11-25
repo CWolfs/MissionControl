@@ -7,7 +7,7 @@ using BattleTech.UI;
 using BattleTech.Rendering.Mood;
 
 namespace MissionControl.Patches {
-  [HarmonyPatch(typeof(MapModule), "get_SelectedMood")]
+  [HarmonyPatch(typeof(MapModule), "SelectedMood", MethodType.Getter)]
   public class MapModuleSelectedMoodPatch {
     public static BattleMood mood = null;
 

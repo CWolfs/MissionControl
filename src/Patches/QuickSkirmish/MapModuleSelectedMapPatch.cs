@@ -7,7 +7,7 @@ using BattleTech.UI;
 using BattleTech.Framework;
 
 namespace MissionControl.Patches {
-  [HarmonyPatch(typeof(MapModule), "get_SelectedMap")]
+  [HarmonyPatch(typeof(MapModule), "SelectedMap", MethodType.Getter)]
   public class MapModuleSelectedMapPatch {
     public static MapAndEncounters mapAndEncounter = null;
 
