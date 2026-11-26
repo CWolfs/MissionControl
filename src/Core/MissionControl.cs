@@ -663,6 +663,7 @@ namespace MissionControl {
       EncounterObjectDictionary.Clear();
       QueuedBuildingMounts.Clear();
       DelayResults.Clear();
+      TeamActivationRedirect.Clear();
       ResetGameLogicData();
 
       EncounterRules = null;

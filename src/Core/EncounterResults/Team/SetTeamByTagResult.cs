@@ -73,6 +73,8 @@ namespace MissionControl.Result {
             actor.EncounterTags.AddRange(ApplyTags);
           }
 
+          TeamActivationRedirect.PrepareActorForTeamSwitch(combatState, actor, oldTeam, newTeam);
+
           if (actor.lance != null) {
             actor.lance.RemoveUnitGUID(actor.GUID);
             actor.RemoveFromLance();

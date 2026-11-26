@@ -21,7 +21,8 @@ namespace MissionControl.Result {
 
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
       Main.LogDebug($"[SetTeamByLanceSpawnerGuid] Setting Team '{Team}' with Spawner Guid '{LanceSpawnerGuid}'");
-      LanceSpawnerGameLogic spawnerGameLogic = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<LanceSpawnerGameLogic>(LanceSpawnerGuid);
+      CombatGameState combatState = this.combat ?? UnityGameInstance.BattleTechGame.Combat;
+      LanceSpawnerGameLogic spawnerGameLogic = combatState.ItemRegistry.GetItemByGUID<LanceSpawnerGameLogic>(LanceSpawnerGuid);
       if (spawnerGameLogic == null) {
         Main.Logger.LogError($"[SetTeamByLanceSpawnerGuid] Could not find LanceSpawnerGameLogic with Guid '{LanceSpawnerGuid}'.");
         return;
@@ -37,19 +38,12 @@ namespace MissionControl.Result {
 
       Main.LogDebug($"[SetTeamByLanceSpawnerGuid] Found '{lanceUnits.Count}' lance units");
       string newTeamGuid = TeamUtils.GetTeamGuid(Team);
-      Team oldTeam = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(spawnerGameLogic.teamDefinitionGuid);
-      Team newTeam = string.IsNullOrEmpty(newTeamGuid) ? null : UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(newTeamGuid);
+      Team oldTeam = combatState.ItemRegistry.GetItemByGUID<Team>(spawnerGameLogic.teamDefinitionGuid);
+      Team newTeam = string.IsNullOrEmpty(newTeamGuid) ? null : combatState.ItemRegistry.GetItemByGUID<Team>(newTeamGuid);
       if (oldTeam == null || newTeam == null) {
         Main.Logger.LogError($"[SetTeamByLanceSpawnerGuid] Could not resolve teams (oldTeam='{spawnerGameLogic.teamDefinitionGuid}', newTeam='{Team}').");
         return;
       }
-
-      // MC-711 diagnostic: capture turn-system context on every team swap so an intermittent soft-lock
-      // can be diagnosed against the preceding game state without needing to reproduce.
-      TurnDirector turnDirector = UnityGameInstance.BattleTechGame.Combat.TurnDirector;
-      Main.LogDebug($"[SetTeamByLanceSpawnerGuid][MC-711] round={turnDirector.CurrentRound} phase={turnDirector.CurrentPhase} activeTurnActorGuid={turnDirector.ActiveTurnActor?.GUID ?? "<null>"}");
-      Main.LogDebug($"[SetTeamByLanceSpawnerGuid][MC-711] oldTeam name='{oldTeam.Name}' guid={oldTeam.GUID} isActive={oldTeam.IsActive} activationSequenceSet={oldTeam.ActivationSequence != null} unitsCount={oldTeam.units.Count}");
-      Main.LogDebug($"[SetTeamByLanceSpawnerGuid][MC-711] newTeam name='{newTeam.Name}' guid={newTeam.GUID} isActive={newTeam.IsActive} activationSequenceSet={newTeam.ActivationSequence != null} unitsCount={newTeam.units.Count}");
 
       if (oldTeam == newTeam) {
         if (ApplyTags != null) {
@@ -62,6 +56,12 @@ namespace MissionControl.Result {
           lance.BroadcastAlert();
         }
         return;
+      }
+
+      foreach (AbstractActor actor in lanceUnits) {
+        if (!actor.IsDead) {
+          TeamActivationRedirect.PrepareActorForTeamSwitch(combatState, actor, actor.team ?? oldTeam, newTeam);
+        }
       }
 
       spawnerGameLogic.teamDefinitionGuid = newTeamGuid;
@@ -85,8 +85,6 @@ namespace MissionControl.Result {
       CombatHUDInWorldElementMgr inworldElementManager = hudGo?.GetComponent<CombatHUDInWorldElementMgr>();
 
       foreach (AbstractActor actor in lanceUnits) {
-        Main.LogDebug($"[SetTeamByLanceSpawnerGuid][MC-711] actor {actor.LogDisplayName} currentTeam='{actor.team?.Name}' isInterruptActor={actor.IsInterruptActor} hasBegunActivation={actor.HasBegunActivation} hasActivatedThisRound={actor.HasActivatedThisRound} initiative={actor.Initiative}");
-
         actor.EncounterTags.Remove(oldTeam.Name);
         actor.EncounterTags.Add(newTeam.Name);
 
@@ -113,10 +111,10 @@ namespace MissionControl.Result {
         }
 
         CombatantSwitchedTeams message = new CombatantSwitchedTeams(actor.GUID, newTeam.GUID);
-        this.combat.MessageCenter.PublishMessage(message);
+        combatState.MessageCenter.PublishMessage(message);
       }
 
-      oldTeam.VisibilityCache?.RebuildCache(UnityGameInstance.BattleTechGame.Combat.GetAllLivingCombatants());
+      oldTeam.VisibilityCache?.RebuildCache(combatState.GetAllLivingCombatants());
       LazySingletonBehavior<FogOfWarView>.Instance.FowSystem.Rebuild();
 
       if (this.AlertLance) {
