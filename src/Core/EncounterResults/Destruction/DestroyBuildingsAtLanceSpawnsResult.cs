@@ -13,10 +13,15 @@ namespace MissionControl.Result {
       Main.LogDebug("[DestroyBuildingsAtLanceSpawnsResult] Setting state...");
 
       LanceSpawnerGameLogic lanceSpawnerGameLogic = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<LanceSpawnerGameLogic>(LanceSpawnerGuid);
+      if (lanceSpawnerGameLogic == null) {
+        Main.Logger.LogError($"[DestroyBuildingsAtLanceSpawnsResult] Could not find LanceSpawnerGameLogic for Guid '{LanceSpawnerGuid}'.");
+        return;
+      }
+
       UnitSpawnPointGameLogic[] unitSpawns = lanceSpawnerGameLogic.GetComponentsInChildren<UnitSpawnPointGameLogic>();
 
       List<BuildingRepresentation> buildingsInMap = GameObjextExtensions.GetBuildingsInMap();
-      Main.LogDebug($"[TagUnitsInRegionResult] Collected '{buildingsInMap.Count}' buildings to check.");
+      Main.LogDebug($"[DestroyBuildingsAtLanceSpawnsResult] Collected '{buildingsInMap.Count}' buildings to check.");
 
       DestroyBuildingsUnderLanceSpawns(unitSpawns, buildingsInMap.ToArray(), Radius);
     }
@@ -26,10 +31,10 @@ namespace MissionControl.Result {
         Vector3 position = unitSpawn.transform.position;
 
         foreach (BuildingRepresentation building in buildings) {
-          if (!building.IsDead) {
-            if (position.DistanceFlat(building.transform.position) <= Radius) {
-              EncounterLayerParent.EnqueueLoadAwareMessage(new DestroyActorMessage(EncounterLayerData.MapLogicGuid, building.parentCombatant.GUID));
-            }
+          if (building == null || building.parentCombatant == null || building.IsDead) continue;
+
+          if (position.DistanceFlat(building.transform.position) <= radius) {
+            EncounterLayerParent.EnqueueLoadAwareMessage(new DestroyActorMessage(EncounterLayerData.MapLogicGuid, building.parentCombatant.GUID));
           }
         }
       }
