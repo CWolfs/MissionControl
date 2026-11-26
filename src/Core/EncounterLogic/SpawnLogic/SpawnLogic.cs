@@ -69,6 +69,8 @@ namespace MissionControl.Logic {
 
       Main.LogDebug($"[GetClosestValidPathFindingHex] Returning final point '{validOrigin}'");
       checkedAdjacentPoints.Clear();
+      bailoutCount = 0;
+      originalOrigin = Vector3.zero;
       return validOrigin;
     }
 

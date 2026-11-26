@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 
 using BattleTech;
+using BattleTech.Rendering.UrbanWarfare;
 
 using Harmony;
 
@@ -21,6 +22,33 @@ namespace MissionControl {
     }
 
     private static float MAX_SLOPE_FOR_PATHFINDING = 39f;
+    private const float MAX_TERRAIN_HEIGHT_MISMATCH = 1.0f;
+    private const float BUILDING_SAMPLE_OFFSET_DIAG = 2.13f; // 1.5m X/Z building raycast offset in MapMetaDataExporter
+    private const float MAX_OVERHEAD_CLEARANCE = 15f;
+    private static bool layersInitialised = false;
+    private static int terrainLayer = -1;
+    private static int obstructionLayer = -1;
+    private static int noCollisionLayer = -1;
+    private static int groundRaycastMask = Physics.DefaultRaycastLayers;
+
+    public static int GroundRaycastMask {
+      get {
+        EnsureLayersInitialised();
+        return groundRaycastMask;
+      }
+    }
+
+    private static void EnsureLayersInitialised() {
+      if (layersInitialised) return;
+      terrainLayer = LayerMask.NameToLayer("Terrain");
+      obstructionLayer = LayerMask.NameToLayer("Obstruction");
+      noCollisionLayer = LayerMask.NameToLayer("NoCollision");
+      groundRaycastMask = Physics.DefaultRaycastLayers;
+      if (noCollisionLayer >= 0) {
+        groundRaycastMask &= ~(1 << noCollisionLayer);
+      }
+      layersInitialised = true;
+    }
 
     private Mech pathFinderMech;
     // private Vehicle pathFinderVehicle;
@@ -131,6 +159,7 @@ namespace MissionControl {
       if (IsCellImpassableOrDeepWater(cellData)) return false;
       if (!encounterLayerData.IsInEncounterBounds(position)) return false;
       if (cellData.cachedHeight > (cellData.terrainHeight + 50f)) return false;
+      if (HasTerrainHeightMismatch(combatState, cellData, position)) return false;
 
       float pathFindingZoneRadius = 25f;
       AbstractActor pathfindingActor = GetPathFindingActor(type);
@@ -223,11 +252,133 @@ namespace MissionControl {
       return false;
     }
 
+    public static bool IsValidGroundCollider(Collider hitCollider, out bool isTerrainHit) {
+      isTerrainHit = false;
+      if (hitCollider == null) return false;
+
+      EnsureLayersInitialised();
+
+      int layer = hitCollider.gameObject.layer;
+      if (noCollisionLayer >= 0 && layer == noCollisionLayer) return false;
+
+      if (hitCollider.GetComponentInParent<PilotableActorRepresentation>() != null) return false;
+
+      DestructibleObject destructible = hitCollider.GetComponentInParent<DestructibleObject>();
+      if (destructible != null && destructible.isFlimsy) return false;
+
+      if (hitCollider.GetComponentInParent<DestructibleUrbanFlimsy>() != null) return false;
+      if (IsUnderFlimsyGroup(hitCollider.transform)) return false;
+
+      isTerrainHit = hitCollider.GetComponentInParent<Terrain>() != null || (terrainLayer >= 0 && layer == terrainLayer);
+      if (isTerrainHit) return true;
+
+      if (hitCollider.GetComponentInParent<ObstructionGameLogic>() != null) return true;
+
+      return obstructionLayer >= 0 && layer == obstructionLayer;
+    }
+
+    private static bool IsUnderFlimsyGroup(Transform transform) {
+      Transform current = transform;
+      while (current != null) {
+        if (string.Equals(current.name, "_flimsy", StringComparison.Ordinal)) return true;
+        current = current.parent;
+      }
+      return false;
+    }
+
+    private bool HasTerrainHeightMismatch(CombatGameState combatState, MapTerrainDataCell cellData, Vector3 position) {
+      float mapMetaHeight = combatState.MapMetaData.GetLerpedHeightAt(position);
+      bool hasBuilding = cellData.MapEncounterLayerDataCell != null && cellData.MapEncounterLayerDataCell.HasBuilding;
+      float maxMismatch = MAX_TERRAIN_HEIGHT_MISMATCH + (hasBuilding
+        ? BUILDING_SAMPLE_OFFSET_DIAG * Mathf.Tan(Mathf.Clamp(cellData.cachedSteepness, 0f, MAX_SLOPE_FOR_PATHFINDING) * Mathf.Deg2Rad)
+        : 0f);
+
+      float? liveGroundHeight = GetSupportingGroundHeight(position, mapMetaHeight);
+      if (!liveGroundHeight.HasValue) {
+        Main.LogDebug($"[PFM.HasTerrainHeightMismatch] No supporting ground collider found for MapMetaData height '{mapMetaHeight}' at '{position}'. Rejecting spawn.");
+        return true;
+      }
+
+      float heightDelta = Mathf.Abs(liveGroundHeight.Value - mapMetaHeight);
+      if (heightDelta > maxMismatch) {
+        Main.LogDebug($"[PFM.HasTerrainHeightMismatch] Live ground height '{liveGroundHeight.Value}' differs from MapMetaData height '{mapMetaHeight}' by '{heightDelta}' (> {maxMismatch}) at '{position}'. Rejecting spawn.");
+        return true;
+      }
+
+      if (HasOverheadObstructionOverlap(position, liveGroundHeight.Value)) {
+        Main.LogDebug($"[PFM.HasTerrainHeightMismatch] Solid obstruction overlaps unit clearance above '{liveGroundHeight.Value}' at '{position}'. Rejecting spawn.");
+        return true;
+      }
+
+      return false;
+    }
+
+    private float? GetSupportingGroundHeight(Vector3 position, float referenceHeight) {
+      float rayOriginY = referenceHeight + SnapToTerrain.terrainDistance;
+      Vector3 rayOrigin = new Vector3(position.x, rayOriginY, position.z);
+      RaycastHit[] hits = Physics.RaycastAll(rayOrigin, Vector3.down, SnapToTerrain.terrainDistance * 2f, GroundRaycastMask, QueryTriggerInteraction.Ignore);
+
+      float? highestSupportY = null;
+      for (int i = 0; i < hits.Length; i++) {
+        Collider hitCollider = hits[i].collider;
+        if (!IsValidGroundCollider(hitCollider, out bool isTerrainHit)) continue;
+        if (!isTerrainHit
+            && hits[i].point.y > referenceHeight + MAX_OVERHEAD_CLEARANCE
+            && HasOpenClearanceBelow(hitCollider, position, referenceHeight, hits[i].point.y)) {
+          continue;
+        }
+
+        if (!highestSupportY.HasValue || hits[i].point.y > highestSupportY.Value) {
+          highestSupportY = hits[i].point.y;
+        }
+      }
+
+      return highestSupportY;
+    }
+
+    private bool HasOpenClearanceBelow(Collider roofCollider, Vector3 position, float referenceHeight, float roofY) {
+      float startY = referenceHeight + 0.5f;
+      float distance = roofY - startY;
+      if (distance <= MAX_OVERHEAD_CLEARANCE) return false;
+
+      Ray upRay = new Ray(new Vector3(position.x, startY, position.z), Vector3.up);
+      if (roofCollider.Raycast(upRay, out RaycastHit undersideHit, distance)) {
+        return undersideHit.point.y >= referenceHeight + MAX_OVERHEAD_CLEARANCE;
+      }
+
+      return false;
+    }
+
+    private bool HasOverheadObstructionOverlap(Vector3 position, float groundHeight) {
+      const float capsuleRadius = 1.5f;
+      Vector3 bottom = new Vector3(position.x, groundHeight + 3.0f, position.z);
+      Vector3 top = new Vector3(position.x, groundHeight + MAX_OVERHEAD_CLEARANCE - capsuleRadius, position.z);
+      Collider[] overlaps = Physics.OverlapCapsule(bottom, top, capsuleRadius, GroundRaycastMask, QueryTriggerInteraction.Ignore);
+
+      for (int i = 0; i < overlaps.Length; i++) {
+        if (!IsValidGroundCollider(overlaps[i], out bool isTerrainHit)) continue;
+        if (isTerrainHit) continue;
+        return true;
+      }
+
+      return false;
+    }
+
     private bool IsCellImpassableOrDeepWater(MapTerrainDataCell cellData) {
       TerrainMaskFlags terrainMask = cellData.terrainMask;
-      bool isImpassableOrDeepWater = SplatMapInfo.IsImpassable(terrainMask) || (SplatMapInfo.IsDeepWater(terrainMask) && !cellData.MapEncounterLayerDataCell.HasBuilding);
+      bool hasBuilding = cellData.MapEncounterLayerDataCell != null && cellData.MapEncounterLayerDataCell.HasBuilding;
+      TerrainMaskFlags buildingMask = hasBuilding
+        ? (cellData.MapEncounterLayerDataCell.GetTopmostBuilding()?.BuildingTerrainMask ?? TerrainMaskFlags.None)
+        : TerrainMaskFlags.None;
+
+      bool isImpassableOrDeepWater = SplatMapInfo.IsImpassable(terrainMask)
+        || SplatMapInfo.IsImpassable(buildingMask)
+        || SplatMapInfo.IsMapBoundary(terrainMask)
+        || (SplatMapInfo.IsDeepWater(terrainMask) && !hasBuilding)
+        || SplatMapInfo.IsDeepWater(buildingMask);
+
       if (isImpassableOrDeepWater) {
-        Main.LogDebug("[PFM.IsCellImpassableOrDeepWater] Tile is impassable or deep water");
+        Main.LogDebug("[PFM.IsCellImpassableOrDeepWater] Tile is impassable, map boundary, or deep water");
         return true;
       }
       return false;
@@ -285,7 +436,7 @@ namespace MissionControl {
       }
 
       float estimate = estimatesOfBadPathfings[pathfindTarget.ToString()];
-      if (estimate < 1f) return true;
+      if (estimate < 1f) return false;
 
       return true;
     }
