@@ -114,14 +114,20 @@ namespace MissionControl {
     }
 
     public BehaviorVariableValue GetBehaviourVariableValue(AbstractActor unit, string key) {
+      if (unit == null) return null;
+
       BehaviorVariableValue behaviourVariableValue = GetBehaviourVariableValue("UNIT", unit.GUID, key);
       if (behaviourVariableValue != null) return behaviourVariableValue;
 
-      behaviourVariableValue = GetBehaviourVariableValue("LANCE", unit.lance.GUID, key);
-      if (behaviourVariableValue != null) return behaviourVariableValue;
+      if (unit.lance != null) {
+        behaviourVariableValue = GetBehaviourVariableValue("LANCE", unit.lance.GUID, key);
+        if (behaviourVariableValue != null) return behaviourVariableValue;
+      }
 
-      behaviourVariableValue = GetBehaviourVariableValue("TEAM", unit.team.GUID, key);
-      if (behaviourVariableValue != null) return behaviourVariableValue;
+      if (unit.team != null) {
+        behaviourVariableValue = GetBehaviourVariableValue("TEAM", unit.team.GUID, key);
+        if (behaviourVariableValue != null) return behaviourVariableValue;
+      }
 
       return null;
     }

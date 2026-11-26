@@ -32,7 +32,7 @@ namespace MissionControl.AI {
         return new BehaviorTreeResults(BehaviorNodeState.Success);
       }
       float num = Time.realtimeSinceStartup - this.startTime;
-      if (num > 60f && this.tickCount > 20) {
+      if (num > TIME_TO_WAIT_FOR_PATHFINDING && this.tickCount > TICKS_TO_WAIT_FOR_PATHFINDING) {
         Main.LogDebug($"[AI] [BlockUntilPathfindingReadyNode] Block until pathfinding failing, having timed out with too long a time '{num}' '{this.tickCount}'");
         base.LogAI(string.Format("Block until pathfinding failing, having timed out with too long a time {0} {1}", num, this.tickCount), "AI.BehaviorNodes");
         return new BehaviorTreeResults(BehaviorNodeState.Failure);
