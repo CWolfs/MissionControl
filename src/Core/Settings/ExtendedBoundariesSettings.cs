@@ -33,12 +33,17 @@ namespace MissionControl.Config {
       return IncreaseBoundarySizeByPercentage;
     }
 
-    [OnDeserialized]
-    internal void OnDeserialized(StreamingContext context) {
-      // Sort the overrides on Deserialisation
+    public void SortOverrides() {
+      if (Overrides == null) return;
       Overrides = Overrides.OrderByDescending(x => x.MapId != "UNSET" && x.ContractTypeName != "UNSET").
                 ThenByDescending(x => x.MapId != "UNSET" && x.ContractTypeName == "UNSET").
                 ThenByDescending(x => x.MapId == "UNSET" && x.ContractTypeName != "UNSET").ToList();
+    }
+
+    [OnDeserialized]
+    internal void OnDeserialized(StreamingContext context) {
+      // Sort the overrides on Deserialisation
+      SortOverrides();
     }
   }
 }

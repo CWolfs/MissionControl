@@ -127,6 +127,7 @@ namespace MissionControl.Config {
 
     public static string Misc_LanceSelectionDivergenceOverride_Enable = "Misc.LanceSelectionDivergenceOverride.Enable";
     public static string Misc_LanceSelectionDivergenceOverride_Divergence = "Misc.LanceSelectionDivergenceOverride.Divergence";
+    public static string Misc_ContractOverrideDataCleanupMethod = "Misc.ContractOverrideDataCleanupMethod";
 
     public static string AdditionalPlayerMechs_Enable = "AdditionalPlayerMechs";
 
@@ -219,6 +220,7 @@ namespace MissionControl.Config {
 
       if (Has(EnableStoryOverrides)) settings.EnableStoryOverrides = GetBool(EnableStoryOverrides);
       if (Has(EnableAdditionalPlayerMechsForStory)) settings.EnableAdditionalPlayerMechsForStory = GetBool(EnableAdditionalPlayerMechsForStory);
+      if (Has(AdditionalPlayerMechs_Enable)) settings.AdditionalPlayerMechs = GetBool(AdditionalPlayerMechs_Enable);
     }
 
     private void LoadRandomSpawns(Settings settings) {
@@ -318,6 +320,7 @@ namespace MissionControl.Config {
         JArray boundaryOverridesObject = (JArray)Properties.SelectToken(ExtendedBoundaries_Overrides);
         List<ExtendedBoundariesOverride> boundaryOverrides = boundaryOverridesObject.ToObject<List<ExtendedBoundariesOverride>>();
         settings.ExtendedBoundaries.Overrides = boundaryOverrides;
+        settings.ExtendedBoundaries.SortOverrides();
       }
     }
 
@@ -336,15 +339,15 @@ namespace MissionControl.Config {
       if (Has(AI_FollowPlayer_Pathfinding)) settings.AiSettings.FollowAiSettings.Pathfinding = GetString(AI_FollowPlayer_Pathfinding);
       if (Has(AI_FollowPlayer_Target)) settings.AiSettings.FollowAiSettings.Target = GetString(AI_FollowPlayer_Target);
       if (Has(AI_FollowPlayer_StopWhen)) settings.AiSettings.FollowAiSettings.StopWhen = GetString(AI_FollowPlayer_StopWhen);
-      if (Has(AI_FollowPlayer_MaxDistanceFromTargetBeforeSprinting)) settings.AiSettings.FollowAiSettings.MaxDistanceFromTargetBeforeSprinting = GetInt(AI_FollowPlayer_MaxDistanceFromTargetBeforeSprinting);
-      if (Has(AI_FollowPlayer_TargetZoneRadius)) settings.AiSettings.FollowAiSettings.TargetZoneRadius = GetInt(AI_FollowPlayer_TargetZoneRadius);
-      if (Has(AI_FollowPlayer_TimeToWaitForPathfinding)) settings.AiSettings.FollowAiSettings.TimeToWaitForPathfinding = GetInt(AI_FollowPlayer_TimeToWaitForPathfinding);
+      if (Has(AI_FollowPlayer_MaxDistanceFromTargetBeforeSprinting)) settings.AiSettings.FollowAiSettings.MaxDistanceFromTargetBeforeSprinting = GetFloat(AI_FollowPlayer_MaxDistanceFromTargetBeforeSprinting);
+      if (Has(AI_FollowPlayer_TargetZoneRadius)) settings.AiSettings.FollowAiSettings.TargetZoneRadius = GetFloat(AI_FollowPlayer_TargetZoneRadius);
+      if (Has(AI_FollowPlayer_TimeToWaitForPathfinding)) settings.AiSettings.FollowAiSettings.TimeToWaitForPathfinding = GetFloat(AI_FollowPlayer_TimeToWaitForPathfinding);
       if (Has(AI_FollowPlayer_TicksToWaitForPathfinding)) settings.AiSettings.FollowAiSettings.TicksToWaitForPathfinding = GetInt(AI_FollowPlayer_TicksToWaitForPathfinding);
     }
 
     public void LoadSpawners(Settings settings) {
-      if (Has(Spawners_SpawnLanceAtEdgeBoundary_MinBuffer)) settings.Spawners.SpawnLanceAtBoundary.MinBuffer = GetInt(Spawners_SpawnLanceAtEdgeBoundary_MinBuffer);
-      if (Has(Spawners_SpawnLanceAtEdgeBoundary_MaxBuffer)) settings.Spawners.SpawnLanceAtBoundary.MaxBuffer = GetInt(Spawners_SpawnLanceAtEdgeBoundary_MaxBuffer);
+      if (Has(Spawners_SpawnLanceAtEdgeBoundary_MinBuffer)) settings.Spawners.SpawnLanceAtBoundary.MinBuffer = GetFloat(Spawners_SpawnLanceAtEdgeBoundary_MinBuffer);
+      if (Has(Spawners_SpawnLanceAtEdgeBoundary_MaxBuffer)) settings.Spawners.SpawnLanceAtBoundary.MaxBuffer = GetFloat(Spawners_SpawnLanceAtEdgeBoundary_MaxBuffer);
     }
 
     public void LoadCustomData(Settings settings) {
@@ -360,6 +363,7 @@ namespace MissionControl.Config {
     public void LoadMisc(Settings settings) {
       if (Has(Misc_LanceSelectionDivergenceOverride_Enable)) settings.Misc.LanceSelectionDivergenceOverride.Enable = GetBool(Misc_LanceSelectionDivergenceOverride_Enable);
       if (Has(Misc_LanceSelectionDivergenceOverride_Divergence)) settings.Misc.LanceSelectionDivergenceOverride.Divergence = GetInt(Misc_LanceSelectionDivergenceOverride_Divergence);
+      if (Has(Misc_ContractOverrideDataCleanupMethod)) settings.Misc.ContractOverrideDataCleanupMethod = GetString(Misc_ContractOverrideDataCleanupMethod);
     }
   }
 }
