@@ -83,12 +83,17 @@ namespace MissionControl {
 
     private static void VersionCheck() {
       try {
-        string modJson = new WebClient().DownloadString("https://raw.githubusercontent.com/CWolfs/MissionControl/master/mod.json");
-        JObject json = JObject.Parse(modJson);
-        string version = (string)json["Version"];
-        Main.Settings.GithubVersion = version;
-      } catch (WebException) {
-        // Do nothing if there's a problem getting the version from Github
+        using (WebClient webClient = new WebClient()) {
+          string modJson = webClient.DownloadString("https://raw.githubusercontent.com/CWolfs/MissionControl/master/mod.json");
+          JObject json = JObject.Parse(modJson);
+          string version = (string)json["Version"];
+          if (!string.IsNullOrWhiteSpace(version)) {
+            Main.Settings.GithubVersion = version;
+          }
+        }
+      } catch (Exception e) {
+        // Do nothing if there's a problem getting or parsing the version from Github
+        Logger.LogWarning($"[VersionCheck] Could not check latest version from Github: {e.Message}");
       }
     }
 

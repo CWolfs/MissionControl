@@ -23,16 +23,36 @@ namespace MissionControl.Patches {
 
       if (Main.Settings.VersionCheck) {
         // GUARD: If the github version cannot be obtained, ignore this check
-        if (Main.Settings.GithubVersion == "0.0.0") return;
+        if (string.IsNullOrWhiteSpace(Main.Settings.GithubVersion) || Main.Settings.GithubVersion == "0.0.0") return;
 
         if (Main.Settings.Version != Main.Settings.GithubVersion) {
-          Version currentVersion = new Version(Main.Settings.Version);
-          Version latestVersion = new Version(Main.Settings.GithubVersion);
-          if (currentVersion < latestVersion) {
-            UiManager.Instance.ShowNewerVersionAvailablePopup(Main.Settings.Version, Main.Settings.GithubVersion);
+          if (TryParseVersion(Main.Settings.Version, out Version currentVersion, out bool isCurrentPrerelease) &&
+            TryParseVersion(Main.Settings.GithubVersion, out Version latestVersion, out bool isLatestPrerelease)) {
+            bool isNewer = currentVersion < latestVersion || (currentVersion == latestVersion && isCurrentPrerelease && !isLatestPrerelease);
+            if (isNewer) {
+              UiManager.Instance.ShowNewerVersionAvailablePopup(Main.Settings.Version, Main.Settings.GithubVersion);
+            }
           }
         }
       }
+    }
+
+    private static bool TryParseVersion(string rawVersion, out Version version, out bool isPrerelease) {
+      version = null;
+      isPrerelease = false;
+      if (string.IsNullOrWhiteSpace(rawVersion)) return false;
+
+      string cleaned = rawVersion.Trim();
+      int buildIndex = cleaned.IndexOf('+');
+      if (buildIndex >= 0) cleaned = cleaned.Substring(0, buildIndex);
+
+      int prereleaseIndex = cleaned.IndexOf('-');
+      if (prereleaseIndex >= 0) {
+        isPrerelease = true;
+        cleaned = cleaned.Substring(0, prereleaseIndex);
+      }
+
+      return Version.TryParse(cleaned, out version);
     }
   }
 }
