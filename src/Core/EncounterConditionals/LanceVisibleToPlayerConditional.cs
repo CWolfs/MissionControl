@@ -25,7 +25,7 @@ namespace MissionControl.Conditional {
       }
 
       VisibilityLevelAndAttribution visibility = visibilityMessage.VisibilityLevelAndAttribution;
-      if (visibility.SpottingTeamGUID != combat.LocalPlayerTeamGuid) {
+      if (string.IsNullOrEmpty(visibility.SpottingTeamGUID) || !combat.HostilityMatrix.IsLocalPlayerFriendly(visibility.SpottingTeamGUID)) {
         return false;
       }
 
@@ -38,11 +38,15 @@ namespace MissionControl.Conditional {
         return false;
       }
 
+      if (combat.LocalPlayerTeam == null || combat.LocalPlayerTeam.VisibilityToTarget(targetActor) <= VisibilityLevel.None) {
+        return false;
+      }
+
       if (targetActor.lance == null || string.IsNullOrEmpty(targetActor.lance.GUID)) {
         return false;
       }
 
-      if (targetActor.lance.GUID.Contains(TargetLanceGuid)) {
+      if (targetActor.lance.GUID == TargetLanceGuid || targetActor.lance.GUID == LanceSpawnerGameLogic.GetLanceGuid(TargetLanceGuid)) {
         Main.LogDebug($"[LanceVisibleToPlayerConditional] Player visibility matches target lance guid '{TargetLanceGuid}'. '{responseName}'");
         return true;
       }
