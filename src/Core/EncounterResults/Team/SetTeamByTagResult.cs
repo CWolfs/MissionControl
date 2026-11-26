@@ -21,9 +21,12 @@ namespace MissionControl.Result {
       List<ICombatant> combatants = ObjectiveGameLogic.GetTaggedCombatants(UnityGameInstance.BattleTechGame.Combat, new TagSet(Tags));
 
       Main.LogDebug($"[SetTeamByTagResult] Found '{combatants.Count}' combatants");
-      Team newTeam = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(TeamUtils.GetTeamGuid(Team));
-      Lance newLance = new Lance(newTeam);
-      newLance.team = newTeam;
+      string newTeamGuid = TeamUtils.GetTeamGuid(Team);
+      Team newTeam = string.IsNullOrEmpty(newTeamGuid) ? null : UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(newTeamGuid);
+      if (newTeam == null) {
+        Main.Logger.LogError($"[SetTeamByTagResult] Could not find Team '{Team}'.");
+        return;
+      }
 
       foreach (ICombatant combatant in combatants) {
         if (combatant is AbstractActor) {
@@ -42,9 +45,24 @@ namespace MissionControl.Result {
           actor.team.lances.Add(newLance);
           */
           Main.Logger.LogError($"[SetTeamByTagResult] Using this result with AbstractActors isn't supported yet");
+          continue;
         } else {
-          combatant.RemoveFromTeam();
-          combatant.AddToTeam(newTeam);
+          if (combatant.team == newTeam && newTeam.miscCombatants != null && newTeam.miscCombatants.Contains(combatant)) {
+            if (ApplyTags != null) {
+              combatant.EncounterTags.AddRange(ApplyTags);
+            }
+            continue;
+          }
+
+          if (combatant is BattleTech.Building building && combatant.team != null) {
+            combatant.team.RemoveBuilding(building);
+          } else {
+            combatant.team?.miscCombatants?.Remove(combatant);
+            combatant.RemoveFromTeam();
+          }
+
+          newTeam.miscCombatants?.Remove(combatant);
+          newTeam.AddCombatant(combatant);
         }
 
         if (ApplyTags != null) {
@@ -55,15 +73,6 @@ namespace MissionControl.Result {
         this.combat.MessageCenter.PublishMessage(message);
 
         LazySingletonBehavior<FogOfWarView>.Instance.FowSystem.Rebuild();
-      }
-
-      if (newLance.unitGuids.Count > 0) {
-        newTeam.lances.Add(newLance);
-        UnityGameInstance.BattleTechGame.Combat.ItemRegistry.AddItem(newLance);
-
-        if (this.AlertLance) {
-          newLance.BroadcastAlert();
-        }
       }
     }
   }
