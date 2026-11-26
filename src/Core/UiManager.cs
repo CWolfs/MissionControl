@@ -270,13 +270,13 @@ namespace MissionControl {
 
     public IEnumerator CreateContractTypeCredits(GameObject spinnerWidget) {
       float startTime = Time.time;
-      if (!HasUI(CreditsPrefabName) && IsBuildingUI(CreditsPrefabName)) {
+      if (IsBuildingUI(CreditsPrefabName)) {
         Main.Logger.Log("[UiManager.CreateContractTypeCredits] Waiting for 'MCUI_Contract_Type_Credits_Panel' to exist or finish building");
         yield return new WaitUntil(() => {
           Main.Logger.Log($"[UiManager.CreatePrefab v1] Waiting for MC prefab to be built so it can be instantiated");
           return (HasUI(CreditsPrefabName) && !IsBuildingUI(CreditsPrefabName)) || Time.time > (startTime + 2f);
         });
-      } else if (!HasUI(CreditsPrefabName) && !IsBuildingUI(CreditsPrefabName)) {
+      } else if (!HasUI(CreditsPrefabName)) {
         Main.Logger.Log("[UiManager.CreateContractTypeCredits] Attempted to use 'MCUI_Contract_Type_Credits_Panel' but it doesn't exist. Going to build prefab first.");
         GameObject UIManagerGameObject = GameObject.Find("UIManager");
         if (UIManagerGameObject != null) {
@@ -303,8 +303,11 @@ namespace MissionControl {
         Main.Logger.LogWarning($"[UiManager.ProceedToCreateContractTypeCredits] No metadata found for contract type '{MissionControl.Instance.CurrentContractType}'. Skipping credits.");
         return;
       }
-      Transform parentGo = GameObject.Find("uixPrfPanl_combatMissionLoad-overlay_V2-MANAGED").transform;
-      GameObject creditsGo = CreatePrefab(CreditsPrefabName, parentGo.Find("Representation"));
+      GameObject parentGo = GameObject.Find("uixPrfPanl_combatMissionLoad-overlay_V2-MANAGED");
+      if (parentGo == null) return;
+      Transform representation = parentGo.transform.Find("Representation");
+      if (representation == null) return;
+      GameObject creditsGo = CreatePrefab(CreditsPrefabName, representation);
       if (creditsGo == null) return;
 
       RectTransform creditsTransform = ((RectTransform)creditsGo.transform);
@@ -356,6 +359,8 @@ namespace MissionControl {
     IEnumerator FinishCreateContractTypeCreditsPrefab(RectTransform creditsTransform, GameObject contractTypeNameTextGo, GameObject authorTextGo, GameObject contributorsTextGo, GameObject designedWithTextGo) {
       yield return new WaitForEndOfFrame();
 
+      if (creditsTransform == null) yield break;
+
       VerticalLayoutGroup verticalLayout = creditsTransform.gameObject.GetComponent<VerticalLayoutGroup>();
 
       float contractTypeNameTextSizeDeltaX = contractTypeNameTextGo.GetComponent<TextMeshProUGUI>().textBounds.size.x;
@@ -378,10 +383,12 @@ namespace MissionControl {
 
       // Resize container
       GameObject positionTargetParent = GameObject.Find("uixPfrPanlMissionObjective-element-MANAGED");
-      RectTransform positionTargetTransform = positionTargetParent.transform.Find("fullInfo/obj-CrewInfo") as RectTransform;
+      RectTransform positionTargetTransform = positionTargetParent != null
+        ? positionTargetParent.transform.Find("fullInfo/obj-CrewInfo") as RectTransform
+        : null;
 
       float xPosition = 1900f;
-      if (positionTargetParent != null) {
+      if (positionTargetTransform != null) {
         xPosition = positionTargetTransform.position.x;
         creditsTransform.position = new Vector2(xPosition, creditsTransform.position.y);
       } else {
