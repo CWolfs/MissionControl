@@ -99,6 +99,10 @@ namespace MissionControl.Interpolation {
     private string BindCastDefAndActorIndex(int pilotPosition, string selectedCastDefID, SpawnableUnit[] lanceConfigUnits, SpawnableUnit[] fullLanceConfigUnits) {
       if (lanceConfigUnits.Length >= pilotPosition) {
         SpawnableUnit lanceConfigUnit = lanceConfigUnits[pilotPosition - 1];
+        if (lanceConfigUnit == null || lanceConfigUnit.Pilot == null) {
+          return HandleFallback(pilotPosition, selectedCastDefID);
+        }
+
         PilotDef lanceConfigUnitPilotDef = lanceConfigUnit.Pilot;
 
         // Find the full exact position so we can map it to the AbstractActors in the Team Lance
@@ -119,7 +123,7 @@ namespace MissionControl.Interpolation {
         return pilotCastDefId;
       }
 
-      return null;
+      return HandleFallback(pilotPosition, selectedCastDefID);
     }
 
     private string InterpolatePlayerPilot(Contract contract, string selectedCastDefID, SpawnableUnit[] lanceConfigUnits, SpawnableUnit[] fullLanceConfigUnits) {
@@ -177,13 +181,14 @@ namespace MissionControl.Interpolation {
         if (DynamicCastDefs.TryGetValue(entry.Key, out string castDefId)) {
           string pilotDefId = RuntimeCastFactory.GetPilotDefIDFromCastDefID(castDefId);
           matchedActor = units.FirstOrDefault(u =>
+            u.GetPilot()?.pilotDef != null &&
             u.GetPilot().pilotDef.Description.Id.ToUpperFirst() == pilotDefId.ToUpperFirst());
         }
 
         // Fallback: index-based with bounds checking
         if (matchedActor == null) {
           int index = entry.Value - 1;
-          if (index >= 0 && index < units.Count) {
+          if (index >= 0 && index < units.Count && units[index].GetPilot()?.pilotDef != null) {
             matchedActor = units[index];
           }
         }
@@ -196,12 +201,15 @@ namespace MissionControl.Interpolation {
 
       // Bind the commander if they are in combat
       if (!MissionControl.Instance.IsSkirmish()) {
-        foreach (AbstractActor unit in units) {
-          Pilot pilot = unit.GetPilot();
-          Pilot commanderPilot = UnityGameInstance.Instance.Game.Simulation.Commander;
+        Pilot commanderPilot = UnityGameInstance.Instance.Game.Simulation?.Commander;
+        if (commanderPilot != null) {
+          foreach (AbstractActor unit in units) {
+            Pilot pilot = unit.GetPilot();
+            if (pilot == null) continue;
 
-          if (pilot.Description.Id.ToUpperFirst() == commanderPilot.Description.Id.ToUpperFirst()) {
-            BoundAbstractActors[DialogueInterpolationConstants.Commander] = unit;
+            if (pilot.Description.Id.ToUpperFirst() == commanderPilot.Description.Id.ToUpperFirst()) {
+              BoundAbstractActors[DialogueInterpolationConstants.Commander] = unit;
+            }
           }
         }
       }
@@ -210,7 +218,9 @@ namespace MissionControl.Interpolation {
     public string RebindDeadUnit(string bindingKey) {
       if (bindingKey == DialogueInterpolationConstants.Commander) {
         Main.LogDebug($"[PilotCastInterpolator.RebindDeadUnit] Rebinding and referencing dead commander to Darius");
-        RebindDeadUnitReferences(CustomCastDef.castDef_Commander, CustomCastDef.castDef_Darius);
+        Pilot commanderPilot = (!MissionControl.Instance.IsSkirmish()) ? UnityGameInstance.Instance.Game.Simulation?.Commander : null;
+        string commanderCastDefID = (commanderPilot != null) ? RuntimeCastFactory.GetCastDefIDFromPilotDefID(commanderPilot.Description.Id) : CustomCastDef.castDef_Commander;
+        RebindDeadUnitReferences(commanderCastDefID, CustomCastDef.castDef_Darius);
         return CustomCastDef.castDef_Darius;
       } else {
         string oldCastDefID = PilotCastInterpolator.Instance.DynamicCastDefs[bindingKey];

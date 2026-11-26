@@ -60,12 +60,12 @@ namespace MissionControl.Interpolation {
         Main.LogDebug($"[Interpolate.{interpolateType.ToString()}] Found '{groupMatchCollection.Count}' MC interpolation GROUP matches");
       }
 
-      for (int i = 0; i < groupMatchCollection.Count; i++) {
+      while (groupMatchCollection.Count > 0) {
         List<string> conditionals = new List<string>();
         List<string> conditionalResults = new List<string>();
         string conditionalOperator = DialogueInterpolationConstants.ConditionalOperatorAND;
 
-        Match match = groupMatchCollection[i];
+        Match match = groupMatchCollection[0];
         string matchValue = match.Value;
         int index = match.Index;
         int length = match.Length;
@@ -118,10 +118,11 @@ namespace MissionControl.Interpolation {
         }
 
         if (resolvedData == DialogueInterpolationConstants.SKIP_DIALOGUE) {
-          message = DialogueInterpolationConstants.SKIP_DIALOGUE;
-        } else {
-          message = message.Remove(index, length).Insert(index, resolvedData);
+          return DialogueInterpolationConstants.SKIP_DIALOGUE;
         }
+
+        message = message.Remove(index, length).Insert(index, resolvedData);
+        groupMatchCollection = preGroupPattern.Matches(message);
       }
 
       return message;
@@ -150,11 +151,10 @@ namespace MissionControl.Interpolation {
         }
 
         if (resolvedData == DialogueInterpolationConstants.SKIP_DIALOGUE) {
-          message = DialogueInterpolationConstants.SKIP_DIALOGUE;
-        } else {
-          message = message.Remove(index, length).Insert(index, resolvedData);
+          return DialogueInterpolationConstants.SKIP_DIALOGUE;
         }
 
+        message = message.Remove(index, length).Insert(index, resolvedData);
         matchCollection = messagePattern.Matches(message);
       }
 
@@ -175,7 +175,7 @@ namespace MissionControl.Interpolation {
     public string PostInterpolate(CastDef speakerCastDef, string message, string[] lookups) {
       switch (lookups[1]) {
         case DialogueInterpolationConstants.Format: return InterpolateFormat(InterpolateType.PostInterpolate, message, lookups);
-        case DialogueInterpolationConstants.Modification: return InterpolateModification(InterpolateType.PreInterpolate, speakerCastDef, message, lookups);
+        case DialogueInterpolationConstants.Modification: return InterpolateModification(InterpolateType.PostInterpolate, speakerCastDef, message, lookups);
         default: break;
       }
       return "MC_INCORRECT_POSTINTERPOLATE_COMMAND";
@@ -253,10 +253,14 @@ namespace MissionControl.Interpolation {
           }
         }
       } else if (unitKey == DialogueInterpolationConstants.Speaker) { // Interact with the actor/pilot talking
-        unit = GetSpeakerUnit(RuntimeCastFactory.GetPilotDefIDFromCastDefID(speakerCastDef.id));
+        if (speakerCastDef != null) {
+          unit = GetSpeakerUnit(RuntimeCastFactory.GetPilotDefIDFromCastDefID(speakerCastDef.id));
+        }
 
         if (unitDataKey == "DisplayName") {
-          return speakerCastDef.Callsign() == null ? speakerCastDef.FirstName() : speakerCastDef.Callsign();
+          if (speakerCastDef != null) {
+            return speakerCastDef.Callsign() == null ? speakerCastDef.FirstName() : speakerCastDef.Callsign();
+          }
         } else if (unitDataKey == "UnitName") {
           if (unit != null) {
             return unit.UnitName;
@@ -272,11 +276,15 @@ namespace MissionControl.Interpolation {
         }
       } else if (unitKey.StartsWith(DialogueInterpolationConstants.TeamPilot_Position)) { // Interact with the actor/pilot talking
         string index = unitKey.Substring(unitKey.LastIndexOf("_") + 1);
-        unit = GetUnitAtPlayerPosition(int.Parse(index));
+        if (int.TryParse(index, out int position)) {
+          unit = GetUnitAtPlayerPosition(position);
+        }
 
         if (unitDataKey == "DisplayName") {
-          Pilot pilot = unit.GetPilot();
-          return pilot.Callsign == null ? pilot.FirstName : pilot.Callsign;
+          Pilot pilot = unit?.GetPilot();
+          if (pilot != null) {
+            return pilot.Callsign == null ? pilot.FirstName : pilot.Callsign;
+          }
         } else if (unitDataKey == "UnitName") {
           if (unit != null) {
             return unit.UnitName;
@@ -312,19 +320,21 @@ namespace MissionControl.Interpolation {
       } else if (modificationSubject.StartsWith(DialogueInterpolationConstants.TeamPilot_Random)) {
         string key = modificationSubject.Replace("_Tags", "");
         AbstractActor unit = GetBoundUnit(key);
+        Pilot pilot = unit?.GetPilot();
 
-        if (unit != null) {
-          tags = unit.GetPilot().pilotDef.PilotTags;
+        if (pilot?.pilotDef != null) {
+          tags = pilot.pilotDef.PilotTags;
         } else {
-          Main.Logger.LogWarning($"[InterpolateModification] Couldn't find unit from TeamPilot_Random_* '{speakerCastDef.id}' to set tags on.");
+          Main.Logger.LogWarning($"[InterpolateModification] Couldn't find unit from TeamPilot_Random_* '{key}' (speaker '{speakerCastDef?.id ?? "<null>"}') to set tags on.");
         }
       } else if (modificationSubject == "SpeakerTags") {
-        AbstractActor unit = GetSpeakerUnit(RuntimeCastFactory.GetPilotDefIDFromCastDefID(speakerCastDef.id));
+        AbstractActor unit = speakerCastDef != null ? GetSpeakerUnit(RuntimeCastFactory.GetPilotDefIDFromCastDefID(speakerCastDef.id)) : null;
+        Pilot pilot = unit?.GetPilot();
 
-        if (unit != null) {
-          tags = unit.GetPilot().pilotDef.PilotTags;
+        if (pilot?.pilotDef != null) {
+          tags = pilot.pilotDef.PilotTags;
         } else {
-          Main.Logger.LogWarning($"[InterpolateModification] Couldn't find unit from speaker '{speakerCastDef.id}' to set SpeakerTags on.");
+          Main.Logger.LogWarning($"[InterpolateModification] Couldn't find unit from speaker '{speakerCastDef?.id ?? "<null>"}' to set SpeakerTags on.");
         }
       }
 
@@ -372,9 +382,10 @@ namespace MissionControl.Interpolation {
         }
 
         return DialogueInterpolationConstants.SKIP_DIALOGUE;
-      } else if (conditionalSubject.EndsWith("EmployerFactionName")) {
+      } else if (conditionalSubject == "EmployerFactionName" || conditionalSubject == "TargetFactionName") {
         ContractOverride contractOverride = MissionControl.Instance.CurrentContract.Override;
         FactionDef factionDef = (conditionalSubject.StartsWith("Employer")) ? contractOverride.employerTeam.FactionDef : contractOverride.targetTeam.FactionDef;
+        if (factionDef == null) return DialogueInterpolationConstants.SKIP_DIALOGUE;
         string factionName = factionDef.Name;
 
         if (conditionalType == DialogueInterpolationConstants.ConditionalTypePositive) {
@@ -386,9 +397,10 @@ namespace MissionControl.Interpolation {
         }
 
         return DialogueInterpolationConstants.SKIP_DIALOGUE;
-      } else if (conditionalSubject.EndsWith("EmployerFactionShortName")) {
+      } else if (conditionalSubject == "EmployerFactionShortName" || conditionalSubject == "TargetFactionShortName") {
         ContractOverride contractOverride = MissionControl.Instance.CurrentContract.Override;
         FactionDef factionDef = (conditionalSubject.StartsWith("Employer")) ? contractOverride.employerTeam.FactionDef : contractOverride.targetTeam.FactionDef;
+        if (factionDef == null) return DialogueInterpolationConstants.SKIP_DIALOGUE;
         string factionName = factionDef.ShortName;
 
         if (conditionalType == DialogueInterpolationConstants.ConditionalTypePositive) {
@@ -455,8 +467,8 @@ namespace MissionControl.Interpolation {
 
       // Continue with interpolation
       if (conditionalTarget.StartsWith(DialogueInterpolationConstants.TeamPilot_Random)) {
-        if (unit != null) {
-          PilotDef pilotDef = unit.GetPilot().pilotDef;
+        PilotDef pilotDef = unit?.GetPilot()?.pilotDef;
+        if (pilotDef != null) {
           if (IsTagConditional(conditionalType)) {
             return InterpolateTagsConditional(pilotDef.PilotTags, conditionalType, conditionalValue);
           }
@@ -470,11 +482,12 @@ namespace MissionControl.Interpolation {
           return InterpolateTagsConditional(commanderTags, conditionalType, conditionalValue);
         }
       } else if (conditionalTarget == DialogueInterpolationConstants.Speaker) { // Interact with the actor/pilot talking
-        unit = GetSpeakerUnit(RuntimeCastFactory.GetPilotDefIDFromCastDefID(speakerCastDef.id));
+        unit = speakerCastDef != null ? GetSpeakerUnit(RuntimeCastFactory.GetPilotDefIDFromCastDefID(speakerCastDef.id)) : null;
+        Pilot pilot = unit?.GetPilot();
 
-        if (unit != null) {
+        if (pilot?.pilotDef != null) {
           if (IsTagConditional(conditionalType)) {
-            TagSet pilotTags = unit.GetPilot().pilotDef.PilotTags;
+            TagSet pilotTags = pilot.pilotDef.PilotTags;
             return InterpolateTagsConditional(pilotTags, conditionalType, conditionalValue);
           }
         }
@@ -598,14 +611,20 @@ namespace MissionControl.Interpolation {
     }
 
     private AbstractActor GetSpeakerUnit(string pilotDefID) {
+      if (string.IsNullOrEmpty(pilotDefID)) return null;
+
       Team player1Team = TeamUtils.GetTeam(TeamUtils.PLAYER_TEAM_ID);
+      if (player1Team == null) return null;
       List<Lance> lances = player1Team.lances;
       if (lances.Count <= 0) return null;
 
       Lance lance = lances[0];
       List<AbstractActor> units = lance.GetLanceUnits();
       foreach (AbstractActor unit in units) {
-        string unitPilotDefID = unit.GetPilot().pilotDef.Description.Id.ToUpperFirst();
+        PilotDef pilotDef = unit.GetPilot()?.pilotDef;
+        if (pilotDef == null) continue;
+
+        string unitPilotDefID = pilotDef.Description.Id.ToUpperFirst();
         if (unitPilotDefID == pilotDefID) {
           Main.LogDebug("[DialogueInterpolator.GetSpeakerUnit] Found speaker's unit!");
           return unit;
@@ -621,33 +640,39 @@ namespace MissionControl.Interpolation {
     }
 
     private AbstractActor GetUnitAtPlayerPosition(int position) {
+      if (position <= 0) return null;
+
       Team player1Team = TeamUtils.GetTeam(TeamUtils.PLAYER_TEAM_ID);
+      if (player1Team == null) return null;
       List<Lance> lances = player1Team.lances;
       if (lances.Count <= 0) return null;
-
-      Lance lance = lances[0];
-      List<AbstractActor> units = lance.GetLanceUnits();
 
       SpawnableUnit[] fullLanceConfigUnits = MissionControl.Instance.CurrentContract.Lances.GetLanceUnitsIncludeEmptySlots(TeamUtils.PLAYER_TEAM_ID);
       if (fullLanceConfigUnits.Length <= 0) return null;
 
       if (position <= fullLanceConfigUnits.Length) {
-        string pilotDefID = fullLanceConfigUnits[position - 1].PilotId;
-        return GetSpeakerUnit(pilotDefID);
+        SpawnableUnit slotUnit = fullLanceConfigUnits[position - 1];
+        if (slotUnit == null || string.IsNullOrEmpty(slotUnit.PilotId)) return null;
+        return GetSpeakerUnit(slotUnit.PilotId);
       }
 
       return null;
     }
 
     private PilotDef GetSpeakerPilotDef(string pilotDefID) {
+      if (string.IsNullOrEmpty(pilotDefID)) return null;
+
       Team player1Team = TeamUtils.GetTeam(TeamUtils.PLAYER_TEAM_ID);
+      if (player1Team == null) return null;
       List<Lance> lances = player1Team.lances;
       if (lances.Count <= 0) return null;
 
       Lance lance = lances[0];
       List<AbstractActor> units = lance.GetLanceUnits();
       foreach (AbstractActor unit in units) {
-        PilotDef pilotDef = unit.GetPilot().pilotDef;
+        PilotDef pilotDef = unit.GetPilot()?.pilotDef;
+        if (pilotDef == null) continue;
+
         string unitPilotDefID = pilotDef.Description.Id.ToUpperFirst();
         if (unitPilotDefID == pilotDefID) {
           return pilotDef;
@@ -671,7 +696,7 @@ namespace MissionControl.Interpolation {
       }
 
       string castDefID = castDef.id;
-      string bindingKey = (castDefID.Contains(DialogueInterpolationConstants.Commander) ? DialogueInterpolationConstants.Commander : PilotCastInterpolator.Instance.GetBindIDFromCastDefID(castDefID));
+      string bindingKey = PilotCastInterpolator.Instance.GetBindIDFromCastDefID(castDefID);
 
       // Handle bound units
       if (bindingKey != null) {
