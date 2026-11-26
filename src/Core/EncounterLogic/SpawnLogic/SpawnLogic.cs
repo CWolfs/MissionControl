@@ -35,6 +35,10 @@ namespace MissionControl.Logic {
     }
 
     public bool TryGetClosestValidPathFindingHex(GameObject originGo, Vector3 origin, string identifier, Vector3 pathfindingTarget, out Vector3 validPosition, int radius = 3) {
+      return TryGetClosestValidPathFindingHex(originGo, origin, identifier, pathfindingTarget, out validPosition, out _, radius);
+    }
+
+    public bool TryGetClosestValidPathFindingHex(GameObject originGo, Vector3 origin, string identifier, Vector3 pathfindingTarget, out Vector3 validPosition, out bool usedOriginalTarget, int radius = 3) {
       Main.LogDebug($"[GetClosestValidPathFindingHex] About to process with origin '{origin}'");
       if (originalOrigin == Vector3.zero) originalOrigin = origin;
 
@@ -43,6 +47,7 @@ namespace MissionControl.Logic {
       if (radius > 12) {
         if (bailoutCount >= BAILOUT_MAX) {
           validPosition = originalOrigin.GetClosestHexLerpedPointOnGrid();
+          usedOriginalTarget = false;
           Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Returning original origin with fixed height of '{validPosition}'");
           checkedAdjacentPoints.Clear();
           bailoutCount = 0;
@@ -67,12 +72,13 @@ namespace MissionControl.Logic {
 
       if (validOrigin == Vector3.zero) {
         Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Expanding search radius from radius '{radius}' to '{radius * 2}'");
-        bool found = TryGetClosestValidPathFindingHex(originGo, origin, identifier, pathfindingTarget, out validPosition, radius * 2);
+        bool found = TryGetClosestValidPathFindingHex(originGo, origin, identifier, pathfindingTarget, out validPosition, out usedOriginalTarget, radius * 2);
         checkedAdjacentPoints.Clear();
         return found;
       }
 
       Main.LogDebug($"[GetClosestValidPathFindingHex] Returning final point '{validOrigin}'");
+      usedOriginalTarget = (bailoutCount == 0);
       checkedAdjacentPoints.Clear();
       bailoutCount = 0;
       originalOrigin = Vector3.zero;

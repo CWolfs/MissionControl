@@ -22,6 +22,8 @@ namespace MissionControl {
     }
 
     private static float MAX_SLOPE_FOR_PATHFINDING = 39f;
+    private const float MIN_MECH_WALK_DISTANCE = 95f; // Slowest Assault mech walk distance (e.g. Atlas/Awesome)
+    private const float UNWALKABLE_STEP_COST_THRESHOLD = 99999f;
     private const float MAX_TERRAIN_HEIGHT_MISMATCH = 1.0f;
     private const float BUILDING_SAMPLE_OFFSET_DIAG = 2.13f; // 1.5m X/Z building raycast offset in MapMetaDataExporter
     private const float MAX_OVERHEAD_CLEARANCE = 15f;
@@ -186,9 +188,25 @@ namespace MissionControl {
       }
 
       List<Vector3> path = null;
+      bool targetIsWalkableHex = IsCellValidDrySpawn(combatState, validityPosition);
+      float effectiveTargetRadius = targetIsWalkableHex ? 0f : pathFindingZoneRadius;
+      HBS.Math.HexPoint3 goalHex = combatState.HexGrid.GetClosestHexPoint3OnGrid(validityPosition);
+      bool reachedExactGoal = false;
       try {
+        pathfindingActor.Pathing.SetWalking();
         DynamicLongRangePathfinder.PointWithCost pointWithCost = new DynamicLongRangePathfinder.PointWithCost(combatState.HexGrid.GetClosestHexPoint3OnGrid(positionPathNode.Position), 0, (validityPosition - positionPathNode.Position).magnitude);
-        path = DynamicLongRangePathfinder.GetDynamicPathToDestination(new List<DynamicLongRangePathfinder.PointWithCost>() { pointWithCost }, validityPosition, float.MaxValue, pathfindingActor, false, new List<AbstractActor>(), pathfindingActor.Pathing.CurrentGrid, pathFindingZoneRadius);
+        List<DynamicLongRangePathfinder.PointWithCost> rawPath = DynamicLongRangePathfinder.FindPath(
+          new List<DynamicLongRangePathfinder.PointWithCost>() { pointWithCost },
+          goalHex,
+          pathfindingActor,
+          MoveType.Walking,
+          effectiveTargetRadius,
+          actorAware: false
+        );
+        if (rawPath != null && rawPath.Count > 0) {
+          reachedExactGoal = rawPath[rawPath.Count - 1].point.Equals(goalHex);
+          path = rawPath.ConvertAll(p => combatState.HexGrid.HexPoint3ToCartesianWorld(p.point));
+        }
       } catch (Exception e) {
         // TODO: Sometimes this gets triggered in very large amounts. It's usually because the SpawnLogic.GetClosestValidPathFindingHex is increasing
         // the radius larger and larger and the checks keep going off the map
@@ -206,10 +224,17 @@ namespace MissionControl {
 
       Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Path count is: '{path.Count}', Current position is: '{position}'");
 
-      // GUARD: Against deep water and other impassables that have slipped through
-      if (HasPathImpassableOrDeepWaterTiles(combatState, path)) return false;
+      // GUARD: Against deep water, impassables, out-of-bounds waypoints, and unwalkable cliffs that DynamicLongRangePathfinder walks over
+      if (HasPathImpassableOrDeepWaterTiles(combatState, pathfindingActor.Pathing.CurrentGrid, path, validityPosition)) {
+        Reset();
+        return false;
+      }
 
-      if (path != null && path.Count > 1 && (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)) {
+      bool endpointMatchesGoal = targetIsWalkableHex
+        ? reachedExactGoal
+        : (path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius);
+
+      if (path != null && path.Count > 1 && endpointMatchesGoal) {
         Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Path count is: '{path.Count}', Current position is: '{position}'");
         Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Last point is '{path[path.Count - 1]}', Validity position is '{validityPosition}'");
         Main.LogDebug($"[PFM.IsSpawnValid] [{identifier}] Distance from last path to valdity position is: '{(path[path.Count - 1].DistanceFlat(validityPosition))}' and is it within zone radius? '{(path[path.Count - 1].DistanceFlat(validityPosition) <= pathFindingZoneRadius)}'");
@@ -237,19 +262,114 @@ namespace MissionControl {
       return false;
     }
 
-    private bool HasPathImpassableOrDeepWaterTiles(CombatGameState combatState, List<Vector3> path) {
-      if (path == null) return true;
+    private bool HasPathImpassableOrDeepWaterTiles(CombatGameState combatState, PathNodeGrid pathGrid, List<Vector3> path, Vector3 validityPosition) {
+      if (path == null || path.Count == 0) return true;
+
+      EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
+      bool targetInBounds = encounterLayerData != null && encounterLayerData.IsInEncounterBounds(validityPosition);
+      float maxSteepness = (pathGrid != null && pathGrid.Capabilities != null)
+        ? Mathf.Min(MAX_SLOPE_FOR_PATHFINDING, pathGrid.Capabilities.MaxSteepness)
+        : MAX_SLOPE_FOR_PATHFINDING;
+      float maxGrade = (pathGrid != null && pathGrid.Capabilities != null)
+        ? pathGrid.Capabilities.MaxGrade
+        : 0.8f;
+
+      MapTerrainDataCell prevCell = null;
+      Vector3 prevPosWithHeight = Vector3.zero;
 
       for (int i = 0; i < path.Count; i++) {
         Vector3 position = path[i];
+        if (encounterLayerData != null && !encounterLayerData.IsInEncounterBounds(position)) {
+          if (i < path.Count - 1 || targetInBounds) {
+            Main.LogDebug($"[PFM.HasPathImpassableOrDeepWaterTiles] Path tile '{position}' is outside encounter bounds");
+            return true;
+          }
+        }
+
         MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
+        if (cellData == null) return true;
+
         if (IsCellImpassableOrDeepWater(combatState, cellData, allowTraversableStructureOverWater: true)) {
           Main.LogDebug("[PFM.HasPathImpassableOrDeepWaterTiles] Path has impassable or deep water tiles in it");
           return true;
         }
+
+        bool isTraversableStructure = IsTraversableStructureCell(combatState, cellData);
+        if (!isTraversableStructure && cellData.cachedSteepness > maxSteepness) {
+          Main.LogDebug($"[PFM.HasPathImpassableOrDeepWaterTiles] Path tile steepness '{cellData.cachedSteepness}' exceeds walkable limit '{maxSteepness}'");
+          return true;
+        }
+
+        Vector3 posWithHeight = new Vector3(position.x, cellData.cachedHeight, position.z);
+        if (i > 0 && prevCell != null) {
+          float flatDist = prevPosWithHeight.DistanceFlat(posWithHeight);
+          if (flatDist > 0.01f) {
+            float realGrade = Mathf.Abs(posWithHeight.y - prevPosWithHeight.y) / flatDist;
+            if (realGrade > maxGrade) {
+              Main.LogDebug($"[PFM.HasPathImpassableOrDeepWaterTiles] Path step grade '{realGrade}' exceeds MaxGrade '{maxGrade}' (cliff/drop-off)");
+              return true;
+            }
+
+            if (HasImpassableInterveningCells(combatState, prevPosWithHeight, posWithHeight, maxSteepness)) {
+              Main.LogDebug("[PFM.HasPathImpassableOrDeepWaterTiles] Intervening cells between waypoints contain impassable, deep water, or overly steep terrain");
+              return true;
+            }
+
+            if (pathGrid != null) {
+              if (!isTraversableStructure) {
+                // GetTerrainModifiedCost already calls FindBlockerReciprocal and returns 99999.9f for blocked/impassable edges
+                float stepCost = pathGrid.GetTerrainModifiedCost(prevPosWithHeight, posWithHeight);
+                if (stepCost >= UNWALKABLE_STEP_COST_THRESHOLD) {
+                  Main.LogDebug($"[PFM.HasPathImpassableOrDeepWaterTiles] Path step terrain cost '{stepCost}' is unwalkable");
+                  return true;
+                }
+              } else if (pathGrid.FindBlockerReciprocal(prevPosWithHeight, posWithHeight)) {
+                Main.LogDebug("[PFM.HasPathImpassableOrDeepWaterTiles] Path step on structure has a reciprocal terrain blocker");
+                return true;
+              }
+            }
+          }
+        }
+
+        prevCell = cellData;
+        prevPosWithHeight = posWithHeight;
       }
 
       return false;
+    }
+
+    private bool HasImpassableInterveningCells(CombatGameState combatState, Vector3 fromPos, Vector3 toPos, float maxSteepness) {
+      MapMetaData mapMetaData = combatState.MapMetaData;
+      Point fromIdx = mapMetaData.GetIndex(fromPos);
+      Point toIdx = mapMetaData.GetIndex(toPos);
+      if (!mapMetaData.IsWithinBounds(fromIdx) || !mapMetaData.IsWithinBounds(toIdx)) return true;
+
+      List<Point> lineCells = BresenhamLineUtil.BresenhamLine(fromIdx, toIdx);
+      for (int j = 1; j < lineCells.Count - 1; j++) {
+        Point cellIdx = lineCells[j];
+        if (!mapMetaData.IsWithinBounds(cellIdx)) return true;
+        MapTerrainDataCell stepCell = mapMetaData.GetCellAt(cellIdx);
+        if (stepCell == null) return true;
+        if (IsCellImpassableOrDeepWater(combatState, stepCell, allowTraversableStructureOverWater: true)) return true;
+        if (!IsTraversableStructureCell(combatState, stepCell) && stepCell.cachedSteepness > maxSteepness) return true;
+      }
+      return false;
+    }
+
+    private bool IsTraversableStructureCell(CombatGameState combatState, MapTerrainDataCell cellData) {
+      bool hasBuilding = cellData.MapEncounterLayerDataCell != null && cellData.MapEncounterLayerDataCell.HasBuilding;
+      if (!hasBuilding) return false;
+
+      BuildingRaycastHit topmostBuilding = cellData.MapEncounterLayerDataCell.GetTopmostBuilding();
+      if (topmostBuilding == null) return false;
+
+      ObstructionGameLogic obstruction = topmostBuilding.obstructionGameLogic;
+      if (obstruction == null && combatState?.ItemRegistry != null && !string.IsNullOrEmpty(topmostBuilding.buildingGuid)) {
+        obstruction = combatState.ItemRegistry.GetItemByGUID<ObstructionGameLogic>(topmostBuilding.buildingGuid);
+      }
+      if (obstruction == null) return false;
+
+      return IsTraversableStructureOverWater(obstruction, obstruction.TerrainMask);
     }
 
     public static bool IsValidGroundCollider(Collider hitCollider, out bool isTerrainHit) {
@@ -397,6 +517,90 @@ namespace MissionControl {
       }
     }
 
+    private bool HasValidLocalWalkingRoute(CombatGameState combatState, Vector3 fromPos, Vector3 toPos, UnitType type) {
+      AbstractActor pathfindingActor = GetPathFindingActor(type);
+      if (pathfindingActor == null) return false;
+
+      SetupPathfindingActor(fromPos, pathfindingActor);
+      pathfindingActor.Pathing.SetWalking();
+      PathNodeGrid pathGrid = pathfindingActor.Pathing.CurrentGrid;
+      PathNode startNode = pathGrid.GetValidPathNodeAt(fromPos, pathfindingActor.Pathing.MaxCost);
+      if (startNode == null) return false;
+
+      // Expand only the walking grid rather than sprinting/backwards grids
+      AccessTools.Field(typeof(PathNodeGrid), "open").SetValue(pathGrid, new List<PathNode>() { startNode });
+      pathGrid.UpdateBuild(10000);
+      float maxStepCost = Mathf.Min(pathfindingActor.MaxWalkDistance, MIN_MECH_WALK_DISTANCE);
+      PathNode targetNode = pathGrid.GetValidPathNodeAt(toPos, maxStepCost);
+      if (targetNode == null) return false;
+
+      List<Vector3> walkedRoute = new List<Vector3>();
+      for (PathNode node = targetNode; node != null; node = node.Parent) {
+        walkedRoute.Add(node.Position);
+        if (walkedRoute.Count > 64) break;
+      }
+      walkedRoute.Reverse();
+      if (walkedRoute.Count == 0) return false;
+
+      return !HasPathImpassableOrDeepWaterTiles(combatState, pathGrid, walkedRoute, toPos);
+    }
+
+    public bool IsAdjacentReachableSpawn(CombatGameState combatState, GameObject spawnGo, Vector3 position, Vector3 targetPosition, UnitType type) {
+      if (combatState == null) return false;
+      EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
+      if (encounterLayerData != null && !encounterLayerData.IsInEncounterBounds(position)) return false;
+      if (position.IsTooCloseToAnotherSpawn(spawnGo)) return false;
+      if (!IsCellValidDrySpawn(combatState, position)) return false;
+
+      AbstractActor pathfindingActor = GetPathFindingActor(type);
+      if (pathfindingActor == null) return false;
+
+      try {
+        SetupPathfindingActor(position, pathfindingActor);
+        pathfindingActor.Pathing.SetWalking();
+        PathNodeGrid pathGrid = pathfindingActor.Pathing.CurrentGrid;
+        PathNode positionPathNode = pathGrid.GetValidPathNodeAt(position, pathfindingActor.Pathing.MaxCost);
+        if (positionPathNode == null || !HasValidNeighbours(positionPathNode, targetPosition, type)) {
+          Reset();
+          return false;
+        }
+
+        bool localRouteValid = HasValidLocalWalkingRoute(combatState, position, targetPosition, type);
+        if (!localRouteValid) {
+          // If the local grid rejected targetPosition (e.g. occupied by a live actor or longer detour), try exact-goal long-range FindPath
+          SetupPathfindingActor(position, pathfindingActor);
+          pathfindingActor.Pathing.SetWalking();
+          PathNode startNode = pathfindingActor.Pathing.CurrentGrid.GetValidPathNodeAt(position, pathfindingActor.Pathing.MaxCost);
+          if (startNode != null) {
+            DynamicLongRangePathfinder.PointWithCost startPwc = new DynamicLongRangePathfinder.PointWithCost(
+              combatState.HexGrid.GetClosestHexPoint3OnGrid(startNode.Position),
+              0,
+              (targetPosition - startNode.Position).magnitude
+            );
+            HBS.Math.HexPoint3 goalHex = combatState.HexGrid.GetClosestHexPoint3OnGrid(targetPosition);
+            List<DynamicLongRangePathfinder.PointWithCost> rawPath = DynamicLongRangePathfinder.FindPath(
+              new List<DynamicLongRangePathfinder.PointWithCost>() { startPwc },
+              goalHex,
+              pathfindingActor,
+              MoveType.Walking,
+              0f,
+              actorAware: false
+            );
+            if (rawPath != null && rawPath.Count > 1 && rawPath[rawPath.Count - 1].point.Equals(goalHex)) {
+              List<Vector3> fallbackPath = rawPath.ConvertAll(p => combatState.HexGrid.HexPoint3ToCartesianWorld(p.point));
+              localRouteValid = !HasPathImpassableOrDeepWaterTiles(combatState, pathfindingActor.Pathing.CurrentGrid, fallbackPath, targetPosition);
+            }
+          }
+        }
+        Reset();
+        return localRouteValid;
+      } catch (Exception e) {
+        Main.LogDebug($"[PFM.IsAdjacentReachableSpawn] Caught error at '{position}': {e.Message}");
+        Reset();
+        return false;
+      }
+    }
+
     private bool IsCellImpassableOrDeepWater(CombatGameState combatState, MapTerrainDataCell cellData, bool allowTraversableStructureOverWater) {
       TerrainMaskFlags terrainMask = cellData.terrainMask;
       bool hasBuilding = cellData.MapEncounterLayerDataCell != null && cellData.MapEncounterLayerDataCell.HasBuilding;
@@ -445,10 +649,11 @@ namespace MissionControl {
       pathfindingActor.Pathing.CurrentGrid.UpdateBuild(1);
       List<PathNode> neighbours = AccessTools.Field(typeof(PathNodeGrid), "open").GetValue(pathfindingActor.Pathing.CurrentGrid) as List<PathNode>;
 
+      float maxNeighbourStepCost = Mathf.Min(pathfindingActor.MaxWalkDistance, MIN_MECH_WALK_DISTANCE);
       foreach (PathNode neighbourNode in neighbours) {
-        float cost = pathfindingActor.Pathing.CurrentGrid.GetTerrainModifiedCost(positionNode, neighbourNode, pathfindingActor.MaxWalkDistance);
-        Main.LogDebug($"[PFM.HasValidNeighbours] Cost of neighbour is {cost} with max pathfinder cost being {pathfindingActor.MaxWalkDistance}");
-        if (cost < pathfindingActor.MaxWalkDistance) count++;
+        float cost = pathfindingActor.Pathing.CurrentGrid.GetTerrainModifiedCost(positionNode, neighbourNode, maxNeighbourStepCost);
+        Main.LogDebug($"[PFM.HasValidNeighbours] Cost of neighbour is {cost} with max pathfinder cost being {maxNeighbourStepCost}");
+        if (cost < maxNeighbourStepCost) count++;
         if (count >= 2) return true;
       }
       return false;

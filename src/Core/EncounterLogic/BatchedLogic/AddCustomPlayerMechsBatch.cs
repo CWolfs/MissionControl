@@ -14,7 +14,10 @@ namespace MissionControl.Logic {
       List<string> unitGuids = encounterRules.GenerateGuids(numberOfUnitsInLance);
       string spawnerName = $"Lance_Custom_PlayerLance_{lanceGuid}";
 
-      encounterRules.EncounterLogic.Add(new AddCustomPlayerLanceExtraSpawnPoints());
+      LogicState extraPlayerSpawnState = new LogicState();
+      encounterRules.EncounterLogic.Add(new AddCustomPlayerLanceExtraSpawnPoints(encounterRules, extraPlayerSpawnState));
+      encounterRules.EncounterLogic.Add(new SpawnObjectsAroundTarget(encounterRules, extraPlayerSpawnState,
+        SceneManipulationLogic.LookDirection.TOWARDS_TARGET, 24f, 100f, onlyRepositionIfInvalid: true));
 
       int playerAiUnitCount = MissionControl.Instance.CurrentContract.Lances.GetLanceUnits(EncounterRules.EMPLOYER_TEAM_ID).Length;
       if (playerAiUnitCount > 0) {

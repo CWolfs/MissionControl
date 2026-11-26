@@ -198,22 +198,64 @@ namespace MissionControl.Logic {
         string orientationKey = $"{spawnerName}.{orientationUnit.name}";
         encounterRules.ObjectLookup[orientationKey] = orientationUnit;
 
-        for (int j = unitSpawnPoints.Count; j < numberOfUnitsInLance; j++) {
-          Vector3 randomLanceSpawn = unitSpawnPoints.GetRandom().transform.localPosition;
-          Vector3 spawnPositon = SceneUtils.GetRandomPositionFromTarget(randomLanceSpawn, 24, 100);
-          spawnPositon = spawnPositon.GetClosestHexLerpedPointOnGrid();
+        EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
+        CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+        bool isUnplacedGeneratedLance = lanceSpawner.gameObject.GetComponent<UnplacedGeneratedLanceMarker>() != null;
+        List<GameObject> originalSpawnPoints = new List<GameObject>(unitSpawnPoints);
 
-          // Ensure spawn position isn't on another unit spawn. Give up if one isn't possible.
-          int failSafe = 0;
-          while (spawnPositon.IsTooCloseToAnotherSpawn()) {
-            spawnPositon = SceneUtils.GetRandomPositionFromTarget(randomLanceSpawn, 24, 100);
-            spawnPositon = spawnPositon.GetClosestHexLerpedPointOnGrid();
-            if (failSafe > 20) break;
-            failSafe++;
+        for (int j = unitSpawnPoints.Count; j < numberOfUnitsInLance; j++) {
+          Vector3 localSpawnPos;
+          if (isUnplacedGeneratedLance) {
+            localSpawnPos = new Vector3(24f * j, 0f, 24f * j);
+          } else {
+            Vector3 anchorWorldPos = originalSpawnPoints.GetRandom().transform.position;
+            Vector3 spawnWorldPos = Vector3.zero;
+            bool found = false;
+
+            // Note: ChunkLogic runs in InitializeContract Prefix before LoadMapMetaDataV2 populates cachedHeight/cachedSteepness,
+            // so place on a distinct in-bounds world hex here and let SpawnObjectsAroundTarget validate terrain/reachability in SCENE_MANIPULATION
+            for (int failSafe = 0; failSafe < 25; failSafe++) {
+              Vector3 sampleAnchor = originalSpawnPoints.GetRandom().transform.position;
+              Vector3 candidate = SceneUtils.GetRandomPositionFromTarget(sampleAnchor, 24, 100).GetClosestHexLerpedPointOnGrid();
+              if (!encounterLayerData.IsInEncounterBounds(candidate)) continue;
+              if (candidate.IsTooCloseToAnotherSpawn()) continue;
+
+              spawnWorldPos = candidate;
+              found = true;
+              break;
+            }
+
+            if (!found && combatState != null) {
+              foreach (GameObject anchorGo in originalSpawnPoints) {
+                Vector3 pos = anchorGo.transform.position;
+                List<Vector3> ringHexes = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(pos, 15);
+                ringHexes.Sort((a, b) => (a - pos).sqrMagnitude.CompareTo((b - pos).sqrMagnitude));
+                foreach (Vector3 rawHex in ringHexes) {
+                  Vector3 hex = rawHex.GetClosestHexLerpedPointOnGrid();
+                  if (!encounterLayerData.IsInEncounterBounds(hex)) continue;
+                  if (hex.IsTooCloseToAnotherSpawn()) continue;
+
+                  spawnWorldPos = hex;
+                  found = true;
+                  break;
+                }
+                if (found) break;
+              }
+            }
+
+            if (!found) {
+              // Keep last-resort initial placement inside encounter bounds rather than offsetting blindly across a boundary
+              Vector3 inBoundsFallback = SceneUtils.GetRandomPositionWithinBounds(anchorWorldPos, 240f).GetClosestHexLerpedPointOnGrid();
+              spawnWorldPos = encounterLayerData.IsInEncounterBounds(inBoundsFallback)
+                ? inBoundsFallback
+                : anchorWorldPos.GetClosestHexLerpedPointOnGrid();
+            }
+
+            localSpawnPos = lanceSpawner.transform.InverseTransformPoint(spawnWorldPos);
           }
 
           Main.Logger.Log($"[AddExtraLanceSpawnPoints] [Faction:{teamOverride.faction}] Creating lance '{lanceOverride.name}' spawn point 'UnitSpawnPoint{j + 1}'");
-          UnitSpawnPointGameLogic unitSpawnGameLogic = LanceSpawnerFactory.CreateUnitSpawnPoint(lanceSpawner.gameObject, $"UnitSpawnPoint{j + 1}", spawnPositon, lanceOverride.unitSpawnPointOverrideList[j].unitSpawnPoint.EncounterObjectGuid);
+          UnitSpawnPointGameLogic unitSpawnGameLogic = LanceSpawnerFactory.CreateUnitSpawnPoint(lanceSpawner.gameObject, $"UnitSpawnPoint{j + 1}", localSpawnPos, lanceOverride.unitSpawnPointOverrideList[j].unitSpawnPoint.EncounterObjectGuid);
           unitSpawnPoints.Add(unitSpawnGameLogic.gameObject);
 
           string spawnKey = $"{spawnerName}.{unitSpawnGameLogic.gameObject.name}";

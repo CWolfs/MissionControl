@@ -10,8 +10,9 @@ using MissionControl.Rules;
 using MissionControl.Utils;
 
 namespace MissionControl.Logic {
-  public class SpawnObjectsAroundTarget : SpawnLogic {
+  public class SpawnObjectsAroundTarget : SpawnLanceLogic {
     private LogicState state;
+    private bool onlyRepositionIfInvalid = false;
 
     private List<string> configuredObjectKeys = new List<string>();
     private List<string> objectKeys = new List<string>();
@@ -22,6 +23,8 @@ namespace MissionControl.Logic {
     private List<GameObject> objectGos = new List<GameObject>();
     private Dictionary<string, GameObject> orientationTargets = new Dictionary<string, GameObject>();
     private Dictionary<GameObject, Vector3> validOrientationTargetPositions = new Dictionary<GameObject, Vector3>();
+    private Dictionary<GameObject, Vector3> cachedSpawnSnappedPositions = new Dictionary<GameObject, Vector3>();
+    private Dictionary<GameObject, Vector3> cachedSpawnRawPositions = new Dictionary<GameObject, Vector3>();
 
     private float minDistanceFromTarget = 50f;
     private float maxDistanceFromTarget = 150f;
@@ -65,11 +68,15 @@ namespace MissionControl.Logic {
       this.lookDirection = lookDirection;
     }
 
-    public SpawnObjectsAroundTarget(EncounterRules encounterRules, LogicState state, LookDirection lookDirection, float minDistance, float maxDistance) : base(encounterRules) {
+    public SpawnObjectsAroundTarget(EncounterRules encounterRules, LogicState state, LookDirection lookDirection, float minDistance, float maxDistance)
+      : this(encounterRules, state, lookDirection, minDistance, maxDistance, false) { }
+
+    public SpawnObjectsAroundTarget(EncounterRules encounterRules, LogicState state, LookDirection lookDirection, float minDistance, float maxDistance, bool onlyRepositionIfInvalid) : base(encounterRules) {
       this.state = state;
       this.minDistanceFromTarget = minDistance;
       this.maxDistanceFromTarget = maxDistance;
       this.lookDirection = lookDirection;
+      this.onlyRepositionIfInvalid = onlyRepositionIfInvalid;
     }
 
     public override void Run(RunPayload payload) {
@@ -85,6 +92,8 @@ namespace MissionControl.Logic {
         Main.Logger.LogError($"[SpawnObjectsAroundTarget] Objects do not have a matching set of 'orientation target keys' for this spawner to work correctly.");
         return;
       }
+
+      RefreshCachedSpawnOccupancy();
 
       for (int i = 0; i < objectGos.Count; i++) {
         GameObject objectGo = objectGos[i];
@@ -115,38 +124,192 @@ namespace MissionControl.Logic {
     private void SpawnObjectAroundTarget(GameObject objectGo, GameObject orientationTarget) {
       SaveSpawnPosition(objectGo);
 
+      EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
+      CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       Vector3 validOrientationTargetPosition = GetValidOrientationTargetPosition(orientationTarget);
+
+      bool isPlayerObject = (objectGo.transform.parent != null && objectGo.transform.parent.gameObject == EncounterRules.SpawnerPlayerLanceGo)
+        || objectGo.GetComponentInParent<PlayerLanceSpawnerGameLogic>() != null;
+      Vector3 playerConnectivityTarget = (!isPlayerObject && EncounterRules.SpawnerPlayerLanceGo != null)
+        ? ResolveVerifiedOrientationTargetPosition(EncounterRules.SpawnerPlayerLanceGo, "PlayerLanceConnectivity")
+        : Vector3.zero;
+      Vector3 candidatePathfindTarget = isPlayerObject ? validOrientationTargetPosition : playerConnectivityTarget;
+      Quaternion originalRotation = objectGo.transform.rotation;
+
+      if (onlyRepositionIfInvalid) {
+        Vector3 currentPos = objectGo.transform.position.GetClosestHexLerpedPointOnGrid();
+        bool withinFormationRange = IsWithinFormationRange(objectGo, currentPos, validOrientationTargetPosition);
+        bool validAtCurrentPos = withinFormationRange
+          && !IsHexOccupiedByAnotherSpawn(currentPos, objectGo)
+          && encounterLayerData.IsInEncounterBounds(currentPos)
+          && IsObjectPositionReachable(combatState, objectGo, currentPos, validOrientationTargetPosition, playerConnectivityTarget, skipOrientationCheck: false, skipPlayerCheck: false);
+        if (validAtCurrentPos) {
+          objectGo.transform.position = currentPos;
+          UpdateCachedSpawnOccupancy(objectGo, currentPos);
+          Main.LogDebug($"[SpawnObjectsAroundTarget] '{objectGo.name}' is already at a valid reachable position '{currentPos}'. Keeping existing placement.");
+          return;
+        }
+      }
+
       float currentMinDistance = minDistanceFromTarget;
       float currentMaxDistance = maxDistanceFromTarget;
 
       while (TotalAttemptCount < TotalAttemptMax) {
         Vector3 newSpawnPosition = GetRandomPositionFromTarget(validOrientationTargetPosition, currentMinDistance, currentMaxDistance);
-        newSpawnPosition = GetClosestValidPathFindingHex(objectGo, newSpawnPosition, $"NewRandomSpawnPositionFromOrientationTarget.{orientationTarget.name}", 2);
+        bool verifiedCandidateTarget = false;
+        bool foundSpawn = false;
 
-        if (MissionControl.Instance.EncounterLayerData.IsInEncounterBounds(newSpawnPosition)) {
+        if (candidatePathfindTarget != Vector3.zero
+            && newSpawnPosition.DistanceFlat(candidatePathfindTarget) <= 25f
+            && !IsHexOccupiedByAnotherSpawn(newSpawnPosition, objectGo)
+            && PathFinderManager.Instance.IsAdjacentReachableSpawn(combatState, objectGo, newSpawnPosition, candidatePathfindTarget, UnitType.Mech)) {
+          foundSpawn = true;
+          verifiedCandidateTarget = true;
+        } else {
+          foundSpawn = TryGetClosestValidPathFindingHex(objectGo, newSpawnPosition, $"NewRandomSpawnPositionFromOrientationTarget.{orientationTarget.name}", candidatePathfindTarget, out newSpawnPosition, out verifiedCandidateTarget, 2);
+        }
+
+        if (foundSpawn && encounterLayerData.IsInEncounterBounds(newSpawnPosition) && !IsHexOccupiedByAnotherSpawn(newSpawnPosition, objectGo)) {
           objectGo.transform.position = newSpawnPosition;
 
-          if (lookDirection == LookDirection.TOWARDS_TARGET) {
+          if (onlyRepositionIfInvalid) {
+            objectGo.transform.rotation = originalRotation;
+          } else if (lookDirection == LookDirection.TOWARDS_TARGET) {
             RotateToTarget(objectGo, orientationTarget);
           } else {
             RotateAwayFromTarget(objectGo, orientationTarget);
           }
 
-          if (IsSpawnValid(objectGo, validOrientationTargetPosition)) {
+          bool skipOrientation = verifiedCandidateTarget && isPlayerObject;
+          bool skipPlayer = verifiedCandidateTarget && !isPlayerObject && playerConnectivityTarget != Vector3.zero;
+          if (IsObjectPositionReachable(combatState, objectGo, newSpawnPosition, validOrientationTargetPosition, playerConnectivityTarget, skipOrientation, skipPlayer)) {
+            UpdateCachedSpawnOccupancy(objectGo, newSpawnPosition);
             Main.Logger.Log("[SpawnObjectsAroundTarget] Object spawn complete");
             ResetAttempts();
             return;
           }
         } else {
-          Main.LogDebugWarning("[SpawnObjectsAroundTarget] Selected object spawn point is outside of the boundary. Select a new object spawn point.");
+          Main.LogDebugWarning("[SpawnObjectsAroundTarget] Selected object spawn point is invalid or outside of the boundary. Select a new object spawn point.");
         }
 
         CheckAttempts(ref currentMinDistance, ref currentMaxDistance);
       }
 
+      // Bounded nearest-first ring search around the verified orientation target before falling back to the original position
+      if (combatState != null) {
+        List<Vector3> ringHexes = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(validOrientationTargetPosition, 10);
+        ringHexes.Sort((a, b) => (a - validOrientationTargetPosition).sqrMagnitude.CompareTo((b - validOrientationTargetPosition).sqrMagnitude));
+        int terrainBudget = 160;
+        int pathfindBudget = 40;
+        foreach (Vector3 rawHex in ringHexes) {
+          if (terrainBudget <= 0 || pathfindBudget <= 0) break;
+          Vector3 hex = rawHex.GetClosestHexLerpedPointOnGrid();
+          if (!encounterLayerData.IsInEncounterBounds(hex)) continue;
+
+          terrainBudget--;
+          if (!PathFinderManager.Instance.IsCellValidDrySpawn(combatState, hex)) continue;
+          if (IsHexOccupiedByAnotherSpawn(hex, objectGo)) continue;
+
+          pathfindBudget--;
+          if (!IsObjectPositionReachable(combatState, objectGo, hex, validOrientationTargetPosition, playerConnectivityTarget, skipOrientationCheck: false, skipPlayerCheck: false)) continue;
+
+          objectGo.transform.position = hex;
+          UpdateCachedSpawnOccupancy(objectGo, hex);
+          if (onlyRepositionIfInvalid) {
+            objectGo.transform.rotation = originalRotation;
+          } else if (lookDirection == LookDirection.TOWARDS_TARGET) {
+            RotateToTarget(objectGo, orientationTarget);
+          } else {
+            RotateAwayFromTarget(objectGo, orientationTarget);
+          }
+          Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] Placed '{objectGo.name}' at nearest reachable fallback '{hex}'.");
+          ResetAttempts();
+          return;
+        }
+      }
+
       Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] Could not find a valid spawn for '{objectGo.name}' after '{TotalAttemptCount}' attempts. Restoring its original position.");
       RestoreSpawnPosition(objectGo);
+      objectGo.transform.rotation = originalRotation;
+      UpdateCachedSpawnOccupancy(objectGo, objectGo.transform.position.GetClosestHexLerpedPointOnGrid());
       ResetAttempts();
+    }
+
+    private void RefreshCachedSpawnOccupancy() {
+      cachedSpawnSnappedPositions.Clear();
+      cachedSpawnRawPositions.Clear();
+      EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
+      if (encounterLayerData == null) return;
+
+      UnitSpawnPointGameLogic[] unitSpawns = encounterLayerData.GetComponentsInChildren<UnitSpawnPointGameLogic>();
+      foreach (UnitSpawnPointGameLogic unitSpawn in unitSpawns) {
+        if (unitSpawn == null) continue;
+        GameObject go = unitSpawn.gameObject;
+        cachedSpawnRawPositions[go] = go.transform.position;
+        cachedSpawnSnappedPositions[go] = go.transform.position.GetClosestHexLerpedPointOnGrid();
+      }
+    }
+
+    private void UpdateCachedSpawnOccupancy(GameObject go, Vector3 snappedPos) {
+      if (go == null) return;
+      cachedSpawnRawPositions[go] = go.transform.position;
+      cachedSpawnSnappedPositions[go] = snappedPos;
+    }
+
+    private bool IsWithinFormationRange(GameObject objectGo, Vector3 candidatePos, Vector3 fallbackAnchorPos) {
+      if (objectGo.transform.parent != null) {
+        List<GameObject> siblings = objectGo.transform.parent.gameObject.FindAllContains("SpawnPoint");
+        float nearestOriginalDist = float.MaxValue;
+        bool foundOriginalSibling = false;
+        foreach (GameObject sibling in siblings) {
+          if (sibling == null || sibling == objectGo || objectGos.Contains(sibling)) continue;
+          float dist = candidatePos.DistanceFlat(sibling.transform.position);
+          if (dist < nearestOriginalDist) {
+            nearestOriginalDist = dist;
+            foundOriginalSibling = true;
+          }
+        }
+        if (foundOriginalSibling) {
+          return nearestOriginalDist <= maxDistanceFromTarget;
+        }
+      }
+      return candidatePos.DistanceFlat(fallbackAnchorPos) <= maxDistanceFromTarget;
+    }
+
+    private bool IsHexOccupiedByAnotherSpawn(Vector3 snappedHex, GameObject ignoreGo) {
+      foreach (KeyValuePair<GameObject, Vector3> entry in cachedSpawnSnappedPositions) {
+        GameObject otherGo = entry.Key;
+        if (otherGo == null || otherGo == ignoreGo) continue;
+        if (snappedHex.DistanceFlat(entry.Value) < 13f) return true;
+        if (cachedSpawnRawPositions.TryGetValue(otherGo, out Vector3 rawPos) && Vector3.Distance(rawPos, snappedHex) < 13f) return true;
+      }
+      return false;
+    }
+
+    private bool IsObjectPositionReachable(
+      CombatGameState combatState,
+      GameObject objectGo,
+      Vector3 candidatePos,
+      Vector3 orientationTargetPos,
+      Vector3 playerConnectivityTarget,
+      bool skipOrientationCheck,
+      bool skipPlayerCheck
+    ) {
+      if (!skipOrientationCheck) {
+        bool reachesOrientation = (candidatePos.DistanceFlat(orientationTargetPos) <= 25f)
+          ? PathFinderManager.Instance.IsAdjacentReachableSpawn(combatState, objectGo, candidatePos, orientationTargetPos, UnitType.Mech)
+          : PathFinderManager.Instance.IsSpawnValid(objectGo, candidatePos, orientationTargetPos, UnitType.Mech, objectGo.name);
+        if (!reachesOrientation) return false;
+      }
+
+      if (!skipPlayerCheck && playerConnectivityTarget != Vector3.zero && playerConnectivityTarget.DistanceFlat(orientationTargetPos) > 1f) {
+        bool reachesPlayer = (candidatePos.DistanceFlat(playerConnectivityTarget) <= 25f)
+          ? PathFinderManager.Instance.IsAdjacentReachableSpawn(combatState, objectGo, candidatePos, playerConnectivityTarget, UnitType.Mech)
+          : PathFinderManager.Instance.IsSpawnValid(objectGo, candidatePos, playerConnectivityTarget, UnitType.Mech, objectGo.name);
+        if (!reachesPlayer) return false;
+      }
+
+      return true;
     }
 
     private Vector3 GetValidOrientationTargetPosition(GameObject orientationTarget) {
@@ -156,8 +319,8 @@ namespace MissionControl.Logic {
         return validPosition;
       }
 
-      Main.LogDebug($"[SpawnObjectsAroundTarget] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
-      Vector3 validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget, orientationTarget.transform.position, $"OrientationTarget.{orientationTarget.name}");
+      Main.LogDebug($"[SpawnObjectsAroundTarget] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Resolving verified target hex.");
+      Vector3 validOrientationTargetPosition = ResolveVerifiedOrientationTargetPosition(orientationTarget, $"OrientationTarget.{orientationTarget.name}");
       validOrientationTargetPositions[orientationTarget] = validOrientationTargetPosition;
 
       return validOrientationTargetPosition;
@@ -208,7 +371,10 @@ namespace MissionControl.Logic {
                 continue;
               }
 
-              GameObject objectKeyGO = GameObject.Find(objectKey.Substring(objectKey.IndexOf(".") + 1));
+              GameObject objectKeyGO = null;
+              if (!this.EncounterRules.ObjectLookup.TryGetValue(objectKey, out objectKeyGO) || objectKeyGO == null) {
+                objectKeyGO = GameObject.Find(objectKey.Substring(objectKey.IndexOf(".") + 1));
+              }
               if (objectKeyGO == null) {
                 Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] GameObject with key '{objectKey}' was not found. This is unexpected.");
                 continue;
@@ -219,7 +385,10 @@ namespace MissionControl.Logic {
                 continue;
               }
 
-              GameObject orientationObjectKeyGO = GameObject.Find(orientationObjectKey.Substring(orientationObjectKey.IndexOf(".") + 1));
+              GameObject orientationObjectKeyGO = null;
+              if (!this.EncounterRules.ObjectLookup.TryGetValue(orientationObjectKey, out orientationObjectKeyGO) || orientationObjectKeyGO == null) {
+                orientationObjectKeyGO = GameObject.Find(orientationObjectKey.Substring(orientationObjectKey.IndexOf(".") + 1));
+              }
               if (orientationObjectKeyGO == null) {
                 Main.Logger.LogWarning($"[SpawnObjectsAroundTarget] GameObject for orientation target with key '{orientationObjectKey}' was not found. This is unexpected.");
                 continue;
