@@ -26,6 +26,8 @@ namespace MissionControl.Result {
 
     private bool activated = false;
     private bool completed = false;
+    private float timeStarted = 0;
+    private float timeToWait = 0;
 
     private bool waitingUntilAfterDelayToSkipIf = false;
     private bool useSkippedState = false;
@@ -53,7 +55,13 @@ namespace MissionControl.Result {
       }
 
       Main.LogDebug($"[DelayResult] Delaying '{Name}' results for '{Time}' seconds, '{Rounds}' rounds and/or '{Phases}' phases");
+      Activate(Time);
+    }
+
+    private void Activate(float timeToWait) {
       activated = true;
+      this.timeToWait = timeToWait;
+      timeStarted = UnityEngine.Time.time;
       SubscribeToMessages(true);
 
       InitResults();
@@ -120,8 +128,8 @@ namespace MissionControl.Result {
     }
 
     IEnumerator DelayResultsWithTime() {
-      yield return new WaitForSeconds(Time);
-      Main.LogDebug("[DelayResult] Triggering '{Name}' with DelayResultsWithTime");
+      yield return new WaitForSeconds(timeToWait);
+      Main.LogDebug($"[DelayResult] Triggering '{Name}' with DelayResultsWithTime");
       TriggerResults();
     }
 
@@ -242,11 +250,53 @@ namespace MissionControl.Result {
       CancelTriggers.Clear();
     }
 
+    public DelaySaveState GetSaveState() {
+      if (!activated) return null;
+
+      return new DelaySaveState {
+        Completed = completed,
+        RoundCount = roundCount,
+        PhaseCount = phaseCount,
+        TimeRemaining = Mathf.Max(0, timeToWait - (UnityEngine.Time.time - timeStarted)),
+        UseSkippedState = useSkippedState,
+        WaitingUntilAfterDelayToSkipIf = waitingUntilAfterDelayToSkipIf
+      };
+    }
+
+    public void RestoreSaveState(DelaySaveState state) {
+      if (activated) return;
+
+      if (state.Completed) {
+        Main.LogDebug($"[DelayResult.RestoreSaveState] Restoring '{Name}' as completed");
+        activated = true;
+        completed = true;
+        DeleteTriggers();
+        return;
+      }
+
+      Main.LogDebug($"[DelayResult.RestoreSaveState] Resuming '{Name}' at round count '{state.RoundCount}', phase count '{state.PhaseCount}' and '{state.TimeRemaining}' seconds remaining");
+      roundCount = state.RoundCount;
+      phaseCount = state.PhaseCount;
+      useSkippedState = useSkippedState || state.UseSkippedState;
+      waitingUntilAfterDelayToSkipIf = state.WaitingUntilAfterDelayToSkipIf;
+      Activate(state.TimeRemaining);
+    }
+
     public void Cancel() {
       Main.LogDebug($"[DelayResult.Cancel] Cancelling DelayResult '{Name}'");
       completed = true;
       SubscribeToMessages(false);
       DeleteTriggers();
     }
+  }
+
+  public class DelaySaveState {
+    public string Id { get; set; }
+    public bool Completed { get; set; }
+    public int RoundCount { get; set; }
+    public int PhaseCount { get; set; }
+    public float TimeRemaining { get; set; }
+    public bool UseSkippedState { get; set; }
+    public bool WaitingUntilAfterDelayToSkipIf { get; set; }
   }
 }

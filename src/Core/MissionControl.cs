@@ -19,6 +19,7 @@ using MissionControl.ContractTypeBuilders;
 using MissionControl.Patches;
 using MissionControl.Config;
 using MissionControl.Interpolation;
+using MissionControl.Result;
 
 using Newtonsoft.Json.Linq;
 
@@ -66,6 +67,7 @@ namespace MissionControl {
     public EncounterLayer_MDD EncounterLayerMDD { get; private set; }
     public bool IsCustomContractType { get; set; } = false;
     public List<object[]> QueuedBuildingMounts { get; set; } = new List<object[]>();
+    public List<DelayResult> DelayResults { get; set; } = new List<DelayResult>();
 
     private Dictionary<string, string> CustomGameLogicData { get; set; } = new Dictionary<string, string>();
 
@@ -201,6 +203,7 @@ namespace MissionControl {
 
       if (DataManager.Instance.AvailableCustomContractTypeBuilds.ContainsKey(contractTypeName)) {
         JObject contractTypeBuild = DataManager.Instance.GetAvailableCustomContractTypeBuilds(contractTypeName, EncounterLayerMDD.EncounterLayerID);
+        DelayResults.Clear();
         ContractTypeBuilder contractTypeBuilder = new ContractTypeBuilder(encounterLayerGo, contractTypeBuild, contractTypeName);
         contractTypeBuilder.Build();
       } else {
@@ -655,6 +658,7 @@ namespace MissionControl {
       CustomDropshipsGuids.Clear();
       EncounterObjectDictionary.Clear();
       QueuedBuildingMounts.Clear();
+      DelayResults.Clear();
       ResetGameLogicData();
 
       EncounterRules = null;

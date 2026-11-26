@@ -116,4 +116,5 @@ workflow, which checks out the `develop` branch and builds it alongside Designer
 - In-combat MC state (`EncounterTags`, `EncounterStats` and the game logic data behind `SetRelationship`/`SetAllTeamsRelationship`)
   lives on `MissionControl` in memory. `CombatStatePersistence` copies it into the `MC_CombatState` company stat when the game
   saves during combat, restores it in `GameInstanceLaunchContractFromSavePatch` and removes it in `OnCombatDestroyed`. New
-  in-combat state that must survive a save needs adding there.
+  in-combat state that must survive a save needs adding there. `Delay` results are stored there too, matched on load by
+  build order and name, and resumed in `EncounterLayerParentInitFromSavePassTwoPatch` once the contract type has been rebuilt.

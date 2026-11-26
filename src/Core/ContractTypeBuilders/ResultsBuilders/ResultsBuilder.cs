@@ -422,6 +422,7 @@ namespace MissionControl.ContractTypeBuilders {
       result.Results = createdChildResults;
       result.ResultsIfSkipped = createdChildResultsIfSkipped;
       result.SkipIfExecution = skipIfExecution;
+      MissionControl.Instance.DelayResults.Add(result);
 
       // Build SkipIf triggers
       if (skipIfTrigger != null && skipIfTrigger.ContainsKey("Triggers")) {

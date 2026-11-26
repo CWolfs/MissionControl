@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 using BattleTech;
 
+using MissionControl.Result;
+
 using Newtonsoft.Json;
 
 namespace MissionControl.SaveSupport {
@@ -19,6 +21,7 @@ namespace MissionControl.SaveSupport {
       public List<string> EncounterTags { get; set; } = new List<string>();
       public List<SavedStat> EncounterStats { get; set; } = new List<SavedStat>();
       public Dictionary<string, string> GameLogicData { get; set; } = new Dictionary<string, string>();
+      public List<DelaySaveState> Delays { get; set; } = new List<DelaySaveState>();
     }
 
     public static void Store(SimGameState simGame) {
@@ -27,6 +30,14 @@ namespace MissionControl.SaveSupport {
       SavedCombatState state = new SavedCombatState();
       state.EncounterTags.AddRange(MissionControl.Instance.EncounterTags);
       state.GameLogicData = MissionControl.Instance.GetAllGameLogicData();
+
+      List<DelayResult> delayResults = MissionControl.Instance.DelayResults;
+      for (int i = 0; i < delayResults.Count; i++) {
+        DelaySaveState delayState = delayResults[i].GetSaveState();
+        if (delayState == null) continue;
+        delayState.Id = GetDelayId(delayResults[i], i);
+        state.Delays.Add(delayState);
+      }
 
       foreach (KeyValuePair<string, Statistic> stat in MissionControl.Instance.EncounterStats) {
         Type type = stat.Value.ValueType();
@@ -54,16 +65,9 @@ namespace MissionControl.SaveSupport {
     }
 
     public static void Restore(SimGameState simGame) {
-      if (simGame == null || !simGame.CompanyStats.ContainsStatistic(STAT_NAME)) return;
-
+      SavedCombatState state = Load(simGame);
+      if (state == null) return;
       string json = simGame.CompanyStats.GetValue<string>(STAT_NAME);
-      SavedCombatState state;
-      try {
-        state = JsonConvert.DeserializeObject<SavedCombatState>(json);
-      } catch (Exception e) {
-        Main.Logger.LogError($"[CombatStatePersistence.Restore] Couldn't read saved combat state '{json}': {e.Message}");
-        return;
-      }
 
       MissionControl.Instance.EncounterTags.AddRange(state.EncounterTags);
       foreach (KeyValuePair<string, string> data in state.GameLogicData) {
@@ -81,6 +85,40 @@ namespace MissionControl.SaveSupport {
         }
       }
       Main.LogDebug($"[CombatStatePersistence.Restore] Restored combat state: {json}");
+    }
+
+    public static void RestoreDelays(SimGameState simGame) {
+      SavedCombatState state = Load(simGame);
+      if (state == null) return;
+
+      Dictionary<string, DelayResult> delayResults = new Dictionary<string, DelayResult>();
+      for (int i = 0; i < MissionControl.Instance.DelayResults.Count; i++) {
+        delayResults[GetDelayId(MissionControl.Instance.DelayResults[i], i)] = MissionControl.Instance.DelayResults[i];
+      }
+
+      foreach (DelaySaveState delayState in state.Delays) {
+        if (delayResults.TryGetValue(delayState.Id, out DelayResult delayResult)) {
+          delayResult.RestoreSaveState(delayState);
+        } else {
+          Main.Logger.LogWarning($"[CombatStatePersistence.RestoreDelays] Couldn't find Delay '{delayState.Id}' so it won't be resumed");
+        }
+      }
+    }
+
+    private static SavedCombatState Load(SimGameState simGame) {
+      if (simGame == null || !simGame.CompanyStats.ContainsStatistic(STAT_NAME)) return null;
+
+      string json = simGame.CompanyStats.GetValue<string>(STAT_NAME);
+      try {
+        return JsonConvert.DeserializeObject<SavedCombatState>(json);
+      } catch (Exception e) {
+        Main.Logger.LogError($"[CombatStatePersistence.Load] Couldn't read saved combat state '{json}': {e.Message}");
+        return null;
+      }
+    }
+
+    private static string GetDelayId(DelayResult delayResult, int index) {
+      return $"{index}:{delayResult.Name}";
     }
 
     public static void Clear(SimGameState simGame) {
