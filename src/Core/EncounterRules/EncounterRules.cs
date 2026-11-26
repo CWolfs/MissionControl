@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using BattleTech;
 using BattleTech.Framework;
 
+using HBS.Collections;
+
 using MissionControl.Data;
 using MissionControl.Logic;
 using MissionControl.Trigger;
@@ -179,19 +181,75 @@ namespace MissionControl.Rules {
     }
 
     private bool IsPlotValidForEncounter(Transform plotTransform, string name = "PlotVariant") {
-      Transform selectedPlotTransform = plotTransform.FindIgnoreCaseStartsWith(name);
-
-      if (selectedPlotTransform == null) {
-        return false;
+      foreach (Transform child in plotTransform) {
+        if (child.name.StartsWith(name, StringComparison.OrdinalIgnoreCase) && child.gameObject.activeInHierarchy) {
+          return true;
+        }
       }
-
-      GameObject selectedPlotGo = selectedPlotTransform.gameObject;
-      if (selectedPlotGo.activeSelf) return true;
 
       return false;
     }
 
+    private GameObject GetPlotForTransform(Transform target, Transform plotsParentTransform) {
+      Plot plot = target.GetComponentInParent<Plot>();
+      if (plot != null && plot.transform.IsChildOf(plotsParentTransform)) {
+        return plot.gameObject;
+      }
+
+      Transform current = target;
+      while (current != null && current.parent != null) {
+        if (current.parent == plotsParentTransform) {
+          return current.gameObject;
+        }
+        current = current.parent;
+      }
+
+      return null;
+    }
+
+    private GameObject FindUniquePlotForObjectives(Transform plotsParentTransform, ObjectiveGameLogic[] objectives, bool primaryOnly) {
+      HashSet<GameObject> matchedPlots = new HashSet<GameObject>();
+      TagSet emptyTagSet = new TagSet();
+
+      foreach (ObjectiveGameLogic objective in objectives) {
+        if (objective == null || objective.Combat?.ItemRegistry == null) continue;
+        if (primaryOnly && !objective.IsRequiredForPrimaryContractObjective) continue;
+        if (objective.DoesObjectiveTargetThisTagset(emptyTagSet)) continue;
+
+        List<ICombatant> targetUnits = objective.GetTargetUnits();
+        if (targetUnits == null) continue;
+
+        foreach (ICombatant combatant in targetUnits) {
+          BattleTech.Building building = combatant as BattleTech.Building;
+          if (building == null || building.IsDead || !building.isObjectiveTarget || building.GameRep == null) continue;
+
+          GameObject plotGo = GetPlotForTransform(building.GameRep.transform, plotsParentTransform);
+          if (plotGo != null && EncounterLayerData.IsInEncounterBounds(plotGo.transform.position)) {
+            matchedPlots.Add(plotGo);
+          }
+        }
+      }
+
+      if (matchedPlots.Count == 1) {
+        return matchedPlots.First();
+      }
+
+      return null;
+    }
+
+    private GameObject GetPlotFromBuildingObjectives(GameObject plotsParent) {
+      if (plotsParent == null || EncounterLayerData == null) return null;
+
+      ObjectiveGameLogic[] objectives = EncounterLayerData.GetComponentsInChildren<ObjectiveGameLogic>(false);
+      GameObject plotGo = FindUniquePlotForObjectives(plotsParent.transform, objectives, true);
+      if (plotGo != null) return plotGo;
+
+      return FindUniquePlotForObjectives(plotsParent.transform, objectives, false);
+    }
+
     private GameObject CheckAllPlotsForValidPlot(GameObject plotsParent, Vector3 origin, string name) {
+      if (plotsParent == null) return null;
+
       GameObject closestPlot = null;
       float closestDistance = -1;
 
@@ -200,7 +258,7 @@ namespace MissionControl.Rules {
         if (EncounterLayerData.IsInEncounterBounds(plotPosition)) {
           if (IsPlotValidForEncounter(t, name)) {
             float distance = Vector3.Distance(t.position, origin);
-            if (closestDistance == -1 || closestDistance < distance) {
+            if (closestDistance == -1 || distance < closestDistance) {
               closestDistance = distance;
               closestPlot = t.gameObject;
             }
@@ -243,8 +301,13 @@ namespace MissionControl.Rules {
     }
 
     protected GameObject GetPlotBaseGO(string mapName) {
-      Vector3 playerLanceSpawnPosition = SpawnerPlayerLanceGo.transform.position;
-      GameObject plotGO = GetClosestPlot(playerLanceSpawnPosition);
+      GameObject plotsParentGo = GameObject.Find("PlotParent");
+      GameObject plotGO = GetPlotFromBuildingObjectives(plotsParentGo);
+
+      if (plotGO == null) {
+        Vector3 playerLanceSpawnPosition = SpawnerPlayerLanceGo.transform.position;
+        plotGO = GetClosestPlot(playerLanceSpawnPosition);
+      }
 
       if (plotGO == null) {
         Main.Logger.Log($"[{this.GetType().Name}] GetPlotBaseGO for map '{mapName}' is empty");
