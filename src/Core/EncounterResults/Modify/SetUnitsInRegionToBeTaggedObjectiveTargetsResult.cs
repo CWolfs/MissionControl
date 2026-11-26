@@ -16,8 +16,6 @@ namespace MissionControl.Result {
     public bool IsObjectiveTarget { get; set; } = true;
     public string[] Tags { get; set; }
 
-    int processedUnitCount = 0;
-
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
       TagUnitsInRegion();
     }
@@ -39,16 +37,30 @@ namespace MissionControl.Result {
           buildingsInMap.Shuffle();
         }
 
+        int processedUnitCount = 0;
         foreach (BuildingRepresentation building in buildingsInMap) {
+          if (building == null || building.ParentBuilding == null || building.ParentBuilding.IsDead) continue;
+
           bool isBuildingInRegion = RegionUtil.PointInRegion(UnityGameInstance.BattleTechGame.Combat, building.transform.position, RegionGuid);
           if (isBuildingInRegion) {
             Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Found building '{building.gameObject.name}' in region!");
-            building.ParentBuilding.EncounterTags.UnionWith(Tags);
+            if (Tags != null && Tags.Length > 0) {
+              building.ParentBuilding.EncounterTags.UnionWith(Tags);
+            }
 
             SetTeam(building.ParentBuilding);
             SetIsTargetObjective(building.ParentBuilding);
 
-            if (HasReachedUnitLimit()) break;
+            processedUnitCount += 1;
+            if (NumberOfUnits > 0 && processedUnitCount >= NumberOfUnits) break;
+          }
+        }
+
+        if (processedUnitCount > 0) {
+          // Ensure objectives do a check now units have target objective changed
+          ObjectiveGameLogic[] objectiveGameLogics = MissionControl.Instance.EncounterLayerData.GetComponentsInChildren<ObjectiveGameLogic>();
+          foreach (ObjectiveGameLogic objectiveGameLogic in objectiveGameLogics) {
+            objectiveGameLogic.QueueCheckObjective();
           }
         }
       } else {
@@ -56,24 +68,22 @@ namespace MissionControl.Result {
       }
     }
 
-    private bool HasReachedUnitLimit() {
-      processedUnitCount += 1;
-
-      if (NumberOfUnits > 0 && (processedUnitCount >= NumberOfUnits)) {
-        processedUnitCount = 0;
-        return true;
+    private void SetTeam(ICombatant combatant) {
+      Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Setting Team '{Team}' for '{combatant.GameRep.name} - {combatant.DisplayName}' who is currently on team '{combatant.team?.Name} : {combatant.team?.GUID}'");
+      Team oldTeam = combatant.team;
+      string newTeamGuid = TeamUtils.GetTeamGuid(Team);
+      Team newTeam = string.IsNullOrEmpty(newTeamGuid) ? null : UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(newTeamGuid);
+      if (newTeam == null) {
+        Main.Logger.LogError($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Could not find Team '{Team}'.");
+        return;
       }
 
-      return false;
-    }
-
-    private void SetTeam(ICombatant combatant) {
-      Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Setting Team '{Team}' for '{combatant.GameRep.name} - {combatant.DisplayName}' who is currently on team '{combatant.team.Name} : {combatant.team.GUID}'");
-      Team oldTeam = combatant.team;
-      Team newTeam = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(TeamUtils.GetTeamGuid(Team));
+      if (oldTeam == newTeam) {
+        return;
+      }
 
       if (Type == "Building") {
-        oldTeam.RemoveBuilding((BattleTech.Building)combatant);
+        oldTeam?.RemoveBuilding((BattleTech.Building)combatant);
         newTeam.AddCombatant(combatant);
       } else {
         Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Setting Team '{Type}' Not Yet Supported. Use 'SetTeamByLanceSpawnerGuid'");
@@ -94,36 +104,35 @@ namespace MissionControl.Result {
 
     private void SetIsTargetObjective(ICombatant combatant) {
       Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Setting isObjectiveTarget '{IsObjectiveTarget}' for '{combatant.GameRep.name} - {combatant.DisplayName}'");
-      ObstructionGameLogic obstructionGameLogic = combatant.GameRep.GetComponent<ObstructionGameLogic>();
-      obstructionGameLogic.isObjectiveTarget = true;
+      ObstructionGameLogic obstructionGameLogic = combatant.GameRep?.GetComponent<ObstructionGameLogic>();
+      if (obstructionGameLogic != null) {
+        obstructionGameLogic.isObjectiveTarget = IsObjectiveTarget;
+      }
 
       if (Type == "Building") {
         BattleTech.Building building = combatant as BattleTech.Building;
-        building.isObjectiveTarget = true;
-        building.BuildingRep.IsTargetable = true;
-      }
-
-      GameObject hubPanel = GameObject.Find("uixPrfPanl_HUD(Clone)");
-      if (hubPanel != null) {
-        CombatHUDInWorldElementMgr inworldElementManager = GameObject.Find("uixPrfPanl_HUD(Clone)").GetComponent<CombatHUDInWorldElementMgr>();
-        inworldElementManager.AddTickMark(combatant);
-        inworldElementManager.AddInWorldActorElements(combatant);
-
-        if (Type == "Building") {
-          CombatHUDNumFlagHex numFlagEx = inworldElementManager.GetNumFlagForCombatant(combatant);
-          CombatHUDFloatieStackActor floatie = inworldElementManager.GetFloatieStackForCombatant(combatant);
-
-          numFlagEx.anchorPosition = CombatHUDInWorldScalingActorInfo.AnchorPosition.Feet;
-          floatie.anchorPosition = CombatHUDInWorldScalingActorInfo.AnchorPosition.Feet;
+        if (building != null) {
+          building.isObjectiveTarget = IsObjectiveTarget;
         }
-      } else {
-        Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] 'uixPrfPanl_HUD(Clone)' wasn't found so skipping logic for it.");
       }
 
-      // Ensure objectives do a check now units have target objective changed
-      ObjectiveGameLogic[] objectiveGameLogics = MissionControl.Instance.EncounterLayerData.GetComponentsInChildren<ObjectiveGameLogic>();
-      foreach (ObjectiveGameLogic objectiveGameLogic in objectiveGameLogics) {
-        objectiveGameLogic.QueueCheckObjective();
+      if (IsObjectiveTarget) {
+        GameObject hudPanel = GameObject.Find("uixPrfPanl_HUD(Clone)");
+        CombatHUDInWorldElementMgr inworldElementManager = hudPanel?.GetComponent<CombatHUDInWorldElementMgr>();
+        if (inworldElementManager != null) {
+          inworldElementManager.AddTickMark(combatant);
+          inworldElementManager.AddInWorldActorElements(combatant);
+
+          if (Type == "Building") {
+            CombatHUDNumFlagHex numFlagEx = inworldElementManager.GetNumFlagForCombatant(combatant);
+            CombatHUDFloatieStackActor floatie = inworldElementManager.GetFloatieStackForCombatant(combatant);
+
+            if (numFlagEx != null) numFlagEx.anchorPosition = CombatHUDInWorldScalingActorInfo.AnchorPosition.Feet;
+            if (floatie != null) floatie.anchorPosition = CombatHUDInWorldScalingActorInfo.AnchorPosition.Feet;
+          }
+        } else {
+          Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] 'uixPrfPanl_HUD(Clone)' wasn't found so skipping logic for it.");
+        }
       }
     }
   }
