@@ -86,12 +86,12 @@ namespace MissionControl.AI {
       bool shouldSprint = this.tree.GetCustomBehaviorVariableValue(FOLLOW_LANCE_SHOULD_SPRINT_KEY).BoolVal;
       Main.LogDebug($"[MoveToFollowLanceNode] Should sprint by behaviour value being set? '{shouldSprint}'");
 
-      shouldSprint = (!this.unit.HasAnyContactWithEnemy);
+      bool isBeyondSprintDistance = (this.unit.CurrentPosition - targetActor.CurrentPosition).magnitude > Main.Settings.AiSettings.FollowAiSettings.MaxDistanceFromTargetBeforeSprinting;
+      shouldSprint = shouldSprint || isBeyondSprintDistance;
+      Main.LogDebug($"[MoveToFollowLanceNode] Is the follow target further than {Main.Settings.AiSettings.FollowAiSettings.MaxDistanceFromTargetBeforeSprinting}m? Should sprint? '{shouldSprint}'");
 
-      Main.LogDebug($"[MoveToFollowLanceNode] Should sprint by contact with enemy? '{shouldSprint}'");
-
-      shouldSprint = (this.unit.CurrentPosition - targetActor.CurrentPosition).magnitude > Main.Settings.AiSettings.FollowAiSettings.MaxDistanceFromTargetBeforeSprinting; // sprint if the unit is over 200 metres away
-      Main.LogDebug($"[MoveToFollowLanceNode] Is the follow target further than 200m? Should sprint? '{shouldSprint}'");
+      shouldSprint = shouldSprint && !this.unit.HasAnyContactWithEnemy && this.unit.CanSprint;
+      Main.LogDebug($"[MoveToFollowLanceNode] Should sprint after checking contact with enemy and CanSprint? '{shouldSprint}'");
 
       Vector3 lookDirection = (closestEnemy == null) ? targetActor.CurrentPosition : closestEnemy.CurrentPosition;
       MoveType moveType = (shouldSprint) ? MoveType.Sprinting : MoveType.Walking;
@@ -118,11 +118,11 @@ namespace MissionControl.AI {
         Main.LogDebug($"[MoveToFollowLanceNode] ...and I am NOT inside that zone.");
       }
 
-      Vector3 lookPosition = targetDestination;
+      Vector3 lookPosition = lookDirection;
 
       if (Main.Settings.AiSettings.FollowAiSettings.Pathfinding == "Alternative") {
         Main.LogDebug($"[MoveToFollowLanceNode] Using 'Alternative' pathfinding");
-        this.unit.Pathing.UpdateAIPath(targetDestination, targetDestination, moveType);
+        this.unit.Pathing.UpdateAIPath(targetDestination, lookDirection, moveType);
         Vector3 resultDestination = this.unit.Pathing.ResultDestination;
         float maxCost = this.unit.Pathing.MaxCost;
         PathNodeGrid currentGrid = this.unit.Pathing.CurrentGrid;
@@ -144,7 +144,7 @@ namespace MissionControl.AI {
           for (int j = 0; j < dynamicPathToDestination.Count; j++) {
             Vector3 vector5 = dynamicPathToDestination[j];
 
-            if (RoutingUtils.IsUnitInsideRadiusOfPoint(this.unit, vector5, followLanceZoneRadius)) {
+            if ((vector5 - targetActor.CurrentPosition).magnitude <= followLanceZoneRadius) {
               float sqrMagnitude = (a - new Vector2(vector5.x, vector5.z)).sqrMagnitude;
               if (sqrMagnitude < num2) {
                 num2 = sqrMagnitude;
@@ -157,6 +157,8 @@ namespace MissionControl.AI {
             resultDestination = vector4.Value;
           }
         }
+
+        targetDestination = resultDestination;
       } else {
         Main.LogDebug($"[MoveToFollowLanceNode] Using 'Original' pathfinding");
         this.unit.Pathing.UpdateAIPath(targetDestination, lookDirection, moveType);

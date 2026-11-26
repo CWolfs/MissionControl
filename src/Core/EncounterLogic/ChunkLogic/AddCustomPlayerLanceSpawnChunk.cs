@@ -38,10 +38,6 @@ namespace MissionControl.Logic {
 
     public override void Run(RunPayload payload) {
       Main.Logger.Log($"[AddCustomPlayerLanceSpawnChunk] Adding encounter structure");
-      EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
-      EmptyCustomChunkGameLogic emptyCustomChunk = ChunkFactory.CreateEmptyCustomChunk("Chunk_Lance");
-      emptyCustomChunk.encounterObjectGuid = System.Guid.NewGuid().ToString();
-      emptyCustomChunk.notes = debugDescription;
 
       // Auto select Player or Employer based on the lance configurator
       if (teamGuid == null) {
@@ -54,9 +50,16 @@ namespace MissionControl.Logic {
       }
 
       // Guard: Don't do anything if there are no employer units and employer mode is on
-      SpawnableUnit[] employerLanceUnits = MissionControl.Instance.CurrentContract.Lances.GetLanceUnits(EncounterRules.EMPLOYER_TEAM_ID);
-      Main.Logger.Log($"[AddCustomPlayerLanceExtraSpawnPoints] '{employerLanceUnits.Length}' employer lance units are being sent to Mission Control by Bigger Drops.");
-      if (employerLanceUnits.Length <= 0) return;
+      if (teamGuid == EncounterRules.EMPLOYER_TEAM_ID) {
+        SpawnableUnit[] employerLanceUnits = MissionControl.Instance.CurrentContract.Lances.GetLanceUnits(EncounterRules.EMPLOYER_TEAM_ID);
+        Main.Logger.Log($"[AddCustomPlayerLanceSpawnChunk] '{employerLanceUnits.Length}' employer lance units are being sent to Mission Control by Bigger Drops.");
+        if (employerLanceUnits.Length <= 0) return;
+      }
+
+      EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
+      EmptyCustomChunkGameLogic emptyCustomChunk = ChunkFactory.CreateEmptyCustomChunk("Chunk_Lance");
+      emptyCustomChunk.encounterObjectGuid = System.Guid.NewGuid().ToString();
+      emptyCustomChunk.notes = debugDescription;
 
       bool spawnOnActivation = true;
       CustomPlayerLanceSpawnerGameLogic lanceSpawner = LanceSpawnerFactory.CreateCustomPlayerLanceSpawner(
