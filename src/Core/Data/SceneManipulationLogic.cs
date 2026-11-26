@@ -221,14 +221,52 @@ namespace MissionControl.Logic {
       return false;
     }
 
+    private static readonly Vector3[] CompactHexFormationOffsets = new Vector3[] {
+      new Vector3(0f, 0f, 0f),
+      new Vector3(24f, 0f, 0f),
+      new Vector3(-12f, 0f, 21f),
+      new Vector3(12f, 0f, 21f),
+      new Vector3(-24f, 0f, 0f),
+      new Vector3(-12f, 0f, -21f),
+      new Vector3(12f, 0f, -21f),
+      new Vector3(0f, 0f, 42f),
+    };
+
+    private static Vector3 GetCompactFormationOffset(int index) {
+      if (index < CompactHexFormationOffsets.Length) {
+        return CompactHexFormationOffsets[index];
+      }
+      int overflow = index - CompactHexFormationOffsets.Length;
+      return new Vector3(24f * (overflow % 4), 0f, 63f + (21f * (overflow / 4)));
+    }
+
     protected void ClusterLanceMembers(GameObject lance) {
       List<GameObject> originalSpawnPoints = lance.FindAllContains("SpawnPoint");
-      List<Vector3> usedPosition = new List<Vector3>();
-      foreach (GameObject spawn in originalSpawnPoints) {
-        Vector3 clusteredSpawnPosition = GetRandomPositionWithinBounds(lance.transform.position, 25f);
-        while (ContainsCompare(usedPosition, clusteredSpawnPosition)) {
-          clusteredSpawnPosition = GetRandomPositionWithinBounds(lance.transform.position, 25f);
+      if (IsUnplacedGeneratedLance(lance)) {
+        for (int i = 0; i < originalSpawnPoints.Count; i++) {
+          originalSpawnPoints[i].transform.localPosition = GetCompactFormationOffset(i);
         }
+        return;
+      }
+
+      List<Vector3> usedPosition = new List<Vector3>();
+      for (int i = 0; i < originalSpawnPoints.Count; i++) {
+        GameObject spawn = originalSpawnPoints[i];
+        Vector3 clusteredSpawnPosition = GetRandomPositionWithinBounds(lance.transform.position, 25f);
+        int attempts = 0;
+        while (ContainsCompare(usedPosition, clusteredSpawnPosition) && attempts < 30) {
+          clusteredSpawnPosition = GetRandomPositionWithinBounds(lance.transform.position, 25f);
+          attempts++;
+        }
+
+        if (ContainsCompare(usedPosition, clusteredSpawnPosition)) {
+          // Switch the whole lance to a distinct deterministic compact formation so no two members can collide
+          for (int j = 0; j < originalSpawnPoints.Count; j++) {
+            originalSpawnPoints[j].transform.localPosition = GetCompactFormationOffset(j);
+          }
+          return;
+        }
+
         spawn.transform.position = clusteredSpawnPosition;
         usedPosition.Add(clusteredSpawnPosition);
       }

@@ -20,10 +20,12 @@ namespace MissionControl.Logic {
     private float maxDistanceFromTarget = 150f;
     private LookDirection lookDirection = LookDirection.TOWARDS_TARGET;
     private bool fitLanceMembers = false;
+    private bool clusterUnits = false;
+    private bool preferNearTargetFallback = false;
 
     private int AttemptCountMax { get; set; } = 3;
     private int AttemptCount { get; set; } = 0;
-    private int TotalAttemptMax { get; set; } = 3;
+    private int TotalAttemptMax { get; set; } = 12;
     private int TotalAttemptCount { get; set; } = 0;
 
     private bool inited = false;
@@ -35,13 +37,18 @@ namespace MissionControl.Logic {
       this.lookDirection = lookDirection;
     }
 
-    public SpawnLanceAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance, bool fitLanceMembers) : base(encounterRules) {
+    public SpawnLanceAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance, bool fitLanceMembers)
+      : this(encounterRules, lanceKey, orientationTargetKey, lookDirection, minDistance, maxDistance, fitLanceMembers, false, false) { }
+
+    public SpawnLanceAroundTarget(EncounterRules encounterRules, string lanceKey, string orientationTargetKey, LookDirection lookDirection, float minDistance, float maxDistance, bool fitLanceMembers, bool clusterUnits, bool preferNearTargetFallback) : base(encounterRules) {
       this.lanceKey = lanceKey;
       this.orientationTargetKey = orientationTargetKey;
       this.minDistanceFromTarget = minDistance;
       this.maxDistanceFromTarget = maxDistance;
       this.lookDirection = lookDirection;
       this.fitLanceMembers = fitLanceMembers;
+      this.clusterUnits = clusterUnits;
+      this.preferNearTargetFallback = preferNearTargetFallback;
     }
 
     public override string TargetLanceKey => lanceKey;
@@ -58,6 +65,12 @@ namespace MissionControl.Logic {
       if (!GetObjectReferences()) return;
 
       SaveSpawnPositions(lance);
+      if (clusterUnits) {
+        Main.LogDebug($"[SpawnLanceAroundTarget] Clustering lance '{lance.name}'");
+        ClusterLanceMembers(lance);
+        clusterUnits = false;
+        Main.LogDebug($"[SpawnLanceAroundTarget] Finished clustering lance '{lance.name}'");
+      }
       SaveAttemptFormation(lance);
       Main.Logger.Log($"[SpawnLanceAroundTarget] Attemping for '{lance.name}'");
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
@@ -66,7 +79,7 @@ namespace MissionControl.Logic {
       Init();
 
       if (TotalAttemptCount >= TotalAttemptMax) {
-        HandleFallback(payload, this.lanceKey, this.orientationTargetKey);
+        HandleFallback(payload, this.lanceKey, this.orientationTargetKey, this.preferNearTargetFallback, this.lookDirection);
         return;
       }
 
@@ -142,7 +155,7 @@ namespace MissionControl.Logic {
       AttemptCount++;
       TotalAttemptCount++;
 
-      if (AttemptCount > AttemptCountMax) {
+      if (AttemptCount >= AttemptCountMax) {
         AttemptCount = 0;
         Main.LogDebug($"[SpawnLanceAroundTarget] Cannot find a suitable lance spawn within the boundaries of {minDistanceFromTarget} and {maxDistanceFromTarget}. Widening search");
         minDistanceFromTarget -= 10;

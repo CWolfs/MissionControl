@@ -59,17 +59,30 @@ namespace MissionControl.Logic {
     }
 
     protected void HandleFallback(RunPayload payload, string lanceKey, string orientationTargetKey) {
+      HandleFallback(payload, lanceKey, orientationTargetKey, preferNearTargetFallback: false, fallbackLookDirection: LookDirection.TOWARDS_TARGET);
+    }
+
+    protected void HandleFallback(RunPayload payload, string lanceKey, string orientationTargetKey, bool preferNearTargetFallback, LookDirection fallbackLookDirection) {
       this.EncounterRules.ObjectLookup.TryGetValue(lanceKey, out GameObject lance);
       if (IsUnplacedGeneratedLance(lance)) {
-        if (!(this is SpawnLanceAnywhere)) {
+        if (this is SpawnLanceAnywhere) {
+          Main.Logger.LogWarning($"[{this.GetType().Name}] Generated lance '{lanceKey}' exhausted fallback attempts. Attempting placement around a verified in-bounds anchor near '{orientationTargetKey}'.");
+          PlaceGeneratedLanceAtSafeFallback(lanceKey, orientationTargetKey);
+        } else if (preferNearTargetFallback) {
+          Main.Logger.LogWarning($"[{this.GetType().Name}] Generated lance '{lanceKey}' exhausted attempts. Attempting near-target anchor placement around '{orientationTargetKey}'.");
+          if (!PlaceGeneratedLanceAtSafeFallback(lanceKey, orientationTargetKey, restrictToTargetArea: true)) {
+            if (lance != null) {
+              RestoreSpawnPositions(lance);
+            }
+            Main.LogDebug($"[{this.GetType().Name}] Near-target anchor placement failed. Falling back to 'SpawnAnywhere' profile.");
+            RunFallbackSpawn(payload, lanceKey, orientationTargetKey);
+          }
+        } else {
           if (lance != null) {
             RestoreSpawnPositions(lance);
           }
           Main.LogDebug($"[{this.GetType().Name}] Cannot find valid spawn. Spawning with 'SpawnAnywhere' profile.");
           RunFallbackSpawn(payload, lanceKey, orientationTargetKey);
-        } else {
-          Main.Logger.LogWarning($"[{this.GetType().Name}] Generated lance '{lanceKey}' exhausted fallback attempts. Attempting placement around a verified in-bounds anchor.");
-          PlaceGeneratedLanceAtSafeFallback(lanceKey, orientationTargetKey);
         }
       } else if (lance != null) {
         RestoreSpawnPositions(lance);
@@ -77,8 +90,13 @@ namespace MissionControl.Logic {
       }
 
       if (lance != null && lance.activeInHierarchy) {
-        LookAtTarget lookAtTarget = new LookAtTarget(this.EncounterRules, lanceKey, orientationTargetKey, true);
-        lookAtTarget.Run(payload);
+        if (fallbackLookDirection == LookDirection.AWAY_FROM_TARGET) {
+          LookAwayFromTarget lookAwayFromTarget = new LookAwayFromTarget(this.EncounterRules, lanceKey, orientationTargetKey, true);
+          lookAwayFromTarget.Run(payload);
+        } else {
+          LookAtTarget lookAtTarget = new LookAtTarget(this.EncounterRules, lanceKey, orientationTargetKey, true);
+          lookAtTarget.Run(payload);
+        }
       }
     }
 
@@ -87,8 +105,8 @@ namespace MissionControl.Logic {
     private const int MAX_BOUNDARY_FALLBACK_TERRAIN_PROBES = 400;
     private const int MAX_BOUNDARY_FALLBACK_PATHFIND_CHECKS = 120;
 
-    private void PlaceGeneratedLanceAtSafeFallback(string lanceKey, string orientationTargetKey) {
-      if (!this.EncounterRules.ObjectLookup.TryGetValue(lanceKey, out GameObject lance) || lance == null) return;
+    private bool PlaceGeneratedLanceAtSafeFallback(string lanceKey, string orientationTargetKey, bool restrictToTargetArea = false) {
+      if (!this.EncounterRules.ObjectLookup.TryGetValue(lanceKey, out GameObject lance) || lance == null) return false;
 
       CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
       EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
@@ -129,7 +147,7 @@ namespace MissionControl.Logic {
         : Vector3.zero;
 
       List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
-      if (spawnPoints.Count == 0) return;
+      if (spawnPoints.Count == 0) return false;
 
       Vector3 offMapStaging = new Vector3(10000f, 0f, 10000f);
       bool committed = false;
@@ -153,7 +171,7 @@ namespace MissionControl.Logic {
         if (reachabilityTarget != Vector3.zero && !scanCenters.Contains(reachabilityTarget)) {
           scanCenters.Add(reachabilityTarget);
         }
-        if (hasBoundaryRect) {
+        if (!restrictToTargetArea && hasBoundaryRect) {
           Vector3 boundaryCenter = new Vector3(boundaryRect.center.x, 0f, boundaryRect.center.y).GetClosestHexLerpedPointOnGrid();
           if (!scanCenters.Contains(boundaryCenter)) scanCenters.Add(boundaryCenter);
         }
@@ -181,11 +199,11 @@ namespace MissionControl.Logic {
           if (done) {
             SetLanceRootPreservingChildren(lance, spawnPoints[0].transform.position, spawnPoints);
             committed = true;
-            return;
+            return true;
           }
         }
 
-        if (hasBoundaryRect) {
+        if (!restrictToTargetArea && hasBoundaryRect) {
           List<Vector3> allBoundaryHexes = EnumerateBoundaryHexes(combatState.HexGrid, boundaryRect);
           if (allBoundaryHexes.Count > 0) {
             int terrainProbeBudget = MAX_BOUNDARY_FALLBACK_TERRAIN_PROBES;
@@ -225,7 +243,7 @@ namespace MissionControl.Logic {
                 if (done) {
                   SetLanceRootPreservingChildren(lance, spawnPoints[0].transform.position, spawnPoints);
                   committed = true;
-                  return;
+                  return true;
                 }
               }
             }
@@ -233,12 +251,13 @@ namespace MissionControl.Logic {
             if (nextMemberIdx >= spawnPoints.Count) {
               SetLanceRootPreservingChildren(lance, spawnPoints[0].transform.position, spawnPoints);
               committed = true;
-              return;
+              return true;
             }
           }
         }
 
         Main.Logger.LogError($"[{this.GetType().Name}] Could not place generated lance '{lanceKey}' on distinct reachable in-bounds hexes ({nextMemberIdx}/{spawnPoints.Count} placed).");
+        return false;
       } finally {
         if (!committed) {
           RestoreSpawnPositions(lance);
