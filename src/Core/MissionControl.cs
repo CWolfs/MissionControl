@@ -500,6 +500,7 @@ namespace MissionControl {
 
       if (Main.Settings.DynamicWithdraw.Enable) {
         bool isDynamicWithdrawAllowed = (!IsAnyFlashpointContract() && !IsAnyStoryContract()) || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.DynamicWithdraw.EnableForFlashpoints || (IsAnyStoryContract() && Main.Settings.EnableStoryOverrides && Main.Settings.DynamicWithdraw.EnableForStory));
+        if (isDynamicWithdrawAllowed) isDynamicWithdrawAllowed = Main.Settings.DynamicWithdraw.GetValidContractTypes().Contains(CurrentContractType);
         if (isDynamicWithdrawAllowed) isDynamicWithdrawAllowed = !MissionControl.Instance.IsSkirmish();
         return isDynamicWithdrawAllowed;
       }
@@ -518,6 +519,7 @@ namespace MissionControl {
 
       if (Main.Settings.HotDropProtection.Enable) {
         bool isHotDropProtectionAllowed = (!IsAnyFlashpointContract() && !IsAnyStoryContract()) || (IsAnyFlashpointContract() && Main.Settings.EnableFlashpointOverrides && Main.Settings.HotDropProtection.EnableForFlashpoints || (IsAnyStoryContract() && Main.Settings.EnableStoryOverrides && Main.Settings.HotDropProtection.EnableForStory));
+        if (isHotDropProtectionAllowed) isHotDropProtectionAllowed = Main.Settings.HotDropProtection.GetValidContractTypes().Contains(CurrentContractType);
         return isHotDropProtectionAllowed;
       }
       return false;
