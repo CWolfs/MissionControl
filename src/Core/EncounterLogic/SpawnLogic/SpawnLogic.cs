@@ -30,6 +30,11 @@ namespace MissionControl.Logic {
     }
 
     public Vector3 GetClosestValidPathFindingHex(GameObject originGo, Vector3 origin, string identifier, Vector3 pathfindingTarget, int radius = 3) {
+      TryGetClosestValidPathFindingHex(originGo, origin, identifier, pathfindingTarget, out Vector3 validPosition, radius);
+      return validPosition;
+    }
+
+    public bool TryGetClosestValidPathFindingHex(GameObject originGo, Vector3 origin, string identifier, Vector3 pathfindingTarget, out Vector3 validPosition, int radius = 3) {
       Main.LogDebug($"[GetClosestValidPathFindingHex] About to process with origin '{origin}'");
       if (originalOrigin == Vector3.zero) originalOrigin = origin;
 
@@ -37,23 +42,23 @@ namespace MissionControl.Logic {
       // Get a new point for both relatively close to the original points to test against and try again.
       if (radius > 12) {
         if (bailoutCount >= BAILOUT_MAX) {
-          origin = originalOrigin.GetClosestHexLerpedPointOnGrid();
-          Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Returning original origin with fixed height of '{origin}'");
+          validPosition = originalOrigin.GetClosestHexLerpedPointOnGrid();
+          Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Returning original origin with fixed height of '{validPosition}'");
           checkedAdjacentPoints.Clear();
           bailoutCount = 0;
           originalOrigin = Vector3.zero;
-          return origin;
+          return false;
         } else {
           bailoutCount++;
           Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Casting net out to another location'");
           radius = 3;
-          // Vector3 randomPositionFromBadSpawn = SceneUtils.GetRandomPositionWithinBounds(origin, 96);
-          // Main.LogDebugWarning($"[GetClosestValidPathFindingHex] New location to test for '{originGo.name}' is '{randomPositionFromBadSpawn}'");
 
-          Vector3 randomPositionFromBadPathfindTarget = SceneUtils.GetRandomPositionWithinBounds(pathfindingTarget, 96);
+          Vector3 effectiveTarget = (pathfindingTarget == Vector3.zero && EncounterRules.SpawnerPlayerLanceGo != null)
+            ? EncounterRules.SpawnerPlayerLanceGo.transform.position.GetClosestHexLerpedPointOnGrid()
+            : pathfindingTarget;
+          Vector3 randomPositionFromBadPathfindTarget = SceneUtils.GetRandomPositionWithinBounds(effectiveTarget, 96);
           Main.LogDebugWarning($"[GetClosestValidPathFindingHex] New location to test for pathfind target is '{randomPositionFromBadPathfindTarget}'");
 
-          // origin = randomPositionFromBadSpawn;
           pathfindingTarget = randomPositionFromBadPathfindTarget;
         }
       }
@@ -62,16 +67,17 @@ namespace MissionControl.Logic {
 
       if (validOrigin == Vector3.zero) {
         Main.LogDebugWarning($"[GetClosestValidPathFindingHex] No valid points found. Expanding search radius from radius '{radius}' to '{radius * 2}'");
-        origin = GetClosestValidPathFindingHex(originGo, origin, identifier, pathfindingTarget, radius * 2);
+        bool found = TryGetClosestValidPathFindingHex(originGo, origin, identifier, pathfindingTarget, out validPosition, radius * 2);
         checkedAdjacentPoints.Clear();
-        return origin;
+        return found;
       }
 
       Main.LogDebug($"[GetClosestValidPathFindingHex] Returning final point '{validOrigin}'");
       checkedAdjacentPoints.Clear();
       bailoutCount = 0;
       originalOrigin = Vector3.zero;
-      return validOrigin;
+      validPosition = validOrigin;
+      return true;
     }
 
     private Vector3 PathfindFromPointToSpawn(GameObject originGo, Vector3 origin, int radius, string identifier, Vector3 pathfindingTarget) {

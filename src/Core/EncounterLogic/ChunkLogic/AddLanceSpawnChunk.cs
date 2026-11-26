@@ -51,6 +51,7 @@ namespace MissionControl.Logic {
         alertLanceOnSpawn: true
       );
       lanceSpawner.transform.position = Vector3.zero;
+      lanceSpawner.gameObject.AddComponent<UnplacedGeneratedLanceMarker>();
     }
   }
 }

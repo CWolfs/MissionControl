@@ -156,7 +156,7 @@ namespace MissionControl {
         return false;
       }
 
-      if (IsCellImpassableOrDeepWater(cellData)) return false;
+      if (IsCellImpassableOrDeepWater(combatState, cellData, allowTraversableStructureOverWater: false)) return false;
       if (!encounterLayerData.IsInEncounterBounds(position)) return false;
       if (cellData.cachedHeight > (cellData.terrainHeight + 50f)) return false;
       if (HasTerrainHeightMismatch(combatState, cellData, position)) return false;
@@ -243,7 +243,7 @@ namespace MissionControl {
       for (int i = 0; i < path.Count; i++) {
         Vector3 position = path[i];
         MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
-        if (IsCellImpassableOrDeepWater(cellData)) {
+        if (IsCellImpassableOrDeepWater(combatState, cellData, allowTraversableStructureOverWater: true)) {
           Main.LogDebug("[PFM.HasPathImpassableOrDeepWaterTiles] Path has impassable or deep water tiles in it");
           return true;
         }
@@ -364,17 +364,62 @@ namespace MissionControl {
       return false;
     }
 
-    private bool IsCellImpassableOrDeepWater(MapTerrainDataCell cellData) {
+    public bool IsCellValidDrySpawn(CombatGameState combatState, Vector3 position) {
+      MapTerrainDataCell cellData = combatState.MapMetaData.GetCellAt(position);
+      if (cellData.cachedSteepness > MAX_SLOPE_FOR_PATHFINDING) return false;
+      if (IsCellImpassableOrDeepWater(combatState, cellData, allowTraversableStructureOverWater: false)) return false;
+      if (cellData.cachedHeight > (cellData.terrainHeight + 50f)) return false;
+      if (HasTerrainHeightMismatch(combatState, cellData, position)) return false;
+      return true;
+    }
+
+    public bool HasValidPathNodeAndNeighbours(CombatGameState combatState, Vector3 position, UnitType type) {
+      if (!IsCellValidDrySpawn(combatState, position)) return false;
+
+      AbstractActor pathfindingActor = GetPathFindingActor(type);
+      if (pathfindingActor == null) return false;
+
+      try {
+        SetupPathfindingActor(position, pathfindingActor);
+        PathNodeGrid pathfinderPathGrid = pathfindingActor.Pathing.CurrentGrid;
+        PathNode positionPathNode = pathfinderPathGrid.GetValidPathNodeAt(position, pathfindingActor.Pathing.MaxCost);
+        if (positionPathNode == null) {
+          Reset();
+          return false;
+        }
+        bool hasNeighbours = HasValidNeighbours(positionPathNode, position, type);
+        Reset();
+        return hasNeighbours;
+      } catch (Exception e) {
+        Main.LogDebug($"[PFM.HasValidPathNodeAndNeighbours] Caught error at '{position}': {e.Message}");
+        Reset();
+        return false;
+      }
+    }
+
+    private bool IsCellImpassableOrDeepWater(CombatGameState combatState, MapTerrainDataCell cellData, bool allowTraversableStructureOverWater) {
       TerrainMaskFlags terrainMask = cellData.terrainMask;
       bool hasBuilding = cellData.MapEncounterLayerDataCell != null && cellData.MapEncounterLayerDataCell.HasBuilding;
-      TerrainMaskFlags buildingMask = hasBuilding
-        ? (cellData.MapEncounterLayerDataCell.GetTopmostBuilding()?.BuildingTerrainMask ?? TerrainMaskFlags.None)
-        : TerrainMaskFlags.None;
+      BuildingRaycastHit topmostBuilding = hasBuilding ? cellData.MapEncounterLayerDataCell.GetTopmostBuilding() : null;
+
+      ObstructionGameLogic obstruction = null;
+      TerrainMaskFlags buildingMask = TerrainMaskFlags.None;
+      if (topmostBuilding != null) {
+        obstruction = topmostBuilding.obstructionGameLogic;
+        if (obstruction == null && combatState?.ItemRegistry != null && !string.IsNullOrEmpty(topmostBuilding.buildingGuid)) {
+          obstruction = combatState.ItemRegistry.GetItemByGUID<ObstructionGameLogic>(topmostBuilding.buildingGuid);
+        }
+        buildingMask = (obstruction != null) ? obstruction.TerrainMask : topmostBuilding.BuildingTerrainMask;
+      }
+
+      bool hasTraversableStructureOverWater = allowTraversableStructureOverWater
+        && obstruction != null
+        && IsTraversableStructureOverWater(obstruction, buildingMask);
 
       bool isImpassableOrDeepWater = SplatMapInfo.IsImpassable(terrainMask)
         || SplatMapInfo.IsImpassable(buildingMask)
         || SplatMapInfo.IsMapBoundary(terrainMask)
-        || (SplatMapInfo.IsDeepWater(terrainMask) && !hasBuilding)
+        || (SplatMapInfo.IsDeepWater(terrainMask) && !hasTraversableStructureOverWater)
         || SplatMapInfo.IsDeepWater(buildingMask);
 
       if (isImpassableOrDeepWater) {
@@ -382,6 +427,13 @@ namespace MissionControl {
         return true;
       }
       return false;
+    }
+
+    private bool IsTraversableStructureOverWater(ObstructionGameLogic obstruction, TerrainMaskFlags buildingMask) {
+      if (SplatMapInfo.IsImpassable(buildingMask) || SplatMapInfo.IsDeepWater(buildingMask)) return false;
+      if (obstruction.isBridge) return true;
+      if (obstruction.buildingDefId == ObstructionGameLogic.buildingDef_SolidObstruction) return false;
+      return !obstruction.IsRealBuilding;
     }
 
     public bool HasValidNeighbours(PathNode positionNode, Vector3 validityPosition, UnitType type) {

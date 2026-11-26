@@ -58,10 +58,12 @@ namespace MissionControl.Logic {
       this.clusterUnits = clusterUnits;
     }
 
+    public override string TargetLanceKey => lanceKey;
+
     private void Init() {
       if (!inited) {
-        Main.LogDebug($"[SpawnLanceAnywhere] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
-        validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget, orientationTarget.transform.position, $"OrientationTarget.{orientationTarget.name}");
+        Main.LogDebug($"[SpawnLanceAnywhere] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Resolving verified target hex.");
+        validOrientationTargetPosition = ResolveVerifiedOrientationTargetPosition(orientationTarget, $"OrientationTarget.{orientationTarget.name}");
         inited = true;
       }
     }
@@ -83,13 +85,21 @@ namespace MissionControl.Logic {
         Main.LogDebug($"[SpawnLanceAnywhere] Finished clustering lance '{lance.name}'");
       }
 
+      SaveAttemptFormation(lance);
+
       if (TotalAttemptCount > TotalAttemptMax) {
         HandleFallback(payload, this.lanceKey, this.orientationTargetKey);
         return;
       }
 
       Vector3 newPosition = GetRandomPositionWithinBounds();
-      newPosition = GetClosestValidPathFindingHex(null, newPosition, $"NewSpawnPosition.{lance.name}", IsLancePlayerLance(lanceKey) ? orientationTarget.transform.position : Vector3.zero, 2);
+      Vector3 pathfindTarget = IsLancePlayerLance(lanceKey) ? validOrientationTargetPosition : Vector3.zero;
+      if (!TryGetClosestValidPathFindingHex(null, newPosition, $"NewSpawnPosition.{lance.name}", pathfindTarget, out newPosition, 2)) {
+        Main.LogDebugWarning("[SpawnLanceAnywhere] Could not find valid spawn position. Selecting a new spawn.");
+        CheckAttempts();
+        Run(payload);
+        return;
+      }
       Main.LogDebug($"[SpawnLanceAnywhere] Attempting selection of random position in bounds. Selected position '{newPosition}'");
       lance.transform.position = newPosition;
 
@@ -97,6 +107,7 @@ namespace MissionControl.Logic {
 
       if (IsDistanceSetupValid(newPosition)) {
         if (!AreLanceMemberSpawnsValid(lance, validOrientationTargetPosition)) {
+          RestoreAttemptFormation(lance);
           CheckAttempts();
           Run(payload);
         } else {
@@ -105,6 +116,7 @@ namespace MissionControl.Logic {
         }
       } else {
         Main.Logger.Log("[SpawnLanceAnywhere] Spawn is too close to the target. Selecting a new spawn.");
+        RestoreAttemptFormation(lance);
         CheckAttempts();
         Run(payload);
       }

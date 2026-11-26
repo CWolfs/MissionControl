@@ -9,14 +9,24 @@ using BattleTech.Designed;
 using MissionControl.Rules;
 
 namespace MissionControl.Logic {
+  public class UnplacedGeneratedLanceMarker : MonoBehaviour { }
+
   public abstract class SceneManipulationLogic : LogicBlock {
     public enum LookDirection { TOWARDS_TARGET, AWAY_FROM_TARGET };
+    private bool hasSavedOriginalPositions = false;
     private Vector3 vanillaLanceSpawnPosition = Vector3.zero;
+    private Quaternion vanillaLanceSpawnRotation = Quaternion.identity;
 
     // Saved locations
     private List<Vector3> vanillaLanceUnitSpawnPositions = new List<Vector3>();
+    private List<Quaternion> vanillaLanceUnitSpawnRotations = new List<Quaternion>();
+    private bool hasSavedAttemptFormation = false;
+    private Quaternion attemptLanceRotation = Quaternion.identity;
+    private List<Vector3> attemptLanceUnitLocalPositions = new List<Vector3>();
+    private List<Quaternion> attemptLanceUnitLocalRotations = new List<Quaternion>();
     private Vector3 originalObjectPosition = Vector3.zero;
     private List<Vector3> originalObjectPositions = new List<Vector3>();
+    private List<Quaternion> originalObjectRotations = new List<Quaternion>();
 
     protected EncounterRules EncounterRules { get; set; }
 
@@ -36,33 +46,76 @@ namespace MissionControl.Logic {
     }
 
     protected void SaveSpawnPositions(List<GameObject> objectGos) {
+      if (originalObjectPositions.Count > 0) return;
+
       for (int i = 0; i < objectGos.Count; i++) {
         originalObjectPositions.Add(objectGos[i].transform.position);
+        originalObjectRotations.Add(objectGos[i].transform.rotation);
       }
     }
 
     protected void RestoreSpawnPositions(List<GameObject> objectGos) {
-      for (int i = 0; i < originalObjectPositions.Count; i++) {
+      for (int i = 0; i < objectGos.Count && i < originalObjectPositions.Count; i++) {
         objectGos[i].transform.position = originalObjectPositions[i];
+        if (i < originalObjectRotations.Count) {
+          objectGos[i].transform.rotation = originalObjectRotations[i];
+        }
       }
     }
 
     protected void SaveSpawnPositions(GameObject lance) {
-      if ((vanillaLanceSpawnPosition == Vector3.zero) && (vanillaLanceUnitSpawnPositions.Count <= 0)) {
+      if (!hasSavedOriginalPositions && (vanillaLanceSpawnPosition == Vector3.zero) && (vanillaLanceUnitSpawnPositions.Count <= 0)) {
+        hasSavedOriginalPositions = true;
         vanillaLanceSpawnPosition = lance.transform.position;
+        vanillaLanceSpawnRotation = lance.transform.rotation;
         List<GameObject> originalSpawnPoints = lance.FindAllContains("SpawnPoint");
         foreach (GameObject spawn in originalSpawnPoints) {
           vanillaLanceUnitSpawnPositions.Add(spawn.transform.position);
+          vanillaLanceUnitSpawnRotations.Add(spawn.transform.rotation);
         }
       }
     }
 
     protected void RestoreSpawnPositions(GameObject lance) {
       lance.transform.position = vanillaLanceSpawnPosition;
+      lance.transform.rotation = vanillaLanceSpawnRotation;
       List<GameObject> originalSpawnPoints = lance.FindAllContains("SpawnPoint");
-      for (int i = 0; i < originalSpawnPoints.Count; i++) {
+      for (int i = 0; i < originalSpawnPoints.Count && i < vanillaLanceUnitSpawnPositions.Count; i++) {
         GameObject spawn = originalSpawnPoints[i];
         spawn.transform.position = vanillaLanceUnitSpawnPositions[i];
+        if (i < vanillaLanceUnitSpawnRotations.Count) {
+          spawn.transform.rotation = vanillaLanceUnitSpawnRotations[i];
+        }
+      }
+    }
+
+    protected void SaveAttemptFormation(GameObject lance) {
+      if (hasSavedAttemptFormation) return;
+
+      attemptLanceRotation = lance.transform.rotation;
+      attemptLanceUnitLocalPositions.Clear();
+      attemptLanceUnitLocalRotations.Clear();
+      List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
+      foreach (GameObject spawn in spawnPoints) {
+        attemptLanceUnitLocalPositions.Add(spawn.transform.localPosition);
+        attemptLanceUnitLocalRotations.Add(spawn.transform.localRotation);
+      }
+      hasSavedAttemptFormation = true;
+    }
+
+    protected void RestoreAttemptFormation(GameObject lance) {
+      if (!hasSavedAttemptFormation) {
+        RestoreSpawnPositions(lance);
+        return;
+      }
+
+      lance.transform.rotation = attemptLanceRotation;
+      List<GameObject> spawnPoints = lance.FindAllContains("SpawnPoint");
+      for (int i = 0; i < spawnPoints.Count && i < attemptLanceUnitLocalPositions.Count; i++) {
+        spawnPoints[i].transform.localPosition = attemptLanceUnitLocalPositions[i];
+        if (i < attemptLanceUnitLocalRotations.Count) {
+          spawnPoints[i].transform.localRotation = attemptLanceUnitLocalRotations[i];
+        }
       }
     }
 
@@ -76,6 +129,27 @@ namespace MissionControl.Logic {
 
     protected Vector3 GetOriginalSpawnPosition() {
       return vanillaLanceSpawnPosition;
+    }
+
+    protected bool HasSavedOriginalPositions() {
+      return hasSavedOriginalPositions;
+    }
+
+    protected bool IsUnplacedGeneratedLance(GameObject lance) {
+      if (lance != null && lance.GetComponent<UnplacedGeneratedLanceMarker>() != null) return true;
+      if (!hasSavedOriginalPositions) return false;
+      if (vanillaLanceSpawnPosition != Vector3.zero) return false;
+      if (vanillaLanceUnitSpawnPositions.Count == 0) return false;
+
+      // Fallback heuristic if a generated lance was constructed without the marker
+      bool allOrigin = true;
+      bool matchesFactoryDiagonal = true;
+      for (int i = 0; i < vanillaLanceUnitSpawnPositions.Count; i++) {
+        Vector3 pos = vanillaLanceUnitSpawnPositions[i];
+        if (pos != Vector3.zero) allOrigin = false;
+        if (pos != new Vector3(24f * i, 0f, 24f * i)) matchesFactoryDiagonal = false;
+      }
+      return allOrigin || matchesFactoryDiagonal;
     }
 
     protected void RotateToTarget(GameObject focus, GameObject target) {

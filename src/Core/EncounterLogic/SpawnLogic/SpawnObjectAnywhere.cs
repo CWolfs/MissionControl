@@ -52,8 +52,8 @@ namespace MissionControl.Logic {
 
     private void Init() {
       if (!inited) {
-        Main.LogDebug($"[SpawnObjectAnywhere] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Attempting to get closest valid path finding hex.");
-        validOrientationTargetPosition = GetClosestValidPathFindingHex(orientationTarget, orientationTarget.transform.position, $"OrientationTarget.{orientationTarget.name}");
+        Main.LogDebug($"[SpawnObjectAnywhere] Orientation target of '{orientationTarget.name}' at '{orientationTarget.transform.position}'. Resolving verified target hex.");
+        validOrientationTargetPosition = ResolveVerifiedOrientationTargetPosition(orientationTarget, $"OrientationTarget.{orientationTarget.name}");
         inited = true;
       }
     }
@@ -68,12 +68,24 @@ namespace MissionControl.Logic {
       Init();
 
       if (TotalAttemptCount > TotalAttemptMax) {
-        HandleFallback(payload, this.objectKey, this.orientationTargetKey);
+        if (TryPlaceObjectAtSafeFallback()) {
+          return;
+        }
+
+        RestoreSpawnPositions(new List<GameObject>() { target });
+        RestorePairedOrientationTarget();
+        Main.Logger.LogWarning($"[SpawnObjectAnywhere] Could not find valid spawn for '{target.name}'. Restored original position (and paired target '{orientationTargetKey}' if relocated).");
         return;
       }
 
       Vector3 newPosition = GetRandomPositionWithinBounds();
-      newPosition = GetClosestValidPathFindingHex(null, newPosition, $"NewSpawnPosition.{target.name}", IsLancePlayerLance(objectKey) ? orientationTarget.transform.position : Vector3.zero, 2);
+      Vector3 pathfindTarget = IsLancePlayerLance(objectKey) ? validOrientationTargetPosition : Vector3.zero;
+      if (!TryGetClosestValidPathFindingHex(null, newPosition, $"NewSpawnPosition.{target.name}", pathfindTarget, out newPosition, 2)) {
+        Main.LogDebugWarning("[SpawnObjectAnywhere] Could not find valid spawn position. Selecting a new spawn.");
+        CheckAttempts();
+        Run(payload);
+        return;
+      }
       Main.LogDebug($"[SpawnObjectAnywhere] Attempting selection of random position in bounds. Selected position '{newPosition}'");
       target.transform.position = newPosition;
 
@@ -95,6 +107,110 @@ namespace MissionControl.Logic {
       }
     }
 
+
+    private void RestorePairedOrientationTarget() {
+      if (string.IsNullOrEmpty(orientationTargetKey) || EncounterRules == null) return;
+      foreach (LogicBlock logicBlock in EncounterRules.EncounterLogic) {
+        if (logicBlock is SpawnLanceLogic spawnLanceLogic && spawnLanceLogic.TargetLanceKey == orientationTargetKey) {
+          spawnLanceLogic.RestoreOriginalLanceSpawn();
+        }
+      }
+    }
+
+    private float GetRequiredTargetSeparation() {
+      float requiredSeparation = 30f;
+      if (target == null) return requiredSeparation;
+
+      RegionGameLogic region = target.GetComponent<RegionGameLogic>();
+      if (region != null) {
+        float footprintRadius = region.radius;
+        RegionPointGameLogic[] regionPoints = region.regionPointList;
+        if (regionPoints != null && regionPoints.Length > 0) {
+          Vector3 currentCenter = target.transform.position;
+          foreach (RegionPointGameLogic rp in regionPoints) {
+            if (rp != null) {
+              float dist = currentCenter.DistanceFlat(rp.transform.position);
+              if (dist > footprintRadius) footprintRadius = dist;
+            }
+          }
+        }
+        requiredSeparation = Mathf.Max(requiredSeparation, footprintRadius + 24f);
+      }
+
+      return requiredSeparation;
+    }
+
+    private bool IsSeparatedFromOrientationTarget(Vector3 position, float minDistance) {
+      if (!useOrientationTarget) return true;
+      if (position.DistanceFlat(validOrientationTargetPosition) <= minDistance) return false;
+      if (orientationTarget != null) {
+        if (position.DistanceFlat(orientationTarget.transform.position) <= minDistance) return false;
+        List<GameObject> targetSpawns = orientationTarget.FindAllContains("SpawnPoint");
+        foreach (GameObject targetSpawn in targetSpawns) {
+          if (position.DistanceFlat(targetSpawn.transform.position) <= minDistance) return false;
+        }
+      }
+      return true;
+    }
+
+    private bool TryPlaceObjectAtSafeFallback() {
+      CombatGameState combatState = UnityGameInstance.BattleTechGame.Combat;
+      EncounterLayerData encounterLayerData = MissionControl.Instance.EncounterLayerData;
+      float requiredSeparation = GetRequiredTargetSeparation();
+
+      // 1. Try relaxed-distance random placements in bounds that remain reachable and clear of the target footprint
+      for (int attempt = 0; attempt < 5; attempt++) {
+        Vector3 candidate = GetRandomPositionWithinBounds();
+        if (!TryGetClosestValidPathFindingHex(null, candidate, $"FallbackObject.{target.name}.{attempt}", validOrientationTargetPosition, out candidate, 2)) {
+          continue;
+        }
+
+        target.transform.position = candidate;
+        if (!IsObjectSpawnValid(target, validOrientationTargetPosition)) continue;
+
+        Vector3 finalPos = target.transform.position.GetClosestHexLerpedPointOnGrid();
+        if (!IsSeparatedFromOrientationTarget(finalPos, requiredSeparation)) continue;
+
+        target.transform.position = finalPos;
+        if (useOrientationTarget && orientationTarget != null) RotateToTarget(target, orientationTarget);
+        Main.Logger.LogWarning($"[SpawnObjectAnywhere] Placed '{target.name}' at relaxed-distance reachable fallback '{target.transform.position}'.");
+        return true;
+      }
+
+      // 2. Check whether the original vanilla position is still valid and clear of the target footprint after snapping
+      RestoreSpawnPositions(new List<GameObject>() { target });
+      if (IsObjectSpawnValid(target, validOrientationTargetPosition)) {
+        Vector3 finalRestoredPos = target.transform.position.GetClosestHexLerpedPointOnGrid();
+        if (IsSeparatedFromOrientationTarget(finalRestoredPos, requiredSeparation)) {
+          target.transform.position = finalRestoredPos;
+          Main.Logger.LogWarning($"[SpawnObjectAnywhere] Restored '{target.name}' to verified original position '{target.transform.position}'.");
+          return true;
+        }
+      }
+
+      // 3. Bounded nearest-first ring search around the orientation target for a reachable dry hex outside the region footprint
+      int ringRadius = Mathf.Clamp(Mathf.CeilToInt(requiredSeparation / combatState.HexGrid.HexWidth) + 8, 15, 25);
+      List<Vector3> ringHexes = combatState.HexGrid.GetGridPointsAroundPointWithinRadius(validOrientationTargetPosition, ringRadius);
+      ringHexes.Sort((a, b) => (a - validOrientationTargetPosition).sqrMagnitude.CompareTo((b - validOrientationTargetPosition).sqrMagnitude));
+      int budget = 40;
+      foreach (Vector3 rawHex in ringHexes) {
+        if (budget <= 0) break;
+        Vector3 hex = rawHex.GetClosestHexLerpedPointOnGrid();
+        if (!IsSeparatedFromOrientationTarget(hex, requiredSeparation)) continue;
+        if (!encounterLayerData.IsInEncounterBounds(hex)) continue;
+        if (!PathFinderManager.Instance.IsCellValidDrySpawn(combatState, hex)) continue;
+
+        budget--;
+        if (!PathFinderManager.Instance.IsSpawnValid(target, hex, validOrientationTargetPosition, UnitType.Mech, target.name)) continue;
+
+        target.transform.position = hex;
+        if (useOrientationTarget && orientationTarget != null) RotateToTarget(target, orientationTarget);
+        Main.Logger.LogWarning($"[SpawnObjectAnywhere] Placed '{target.name}' at reachable ring fallback '{target.transform.position}'.");
+        return true;
+      }
+
+      return false;
+    }
 
     public bool IsDistanceSetupValid(Vector3 newSpawnPosition) {
       if (distanceCheckType == WithinOrBeyondDistanceType.NONE) return true;

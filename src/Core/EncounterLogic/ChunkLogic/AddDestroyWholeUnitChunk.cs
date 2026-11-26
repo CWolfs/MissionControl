@@ -65,6 +65,7 @@ namespace MissionControl.Logic {
         BehaviorTreeIDEnum.CoreAITree,
         lanceTags
       );
+      lanceSpawner.gameObject.AddComponent<UnplacedGeneratedLanceMarker>();
       LanceSpawnerRef lanceSpawnerRef = new LanceSpawnerRef(lanceSpawner);
 
       bool showProgress = true;
