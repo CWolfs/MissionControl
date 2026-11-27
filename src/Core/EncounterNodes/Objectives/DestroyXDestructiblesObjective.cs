@@ -89,7 +89,13 @@ namespace MissionControl.EncounterNodes.Objectives {
     private bool CollectTrackedDestructibles() {
       TrackedDestructibles.Clear();
 
-      RegionGameLogic regionGameLogic = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<RegionGameLogic>(RegionGuid);
+      CombatGameState combat = UnityGameInstance.BattleTechGame?.Combat;
+      if (combat == null) {
+        Main.Logger.LogError("[DestroyXDestructiblesObjective] Combat state is null.");
+        return false;
+      }
+
+      RegionGameLogic regionGameLogic = combat.ItemRegistry.GetItemByGUID<RegionGameLogic>(RegionGuid);
 
       if (regionGameLogic == null) {
         Main.Logger.LogError($"[DestroyXDestructiblesObjective] Region Not Found for Guid '{RegionGuid}'");
@@ -101,8 +107,11 @@ namespace MissionControl.EncounterNodes.Objectives {
 
       destructibles.Shuffle();
 
+      EncounterLayerData layerData = GetComponentInParent<EncounterLayerData>() ?? combat.EncounterLayerData ?? MissionControl.Instance.EncounterLayerData;
+
       foreach (DestructibleObject destructible in destructibles) {
-        bool isDestructibleInRegion = RegionUtil.PointInRegion(UnityGameInstance.BattleTechGame.Combat, destructible.transform.position, RegionGuid);
+        if (destructible == null) continue;
+        bool isDestructibleInRegion = layerData.IsPointInRegion(destructible.transform.position, RegionGuid);
         if (isDestructibleInRegion) {
           TrackedDestructibles.Add(destructible);
         }

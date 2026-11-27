@@ -9,15 +9,24 @@ namespace MissionControl.Result {
     public string Type { get; set; }
     public string[] Tags { get; set; }
 
-    int processedUnitCount = 0;
-
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
+      if (Tags == null || Tags.Length == 0) {
+        Main.Logger.LogError($"[TagUnitsInRegionResult] No tags provided for region '{RegionGuid}'. Skipping.");
+        return;
+      }
+
       Main.LogDebug($"[TagUnitsInRegionResult] Tagging '{NumberOfUnits}' '{Type}' in region '{RegionGuid}' with tags '{string.Join(",", Tags)}'");
       TagUnitsInRegion();
     }
 
     private void TagUnitsInRegion() {
-      RegionGameLogic regionGameLogic = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<RegionGameLogic>(RegionGuid);
+      CombatGameState combat = UnityGameInstance.BattleTechGame?.Combat;
+      if (combat == null) {
+        Main.Logger.LogError("[TagUnitsInRegionResult] Combat state is null.");
+        return;
+      }
+
+      RegionGameLogic regionGameLogic = combat.ItemRegistry.GetItemByGUID<RegionGameLogic>(RegionGuid);
 
       if (regionGameLogic == null) {
         Main.Logger.LogError($"[TagUnitsInRegionResult] Region Not Found for Guid '{RegionGuid}'");
@@ -25,36 +34,33 @@ namespace MissionControl.Result {
       }
 
       if (Type == "Building") {
-        List<BuildingRepresentation> buildingsInMap = GameObjextExtensions.GetBuildingsInMap();
+        List<BattleTech.Building> buildingsInMap = combat.ItemRegistry.GetObjectsOfType<BattleTech.Building>(TaggedObjectType.Building);
         Main.LogDebug($"[TagUnitsInRegionResult] Collected '{buildingsInMap.Count}' buildings to check.");
 
         if (NumberOfUnits > 0) {
           buildingsInMap.Shuffle();
         }
 
-        foreach (BuildingRepresentation building in buildingsInMap) {
-          bool isBuildingInRegion = RegionUtil.PointInRegion(UnityGameInstance.BattleTechGame.Combat, building.transform.position, RegionGuid);
-          if (isBuildingInRegion) {
-            Main.LogDebug($"[TagUnitsInRegionResult] Found building '{building.gameObject.name}' in region!");
-            building.ParentBuilding.EncounterTags.UnionWith(Tags);
+        EncounterLayerData layerData = combat.EncounterLayerData ?? MissionControl.Instance.EncounterLayerData;
+        int processedUnitCount = 0;
+        foreach (BattleTech.Building building in buildingsInMap) {
+          if (building == null || building.IsDead) continue;
 
-            if (HasReachedUnitLimit()) break;
+          BuildingRepresentation buildingRep = building.BuildingRep;
+          if (buildingRep == null || !buildingRep.gameObject.activeInHierarchy) continue;
+
+          bool isBuildingInRegion = layerData.IsPointInRegion(buildingRep.transform.position, RegionGuid);
+          if (isBuildingInRegion) {
+            Main.LogDebug($"[TagUnitsInRegionResult] Found building '{buildingRep.gameObject.name}' in region!");
+            building.EncounterTags.UnionWith(Tags);
+
+            processedUnitCount += 1;
+            if (NumberOfUnits > 0 && processedUnitCount >= NumberOfUnits) break;
           }
         }
       } else {
         Main.LogDebug($"[TagUnitsInRegionResult] Tagging '{Type}' Not Yet Supported");
       }
-    }
-
-    private bool HasReachedUnitLimit() {
-      processedUnitCount += 1;
-
-      if (NumberOfUnits > 0 && (processedUnitCount >= NumberOfUnits)) {
-        processedUnitCount = 0;
-        return true;
-      }
-
-      return false;
     }
   }
 }

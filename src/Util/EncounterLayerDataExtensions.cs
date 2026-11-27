@@ -24,6 +24,15 @@ public static class EncounterLayerDataExtensions {
     return null;
   }
 
+  public static bool IsPointInRegion(this EncounterLayerData layerData, Vector3 point, string regionGuid) {
+    if (layerData == null || layerData.mapEncounterLayerDataCells == null || string.IsNullOrEmpty(regionGuid)) {
+      return false;
+    }
+
+    MapEncounterLayerDataCell cell = layerData.GetCellAt(point);
+    return cell?.GetRegionGuids()?.Contains(regionGuid) == true;
+  }
+
   public static ContractObjectiveGameLogic GetContractObjectiveGameLogicByGUID(this EncounterLayerData layerData, string guid) {
     ContractObjectiveGameLogic[] components = layerData.GetComponentsInChildren<ContractObjectiveGameLogic>();
     foreach (ContractObjectiveGameLogic logic in components) {

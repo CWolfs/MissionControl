@@ -12,7 +12,13 @@ namespace MissionControl.Result {
     public override void Trigger(MessageCenterMessage inMessage, string triggeringName) {
       Main.LogDebug("[DestroyBuildingsAtLanceSpawnsResult] Setting state...");
 
-      LanceSpawnerGameLogic lanceSpawnerGameLogic = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<LanceSpawnerGameLogic>(LanceSpawnerGuid);
+      CombatGameState combat = UnityGameInstance.BattleTechGame?.Combat;
+      if (combat == null) {
+        Main.Logger.LogError("[DestroyBuildingsAtLanceSpawnsResult] Combat state is null.");
+        return;
+      }
+
+      LanceSpawnerGameLogic lanceSpawnerGameLogic = combat.ItemRegistry.GetItemByGUID<LanceSpawnerGameLogic>(LanceSpawnerGuid);
       if (lanceSpawnerGameLogic == null) {
         Main.Logger.LogError($"[DestroyBuildingsAtLanceSpawnsResult] Could not find LanceSpawnerGameLogic for Guid '{LanceSpawnerGuid}'.");
         return;
@@ -20,21 +26,27 @@ namespace MissionControl.Result {
 
       UnitSpawnPointGameLogic[] unitSpawns = lanceSpawnerGameLogic.GetComponentsInChildren<UnitSpawnPointGameLogic>();
 
-      List<BuildingRepresentation> buildingsInMap = GameObjextExtensions.GetBuildingsInMap();
+      List<BattleTech.Building> buildingsInMap = combat.ItemRegistry.GetObjectsOfType<BattleTech.Building>(TaggedObjectType.Building);
       Main.LogDebug($"[DestroyBuildingsAtLanceSpawnsResult] Collected '{buildingsInMap.Count}' buildings to check.");
 
-      DestroyBuildingsUnderLanceSpawns(unitSpawns, buildingsInMap.ToArray(), Radius);
+      DestroyBuildingsUnderLanceSpawns(unitSpawns, buildingsInMap, Radius);
     }
 
-    private void DestroyBuildingsUnderLanceSpawns(UnitSpawnPointGameLogic[] unitSpawns, BuildingRepresentation[] buildings, float radius) {
+    private void DestroyBuildingsUnderLanceSpawns(UnitSpawnPointGameLogic[] unitSpawns, List<BattleTech.Building> buildings, float radius) {
+      HashSet<string> destroyedBuildingGuids = new HashSet<string>();
+
       foreach (UnitSpawnPointGameLogic unitSpawn in unitSpawns) {
         Vector3 position = unitSpawn.transform.position;
 
-        foreach (BuildingRepresentation building in buildings) {
-          if (building == null || building.parentCombatant == null || building.IsDead) continue;
+        foreach (BattleTech.Building building in buildings) {
+          if (building == null || building.IsDead || destroyedBuildingGuids.Contains(building.GUID)) continue;
 
-          if (position.DistanceFlat(building.transform.position) <= radius) {
-            EncounterLayerParent.EnqueueLoadAwareMessage(new DestroyActorMessage(EncounterLayerData.MapLogicGuid, building.parentCombatant.GUID));
+          BuildingRepresentation buildingRep = building.BuildingRep;
+          if (buildingRep == null || !buildingRep.gameObject.activeInHierarchy) continue;
+
+          if (position.DistanceFlat(buildingRep.transform.position) <= radius) {
+            destroyedBuildingGuids.Add(building.GUID);
+            EncounterLayerParent.EnqueueLoadAwareMessage(new DestroyActorMessage(EncounterLayerData.MapLogicGuid, building.GUID));
           }
         }
       }

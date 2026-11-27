@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 using System;
 using System.Linq;
@@ -56,59 +57,44 @@ public static class GameObjextExtensions {
     return debugPoint;
   }
 
+  private static List<T> FindSceneObjectsOfType<T>(bool includeInactive) where T : Component {
+    if (!includeInactive) {
+      return new List<T>(UnityEngine.Object.FindObjectsOfType<T>());
+    }
+
+    List<T> results = new List<T>();
+    int sceneCount = SceneManager.sceneCount;
+    for (int i = 0; i < sceneCount; i++) {
+      Scene scene = SceneManager.GetSceneAt(i);
+      if (!scene.isLoaded) continue;
+
+      foreach (GameObject root in scene.GetRootGameObjects()) {
+        results.AddRange(root.GetComponentsInChildren<T>(true));
+      }
+    }
+
+    return results;
+  }
+
   // TODO: Cache this
   public static List<BuildingRepresentation> GetBuildingsInMap(bool includeInactive = false) {
-    List<BuildingRepresentation> buildings = new List<BuildingRepresentation>();
-    BuildingRepresentation[] buildingsUnderGameObject = GameObject.Find("GAME").GetComponentsInChildren<BuildingRepresentation>(includeInactive);
-    BuildingRepresentation[] buildingsUnderPlots = GameObject.Find("PlotParent").GetComponentsInChildren<BuildingRepresentation>(includeInactive);
-    BuildingRepresentation[] buildingsUnderEncounter = MissionControl.MissionControl.Instance.EncounterLayerData.GetComponentsInChildren<BuildingRepresentation>(includeInactive);
-
-    buildings.AddRange(buildingsUnderGameObject);
-    buildings.AddRange(buildingsUnderPlots);
-    buildings.AddRange(buildingsUnderEncounter);
-
-    return buildings;
+    return FindSceneObjectsOfType<BuildingRepresentation>(includeInactive);
   }
 
   // TODO: Cache this
   public static List<DestructibleObject> GetDestructiblesWithLODComponents(List<string> filterByName = null, bool includeInactive = false) {
-    List<DestructibleObject> destructibles = new List<DestructibleObject>();
-    DestructibleObject[] destructiblesUnderGameObject = GameObject.Find("GAME").GetComponentsInChildren<DestructibleObject>(includeInactive);
-    DestructibleObject[] destructiblesUnderPlots = GameObject.Find("PlotParent").GetComponentsInChildren<DestructibleObject>(includeInactive);
-    DestructibleObject[] destructiblesUnderEncounter = MissionControl.MissionControl.Instance.EncounterLayerData.GetComponentsInChildren<DestructibleObject>(includeInactive);
+    List<DestructibleObject> allDestructibles = FindSceneObjectsOfType<DestructibleObject>(includeInactive);
 
-    List<DestructibleObject> filteredDestructiblesUnderGameObject = destructiblesUnderGameObject.Where(destructible => {
+    return allDestructibles.Where(destructible => {
+      if (destructible == null) return false;
+
       if (filterByName != null) {
-        Boolean startsWithFilterName = filterByName.Any(filterName => destructible.gameObject.name.StartsWith(filterName, StringComparison.OrdinalIgnoreCase));
+        bool startsWithFilterName = filterByName.Any(filterName => destructible.gameObject.name.StartsWith(filterName, StringComparison.OrdinalIgnoreCase));
         if (!startsWithFilterName) return false;
       }
 
       return destructible.GetComponent<LODGroup>() != null;
     }).ToList();
-
-    List<DestructibleObject> filteredDestructiblesUnderPlots = destructiblesUnderPlots.Where(destructible => {
-      if (filterByName != null) {
-        Boolean startsWithFilterName = filterByName.Any(filterName => destructible.gameObject.name.StartsWith(filterName, StringComparison.OrdinalIgnoreCase));
-        if (!startsWithFilterName) return false;
-      }
-
-      return destructible.GetComponent<LODGroup>() != null;
-    }).ToList();
-
-    List<DestructibleObject> filteredDestructiblesUnderEncounter = destructiblesUnderEncounter.Where(destructible => {
-      if (filterByName != null) {
-        Boolean startsWithFilterName = filterByName.Any(filterName => destructible.gameObject.name.StartsWith(filterName, StringComparison.OrdinalIgnoreCase));
-        if (!startsWithFilterName) return false;
-      }
-
-      return destructible.GetComponent<LODGroup>() != null;
-    }).ToList();
-
-    destructibles.AddRange(filteredDestructiblesUnderGameObject);
-    destructibles.AddRange(filteredDestructiblesUnderPlots);
-    destructibles.AddRange(filteredDestructiblesUnderEncounter);
-
-    return destructibles;
   }
 
   public static List<Plot> GetAllPlots() {

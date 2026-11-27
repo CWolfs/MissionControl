@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 using BattleTech;
+using BattleTech.Rendering.UrbanWarfare;
 using BattleTech.UI;
 
 using BattleTech.Framework;
@@ -22,7 +23,13 @@ namespace MissionControl.Result {
 
     private void TagUnitsInRegion() {
       Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Tagging '{NumberOfUnits}' '{Type}' in region '{RegionGuid}'");
-      RegionGameLogic regionGameLogic = UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<RegionGameLogic>(RegionGuid);
+      CombatGameState combat = UnityGameInstance.BattleTechGame?.Combat;
+      if (combat == null) {
+        Main.Logger.LogError("[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Combat state is null.");
+        return;
+      }
+
+      RegionGameLogic regionGameLogic = combat.ItemRegistry.GetItemByGUID<RegionGameLogic>(RegionGuid);
 
       if (regionGameLogic == null) {
         Main.Logger.LogError($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Region Not Found for Guid '{RegionGuid}'");
@@ -30,33 +37,35 @@ namespace MissionControl.Result {
       }
 
       if (Type == "Building") {
-        List<BuildingRepresentation> buildingsInMap = GameObjextExtensions.GetBuildingsInMap();
+        List<BattleTech.Building> buildingsInMap = combat.ItemRegistry.GetObjectsOfType<BattleTech.Building>(TaggedObjectType.Building);
         Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Collected '{buildingsInMap.Count}' buildings to check.");
 
         if (NumberOfUnits > 0) {
           buildingsInMap.Shuffle();
         }
 
+        EncounterLayerData layerData = combat.EncounterLayerData ?? MissionControl.Instance.EncounterLayerData;
         int processedUnitCount = 0;
-        foreach (BuildingRepresentation building in buildingsInMap) {
-          if (building == null || building.ParentBuilding == null || building.ParentBuilding.IsDead) continue;
+        foreach (BattleTech.Building building in buildingsInMap) {
+          if (!IsEligibleTargetBuilding(combat, building)) continue;
 
-          bool isBuildingInRegion = RegionUtil.PointInRegion(UnityGameInstance.BattleTechGame.Combat, building.transform.position, RegionGuid);
+          BuildingRepresentation buildingRep = building.BuildingRep;
+          bool isBuildingInRegion = layerData.IsPointInRegion(buildingRep.transform.position, RegionGuid);
           if (isBuildingInRegion) {
-            Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Found building '{building.gameObject.name}' in region!");
+            Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Found building '{buildingRep.gameObject.name}' in region!");
             if (Tags != null && Tags.Length > 0) {
-              building.ParentBuilding.EncounterTags.UnionWith(Tags);
+              building.EncounterTags.UnionWith(Tags);
             }
 
-            SetTeam(building.ParentBuilding);
-            SetIsTargetObjective(building.ParentBuilding);
+            SetTeam(combat, building);
+            SetIsTargetObjective(building);
 
             processedUnitCount += 1;
             if (NumberOfUnits > 0 && processedUnitCount >= NumberOfUnits) break;
           }
         }
 
-        if (processedUnitCount > 0) {
+        if (processedUnitCount > 0 && MissionControl.Instance.EncounterLayerData != null) {
           // Ensure objectives do a check now units have target objective changed
           ObjectiveGameLogic[] objectiveGameLogics = MissionControl.Instance.EncounterLayerData.GetComponentsInChildren<ObjectiveGameLogic>();
           foreach (ObjectiveGameLogic objectiveGameLogic in objectiveGameLogics) {
@@ -68,11 +77,28 @@ namespace MissionControl.Result {
       }
     }
 
-    private void SetTeam(ICombatant combatant) {
-      Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Setting Team '{Team}' for '{combatant.GameRep.name} - {combatant.DisplayName}' who is currently on team '{combatant.team?.Name} : {combatant.team?.GUID}'");
+    private static bool IsEligibleTargetBuilding(CombatGameState combat, BattleTech.Building building) {
+      if (building == null || building.IsDead) return false;
+
+      BuildingRepresentation buildingRep = building.BuildingRep;
+      if (buildingRep == null || !buildingRep.gameObject.activeInHierarchy) return false;
+
+      ObstructionGameLogic obstruction = buildingRep.GetComponent<ObstructionGameLogic>()
+        ?? ObstructionGameLogic.GetObstructionFromBuilding(building, combat.ItemRegistry);
+      if (obstruction != null && (!obstruction.IsRealBuilding || !obstruction.IsBuildingEnabled)) return false;
+
+      if (building.UrbanDestructible != null && building.UrbanDestructible.CurDesolationState == UrbanBuildingGroup.DesolationState.Rubble) {
+        return false;
+      }
+
+      return true;
+    }
+
+    private void SetTeam(CombatGameState combat, ICombatant combatant) {
+      Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Setting Team '{Team}' for '{combatant.GameRep?.name} - {combatant.DisplayName}' who is currently on team '{combatant.team?.Name} : {combatant.team?.GUID}'");
       Team oldTeam = combatant.team;
       string newTeamGuid = TeamUtils.GetTeamGuid(Team);
-      Team newTeam = string.IsNullOrEmpty(newTeamGuid) ? null : UnityGameInstance.BattleTechGame.Combat.ItemRegistry.GetItemByGUID<Team>(newTeamGuid);
+      Team newTeam = string.IsNullOrEmpty(newTeamGuid) ? null : combat.ItemRegistry.GetItemByGUID<Team>(newTeamGuid);
       if (newTeam == null) {
         Main.Logger.LogError($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Could not find Team '{Team}'.");
         return;
@@ -103,7 +129,7 @@ namespace MissionControl.Result {
     }
 
     private void SetIsTargetObjective(ICombatant combatant) {
-      Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Setting isObjectiveTarget '{IsObjectiveTarget}' for '{combatant.GameRep.name} - {combatant.DisplayName}'");
+      Main.LogDebug($"[SetUnitsInRegionToBeTaggedObjectiveTargetsResult] Setting isObjectiveTarget '{IsObjectiveTarget}' for '{combatant.GameRep?.name} - {combatant.DisplayName}'");
       ObstructionGameLogic obstructionGameLogic = combatant.GameRep?.GetComponent<ObstructionGameLogic>();
       if (obstructionGameLogic != null) {
         obstructionGameLogic.isObjectiveTarget = IsObjectiveTarget;
