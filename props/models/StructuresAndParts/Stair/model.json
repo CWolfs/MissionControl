@@ -1,0 +1,24 @@
+{
+  "Key": "Stair",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "stair",
+  "SourceAssetFile": "sharedassets50.assets",
+  "MeshPathIds": {
+    "Flimsy": 49
+  },
+  "Materials": [
+    {
+      "Name": "envMatStct_diamondMetal_storyMission7"
+    },
+    {
+      "Name": "envMatStct_aluminum_storyMission7"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

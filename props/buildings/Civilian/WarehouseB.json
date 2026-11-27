@@ -1,0 +1,6 @@
+{
+  "Key": "WarehouseB",
+  "FriendlyName": "Warehouse B",
+  "BuildingDefID": "buildingdef_Industrial_Large",
+  "MainModel": "WarehouseB"
+}

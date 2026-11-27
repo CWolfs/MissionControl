@@ -1,0 +1,6 @@
+{
+  "Key": "LargeRadar",
+  "FriendlyName": "Large Radar",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "LargeRadar"
+}

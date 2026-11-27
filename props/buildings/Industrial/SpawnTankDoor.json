@@ -1,0 +1,6 @@
+{
+  "Key": "SpawnTankDoor",
+  "FriendlyName": "Spawn Tank Door",
+  "BuildingDefID": "buildingdef_Civilian_Medium",
+  "MainModel": "SpawnTankDoor"
+}

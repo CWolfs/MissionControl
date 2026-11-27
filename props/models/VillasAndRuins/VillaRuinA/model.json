@@ -1,0 +1,18 @@
+{
+  "Key": "VillaRuinA",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "villaRuinA",
+  "Materials": [
+    {
+      "Name": "envMatStct_cementA_aurigan"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfDeco_villaRuinA_generic_static_destruct_split",
+  "HasCustomShell": true,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

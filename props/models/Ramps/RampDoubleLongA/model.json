@@ -1,5 +1,6 @@
 {
   "Key": "RampDoubleLongA",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "longDoubleRamp",
   "Materials": [

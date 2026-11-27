@@ -1,0 +1,17 @@
+{
+  "Key": "Hut_support",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "hut_support",
+  "Materials": [
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

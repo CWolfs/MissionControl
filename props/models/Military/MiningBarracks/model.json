@@ -1,0 +1,29 @@
+{
+  "Key": "MiningBarracks",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "miningBarracks",
+  "Materials": [
+    {
+      "Name": "envMatStct_lightMetal_mission02"
+    },
+    {
+      "Name": "envMatStct_darkMetal_mission02"
+    },
+    {
+      "Name": "envMatStct_brick_mission02"
+    },
+    {
+      "Name": "envMatStct_concrete_mission02"
+    }
+  ],
+  "GlassMaterial": {
+    "Name": "envMatStct_window_mission02"
+  },
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": true,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

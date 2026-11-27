@@ -1,0 +1,21 @@
+{
+  "Key": "Catwalk",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "catwalk",
+  "SourceAssetFile": "sharedassets8.assets",
+  "MeshPathIds": {
+    "Flimsy": 428
+  },
+  "Materials": [
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

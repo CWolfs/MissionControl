@@ -1,0 +1,24 @@
+{
+  "Key": "Fence",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "fence",
+  "SourceAssetFile": "sharedassets8.assets",
+  "MeshPathIds": {
+    "Flimsy": 231
+  },
+  "Materials": [
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "fence",
+  "FlimsyDestructibleType": "smallStone"
+}

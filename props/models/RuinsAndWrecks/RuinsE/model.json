@@ -1,0 +1,29 @@
+{
+  "Key": "RuinsE",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "ruinsE",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_rubble_generic"
+    },
+    {
+      "Name": "envMatStct_darkRust_generic"
+    },
+    {
+      "Name": "envMatStct_lightRust_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "mediumStone"
+}

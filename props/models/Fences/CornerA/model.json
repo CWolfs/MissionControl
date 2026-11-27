@@ -1,5 +1,6 @@
 {
   "Key": "FenceCornerA",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "fence",
   "SourceAssetFile": "sharedassets8.assets",

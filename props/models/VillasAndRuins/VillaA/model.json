@@ -1,0 +1,27 @@
+{
+  "Key": "VillaA",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "villaA",
+  "Materials": [
+    {
+      "Name": "envMatStct_cementA_aurigan"
+    },
+    {
+      "Name": "envMatStct_roofB_aurigan"
+    },
+    {
+      "Name": "envMatStct_roofA_aurigan"
+    },
+    {
+      "Name": "envMatStct_grassA_aurigan"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfDeco_villaA_generic_static_destruct_split",
+  "HasCustomShell": true,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

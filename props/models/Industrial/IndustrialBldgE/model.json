@@ -1,0 +1,27 @@
+{
+  "Key": "IndustrialBldgE",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "industrialBldgE",
+  "Materials": [
+    {
+      "Name": "envMatStct_asphalt_generic"
+    },
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfComp_industrialBldgE_generic_static_destruct_split",
+  "HasCustomShell": true,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "mediumStone"
+}

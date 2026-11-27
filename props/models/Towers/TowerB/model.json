@@ -1,0 +1,26 @@
+{
+  "Key": "TowerB",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "towerB",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    },
+    {
+      "Name": "Default_Material"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

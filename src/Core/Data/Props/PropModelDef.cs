@@ -12,6 +12,9 @@ namespace MissionControl.Data {
     [JsonProperty("Key")]
     public string Key { get; set; }
 
+    [JsonProperty("IsVanilla")]
+    public bool IsVanilla { get; set; } = false;
+
     [JsonProperty("AssetSource")]
     public string AssetSource { get; set; } = "Auto";
 

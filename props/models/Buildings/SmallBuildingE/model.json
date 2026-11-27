@@ -1,0 +1,26 @@
+{
+  "Key": "SmallBuildingE",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "smallBuildingE",
+  "Materials": [
+    {
+      "Name": "envMatStct_trimMetal_mission03"
+    },
+    {
+      "Name": "envMatStct_concrete_mission03"
+    },
+    {
+      "Name": "envMatStct_plainMetal_mission03"
+    },
+    {
+      "Name": "envMatStct_dome_mission03"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "mediumStone"
+}

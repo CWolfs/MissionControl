@@ -1,0 +1,6 @@
+{
+  "Key": "Bridge",
+  "FriendlyName": "Bridge",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "Bridge"
+}

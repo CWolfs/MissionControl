@@ -1,0 +1,17 @@
+{
+  "Key": "IndustrialLowRampA",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "industrialLowRampA",
+  "Materials": [
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
+}

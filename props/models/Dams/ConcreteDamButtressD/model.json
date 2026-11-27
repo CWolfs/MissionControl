@@ -1,0 +1,17 @@
+{
+  "Key": "ConcreteDamButtressD",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "concreteDamButtressD",
+  "Materials": [
+    {
+      "Name": "envMatStct_concreteDam_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "mediumStone"
+}

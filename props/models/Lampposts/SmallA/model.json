@@ -1,5 +1,6 @@
 {
   "Key": "LamppostSmallA",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "lightPoleA2",
   "SourceAssetFile": "sharedassets8.assets",

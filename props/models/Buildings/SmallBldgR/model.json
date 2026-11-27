@@ -1,0 +1,20 @@
+{
+  "Key": "SmallBldgR",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "smallBldgR",
+  "Materials": [
+    {
+      "Name": "envMatStct_aluminum_storyMission7"
+    },
+    {
+      "Name": "envMatStct_steel_storyMission7"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

@@ -1,0 +1,6 @@
+{
+  "Key": "TurretGenerator",
+  "FriendlyName": "Turret Generator",
+  "BuildingDefID": "buildingdef_Military_Medium",
+  "MainModel": "TurretGenerator"
+}

@@ -1,0 +1,17 @@
+{
+  "Key": "DropshipLeopardDestroyedHull",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "dropshipLeopardDestroyedHull",
+  "Materials": [
+    {
+      "Name": "envMatStct_leopardDestroyed"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

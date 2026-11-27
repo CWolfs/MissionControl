@@ -10,6 +10,12 @@ namespace MissionControl.Data {
     [JsonProperty("MainModel")]
     public string ModelKey { get; set; } // Key in 'props/models' folder only
 
+    [JsonProperty("IsVanilla")]
+    public bool? IsVanillaOverride { get; set; }
+
+    [JsonIgnore]
+    public bool IsVanilla => IsVanillaOverride ?? (GetPropModelDef()?.IsVanilla ?? false);
+
     [JsonProperty("Position")]
     public Vector3 Position { get; set; } = Vector3.zero;
 
@@ -39,6 +45,7 @@ namespace MissionControl.Data {
       PropDestructibleFlimsyDef newPropDestructibleFlimsyDef = new PropDestructibleFlimsyDef();
       newPropDestructibleFlimsyDef.Key = Key;
       newPropDestructibleFlimsyDef.ModelKey = ModelKey;
+      newPropDestructibleFlimsyDef.IsVanillaOverride = IsVanillaOverride;
       newPropDestructibleFlimsyDef.Position = Position;
       newPropDestructibleFlimsyDef.Rotation = Rotation;
       newPropDestructibleFlimsyDef.Mass = Mass;

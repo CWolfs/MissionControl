@@ -1,5 +1,6 @@
 {
   "Key": "GearHalfCylinderWithBaseB",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "turbine6",
   "SourceAssetFile": "sharedassets13.assets",

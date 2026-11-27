@@ -1,0 +1,17 @@
+{
+  "Key": "MedSquareAsphaltFoundation",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "envMdlFndn_medSquareAsphaltFoundation_generic_static_obstruct_L",
+  "Materials": [
+    {
+      "Name": "envMatStct_asphalt_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

@@ -1,0 +1,35 @@
+{
+  "Key": "WarehouseB",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "warehouseB",
+  "SourceAssetFile": "sharedassets34.assets",
+  "MeshPathIds": {
+    "LOD0": 239,
+    "LOD1": 237,
+    "LOD2": 235,
+    "COL": 241,
+    "Shell": 256,
+    "ShellCOL": 254
+  },
+  "Materials": [
+    {
+      "Name": "envMatStct_plaster_storyMission7"
+    },
+    {
+      "Name": "envMatStct_concrete_storyMission7"
+    },
+    {
+      "Name": "envMatStct_steel_storyMission7"
+    },
+    {
+      "Name": "envMatStct_panels_storyMission7"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": true,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

@@ -1,5 +1,6 @@
 {
   "Key": "MediumMilitaryBuildingB",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "mediumMilitaryBarracksB",
   "Materials": [

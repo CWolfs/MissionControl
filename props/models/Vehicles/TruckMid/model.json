@@ -1,0 +1,20 @@
+{
+  "Key": "TruckMid",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "truckMid",
+  "Materials": [
+    {
+      "Name": "envMatDeco_mobileHQ1"
+    },
+    {
+      "Name": "envMatDeco_mobileHQ2"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

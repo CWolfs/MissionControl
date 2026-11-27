@@ -1,0 +1,27 @@
+{
+  "Key": "LookOutTower01",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "lookOutTower01",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_darkMetal_mission05"
+    },
+    {
+      "Name": "envMatStct_copper_generic"
+    }
+  ],
+  "GlassMaterial": {
+    "Name": "envMatStct_window_mission02"
+  },
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfDeco_lookOutTower01_generic_static_destruct_split",
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
+}

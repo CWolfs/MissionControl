@@ -1,0 +1,6 @@
+{
+  "Key": "IndustrialStairsA",
+  "FriendlyName": "Industrial Stairs A",
+  "BuildingDefID": "buildingdef_Industrial_Small",
+  "MainModel": "IndustrialStairsA"
+}

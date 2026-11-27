@@ -1,5 +1,6 @@
 {
   "Key": "MachinePowerGeneratorA",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "turretGenerator",
   "Materials": [

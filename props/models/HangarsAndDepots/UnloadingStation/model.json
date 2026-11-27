@@ -1,0 +1,26 @@
+{
+  "Key": "UnloadingStation",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "unloadingStation",
+  "Materials": [
+    {
+      "Name": "envMatStct_trimMetal_mission03"
+    },
+    {
+      "Name": "envMatStct_greeble1_mission03"
+    },
+    {
+      "Name": "envMatStct_plainMetal_mission03"
+    },
+    {
+      "Name": "envMatStct_greebleWLights_mission03"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": true,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

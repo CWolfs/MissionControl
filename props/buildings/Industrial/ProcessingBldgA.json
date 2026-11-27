@@ -1,0 +1,6 @@
+{
+  "Key": "ProcessingBldgA",
+  "FriendlyName": "Processing Bldg A",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "ProcessingBldgA"
+}

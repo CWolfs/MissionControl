@@ -1,0 +1,6 @@
+{
+  "Key": "ParkingBumper",
+  "FriendlyName": "Parking Bumper",
+  "MainModel": "ParkingBumper",
+  "Mass": 100.0
+}

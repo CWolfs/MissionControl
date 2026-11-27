@@ -1,0 +1,6 @@
+{
+  "Key": "ApartmentBlockA",
+  "FriendlyName": "Apartment Block A",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "ApartmentBlockA"
+}

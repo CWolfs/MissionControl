@@ -1,0 +1,6 @@
+{
+  "Key": "MediumMilitaryBarracksB",
+  "FriendlyName": "Medium Military Barracks B",
+  "BuildingDefID": "buildingdef_Military_Large",
+  "MainModel": "MediumMilitaryBarracksB"
+}

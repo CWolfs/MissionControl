@@ -1,0 +1,6 @@
+{
+  "Key": "VillageB",
+  "FriendlyName": "Village B",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "VillageB"
+}

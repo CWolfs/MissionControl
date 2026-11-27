@@ -1,0 +1,24 @@
+{
+  "Key": "SmallMilitaryBunkerA",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "smallMilitaryBunkerA",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    }
+  ],
+  "GlassMaterial": {
+    "Name": "envMatStct_glassA_decals_generic"
+  },
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfComp_smallMilitaryBunkerA_generic_static_destruct_split",
+  "HasCustomShell": true,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "mediumStone"
+}

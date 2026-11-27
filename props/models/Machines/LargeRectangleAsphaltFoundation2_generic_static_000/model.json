@@ -1,0 +1,17 @@
+{
+  "Key": "LargeRectangleAsphaltFoundation2_generic_static_000",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "envMdlFndn_largeRectangleAsphaltFoundation2_generic_static__000",
+  "Materials": [
+    {
+      "Name": "envMatStct_asphalt_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

@@ -1,5 +1,6 @@
 {
   "Key": "MountTurretWallLow",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "lowTurretWallMount",
   "Materials": [

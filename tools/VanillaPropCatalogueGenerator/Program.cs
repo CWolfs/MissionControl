@@ -321,19 +321,36 @@ namespace VanillaPropCatalogueGenerator {
         return 0;
       }
 
-      // Collect existing keys so we never clobber hand-curated/migrated MC keys unless --overwrite
+      // Collect existing keys so we never clobber hand-curated/migrated MC keys
       var existingModelKeys = CollectExistingJsonKeys(Path.Combine(outDir, "models"), "model.json");
       var existingBuildingKeys = CollectExistingJsonKeys(Path.Combine(outDir, "buildings"), "*.json");
       var existingStructureKeys = CollectExistingJsonKeys(Path.Combine(outDir, "structures"), "*.json");
       var existingDestructibleKeys = CollectExistingJsonKeys(Path.Combine(outDir, "destructibles"), "*.json");
+
+      var reservedKeys = new HashSet<string>(existingModelKeys, StringComparer.OrdinalIgnoreCase);
+      reservedKeys.UnionWith(existingBuildingKeys);
+      reservedKeys.UnionWith(existingStructureKeys);
+      reservedKeys.UnionWith(existingDestructibleKeys);
+
+      // Ensure unique keys across all generated models without a Vanilla_ prefix
+      foreach (var m in models) {
+        string baseKey = m.Key;
+        string candidate = baseKey;
+        int suffix = 2;
+        while (!overwrite && reservedKeys.Contains(candidate)) {
+          candidate = $"{baseKey}_{suffix++}";
+        }
+        m.Key = candidate;
+        reservedKeys.Add(candidate);
+      }
 
       int writtenModels = 0, writtenBuildings = 0, writtenStructures = 0, writtenDestructibles = 0;
 
       foreach (var m in models) {
         bool modelNeedsDisambig = NeedsDisambiguation(index, m);
 
-        // 1. Write model.json under props/models/Vanilla/<Category>/<Key>/model.json
-        string modelDir = Path.Combine(outDir, "models", "Vanilla", m.Category, m.Key);
+        // 1. Write model.json under props/models/<Category>/<Key>/model.json
+        string modelDir = Path.Combine(outDir, "models", m.Category, m.Key);
         string modelPath = Path.Combine(modelDir, "model.json");
         if (overwrite || (!existingModelKeys.Contains(m.Key) && !File.Exists(modelPath))) {
           Directory.CreateDirectory(modelDir);
@@ -452,7 +469,7 @@ namespace VanillaPropCatalogueGenerator {
 
       m.Category = InferCategory(low, m.Role);
       string cleanBase = CleanKeyName(m.MeshBaseName);
-      m.Key = $"Vanilla_{cleanBase}";
+      m.Key = cleanBase;
       m.FriendlyName = MakeFriendlyName(cleanBase);
     }
 
@@ -555,6 +572,7 @@ namespace VanillaPropCatalogueGenerator {
       var stats = InferDestructibleStats(m);
       var obj = new JObject {
         ["Key"] = m.Key,
+        ["IsVanilla"] = true,
         ["AssetSource"] = "GameData",
         ["Mesh"] = m.MeshBaseName
       };

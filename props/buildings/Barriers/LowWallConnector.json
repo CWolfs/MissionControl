@@ -1,0 +1,6 @@
+{
+  "Key": "LowWallConnector",
+  "FriendlyName": "Low Wall Connector",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "LowWallConnector"
+}

@@ -1,0 +1,38 @@
+{
+  "Key": "WarehouseA",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "warehouseA",
+  "SourceAssetFile": "sharedassets50.assets",
+  "MeshPathIds": {
+    "LOD0": 912,
+    "LOD1": 906,
+    "LOD2": 899,
+    "COL": 1753,
+    "Shell": 1791,
+    "ShellCOL": 1790
+  },
+  "Materials": [
+    {
+      "Name": "envMatStct_lights_decal_generic"
+    },
+    {
+      "Name": "envMatStct_aluminum_storyMission7"
+    },
+    {
+      "Name": "envMatStct_plaster_storyMission7"
+    },
+    {
+      "Name": "envMatStct_panels_storyMission7"
+    },
+    {
+      "Name": "envMatStct_steel_storyMission7"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": true,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

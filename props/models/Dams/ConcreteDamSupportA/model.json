@@ -1,0 +1,17 @@
+{
+  "Key": "ConcreteDamSupportA",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "concreteDamSupportA",
+  "Materials": [
+    {
+      "Name": "envMatStct_concreteDam_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

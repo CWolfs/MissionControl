@@ -1,0 +1,6 @@
+{
+  "Key": "LgAirConditioners",
+  "FriendlyName": "Lg Air Conditioners",
+  "BuildingDefID": "buildingdef_Civilian_Medium",
+  "MainModel": "LgAirConditioners"
+}

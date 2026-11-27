@@ -1,5 +1,6 @@
 {
   "Key": "WallLow50m",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "lowWall50m",
   "Materials": [

@@ -1,0 +1,6 @@
+{
+  "Key": "TraverseBuilding",
+  "FriendlyName": "Traverse Building",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "TraverseBuilding"
+}

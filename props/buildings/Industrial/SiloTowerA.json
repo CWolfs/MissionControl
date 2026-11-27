@@ -1,0 +1,6 @@
+{
+  "Key": "SiloTowerA",
+  "FriendlyName": "Silo Tower A",
+  "BuildingDefID": "buildingdef_Industrial_Large",
+  "MainModel": "SiloTowerA"
+}

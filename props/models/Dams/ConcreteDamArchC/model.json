@@ -1,0 +1,17 @@
+{
+  "Key": "ConcreteDamArchC",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "concreteDamArchC",
+  "Materials": [
+    {
+      "Name": "envMatStct_concreteDam_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "mediumStone"
+}

@@ -1,0 +1,20 @@
+{
+  "Key": "SolarPanelsSpire_panel6",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "solarPanelsSpire_panel6",
+  "Materials": [
+    {
+      "Name": "envMatStct_window_mission02"
+    },
+    {
+      "Name": "envMatStct_copper_worn"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

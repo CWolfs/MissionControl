@@ -1,0 +1,6 @@
+{
+  "Key": "LandingFoundationWalls",
+  "FriendlyName": "Landing Foundation Walls",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "LandingFoundationWalls"
+}

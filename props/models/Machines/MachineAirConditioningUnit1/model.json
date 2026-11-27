@@ -1,5 +1,6 @@
 {
   "Key": "MachineAirConditioningUnitA",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "acUnit1",
   "SourceAssetFile": "sharedassets13.assets",

@@ -1,0 +1,21 @@
+{
+  "Key": "Ladder",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "ladder",
+  "SourceAssetFile": "sharedassets20.assets",
+  "MeshPathIds": {
+    "Flimsy": 318
+  },
+  "Materials": [
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

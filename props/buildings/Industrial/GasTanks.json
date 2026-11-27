@@ -1,0 +1,6 @@
+{
+  "Key": "GasTanks",
+  "FriendlyName": "Gas Tanks",
+  "BuildingDefID": "buildingdef_Civilian_Medium",
+  "MainModel": "GasTanks"
+}

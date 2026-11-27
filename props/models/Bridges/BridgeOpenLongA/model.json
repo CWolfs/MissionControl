@@ -1,5 +1,6 @@
 {
   "Key": "BridgeOpenLongA",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "bridge",
   "Materials": [

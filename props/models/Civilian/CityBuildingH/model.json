@@ -1,0 +1,24 @@
+{
+  "Key": "CityBuildingH",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "cityBuildingH",
+  "Materials": [
+    {
+      "Name": "envMatStct_roofB_aurigan"
+    },
+    {
+      "Name": "envMatStct_cementA_aurigan"
+    },
+    {
+      "Name": "envMatStct_metalA_aurigan"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfComp_cityBuildingH_generic_static_destruct_split",
+  "HasCustomShell": true,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

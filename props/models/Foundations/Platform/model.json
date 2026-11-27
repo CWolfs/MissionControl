@@ -1,0 +1,20 @@
+{
+  "Key": "Platform",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "platform",
+  "Materials": [
+    {
+      "Name": "envMatStct_paintedMetal_storyMission4"
+    },
+    {
+      "Name": "envMatStct_asphalt_storyMission4"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

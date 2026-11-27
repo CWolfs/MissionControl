@@ -1,5 +1,6 @@
 {
   "Key": "pipesTwoShortCurved",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "greeble",
   "SourceAssetFile": "sharedassets13.assets",

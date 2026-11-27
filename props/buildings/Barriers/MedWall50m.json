@@ -1,0 +1,6 @@
+{
+  "Key": "MedWall50m",
+  "FriendlyName": "Med Wall50m",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "MedWall50m"
+}

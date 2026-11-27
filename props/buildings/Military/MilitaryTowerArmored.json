@@ -1,0 +1,6 @@
+{
+  "Key": "MilitaryTowerArmored",
+  "FriendlyName": "Military Tower Armored",
+  "BuildingDefID": "buildingdef_Military_Large",
+  "MainModel": "MilitaryTowerArmored"
+}

@@ -1,5 +1,6 @@
 {
   "Key": "pipesOneBentA",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "turbine27",
   "SourceAssetFile": "sharedassets25.assets",

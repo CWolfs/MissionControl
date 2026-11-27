@@ -1,0 +1,6 @@
+{
+  "Key": "MedWalllTower",
+  "FriendlyName": "Med Walll Tower",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "MedWalllTower"
+}

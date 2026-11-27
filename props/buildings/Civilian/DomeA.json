@@ -1,0 +1,6 @@
+{
+  "Key": "DomeA",
+  "FriendlyName": "Dome A",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "DomeA"
+}

@@ -1,0 +1,20 @@
+{
+  "Key": "SmallBldgE",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "smallBldgE",
+  "Materials": [
+    {
+      "Name": "envMatStct_plaster_storyMission7"
+    },
+    {
+      "Name": "envMatStct_steel_storyMission7"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
+}

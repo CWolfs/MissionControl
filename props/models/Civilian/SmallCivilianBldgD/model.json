@@ -1,0 +1,33 @@
+{
+  "Key": "SmallCivilianBldgD",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "smallCivilianBldgD",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lights_decal_generic"
+    },
+    {
+      "Name": "envMatStct_asphalt_generic"
+    }
+  ],
+  "GlassMaterial": {
+    "Name": "envMatStct_glassA_decals_generic"
+  },
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfDeco_smallCivilianBldgD_generic_static_destruct_split",
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "smallStone"
+}

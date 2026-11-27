@@ -1,0 +1,6 @@
+{
+  "Key": "MilitaryWedgeShape",
+  "FriendlyName": "Military Wedge Shape",
+  "BuildingDefID": "buildingdef_Military_Large",
+  "MainModel": "MilitaryWedgeShape"
+}

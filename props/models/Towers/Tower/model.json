@@ -1,0 +1,27 @@
+{
+  "Key": "Tower",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "tower",
+  "SourceAssetFile": "sharedassets23.assets",
+  "MeshPathIds": {
+    "Flimsy": 191
+  },
+  "Materials": [
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lightRust_generic"
+    },
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
+}

@@ -1,0 +1,6 @@
+{
+  "Key": "TallMechGate",
+  "FriendlyName": "Tall Mech Gate",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "TallMechGate"
+}

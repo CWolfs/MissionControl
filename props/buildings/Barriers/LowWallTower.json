@@ -1,0 +1,6 @@
+{
+  "Key": "LowWallTower",
+  "FriendlyName": "Low Wall Tower",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "LowWallTower"
+}

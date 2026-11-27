@@ -1,0 +1,6 @@
+{
+  "Key": "CommCenterBldg",
+  "FriendlyName": "Comm Center Bldg",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "CommCenterBldg"
+}

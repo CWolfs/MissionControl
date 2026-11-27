@@ -1,5 +1,6 @@
 {
   "Key": "FoundationMediumFlatWithEntranceB",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "lowFlatB",
   "Materials": [

@@ -1,5 +1,6 @@
 {
   "Key": "ContainerSmallRoundA",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "pCube22",
   "SourceAssetFile": "sharedassets6.assets",

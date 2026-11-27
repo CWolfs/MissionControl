@@ -1,0 +1,6 @@
+{
+  "Key": "CivOfficeA",
+  "FriendlyName": "Civ Office A",
+  "BuildingDefID": "buildingdef_Civilian_Medium",
+  "MainModel": "CivOfficeA"
+}

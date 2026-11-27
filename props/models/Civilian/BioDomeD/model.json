@@ -1,0 +1,23 @@
+{
+  "Key": "BioDomeD",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "bioDomeD",
+  "Materials": [
+    {
+      "Name": "envMatStct_plainMetal_mission03"
+    },
+    {
+      "Name": "envMatStct_trimMetal_mission03"
+    },
+    {
+      "Name": "envMatStct_dome_mission03"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": true,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

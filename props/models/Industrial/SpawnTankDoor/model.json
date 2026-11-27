@@ -1,0 +1,20 @@
+{
+  "Key": "SpawnTankDoor",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "spawnTankDoor",
+  "Materials": [
+    {
+      "Name": "envMatStct_darkRust_generic"
+    },
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
+}

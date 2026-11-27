@@ -1,0 +1,6 @@
+{
+  "Key": "SmallOffice",
+  "FriendlyName": "Small Office",
+  "BuildingDefID": "buildingdef_Civilian_Medium",
+  "MainModel": "SmallOffice"
+}

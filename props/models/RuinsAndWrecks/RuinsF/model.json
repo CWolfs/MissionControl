@@ -1,0 +1,29 @@
+{
+  "Key": "RuinsF",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "ruinsF",
+  "Materials": [
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_darkRust_generic"
+    },
+    {
+      "Name": "envMatStct_rubble_generic"
+    },
+    {
+      "Name": "envMatStct_lightRust_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

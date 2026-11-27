@@ -1,0 +1,20 @@
+{
+  "Key": "OutterCase03",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "outterCase03",
+  "Materials": [
+    {
+      "Name": "envMatStct_lightMetal_mission02"
+    },
+    {
+      "Name": "envMatStct_darkMetal_mission05"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

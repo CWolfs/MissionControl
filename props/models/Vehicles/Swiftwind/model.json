@@ -1,0 +1,17 @@
+{
+  "Key": "Swiftwind",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "swiftwind",
+  "Materials": [
+    {
+      "Name": "envMatDeco_swiftWind"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

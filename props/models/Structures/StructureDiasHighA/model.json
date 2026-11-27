@@ -1,5 +1,6 @@
 {
   "Key": "StructureDiasHighA",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "highDiasA",
   "Materials": [

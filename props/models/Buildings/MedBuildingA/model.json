@@ -1,0 +1,35 @@
+{
+  "Key": "MedBuildingA",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "medBuildingA",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    },
+    {
+      "Name": "envMatStct_trimMetal_mission03"
+    },
+    {
+      "Name": "lambert2"
+    },
+    {
+      "Name": "envMatStct_concrete_mission03"
+    },
+    {
+      "Name": "envMatStct_greebleWLights_mission03"
+    },
+    {
+      "Name": "envMatStct_plainMetal_mission03"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": true,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

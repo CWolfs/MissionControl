@@ -1,0 +1,17 @@
+{
+  "Key": "Poles",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "poles",
+  "Materials": [
+    {
+      "Name": "envMatStct_aluminum_storyMission7"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
+}

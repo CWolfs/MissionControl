@@ -1,0 +1,6 @@
+{
+  "Key": "MiningShipping",
+  "FriendlyName": "Mining Shipping",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "MiningShipping"
+}

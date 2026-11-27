@@ -1,0 +1,6 @@
+{
+  "Key": "IndustrialTankA",
+  "FriendlyName": "Industrial Tank A",
+  "BuildingDefID": "buildingdef_Industrial_Large",
+  "MainModel": "IndustrialTankA"
+}

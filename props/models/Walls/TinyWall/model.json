@@ -1,0 +1,20 @@
+{
+  "Key": "TinyWall",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "tinyWall",
+  "Materials": [
+    {
+      "Name": "envMatStct_greeble1_mission03"
+    },
+    {
+      "Name": "envMatStct_concrete_mission03"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

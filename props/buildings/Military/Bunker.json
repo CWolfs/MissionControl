@@ -1,0 +1,6 @@
+{
+  "Key": "Bunker",
+  "FriendlyName": "Bunker",
+  "BuildingDefID": "buildingdef_Military_Medium",
+  "MainModel": "Bunker"
+}

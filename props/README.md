@@ -8,11 +8,12 @@ This directory defines placeable **buildings**, **structures**, **destructibles*
 
 Both MissionControl and Designer use `BTAssetReader` to read vanilla BattleTech meshes, materials, textures, destruction shells, and split prefabs directly from `BattleTech_Data` at runtime - no AssetBundles or exported game art required.
 
-Example (`props/models/Vanilla/Military/Vanilla_LargeMilitaryBldgA/model.json`):
+Example (`props/models/Military/LargeMilitaryBldgA/model.json`):
 
 ```json
 {
-  "Key": "Vanilla_LargeMilitaryBldgA",
+  "Key": "LargeMilitaryBldgA",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "largeMilitaryBldgA",
   "Materials": [

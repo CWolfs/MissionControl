@@ -1,0 +1,6 @@
+{
+  "Key": "TallWallConnector",
+  "FriendlyName": "Tall Wall Connector",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "TallWallConnector"
+}

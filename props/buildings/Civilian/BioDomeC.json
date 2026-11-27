@@ -1,0 +1,6 @@
+{
+  "Key": "BioDomeC",
+  "FriendlyName": "Bio Dome C",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "BioDomeC"
+}

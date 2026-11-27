@@ -1,5 +1,6 @@
 {
   "Key": "DropshipLeopardA",
+  "IsVanilla": true,
   "CompleteBundle": "chrPrfVhcl_leopard",
   "Scale": {
     "Type": "Local",

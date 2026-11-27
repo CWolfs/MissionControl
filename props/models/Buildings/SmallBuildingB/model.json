@@ -1,0 +1,20 @@
+{
+  "Key": "SmallBuildingB",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "smallBuildingB",
+  "Materials": [
+    {
+      "Name": "envMatStct_trimMetal_mission03"
+    },
+    {
+      "Name": "envMatStct_plainMetal_mission03"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
+}

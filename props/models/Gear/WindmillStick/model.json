@@ -1,0 +1,17 @@
+{
+  "Key": "WindmillStick",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "windmillStick",
+  "Materials": [
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

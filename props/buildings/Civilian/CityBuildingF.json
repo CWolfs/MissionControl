@@ -1,0 +1,6 @@
+{
+  "Key": "CityBuildingF",
+  "FriendlyName": "City Building F",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "CityBuildingF"
+}

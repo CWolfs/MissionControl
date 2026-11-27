@@ -1,0 +1,6 @@
+{
+  "Key": "CivilianFactoryAMain",
+  "FriendlyName": "Civilian Factory Amain",
+  "BuildingDefID": "buildingdef_Industrial_Medium",
+  "MainModel": "CivilianFactoryAMain"
+}

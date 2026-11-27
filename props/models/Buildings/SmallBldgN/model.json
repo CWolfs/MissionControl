@@ -1,0 +1,23 @@
+{
+  "Key": "SmallBldgN",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "smallBldgN",
+  "Materials": [
+    {
+      "Name": "envMatStct_aluminum_storyMission7"
+    },
+    {
+      "Name": "envMatStct_glassA_decals_generic"
+    },
+    {
+      "Name": "envMatStct_steel_storyMission7"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

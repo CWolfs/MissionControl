@@ -1,0 +1,6 @@
+{
+  "Key": "MilitaryTowerSleek",
+  "FriendlyName": "Military Tower Sleek",
+  "BuildingDefID": "buildingdef_Military_Large",
+  "MainModel": "MilitaryTowerSleek"
+}

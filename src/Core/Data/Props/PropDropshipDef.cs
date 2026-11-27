@@ -17,6 +17,12 @@ namespace MissionControl.Data {
     [JsonProperty("MainModel")]
     public string MainModelKey { get; set; }
 
+    [JsonProperty("IsVanilla")]
+    public bool? IsVanillaOverride { get; set; }
+
+    [JsonIgnore]
+    public bool IsVanilla => IsVanillaOverride ?? (GetPropModelDef()?.IsVanilla ?? false);
+
     [JsonProperty("Destructibles")]
     public JArray RawDestructibleFlimsyModels { get; set; }
 

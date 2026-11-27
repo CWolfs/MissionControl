@@ -1,0 +1,20 @@
+{
+  "Key": "SmallBldgA",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "smallBldgA",
+  "Materials": [
+    {
+      "Name": "envMatStct_plaster_storyMission7"
+    },
+    {
+      "Name": "envMatStct_concrete_storyMission7"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "smallStone"
+}

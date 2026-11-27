@@ -1,0 +1,17 @@
+{
+  "Key": "VhlPrk",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "vhlPrk",
+  "Materials": [
+    {
+      "Name": "envMatStct_paintedMetal_storyMission4"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

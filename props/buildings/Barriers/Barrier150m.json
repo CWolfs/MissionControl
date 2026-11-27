@@ -1,0 +1,6 @@
+{
+  "Key": "Barrier150m",
+  "FriendlyName": "Barrier150m",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "Barrier150m"
+}

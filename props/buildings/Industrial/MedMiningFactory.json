@@ -1,0 +1,6 @@
+{
+  "Key": "MedMiningFactory",
+  "FriendlyName": "Med Mining Factory",
+  "BuildingDefID": "buildingdef_Industrial_Large",
+  "MainModel": "MedMiningFactory"
+}

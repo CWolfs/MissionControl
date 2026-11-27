@@ -1,5 +1,6 @@
 {
   "Key": "BuildingCivilianSmallB",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "smallCivilianBldgB",
   "Materials": [

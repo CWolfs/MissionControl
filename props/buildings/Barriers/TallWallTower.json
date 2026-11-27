@@ -1,0 +1,6 @@
+{
+  "Key": "TallWallTower",
+  "FriendlyName": "Tall Wall Tower",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "TallWallTower"
+}

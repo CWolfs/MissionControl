@@ -1,5 +1,6 @@
 {
   "Key": "FoundationRaisedLargeSquareA",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "envMdlFndn_largeSquareAngled_generic_static_obstruct",
   "Materials": [

@@ -1,0 +1,6 @@
+{
+  "Key": "LargeMiningFactory",
+  "FriendlyName": "Large Mining Factory",
+  "BuildingDefID": "buildingdef_Industrial_Large",
+  "MainModel": "LargeMiningFactory"
+}

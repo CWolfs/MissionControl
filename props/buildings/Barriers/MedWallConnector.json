@@ -1,0 +1,6 @@
+{
+  "Key": "MedWallConnector",
+  "FriendlyName": "Med Wall Connector",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "MedWallConnector"
+}

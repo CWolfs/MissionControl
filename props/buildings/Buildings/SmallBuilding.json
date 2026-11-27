@@ -1,0 +1,6 @@
+{
+  "Key": "SmallBuilding",
+  "FriendlyName": "Small Building",
+  "BuildingDefID": "buildingdef_Civilian_Medium",
+  "MainModel": "SmallBuilding"
+}

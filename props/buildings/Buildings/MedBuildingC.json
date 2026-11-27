@@ -1,0 +1,6 @@
+{
+  "Key": "MedBuildingC",
+  "FriendlyName": "Med Building C",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "MedBuildingC"
+}

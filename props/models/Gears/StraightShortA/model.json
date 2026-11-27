@@ -1,5 +1,6 @@
 {
   "Key": "GearStraightShortA",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "turbine23",
   "SourceAssetFile": "sharedassets25.assets",

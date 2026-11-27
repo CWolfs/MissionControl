@@ -1,0 +1,6 @@
+{
+  "Key": "BarrierConnector",
+  "FriendlyName": "Barrier Connector",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "BarrierConnector"
+}

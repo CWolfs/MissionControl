@@ -1,0 +1,23 @@
+{
+  "Key": "GrdPost",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "grdPost",
+  "Materials": [
+    {
+      "Name": "envMatStct_concrete_storyMission4"
+    },
+    {
+      "Name": "envMatStct_paintedMetal_storyMission4"
+    },
+    {
+      "Name": "envMatStct_steel_storyMission4"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "mediumStone"
+}

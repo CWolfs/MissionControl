@@ -1,5 +1,6 @@
 {
   "Key": "ContainerSmallRoundB",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "pCylinder32",
   "SourceAssetFile": "sharedassets6.assets",

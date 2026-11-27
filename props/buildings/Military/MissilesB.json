@@ -1,0 +1,6 @@
+{
+  "Key": "MissilesB",
+  "FriendlyName": "Missiles B",
+  "BuildingDefID": "buildingdef_Civilian_Medium",
+  "MainModel": "MissilesB"
+}

@@ -1,0 +1,20 @@
+{
+  "Key": "ResearchPlatformElevated_top_1",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "researchPlatformElevated_top_1",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_copper_worn"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

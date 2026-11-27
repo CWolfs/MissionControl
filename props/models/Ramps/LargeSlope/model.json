@@ -1,0 +1,20 @@
+{
+  "Key": "LargeSlope",
+  "IsVanilla": true,
+  "AssetSource": "GameData",
+  "Mesh": "largeSlope",
+  "Materials": [
+    {
+      "Name": "envMatStct_asphalt_generic"
+    },
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

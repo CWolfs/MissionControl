@@ -1,5 +1,6 @@
 {
   "Key": "FenceShortStraightA",
+  "IsVanilla": true,
   "AssetSource": "GameData",
   "Mesh": "fence",
   "SourceAssetFile": "sharedassets8.assets",

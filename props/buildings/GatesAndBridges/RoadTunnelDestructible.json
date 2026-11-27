@@ -1,0 +1,6 @@
+{
+  "Key": "RoadTunnelDestructible",
+  "FriendlyName": "Road Tunnel Destructible",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "RoadTunnelDestructible"
+}
