@@ -40,7 +40,7 @@ namespace BTAssetReader.Unity {
       if (pivotMode == MeshPivotMode.Center) {
         pivotShift = (min + max) * 0.5f;
       } else if (pivotMode == MeshPivotMode.Bottom) {
-        pivotShift = new Vector3(0f, min.y, 0f);
+        pivotShift = new Vector3((min.x + max.x) * 0.5f, min.y, (min.z + max.z) * 0.5f);
       }
 
       if (pivotShift != Vector3.zero) {

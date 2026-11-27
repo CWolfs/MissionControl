@@ -545,8 +545,17 @@ namespace MissionControl {
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef CompleteBundleName: " + propModelDef.CompleteBundleName);
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef Scale: " + propModelDef.Scale.ToString());
 
+        // Resolve custom file model (.glb / .obj) if present in the model directory
+        propModelDef.ModelFilePath = BTAssetReader.Core.CustomModels.CustomModelLoader.FindModelFileInDirectory(modelDirectory, propModelDef.ModelFile);
+        if (!string.IsNullOrEmpty(propModelDef.ModelFilePath)) {
+          Main.Logger.Log("[DataManager.LoadPropModelData] Custom model file found for '" + propModelDef.Key + "': " + propModelDef.ModelFilePath);
+        }
+
         if (propModelDef.UsesBundleForMesh && propModelDef.BundlePath == null) {
           Main.Logger.LogError($"[DataManager.LoadPropModelDefs] PropModelDef '{propModelDef.Key}' is configured to use a custom bundle but no custom bundle was provided or successfully loaded");
+        }
+        if (string.Equals(propModelDef.AssetSource, "File", StringComparison.OrdinalIgnoreCase) && string.IsNullOrEmpty(propModelDef.ModelFilePath)) {
+          Main.Logger.LogError($"[DataManager.LoadPropModelDefs] PropModelDef '{propModelDef.Key}' has AssetSource='File' but no .glb/.gltf/.obj model file was found in '{modelDirectory}'");
         }
 
         if (!ModelDefs.ContainsKey(propModelDef.Key)) {

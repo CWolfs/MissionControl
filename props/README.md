@@ -2,7 +2,7 @@
 
 This directory defines placeable **buildings**, **structures**, **destructibles** (flimsies), **dropships**, **decals**, and their underlying **models** used by both MissionControl and Designer.
 
-## Two Asset Sources
+## Three Asset Sources
 
 ### 1. Vanilla Game Assets (`"AssetSource": "GameData"`) - Default for Vanilla Content
 
@@ -43,9 +43,22 @@ To regenerate or inspect the vanilla catalogue against your BattleTech install:
 dotnet run --project MissionControl/tools/VanillaPropCatalogueGenerator/VanillaPropCatalogueGenerator.csproj -- --dry-run
 ```
 
-### 2. Custom Bundled Assets (`"AssetSource": "Bundle"`, `"IsMeshInBundle": true`)
+### 2. Custom `.glb` / `.obj` Models (`"AssetSource": "File"`) - Recommended for Custom 3D Props
 
-Use custom Unity 2018.4 AssetBundles (built with `Designer-Prop-Bundler`) only for brand-new custom 3D art or custom textures/shaders not present in vanilla BattleTech.
+Drop a standard `.glb` (glTF 2.0 binary) or `.obj` (+ `.mtl`) file alongside `model.json` - no Unity 2018.4 or DinoFracture required. Use **Designer-Prop-Studio** (Godot 4.7.2 C# desktop app) to visually adjust orientation, pivot, height, vanilla BattleTech material overrides, `BTLight` placement, and preview procedural plane-sliced splits and Auto-Stump ruined shells before saving directly into `<Mod>/mcData/props/`.
+
+Supported `model.json` fields for `"AssetSource": "File"`:
+- `"ModelFile"`: filename relative to `model.json` (auto-detected if omitted)
+- `"PivotMode"`: `"Bottom"` (default), `"Center"`, or `"Original"`
+- `"RotationOffset"` / `"PositionOffset"` / `"TargetHeight"` (metres) / `"ColliderMode"` (`"Mesh"`, `"Box"`, `"Convex"`)
+- `"Materials"`: `"$embedded"` to use the `.glb`/`.obj` PBR textures auto-mapped to `BattleTech Standard`, or any vanilla BT material name (e.g. `"envMatStct_darkMetal_generic"`)
+- `"SplitMode"` (`"Auto"`, `"Custom"`, `"None"`), `"FractureCount"`, `"FractureSeed"`
+- `"ShellMode"` (`"AutoStump"`, `"Rubble"`, `"Custom"`), `"StumpHeight"`
+- `"Lights"`: array of `BTLight` definitions (`Point`, `Spot`, `Linear`, `Area`) - or auto-imported from `.glb` `KHR_lights_punctual`
+
+### 3. Custom Bundled Assets (`"AssetSource": "Bundle"`, `"IsMeshInBundle": true`)
+
+Use custom Unity 2018.4 AssetBundles (built with `Designer-Prop-Bundler`) only for custom Unity shaders, rigged animations, or custom VFX not covered by `"AssetSource": "File"`.
 
 Working bundled examples are included under:
 - `props/models/Examples/CustomBundledCuboid/model.json` & `props/structures/Examples/ExampleCustomBundledStructure.json` (demonstrates `"AssetSource": "Bundle"`, `"BundleOverride"`, `"PivotMode": "Bottom"`, and pairing a custom bundled mesh with a runtime-loaded vanilla material from `BattleTech_Data`)

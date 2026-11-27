@@ -73,6 +73,7 @@ namespace MissionControl.EncounterFactories {
       structureGO.SetActive(false);
 
       CreateColAndLODs(structureGO, propModelDef);
+      CreatePropLights(structureGO, propModelDef);
       GameObject flimsyParentGO = CreateFlimsies(structureGO);
 
       // Setup LOD Group

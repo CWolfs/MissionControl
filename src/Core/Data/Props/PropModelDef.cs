@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
+using BTAssetReader.Core.Models;
 using BTAssetReader.Unity;
 
 namespace MissionControl.Data {
@@ -72,15 +73,83 @@ namespace MissionControl.Data {
     [JsonProperty("Scale")]
     public VectorData Scale { get; set; } = new VectorData(VectorData.VectorType.Local, Vector3.one);
 
+    // Custom file model (.glb / .obj) settings
+    [JsonProperty("ModelFile")]
+    public string ModelFile { get; set; }
+
+    [JsonProperty("RotationOffset")]
+    public Vector3 RotationOffset { get; set; } = Vector3.zero;
+
+    [JsonProperty("PositionOffset")]
+    public Vector3 PositionOffset { get; set; } = Vector3.zero;
+
+    [JsonProperty("TargetHeight")]
+    public float TargetHeight { get; set; } = 0f;
+
+    [JsonProperty("ColliderMode")]
+    public string ColliderMode { get; set; } = "Mesh";
+
+    [JsonProperty("SplitMode")]
+    public string SplitMode { get; set; } = "Auto";
+
+    [JsonProperty("FractureCount")]
+    public int FractureCount { get; set; } = 8;
+
+    [JsonProperty("FractureSeed")]
+    public int FractureSeed { get; set; } = 0;
+
+    [JsonProperty("ShellMode")]
+    public string ShellMode { get; set; } = "Auto";
+
+    [JsonProperty("StumpHeight")]
+    public float StumpHeight { get; set; } = 0.22f;
+
+    [JsonProperty("Lights")]
+    public List<PropLightDef> Lights { get; set; } = null;
+
     public string BundlePath { get; set; }
+
+    [JsonIgnore]
+    public string ModelFilePath { get; set; }
+
+    [JsonIgnore]
+    public bool UsesFileForMesh {
+      get {
+        if (string.Equals(AssetSource, "File", StringComparison.OrdinalIgnoreCase)) return true;
+        if (string.Equals(AssetSource, "Auto", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(ModelFilePath)) return true;
+        return false;
+      }
+    }
 
     [JsonIgnore]
     public bool UsesBundleForMesh {
       get {
+        if (UsesFileForMesh) return false;
         if (string.Equals(AssetSource, "GameData", StringComparison.OrdinalIgnoreCase)) return false;
         if (string.Equals(AssetSource, "Bundle", StringComparison.OrdinalIgnoreCase)) return true;
         return IsMeshInBundle;
       }
+    }
+
+    public MeshTransformSettings BuildTransformSettings() {
+      CorePivotMode pivot = CorePivotMode.Bottom;
+      if (!string.IsNullOrEmpty(PivotMode)) {
+        if (string.Equals(PivotMode, "Original", StringComparison.OrdinalIgnoreCase)) pivot = CorePivotMode.Original;
+        else if (string.Equals(PivotMode, "Center", StringComparison.OrdinalIgnoreCase)) pivot = CorePivotMode.Center;
+      }
+      return new MeshTransformSettings {
+        PivotMode = pivot,
+        RotationOffset = new Float3(RotationOffset.x, RotationOffset.y, RotationOffset.z),
+        PositionOffset = new Float3(PositionOffset.x, PositionOffset.y, PositionOffset.z),
+        TargetHeight = TargetHeight,
+        Scale = new Float3(1f, 1f, 1f) // PropModelDef.Scale is still applied on the GameObject transform
+      };
+    }
+
+    public CoreColliderMode GetColliderMode() {
+      if (string.Equals(ColliderMode, "Box", StringComparison.OrdinalIgnoreCase)) return CoreColliderMode.Box;
+      if (string.Equals(ColliderMode, "Convex", StringComparison.OrdinalIgnoreCase)) return CoreColliderMode.Convex;
+      return CoreColliderMode.Mesh;
     }
 
     public long GetMeshPathId(string slot) {
@@ -107,7 +176,9 @@ namespace MissionControl.Data {
     [JsonIgnore]
     public DestructibleObject.DestructibleSize DestructibleSize {
       get {
-        return (DestructibleObject.DestructibleSize)Enum.Parse(typeof(DestructibleObject.DestructibleSize), destructibleSize);
+        return Enum.TryParse(destructibleSize, true, out DestructibleObject.DestructibleSize parsed)
+          ? parsed
+          : DestructibleObject.DestructibleSize.large;
       }
     }
 
@@ -117,7 +188,9 @@ namespace MissionControl.Data {
     [JsonIgnore]
     public DestructibleObject.DestructibleMaterial DestructibleMaterial {
       get {
-        return (DestructibleObject.DestructibleMaterial)Enum.Parse(typeof(DestructibleObject.DestructibleMaterial), destructibleMaterial);
+        return Enum.TryParse(destructibleMaterial, true, out DestructibleObject.DestructibleMaterial parsed)
+          ? parsed
+          : DestructibleObject.DestructibleMaterial.metal;
       }
     }
 
@@ -127,7 +200,9 @@ namespace MissionControl.Data {
     [JsonIgnore]
     public FlimsyDestructType FlimsyDestructibleType {
       get {
-        return (FlimsyDestructType)Enum.Parse(typeof(FlimsyDestructType), flimsyDestructibleType);
+        return Enum.TryParse(flimsyDestructibleType, true, out FlimsyDestructType parsed)
+          ? parsed
+          : FlimsyDestructType.largeMetal;
       }
     }
   }

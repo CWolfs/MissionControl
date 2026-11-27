@@ -11,7 +11,7 @@ namespace BTAssetReader.Core.Decoders {
       public byte Dimension; // low 4 bits
     }
 
-    public static RawMeshData Decode(byte[] data, bool bigEndian, AssetRef assetRef, string dataDir) {
+    public static RawMeshData Decode(byte[] data, bool bigEndian, AssetRef assetRef, string dataDir, Func<string, uint, uint, byte[]> streamReader = null) {
       var r = new BinaryStreamReader(data, 0, bigEndian);
       var mesh = new RawMeshData {
         Ref = assetRef,
@@ -105,7 +105,9 @@ namespace BTAssetReader.Core.Decoders {
         uint streamSize = r.ReadUInt32();
         string streamPath = r.ReadAlignedString();
         if (vertexData.Length == 0 && streamSize > 0 && !string.IsNullOrEmpty(streamPath)) {
-          vertexData = SerializedFileReader.ReadStreamData(dataDir, streamPath, streamOffset, streamSize);
+          vertexData = streamReader != null
+            ? streamReader(streamPath, streamOffset, streamSize)
+            : SerializedFileReader.ReadStreamData(dataDir, streamPath, streamOffset, streamSize);
         }
       }
 

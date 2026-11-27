@@ -36,7 +36,13 @@ namespace BTAssetReader.Core {
     /// </summary>
     public static SerializedFileHeader ReadHeader(string filePath, int fileIndex) {
       using (FileStream fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+        return ReadHeader(fs, filePath, fileIndex);
+      }
+    }
+
+    public static SerializedFileHeader ReadHeader(Stream fs, string filePath, int fileIndex) {
         if (fs.Length < 20) return null;
+        fs.Seek(0, SeekOrigin.Begin);
 
         byte[] prefix = new byte[20];
         if (ReadExact(fs, prefix, 0, 20) != 20) return null;
@@ -132,7 +138,6 @@ namespace BTAssetReader.Core {
         }
 
         return header;
-      }
     }
 
     public static byte[] ReadObjectBytes(SerializedFileHeader header, SerializedObjectInfo obj) {
@@ -141,7 +146,7 @@ namespace BTAssetReader.Core {
       }
     }
 
-    public static byte[] ReadObjectBytes(FileStream fs, SerializedFileHeader header, SerializedObjectInfo obj) {
+    public static byte[] ReadObjectBytes(Stream fs, SerializedFileHeader header, SerializedObjectInfo obj) {
       long absOffset = (long)header.DataOffset + obj.ByteStart;
       fs.Seek(absOffset, SeekOrigin.Begin);
       byte[] buf = new byte[obj.ByteSize];

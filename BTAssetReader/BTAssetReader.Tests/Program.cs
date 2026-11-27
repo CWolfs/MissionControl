@@ -4,6 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using BTAssetReader.Core;
+using BTAssetReader.Core.CustomModels;
+using BTAssetReader.Core.Destruction;
+using BTAssetReader.Core.Geometry;
 using BTAssetReader.Core.Models;
 using Newtonsoft.Json.Linq;
 
@@ -225,8 +228,214 @@ namespace BTAssetReader.Tests {
 
       if (File.Exists(cachePath)) File.Delete(cachePath);
 
+      // 8. Test custom .glb, .obj, MeshNormaliser, PlaneSliceFracturer, AutoStumpShellGenerator, and MechBundleLoader
+      RunCustomPropCoreTests(btData);
+
       Console.WriteLine($"\n=== Results: {_passed} passed, {_failed} failed ===");
       return _failed == 0 ? 0 : 1;
+    }
+
+    private static void RunCustomPropCoreTests(string dataDir) {
+      Console.WriteLine("\n--- Testing Custom Prop Core (.glb, .obj, Normaliser, Fracturer, Auto-Stump) ---");
+      string tmpDir = Path.Combine(Path.GetTempPath(), "bt-custom-prop-tests-" + Guid.NewGuid().ToString("N"));
+      Directory.CreateDirectory(tmpDir);
+
+      try {
+        // 8a. OBJ + MTL load with LOD0 + _COL + quad triangulation
+        string mtlPath = Path.Combine(tmpDir, "bunker.mtl");
+        File.WriteAllText(mtlPath, "newmtl WallMat\nKd 0.6 0.5 0.4\nPm 0.2\nPr 0.8\n");
+        string objPath = Path.Combine(tmpDir, "bunker.obj");
+        File.WriteAllText(objPath, @"
+mtllib bunker.mtl
+o BunkerBody
+usemtl WallMat
+v -2 0 -1
+v 2 0 -1
+v 2 4 -1
+v -2 4 -1
+v -2 0 1
+v 2 0 1
+v 2 4 1
+v -2 4 1
+f 1 4 3 2
+f 5 6 7 8
+f 5 8 4 1
+f 2 3 7 6
+f 4 8 7 3
+f 1 2 6 5
+o BunkerBody_COL
+f 1 4 3 2
+");
+        CustomModelBundle objBundle = CustomModelLoader.Load(objPath);
+        Assert(objBundle != null && objBundle.Lod0Mesh != null, "OBJ should produce LOD0 mesh");
+        Assert(objBundle.ColMesh != null, "OBJ should extract _COL group");
+        Assert(objBundle.Materials.Count == 1 && objBundle.Materials[0].Name == "WallMat", "OBJ should parse MTL material");
+        Assert(HasOutwardUnityWinding(objBundle.Lod0Mesh), "OBJ mesh should have outward Unity CW winding (dot(cross(e1,e2), outward) > 0)");
+
+        // 8b. GLB binary load with KHR_lights_punctual spotlight + PBR material
+        string glbPath = Path.Combine(tmpDir, "tower.glb");
+        WriteMinimalTestGlb(glbPath);
+        CustomModelBundle glbBundle = CustomModelLoader.Load(glbPath);
+        Assert(glbBundle != null && glbBundle.Lod0Mesh != null && glbBundle.Lod0Mesh.VertexCount == 8, $"GLB should load 8-vertex cube, got {glbBundle?.Lod0Mesh?.VertexCount}");
+        Assert(glbBundle.Materials.Count == 1 && glbBundle.Materials[0].Name == "TowerMetal", "GLB should load embedded PBR material");
+        Assert(glbBundle.Lights.Count == 1 && glbBundle.Lights[0].Type == "Spot", $"GLB should load KHR_lights_punctual spotlight, got {glbBundle.Lights.Count}");
+        Assert(HasOutwardUnityWinding(glbBundle.Lod0Mesh), "GLB mesh should have outward Unity CW winding (dot(cross(e1,e2), outward) > 0)");
+
+        // 8c. MeshNormaliser: rotate 90 X, TargetHeight = 12m, PivotMode = Bottom
+        MeshNormaliser.Normalize(glbBundle, new MeshTransformSettings {
+          RotationOffset = new Float3(90f, 0f, 0f),
+          TargetHeight = 12f,
+          PivotMode = CorePivotMode.Bottom
+        });
+        RawBounds b = glbBundle.Lod0Mesh.LocalAabb;
+        float finalHeight = b.Extents.Y * 2f;
+        float minY = b.Center.Y - b.Extents.Y;
+        Assert(Math.Abs(finalHeight - 12f) < 0.05f, $"Normalised height should be 12m, got {finalHeight:F3}");
+        Assert(Math.Abs(minY) < 0.05f, $"Bottom pivot minY should be 0, got {minY:F3}");
+        Assert(Math.Abs(b.Center.X) < 0.05f && Math.Abs(b.Center.Z) < 0.05f, $"Bottom pivot X/Z should be centred, got ({b.Center.X:F3}, {b.Center.Z:F3})");
+
+        // 8d. PlaneSliceFracturer: 8 deterministic chunks with valid indices + interior caps
+        var chunksA = PlaneSliceFracturer.Fracture(glbBundle.Lod0Mesh, targetPieces: 8, seed: 42);
+        var chunksB = PlaneSliceFracturer.Fracture(glbBundle.Lod0Mesh, targetPieces: 8, seed: 42);
+        Assert(chunksA.Count == 8, $"Expected 8 fractured chunks, got {chunksA.Count}");
+        Assert(chunksB.Count == chunksA.Count && chunksA[0].Mesh.VertexCount == chunksB[0].Mesh.VertexCount, "PlaneSliceFracturer should be deterministic for same seed");
+        bool allValid = true;
+        bool anyInteriorCap = false;
+        foreach (var ch in chunksA) {
+          if (ch.InteriorSubMeshIndex >= 0) anyInteriorCap = true;
+          foreach (int[] sub in ch.Mesh.SubMeshIndices) {
+            foreach (int idx in sub) {
+              if (idx < 0 || idx >= ch.Mesh.VertexCount) allValid = false;
+            }
+          }
+        }
+        Assert(allValid, "All fractured chunk triangle indices should be within bounds");
+        Assert(anyInteriorCap, "Fractured chunks should include capped interior cross-section submesh");
+
+        // 8e. AutoStumpShellGenerator: jagged low ruined stump with interior cap
+        RawMeshData stump = AutoStumpShellGenerator.Generate(glbBundle.Lod0Mesh, stumpHeightFraction: 0.25f, seed: 42);
+        Assert(stump != null && stump.VertexCount > 0, "AutoStumpShellGenerator should produce non-empty shell mesh");
+        float stumpHeight = stump.LocalAabb.Extents.Y * 2f;
+        Assert(stumpHeight > 0.5f && stumpHeight < 6.0f, $"Auto-stump height should be lower than 12m original (got {stumpHeight:F2}m)");
+        Assert(stump.SubMeshIndices.Length >= 2, "Auto-stump shell should include interior rubble cap submesh");
+        // 8f. Real BattleTech Mech bundle loader (UnityFS + LZ4 + TEST_MechScaleMultiplier)
+        string atlasBundlePath = MechBundleLoader.ResolveMechBundlePath(dataDir, "chrprfmech_atlasbase-001");
+        if (atlasBundlePath != null) {
+          RawMechReference atlas = MechBundleLoader.Load(dataDir, "chrprfmech_atlasbase-001", loadTextures: true);
+          Assert(atlas != null && atlas.Mesh != null && atlas.Mesh.VertexCount > 5000, $"Atlas mech bundle should load combined mesh, got {atlas?.Mesh?.VertexCount}");
+          Assert(atlas.InGameHeight > 20f && atlas.InGameHeight < 28f, $"Atlas in-game height should be ~24m (got {atlas.InGameHeight:F2}m)");
+          Assert(atlas.AlbedoTexture != null && atlas.AlbedoTexture.Width > 0, "Atlas mech bundle should decode _MainTex albedo texture");
+          Console.WriteLine($"Mech bundle verified: Atlas raw={atlas.RawHeight:F2}m, in-game(x{atlas.ScaleMultiplier:F2})={atlas.InGameHeight:F2}m, verts={atlas.Mesh.VertexCount}, tex={atlas.AlbedoTexture.Width}x{atlas.AlbedoTexture.Height}.");
+        }
+        // 8g. PropBundleLoader (LZMA AssetBundle prop + GameData vanilla prop)
+        string mcArenaBundle = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "props", "models", "Arenas", "ArenaLargeOneSideOpenA", "prop-model-arena-large-one-side-open-a-bundle");
+        if (File.Exists(mcArenaBundle)) {
+          CustomModelBundle arena = PropBundleLoader.LoadFromBundle(mcArenaBundle, "arenaLargeOneSideOpenA");
+          Assert(arena != null && arena.Lod0Mesh != null && arena.Lod0Mesh.SubMeshIndices.Length == 7, $"LZMA prop bundle should load 7-submesh arena LOD0, got {arena?.Lod0Mesh?.SubMeshIndices?.Length}");
+          Assert(arena.ColMesh != null && arena.ColMesh.VertexCount > 1000, $"LZMA prop bundle should load COL mesh, got {arena?.ColMesh?.VertexCount}");
+          Console.WriteLine($"Prop bundle verified: ArenaLargeOneSideOpenA LOD0={arena.Lod0Mesh.VertexCount} verts (7 submeshes), COL={arena.ColMesh.VertexCount} verts.");
+        }
+        Console.WriteLine($"Custom prop core verified: GLB/OBJ loaded, normalized to {finalHeight:F1}m, fractured into {chunksA.Count} chunks, auto-stump height={stumpHeight:F2}m.");
+      } finally {
+        try { Directory.Delete(tmpDir, true); } catch { }
+      }
+    }
+
+    private static bool HasOutwardUnityWinding(RawMeshData mesh) {
+      Float3 center = mesh.LocalAabb.Center;
+      double totalDot = 0;
+      foreach (int[] sub in mesh.SubMeshIndices) {
+        for (int i = 0; i + 2 < sub.Length; i += 3) {
+          Float3 a = mesh.Vertices[sub[i]];
+          Float3 b = mesh.Vertices[sub[i + 1]];
+          Float3 c = mesh.Vertices[sub[i + 2]];
+          float e1x = b.X - a.X, e1y = b.Y - a.Y, e1z = b.Z - a.Z;
+          float e2x = c.X - a.X, e2y = c.Y - a.Y, e2z = c.Z - a.Z;
+          float cx = e1y * e2z - e1z * e2y;
+          float cy = e1z * e2x - e1x * e2z;
+          float cz = e1x * e2y - e1y * e2x;
+          float mx = (a.X + b.X + c.X) / 3f - center.X;
+          float my = (a.Y + b.Y + c.Y) / 3f - center.Y;
+          float mz = (a.Z + b.Z + c.Z) / 3f - center.Z;
+          totalDot += cx * mx + cy * my + cz * mz;
+        }
+      }
+      return totalDot > 0.0;
+    }
+
+    private static void WriteMinimalTestGlb(string path) {
+      // 8-vertex 2x4x2 rectangular prism (Y from 0..4, X from -1..1, Z from -1..1) + 36 outward RH CCW ushort indices
+      float[] positions = {
+        -1,0,-1,  1,0,-1,  1,4,-1, -1,4,-1,
+        -1,0, 1,  1,0, 1,  1,4, 1, -1,4, 1
+      };
+      ushort[] indices = {
+        0,3,2, 0,2,1, // -Z face (outward CCW)
+        4,5,6, 4,6,7, // +Z face
+        4,7,3, 4,3,0, // -X face
+        1,2,6, 1,6,5, // +X face
+        3,7,6, 3,6,2, // +Y face
+        0,1,5, 0,5,4  // -Y face
+      };
+
+      byte[] binBytes;
+      int posLen = positions.Length * 4;
+      int idxLen = indices.Length * 2;
+      using (var ms = new MemoryStream())
+      using (var bw = new BinaryWriter(ms)) {
+        foreach (float f in positions) bw.Write(f);
+        foreach (ushort u in indices) bw.Write(u);
+        while (ms.Length % 4 != 0) bw.Write((byte)0);
+        binBytes = ms.ToArray();
+      }
+
+      string json = $@"{{
+        ""asset"": {{ ""version"": ""2.0"" }},
+        ""extensionsUsed"": [""KHR_lights_punctual""],
+        ""extensions"": {{
+          ""KHR_lights_punctual"": {{
+            ""lights"": [{{ ""name"": ""RoofSpot"", ""type"": ""spot"", ""color"": [1, 0.9, 0.7], ""intensity"": 2.0, ""range"": 20.0, ""spot"": {{ ""innerConeAngle"": 0.4, ""outerConeAngle"": 0.8 }} }}]
+          }}
+        }},
+        ""scenes"": [{{ ""nodes"": [0, 1] }}],
+        ""scene"": 0,
+        ""nodes"": [
+          {{ ""name"": ""TowerMesh"", ""mesh"": 0 }},
+          {{ ""name"": ""SpotNode"", ""translation"": [0, 3.8, 1.1], ""extensions"": {{ ""KHR_lights_punctual"": {{ ""light"": 0 }} }} }}
+        ],
+        ""materials"": [{{ ""name"": ""TowerMetal"", ""pbrMetallicRoughness"": {{ ""baseColorFactor"": [0.7, 0.7, 0.75, 1.0], ""metallicFactor"": 0.6, ""roughnessFactor"": 0.4 }} }}],
+        ""meshes"": [{{ ""name"": ""Tower"", ""primitives"": [{{ ""attributes"": {{ ""POSITION"": 0 }}, ""indices"": 1, ""material"": 0 }}] }}],
+        ""buffers"": [{{ ""byteLength"": {binBytes.Length} }}],
+        ""bufferViews"": [
+          {{ ""buffer"": 0, ""byteOffset"": 0, ""byteLength"": {posLen} }},
+          {{ ""buffer"": 0, ""byteOffset"": {posLen}, ""byteLength"": {idxLen} }}
+        ],
+        ""accessors"": [
+          {{ ""bufferView"": 0, ""componentType"": 5126, ""count"": 8, ""type"": ""VEC3"" }},
+          {{ ""bufferView"": 1, ""componentType"": 5123, ""count"": 36, ""type"": ""SCALAR"" }}
+        ]
+      }}";
+
+      byte[] jsonBytes = System.Text.Encoding.UTF8.GetBytes(json);
+      int jsonPad = (4 - (jsonBytes.Length % 4)) % 4;
+      int jsonChunkLen = jsonBytes.Length + jsonPad;
+      int totalLen = 12 + 8 + jsonChunkLen + 8 + binBytes.Length;
+
+      using (var fs = new FileStream(path, FileMode.Create, FileAccess.Write))
+      using (var bw = new BinaryWriter(fs)) {
+        bw.Write(0x46546C67u); // glTF
+        bw.Write(2u);
+        bw.Write((uint)totalLen);
+
+        bw.Write((uint)jsonChunkLen);
+        bw.Write(0x4E4F534Au); // JSON
+        bw.Write(jsonBytes);
+        for (int i = 0; i < jsonPad; i++) bw.Write((byte)' ');
+
+        bw.Write((uint)binBytes.Length);
+        bw.Write(0x004E4942u); // BIN
+        bw.Write(binBytes);
+      }
     }
   }
 }

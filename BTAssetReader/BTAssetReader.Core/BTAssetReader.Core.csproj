@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Library</OutputType>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFrameworks>net471;net8.0</TargetFrameworks>
     <LangVersion>11</LangVersion>
     <Version>1.0.0</Version>
     <RootNamespace>BTAssetReader.Core</RootNamespace>

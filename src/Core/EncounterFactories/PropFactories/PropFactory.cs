@@ -178,6 +178,25 @@ namespace MissionControl.EncounterFactories {
       return ApplyMeshPivotMode(oldMesh, MeshPivotMode.Center);
     }
 
+    private struct FitTransform {
+      public bool HasRotation;
+      public Quaternion Rotation;
+      public float HeightScale;
+      public Vector3 PivotShift;
+      public Vector3 PositionOffset;
+    }
+
+    private readonly Dictionary<string, FitTransform> fitTransformCache = new Dictionary<string, FitTransform>(StringComparer.OrdinalIgnoreCase);
+
+    protected static bool HasFitTransformOverrides(PropModelDef propModelDef) {
+      if (propModelDef == null) return false;
+      Vector3 r = propModelDef.RotationOffset;
+      Vector3 p = propModelDef.PositionOffset;
+      return Mathf.Abs(r.x) > 1e-4f || Mathf.Abs(r.y) > 1e-4f || Mathf.Abs(r.z) > 1e-4f ||
+             Mathf.Abs(p.x) > 1e-4f || Mathf.Abs(p.y) > 1e-4f || Mathf.Abs(p.z) > 1e-4f ||
+             propModelDef.TargetHeight > 0.001f;
+    }
+
     protected Mesh ApplyMeshPivotMode(Mesh oldMesh, MeshPivotMode pivotMode) {
       if (oldMesh == null || pivotMode == MeshPivotMode.Original) return oldMesh;
       if (!oldMesh.isReadable) {
@@ -191,7 +210,7 @@ namespace MissionControl.EncounterFactories {
       Mesh mesh = MonoBehaviour.Instantiate(oldMesh);
       Bounds bounds = mesh.bounds;
       Vector3 shift = pivotMode == MeshPivotMode.Bottom
-        ? new Vector3(0f, bounds.min.y, 0f)
+        ? new Vector3(bounds.center.x, bounds.min.y, bounds.center.z)
         : bounds.center;
 
       Vector3[] vertices = mesh.vertices;
@@ -204,6 +223,127 @@ namespace MissionControl.EncounterFactories {
       return mesh;
     }
 
+    private Mesh ApplyFitTransform(Mesh oldMesh, FitTransform fit) {
+      if (oldMesh == null) return null;
+      if (!oldMesh.isReadable) {
+        Main.Logger.LogWarning($"[PropFactory.ApplyFitTransform] Mesh '{oldMesh.name}' is not readable; skipping Fit transform");
+        return oldMesh;
+      }
+
+      Mesh mesh = MonoBehaviour.Instantiate(oldMesh);
+      mesh.name = oldMesh.name.Replace("(Clone)", "");
+
+      Vector3[] vertices = mesh.vertices;
+      for (int i = 0; i < vertices.Length; i++) {
+        Vector3 v = fit.HasRotation ? (fit.Rotation * vertices[i]) : vertices[i];
+        vertices[i] = v * fit.HeightScale - fit.PivotShift + fit.PositionOffset;
+      }
+      mesh.vertices = vertices;
+
+      if (fit.HasRotation) {
+        Vector3[] normals = mesh.normals;
+        if (normals != null && normals.Length == vertices.Length) {
+          for (int i = 0; i < normals.Length; i++) normals[i] = (fit.Rotation * normals[i]).normalized;
+          mesh.normals = normals;
+        }
+        Vector4[] tangents = mesh.tangents;
+        if (tangents != null && tangents.Length == vertices.Length) {
+          for (int i = 0; i < tangents.Length; i++) {
+            Vector3 t = (fit.Rotation * new Vector3(tangents[i].x, tangents[i].y, tangents[i].z)).normalized;
+            tangents[i] = new Vector4(t.x, t.y, t.z, tangents[i].w);
+          }
+          mesh.tangents = tangents;
+        }
+      }
+
+      mesh.RecalculateBounds();
+      return mesh;
+    }
+
+    private FitTransform GetOrComputeFitTransform(PropModelDef propModelDef, bool isFlimsyBase, Mesh fallbackRefMesh) {
+      string cacheKey = $"{propModelDef.Key}|{isFlimsyBase}";
+      if (fitTransformCache.TryGetValue(cacheKey, out FitTransform cached)) return cached;
+
+      // Measure LOD0 (or flimsy base) so LODs, collider, glass, and shell share identical Fit bounds (matching MeshNormaliser)
+      Mesh refMesh = ResolveRawUnadjustedMesh(propModelDef, $"{propModelDef.MeshName}_LOD0", "LOD0", requireReadable: true)
+        ?? ResolveRawUnadjustedMesh(propModelDef, propModelDef.MeshName, "Flimsy", requireReadable: true)
+        ?? fallbackRefMesh;
+
+      Vector3 rotDeg = propModelDef.RotationOffset;
+      bool hasRot = Mathf.Abs(rotDeg.x) > 1e-4f || Mathf.Abs(rotDeg.y) > 1e-4f || Mathf.Abs(rotDeg.z) > 1e-4f;
+      Quaternion rot = hasRot ? Quaternion.Euler(rotDeg) : Quaternion.identity;
+
+      Vector3 rotMin = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+      Vector3 rotMax = new Vector3(float.MinValue, float.MinValue, float.MinValue);
+      if (refMesh != null && refMesh.isReadable) {
+        Vector3[] verts = refMesh.vertices;
+        for (int i = 0; i < verts.Length; i++) {
+          Vector3 p = hasRot ? (rot * verts[i]) : verts[i];
+          if (p.x < rotMin.x) rotMin.x = p.x; if (p.y < rotMin.y) rotMin.y = p.y; if (p.z < rotMin.z) rotMin.z = p.z;
+          if (p.x > rotMax.x) rotMax.x = p.x; if (p.y > rotMax.y) rotMax.y = p.y; if (p.z > rotMax.z) rotMax.z = p.z;
+        }
+      } else {
+        rotMin = Vector3.zero;
+        rotMax = Vector3.zero;
+      }
+
+      float rawHeight = rotMax.y - rotMin.y;
+      float heightScale = (propModelDef.TargetHeight > 0.001f && rawHeight > 1e-5f)
+        ? propModelDef.TargetHeight / rawHeight
+        : 1f;
+
+      Vector3 sMin = rotMin * heightScale;
+      Vector3 sMax = rotMax * heightScale;
+      MeshPivotMode pivotMode = propModelDef.GetEffectivePivotMode(isFlimsyBase);
+      Vector3 pivotShift = Vector3.zero;
+      if (pivotMode == MeshPivotMode.Center) {
+        pivotShift = (sMin + sMax) * 0.5f;
+      } else if (pivotMode == MeshPivotMode.Bottom) {
+        pivotShift = new Vector3((sMin.x + sMax.x) * 0.5f, sMin.y, (sMin.z + sMax.z) * 0.5f);
+      }
+
+      var fit = new FitTransform {
+        HasRotation = hasRot,
+        Rotation = rot,
+        HeightScale = heightScale,
+        PivotShift = pivotShift,
+        PositionOffset = propModelDef.PositionOffset
+      };
+      fitTransformCache[cacheKey] = fit;
+      return fit;
+    }
+
+    private Mesh ResolveRawUnadjustedMesh(PropModelDef propModelDef, string meshName, string slot, bool requireReadable) {
+      long pathId = propModelDef.GetMeshPathId(slot);
+
+      if (propModelDef.UsesBundleForMesh && !string.IsNullOrEmpty(propModelDef.BundlePath)) {
+        LoadAssetBundle(propModelDef);
+        Mesh bundleMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, meshName);
+        if (bundleMesh != null) {
+          bundleMesh.name = bundleMesh.name.Replace("(Clone)", "");
+          return bundleMesh;
+        }
+      }
+
+      if (pathId == 0) {
+        Mesh sceneMesh = FindSceneMesh(meshName);
+        if (sceneMesh != null && (!requireReadable || sceneMesh.isReadable)) {
+          return sceneMesh;
+        }
+      }
+
+      if (!string.Equals(propModelDef.AssetSource, "Bundle", StringComparison.OrdinalIgnoreCase)) {
+        return GameAssetProvider.Instance.TryLoadMesh(
+          meshName,
+          makeReadable: requireReadable,
+          pivotMode: MeshPivotMode.Original,
+          sourceAssetFile: propModelDef.SourceAssetFile,
+          pathId: pathId);
+      }
+
+      return null;
+    }
+
     protected Mesh FindSceneMesh(string meshName) {
       if (allGameMeshes == null || string.IsNullOrEmpty(meshName)) return null;
       for (int i = 0; i < allGameMeshes.Length; i++) {
@@ -213,12 +353,52 @@ namespace MissionControl.EncounterFactories {
       return null;
     }
 
+    protected CustomUnityModelAsset ResolveCustomFileModel(PropModelDef propModelDef, bool makeReadable = true) {
+      if (propModelDef == null || !propModelDef.UsesFileForMesh || string.IsNullOrEmpty(propModelDef.ModelFilePath)) {
+        return null;
+      }
+      return CustomModelProvider.Instance.GetOrLoad(
+        propModelDef.Key,
+        propModelDef.ModelFilePath,
+        propModelDef.BuildTransformSettings(),
+        propModelDef.GetColliderMode(),
+        makeReadable: makeReadable,
+        logWarning: msg => Main.Logger.LogWarning(msg));
+    }
+
     protected Mesh ResolveMesh(PropModelDef propModelDef, string meshName, string slot, bool isFlimsyBase, bool makeReadable = false) {
       if (propModelDef == null) return null;
+
+      // 0. Custom .glb / .obj file model (AssetSource = "File" or auto-detected)
+      if (propModelDef.UsesFileForMesh) {
+        CustomUnityModelAsset fileAsset = ResolveCustomFileModel(propModelDef, makeReadable: true);
+        if (fileAsset != null) {
+          switch (slot) {
+            case "LOD0":
+            case "Flimsy": return fileAsset.Lod0Mesh;
+            case "LOD1": return fileAsset.Lod1Mesh;
+            case "LOD2": return fileAsset.Lod2Mesh;
+            case "COL": return fileAsset.ColMesh ?? fileAsset.Lod0Mesh;
+            case "Glass": return fileAsset.GlassMesh;
+            case "Shell": return fileAsset.ShellMesh;
+            case "ShellCOL": return fileAsset.ShellColMesh ?? fileAsset.ShellMesh;
+          }
+        }
+        return null;
+      }
+
+      // 1. Bundle or GameData prop with Fit overrides (RotationOffset / PositionOffset / TargetHeight)
+      if (HasFitTransformOverrides(propModelDef)) {
+        Mesh rawMesh = ResolveRawUnadjustedMesh(propModelDef, meshName, slot, requireReadable: true);
+        if (rawMesh == null) return null;
+        FitTransform fit = GetOrComputeFitTransform(propModelDef, isFlimsyBase, rawMesh);
+        return ApplyFitTransform(rawMesh, fit);
+      }
+
       MeshPivotMode pivotMode = propModelDef.GetEffectivePivotMode(isFlimsyBase);
       long pathId = propModelDef.GetMeshPathId(slot);
 
-      // 1. Custom mod AssetBundle (when configured)
+      // 2. Custom mod AssetBundle (when configured)
       if (propModelDef.UsesBundleForMesh && !string.IsNullOrEmpty(propModelDef.BundlePath)) {
         LoadAssetBundle(propModelDef);
         Mesh bundleMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, meshName);
@@ -228,7 +408,7 @@ namespace MissionControl.EncounterFactories {
         }
       }
 
-      // 2. Active scene memory (zero-I/O fast path when no specific PathId override is set)
+      // 3. Active scene memory (zero-I/O fast path when no specific PathId override is set)
       if (pathId == 0) {
         Mesh sceneMesh = FindSceneMesh(meshName);
         if (sceneMesh != null) {
@@ -236,7 +416,7 @@ namespace MissionControl.EncounterFactories {
         }
       }
 
-      // 3. Runtime GameData reader (BattleTech_Data/sharedassets*.assets)
+      // 4. Runtime GameData reader (BattleTech_Data/sharedassets*.assets)
       if (!string.Equals(propModelDef.AssetSource, "Bundle", StringComparison.OrdinalIgnoreCase)) {
         Mesh gameDataMesh = GameAssetProvider.Instance.TryLoadMesh(
           meshName,
@@ -283,6 +463,9 @@ namespace MissionControl.EncounterFactories {
       GameObject buildingCOLGO = CreateGameObject(buildingGO, $"{buildingGO.name}_COL");
       MeshCollider buildingCOLCollider = buildingCOLGO.AddComponent<MeshCollider>();
       buildingCOLCollider.sharedMesh = buildingCOLMesh;
+      if (propModelDef.GetColliderMode() == BTAssetReader.Core.Models.CoreColliderMode.Convex) {
+        buildingCOLCollider.convex = true;
+      }
       buildingCOLGO.layer = 12; // so raycasts can hit it for highlight effect and selection
       // ApplyScale(buildingCOLGO);
 
@@ -410,7 +593,17 @@ namespace MissionControl.EncounterFactories {
         meshSubcount = mesh.subMeshCount;
       }
 
+      CustomUnityModelAsset fileAsset = bundleItem is PropModelDef pmd && pmd.UsesFileForMesh
+        ? ResolveCustomFileModel(pmd, makeReadable: true)
+        : null;
+
       if (materialDefs == null || materialDefs.Count == 0) {
+        if (fileAsset != null && fileAsset.EmbeddedMaterials != null && fileAsset.EmbeddedMaterials.Length > 0) {
+          for (int i = 0; i < meshSubcount; i++) {
+            materials[i] = fileAsset.EmbeddedMaterials[Math.Min(i, fileAsset.EmbeddedMaterials.Length - 1)] ?? fallbackMaterial;
+          }
+          return materials;
+        }
         Main.Logger.LogWarning($"[PropFactory.BuildMaterialsForRenderer] No material definitions supplied for mesh '{mesh?.name ?? "null"}'. Using placeholder material.");
         for (int i = 0; i < meshSubcount; i++) {
           materials[i] = fallbackMaterial;
@@ -422,6 +615,9 @@ namespace MissionControl.EncounterFactories {
         PropMaterialDef propMaterialDef;
         if (i < materialDefs.Count) {
           propMaterialDef = materialDefs[i];
+        } else if (fileAsset != null && fileAsset.EmbeddedMaterials != null && i < fileAsset.EmbeddedMaterials.Length) {
+          materials[i] = fileAsset.EmbeddedMaterials[i] ?? fallbackMaterial;
+          continue;
         } else {
           Main.Logger.LogWarning($"[PropFactory.BuildMaterialsForRenderer] Not enough supplied material identifiers in prop data to use for submesh '{i}' for mesh '{mesh?.name ?? "null"}'. Duplicating existing mat references.");
           propMaterialDef = materialDefs[UnityEngine.Random.Range(0, materialDefs.Count)];
@@ -429,6 +625,15 @@ namespace MissionControl.EncounterFactories {
 
         if (propMaterialDef == null) {
           materials[i] = fallbackMaterial;
+          continue;
+        }
+
+        if (string.Equals(propMaterialDef.Name, "$embedded", StringComparison.OrdinalIgnoreCase)) {
+          if (fileAsset != null && fileAsset.EmbeddedMaterials != null && fileAsset.EmbeddedMaterials.Length > 0) {
+            materials[i] = fileAsset.EmbeddedMaterials[Math.Min(i, fileAsset.EmbeddedMaterials.Length - 1)] ?? fallbackMaterial;
+          } else {
+            materials[i] = fallbackMaterial;
+          }
           continue;
         }
 
@@ -518,6 +723,52 @@ namespace MissionControl.EncounterFactories {
       }
 
       return materials;
+    }
+
+    protected GameObject CreatePropLights(GameObject parentGO, PropModelDef propModelDef) {
+      if (parentGO == null || propModelDef == null) return null;
+
+      List<PropLightDef> lights = propModelDef.Lights;
+      if (lights == null && propModelDef.UsesFileForMesh) {
+        CustomUnityModelAsset fileAsset = ResolveCustomFileModel(propModelDef, makeReadable: true);
+        if (fileAsset?.EmbeddedLights != null && fileAsset.EmbeddedLights.Count > 0) {
+          lights = fileAsset.EmbeddedLights.Select(PropLightDef.FromCore).ToList();
+        }
+      }
+
+      if (lights == null || lights.Count == 0) return null;
+
+      GameObject lightsParent = CreateGameObject(parentGO, "_lights");
+      for (int i = 0; i < lights.Count; i++) {
+        PropLightDef lDef = lights[i];
+        if (lDef == null) continue;
+
+        GameObject lightGO = CreateGameObject(lightsParent, string.IsNullOrEmpty(lDef.Name) ? $"Light_{i}" : lDef.Name);
+        lightGO.transform.localPosition = lDef.Position;
+        lightGO.transform.localEulerAngles = lDef.Rotation;
+
+        BTLight btLight = lightGO.AddComponent<BTLight>();
+        btLight.lightType = ParseBTLightType(lDef.Type);
+        btLight.radius = Mathf.Max(0.5f, lDef.Radius);
+        btLight.intensity = Mathf.Max(0.01f, lDef.Intensity) * 3000f;
+        btLight.lightColor = lDef.GetUnityColor();
+        btLight.spotlightAngleInner = Mathf.Clamp(lDef.InnerAngle, 1f, 89f);
+        btLight.spotlightAngleOuter = Mathf.Clamp(lDef.OuterAngle, btLight.spotlightAngleInner + 0.5f, 90f);
+        btLight.length = Mathf.Max(0.1f, lDef.Length);
+        btLight.castShadows = lDef.CastShadows;
+        btLight.contributeSpecular = lDef.ContributeSpecular;
+        btLight.contributeVolumetrics = lDef.ContributeVolumetrics;
+        btLight.RefreshLightSettings(fullRefresh: true);
+      }
+
+      return lightsParent;
+    }
+
+    private static BTLight.LightTypes ParseBTLightType(string type) {
+      if (string.Equals(type, "Spot", StringComparison.OrdinalIgnoreCase)) return BTLight.LightTypes.Spot;
+      if (string.Equals(type, "Linear", StringComparison.OrdinalIgnoreCase)) return BTLight.LightTypes.Linear;
+      if (string.Equals(type, "Area", StringComparison.OrdinalIgnoreCase)) return BTLight.LightTypes.Area;
+      return BTLight.LightTypes.Point;
     }
   }
 }

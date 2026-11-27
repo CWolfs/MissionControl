@@ -109,6 +109,7 @@ namespace MissionControl.EncounterFactories {
         return null;
       }
       CalculateBounds(mf, boxCollider);
+      CreatePropLights(flimsyGO, propModelDef);
 
       flimsyGO.transform.localPosition = propFlimsyDef.Position;
       flimsyGO.transform.localEulerAngles = propFlimsyDef.Rotation;

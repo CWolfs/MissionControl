@@ -1,8 +1,9 @@
+using System;
 using BTAssetReader.Core.Models;
 
 namespace BTAssetReader.Core.Decoders {
   public static class Texture2DDecoder {
-    public static RawTexture2DData Decode(byte[] data, bool bigEndian, AssetRef assetRef, string dataDir) {
+    public static RawTexture2DData Decode(byte[] data, bool bigEndian, AssetRef assetRef, string dataDir, Func<string, uint, uint, byte[]> streamReader = null) {
       var r = new BinaryStreamReader(data, 0, bigEndian);
       var tex = new RawTexture2DData {
         Ref = assetRef,
@@ -48,7 +49,9 @@ namespace BTAssetReader.Core.Decoders {
         uint streamSize = r.ReadUInt32();
         string streamPath = r.ReadAlignedString();
         if (streamSize > 0 && !string.IsNullOrEmpty(streamPath)) {
-          tex.RawBytes = SerializedFileReader.ReadStreamData(dataDir, streamPath, streamOffset, streamSize);
+          tex.RawBytes = streamReader != null
+            ? streamReader(streamPath, streamOffset, streamSize)
+            : SerializedFileReader.ReadStreamData(dataDir, streamPath, streamOffset, streamSize);
         } else {
           tex.RawBytes = System.Array.Empty<byte>();
         }

@@ -31,6 +31,7 @@ namespace MissionControl.EncounterFactories {
     // private GameObject destructDecalParent;
     private GameObject destructSplit;
     private GameObject destructShell;
+    private bool usedCustomOrAutoStumpShell = false;
 
     // CameraFade variables
     private LODGroup fadeLODGroup;
@@ -120,6 +121,7 @@ namespace MissionControl.EncounterFactories {
       buildingGO.SetActive(false);
 
       CreateColAndLODs(buildingGO, propModelDef);
+      CreatePropLights(buildingGO, propModelDef);
       GameObject flimsyParentGO = CreateFlimsies(buildingGroupGO);
       GameObject glassParentGO = CreateGlass(buildingGroupGO);
       GameObject decalParentGO = CreateDecals(buildingGroupGO);
@@ -172,7 +174,7 @@ namespace MissionControl.EncounterFactories {
       destructShell.transform.SetParent(destructibleObject.destructionParent.transform, false);
       destructShell.transform.localPosition = Vector3.zero;
       destructShell.transform.localEulerAngles = Vector3.zero;
-      if (propModelDef.HasCustomShell) {
+      if (usedCustomOrAutoStumpShell) {
         destructShell.transform.localScale = propModelDef.Scale.Value;
       }
 
@@ -182,7 +184,7 @@ namespace MissionControl.EncounterFactories {
         glassGO.transform.localEulerAngles = PropBuildingDef.Glass != null ? PropBuildingDef.Glass.Rotation : Vector3.zero;
       }
 
-      if (!propModelDef.HasCustomShell) RandomiseShell(destructibleObject);
+      if (!usedCustomOrAutoStumpShell) RandomiseShell(destructibleObject);
 
       // Cache for adding to Camera Fade Manager
       fadeLODGroup = lodGroup;
@@ -387,9 +389,16 @@ namespace MissionControl.EncounterFactories {
     private void CreateGenericStaticDestruct(GameObject buildingGO) {
       PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
 
+      CustomUnityModelAsset fileAsset = propModelDef.UsesFileForMesh ? ResolveCustomFileModel(propModelDef, makeReadable: true) : null;
+      Material[] outerMaterials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef, propModelDef.Materials, placeholderMaterial);
+      Material interiorRubbleMaterial = ResolveInteriorRubbleMaterial(propModelDef, outerMaterials);
+
       // SPLIT
       bool builtSplits = false;
-      if (propModelDef.HasCustomSplits && propModelDef.UsesBundleForMesh && !string.IsNullOrEmpty(propModelDef.BundlePath)) {
+      if (fileAsset != null && fileAsset.CustomSplits != null && fileAsset.CustomSplits.Count > 0 && !string.Equals(propModelDef.SplitMode, "None", StringComparison.OrdinalIgnoreCase)) {
+        InstantiateSplitPieces(buildingGO, propModelDef, fileAsset.CustomSplits, outerMaterials);
+        builtSplits = true;
+      } else if (propModelDef.HasCustomSplits && propModelDef.UsesBundleForMesh && !string.IsNullOrEmpty(propModelDef.BundlePath)) {
         LoadAssetBundle(propModelDef);
 
         // Spawn the custom bundled prefab split
@@ -399,15 +408,15 @@ namespace MissionControl.EncounterFactories {
           LayerTools.SetLayerRecursively(destructSplit, 8);
 
           foreach (Transform splitPiece in destructSplit.transform) {
-            Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef, PropBuildingDef.GetPropModelDef().Materials, placeholderMaterial);
             MeshRenderer splitRenderer = splitPiece.GetComponent<MeshRenderer>();
             if (splitRenderer != null) {
-              splitRenderer.materials = materials;
+              splitRenderer.materials = outerMaterials;
             }
           }
           builtSplits = true;
         }
-      } else if ((propModelDef.HasCustomSplits || !string.IsNullOrEmpty(propModelDef.SplitPrefabName))
+      } else if (!propModelDef.UsesFileForMesh
+                 && (propModelDef.HasCustomSplits || !string.IsNullOrEmpty(propModelDef.SplitPrefabName))
                  && !string.Equals(propModelDef.AssetSource, "Bundle", StringComparison.OrdinalIgnoreCase)) {
         // Reconstruct genuine vanilla multi-chunk splits with exact per-piece materials from BattleTech_Data
         List<SplitPieceAsset> vanillaPieces = GameAssetProvider.Instance.TryLoadSplitPrefab(
@@ -417,55 +426,28 @@ namespace MissionControl.EncounterFactories {
           matName => matLookup != null && matLookup.TryGetValue(matName, out Material m) ? m : null);
 
         if (vanillaPieces != null && vanillaPieces.Count > 0) {
-          destructSplit = CreateGameObject(buildingGO, $"{buildingGO.name}_{GenericStaticDestructName}_split");
-          destructSplit.layer = 8;
-
-          foreach (SplitPieceAsset piece in vanillaPieces) {
-            GameObject pieceGO = CreateGameObject(destructSplit, piece.Name ?? "splitPiece");
-            pieceGO.layer = 8;
-            pieceGO.transform.localPosition = piece.LocalPosition;
-            pieceGO.transform.localRotation = piece.LocalRotation;
-            pieceGO.transform.localScale = piece.LocalScale;
-
-            MeshFilter pmf = pieceGO.AddComponent<MeshFilter>();
-            pmf.sharedMesh = piece.Mesh;
-
-            MeshRenderer pmr = pieceGO.AddComponent<MeshRenderer>();
-            if (piece.Materials != null && piece.Materials.Length > 0) {
-              Material[] safeMats = new Material[piece.Materials.Length];
-              for (int mi = 0; mi < piece.Materials.Length; mi++) {
-                safeMats[mi] = piece.Materials[mi] ?? placeholderMaterial;
-              }
-              pmr.sharedMaterials = safeMats;
-            } else {
-              pmr.sharedMaterials = BuildMaterialsForRenderer(piece.Mesh, propModelDef, propModelDef.Materials, placeholderMaterial);
-            }
-
-            if (piece.MeshColliderMesh != null) {
-              MeshCollider mc = pieceGO.AddComponent<MeshCollider>();
-              mc.sharedMesh = piece.MeshColliderMesh;
-              mc.convex = piece.MeshColliderConvex;
-            } else {
-              BoxCollider bc = pieceGO.AddComponent<BoxCollider>();
-              if (piece.BoxCollider != null) {
-                bc.center = new Vector3(piece.BoxCollider.Center.X, piece.BoxCollider.Center.Y, piece.BoxCollider.Center.Z);
-                bc.size = new Vector3(piece.BoxCollider.Size.X, piece.BoxCollider.Size.Y, piece.BoxCollider.Size.Z);
-              } else {
-                CalculateBounds(pmf, bc);
-              }
-            }
-
-            Rigidbody rb = pieceGO.AddComponent<Rigidbody>();
-            rb.mass = piece.Mass;
-
-            DestructibleObject pieceDestructible = pieceGO.AddComponent<DestructibleObject>();
-            pieceDestructible.dependentPersistentFX = new List<GameObject>();
-            pieceDestructible.embeddedFlimsyChildren = new List<DestructibleObject>();
-
-            pieceGO.AddComponent<PhysicsExplodeChild>();
-          }
-
+          InstantiateSplitPieces(buildingGO, propModelDef, vanillaPieces, outerMaterials);
           builtSplits = true;
+        }
+      }
+
+      if (!builtSplits && !string.Equals(propModelDef.SplitMode, "None", StringComparison.OrdinalIgnoreCase)) {
+        // Procedural plane-sliced solid chunks (shared with Designer-Prop-Studio)
+        BTAssetReader.Core.Models.RawMeshData rawSource = fileAsset?.RawLod0Mesh ?? CustomModelProvider.ExtractRawMeshFromUnityMesh(buildingLOD0Mesh);
+        if (rawSource != null) {
+          int count = propModelDef.FractureCount > 1 ? propModelDef.FractureCount : 8;
+          List<SplitPieceAsset> proceduralPieces = CustomModelProvider.Instance.GetOrBuildProceduralSplits(
+            propModelDef.Key,
+            rawSource,
+            count,
+            propModelDef.FractureSeed,
+            outerMaterials,
+            interiorRubbleMaterial);
+
+          if (proceduralPieces != null && proceduralPieces.Count > 0) {
+            InstantiateSplitPieces(buildingGO, propModelDef, proceduralPieces, outerMaterials);
+            builtSplits = true;
+          }
         }
       }
 
@@ -481,8 +463,7 @@ namespace MissionControl.EncounterFactories {
           splitPiece.transform.localRotation = Quaternion.identity;
           splitPiece.layer = 8;
 
-          Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef, PropBuildingDef.GetPropModelDef().Materials, placeholderMaterial);
-          splitPiece.GetComponent<MeshRenderer>().materials = materials;
+          splitPiece.GetComponent<MeshRenderer>().materials = outerMaterials;
         }
       }
 
@@ -493,12 +474,17 @@ namespace MissionControl.EncounterFactories {
       destructShell = CreateGameObject(buildingGO, $"{buildingGO.name}_{GenericStaticDestructName}_shell");
       destructShell.layer = 8;
       destructShell.SetActive(false);
+      usedCustomOrAutoStumpShell = false;
 
-      if (propModelDef.HasCustomShell) {
+      bool wantAutoStump = string.Equals(propModelDef.ShellMode, "AutoStump", StringComparison.OrdinalIgnoreCase)
+        || (string.Equals(propModelDef.ShellMode, "Auto", StringComparison.OrdinalIgnoreCase) && propModelDef.UsesFileForMesh && fileAsset?.ShellMesh == null);
+      bool hasFileCustomShell = fileAsset?.ShellMesh != null && !string.Equals(propModelDef.ShellMode, "Rubble", StringComparison.OrdinalIgnoreCase);
+
+      if (propModelDef.HasCustomShell || hasFileCustomShell) {
         Main.Logger.Log("[BuildingFactory.CreateGenericStaticDestruct] CustomShell has been set for " + PropBuildingDef.Key);
 
-        Mesh shellMesh = ResolveMesh(propModelDef, $"{propModelDef.MeshName}_shell", "Shell", isFlimsyBase: false);
-        Mesh shellCOLMesh = ResolveMesh(propModelDef, $"{propModelDef.MeshName}_shell_COL", "ShellCOL", isFlimsyBase: false);
+        Mesh shellMesh = hasFileCustomShell ? fileAsset.ShellMesh : ResolveMesh(propModelDef, $"{propModelDef.MeshName}_shell", "Shell", isFlimsyBase: false);
+        Mesh shellCOLMesh = hasFileCustomShell ? (fileAsset.ShellColMesh ?? fileAsset.ShellMesh) : ResolveMesh(propModelDef, $"{propModelDef.MeshName}_shell_COL", "ShellCOL", isFlimsyBase: false);
 
         if (shellMesh == null) {
           Main.Logger.LogError($"[BuildingFactory.CreateGenericStaticDestruct] Shell Mesh is null for {propModelDef.Key}");
@@ -507,29 +493,21 @@ namespace MissionControl.EncounterFactories {
           Main.Logger.Log("[BuildingFactory.CreateGenericStaticDestruct] Shell Mesh is " + shellMesh.name);
         }
 
-        GameObject shellGO = new GameObject(shellMesh.name);
-        shellGO.transform.SetParent(destructShell.transform, false);
-        shellGO.transform.localPosition = Vector3.zero;
+        AttachShellMesh(shellMesh, shellCOLMesh, propModelDef, outerMaterials, interiorRubbleMaterial);
+        usedCustomOrAutoStumpShell = true;
+      } else if (wantAutoStump) {
+        BTAssetReader.Core.Models.RawMeshData rawSource = fileAsset?.RawLod0Mesh ?? CustomModelProvider.ExtractRawMeshFromUnityMesh(buildingLOD0Mesh);
+        Mesh stumpMesh = rawSource != null
+          ? CustomModelProvider.Instance.GetOrBuildAutoStumpShell(propModelDef.Key, rawSource, propModelDef.StumpHeight, propModelDef.FractureSeed)
+          : null;
 
-        MeshFilter mf = shellGO.AddComponent<MeshFilter>();
-        mf.sharedMesh = shellMesh;
-
-        MeshRenderer mr = shellGO.AddComponent<MeshRenderer>();
-
-        if (shellCOLMesh != null) {
-          MeshCollider shellCollider = shellGO.AddComponent<MeshCollider>();
-          shellCollider.sharedMesh = shellCOLMesh;
+        if (stumpMesh != null) {
+          AttachShellMesh(stumpMesh, stumpMesh, propModelDef, outerMaterials, interiorRubbleMaterial);
+          usedCustomOrAutoStumpShell = true;
         }
+      }
 
-        if (propModelDef.CustomShellMaterials.Count > 0) {
-          Main.Logger.Log("[BuildingFactory.CreateGenericStaticDestruct] Shell Materials are specified");
-
-          Material[] materials = BuildMaterialsForRenderer(shellMesh, propModelDef, propModelDef.CustomShellMaterials, placeholderMaterial);
-          mr.materials = materials;
-        } else {
-          SetShellMaterials(shellGO);
-        }
-      } else {
+      if (!usedCustomOrAutoStumpShell) {
         // Dynamically create basic shell debris
         string shellPrefabName = "small_civilian_building_shell";
         GameObject randomShellPrefab = AssetBundleLoader.GetAsset<GameObject>("common-assets-bundle", shellPrefabName);
@@ -558,6 +536,100 @@ namespace MissionControl.EncounterFactories {
         wallShell.name = wallShell.name.Replace("(Clone)", "");
         SetShellMaterials(wallShell);
       }
+    }
+
+    private void InstantiateSplitPieces(GameObject buildingGO, PropModelDef propModelDef, List<SplitPieceAsset> pieces, Material[] fallbackOuterMaterials) {
+      destructSplit = CreateGameObject(buildingGO, $"{buildingGO.name}_{GenericStaticDestructName}_split");
+      destructSplit.layer = 8;
+
+      foreach (SplitPieceAsset piece in pieces) {
+        GameObject pieceGO = CreateGameObject(destructSplit, piece.Name ?? "splitPiece");
+        pieceGO.layer = 8;
+        pieceGO.transform.localPosition = piece.LocalPosition;
+        pieceGO.transform.localRotation = piece.LocalRotation;
+        pieceGO.transform.localScale = piece.LocalScale;
+
+        MeshFilter pmf = pieceGO.AddComponent<MeshFilter>();
+        pmf.sharedMesh = piece.Mesh;
+
+        MeshRenderer pmr = pieceGO.AddComponent<MeshRenderer>();
+        if (piece.Materials != null && piece.Materials.Length > 0) {
+          Material[] safeMats = new Material[piece.Materials.Length];
+          for (int mi = 0; mi < piece.Materials.Length; mi++) {
+            safeMats[mi] = piece.Materials[mi] ?? placeholderMaterial;
+          }
+          pmr.sharedMaterials = safeMats;
+        } else {
+          pmr.sharedMaterials = fallbackOuterMaterials;
+        }
+
+        if (piece.MeshColliderMesh != null) {
+          MeshCollider mc = pieceGO.AddComponent<MeshCollider>();
+          mc.sharedMesh = piece.MeshColliderMesh;
+          mc.convex = piece.MeshColliderConvex;
+        } else {
+          BoxCollider bc = pieceGO.AddComponent<BoxCollider>();
+          if (piece.BoxCollider != null) {
+            bc.center = new Vector3(piece.BoxCollider.Center.X, piece.BoxCollider.Center.Y, piece.BoxCollider.Center.Z);
+            bc.size = new Vector3(piece.BoxCollider.Size.X, piece.BoxCollider.Size.Y, piece.BoxCollider.Size.Z);
+          } else {
+            CalculateBounds(pmf, bc);
+          }
+        }
+
+        Rigidbody rb = pieceGO.AddComponent<Rigidbody>();
+        rb.mass = piece.Mass;
+
+        DestructibleObject pieceDestructible = pieceGO.AddComponent<DestructibleObject>();
+        pieceDestructible.dependentPersistentFX = new List<GameObject>();
+        pieceDestructible.embeddedFlimsyChildren = new List<DestructibleObject>();
+
+        pieceGO.AddComponent<PhysicsExplodeChild>();
+      }
+    }
+
+    private void AttachShellMesh(Mesh shellMesh, Mesh shellCOLMesh, PropModelDef propModelDef, Material[] outerMaterials, Material interiorRubbleMaterial) {
+      GameObject shellGO = new GameObject(shellMesh.name);
+      shellGO.transform.SetParent(destructShell.transform, false);
+      shellGO.transform.localPosition = Vector3.zero;
+
+      MeshFilter mf = shellGO.AddComponent<MeshFilter>();
+      mf.sharedMesh = shellMesh;
+
+      MeshRenderer mr = shellGO.AddComponent<MeshRenderer>();
+
+      if (shellCOLMesh != null) {
+        MeshCollider shellCollider = shellGO.AddComponent<MeshCollider>();
+        shellCollider.sharedMesh = shellCOLMesh;
+      }
+
+      if (propModelDef.CustomShellMaterials.Count > 0) {
+        Main.Logger.Log("[BuildingFactory.CreateGenericStaticDestruct] Shell Materials are specified");
+        mr.materials = BuildMaterialsForRenderer(shellMesh, propModelDef, propModelDef.CustomShellMaterials, placeholderMaterial);
+      } else if (outerMaterials != null && outerMaterials.Length > 0 && shellMesh.subMeshCount > 0) {
+        Material[] shellMats = new Material[shellMesh.subMeshCount];
+        for (int s = 0; s < shellMesh.subMeshCount; s++) {
+          if (s < outerMaterials.Length) shellMats[s] = outerMaterials[s];
+          else shellMats[s] = interiorRubbleMaterial ?? outerMaterials[0];
+        }
+        mr.materials = shellMats;
+      } else {
+        SetShellMaterials(shellGO);
+      }
+    }
+
+    private Material ResolveInteriorRubbleMaterial(PropModelDef propModelDef, Material[] outerMaterials) {
+      string preferredName = propModelDef.DestructibleMaterial == DestructibleObject.DestructibleMaterial.metal
+        ? "envMatStct_darkMetal_generic"
+        : "envMatStct_concrete_generic";
+
+      if (matLookup != null && matLookup.TryGetValue(preferredName, out Material sceneMat) && sceneMat != null) {
+        return sceneMat;
+      }
+      Material gdMat = GameAssetProvider.Instance.TryLoadMaterial(preferredName);
+      if (gdMat != null) return gdMat;
+      if (outerMaterials != null && outerMaterials.Length > 0 && outerMaterials[0] != null) return outerMaterials[0];
+      return placeholderMaterial;
     }
 
     private void RandomiseShell(DestructibleObject linkedDestructibleObject) {

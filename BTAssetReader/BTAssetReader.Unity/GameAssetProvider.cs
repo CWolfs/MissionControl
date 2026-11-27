@@ -253,6 +253,7 @@ namespace BTAssetReader.Unity {
 
     public void UnloadAll() {
       _cache.UnloadAll();
+      CustomModelProvider.Instance.ClearAll();
       UnityMaterialBuilder.ReleaseFallbackShaderBundle();
     }
   }
