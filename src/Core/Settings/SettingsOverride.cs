@@ -69,6 +69,8 @@ namespace MissionControl.Config {
 
     public static string AdditionalLances_DisableAllies = "AdditionalLances.DisableAllies";
     public static string AdditionalLances_DisableEnemies = "AdditionalLances.DisableEnemies";
+    public static string AdditionalLances_FactionOverrides = "AdditionalLances.FactionOverrides";
+    public static string AdditionalLances_LanceSizeOverrides = "AdditionalLances.LanceSizeOverrides";
 
     public static string ExtendedLances_Enable = "ExtendedLances.Enable";
     public static string ExtendedLances_EnableForFlashpoints = "ExtendedLances.EnableForFlashpoints";
@@ -278,6 +280,26 @@ namespace MissionControl.Config {
 
       if (Has(AdditionalLances_DisableAllies)) settings.AdditionalLanceSettings.DisableAllies = GetBool(AdditionalLances_DisableAllies);
       if (Has(AdditionalLances_DisableEnemies)) settings.AdditionalLanceSettings.DisableEnemies = GetBool(AdditionalLances_DisableEnemies);
+
+      if (Has(AdditionalLances_FactionOverrides)) {
+        JToken factionOverridesToken = Properties.SelectToken(AdditionalLances_FactionOverrides);
+        if (factionOverridesToken is JObject factionOverridesObject) {
+          Dictionary<string, FactionAdditionalLanceOverride> factionOverrides = factionOverridesObject.ToObject<Dictionary<string, FactionAdditionalLanceOverride>>();
+          settings.AdditionalLanceSettings.FactionOverrides = factionOverrides ?? new Dictionary<string, FactionAdditionalLanceOverride>();
+        } else {
+          settings.AdditionalLanceSettings.FactionOverrides = new Dictionary<string, FactionAdditionalLanceOverride>();
+        }
+      }
+
+      if (Has(AdditionalLances_LanceSizeOverrides)) {
+        JToken lanceSizeOverridesToken = Properties.SelectToken(AdditionalLances_LanceSizeOverrides);
+        if (lanceSizeOverridesToken is JObject lanceSizeOverridesObject) {
+          Dictionary<string, FactionAdditionalLanceOverride> lanceSizeOverrides = lanceSizeOverridesObject.ToObject<Dictionary<string, FactionAdditionalLanceOverride>>();
+          settings.AdditionalLanceSettings.LanceSizeOverrides = lanceSizeOverrides ?? new Dictionary<string, FactionAdditionalLanceOverride>();
+        } else {
+          settings.AdditionalLanceSettings.LanceSizeOverrides = new Dictionary<string, FactionAdditionalLanceOverride>();
+        }
+      }
     }
 
     private void LoadExtendedLances(Settings settings) {

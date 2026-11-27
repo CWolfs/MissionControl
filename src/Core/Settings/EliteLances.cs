@@ -18,6 +18,7 @@ namespace MissionControl.Config {
     public bool ShouldEliteLancesBeSelected(FactionDef faction) {
       if (!Main.Settings.AdditionalLanceSettings.UseElites) return false;
       if (MissionControl.Instance.IsSkirmish()) return false;
+      if (faction?.FactionValue == null) return false;
       bool useEliteLances = false;
 
       if (Conditions.Contains("IsEnemy")) {

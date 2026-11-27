@@ -428,9 +428,9 @@ namespace MissionControl.Rules {
           // PER-CONTRACT OVERRIDE OR DEFAULT DRIVEN
           numberOfAdditionalAllyLances = GetNumberOfLances("allies", faction);
 
-          if (Main.Settings.AdditionalLanceSettings.MatchAllyLanceCountToEnemy) {
-            Main.Logger.LogDebug($"[{this.GetType().Name}] 'MatchAllyLanceCountToEnemy' is on. Ally lance count will be {numberOfAdditionalEnemyLances}");
-            numberOfAdditionalAllyLances = numberOfAdditionalEnemyLances;
+          if (Main.Settings.AdditionalLanceSettings.MatchAllyLanceCountToEnemy && !Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_AllyLanceCountOverride)) {
+            Main.Logger.LogDebug($"[{this.GetType().Name}] 'MatchAllyLanceCountToEnemy' is on. Ally lance count will match enemy count of {numberOfAdditionalEnemyLances} before any ally faction overrides");
+            numberOfAdditionalAllyLances = Main.Settings.ActiveAdditionalLances.Allies.ApplyFactionOverrideToMatchedCount(faction, "allies", numberOfAdditionalEnemyLances);
           }
 
           if (Main.Settings.ActiveContractSettings.Has(ContractSettingsOverrides.AdditionalLances_AllyLancesOverride)) {

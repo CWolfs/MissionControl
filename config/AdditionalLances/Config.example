@@ -5,6 +5,7 @@
     "ALL": ["Generic_Medium_Battle_Lance", "Damaged_Medium_Battle_Lance"]
   },
   "Enemy": {
+    "Min": 0,
     "Max": 2,
     "ExcludeContractTypes": [],
     "ChanceToSpawn": 0.4,
@@ -13,6 +14,18 @@
       "Suffix": "_Elite",
       "Overrides": {
         "ChanceToSpawn": 0.6
+      }
+    },
+    "FactionOverrides": {
+      "ComStar": {
+        "MaxMod": -1,
+        "OnlyWhenExtendedLancesActive": true
+      }
+    },
+    "LanceSizeOverrides": {
+      "6": {
+        "MaxMod": -1,
+        "OnlyWhenLargerThanOpposingLance": true
       }
     },
     "LancePool": {

@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 
 using Newtonsoft.Json;
 
@@ -50,6 +52,43 @@ namespace MissionControl.Config {
 
     [JsonProperty("DisableEnemies")]
     public bool DisableEnemies { get; set; } = false;
+
+    [JsonProperty("FactionOverrides")]
+    public Dictionary<string, FactionAdditionalLanceOverride> FactionOverrides { get; set; } = new Dictionary<string, FactionAdditionalLanceOverride>();
+
+    [JsonProperty("LanceSizeOverrides")]
+    public Dictionary<string, FactionAdditionalLanceOverride> LanceSizeOverrides { get; set; } = new Dictionary<string, FactionAdditionalLanceOverride>();
+
+    public bool TryGetFactionOverride(string factionKey, string teamType, out FactionAdditionalLanceLimit limit) {
+      limit = null;
+      if (string.IsNullOrEmpty(factionKey) || FactionOverrides == null || FactionOverrides.Count == 0) return false;
+
+      foreach (KeyValuePair<string, FactionAdditionalLanceOverride> entry in FactionOverrides) {
+        if (string.Equals(entry.Key, factionKey, StringComparison.OrdinalIgnoreCase)) {
+          if (entry.Value == null) return false;
+          limit = entry.Value.ResolveForTeam(teamType);
+          return limit != null && limit.HasLimits;
+        }
+      }
+
+      return false;
+    }
+
+    public bool TryGetLanceSizeOverride(int lanceSize, string teamType, out FactionAdditionalLanceLimit limit) {
+      limit = null;
+      if (LanceSizeOverrides == null || LanceSizeOverrides.Count == 0) return false;
+
+      string lanceSizeKey = lanceSize.ToString(CultureInfo.InvariantCulture);
+      foreach (KeyValuePair<string, FactionAdditionalLanceOverride> entry in LanceSizeOverrides) {
+        if (string.Equals(entry.Key?.Trim(), lanceSizeKey, StringComparison.OrdinalIgnoreCase)) {
+          if (entry.Value == null) return false;
+          limit = entry.Value.ResolveForTeam(teamType);
+          return limit != null && limit.HasLimits;
+        }
+      }
+
+      return false;
+    }
 
     public bool IsTeamDisabled(string teamType) {
       if (teamType.ToLower() == "enemy") {

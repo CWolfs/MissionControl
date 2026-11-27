@@ -56,7 +56,9 @@
       "AllySpawnInfluencePerHalfSkullBelow": 0.1
     },
     "DisableAllies": false,
-    "DisableEnemies": false
+    "DisableEnemies": false,
+    "FactionOverrides": {},
+    "LanceSizeOverrides": {}
   },
   "ExtendedLances": {
     "Enable": true,

@@ -582,14 +582,114 @@ namespace MissionControl {
       return Main.Settings.AdditionalLanceSettings.UseElites && activeAdditionalLances.EliteLances.ShouldEliteLancesBeSelected(faction);
     }
 
-    public FactionDef GetFactionFromTeamType(string teamType) {
-      switch (teamType.ToLower()) {
+    private TeamOverride GetTeamOverrideFromTeamType(string teamType) {
+      if (string.IsNullOrEmpty(teamType)) return null;
+
+      ContractOverride contractOverride = CurrentContract?.Override;
+      if (contractOverride == null) return null;
+
+      switch (teamType.ToLowerInvariant()) {
         case "enemy":
-          return MissionControl.Instance.CurrentContract.Override.targetTeam.FactionDef;
+          return CurrentContractType == "ArenaSkirmish" ? contractOverride.player2Team : contractOverride.targetTeam;
         case "allies":
-          return MissionControl.Instance.CurrentContract.Override.employerTeam.FactionDef;
+          return contractOverride.employerTeam;
       }
+
       return null;
+    }
+
+    public FactionDef GetFactionFromTeamType(string teamType) {
+      return GetTeamOverrideFromTeamType(teamType)?.FactionDef;
+    }
+
+    public string GetFactionKeyFromTeamType(string teamType) {
+      TeamOverride teamOverride = GetTeamOverrideFromTeamType(teamType);
+      if (teamOverride == null) return null;
+
+      FactionValue defFactionValue = teamOverride.FactionDef?.FactionValue;
+      if (defFactionValue != null && !defFactionValue.IsInvalidUnset && !string.IsNullOrEmpty(defFactionValue.Name)) {
+        return defFactionValue.Name;
+      }
+
+      FactionValue teamFactionValue = teamOverride.FactionValue;
+      if (teamFactionValue != null && !teamFactionValue.IsInvalidUnset && !string.IsNullOrEmpty(teamFactionValue.Name)) {
+        return teamFactionValue.Name;
+      }
+
+      if (!string.IsNullOrEmpty(teamOverride.faction) && !string.Equals(teamOverride.faction, "INVALID_UNSET", StringComparison.OrdinalIgnoreCase)) {
+        return teamOverride.faction;
+      }
+
+      return null;
+    }
+
+    public int GetEffectiveExtendedLanceSizeForTeam(string teamType, string factionKey) {
+      if (!IsExtendedLancesAllowed()) return 4;
+
+      if (string.Equals(teamType, "enemy", StringComparison.OrdinalIgnoreCase) && CurrentContractType == "ArenaSkirmish") {
+        return 4;
+      }
+
+      ContractSettingsOverrides activeContractSettings = Main.Settings.ActiveContractSettings;
+      if (activeContractSettings != null) {
+        string lanceSizeOverrideKey = null;
+        if (string.Equals(teamType, "enemy", StringComparison.OrdinalIgnoreCase)) {
+          lanceSizeOverrideKey = activeContractSettings.Has(ContractSettingsOverrides.ExtendedLances_TargetLanceSizeOverride)
+            ? ContractSettingsOverrides.ExtendedLances_TargetLanceSizeOverride
+            : ContractSettingsOverrides.ExtendedLances_EnemyLanceSizeOverride;
+        } else if (string.Equals(teamType, "allies", StringComparison.OrdinalIgnoreCase)) {
+          lanceSizeOverrideKey = activeContractSettings.Has(ContractSettingsOverrides.ExtendedLances_EmployerLanceSizeOverride)
+            ? ContractSettingsOverrides.ExtendedLances_EmployerLanceSizeOverride
+            : ContractSettingsOverrides.ExtendedLances_AllyLanceSizeOverride;
+        }
+
+        if (!string.IsNullOrEmpty(lanceSizeOverrideKey) && activeContractSettings.Has(lanceSizeOverrideKey)) {
+          int lanceSizeOverride = activeContractSettings.GetInt(lanceSizeOverrideKey);
+          if (lanceSizeOverride > -1) {
+            return lanceSizeOverride;
+          }
+        }
+      }
+
+      if (string.IsNullOrEmpty(factionKey)) return 4;
+
+      return Main.Settings.ExtendedLances.GetFactionLanceSize(factionKey);
+    }
+
+    public bool IsExtendedLancesActiveForTeam(string teamType, string factionKey) {
+      return GetEffectiveExtendedLanceSizeForTeam(teamType, factionKey) > 4;
+    }
+
+    public bool IsExtendedLanceLargerThanOpposingTeam(string teamType, string factionKey) {
+      string opposingTeamType = null;
+      if (string.Equals(teamType, "enemy", StringComparison.OrdinalIgnoreCase)) {
+        opposingTeamType = "allies";
+      } else if (string.Equals(teamType, "allies", StringComparison.OrdinalIgnoreCase)) {
+        opposingTeamType = "enemy";
+      }
+
+      if (string.IsNullOrEmpty(opposingTeamType)) return false;
+
+      int teamLanceSize = GetEffectiveExtendedLanceSizeForTeam(teamType, factionKey);
+      string opposingFactionKey = GetFactionKeyFromTeamType(opposingTeamType);
+      int opposingLanceSize = GetEffectiveExtendedLanceSizeForTeam(opposingTeamType, opposingFactionKey);
+
+      return teamLanceSize > opposingLanceSize;
+    }
+
+    public int GetPlayerDropUnitCount() {
+      if (CurrentContract?.Lances == null) return 0;
+
+      return CurrentContract.Lances.LanceCount(EncounterRules.PLAYER_TEAM_ID)
+        + CurrentContract.Lances.LanceCount(EncounterRules.EMPLOYER_TEAM_ID);
+    }
+
+    public bool IsExtendedLanceLargerThanPlayerDrop(string teamType, string factionKey) {
+      int playerDropCount = GetPlayerDropUnitCount();
+      if (playerDropCount <= 0) return false;
+
+      int teamLanceSize = GetEffectiveExtendedLanceSizeForTeam(teamType, factionKey);
+      return teamLanceSize > playerDropCount;
     }
 
     public bool AllowMissionControl(bool SkipFromSaveCheck = false) {
