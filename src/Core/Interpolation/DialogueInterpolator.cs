@@ -746,6 +746,11 @@ namespace MissionControl.Interpolation {
               updatedCastDef = RuntimeCastFactory.CreateCast(pilotDef, isCommander ? "Commander" : "Pilot");
               ((DictionaryStore<CastDef>)UnityGameInstance.BattleTechGame.DataManager.CastDefs).Add(pilotCastDefID, updatedCastDef);
             }
+          } else {
+            PilotDef pilotDef = GetSpeakerPilotDef(pilotDefID);
+            if (pilotDef != null) {
+              RuntimeCastFactory.CachePilotPortrait(pilotDef);
+            }
           }
 
           if (updatedCastDef != null) {

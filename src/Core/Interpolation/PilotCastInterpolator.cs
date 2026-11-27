@@ -331,8 +331,7 @@ namespace MissionControl.Interpolation {
     }
 
     private static void RebindPortrait(PilotDef pilotDef) {
-      Sprite sprite = pilotDef.GetPortraitSprite(UnityGameInstance.Instance.Game.DataManager);
-      DataManager.Instance.GeneratedPortraits[pilotDef.Description.Id.ToUpperFirst()] = sprite;
+      RuntimeCastFactory.CachePilotPortrait(pilotDef);
     }
 
     public bool IsPlayerTeamDynamicCastDefID(string selectedCastDefID) {

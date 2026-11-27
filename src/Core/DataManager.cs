@@ -47,7 +47,12 @@ namespace MissionControl {
     private Dictionary<string, List<string>> LastNames = new Dictionary<string, List<string>>();  // e.g. <All, [list of names]>
     private Dictionary<string, List<string>> Ranks = new Dictionary<string, List<string>>();      // e.g. <FactionName, [list of ranks]>
     private Dictionary<string, List<string>> Portraits = new Dictionary<string, List<string>>();  // e.g. <Male, [list of male portraits]
-    public Dictionary<string, Sprite> GeneratedPortraits = new Dictionary<string, Sprite>();     // e.g. <{pilotDef.Description.Icon}, Sprite>
+    public Dictionary<string, Sprite> GeneratedPortraits = new Dictionary<string, Sprite>();     // e.g. <{pilotDef.Description.Id}, Sprite>
+    public HashSet<string> UnresolvedGeneratedPortraits = new HashSet<string>(StringComparer.Ordinal);
+    public Dictionary<string, Sprite> DiskLoadedPortraitSprites = new Dictionary<string, Sprite>(StringComparer.Ordinal);
+    private readonly Dictionary<Texture2D, Sprite> TextureWrapperPortraitSprites = new Dictionary<Texture2D, Sprite>();
+    public HashSet<string> PendingAsyncPortraitLoads = new HashSet<string>(StringComparer.Ordinal);
+    public Dictionary<string, HashSet<string>> PendingPortraitCacheKeysByResource = new Dictionary<string, HashSet<string>>(StringComparer.Ordinal);
 
     public Dictionary<string, Dictionary<string, JObject>> AvailableCustomContractTypeBuilds { get; set; } = new Dictionary<string, Dictionary<string, JObject>>();
     private Dictionary<string, List<ContractTypeValue>> AvailableCustomContractTypes = new Dictionary<string, List<ContractTypeValue>>();
@@ -258,13 +263,25 @@ namespace MissionControl {
     // Resolves a mod-relative path (e.g. 'sprites/Portraits/my_portrait.png') against MissionControl first, then any mod with an 'mcData' folder
     public string ResolveModFilePath(string relativePath) {
       if (string.IsNullOrEmpty(relativePath)) return null;
+      return ResolveModFilePath(new string[] { relativePath });
+    }
 
-      string path = Utilities.PathUtils.AppendPath(ModDirectory, relativePath, false);
-      if (File.Exists(path)) return path;
+    // Resolves candidate mod-relative paths in priority order within each mod directory (MissionControl first, then 'mcData' mods)
+    public string ResolveModFilePath(string[] relativePaths) {
+      if (relativePaths == null || relativePaths.Length == 0) return null;
+
+      foreach (string relativePath in relativePaths) {
+        if (string.IsNullOrEmpty(relativePath)) continue;
+        string path = Utilities.PathUtils.AppendPath(ModDirectory, relativePath, false);
+        if (File.Exists(path)) return path;
+      }
 
       foreach (string modDirectory in CustomDataModDirectories) {
-        path = Utilities.PathUtils.AppendPath(modDirectory, relativePath, false);
-        if (File.Exists(path)) return path;
+        foreach (string relativePath in relativePaths) {
+          if (string.IsNullOrEmpty(relativePath)) continue;
+          string path = Utilities.PathUtils.AppendPath(modDirectory, relativePath, false);
+          if (File.Exists(path)) return path;
+        }
       }
 
       return null;
@@ -939,8 +956,38 @@ namespace MissionControl {
       return null;
     }
 
+    public void CacheDiskLoadedPortraitSprite(string cacheKey, Sprite sprite) {
+      if (string.IsNullOrEmpty(cacheKey) || sprite == null) return;
+      DiskLoadedPortraitSprites[cacheKey] = sprite;
+    }
+
+    public Sprite GetOrCreateTextureWrapperSprite(Texture2D texture) {
+      if (texture == null) return null;
+
+      if (TextureWrapperPortraitSprites.TryGetValue(texture, out Sprite cached) && cached != null) {
+        return cached;
+      }
+
+      Sprite wrapper = Sprite.Create(texture, new Rect(0f, 0f, texture.width, texture.height), new Vector2(0.5f, 0.5f), 100f, 0u, SpriteMeshType.FullRect, Vector4.zero);
+      TextureWrapperPortraitSprites[texture] = wrapper;
+      return wrapper;
+    }
+
+    public void ClearDiskLoadedPortraitSprites() {
+      // Drop cache references without destroying UnityEngine.Objects directly so any post-combat
+      // simulation UI (such as queued pause notifications) keeps valid sprites while Unity's
+      // scene-transition cleanup reclaims unreferenced textures.
+      DialogueContent.dialogueSpriteCache?.Clear();
+      DiskLoadedPortraitSprites.Clear();
+      TextureWrapperPortraitSprites.Clear();
+      PendingAsyncPortraitLoads.Clear();
+      PendingPortraitCacheKeysByResource.Clear();
+    }
+
     public void ResetBetweenContracts() {
       GeneratedPortraits.Clear();
+      UnresolvedGeneratedPortraits.Clear();
+      ClearDiskLoadedPortraitSprites();
       if (Main.Settings.Misc.ContractOverrideDataCleanupMethod == "RestoreFromCopy") {
         RestoreContractOverriddeData();
       } else {
