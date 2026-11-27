@@ -81,17 +81,32 @@ namespace BTAssetReader.Core.Models {
     public int InteriorSubMeshIndex = -1;
   }
 
+  public class ModelPartInfo {
+    public string Name;
+    public int TriangleCount;
+    public RawBounds LocalBounds;
+
+    public ModelPartInfo Clone() => new ModelPartInfo {
+      Name = Name,
+      TriangleCount = TriangleCount,
+      LocalBounds = LocalBounds
+    };
+  }
+
   public class MeshTransformSettings {
     public CorePivotMode PivotMode = CorePivotMode.Bottom;
     public Float3 RotationOffset = new Float3(0f, 0f, 0f);
     public Float3 PositionOffset = new Float3(0f, 0f, 0f);
     public float TargetHeight = 0f;
     public Float3 Scale = new Float3(1f, 1f, 1f);
+    public bool FlipTextureV = false;
+    public List<string> ExcludedParts;
   }
 
   public class CustomModelBundle {
     public string Name;
     public string SourceFilePath;
+    public bool UsedLooseTextureFallback;
     public RawMeshData Lod0Mesh;
     public RawMeshData Lod1Mesh;
     public RawMeshData Lod2Mesh;
@@ -102,5 +117,75 @@ namespace BTAssetReader.Core.Models {
     public List<FracturePieceData> CustomSplits = new List<FracturePieceData>();
     public List<CustomPbrMaterialData> Materials = new List<CustomPbrMaterialData>();
     public List<PropLightData> Lights = new List<PropLightData>();
+
+    /// <summary>
+    /// Creates a copy whose mesh geometry and light positions can be normalised in-place without
+    /// mutating the raw source bundle, while sharing immutable material and texture byte buffers.
+    /// </summary>
+    public CustomModelBundle CloneForNormalization() {
+      var copy = new CustomModelBundle {
+        Name = Name,
+        SourceFilePath = SourceFilePath,
+        UsedLooseTextureFallback = UsedLooseTextureFallback,
+        Lod0Mesh = CloneMesh(Lod0Mesh),
+        Lod1Mesh = CloneMesh(Lod1Mesh),
+        Lod2Mesh = CloneMesh(Lod2Mesh),
+        ColMesh = CloneMesh(ColMesh),
+        GlassMesh = CloneMesh(GlassMesh),
+        ShellMesh = CloneMesh(ShellMesh),
+        ShellColMesh = CloneMesh(ShellColMesh),
+        Materials = Materials != null ? new List<CustomPbrMaterialData>(Materials) : new List<CustomPbrMaterialData>()
+      };
+      if (CustomSplits != null) {
+        foreach (var fp in CustomSplits) {
+          if (fp == null) continue;
+          copy.CustomSplits.Add(new FracturePieceData {
+            Name = fp.Name,
+            Centroid = fp.Centroid,
+            Mesh = CloneMesh(fp.Mesh),
+            LocalBounds = fp.LocalBounds,
+            EstimatedMass = fp.EstimatedMass,
+            InteriorSubMeshIndex = fp.InteriorSubMeshIndex
+          });
+        }
+      }
+      if (Lights != null) {
+        foreach (var l in Lights) {
+          if (l != null) copy.Lights.Add(l.Clone());
+        }
+      }
+      return copy;
+    }
+
+    private static RawMeshData CloneMesh(RawMeshData src) {
+      if (src == null) return null;
+      int[][] subIndices = null;
+      if (src.SubMeshIndices != null) {
+        subIndices = new int[src.SubMeshIndices.Length][];
+        for (int i = 0; i < src.SubMeshIndices.Length; i++) {
+          if (src.SubMeshIndices[i] != null) subIndices[i] = (int[])src.SubMeshIndices[i].Clone();
+        }
+      }
+      return new RawMeshData {
+        Name = src.Name,
+        Ref = src.Ref,
+        VertexCount = src.VertexCount,
+        IndexFormat = src.IndexFormat,
+        SubMeshes = src.SubMeshes != null ? (RawSubMesh[])src.SubMeshes.Clone() : null,
+        SubMeshIndices = subIndices,
+        Vertices = src.Vertices != null ? (Float3[])src.Vertices.Clone() : null,
+        Normals = src.Normals != null ? (Float3[])src.Normals.Clone() : null,
+        Tangents = src.Tangents != null ? (Float4[])src.Tangents.Clone() : null,
+        Colors = src.Colors,
+        Uv0 = src.Uv0 != null ? (Float2[])src.Uv0.Clone() : null,
+        Uv1 = src.Uv1,
+        Uv2 = src.Uv2,
+        LocalAabb = src.LocalAabb,
+        MeshCompression = src.MeshCompression,
+        OriginalIsReadable = src.OriginalIsReadable,
+        Parts = src.Parts != null ? src.Parts.ConvertAll(p => p.Clone()) : null,
+        VertexPartIds = src.VertexPartIds != null ? (int[])src.VertexPartIds.Clone() : null
+      };
+    }
   }
 }

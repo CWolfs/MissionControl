@@ -431,8 +431,14 @@ namespace MissionControl.EncounterFactories {
         }
       }
 
+      bool hasFileCustomShell = fileAsset?.ShellMesh != null && !string.Equals(propModelDef.ShellMode, "Rubble", StringComparison.OrdinalIgnoreCase);
+      bool wantAutoStump = !propModelDef.HasCustomShell && !hasFileCustomShell && (
+        string.Equals(propModelDef.ShellMode, "AutoStump", StringComparison.OrdinalIgnoreCase)
+        || (string.Equals(propModelDef.ShellMode, "Auto", StringComparison.OrdinalIgnoreCase) && propModelDef.UsesFileForMesh));
+
       if (!builtSplits && !string.Equals(propModelDef.SplitMode, "None", StringComparison.OrdinalIgnoreCase)) {
-        // Procedural plane-sliced solid chunks (shared with Designer-Prop-Studio)
+        // Procedural plane-sliced solid chunks (shared with Designer-Prop-Studio).
+        // When an auto-stump shell keeps the bottom slice, clip the flying chunks above the same cut line so the base never doubles up.
         BTAssetReader.Core.Models.RawMeshData rawSource = fileAsset?.RawLod0Mesh ?? CustomModelProvider.ExtractRawMeshFromUnityMesh(buildingLOD0Mesh);
         if (rawSource != null) {
           int count = propModelDef.FractureCount > 1 ? propModelDef.FractureCount : 8;
@@ -442,7 +448,8 @@ namespace MissionControl.EncounterFactories {
             count,
             propModelDef.FractureSeed,
             outerMaterials,
-            interiorRubbleMaterial);
+            interiorRubbleMaterial,
+            excludeBelowStumpFraction: wantAutoStump ? propModelDef.StumpHeight : 0f);
 
           if (proceduralPieces != null && proceduralPieces.Count > 0) {
             InstantiateSplitPieces(buildingGO, propModelDef, proceduralPieces, outerMaterials);
@@ -475,10 +482,6 @@ namespace MissionControl.EncounterFactories {
       destructShell.layer = 8;
       destructShell.SetActive(false);
       usedCustomOrAutoStumpShell = false;
-
-      bool wantAutoStump = string.Equals(propModelDef.ShellMode, "AutoStump", StringComparison.OrdinalIgnoreCase)
-        || (string.Equals(propModelDef.ShellMode, "Auto", StringComparison.OrdinalIgnoreCase) && propModelDef.UsesFileForMesh && fileAsset?.ShellMesh == null);
-      bool hasFileCustomShell = fileAsset?.ShellMesh != null && !string.Equals(propModelDef.ShellMode, "Rubble", StringComparison.OrdinalIgnoreCase);
 
       if (propModelDef.HasCustomShell || hasFileCustomShell) {
         Main.Logger.Log("[BuildingFactory.CreateGenericStaticDestruct] CustomShell has been set for " + PropBuildingDef.Key);
@@ -651,11 +654,21 @@ namespace MissionControl.EncounterFactories {
     private void SetShellMaterials(GameObject shell) {
       PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
 
-      // Setup materials
+      // Setup materials (skip $embedded custom UVs on generic rubble prefabs so they get proper concrete/metal rubble instead)
       Mesh mesh = shell.GetComponent<MeshFilter>().mesh;
       MeshRenderer mr = shell.GetComponent<MeshRenderer>();
 
-      Material[] shellMaterials = BuildMaterialsForRenderer(mesh, propModelDef, propModelDef.Materials.Where(mat => !mat.Name.Contains("glass") && !mat.Name.Contains("lights") && !mat.Name.Contains("decals")).ToList(), placeholderMaterial);
+      List<PropMaterialDef> usableVanillaMats = propModelDef.Materials
+        .Where(mat => !string.IsNullOrEmpty(mat.Name)
+          && !mat.Name.Equals("$embedded", StringComparison.OrdinalIgnoreCase)
+          && !mat.Name.Contains("glass")
+          && !mat.Name.Contains("lights")
+          && !mat.Name.Contains("decals"))
+        .ToList();
+
+      Material[] shellMaterials = usableVanillaMats.Count > 0
+        ? BuildMaterialsForRenderer(mesh, propModelDef, usableVanillaMats, placeholderMaterial)
+        : new[] { ResolveInteriorRubbleMaterial(propModelDef, null) };
 
       Material[] shellMaterialToUse = new Material[mesh.subMeshCount];
       for (int i = 0; i < mesh.subMeshCount; i++) {

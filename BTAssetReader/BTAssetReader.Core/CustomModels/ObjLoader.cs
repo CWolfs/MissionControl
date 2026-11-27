@@ -14,19 +14,35 @@ namespace BTAssetReader.Core.CustomModels {
       public readonly List<Float3> Vertices = new List<Float3>();
       public readonly List<Float3> Normals = new List<Float3>();
       public readonly List<Float2> Uvs = new List<Float2>();
+      public readonly List<int> VertexPartIds = new List<int>();
+      public readonly List<ModelPartInfo> Parts = new List<ModelPartInfo>();
+      private readonly Dictionary<string, int> _partIdByName = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+      private int _currentPartId = -1;
       public readonly Dictionary<string, int> VertCache = new Dictionary<string, int>(StringComparer.Ordinal);
       public readonly Dictionary<string, List<int>> TrisByMat = new Dictionary<string, List<int>>(StringComparer.Ordinal);
       public readonly List<string> MatOrder = new List<string>();
       public bool HasAnyNormal;
       public bool HasAnyUv;
 
+      public void SetActivePart(string name) {
+        string key = string.IsNullOrWhiteSpace(name) ? "default" : name.Trim();
+        if (!_partIdByName.TryGetValue(key, out int pid)) {
+          pid = Parts.Count;
+          _partIdByName[key] = pid;
+          Parts.Add(new ModelPartInfo { Name = key });
+        }
+        _currentPartId = pid;
+      }
+
       public int GetOrAddVertex(int vi, int vti, int vni, List<Float3> srcPos, List<Float2> srcUv, List<Float3> srcNorm) {
-        string key = $"{vi}/{vti}/{vni}";
+        if (_currentPartId < 0) SetActivePart("default");
+        string key = $"{_currentPartId}:{vi}/{vti}/{vni}";
         if (VertCache.TryGetValue(key, out int existing)) return existing;
 
         Float3 p = vi >= 0 && vi < srcPos.Count ? srcPos[vi] : new Float3(0f, 0f, 0f);
         // Right-handed OBJ -> Unity left-handed: negate X
         Vertices.Add(new Float3(-p.X, p.Y, p.Z));
+        VertexPartIds.Add(_currentPartId);
 
         if (vni >= 0 && vni < srcNorm.Count) {
           Float3 n = srcNorm[vni];
@@ -59,6 +75,9 @@ namespace BTAssetReader.Core.CustomModels {
         list.Add(a);
         list.Add(c);
         list.Add(b);
+        if (_currentPartId >= 0 && _currentPartId < Parts.Count) {
+          Parts[_currentPartId].TriangleCount++;
+        }
       }
 
       public RawMeshData ToRawMesh(string name, out List<string> usedMats, List<string> preferredMatOrder = null) {
@@ -92,12 +111,15 @@ namespace BTAssetReader.Core.CustomModels {
           Uv0 = HasAnyUv ? Uvs.ToArray() : null,
           SubMeshes = subMeshes,
           SubMeshIndices = subIndices,
-          OriginalIsReadable = true
+          OriginalIsReadable = true,
+          Parts = Parts.Count > 0 ? Parts : null,
+          VertexPartIds = Parts.Count > 0 ? VertexPartIds.ToArray() : null
         };
 
         MeshNormaliser.RecalculateNormalsIfMissing(mesh);
         MeshNormaliser.RecalculateTangentsIfMissing(mesh);
         MeshNormaliser.RecalculateBounds(mesh);
+        MeshNormaliser.RecalculatePartBounds(mesh);
         return mesh;
       }
     }
@@ -158,8 +180,8 @@ namespace BTAssetReader.Core.CustomModels {
             break;
           }
           case "mtllib": {
-            string mtlPath = Path.Combine(baseDir, rest);
-            if (File.Exists(mtlPath)) {
+            string mtlPath = CustomModelLoader.ResolveExternalAssetPath(baseDir, rest);
+            if (mtlPath != null) {
               ParseMtl(mtlPath, mtlMaterials);
             }
             break;
@@ -188,6 +210,7 @@ namespace BTAssetReader.Core.CustomModels {
                 _ => lod0
               };
             }
+            activeBuilder.SetActivePart(currentGroup);
             break;
           }
           case "f": {
@@ -314,13 +337,17 @@ namespace BTAssetReader.Core.CustomModels {
 
     private static byte[] TryReadMtlTexture(string dir, string arg, out string mime) {
       mime = "image/png";
-      // Strip optional OBJ texture flags (e.g. -bm 1.0 filename.png)
+      // Strip optional OBJ texture flags (e.g. -bm 1.0 filename.png), preserving spaces in filenames if no flags
       string[] parts = arg.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
-      string fileName = parts.Length > 0 ? parts[parts.Length - 1] : arg;
-      string full = Path.IsPathRooted(fileName) ? fileName : Path.Combine(dir, fileName);
-      if (!File.Exists(full)) return null;
+      string fileRef = arg;
+      if (parts.Length > 1 && parts[0].StartsWith("-")) {
+        fileRef = parts[parts.Length - 1];
+      }
+      string full = CustomModelLoader.ResolveExternalAssetPath(dir, fileRef)
+        ?? (parts.Length > 0 ? CustomModelLoader.ResolveExternalAssetPath(dir, parts[parts.Length - 1]) : null);
+      if (full == null) return null;
       string ext = Path.GetExtension(full).ToLowerInvariant();
-      mime = (ext == ".jpg" || ext == ".jpeg") ? "image/jpeg" : "image/png";
+      mime = (ext == ".jpg" || ext == ".jpeg") ? "image/jpeg" : (ext == ".webp" ? "image/webp" : "image/png");
       return File.ReadAllBytes(full);
     }
 

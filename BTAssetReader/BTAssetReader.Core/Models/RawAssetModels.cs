@@ -87,6 +87,8 @@ namespace BTAssetReader.Core.Models {
     public RawBounds LocalAabb;
     public byte MeshCompression;
     public bool OriginalIsReadable;
+    public List<ModelPartInfo> Parts;
+    public int[] VertexPartIds;
   }
 
   public class RawTexture2DData {

@@ -56,7 +56,7 @@ namespace BTAssetReader.Core.Destruction {
       }
     }
 
-    public static List<FracturePieceData> Fracture(RawMeshData sourceMesh, int targetPieces = 8, int seed = 0) {
+    public static List<FracturePieceData> Fracture(RawMeshData sourceMesh, int targetPieces = 8, int seed = 0, float excludeBelowStumpFraction = 0f) {
       var results = new List<FracturePieceData>();
       if (sourceMesh == null || sourceMesh.Vertices == null || sourceMesh.Vertices.Length == 0 || sourceMesh.SubMeshIndices == null) {
         return results;
@@ -66,7 +66,14 @@ namespace BTAssetReader.Core.Destruction {
       int origSubCount = sourceMesh.SubMeshIndices.Length;
       int interiorSubMesh = origSubCount; // Extra submesh slot for interior rubble cross-sections
 
-      var rootPiece = ExtractWorkPiece(sourceMesh);
+      var rootPiece = new WorkPiece();
+      if (excludeBelowStumpFraction > 0.001f) {
+        var upper = AutoStumpShellGenerator.ExtractUpperTriangles(sourceMesh, excludeBelowStumpFraction, seed, interiorSubMesh);
+        if (upper.Count > 0) rootPiece.Tris.AddRange(upper);
+        else rootPiece.Tris.AddRange(ExtractTriangles(sourceMesh));
+      } else {
+        rootPiece.Tris.AddRange(ExtractTriangles(sourceMesh));
+      }
       if (rootPiece.Tris.Count == 0) return results;
       rootPiece.RecomputeBounds();
 

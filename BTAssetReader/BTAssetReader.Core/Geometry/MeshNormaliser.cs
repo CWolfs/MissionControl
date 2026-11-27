@@ -1,15 +1,28 @@
 using System;
+using System.Collections.Generic;
 using BTAssetReader.Core.Models;
 
 namespace BTAssetReader.Core.Geometry {
   /// <summary>
   /// Pure-C# mesh normalisation shared identically between Unity (MissionControl/Designer)
-  /// and Godot (Designer-Prop-Studio). Applies RotationOffset -> TargetHeight/Scale -> PivotMode -> PositionOffset
+  /// and Godot (Designer-Prop-Studio). Applies ExcludedParts -> RotationOffset -> TargetHeight/Scale -> PivotMode -> PositionOffset
   /// uniformly across LODs, colliders, shells, splits, and lights.
   /// </summary>
   public static class MeshNormaliser {
     public static void Normalize(CustomModelBundle bundle, MeshTransformSettings settings) {
       if (bundle == null || bundle.Lod0Mesh == null || settings == null) return;
+
+      // 0. Strip excluded model parts BEFORE measuring bounds, height, or pivot so remaining parts re-centre cleanly
+      if (settings.ExcludedParts != null && settings.ExcludedParts.Count > 0) {
+        var excluded = new HashSet<string>(settings.ExcludedParts, StringComparer.OrdinalIgnoreCase);
+        FilterExcludedParts(bundle.Lod0Mesh, excluded);
+        FilterExcludedParts(bundle.Lod1Mesh, excluded);
+        FilterExcludedParts(bundle.Lod2Mesh, excluded);
+        FilterExcludedParts(bundle.ColMesh, excluded);
+        FilterExcludedParts(bundle.GlassMesh, excluded);
+        FilterExcludedParts(bundle.ShellMesh, excluded);
+        FilterExcludedParts(bundle.ShellColMesh, excluded);
+      }
 
       Float3 rotDeg = settings.RotationOffset;
       bool hasRot = Math.Abs(rotDeg.X) > 1e-4f || Math.Abs(rotDeg.Y) > 1e-4f || Math.Abs(rotDeg.Z) > 1e-4f;
@@ -46,15 +59,16 @@ namespace BTAssetReader.Core.Geometry {
       }
 
       Float3 posOffset = settings.PositionOffset;
+      bool flipV = settings.FlipTextureV;
 
       // 3. Apply identical transform to every mesh slot
-      ApplyTransform(bundle.Lod0Mesh, rot, hasRot, scale, pivotShift, posOffset);
-      ApplyTransform(bundle.Lod1Mesh, rot, hasRot, scale, pivotShift, posOffset);
-      ApplyTransform(bundle.Lod2Mesh, rot, hasRot, scale, pivotShift, posOffset);
-      ApplyTransform(bundle.ColMesh, rot, hasRot, scale, pivotShift, posOffset);
-      ApplyTransform(bundle.GlassMesh, rot, hasRot, scale, pivotShift, posOffset);
-      ApplyTransform(bundle.ShellMesh, rot, hasRot, scale, pivotShift, posOffset);
-      ApplyTransform(bundle.ShellColMesh, rot, hasRot, scale, pivotShift, posOffset);
+      ApplyTransform(bundle.Lod0Mesh, rot, hasRot, scale, pivotShift, posOffset, flipV);
+      ApplyTransform(bundle.Lod1Mesh, rot, hasRot, scale, pivotShift, posOffset, flipV);
+      ApplyTransform(bundle.Lod2Mesh, rot, hasRot, scale, pivotShift, posOffset, flipV);
+      ApplyTransform(bundle.ColMesh, rot, hasRot, scale, pivotShift, posOffset, flipV);
+      ApplyTransform(bundle.GlassMesh, rot, hasRot, scale, pivotShift, posOffset, flipV);
+      ApplyTransform(bundle.ShellMesh, rot, hasRot, scale, pivotShift, posOffset, flipV);
+      ApplyTransform(bundle.ShellColMesh, rot, hasRot, scale, pivotShift, posOffset, flipV);
 
       if (bundle.CustomSplits != null) {
         foreach (var piece in bundle.CustomSplits) {
@@ -65,7 +79,7 @@ namespace BTAssetReader.Core.Geometry {
             Float3 v = piece.Mesh.Vertices[i];
             piece.Mesh.Vertices[i] = new Float3(v.X + c.X, v.Y + c.Y, v.Z + c.Z);
           }
-          ApplyTransform(piece.Mesh, rot, hasRot, scale, pivotShift, posOffset);
+          ApplyTransform(piece.Mesh, rot, hasRot, scale, pivotShift, posOffset, flipV);
           Float3 newC = piece.Mesh.LocalAabb.Center;
           for (int i = 0; i < piece.Mesh.Vertices.Length; i++) {
             Float3 v = piece.Mesh.Vertices[i];
@@ -112,7 +126,7 @@ namespace BTAssetReader.Core.Geometry {
       }
     }
 
-    private static void ApplyTransform(RawMeshData mesh, Quat rot, bool hasRot, Float3 scale, Float3 pivotShift, Float3 posOffset) {
+    private static void ApplyTransform(RawMeshData mesh, Quat rot, bool hasRot, Float3 scale, Float3 pivotShift, Float3 posOffset, bool flipTextureV) {
       if (mesh == null || mesh.Vertices == null || mesh.Vertices.Length == 0) return;
 
       for (int i = 0; i < mesh.Vertices.Length; i++) {
@@ -136,12 +150,20 @@ namespace BTAssetReader.Core.Geometry {
       }
 
       if (mesh.Tangents != null && mesh.Tangents.Length == mesh.Vertices.Length) {
+        float wSign = flipTextureV ? -1f : 1f;
         for (int i = 0; i < mesh.Tangents.Length; i++) {
           Float4 t = mesh.Tangents[i];
           Float3 td = new Float3(t.X, t.Y, t.Z);
           td = hasRot ? rot.Rotate(td) : td;
           td = Normalize(new Float3(td.X * scale.X, td.Y * scale.Y, td.Z * scale.Z));
-          mesh.Tangents[i] = new Float4(td.X, td.Y, td.Z, t.W);
+          mesh.Tangents[i] = new Float4(td.X, td.Y, td.Z, t.W * wSign);
+        }
+      }
+
+      if (flipTextureV && mesh.Uv0 != null) {
+        for (int i = 0; i < mesh.Uv0.Length; i++) {
+          Float2 u = mesh.Uv0[i];
+          mesh.Uv0[i] = new Float2(u.X, 1f - u.Y);
         }
       }
 
@@ -158,6 +180,150 @@ namespace BTAssetReader.Core.Geometry {
       }
 
       RecalculateBounds(mesh);
+      RecalculatePartBounds(mesh);
+    }
+
+    public static void FilterExcludedParts(RawMeshData mesh, HashSet<string> excludedNames) {
+      if (mesh == null || excludedNames == null || excludedNames.Count == 0) return;
+      if (mesh.Parts == null || mesh.Parts.Count <= 1 || mesh.VertexPartIds == null || mesh.Vertices == null) return;
+      if (mesh.VertexPartIds.Length != mesh.Vertices.Length || mesh.SubMeshIndices == null) return;
+
+      int partCount = mesh.Parts.Count;
+      var keepPart = new bool[partCount];
+      int keptPartCount = 0;
+      for (int p = 0; p < partCount; p++) {
+        bool keep = !excludedNames.Contains(mesh.Parts[p].Name ?? string.Empty);
+        keepPart[p] = keep;
+        if (keep) keptPartCount++;
+      }
+      // Safety: if everything or nothing would be filtered, leave mesh unchanged
+      if (keptPartCount == 0 || keptPartCount == partCount) return;
+
+      int vCount = mesh.Vertices.Length;
+      var remap = new int[vCount];
+      for (int i = 0; i < vCount; i++) remap[i] = -1;
+
+      var newSubIndices = new int[mesh.SubMeshIndices.Length][];
+      var partRemap = new int[partCount];
+      var newParts = new List<ModelPartInfo>(keptPartCount);
+      for (int p = 0; p < partCount; p++) {
+        if (keepPart[p]) {
+          partRemap[p] = newParts.Count;
+          newParts.Add(new ModelPartInfo { Name = mesh.Parts[p].Name, TriangleCount = 0 });
+        } else {
+          partRemap[p] = -1;
+        }
+      }
+
+      int newVertCount = 0;
+      int totalKeptTris = 0;
+      for (int s = 0; s < mesh.SubMeshIndices.Length; s++) {
+        int[] srcIdx = mesh.SubMeshIndices[s];
+        if (srcIdx == null || srcIdx.Length < 3) {
+          newSubIndices[s] = Array.Empty<int>();
+          continue;
+        }
+        var kept = new List<int>(srcIdx.Length);
+        for (int i = 0; i + 2 < srcIdx.Length; i += 3) {
+          int a = srcIdx[i], b = srcIdx[i + 1], c = srcIdx[i + 2];
+          if ((uint)a >= (uint)vCount || (uint)b >= (uint)vCount || (uint)c >= (uint)vCount) continue;
+          int pid = mesh.VertexPartIds[a];
+          if ((uint)pid < (uint)partCount && !keepPart[pid]) continue;
+
+          if (remap[a] < 0) remap[a] = newVertCount++;
+          if (remap[b] < 0) remap[b] = newVertCount++;
+          if (remap[c] < 0) remap[c] = newVertCount++;
+          kept.Add(remap[a]);
+          kept.Add(remap[b]);
+          kept.Add(remap[c]);
+          totalKeptTris++;
+          if ((uint)pid < (uint)partCount && partRemap[pid] >= 0) {
+            newParts[partRemap[pid]].TriangleCount++;
+          }
+        }
+        newSubIndices[s] = kept.ToArray();
+      }
+
+      if (totalKeptTris == 0 || newVertCount == 0) return;
+
+      var newVerts = new Float3[newVertCount];
+      var newNorms = mesh.Normals != null && mesh.Normals.Length == vCount ? new Float3[newVertCount] : null;
+      var newTangs = mesh.Tangents != null && mesh.Tangents.Length == vCount ? new Float4[newVertCount] : null;
+      var newCols = mesh.Colors != null && mesh.Colors.Length == vCount ? new ColorRgba32[newVertCount] : null;
+      var newUv0 = mesh.Uv0 != null && mesh.Uv0.Length == vCount ? new Float2[newVertCount] : null;
+      var newUv1 = mesh.Uv1 != null && mesh.Uv1.Length == vCount ? new Float2[newVertCount] : null;
+      var newUv2 = mesh.Uv2 != null && mesh.Uv2.Length == vCount ? new Float2[newVertCount] : null;
+      var newPartIds = new int[newVertCount];
+
+      for (int i = 0; i < vCount; i++) {
+        int ni = remap[i];
+        if (ni < 0) continue;
+        newVerts[ni] = mesh.Vertices[i];
+        if (newNorms != null) newNorms[ni] = mesh.Normals[i];
+        if (newTangs != null) newTangs[ni] = mesh.Tangents[i];
+        if (newCols != null) newCols[ni] = mesh.Colors[i];
+        if (newUv0 != null) newUv0[ni] = mesh.Uv0[i];
+        if (newUv1 != null) newUv1[ni] = mesh.Uv1[i];
+        if (newUv2 != null) newUv2[ni] = mesh.Uv2[i];
+        int oldPid = mesh.VertexPartIds[i];
+        newPartIds[ni] = (uint)oldPid < (uint)partCount ? partRemap[oldPid] : -1;
+      }
+
+      mesh.Vertices = newVerts;
+      mesh.Normals = newNorms;
+      mesh.Tangents = newTangs;
+      mesh.Colors = newCols;
+      mesh.Uv0 = newUv0;
+      mesh.Uv1 = newUv1;
+      mesh.Uv2 = newUv2;
+      mesh.VertexPartIds = newPartIds;
+      mesh.Parts = newParts;
+      mesh.VertexCount = newVertCount;
+      mesh.IndexFormat = newVertCount > 65535 ? 1 : 0;
+      mesh.SubMeshIndices = newSubIndices;
+      if (mesh.SubMeshes != null && mesh.SubMeshes.Length == newSubIndices.Length) {
+        for (int s = 0; s < newSubIndices.Length; s++) {
+          mesh.SubMeshes[s].IndexCount = (uint)newSubIndices[s].Length;
+        }
+      }
+
+      RecalculateBounds(mesh);
+      RecalculatePartBounds(mesh);
+    }
+
+    public static void RecalculatePartBounds(RawMeshData mesh) {
+      if (mesh == null || mesh.Parts == null || mesh.Parts.Count == 0 || mesh.VertexPartIds == null || mesh.Vertices == null) return;
+      if (mesh.VertexPartIds.Length != mesh.Vertices.Length) return;
+
+      int pc = mesh.Parts.Count;
+      var mins = new Float3[pc];
+      var maxs = new Float3[pc];
+      var hasAny = new bool[pc];
+      for (int p = 0; p < pc; p++) {
+        mins[p] = new Float3(float.MaxValue, float.MaxValue, float.MaxValue);
+        maxs[p] = new Float3(float.MinValue, float.MinValue, float.MinValue);
+      }
+
+      for (int i = 0; i < mesh.Vertices.Length; i++) {
+        int pid = mesh.VertexPartIds[i];
+        if ((uint)pid >= (uint)pc) continue;
+        Float3 v = mesh.Vertices[i];
+        if (v.X < mins[pid].X) mins[pid].X = v.X;
+        if (v.Y < mins[pid].Y) mins[pid].Y = v.Y;
+        if (v.Z < mins[pid].Z) mins[pid].Z = v.Z;
+        if (v.X > maxs[pid].X) maxs[pid].X = v.X;
+        if (v.Y > maxs[pid].Y) maxs[pid].Y = v.Y;
+        if (v.Z > maxs[pid].Z) maxs[pid].Z = v.Z;
+        hasAny[pid] = true;
+      }
+
+      for (int p = 0; p < pc; p++) {
+        if (!hasAny[p]) continue;
+        mesh.Parts[p].LocalBounds = new RawBounds {
+          Center = new Float3((mins[p].X + maxs[p].X) * 0.5f, (mins[p].Y + maxs[p].Y) * 0.5f, (mins[p].Z + maxs[p].Z) * 0.5f),
+          Extents = new Float3((maxs[p].X - mins[p].X) * 0.5f, (maxs[p].Y - mins[p].Y) * 0.5f, (maxs[p].Z - mins[p].Z) * 0.5f)
+        };
+      }
     }
 
     public static void RecalculateBounds(RawMeshData mesh) {

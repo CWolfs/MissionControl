@@ -86,6 +86,12 @@ namespace MissionControl.Data {
     [JsonProperty("TargetHeight")]
     public float TargetHeight { get; set; } = 0f;
 
+    [JsonProperty("FlipTextureV")]
+    public bool FlipTextureV { get; set; } = false;
+
+    [JsonProperty("ExcludedParts")]
+    public List<string> ExcludedParts { get; set; } = null;
+
     [JsonProperty("ColliderMode")]
     public string ColliderMode { get; set; } = "Mesh";
 
@@ -142,7 +148,9 @@ namespace MissionControl.Data {
         RotationOffset = new Float3(RotationOffset.x, RotationOffset.y, RotationOffset.z),
         PositionOffset = new Float3(PositionOffset.x, PositionOffset.y, PositionOffset.z),
         TargetHeight = TargetHeight,
-        Scale = new Float3(1f, 1f, 1f) // PropModelDef.Scale is still applied on the GameObject transform
+        Scale = new Float3(1f, 1f, 1f), // PropModelDef.Scale is still applied on the GameObject transform
+        FlipTextureV = FlipTextureV,
+        ExcludedParts = ExcludedParts
       };
     }
 

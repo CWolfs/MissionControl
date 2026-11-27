@@ -21,11 +21,25 @@ namespace BTAssetReader.Core.CustomModels {
       public readonly List<Float3> Normals = new List<Float3>();
       public readonly List<Float4> Tangents = new List<Float4>();
       public readonly List<Float2> Uv0 = new List<Float2>();
+      public readonly List<int> VertexPartIds = new List<int>();
+      public readonly List<ModelPartInfo> Parts = new List<ModelPartInfo>();
+      private readonly Dictionary<string, int> _partNameCounts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+      private int _currentPartId = -1;
       public readonly Dictionary<int, List<int>> IndicesByMaterial = new Dictionary<int, List<int>>();
       public readonly List<int> MaterialOrder = new List<int>();
       public bool HasNormals = false;
       public bool HasTangents = false;
       public bool HasUv0 = false;
+
+      public int BeginPart(string rawName) {
+        string baseName = string.IsNullOrWhiteSpace(rawName) ? $"Part_{Parts.Count + 1}" : rawName.Trim();
+        int count = _partNameCounts.TryGetValue(baseName, out int c) ? c + 1 : 1;
+        _partNameCounts[baseName] = count;
+        string uniqueName = count == 1 ? baseName : $"{baseName} #{count}";
+        _currentPartId = Parts.Count;
+        Parts.Add(new ModelPartInfo { Name = uniqueName });
+        return _currentPartId;
+      }
 
       public void AddPrimitive(
         Float3[] pos,
@@ -56,6 +70,7 @@ namespace BTAssetReader.Core.CustomModels {
           Float3 wp = worldMatrix.TransformPoint(pos[i]);
           // glTF right-handed -> Unity left-handed: negate X
           Vertices.Add(new Float3(-wp.X, wp.Y, wp.Z));
+          VertexPartIds.Add(_currentPartId);
 
           if (hasN) {
             Float3 wn = Normalize3(worldMatrix.TransformNormal(norm[i]));
@@ -101,6 +116,9 @@ namespace BTAssetReader.Core.CustomModels {
             triList.Add(c);
           }
         }
+        if (_currentPartId >= 0 && _currentPartId < Parts.Count) {
+          Parts[_currentPartId].TriangleCount += indices.Length / 3;
+        }
       }
 
       public RawMeshData ToRawMesh(string name, out List<int> usedMaterialIndices, List<int> preferredMaterialOrder = null) {
@@ -136,12 +154,15 @@ namespace BTAssetReader.Core.CustomModels {
           Uv0 = HasUv0 ? Uv0.ToArray() : null,
           SubMeshes = subMeshes,
           SubMeshIndices = subIndices,
-          OriginalIsReadable = true
+          OriginalIsReadable = true,
+          Parts = Parts.Count > 0 ? Parts : null,
+          VertexPartIds = Parts.Count > 0 ? VertexPartIds.ToArray() : null
         };
 
         MeshNormaliser.RecalculateNormalsIfMissing(mesh);
         MeshNormaliser.RecalculateTangentsIfMissing(mesh);
         MeshNormaliser.RecalculateBounds(mesh);
+        MeshNormaliser.RecalculatePartBounds(mesh);
         return mesh;
       }
     }
@@ -329,7 +350,7 @@ namespace BTAssetReader.Core.CustomModels {
       var splitPieces = new List<FracturePieceData>();
       var extractedLights = new List<PropLightData>();
 
-      void TraverseNode(int nodeIdx, Mat4 parentWorld) {
+      void TraverseNode(int nodeIdx, Mat4 parentWorld, string parentPartHint) {
         if (nodeIdx < 0 || nodeIdx >= nodesList.Count) return;
         var node = MiniJson.AsDict(nodesList[nodeIdx]);
         if (node == null) return;
@@ -355,6 +376,10 @@ namespace BTAssetReader.Core.CustomModels {
           var meshDict = MiniJson.AsDict(meshesList[meshIdx]);
           string meshName = MiniJson.GetString(meshDict, "name", nodeName);
           string tagName = !string.IsNullOrEmpty(nodeName) ? nodeName : meshName;
+          // Prefer clean Sketchfab parent wrapper name (e.g. "SM_WoodLogs_v6" over "SM_WoodLogs_v6_WoodLogs_M_0")
+          string partName = (!string.IsNullOrEmpty(parentPartHint) && tagName.StartsWith(parentPartHint + "_", StringComparison.OrdinalIgnoreCase))
+            ? parentPartHint
+            : tagName;
 
           string slot = ClassifySlotName(tagName);
           if (slot == "Split") {
@@ -389,20 +414,24 @@ namespace BTAssetReader.Core.CustomModels {
               "ShellCOL" => shellColAcc,
               _ => lod0Acc
             };
+            target.BeginPart(partName);
             AppendGltfMesh(meshDict, accessors, bufferViews, buffers, world, target);
           }
         }
 
         var children = MiniJson.GetList(node, "children");
         if (children != null) {
+          string childHint = (meshIdx < 0 && children.Count == 1 && IsMeaningfulPartWrapper(nodeName))
+            ? nodeName
+            : null;
           foreach (object c in children) {
-            TraverseNode(Convert.ToInt32(c), world);
+            TraverseNode(Convert.ToInt32(c), world, childHint);
           }
         }
       }
 
       foreach (int rn in rootNodeIndices) {
-        TraverseNode(rn, Mat4.Identity);
+        TraverseNode(rn, Mat4.Identity, null);
       }
 
       string modelName = Path.GetFileNameWithoutExtension(filePath);
@@ -437,6 +466,21 @@ namespace BTAssetReader.Core.CustomModels {
       };
 
       return bundle;
+    }
+
+    private static bool IsMeaningfulPartWrapper(string name) {
+      if (string.IsNullOrWhiteSpace(name)) return false;
+      string n = name.Trim();
+      if (n.Equals("Sketchfab_model", StringComparison.OrdinalIgnoreCase) ||
+          n.Equals("RootNode", StringComparison.OrdinalIgnoreCase) ||
+          n.Equals("Scene", StringComparison.OrdinalIgnoreCase) ||
+          n.Equals("Root", StringComparison.OrdinalIgnoreCase) ||
+          n.EndsWith(".fbx", StringComparison.OrdinalIgnoreCase) ||
+          n.EndsWith(".obj", StringComparison.OrdinalIgnoreCase) ||
+          n.EndsWith(".dae", StringComparison.OrdinalIgnoreCase)) {
+        return false;
+      }
+      return true;
     }
 
     internal static string ClassifySlotName(string name) {
@@ -582,10 +626,11 @@ namespace BTAssetReader.Core.CustomModels {
         return Array.Empty<byte>();
       }
 
+      string resolved = CustomModelLoader.ResolveExternalAssetPath(baseDir, uri);
+      if (resolved != null) return File.ReadAllBytes(resolved);
+
       string unescaped = Uri.UnescapeDataString(uri);
       string full = Path.Combine(baseDir, unescaped);
-      if (File.Exists(full)) return File.ReadAllBytes(full);
-
       if (required) {
         throw new FileNotFoundException(
           $"Missing external glTF buffer '{unescaped}' referenced by '{ownerFileName ?? "glTF"}'. Keep the .bin file (and textures folder) next to the .gltf file, or use a self-contained .glb file.",

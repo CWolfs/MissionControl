@@ -124,15 +124,16 @@ namespace BTAssetReader.Unity {
       int fractureCount,
       int fractureSeed,
       Material[] outerMaterials,
-      Material interiorMaterial) {
+      Material interiorMaterial,
+      float excludeBelowStumpFraction = 0f) {
       if (rawSource == null) return null;
-      string key = $"{cacheKey}|{fractureCount}|{fractureSeed}";
+      string key = $"{cacheKey}|{fractureCount}|{fractureSeed}|{excludeBelowStumpFraction:F2}";
 
       if (_proceduralSplits.TryGetValue(key, out List<SplitPieceAsset> cached) && cached != null && cached.Count > 0 && cached[0].Mesh != null) {
         return cached;
       }
 
-      List<FracturePieceData> rawPieces = PlaneSliceFracturer.Fracture(rawSource, fractureCount, fractureSeed);
+      List<FracturePieceData> rawPieces = PlaneSliceFracturer.Fracture(rawSource, fractureCount, fractureSeed, excludeBelowStumpFraction);
       if (rawPieces == null || rawPieces.Count == 0) return null;
 
       var result = new List<SplitPieceAsset>(rawPieces.Count);

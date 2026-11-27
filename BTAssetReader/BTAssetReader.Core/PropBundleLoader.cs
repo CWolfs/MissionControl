@@ -323,6 +323,88 @@ namespace BTAssetReader.Core {
       return null;
     }
 
+    /// <summary>
+    /// Resolves and decodes MissionControl's real Rubble shell meshes (smallCivilianBldgG_shell + smallMilitaryBarracksA_shell)
+    /// from common-assets-bundle (in Mods/MissionControl/bundles or sibling workspace) with BattleTech_Data fallback.
+    /// </summary>
+    public static (RawMeshData DebrisMesh, RawMeshData WallsMesh) LoadMissionControlRubbleMeshes(
+      string btDataPath,
+      string modPropsDir,
+      GameAssetIndex btIndex) {
+      RawMeshData debris = null;
+      RawMeshData walls = null;
+
+      string bundlePath = FindCommonAssetsBundle(btDataPath, modPropsDir);
+      if (!string.IsNullOrEmpty(bundlePath)) {
+        try {
+          using (var bundle = UnityBundleReader.Open(bundlePath)) {
+            UnityBundleReader.DirectoryEntry? primaryOpt = bundle.FindPrimarySerializedFile();
+            if (primaryOpt.HasValue) {
+              using (Stream s = bundle.OpenEntryStream(primaryOpt.Value)) {
+                SerializedFileHeader hdr = SerializedFileReader.ReadHeader(s, primaryOpt.Value.Path, 0);
+                if (hdr != null) {
+                  foreach (var obj in hdr.ObjectList) {
+                    if (obj.ClassId != UnityClassId.Mesh) continue;
+                    byte[] bytes = SerializedFileReader.ReadObjectBytes(s, hdr, obj);
+                    RawMeshData m = MeshDecoder.Decode(
+                      bytes,
+                      hdr.BigEndian,
+                      new AssetRef(0, obj.PathId),
+                      Path.GetDirectoryName(bundlePath),
+                      (sp, off, sz) => bundle.ReadStreamResource(sp, off, sz));
+                    if (m == null || m.Vertices == null || m.Vertices.Length == 0) continue;
+                    EnsureMeshDerived(m);
+                    string n = m.Name ?? "";
+                    if (n.Equals("smallCivilianBldgG_shell", StringComparison.OrdinalIgnoreCase)) debris = m;
+                    else if (n.Equals("smallMilitaryBarracksA_shell", StringComparison.OrdinalIgnoreCase)) walls = m;
+                  }
+                }
+              }
+            }
+          }
+        } catch { }
+      }
+
+      if (btIndex != null) {
+        if (debris == null) {
+          AssetRef r = btIndex.FindMesh("smallCivilianBldgG_shell");
+          if (!r.IsNull) { debris = btIndex.DecodeMesh(r); EnsureMeshDerived(debris); }
+        }
+        if (walls == null) {
+          AssetRef r = btIndex.FindMesh("smallMilitaryBarracksA_shell");
+          if (!r.IsNull) { walls = btIndex.DecodeMesh(r); EnsureMeshDerived(walls); }
+        }
+      }
+
+      return (debris, walls);
+    }
+
+    private static string FindCommonAssetsBundle(string btDataPath, string modPropsDir) {
+      var candidates = new List<string>();
+      if (!string.IsNullOrWhiteSpace(btDataPath)) {
+        try {
+          string gameRoot = Path.GetDirectoryName(Path.GetFullPath(btDataPath).TrimEnd('\\', '/'));
+          if (!string.IsNullOrEmpty(gameRoot)) {
+            candidates.Add(Path.Combine(gameRoot, "Mods", "MissionControl", "bundles", "common-assets-bundle"));
+          }
+        } catch { }
+      }
+      if (!string.IsNullOrWhiteSpace(modPropsDir)) {
+        try {
+          var dir = new DirectoryInfo(Path.GetFullPath(modPropsDir).TrimEnd('\\', '/'));
+          for (int i = 0; i < 4 && dir != null; i++) {
+            candidates.Add(Path.Combine(dir.FullName, "MissionControl", "bundles", "common-assets-bundle"));
+            candidates.Add(Path.Combine(dir.FullName, "bundles", "common-assets-bundle"));
+            dir = dir.Parent;
+          }
+        } catch { }
+      }
+      foreach (string c in candidates) {
+        if (IsUnityFsFile(c)) return c;
+      }
+      return null;
+    }
+
     private static bool IsAuxMeshName(string name) {
       if (string.IsNullOrEmpty(name)) return false;
       string low = name.ToLowerInvariant();
