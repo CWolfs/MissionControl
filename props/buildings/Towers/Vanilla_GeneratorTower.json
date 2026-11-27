@@ -1,0 +1,6 @@
+{
+  "Key": "Vanilla_GeneratorTower",
+  "FriendlyName": "Generator Tower",
+  "BuildingDefID": "buildingdef_Industrial_Large",
+  "MainModel": "Vanilla_GeneratorTower"
+}

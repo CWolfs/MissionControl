@@ -23,3 +23,7 @@ cp -r 'mod.json' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/
 cp -r 'settings.json' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
 cp -r 'src/bin/Debug/net471/MissionControl.dll' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
 cp -r 'src/bin/Debug/net471/MissionControl.pdb' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
+cp -r 'src/bin/Debug/net471/BTAssetReader.Core.dll' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
+cp -r 'src/bin/Debug/net471/BTAssetReader.Core.pdb' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
+cp -r 'src/bin/Debug/net471/BTAssetReader.Unity.dll' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'
+cp -r 'src/bin/Debug/net471/BTAssetReader.Unity.pdb' 'D:/Program Files (x86)/Steam/steamapps/common/BATTLETECH/Mods/MissionControl'

@@ -1,6 +1,11 @@
 {
   "Key": "GearHalfCylinderWithBaseB",
-  "Mesh": "gearHalfCylinderWithBaseB",
+  "AssetSource": "GameData",
+  "Mesh": "turbine6",
+  "SourceAssetFile": "sharedassets13.assets",
+  "MeshPathIds": {
+    "Flimsy": 262
+  },
   "Materials": [
     {
       "Name": "envMatStct_darkMetal_generic"
@@ -9,11 +14,15 @@
       "Name": "envMatStct_concrete_generic"
     }
   ],
-  "IsMeshInBundle": true,
+  "IsMeshInBundle": false,
   "DestructibleSize": "small",
   "DestructibleMaterial": "metal",
   "FlimsyDestructibleType": "smallMetal",
   "MeshOffsets": {
-    "LOD0": { "x": 0, "y": 1.9, "z": 0 }
+    "LOD0": {
+      "x": 0,
+      "y": 1.9,
+      "z": 0
+    }
   }
 }

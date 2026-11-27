@@ -1,0 +1,19 @@
+{
+  "Key": "Vanilla_CityBase13",
+  "AssetSource": "GameData",
+  "Mesh": "cityBase13",
+  "Materials": [
+    {
+      "Name": "envMatStct_roofB_aurigan"
+    },
+    {
+      "Name": "envMatStct_cementA_aurigan"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

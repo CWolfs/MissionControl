@@ -5,16 +5,33 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
+using BTAssetReader.Unity;
+
 namespace MissionControl.Data {
   public class PropModelDef : IBundleItem {
     [JsonProperty("Key")]
     public string Key { get; set; }
+
+    [JsonProperty("AssetSource")]
+    public string AssetSource { get; set; } = "Auto";
 
     [JsonProperty("BundleOverride")]
     public string BundleOverride { get; set; }
 
     [JsonProperty("Mesh")]
     public string MeshName { get; set; }
+
+    [JsonProperty("SourceAssetFile")]
+    public string SourceAssetFile { get; set; }
+
+    [JsonProperty("MeshPathIds")]
+    public Dictionary<string, long> MeshPathIds { get; set; } = new Dictionary<string, long>(StringComparer.OrdinalIgnoreCase);
+
+    [JsonProperty("SplitPrefabName")]
+    public string SplitPrefabName { get; set; }
+
+    [JsonProperty("PivotMode")]
+    public string PivotMode { get; set; }
 
     [JsonProperty("ChangePivotToCenterIfFlimsyMeshFormat")]
     public bool ChangePivotToCenterIfFlimsyMeshFormat { get; set; } = true;
@@ -53,6 +70,29 @@ namespace MissionControl.Data {
     public VectorData Scale { get; set; } = new VectorData(VectorData.VectorType.Local, Vector3.one);
 
     public string BundlePath { get; set; }
+
+    [JsonIgnore]
+    public bool UsesBundleForMesh {
+      get {
+        if (string.Equals(AssetSource, "GameData", StringComparison.OrdinalIgnoreCase)) return false;
+        if (string.Equals(AssetSource, "Bundle", StringComparison.OrdinalIgnoreCase)) return true;
+        return IsMeshInBundle;
+      }
+    }
+
+    public long GetMeshPathId(string slot) {
+      if (MeshPathIds == null || string.IsNullOrEmpty(slot)) return 0;
+      return MeshPathIds.TryGetValue(slot, out long pid) ? pid : 0;
+    }
+
+    public MeshPivotMode GetEffectivePivotMode(bool isFlimsyBase) {
+      if (!string.IsNullOrEmpty(PivotMode)) {
+        if (string.Equals(PivotMode, "Center", StringComparison.OrdinalIgnoreCase)) return MeshPivotMode.Center;
+        if (string.Equals(PivotMode, "Bottom", StringComparison.OrdinalIgnoreCase)) return MeshPivotMode.Bottom;
+        return MeshPivotMode.Original;
+      }
+      return isFlimsyBase && ChangePivotToCenterIfFlimsyMeshFormat ? MeshPivotMode.Center : MeshPivotMode.Original;
+    }
 
     [JsonIgnore]
     public bool IsCompleteBundle {

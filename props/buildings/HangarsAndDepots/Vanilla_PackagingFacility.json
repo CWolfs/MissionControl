@@ -1,0 +1,6 @@
+{
+  "Key": "Vanilla_PackagingFacility",
+  "FriendlyName": "Packaging Facility",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "Vanilla_PackagingFacility"
+}

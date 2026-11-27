@@ -1,12 +1,17 @@
 {
   "Key": "pipesTwoShortCurved",
-  "Mesh": "pipesTwoShortCurved",
+  "AssetSource": "GameData",
+  "Mesh": "greeble",
+  "SourceAssetFile": "sharedassets13.assets",
+  "MeshPathIds": {
+    "Flimsy": 3627
+  },
   "Materials": [
     {
       "Name": "envMatStct_copper_generic"
     }
   ],
-  "IsMeshInBundle": true,
+  "IsMeshInBundle": false,
   "DestructibleSize": "small",
   "DestructibleMaterial": "metal",
   "FlimsyDestructibleType": "smallMetal"

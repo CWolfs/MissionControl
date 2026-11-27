@@ -1,0 +1,25 @@
+{
+  "Key": "Vanilla_WarehouseF",
+  "AssetSource": "GameData",
+  "Mesh": "warehouseF",
+  "Materials": [
+    {
+      "Name": "envMatStct_plaster_storyMission7"
+    },
+    {
+      "Name": "envMatStct_panels_storyMission7"
+    },
+    {
+      "Name": "envMatStct_concrete_storyMission7"
+    },
+    {
+      "Name": "envMatStct_steel_storyMission7"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": true,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

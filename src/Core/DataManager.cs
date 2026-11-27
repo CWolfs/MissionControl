@@ -91,6 +91,12 @@ namespace MissionControl {
       LoadContractConfigOverrides(ModDirectory);
       LoadRuntimeCastData();
       LoadPropData($"{ModDirectory}/props");
+      try {
+        string indexCachePath = Path.Combine(ModDirectory, "cache", "bt-asset-index.bin");
+        BTAssetReader.Unity.GameAssetProvider.Instance.Initialize(Application.dataPath, indexCachePath, Main.LogDebug, Main.Logger.LogWarning);
+      } catch (Exception ex) {
+        Main.Logger.LogWarning($"[DataManager.Init] Could not pre-initialise GameAssetProvider: {ex.Message}");
+      }
       InjectMessageScopes();
 
       ModTekVersion = GetAssemblyByName("ModTek").GetName().Version.ToString();
@@ -253,6 +259,11 @@ namespace MissionControl {
           string contractTypeBuildsPath = Path.Combine(mcDataPath, "contractTypeBuilds");
           if (Directory.Exists(contractTypeBuildsPath)) {
             LoadCustomContractTypeBuilds(contractTypeBuildsPath);
+          }
+
+          string customPropsPath = Path.Combine(mcDataPath, "props");
+          if (Directory.Exists(customPropsPath)) {
+            LoadPropData(customPropsPath);
           }
 
           LoadContractConfigOverrides(mcDataPath);
@@ -534,8 +545,8 @@ namespace MissionControl {
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef CompleteBundleName: " + propModelDef.CompleteBundleName);
         Main.Logger.Log("[DataManager.LoadPropModelData] Loaded PropModelDef Scale: " + propModelDef.Scale.ToString());
 
-        if ((propModelDef.IsMeshInBundle || propModelDef.HasCustomShell || propModelDef.HasCustomSplits) && propModelDef.BundlePath == null) {
-          Main.Logger.LogError($"[DataManager.LoadPropModelDefs] PropModelDef '{propModelDef.Key}' has settings that require a custom bundle but no custom bundle was provided or successfully loaded");
+        if (propModelDef.UsesBundleForMesh && propModelDef.BundlePath == null) {
+          Main.Logger.LogError($"[DataManager.LoadPropModelDefs] PropModelDef '{propModelDef.Key}' is configured to use a custom bundle but no custom bundle was provided or successfully loaded");
         }
 
         if (!ModelDefs.ContainsKey(propModelDef.Key)) {

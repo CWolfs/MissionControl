@@ -1,0 +1,32 @@
+{
+  "Key": "Vanilla_TurretGenerator",
+  "AssetSource": "GameData",
+  "Mesh": "turretGenerator",
+  "Materials": [
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    },
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    },
+    {
+      "Name": "envMatStct_redPaintedMetal_generic"
+    }
+  ],
+  "GlassMaterial": {
+    "Name": "envMatStct_lights_decal_generic"
+  },
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfComp_turretGenerator_generic_static_destruct_split",
+  "HasCustomShell": true,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "mediumStone"
+}

@@ -1,0 +1,6 @@
+{
+  "Key": "Vanilla_UnloadingStation",
+  "FriendlyName": "Unloading Station",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "Vanilla_UnloadingStation"
+}

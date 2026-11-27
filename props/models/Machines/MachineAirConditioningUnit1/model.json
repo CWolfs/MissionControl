@@ -1,12 +1,17 @@
 {
   "Key": "MachineAirConditioningUnitA",
-  "Mesh": "machineAirConditioningUnit1",
+  "AssetSource": "GameData",
+  "Mesh": "acUnit1",
+  "SourceAssetFile": "sharedassets13.assets",
+  "MeshPathIds": {
+    "Flimsy": 2371
+  },
   "Materials": [
     {
       "Name": "envMatStct_lightMetal_generic"
     }
   ],
-  "IsMeshInBundle": true,
+  "IsMeshInBundle": false,
   "DestructibleSize": "small",
   "DestructibleMaterial": "metal",
   "FlimsyDestructibleType": "smallMetal",

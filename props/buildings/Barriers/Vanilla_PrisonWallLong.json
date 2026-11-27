@@ -1,0 +1,6 @@
+{
+  "Key": "Vanilla_PrisonWallLong",
+  "FriendlyName": "Prison Wall Long",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "Vanilla_PrisonWallLong"
+}

@@ -1,0 +1,16 @@
+{
+  "Key": "Vanilla_Radar",
+  "AssetSource": "GameData",
+  "Mesh": "radar",
+  "Materials": [
+    {
+      "Name": "envMatDeco_swiftWind"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

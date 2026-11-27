@@ -34,8 +34,12 @@ dotnet build src/MissionControl.csproj
 
 **Entry point**: `MissionControl.Main.Init(string modDirectory, string modSettings)` via mod.json
 
-### Source layout (`src/`)
-- `Main.cs` - Entry point, Harmony setup
+### Source layout (`src/`, `BTAssetReader/`, `tools/`)
+- `BTAssetReader/BTAssetReader.Core/` - Zero-dependency Unity 2018.4.2f1 (`SerializedFile` v17) binary reader & disk-cached index for reading vanilla meshes, materials, textures (`.resS`), shaders, and split/shell hierarchies directly from `BattleTech_Data/` (shared with `Designer`)
+- `BTAssetReader/BTAssetReader.Unity/` - Unity runtime reconstruction layer (`GameAssetProvider`, `RuntimeAssetCache`, `UnityMeshBuilder`, `UnityTextureBuilder`, `UnityMaterialBuilder`)
+- `BTAssetReader/BTAssetReader.Tests/` - Offline verification runner validating binary decoding and every `GameData` `model.json` against `BattleTech_Data`
+- `tools/VanillaPropCatalogueGenerator/` - Offline CLI scanning classic maps (`level8`..`level83`) to auto-generate vanilla `props/` JSON definitions (`--include-urban` flag reserved for post-1.6)
+- `src/Main.cs` - Entry point, Harmony setup
 - `Core/MissionControl.cs` - Singleton managing encounter state
 - `Core/DataManager.cs` - Loads contract type builds, configs, props
 - `Core/API.cs` - Public API for external mods
@@ -61,10 +65,16 @@ dotnet build src/MissionControl.csproj
 
 ### Other mods' data (`mcData`)
 With `CustomData.Search` on, `DataManager` scans every mod folder for an `mcData` folder and loads its
-`contractTypeBuilds/`, `reserved-ids.json` and contract config overrides. Those mod folders are kept in
+`contractTypeBuilds/`, `props/`, `reserved-ids.json` and contract config overrides. Those mod folders are kept in
 `DataManager.CustomDataModDirectories`. `DataManager.ResolveModFilePath` resolves a mod-relative path against MissionControl
 first and then those mods - `EmotePortraitLoadPortraitPatch` uses it, so a castDef in another mod can point
 `portraitAssetPath` at `sprites/Portraits/<file>.png` inside that mod.
+
+### Runtime Vanilla Props (`BTAssetReader`) & Post-1.6 TODO
+- Vanilla buildings, structures, destructibles, shells, splits, materials, and textures are read directly from `BattleTech_Data/sharedassets*.assets` and `resources.assets` (plus `.resS`) at runtime via `BTAssetReader.Unity.GameAssetProvider` - no extracted vanilla AssetBundles are required (`AssetSource: "GameData"`).
+- Custom 3rd-party mod art continues to use `AssetSource: "Bundle"` / `IsMeshInBundle: true` with `*-bundle` files (see `props/models/Examples/` and `props/README.md`).
+- `BTAssetReader.Core.dll` and `BTAssetReader.Unity.dll` are copied alongside `MissionControl.dll` by `copy-assets.sh` and `Designer`'s CI workflow.
+- **Post-1.6 TODO (Urban Warfare):** Multi-mesh modular Urban Warfare (`uTech`) skyscrapers and Houdini VAT collapse buildings (`level84`..`level93` / `sharedassets84..93.assets`) plus optional `RequiredContentPack` DLC gating are deferred until after v1.6.
 
 ### Initialization flow
 1. `Main.Init()` - Load settings, mod.json, create Harmony instance

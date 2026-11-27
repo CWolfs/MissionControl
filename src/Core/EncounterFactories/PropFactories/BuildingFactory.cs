@@ -10,6 +10,8 @@ using BattleTech.Rendering;
 using MissionControl.Data;
 using MissionControl.Utils;
 
+using BTAssetReader.Unity;
+
 namespace MissionControl.EncounterFactories {
   public class BuildingFactory : PropFactory {
     private string facilityName = "UNNAMED";
@@ -139,7 +141,7 @@ namespace MissionControl.EncounterFactories {
       destructibleObject.damagedInstance = destructSplit.GetComponent<PhysicsExplodeChildren>();
       destructibleObject.embeddedFlimsyChildren = new List<DestructibleObject>();
       destructibleObject.shellInstance = destructShell;
-      destructibleObject.damageAssetGroup = allDamageAssetGroups[UnityEngine.Random.Range(0, allDamageAssetGroups.Length)];
+      destructibleObject.damageAssetGroup = GetRandomDamageAssetGroup();
       destructibleObject.decalObjects = new List<GameObject>();
       destructibleObject.decalSpawners = new List<BTDecalSpawner>();
       destructibleObject.flimsyChild = flimsyParentGO;
@@ -217,19 +219,7 @@ namespace MissionControl.EncounterFactories {
     private GameObject CreateGlass(GameObject buildingGroupGO) {
       PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
 
-      if (propModelDef.IsMeshInBundle) {
-        LoadAssetBundle(propModelDef);
-
-        buildingGlassMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_glass");
-      } else {
-        foreach (Mesh mesh in allGameMeshes) {
-          if (mesh.name == $"{propModelDef.MeshName}_glass") {
-            buildingGlassMesh = mesh;
-            break;
-          }
-        }
-      }
-
+      buildingGlassMesh = ResolveMesh(propModelDef, $"{propModelDef.MeshName}_glass", "Glass", isFlimsyBase: false);
       if (buildingGlassMesh == null) return null;
 
       Main.Logger.Log("[PropFactory.CreateGlass] Glass Mesh is " + buildingGlassMesh.name);
@@ -375,52 +365,13 @@ namespace MissionControl.EncounterFactories {
 
     private bool AttachFlimsyMesh(GameObject flimsyGO, PropDestructibleFlimsyDef flimsyDef) {
       PropModelDef propModelDef = flimsyDef.GetPropModelDef();
-      Mesh flimsyLOD0Mesh = null;
-
-      if (propModelDef.IsMeshInBundle) {
-        LoadAssetBundle(propModelDef);
-
-        flimsyLOD0Mesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_LOD0");
-
-        if (flimsyLOD0Mesh == null) flimsyLOD0Mesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}");
-
-        if (flimsyLOD0Mesh == null) {
-          Main.Logger.LogError("[BuildingFactory.AttachFlimsyMesh] Bundle LOD Mesh is null. It's possible LOD0, LOD1 and LOD2 might also be null. Check the names of the Meshes in the bundle match the Mesh in the MC PropModelDef");
-        } else {
-          Main.Logger.Log("[BuildingFactory.AttachFlimsyMesh] Bundle LOD Mesh is " + flimsyLOD0Mesh.name);
-
-          if (flimsyLOD0Mesh.name == propModelDef.MeshName) {
-            Main.Logger.Log($"[BuildingFactory.AttachFlimsyMesh] Found a flimsy base for '{propModelDef.Key}'");
-
-            // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
-            Mesh flimsyFormattedMesh = flimsyLOD0Mesh;
-            if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
-              flimsyFormattedMesh = CenterMeshPivot(flimsyLOD0Mesh);
-              flimsyLOD0Mesh = flimsyFormattedMesh;
-            }
-          }
-        }
-      } else {
-        foreach (Mesh mesh in allGameMeshes) {
-          // If a flimsy base (e.g. no COL, LOD0, LOD1, LOD2) then set them all to the flimsy mesh
-          if (mesh.name == propModelDef.MeshName) {
-            Main.Logger.Log($"[BuildingFactory.AttachFlimsyMesh] Found a flimsy base for '{propModelDef.Key}'");
-
-            // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
-            Mesh flimsyFormattedMesh = mesh;
-            if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
-              flimsyFormattedMesh = CenterMeshPivot(mesh);
-            }
-
-            flimsyLOD0Mesh = flimsyFormattedMesh;
-            break;
-          }
-
-          if (mesh.name == $"{propModelDef.MeshName}_LOD0") flimsyLOD0Mesh = mesh;
-        }
+      Mesh flimsyLOD0Mesh = ResolveMesh(propModelDef, $"{propModelDef.MeshName}_LOD0", "LOD0", isFlimsyBase: false);
+      if (flimsyLOD0Mesh == null) {
+        flimsyLOD0Mesh = ResolveMesh(propModelDef, propModelDef.MeshName, "Flimsy", isFlimsyBase: true);
       }
 
       if (flimsyLOD0Mesh == null) {
+        Main.Logger.LogError($"[BuildingFactory.AttachFlimsyMesh] Could not resolve flimsy mesh '{propModelDef.MeshName}' for '{propModelDef.Key}'");
         return false;
       }
 
@@ -437,29 +388,89 @@ namespace MissionControl.EncounterFactories {
       PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
 
       // SPLIT
-      if (propModelDef.HasCustomSplits) {
+      bool builtSplits = false;
+      if (propModelDef.HasCustomSplits && propModelDef.UsesBundleForMesh && !string.IsNullOrEmpty(propModelDef.BundlePath)) {
         LoadAssetBundle(propModelDef);
 
-        // Spawn the prefab split
+        // Spawn the custom bundled prefab split
         GameObject destructSplitPrefab = AssetBundleLoader.GetAsset<GameObject>(propModelDef.BundlePath, $"{propModelDef.MeshName}_{GenericStaticDestructName}_split");
-        destructSplit = GameObject.Instantiate(destructSplitPrefab, Vector3.zero, new Quaternion(), buildingGO.transform);
-        LayerTools.SetLayerRecursively(destructSplit, 8);
+        if (destructSplitPrefab != null) {
+          destructSplit = GameObject.Instantiate(destructSplitPrefab, Vector3.zero, new Quaternion(), buildingGO.transform);
+          LayerTools.SetLayerRecursively(destructSplit, 8);
 
-        foreach (Transform splitPiece in destructSplit.transform) {
-          // Apply Material
-          // FIXME: This is a hack that reuses the materials of the original model and only assigns the first sequential materials from that original mesh into the splits
-          // FIXME: This will result in some split pieces having the wrong material but it's only intended as a placeholder for now until I figure out what to do with this usecase
-          // FIXME: A manual process won't work here as splits can go up to the hundreds so some kind of workflow is required that works for both:
-          //  - user custom bundled
-          //  - original vanilla extracted and bundled
-          Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef, PropBuildingDef.GetPropModelDef().Materials, placeholderMaterial);
-          MeshRenderer splitRenderer = splitPiece.GetComponent<MeshRenderer>();
-          if (splitRenderer != null) {
-            splitRenderer.materials = materials;
+          foreach (Transform splitPiece in destructSplit.transform) {
+            Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef, PropBuildingDef.GetPropModelDef().Materials, placeholderMaterial);
+            MeshRenderer splitRenderer = splitPiece.GetComponent<MeshRenderer>();
+            if (splitRenderer != null) {
+              splitRenderer.materials = materials;
+            }
           }
+          builtSplits = true;
         }
-      } else {
-        // Split
+      } else if ((propModelDef.HasCustomSplits || !string.IsNullOrEmpty(propModelDef.SplitPrefabName))
+                 && !string.Equals(propModelDef.AssetSource, "Bundle", StringComparison.OrdinalIgnoreCase)) {
+        // Reconstruct genuine vanilla multi-chunk splits with exact per-piece materials from BattleTech_Data
+        List<SplitPieceAsset> vanillaPieces = GameAssetProvider.Instance.TryLoadSplitPrefab(
+          propModelDef.SplitPrefabName,
+          propModelDef.MeshName,
+          propModelDef.SourceAssetFile,
+          matName => matLookup != null && matLookup.TryGetValue(matName, out Material m) ? m : null);
+
+        if (vanillaPieces != null && vanillaPieces.Count > 0) {
+          destructSplit = CreateGameObject(buildingGO, $"{buildingGO.name}_{GenericStaticDestructName}_split");
+          destructSplit.layer = 8;
+
+          foreach (SplitPieceAsset piece in vanillaPieces) {
+            GameObject pieceGO = CreateGameObject(destructSplit, piece.Name ?? "splitPiece");
+            pieceGO.layer = 8;
+            pieceGO.transform.localPosition = piece.LocalPosition;
+            pieceGO.transform.localRotation = piece.LocalRotation;
+            pieceGO.transform.localScale = piece.LocalScale;
+
+            MeshFilter pmf = pieceGO.AddComponent<MeshFilter>();
+            pmf.sharedMesh = piece.Mesh;
+
+            MeshRenderer pmr = pieceGO.AddComponent<MeshRenderer>();
+            if (piece.Materials != null && piece.Materials.Length > 0) {
+              Material[] safeMats = new Material[piece.Materials.Length];
+              for (int mi = 0; mi < piece.Materials.Length; mi++) {
+                safeMats[mi] = piece.Materials[mi] ?? placeholderMaterial;
+              }
+              pmr.sharedMaterials = safeMats;
+            } else {
+              pmr.sharedMaterials = BuildMaterialsForRenderer(piece.Mesh, propModelDef, propModelDef.Materials, placeholderMaterial);
+            }
+
+            if (piece.MeshColliderMesh != null) {
+              MeshCollider mc = pieceGO.AddComponent<MeshCollider>();
+              mc.sharedMesh = piece.MeshColliderMesh;
+              mc.convex = piece.MeshColliderConvex;
+            } else {
+              BoxCollider bc = pieceGO.AddComponent<BoxCollider>();
+              if (piece.BoxCollider != null) {
+                bc.center = new Vector3(piece.BoxCollider.Center.X, piece.BoxCollider.Center.Y, piece.BoxCollider.Center.Z);
+                bc.size = new Vector3(piece.BoxCollider.Size.X, piece.BoxCollider.Size.Y, piece.BoxCollider.Size.Z);
+              } else {
+                CalculateBounds(pmf, bc);
+              }
+            }
+
+            Rigidbody rb = pieceGO.AddComponent<Rigidbody>();
+            rb.mass = piece.Mass;
+
+            DestructibleObject pieceDestructible = pieceGO.AddComponent<DestructibleObject>();
+            pieceDestructible.dependentPersistentFX = new List<GameObject>();
+            pieceDestructible.embeddedFlimsyChildren = new List<DestructibleObject>();
+
+            pieceGO.AddComponent<PhysicsExplodeChild>();
+          }
+
+          builtSplits = true;
+        }
+      }
+
+      if (!builtSplits) {
+        // Fallback single-piece fracture
         destructSplit = CreateGameObject(buildingGO, $"{buildingGO.name}_{GenericStaticDestructName}_split");
         destructSplit.layer = 8;
 
@@ -470,10 +481,6 @@ namespace MissionControl.EncounterFactories {
           splitPiece.transform.localRotation = Quaternion.identity;
           splitPiece.layer = 8;
 
-          // Apply material
-          // FIXME: The fracture UV mapping and material assignment need more work. Fewer mats should be assign per split (e.g. in vanilla a building with 7 mats might have splits with 2-3 mats depending on how they were fractured )
-          // FIXME: So we don't need to assign all 7 original ones to each split. Probably need a 3rd party lib or definitely a better script for fracturing.
-          // FIXME: Having issues making good runtime fractures - just use a copy of LOD0 for now
           Material[] materials = BuildMaterialsForRenderer(buildingLOD0Mesh, propModelDef, PropBuildingDef.GetPropModelDef().Materials, placeholderMaterial);
           splitPiece.GetComponent<MeshRenderer>().materials = materials;
         }
@@ -490,11 +497,8 @@ namespace MissionControl.EncounterFactories {
       if (propModelDef.HasCustomShell) {
         Main.Logger.Log("[BuildingFactory.CreateGenericStaticDestruct] CustomShell has been set for " + PropBuildingDef.Key);
 
-        // Load from bundle
-        LoadAssetBundle(propModelDef);
-
-        Mesh shellMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_shell");
-        Mesh shellCOLMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_shell_COL");
+        Mesh shellMesh = ResolveMesh(propModelDef, $"{propModelDef.MeshName}_shell", "Shell", isFlimsyBase: false);
+        Mesh shellCOLMesh = ResolveMesh(propModelDef, $"{propModelDef.MeshName}_shell_COL", "ShellCOL", isFlimsyBase: false);
 
         if (shellMesh == null) {
           Main.Logger.LogError($"[BuildingFactory.CreateGenericStaticDestruct] Shell Mesh is null for {propModelDef.Key}");

@@ -37,6 +37,11 @@
   </PropertyGroup> -->
 
   <ItemGroup>
+    <ProjectReference Include="..\BTAssetReader\BTAssetReader.Core\BTAssetReader.Core.csproj" />
+    <ProjectReference Include="..\BTAssetReader\BTAssetReader.Unity\BTAssetReader.Unity.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>$(DLLPath)\0Harmony.dll</HintPath>
     </Reference>

@@ -1,0 +1,26 @@
+{
+  "Key": "Vanilla_GeneratorGreeble19",
+  "AssetSource": "GameData",
+  "Mesh": "generatorGreeble19",
+  "SourceAssetFile": "sharedassets9.assets",
+  "MeshPathIds": {
+    "Flimsy": 563
+  },
+  "Materials": [
+    {
+      "Name": "envMatStct_decals_generic"
+    },
+    {
+      "Name": "envMatStct_lights_decal_generic"
+    },
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

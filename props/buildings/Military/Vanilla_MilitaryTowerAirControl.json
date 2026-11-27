@@ -1,0 +1,6 @@
+{
+  "Key": "Vanilla_MilitaryTowerAirControl",
+  "FriendlyName": "Military Tower Air Control",
+  "BuildingDefID": "buildingdef_Military_Large",
+  "MainModel": "Vanilla_MilitaryTowerAirControl"
+}

@@ -1,0 +1,26 @@
+{
+  "Key": "Vanilla_CivTowerA",
+  "AssetSource": "GameData",
+  "Mesh": "civTowerA",
+  "Materials": [
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    }
+  ],
+  "GlassMaterial": {
+    "Name": "envMatStct_glassA_decals_generic"
+  },
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfComp_civTowerA_generic_static_destruct_split",
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "mediumStone"
+}

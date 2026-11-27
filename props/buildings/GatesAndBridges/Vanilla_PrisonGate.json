@@ -1,0 +1,6 @@
+{
+  "Key": "Vanilla_PrisonGate",
+  "FriendlyName": "Prison Gate",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "Vanilla_PrisonGate"
+}

@@ -1,0 +1,19 @@
+{
+  "Key": "Vanilla_UnderwaterPipe03",
+  "AssetSource": "GameData",
+  "Mesh": "underwaterPipe03",
+  "Materials": [
+    {
+      "Name": "envMatStct_rubberTube_generic"
+    },
+    {
+      "Name": "envMatStct_copper_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

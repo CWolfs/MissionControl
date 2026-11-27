@@ -1,6 +1,11 @@
 {
   "Key": "FenceCornerA",
-  "Mesh": "fenceCornerA",
+  "AssetSource": "GameData",
+  "Mesh": "fence",
+  "SourceAssetFile": "sharedassets8.assets",
+  "MeshPathIds": {
+    "Flimsy": 220
+  },
   "Materials": [
     {
       "Name": "envMatStct_lightMetal_generic"
@@ -9,7 +14,7 @@
       "Name": "envMatStct_darkMetal_generic"
     }
   ],
-  "IsMeshInBundle": true,
+  "IsMeshInBundle": false,
   "DestructibleSize": "small",
   "DestructibleMaterial": "metal",
   "FlimsyDestructibleType": "smallMetal"

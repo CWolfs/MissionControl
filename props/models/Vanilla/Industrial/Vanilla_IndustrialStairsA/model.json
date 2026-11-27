@@ -1,0 +1,17 @@
+{
+  "Key": "Vanilla_IndustrialStairsA",
+  "AssetSource": "GameData",
+  "Mesh": "industrialStairsA",
+  "Materials": [
+    {
+      "Name": "envMatStct_concrete_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfGrbl_industrialStairsA_generic_static_destruct_split",
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "smallStone"
+}

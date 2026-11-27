@@ -1,0 +1,16 @@
+{
+  "Key": "ExampleCustomBundledCuboid",
+  "AssetSource": "Bundle",
+  "BundleOverride": "prop-model-block-small-cuboid-a-bundle",
+  "Mesh": "blockSmallCuboidA",
+  "Materials": [
+    {
+      "Name": "envMatStct_redPaintedMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": true,
+  "PivotMode": "Bottom",
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

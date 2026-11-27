@@ -1,6 +1,7 @@
 {
   "Key": "MountTurretWallLow",
-  "Mesh": "mountTurretWallLow",
+  "AssetSource": "GameData",
+  "Mesh": "lowTurretWallMount",
   "Materials": [
     {
       "Name": "envMatStct_darkMetal_generic"
@@ -15,7 +16,7 @@
       "Name": "envMatStct_copper_generic"
     }
   ],
-  "IsMeshInBundle": true,
+  "IsMeshInBundle": false,
   "DestructibleSize": "medium",
   "DestructibleMaterial": "metal",
   "FlimsyDestructibleType": "mediumMetal"

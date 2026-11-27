@@ -1,0 +1,25 @@
+{
+  "Key": "Vanilla_ProcessingBldgB",
+  "AssetSource": "GameData",
+  "Mesh": "processingBldgB",
+  "Materials": [
+    {
+      "Name": "envMatStct_steel_storyMission4"
+    },
+    {
+      "Name": "envMatStct_concrete_storyMission4"
+    },
+    {
+      "Name": "envMatStct_paintedMetal_storyMission4"
+    },
+    {
+      "Name": "envMatStct_buildingMetal_storyMission4"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

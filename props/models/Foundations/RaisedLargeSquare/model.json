@@ -1,12 +1,13 @@
 {
   "Key": "FoundationRaisedLargeSquareA",
-  "Mesh": "foundationRaisedLargeSquare",
+  "AssetSource": "GameData",
+  "Mesh": "envMdlFndn_largeSquareAngled_generic_static_obstruct",
   "Materials": [
     {
       "Name": "envMatStct_mediumMetal_generic"
     }
   ],
-  "IsMeshInBundle": true,
+  "IsMeshInBundle": false,
   "DestructibleSize": "small",
   "DestructibleMaterial": "metal",
   "FlimsyDestructibleType": "smallMetal"

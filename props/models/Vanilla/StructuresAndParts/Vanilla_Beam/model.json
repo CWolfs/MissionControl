@@ -1,0 +1,16 @@
+{
+  "Key": "Vanilla_Beam",
+  "AssetSource": "GameData",
+  "Mesh": "beam",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

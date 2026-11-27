@@ -1,0 +1,22 @@
+{
+  "Key": "Vanilla_PipesA",
+  "AssetSource": "GameData",
+  "Mesh": "pipesA",
+  "Materials": [
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    },
+    {
+      "Name": "envMatStct_plainMetal_mission03"
+    },
+    {
+      "Name": "envMatStct_copperPipe_mission03"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

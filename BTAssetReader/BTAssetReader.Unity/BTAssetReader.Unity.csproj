@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net471</TargetFramework>
+    <LangVersion>11</LangVersion>
+    <Version>1.0.0</Version>
+    <RootNamespace>BTAssetReader.Unity</RootNamespace>
+    <AssemblyName>BTAssetReader.Unity</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DLLPathLocal>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..\BT-Mod-Dependencies\libs'))</DLLPathLocal>
+    <DLLPathCI>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\BT-Mod-Dependencies\libs'))</DLLPathCI>
+
+    <DLLPath Condition="Exists('$(DLLPathLocal)')">$(DLLPathLocal)</DLLPath>
+    <DLLPath Condition=" '$(DLLPath)' == '' ">$(DLLPathCI)</DLLPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BTAssetReader.Core\BTAssetReader.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="UnityEngine">
+      <HintPath>$(DLLPath)\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(DLLPath)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(DLLPath)\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>$(DLLPath)\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+</Project>

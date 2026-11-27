@@ -1,0 +1,31 @@
+{
+  "Key": "Vanilla_WarehouseE",
+  "AssetSource": "GameData",
+  "Mesh": "warehouseE",
+  "Materials": [
+    {
+      "Name": "envMatStct_lights_decal_generic"
+    },
+    {
+      "Name": "envMatStct_plaster_storyMission7"
+    },
+    {
+      "Name": "envMatStct_panels_storyMission7"
+    },
+    {
+      "Name": "envMatStct_aluminum_storyMission7"
+    },
+    {
+      "Name": "envMatStct_concrete_storyMission7"
+    }
+  ],
+  "GlassMaterial": {
+    "Name": "envMatStct_glassA_decals_generic"
+  },
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": true,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

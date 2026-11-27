@@ -1,6 +1,7 @@
 {
   "Key": "StructureDiasHighA",
-  "Mesh": "structureDiasHighA",
+  "AssetSource": "GameData",
+  "Mesh": "highDiasA",
   "Materials": [
     {
       "Name": "envMatStct_concrete_generic"
@@ -18,7 +19,7 @@
       "Name": "envMatStct_lightMetal_generic"
     }
   ],
-  "IsMeshInBundle": true,
+  "IsMeshInBundle": false,
   "HasCustomSplits": false,
   "HasCustomShell": false,
   "DestructibleSize": "medium",

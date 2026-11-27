@@ -1,0 +1,17 @@
+{
+  "Key": "Vanilla_ScrapBaseMaintShed",
+  "AssetSource": "GameData",
+  "Mesh": "scrapBaseMaintShed",
+  "Materials": [
+    {
+      "Name": "envMatStct_scrapBaseBldgs_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfGrbl_scrapBaseMaintShed_generic_static_destruct_split",
+  "HasCustomShell": false,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

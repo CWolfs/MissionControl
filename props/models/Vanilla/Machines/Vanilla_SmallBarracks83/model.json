@@ -1,0 +1,16 @@
+{
+  "Key": "Vanilla_SmallBarracks83",
+  "AssetSource": "GameData",
+  "Mesh": "smallBarracks83",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

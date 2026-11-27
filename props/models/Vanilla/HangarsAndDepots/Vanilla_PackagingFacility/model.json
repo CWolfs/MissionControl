@@ -1,0 +1,28 @@
+{
+  "Key": "Vanilla_PackagingFacility",
+  "AssetSource": "GameData",
+  "Mesh": "packagingFacility",
+  "Materials": [
+    {
+      "Name": "envMatStct_lightMetal_mission02"
+    },
+    {
+      "Name": "envMatStct_brick_mission02"
+    },
+    {
+      "Name": "envMatStct_darkMetal_mission02"
+    },
+    {
+      "Name": "envMatStct_roof_mission02"
+    },
+    {
+      "Name": "envMatStct_concrete_mission02"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": true,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

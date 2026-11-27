@@ -1,0 +1,22 @@
+{
+  "Key": "Vanilla_Kwansit",
+  "AssetSource": "GameData",
+  "Mesh": "kwansit",
+  "Materials": [
+    {
+      "Name": "envMatStct_steel_storyMission4"
+    },
+    {
+      "Name": "envMatStct_paintedMetal_storyMission4"
+    },
+    {
+      "Name": "envMatStct_buildingMetal_storyMission4"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

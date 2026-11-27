@@ -1,0 +1,25 @@
+{
+  "Key": "Vanilla_VillageA",
+  "AssetSource": "GameData",
+  "Mesh": "villageA",
+  "Materials": [
+    {
+      "Name": "envMatStct_concrete_mission03"
+    },
+    {
+      "Name": "envMatStct_greeble1_mission03"
+    },
+    {
+      "Name": "envMatStct_trimMetal_mission03"
+    },
+    {
+      "Name": "envMatStct_plainMetal_mission03"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": true,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

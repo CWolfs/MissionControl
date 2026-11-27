@@ -1,0 +1,20 @@
+{
+  "Key": "Vanilla_Barrier100m",
+  "AssetSource": "GameData",
+  "Mesh": "barrier100m",
+  "Materials": [
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    },
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfComp_barrier100m_generic_static_destruct_split",
+  "HasCustomShell": false,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

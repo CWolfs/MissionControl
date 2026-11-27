@@ -1,0 +1,20 @@
+{
+  "Key": "Vanilla_CivilianFactoryCSide",
+  "AssetSource": "GameData",
+  "Mesh": "civilianFactoryCSide",
+  "Materials": [
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_asphalt_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfDeco_civilianFactoryCSide_generic_static_destruct_split",
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "smallStone"
+}

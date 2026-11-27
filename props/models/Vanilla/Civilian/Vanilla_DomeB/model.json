@@ -1,0 +1,28 @@
+{
+  "Key": "Vanilla_DomeB",
+  "AssetSource": "GameData",
+  "Mesh": "domeB",
+  "Materials": [
+    {
+      "Name": "envMatStct_plaster_storyMission7"
+    },
+    {
+      "Name": "envMatStct_concrete_storyMission7"
+    },
+    {
+      "Name": "envMatStct_steel_storyMission7"
+    },
+    {
+      "Name": "envMatStct_aluminum_storyMission7"
+    },
+    {
+      "Name": "envMatStct_glassA_decals_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

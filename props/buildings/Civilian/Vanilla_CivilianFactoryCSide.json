@@ -1,0 +1,6 @@
+{
+  "Key": "Vanilla_CivilianFactoryCSide",
+  "FriendlyName": "Civilian Factory Cside",
+  "BuildingDefID": "buildingdef_Industrial_Small",
+  "MainModel": "Vanilla_CivilianFactoryCSide"
+}

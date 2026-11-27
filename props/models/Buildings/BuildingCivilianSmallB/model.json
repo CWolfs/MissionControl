@@ -1,6 +1,7 @@
 {
   "Key": "BuildingCivilianSmallB",
-  "Mesh": "buildingCivilianSmallB",
+  "AssetSource": "GameData",
+  "Mesh": "smallCivilianBldgB",
   "Materials": [
     {
       "Name": "envMatStct_darkMetal_generic"
@@ -15,8 +16,9 @@
       "Name": "envMatStct_lightMetal_generic"
     }
   ],
-  "IsMeshInBundle": true,
-  "HasCustomSplits": false,
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfDeco_smallCivilianBldgB_generic_static_destruct_split",
   "HasCustomShell": false,
   "DestructibleSize": "small",
   "DestructibleMaterial": "metal",

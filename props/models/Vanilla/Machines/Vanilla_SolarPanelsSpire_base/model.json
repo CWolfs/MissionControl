@@ -1,0 +1,16 @@
+{
+  "Key": "Vanilla_SolarPanelsSpire_base",
+  "AssetSource": "GameData",
+  "Mesh": "solarPanelsSpire_base",
+  "Materials": [
+    {
+      "Name": "envMatStct_concrete_worn"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "smallStone"
+}

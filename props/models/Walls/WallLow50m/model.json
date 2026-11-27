@@ -1,6 +1,7 @@
 {
   "Key": "WallLow50m",
-  "Mesh": "wallLow50m",
+  "AssetSource": "GameData",
+  "Mesh": "lowWall50m",
   "Materials": [
     {
       "Name": "envMatStct_asphalt_generic"
@@ -9,7 +10,7 @@
       "Name": "envMatStct_asphalt_generic"
     }
   ],
-  "IsMeshInBundle": true,
+  "IsMeshInBundle": false,
   "DestructibleSize": "medium",
   "DestructibleMaterial": "stone",
   "FlimsyDestructibleType": "mediumStone"

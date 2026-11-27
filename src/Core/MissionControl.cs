@@ -758,6 +758,7 @@ namespace MissionControl {
       EncounterStats.Reset(true);
       SaveSupport.CombatStatePersistence.Clear(UnityGameInstance.BattleTechGame.Simulation);
       AssetBundleLoader.UnloadPropBundles();
+      BTAssetReader.Unity.GameAssetProvider.Instance.UnloadAll();
       CustomBuildingGuids.Clear();
       CustomDropshipsGuids.Clear();
       EncounterObjectDictionary.Clear();

@@ -1,0 +1,16 @@
+{
+  "Key": "Vanilla_MedRectangleAsphaltFoundation_generic_static_obs_001",
+  "AssetSource": "GameData",
+  "Mesh": "envMdlFndn_medRectangleAsphaltFoundation_generic_static_obs_001",
+  "Materials": [
+    {
+      "Name": "envMatStct_asphalt_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

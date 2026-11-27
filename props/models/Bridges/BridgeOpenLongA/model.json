@@ -1,6 +1,7 @@
 {
   "Key": "BridgeOpenLongA",
-  "Mesh": "bridgeOpenLongA",
+  "AssetSource": "GameData",
+  "Mesh": "bridge",
   "Materials": [
     {
       "Name": "envMatStct_darkMetal_generic"
@@ -12,7 +13,7 @@
       "Name": "envMatStct_asphalt_generic"
     }
   ],
-  "IsMeshInBundle": true,
+  "IsMeshInBundle": false,
   "DestructibleSize": "large",
   "DestructibleMaterial": "metal",
   "FlimsyDestructibleType": "largeMetal"

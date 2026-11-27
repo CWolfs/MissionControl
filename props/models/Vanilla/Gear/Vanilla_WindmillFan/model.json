@@ -1,0 +1,22 @@
+{
+  "Key": "Vanilla_WindmillFan",
+  "AssetSource": "GameData",
+  "Mesh": "windmillFan",
+  "Materials": [
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lights_decal_generic"
+    },
+    {
+      "Name": "lambert1"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
+}

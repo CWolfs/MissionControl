@@ -1,0 +1,25 @@
+{
+  "Key": "Vanilla_SmallBldgL",
+  "AssetSource": "GameData",
+  "Mesh": "smallBldgL",
+  "Materials": [
+    {
+      "Name": "envMatStct_lights_decal_generic"
+    },
+    {
+      "Name": "envMatStct_plaster_storyMission7"
+    },
+    {
+      "Name": "envMatStct_steel_storyMission7"
+    },
+    {
+      "Name": "envMatStct_panels_storyMission7"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
+}

@@ -1,0 +1,19 @@
+{
+  "Key": "Vanilla_PowerPoleD",
+  "AssetSource": "GameData",
+  "Mesh": "powerPoleD",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lights_decal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
+}

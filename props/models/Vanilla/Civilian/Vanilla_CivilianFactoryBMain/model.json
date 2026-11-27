@@ -1,0 +1,26 @@
+{
+  "Key": "Vanilla_CivilianFactoryBMain",
+  "AssetSource": "GameData",
+  "Mesh": "civilianFactoryBMain",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    }
+  ],
+  "GlassMaterial": {
+    "Name": "envMatStct_glassA_decals_generic"
+  },
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfDeco_civilianFactoryBMain_generic_static_destruct_split",
+  "HasCustomShell": true,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "mediumStone"
+}

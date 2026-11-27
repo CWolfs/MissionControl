@@ -11,6 +11,8 @@ using MissionControl.Data;
 
 using Newtonsoft.Json.Linq;
 
+using BTAssetReader.Unity;
+
 namespace MissionControl.EncounterFactories {
   public abstract class PropFactory {
     private static GameObject mcPropGroupParent = null;
@@ -164,108 +166,118 @@ namespace MissionControl.EncounterFactories {
       }
     }
 
+    protected DamageAssetGroup GetRandomDamageAssetGroup() {
+      if (allDamageAssetGroups == null || allDamageAssetGroups.Length == 0) {
+        Main.Logger.LogWarning("[PropFactory.GetRandomDamageAssetGroup] No DamageAssetGroup objects found in loaded scene.");
+        return null;
+      }
+      return allDamageAssetGroups[UnityEngine.Random.Range(0, allDamageAssetGroups.Length)];
+    }
+
     protected Mesh CenterMeshPivot(Mesh oldMesh) {
-      if (oldMesh == null) return null;
+      return ApplyMeshPivotMode(oldMesh, MeshPivotMode.Center);
+    }
+
+    protected Mesh ApplyMeshPivotMode(Mesh oldMesh, MeshPivotMode pivotMode) {
+      if (oldMesh == null || pivotMode == MeshPivotMode.Original) return oldMesh;
       if (!oldMesh.isReadable) {
-        Main.Logger.LogWarning($"[PropFactory.CenterMeshPivot] Mesh '{oldMesh.name}' is not readable; skipping pivot centering");
+        Main.Logger.LogWarning($"[PropFactory.ApplyMeshPivotMode] Mesh '{oldMesh.name}' is not readable; skipping pivot adjustment ({pivotMode})");
         return oldMesh;
       }
 
-      Main.Logger.Log($"[BuildingFactory.AttachFlimsyMesh] Centering pivot on mesh");
+      Main.Logger.Log($"[PropFactory.ApplyMeshPivotMode] Adjusting pivot ({pivotMode}) on mesh '{oldMesh.name}'");
 
       // Copy the mesh to not alter the original one
       Mesh mesh = MonoBehaviour.Instantiate(oldMesh);
+      Bounds bounds = mesh.bounds;
+      Vector3 shift = pivotMode == MeshPivotMode.Bottom
+        ? new Vector3(0f, bounds.min.y, 0f)
+        : bounds.center;
 
-      // Calculate the mesh's center point
-      Vector3 center = mesh.bounds.center;
-
-      // Shift the mesh vertices to center the mesh
       Vector3[] vertices = mesh.vertices;
       for (int i = 0; i < vertices.Length; i++) {
-        vertices[i] -= center;
+        vertices[i] -= shift;
       }
 
       mesh.vertices = vertices;
       mesh.RecalculateBounds();
-
       return mesh;
+    }
+
+    protected Mesh FindSceneMesh(string meshName) {
+      if (allGameMeshes == null || string.IsNullOrEmpty(meshName)) return null;
+      for (int i = 0; i < allGameMeshes.Length; i++) {
+        Mesh m = allGameMeshes[i];
+        if (m != null && m.name == meshName) return m;
+      }
+      return null;
+    }
+
+    protected Mesh ResolveMesh(PropModelDef propModelDef, string meshName, string slot, bool isFlimsyBase, bool makeReadable = false) {
+      if (propModelDef == null) return null;
+      MeshPivotMode pivotMode = propModelDef.GetEffectivePivotMode(isFlimsyBase);
+      long pathId = propModelDef.GetMeshPathId(slot);
+
+      // 1. Custom mod AssetBundle (when configured)
+      if (propModelDef.UsesBundleForMesh && !string.IsNullOrEmpty(propModelDef.BundlePath)) {
+        LoadAssetBundle(propModelDef);
+        Mesh bundleMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, meshName);
+        if (bundleMesh != null) {
+          bundleMesh.name = bundleMesh.name.Replace("(Clone)", "");
+          return pivotMode != MeshPivotMode.Original ? ApplyMeshPivotMode(bundleMesh, pivotMode) : bundleMesh;
+        }
+      }
+
+      // 2. Active scene memory (zero-I/O fast path when no specific PathId override is set)
+      if (pathId == 0) {
+        Mesh sceneMesh = FindSceneMesh(meshName);
+        if (sceneMesh != null) {
+          return pivotMode != MeshPivotMode.Original ? ApplyMeshPivotMode(sceneMesh, pivotMode) : sceneMesh;
+        }
+      }
+
+      // 3. Runtime GameData reader (BattleTech_Data/sharedassets*.assets)
+      if (!string.Equals(propModelDef.AssetSource, "Bundle", StringComparison.OrdinalIgnoreCase)) {
+        Mesh gameDataMesh = GameAssetProvider.Instance.TryLoadMesh(
+          meshName,
+          makeReadable: makeReadable,
+          pivotMode: pivotMode,
+          sourceAssetFile: propModelDef.SourceAssetFile,
+          pathId: pathId);
+        if (gameDataMesh != null) {
+          return gameDataMesh;
+        }
+      }
+
+      return null;
     }
 
     protected void CreateColAndLODs(GameObject buildingGO, PropModelDef propModelDef) {
       bool isFlimsyBase = false;
 
-      if (propModelDef.IsMeshInBundle) {
-        LoadAssetBundle(propModelDef);
+      buildingCOLMesh = ResolveMesh(propModelDef, $"{propModelDef.MeshName}_COL", "COL", isFlimsyBase: false);
+      buildingLOD0Mesh = ResolveMesh(propModelDef, $"{propModelDef.MeshName}_LOD0", "LOD0", isFlimsyBase: false);
+      buildingLOD1Mesh = ResolveMesh(propModelDef, $"{propModelDef.MeshName}_LOD1", "LOD1", isFlimsyBase: false);
+      buildingLOD2Mesh = ResolveMesh(propModelDef, $"{propModelDef.MeshName}_LOD2", "LOD2", isFlimsyBase: false);
 
-        buildingCOLMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_COL");
-        buildingLOD0Mesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_LOD0");
-        buildingLOD1Mesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_LOD1");
-        buildingLOD2Mesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_LOD2");
-
-        if (buildingCOLMesh == null && buildingLOD0Mesh == null) {
-          Mesh bundledFlimsyStyledMesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}");
-
-          if (bundledFlimsyStyledMesh != null) {
-            Main.Logger.Log($"[PropFactory.CreateColAndLODs] Found a flimsy base in bundle for '{propModelDef.Key}' so using that for COL, LOD0, LOD1, LOD2");
-            bundledFlimsyStyledMesh.name = bundledFlimsyStyledMesh.name.Replace("(Clone)", "");
-
-            // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
-            if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
-              bundledFlimsyStyledMesh = CenterMeshPivot(bundledFlimsyStyledMesh);
-            }
-
-            buildingCOLMesh = bundledFlimsyStyledMesh;
-            buildingLOD0Mesh = bundledFlimsyStyledMesh;
-            buildingLOD1Mesh = bundledFlimsyStyledMesh;
-            buildingLOD2Mesh = bundledFlimsyStyledMesh;
-
-            isFlimsyBase = true;
-          } else {
-            Main.Logger.LogError("[PropFactory.CreateColAndLODs] IsMeshInBundle was true but couldn't find the mesh in either COL/LOD0/LOD1/LOD2 or flimsey (pure name) format");
-          }
+      if (buildingCOLMesh == null && buildingLOD0Mesh == null) {
+        Mesh flimsyStyledMesh = ResolveMesh(propModelDef, propModelDef.MeshName, "Flimsy", isFlimsyBase: true);
+        if (flimsyStyledMesh != null) {
+          Main.Logger.Log($"[PropFactory.CreateColAndLODs] Found a flimsy base for '{propModelDef.Key}' so using that for COL, LOD0, LOD1, LOD2");
+          buildingCOLMesh = flimsyStyledMesh;
+          buildingLOD0Mesh = flimsyStyledMesh;
+          buildingLOD1Mesh = flimsyStyledMesh;
+          buildingLOD2Mesh = flimsyStyledMesh;
+          isFlimsyBase = true;
         }
-
-        if (buildingCOLMesh == null) {
-          Main.Logger.LogError("[PropFactory.CreateColAndLODs] Bundle COL Mesh is null. It's possible LOD0, LOD1 and LOD2 might also be null. Check the names of the Meshes in the bundle match the Mesh in the MC PropModelDef");
-        } else {
-          Main.Logger.Log("[PropFactory.CreateColAndLODs] Bundle COL Mesh is " + buildingCOLMesh.name);
-        }
-      } else {
-        foreach (Mesh mesh in allGameMeshes) {
-          if (mesh == null) continue;
-
-          // If a flimsy base (e.g. no COL, LOD0, LOD1, LOD2) then set them all to the flimsy mesh
-          if (mesh.name == propModelDef.MeshName) {
-            Main.Logger.Log($"[PropFactory.CreateColAndLODs] Found a flimsy base for '{propModelDef.Key}' so using that for COL, LOD0, LOD1, LOD2");
-
-            // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
-            Mesh flimsyFormattedMesh = mesh;
-            if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
-              flimsyFormattedMesh = CenterMeshPivot(mesh);
-            }
-
-            buildingCOLMesh = flimsyFormattedMesh;
-            buildingLOD0Mesh = flimsyFormattedMesh;
-            buildingLOD1Mesh = flimsyFormattedMesh;
-            buildingLOD2Mesh = flimsyFormattedMesh;
-
-            isFlimsyBase = true;
-
-            break;
-          }
-
-          if (mesh.name == $"{propModelDef.MeshName}_COL") buildingCOLMesh = mesh;
-          if (mesh.name == $"{propModelDef.MeshName}_LOD0") buildingLOD0Mesh = mesh;
-          if (mesh.name == $"{propModelDef.MeshName}_LOD1") buildingLOD1Mesh = mesh;
-          if (mesh.name == $"{propModelDef.MeshName}_LOD2") buildingLOD2Mesh = mesh;
-
-          if (buildingCOLMesh != null && buildingLOD0Mesh != null && buildingLOD1Mesh != null && buildingLOD2Mesh != null) break;
-        }
+      } else if (buildingCOLMesh == null && buildingLOD0Mesh != null) {
+        Main.Logger.LogWarning($"[PropFactory.CreateColAndLODs] No dedicated _COL mesh for '{propModelDef.Key}'; using LOD0 mesh as collider fallback");
+        buildingCOLMesh = buildingLOD0Mesh;
       }
 
       if (buildingCOLMesh == null || buildingLOD0Mesh == null) {
-        Main.Logger.LogError("[PropFactory.CreateColAndLODs] COL or LOD0 Mesh is null for '" + buildingGO.name + "'. If attempting to use mesh inbuilt into the map ensure it's actually available for this map.");
-        throw new Exception("COL or LOD0 Mesh is null for '" + buildingGO.name + "'. If attempting to use mesh inbuilt into the map ensure it's actually available for this map.");
+        Main.Logger.LogError("[PropFactory.CreateColAndLODs] COL or LOD0 Mesh is null for '" + buildingGO.name + "' (Mesh: '" + propModelDef.MeshName + "').");
+        throw new Exception("COL or LOD0 Mesh is null for '" + buildingGO.name + "' (Mesh: '" + propModelDef.MeshName + "').");
       }
 
       GameObject buildingCOLGO = CreateGameObject(buildingGO, $"{buildingGO.name}_COL");
@@ -353,8 +365,9 @@ namespace MissionControl.EncounterFactories {
           string textureName = propertyValue.ToString();
           Texture texture = bundleItem.BundlePath != null ? AssetBundleLoader.GetAsset<Texture>(bundleItem.BundlePath, textureName) : null;
 
-          // Otherwise look for texture in game
+          // Otherwise look for texture in game memory, then BattleTech_Data
           if (texture == null) texture = UnityGameInstance.Instance.Game.DataManager.TextureManager.GetLoadedTexture(textureName);
+          if (texture == null) texture = GameAssetProvider.Instance.TryLoadTexture(textureName);
 
           material.SetTexture(propertyName, texture);
         } else if (propertyType == "textureoffset") {
@@ -436,8 +449,8 @@ namespace MissionControl.EncounterFactories {
             // First look for Shader in bundle
             Shader shader = bundleItem.BundlePath != null ? AssetBundleLoader.GetAsset<Shader>(bundleItem.BundlePath, propMaterialDef.Shader) : null;
 
-            // Otherwise look for Shader in game
-            if (shader == null) shader = Shader.Find(propMaterialDef.Shader);
+            // Otherwise look for Shader in game (and fallback shaders AssetBundle)
+            if (shader == null) shader = UnityMaterialBuilder.ResolveShader(propMaterialDef.Shader, Application.dataPath, Main.Logger.LogWarning);
             if (shader == null) {
               Main.Logger.LogError("[PropFactory.BuildMaterialsForRenderer] Couldn't find Shader in bundle or game data for PropMaterialDef " + propMaterialDef.Name + ". It's possible this Map does not have it loaded in memory.");
               material = fallbackMaterial;
@@ -484,8 +497,20 @@ namespace MissionControl.EncounterFactories {
           Material mat = bundleItem.BundlePath != null ? AssetBundleLoader.GetAsset<Material>(bundleItem.BundlePath, propMaterialDef.Name) : null;
           if (mat != null) Main.Logger.Log("[PropFactory.BuildMaterialsForRenderer] Found Material in bundle " + mat.name + " after looking for: " + propMaterialDef.Name);
 
-          // Otherwise look at all game Materials
-          if (mat == null) mat = matLookup.ContainsKey(propMaterialDef.Name) ? matLookup[propMaterialDef.Name] : fallbackMaterial;
+          // Next look at active scene Materials (fast path)
+          if (mat == null && matLookup != null && matLookup.ContainsKey(propMaterialDef.Name)) {
+            mat = matLookup[propMaterialDef.Name];
+          }
+
+          // Next resolve from BattleTech_Data at runtime via BTAssetReader
+          if (mat == null) {
+            mat = GameAssetProvider.Instance.TryLoadMaterial(propMaterialDef.Name);
+            if (mat != null && matLookup != null) {
+              matLookup[propMaterialDef.Name] = mat;
+            }
+          }
+
+          if (mat == null) mat = fallbackMaterial;
           Main.Logger.Log("[PropFactory.BuildMaterialsForRenderer] Using Material " + (mat != null ? mat.name : "null") + " after looking for: " + propMaterialDef.Name);
 
           materials[i] = mat;

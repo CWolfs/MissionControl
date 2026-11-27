@@ -1,12 +1,17 @@
 {
   "Key": "pipesOneBentB",
-  "Mesh": "pipesOneBentB",
+  "AssetSource": "GameData",
+  "Mesh": "turbine26",
+  "SourceAssetFile": "sharedassets25.assets",
+  "MeshPathIds": {
+    "Flimsy": 130
+  },
   "Materials": [
     {
       "Name": "envMatStct_mediumMetal_generic"
     }
   ],
-  "IsMeshInBundle": true,
+  "IsMeshInBundle": false,
   "DestructibleSize": "small",
   "DestructibleMaterial": "metal",
   "FlimsyDestructibleType": "smallMetal"

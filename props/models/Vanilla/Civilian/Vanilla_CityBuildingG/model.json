@@ -1,0 +1,20 @@
+{
+  "Key": "Vanilla_CityBuildingG",
+  "AssetSource": "GameData",
+  "Mesh": "cityBuildingG",
+  "Materials": [
+    {
+      "Name": "envMatStct_metalA_aurigan"
+    },
+    {
+      "Name": "envMatStct_cementA_aurigan"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfComp_cityBuildingG_generic_static_destruct_split",
+  "HasCustomShell": true,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

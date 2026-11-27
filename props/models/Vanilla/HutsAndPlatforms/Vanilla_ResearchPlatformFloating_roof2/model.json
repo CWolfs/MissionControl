@@ -1,0 +1,16 @@
+{
+  "Key": "Vanilla_ResearchPlatformFloating_roof2",
+  "AssetSource": "GameData",
+  "Mesh": "researchPlatformFloating_roof2",
+  "Materials": [
+    {
+      "Name": "envMatStct_copper_worn"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

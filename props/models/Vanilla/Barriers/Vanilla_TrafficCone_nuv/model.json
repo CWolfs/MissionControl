@@ -1,0 +1,22 @@
+{
+  "Key": "Vanilla_TrafficCone_nuv",
+  "AssetSource": "GameData",
+  "Mesh": "trafficCone_nuv",
+  "Materials": [
+    {
+      "Name": "envMatStct_decals_generic_OLD"
+    },
+    {
+      "Name": "envMatStct_whitePaint_generic"
+    },
+    {
+      "Name": "envMatStct_asphalt_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "smallStone"
+}

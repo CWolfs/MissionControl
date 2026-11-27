@@ -1,5 +1,6 @@
 {
   "Key": "ArenaLargeOneSideOpenA",
+  "AssetSource": "Bundle",
   "Mesh": "arenaLargeOneSideOpenA",
   "Materials": [
     {
@@ -29,6 +30,10 @@
   "DestructibleMaterial": "stone",
   "FlimsyDestructibleType": "largeStone",
   "MeshOffsets": {
-    "COL": { "x": 49.4, "y": 37.6, "z": 429 }
+    "COL": {
+      "x": 49.4,
+      "y": 37.6,
+      "z": 429
+    }
   }
 }

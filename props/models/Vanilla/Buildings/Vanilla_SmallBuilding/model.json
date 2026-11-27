@@ -1,0 +1,19 @@
+{
+  "Key": "Vanilla_SmallBuilding",
+  "AssetSource": "GameData",
+  "Mesh": "smallBuilding",
+  "Materials": [
+    {
+      "Name": "envMatStct_darkMetal_mission05"
+    },
+    {
+      "Name": "envMatStct_darkMetal_mission02"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
+}

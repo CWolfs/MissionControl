@@ -1,0 +1,22 @@
+{
+  "Key": "Vanilla_BioDomeE",
+  "AssetSource": "GameData",
+  "Mesh": "bioDomeE",
+  "Materials": [
+    {
+      "Name": "envMatStct_trimMetal_mission03"
+    },
+    {
+      "Name": "envMatStct_concrete_mission03"
+    },
+    {
+      "Name": "envMatStct_rustyMetal1_mission03"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": true,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

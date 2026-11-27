@@ -1,0 +1,23 @@
+{
+  "Key": "Vanilla_VillaF",
+  "AssetSource": "GameData",
+  "Mesh": "villaF",
+  "Materials": [
+    {
+      "Name": "envMatStct_roofA_aurigan"
+    },
+    {
+      "Name": "envMatStct_cementA_aurigan"
+    },
+    {
+      "Name": "envMatStct_metalA_aurigan"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfDeco_villaF_generic_static_destruct_split",
+  "HasCustomShell": true,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

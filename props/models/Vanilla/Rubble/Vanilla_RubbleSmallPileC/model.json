@@ -1,0 +1,22 @@
+{
+  "Key": "Vanilla_RubbleSmallPileC",
+  "AssetSource": "GameData",
+  "Mesh": "rubbleSmallPileC",
+  "Materials": [
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_darkRust_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "smallStone"
+}

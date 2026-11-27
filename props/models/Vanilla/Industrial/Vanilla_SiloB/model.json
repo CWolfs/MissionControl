@@ -1,0 +1,19 @@
+{
+  "Key": "Vanilla_SiloB",
+  "AssetSource": "GameData",
+  "Mesh": "siloB",
+  "Materials": [
+    {
+      "Name": "envMatStct_steel_storyMission7"
+    },
+    {
+      "Name": "envMatStct_aluminum_storyMission7"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

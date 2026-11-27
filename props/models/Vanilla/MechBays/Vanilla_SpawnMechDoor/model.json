@@ -1,0 +1,26 @@
+{
+  "Key": "Vanilla_SpawnMechDoor",
+  "AssetSource": "GameData",
+  "Mesh": "spawnMechDoor",
+  "SourceAssetFile": "sharedassets13.assets",
+  "MeshPathIds": {
+    "LOD0": 243,
+    "LOD1": 235,
+    "LOD2": 228,
+    "COL": 220
+  },
+  "Materials": [
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    },
+    {
+      "Name": "envMatStct_darkRust_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

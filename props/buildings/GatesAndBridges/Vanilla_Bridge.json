@@ -1,0 +1,6 @@
+{
+  "Key": "Vanilla_Bridge",
+  "FriendlyName": "Bridge",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "Vanilla_Bridge"
+}

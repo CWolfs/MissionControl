@@ -1,0 +1,16 @@
+{
+  "Key": "Vanilla_ResearchPlatformElevated_crossBrace_4",
+  "AssetSource": "GameData",
+  "Mesh": "researchPlatformElevated_crossBrace_4",
+  "Materials": [
+    {
+      "Name": "envMatStct_copper_worn"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

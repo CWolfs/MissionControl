@@ -1,0 +1,28 @@
+{
+  "Key": "Vanilla_SmallBldgO",
+  "AssetSource": "GameData",
+  "Mesh": "smallBldgO",
+  "Materials": [
+    {
+      "Name": "envMatStct_aluminum_storyMission7"
+    },
+    {
+      "Name": "envMatStct_concrete_storyMission7"
+    },
+    {
+      "Name": "envMatStct_panels_storyMission7"
+    },
+    {
+      "Name": "envMatStct_glassA_decals_generic"
+    },
+    {
+      "Name": "envMatStct_steel_storyMission7"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

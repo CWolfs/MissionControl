@@ -1,0 +1,19 @@
+{
+  "Key": "Vanilla_ResearchPlatformElevated_leg_1",
+  "AssetSource": "GameData",
+  "Mesh": "researchPlatformElevated_leg_1",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_concrete_worn"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "smallStone"
+}

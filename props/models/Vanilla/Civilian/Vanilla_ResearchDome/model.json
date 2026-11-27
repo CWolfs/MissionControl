@@ -1,0 +1,26 @@
+{
+  "Key": "Vanilla_ResearchDome",
+  "AssetSource": "GameData",
+  "Mesh": "researchDome",
+  "Materials": [
+    {
+      "Name": "envMatStct_concrete_worn"
+    },
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_copper_worn"
+    },
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfDeco_researchDome_generic_static_destruct_split",
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "mediumStone"
+}

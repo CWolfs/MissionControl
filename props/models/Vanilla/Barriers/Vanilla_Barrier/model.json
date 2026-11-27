@@ -1,0 +1,16 @@
+{
+  "Key": "Vanilla_Barrier",
+  "AssetSource": "GameData",
+  "Mesh": "barrier",
+  "Materials": [
+    {
+      "Name": "envMatStct_paintedMetal_mission02"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

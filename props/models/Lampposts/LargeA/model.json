@@ -1,5 +1,6 @@
 {
   "Key": "LamppostLargeA",
+  "AssetSource": "Bundle",
   "Mesh": "lamppostLargeA",
   "Materials": [
     {

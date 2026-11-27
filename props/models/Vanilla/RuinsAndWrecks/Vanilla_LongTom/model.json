@@ -1,0 +1,31 @@
+{
+  "Key": "Vanilla_LongTom",
+  "AssetSource": "GameData",
+  "Mesh": "longTom",
+  "Materials": [
+    {
+      "Name": "envMatVhcl_longtom_section1"
+    },
+    {
+      "Name": "envMatVhcl_longtom_section2"
+    },
+    {
+      "Name": "envMatVhcl_longtom_section3"
+    },
+    {
+      "Name": "envMatVhcl_longtom_section5"
+    },
+    {
+      "Name": "envMatVhcl_longtom_cannon"
+    },
+    {
+      "Name": "envMatVhcl_longtom_section4"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

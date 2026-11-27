@@ -1,0 +1,28 @@
+{
+  "Key": "Vanilla_SmallBldgM",
+  "AssetSource": "GameData",
+  "Mesh": "smallBldgM",
+  "Materials": [
+    {
+      "Name": "envMatStct_concrete_storyMission7"
+    },
+    {
+      "Name": "envMatStct_aluminum_storyMission7"
+    },
+    {
+      "Name": "envMatStct_glassA_decals_generic"
+    },
+    {
+      "Name": "envMatStct_plaster_storyMission7"
+    },
+    {
+      "Name": "envMatStct_steel_storyMission7"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "mediumStone"
+}

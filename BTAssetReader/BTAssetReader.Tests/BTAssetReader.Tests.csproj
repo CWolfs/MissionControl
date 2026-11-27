@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net471</TargetFramework>
+    <LangVersion>11</LangVersion>
+    <RootNamespace>BTAssetReader.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DLLPathLocal>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..\BT-Mod-Dependencies\libs'))</DLLPathLocal>
+    <DLLPathCI>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\BT-Mod-Dependencies\libs'))</DLLPathCI>
+    <DLLPath Condition="Exists('$(DLLPathLocal)')">$(DLLPathLocal)</DLLPath>
+    <DLLPath Condition=" '$(DLLPath)' == '' ">$(DLLPathCI)</DLLPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\BTAssetReader.Core\BTAssetReader.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>$(DLLPath)\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,22 @@
+{
+  "Key": "Vanilla_PowerPoleB",
+  "AssetSource": "GameData",
+  "Mesh": "powerPoleB",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
+}

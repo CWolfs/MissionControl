@@ -1,12 +1,17 @@
 {
   "Key": "pipesOneShortA",
-  "Mesh": "pipesOneShortA",
+  "AssetSource": "GameData",
+  "Mesh": "turbine76",
+  "SourceAssetFile": "sharedassets25.assets",
+  "MeshPathIds": {
+    "Flimsy": 67
+  },
   "Materials": [
     {
       "Name": "envMatStct_asphalt_generic"
     }
   ],
-  "IsMeshInBundle": true,
+  "IsMeshInBundle": false,
   "DestructibleSize": "small",
   "DestructibleMaterial": "stone",
   "FlimsyDestructibleType": "smallStone"

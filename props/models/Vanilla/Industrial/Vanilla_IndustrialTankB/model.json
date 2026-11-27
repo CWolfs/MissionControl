@@ -1,0 +1,20 @@
+{
+  "Key": "Vanilla_IndustrialTankB",
+  "AssetSource": "GameData",
+  "Mesh": "industrialTankB",
+  "Materials": [
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfComp_industrialTankB_generic_static_destruct_split",
+  "HasCustomShell": true,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "smallStone"
+}

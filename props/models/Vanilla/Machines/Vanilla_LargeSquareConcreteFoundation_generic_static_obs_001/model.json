@@ -1,0 +1,16 @@
+{
+  "Key": "Vanilla_LargeSquareConcreteFoundation_generic_static_obs_001",
+  "AssetSource": "GameData",
+  "Mesh": "envMdlFndn_largeSquareConcreteFoundation_generic_static_obs_001",
+  "Materials": [
+    {
+      "Name": "envMatStct_concrete_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

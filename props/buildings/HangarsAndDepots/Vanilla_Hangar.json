@@ -1,0 +1,6 @@
+{
+  "Key": "Vanilla_Hangar",
+  "FriendlyName": "Hangar",
+  "BuildingDefID": "buildingdef_Civilian_Large",
+  "MainModel": "Vanilla_Hangar"
+}

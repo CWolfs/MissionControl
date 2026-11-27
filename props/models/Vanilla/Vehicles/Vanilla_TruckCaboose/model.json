@@ -1,0 +1,23 @@
+{
+  "Key": "Vanilla_TruckCaboose",
+  "AssetSource": "GameData",
+  "Mesh": "truckCaboose",
+  "SourceAssetFile": "sharedassets8.assets",
+  "MeshPathIds": {
+    "Flimsy": 997
+  },
+  "Materials": [
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    },
+    {
+      "Name": "envMatDeco_swiftWind"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}

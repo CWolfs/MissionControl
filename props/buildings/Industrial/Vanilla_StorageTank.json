@@ -1,0 +1,6 @@
+{
+  "Key": "Vanilla_StorageTank",
+  "FriendlyName": "Storage Tank",
+  "BuildingDefID": "buildingdef_Civilian_Medium",
+  "MainModel": "Vanilla_StorageTank"
+}

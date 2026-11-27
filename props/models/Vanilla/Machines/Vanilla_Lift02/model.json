@@ -1,0 +1,22 @@
+{
+  "Key": "Vanilla_Lift02",
+  "AssetSource": "GameData",
+  "Mesh": "lift02",
+  "Materials": [
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    },
+    {
+      "Name": "envMatStct_mediumMetal_flashPoint"
+    },
+    {
+      "Name": "envMatStct_metal_painted_ylw_storyMission4"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
+}

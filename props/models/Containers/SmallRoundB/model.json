@@ -1,6 +1,11 @@
 {
   "Key": "ContainerSmallRoundB",
-  "Mesh": "containerSmallRoundB",
+  "AssetSource": "GameData",
+  "Mesh": "pCylinder32",
+  "SourceAssetFile": "sharedassets6.assets",
+  "MeshPathIds": {
+    "Flimsy": 670
+  },
   "Materials": [
     {
       "Name": "envMatStct_mediumMetal_generic"
@@ -15,7 +20,7 @@
       "Name": "envMatStct_lightMetal_generic"
     }
   ],
-  "IsMeshInBundle": true,
+  "IsMeshInBundle": false,
   "DestructibleSize": "small",
   "DestructibleMaterial": "metal",
   "FlimsyDestructibleType": "smallMetal"

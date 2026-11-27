@@ -1,0 +1,37 @@
+{
+  "Key": "Vanilla_GeneratorTower",
+  "AssetSource": "GameData",
+  "Mesh": "generatorTower",
+  "Materials": [
+    {
+      "Name": "envMatStct_redPaintedMetal_generic"
+    },
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "envMatStct_lightMetal_mission02"
+    },
+    {
+      "Name": "envMatStct_darkMetal_mission02"
+    },
+    {
+      "Name": "envMatStct_concrete_mission02"
+    },
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": true,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

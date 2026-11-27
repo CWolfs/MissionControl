@@ -1,0 +1,20 @@
+{
+  "Key": "Vanilla_IndustrialTankI",
+  "AssetSource": "GameData",
+  "Mesh": "industrialTankI",
+  "Materials": [
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lightRust_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfComp_industrialTankI_generic_static_destruct_split",
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
+}

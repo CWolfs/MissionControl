@@ -155,49 +155,13 @@ namespace MissionControl.EncounterFactories {
 
     private bool AttachFlimsyMesh(GameObject flimsyGO, PropDestructibleFlimsyDef flimsyDef) {
       PropModelDef propModelDef = flimsyDef.GetPropModelDef();
-      Mesh flimsyLOD0Mesh = null;
-
-      if (propModelDef.IsMeshInBundle) {
-        LoadAssetBundle(propModelDef);
-
-        flimsyLOD0Mesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}_LOD0");
-
-        if (flimsyLOD0Mesh == null) flimsyLOD0Mesh = AssetBundleLoader.GetAsset<Mesh>(propModelDef.BundlePath, $"{propModelDef.MeshName}");
-
-        if (flimsyLOD0Mesh == null) {
-          Main.Logger.LogError("[StructureFactory.AttachFlimsyMesh] Bundle LOD Mesh is null. It's possible LOD0, LOD1 and LOD2 might also be null. Check the names of the Meshes in the bundle match the Mesh in the MC PropModelDef");
-        } else {
-          Main.Logger.Log("[StructureFactory.AttachFlimsyMesh] Bundle LOD Mesh is " + flimsyLOD0Mesh.name);
-
-          if (flimsyLOD0Mesh.name == propModelDef.MeshName) {
-            Main.Logger.Log($"[StructureFactory.AttachFlimsyMesh] Found a flimsy base for '{propModelDef.Key}'");
-
-            if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
-              flimsyLOD0Mesh = CenterMeshPivot(flimsyLOD0Mesh);
-            }
-          }
-        }
-      } else {
-        foreach (Mesh mesh in allGameMeshes) {
-          // If a flimsy base (e.g. no COL, LOD0, LOD1, LOD2) then set them all to the flimsy mesh
-          if (mesh.name == propModelDef.MeshName) {
-            Main.Logger.Log($"[StructureFactory.AttachFlimsyMesh] Found a flimsy base for '{propModelDef.Key}' so using that for COL, LOD0, LOD1, LOD2");
-
-            // If enabled, recenter the mesh pivot as filmsy pivots are often all over the place
-            Mesh flimsyFormattedMesh = mesh;
-            if (propModelDef.ChangePivotToCenterIfFlimsyMeshFormat) {
-              flimsyFormattedMesh = CenterMeshPivot(mesh);
-            }
-
-            flimsyLOD0Mesh = flimsyFormattedMesh;
-            break;
-          }
-
-          if (mesh.name == $"{propModelDef.MeshName}_LOD0") flimsyLOD0Mesh = mesh;
-        }
+      Mesh flimsyLOD0Mesh = ResolveMesh(propModelDef, $"{propModelDef.MeshName}_LOD0", "LOD0", isFlimsyBase: false);
+      if (flimsyLOD0Mesh == null) {
+        flimsyLOD0Mesh = ResolveMesh(propModelDef, propModelDef.MeshName, "Flimsy", isFlimsyBase: true);
       }
 
       if (flimsyLOD0Mesh == null) {
+        Main.Logger.LogError($"[StructureFactory.AttachFlimsyMesh] Could not resolve flimsy mesh '{propModelDef.MeshName}' for '{propModelDef.Key}'");
         return false;
       }
 

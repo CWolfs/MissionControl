@@ -1,0 +1,26 @@
+{
+  "Key": "Vanilla_RoadTunnelDestructible",
+  "AssetSource": "GameData",
+  "Mesh": "roadTunnelDestructible",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_concrete_generic"
+    },
+    {
+      "Name": "lambert1"
+    },
+    {
+      "Name": "envMatStct_fadeToBlack_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfComp_roadTunnelDestructible_generic_static_destruct_split",
+  "HasCustomShell": false,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "stone",
+  "FlimsyDestructibleType": "largeStone"
+}

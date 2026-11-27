@@ -1,0 +1,22 @@
+{
+  "Key": "Vanilla_PrisonGate",
+  "AssetSource": "GameData",
+  "Mesh": "prisonGate",
+  "Materials": [
+    {
+      "Name": "envMatStct_steel_storyMission4"
+    },
+    {
+      "Name": "envMatStct_paintedMetal_storyMission4"
+    },
+    {
+      "Name": "envMatStct_buildingMetal_storyMission4"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": true,
+  "DestructibleSize": "huge",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

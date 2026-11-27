@@ -1,0 +1,26 @@
+{
+  "Key": "Vanilla_LowWall50mB",
+  "AssetSource": "GameData",
+  "Mesh": "lowWall50mB",
+  "Materials": [
+    {
+      "Name": "lambert1"
+    },
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    },
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfComp_lowWall50mB_generic_static_destruct_split",
+  "HasCustomShell": false,
+  "DestructibleSize": "large",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "largeMetal"
+}

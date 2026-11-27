@@ -1,12 +1,17 @@
 {
   "Key": "GearStraightShortA",
-  "Mesh": "gearStraightShortA",
+  "AssetSource": "GameData",
+  "Mesh": "turbine23",
+  "SourceAssetFile": "sharedassets25.assets",
+  "MeshPathIds": {
+    "Flimsy": 131
+  },
   "Materials": [
     {
       "Name": "envMatStct_mediumMetal_generic"
     }
   ],
-  "IsMeshInBundle": true,
+  "IsMeshInBundle": false,
   "DestructibleSize": "small",
   "DestructibleMaterial": "metal",
   "FlimsyDestructibleType": "smallMetal"

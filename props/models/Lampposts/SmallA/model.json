@@ -1,6 +1,11 @@
 {
   "Key": "LamppostSmallA",
-  "Mesh": "lamppostSmallA",
+  "AssetSource": "GameData",
+  "Mesh": "lightPoleA2",
+  "SourceAssetFile": "sharedassets8.assets",
+  "MeshPathIds": {
+    "Flimsy": 339
+  },
   "Materials": [
     {
       "Name": "envMatStct_darkMetal_generic"
@@ -12,7 +17,7 @@
       "Name": "envMatStct_lights_decal_generic"
     }
   ],
-  "IsMeshInBundle": true,
+  "IsMeshInBundle": false,
   "DestructibleSize": "small",
   "DestructibleMaterial": "metal",
   "FlimsyDestructibleType": "smallMetal"

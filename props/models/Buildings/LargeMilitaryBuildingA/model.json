@@ -1,6 +1,7 @@
 {
   "Key": "LargeMilitaryBuildingA",
-  "Mesh": "buildingMilitaryLargeA",
+  "AssetSource": "GameData",
+  "Mesh": "largeMilitaryBldgA",
   "Materials": [
     {
       "Name": "envMatStct_darkMetal_generic"
@@ -24,8 +25,9 @@
       "Name": "envMatStct_asphalt_generic"
     }
   ],
-  "IsMeshInBundle": true,
-  "HasCustomSplits": false,
+  "IsMeshInBundle": false,
+  "HasCustomSplits": true,
+  "SplitPrefabName": "envPrfComp_largeMilitaryBldgA_generic_static_destruct_split",
   "HasCustomShell": true,
   "DestructibleSize": "large",
   "DestructibleMaterial": "metal",

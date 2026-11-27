@@ -1,0 +1,25 @@
+{
+  "Key": "Vanilla_LightPoleC",
+  "AssetSource": "GameData",
+  "Mesh": "lightPoleC",
+  "Materials": [
+    {
+      "Name": "envMatStct_mediumMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lightMetal_generic"
+    },
+    {
+      "Name": "envMatStct_lights_decal_generic"
+    },
+    {
+      "Name": "envMatStct_darkMetal_generic"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "medium",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "mediumMetal"
+}

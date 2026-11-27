@@ -1,0 +1,19 @@
+{
+  "Key": "Vanilla_TollGate",
+  "AssetSource": "GameData",
+  "Mesh": "tollGate",
+  "Materials": [
+    {
+      "Name": "envMatStct_lightMetal_mission02"
+    },
+    {
+      "Name": "envMatStct_window_mission02"
+    }
+  ],
+  "IsMeshInBundle": false,
+  "HasCustomSplits": false,
+  "HasCustomShell": false,
+  "DestructibleSize": "small",
+  "DestructibleMaterial": "metal",
+  "FlimsyDestructibleType": "smallMetal"
+}
