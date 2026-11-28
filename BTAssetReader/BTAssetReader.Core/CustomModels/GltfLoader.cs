@@ -611,6 +611,11 @@ namespace BTAssetReader.Core.CustomModels {
       if (texIdx < 0 || texIdx >= texturesList.Count) return;
       var texDict = MiniJson.AsDict(texturesList[texIdx]);
       int imgIdx = MiniJson.GetInt(texDict, "source", -1);
+      if (imgIdx < 0) {
+        var texExts = MiniJson.GetDict(texDict, "extensions");
+        var webpExt = MiniJson.GetDict(texExts, "EXT_texture_webp");
+        imgIdx = MiniJson.GetInt(webpExt, "source", -1);
+      }
       if (imgIdx < 0 || imgIdx >= imageBytes.Length) return;
       bytes = imageBytes[imgIdx];
       mime = imageMimes[imgIdx];

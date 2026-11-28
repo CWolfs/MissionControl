@@ -281,6 +281,15 @@ f 1 4 3 2
         Assert(glbBundle.Lights.Count == 1 && glbBundle.Lights[0].Type == "Spot", $"GLB should load KHR_lights_punctual spotlight, got {glbBundle.Lights.Count}");
         Assert(HasOutwardUnityWinding(glbBundle.Lod0Mesh), "GLB mesh should have outward Unity CW winding (dot(cross(e1,e2), outward) > 0)");
 
+        // 8b2. GLB with EXT_texture_webp texture extension
+        string webpGlbPath = Path.Combine(tmpDir, "webp_ext.glb");
+        WriteMinimalWebpExtGlb(webpGlbPath);
+        CustomModelBundle webpBundle = CustomModelLoader.Load(webpGlbPath);
+        Assert(webpBundle != null && webpBundle.Materials.Count == 1 && webpBundle.Materials[0].BaseColorImageBytes != null && webpBundle.Materials[0].BaseColorImageBytes.Length >= 12,
+          "GLB with EXT_texture_webp should extract image bytes via extension source");
+        Assert(webpBundle.Materials[0].BaseColorImageMime == "image/webp",
+          $"EXT_texture_webp mime should be image/webp, got '{webpBundle.Materials[0].BaseColorImageMime}'");
+
         // 8c. MeshNormaliser: rotate 90 X, TargetHeight = 12m, PivotMode = Bottom
         MeshNormaliser.Normalize(glbBundle, new MeshTransformSettings {
           RotationOffset = new Float3(90f, 0f, 0f),
@@ -434,6 +443,70 @@ f 1 4 3 2
 
         bw.Write((uint)binBytes.Length);
         bw.Write(0x004E4942u); // BIN
+        bw.Write(binBytes);
+      }
+    }
+
+    private static void WriteMinimalWebpExtGlb(string path) {
+      float[] positions = { 0, 0, 0, 1, 0, 0, 0, 1, 0 };
+      ushort[] indices = { 0, 1, 2 };
+      // Minimal RIFF....WEBP payload header for loader extraction verification
+      byte[] fakeWebp = { (byte)'R', (byte)'I', (byte)'F', (byte)'F', 4, 0, 0, 0, (byte)'W', (byte)'E', (byte)'B', (byte)'P' };
+
+      byte[] binBytes;
+      int posLen = positions.Length * 4;
+      int idxLen = indices.Length * 2;
+      int idxPad = (4 - (idxLen % 4)) % 4;
+      int imgOff = posLen + idxLen + idxPad;
+      using (var ms = new MemoryStream())
+      using (var bw = new BinaryWriter(ms)) {
+        foreach (float f in positions) bw.Write(f);
+        foreach (ushort u in indices) bw.Write(u);
+        for (int i = 0; i < idxPad; i++) bw.Write((byte)0);
+        bw.Write(fakeWebp);
+        while (ms.Length % 4 != 0) bw.Write((byte)0);
+        binBytes = ms.ToArray();
+      }
+
+      string json = $@"{{
+        ""asset"": {{ ""version"": ""2.0"" }},
+        ""extensionsUsed"": [""EXT_texture_webp""],
+        ""extensionsRequired"": [""EXT_texture_webp""],
+        ""scenes"": [{{ ""nodes"": [0] }}],
+        ""scene"": 0,
+        ""nodes"": [{{ ""name"": ""Tri"", ""mesh"": 0 }}],
+        ""images"": [{{ ""bufferView"": 2, ""mimeType"": ""image/webp"" }}],
+        ""textures"": [{{ ""extensions"": {{ ""EXT_texture_webp"": {{ ""source"": 0 }} }} }}],
+        ""materials"": [{{ ""name"": ""WebpMat"", ""pbrMetallicRoughness"": {{ ""baseColorTexture"": {{ ""index"": 0 }} }} }}],
+        ""meshes"": [{{ ""name"": ""Tri"", ""primitives"": [{{ ""attributes"": {{ ""POSITION"": 0 }}, ""indices"": 1, ""material"": 0 }}] }}],
+        ""buffers"": [{{ ""byteLength"": {binBytes.Length} }}],
+        ""bufferViews"": [
+          {{ ""buffer"": 0, ""byteOffset"": 0, ""byteLength"": {posLen} }},
+          {{ ""buffer"": 0, ""byteOffset"": {posLen}, ""byteLength"": {idxLen} }},
+          {{ ""buffer"": 0, ""byteOffset"": {imgOff}, ""byteLength"": {fakeWebp.Length} }}
+        ],
+        ""accessors"": [
+          {{ ""bufferView"": 0, ""componentType"": 5126, ""count"": 3, ""type"": ""VEC3"" }},
+          {{ ""bufferView"": 1, ""componentType"": 5123, ""count"": 3, ""type"": ""SCALAR"" }}
+        ]
+      }}";
+
+      byte[] jsonBytes = System.Text.Encoding.UTF8.GetBytes(json);
+      int jsonPad = (4 - (jsonBytes.Length % 4)) % 4;
+      int jsonChunkLen = jsonBytes.Length + jsonPad;
+      int totalLen = 12 + 8 + jsonChunkLen + 8 + binBytes.Length;
+
+      using (var fs = new FileStream(path, FileMode.Create, FileAccess.Write))
+      using (var bw = new BinaryWriter(fs)) {
+        bw.Write(0x46546C67u);
+        bw.Write(2u);
+        bw.Write((uint)totalLen);
+        bw.Write((uint)jsonChunkLen);
+        bw.Write(0x4E4F534Au);
+        bw.Write(jsonBytes);
+        for (int i = 0; i < jsonPad; i++) bw.Write((byte)' ');
+        bw.Write((uint)binBytes.Length);
+        bw.Write(0x004E4942u);
         bw.Write(binBytes);
       }
     }

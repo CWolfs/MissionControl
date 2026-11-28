@@ -70,7 +70,8 @@ namespace MissionControl.EncounterFactories {
       allGameMaterials = Resources.FindObjectsOfTypeAll<Material>();
       allDamageAssetGroups = Resources.FindObjectsOfTypeAll<DamageAssetGroup>();
 
-      placeholderMaterial = new Material(Shader.Find("BattleTech Standard"));
+      Shader defaultShader = UnityMaterialBuilder.ResolveShader("BattleTech Standard", Application.dataPath, Main.Logger.LogWarning) ?? Shader.Find("Standard");
+      placeholderMaterial = defaultShader != null ? new Material(defaultShader) : null;
 
       matLookup = new Dictionary<string, Material>();
       foreach (Material mat in allGameMaterials) {
@@ -758,14 +759,18 @@ namespace MissionControl.EncounterFactories {
             Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Generating cached runtime generated material '{propMaterialDef.Name}'");
 
             // Build whole material with specific properties using 'BattleTech Standard' shader
-            Shader shader = Shader.Find("BattleTech Standard");
+            Shader shader = UnityMaterialBuilder.ResolveShader("BattleTech Standard", Application.dataPath, Main.Logger.LogWarning) ?? Shader.Find("Standard");
+            if (shader == null) {
+              Main.Logger.LogError("[PropFactory.BuildMaterialsForRenderer] Couldn't find default shader 'BattleTech Standard' for PropMaterialDef " + propMaterialDef.Name);
+              material = fallbackMaterial;
+            } else {
+              material = new Material(shader);
+              material.name = propMaterialDef.Name;
+              JObject materialProperties = propMaterialDef.MaterialProperties;
+              SetMaterialProperties(bundleItem, material, materialProperties);
 
-            material = new Material(shader);
-            material.name = propMaterialDef.Name;
-            JObject materialProperties = propMaterialDef.MaterialProperties;
-            SetMaterialProperties(bundleItem, material, materialProperties);
-
-            MissionControl.Instance.GeneratedMaterials.Add(propMaterialDef.Name, material);
+              MissionControl.Instance.GeneratedMaterials.Add(propMaterialDef.Name, material);
+            }
           }
 
           materials[i] = material;
@@ -824,7 +829,7 @@ namespace MissionControl.EncounterFactories {
         BTLight btLight = lightGO.AddComponent<BTLight>();
         btLight.lightType = ParseBTLightType(lDef.Type);
         btLight.radius = Mathf.Max(0.5f, lDef.Radius);
-        btLight.intensity = Mathf.Max(0.01f, lDef.Intensity) * 3000f;
+        btLight.intensity = ComputeBTLightIntensity(btLight.lightType, lDef.Intensity);
         btLight.lightColor = lDef.GetUnityColor();
         btLight.spotlightAngleInner = Mathf.Clamp(lDef.InnerAngle, 1f, 89f);
         btLight.spotlightAngleOuter = Mathf.Clamp(lDef.OuterAngle, btLight.spotlightAngleInner + 0.5f, 90f);
@@ -836,6 +841,15 @@ namespace MissionControl.EncounterFactories {
       }
 
       return lightsParent;
+    }
+
+    private static float ComputeBTLightIntensity(BTLight.LightTypes lightType, float normalizedIntensity) {
+      float clamped = Mathf.Max(0.01f, normalizedIntensity);
+      if (lightType == BTLight.LightTypes.Linear) {
+        // BTLight.RefreshLightSettings divides Linear intensity by 10000f * IlluminanceScale instead of 4*PI * IlluminanceScale
+        return clamped * BTLight.IlluminanceScale * (10000f / (4f * Mathf.PI));
+      }
+      return clamped * BTLight.IlluminanceScale;
     }
 
     private static BTLight.LightTypes ParseBTLightType(string type) {

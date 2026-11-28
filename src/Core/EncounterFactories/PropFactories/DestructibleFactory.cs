@@ -66,7 +66,6 @@ namespace MissionControl.EncounterFactories {
       destructibleObject.damageAssetGroup = GetRandomDamageAssetGroup();
       destructibleObject.decalObjects = new List<GameObject>();
       destructibleObject.decalSpawners = new List<BTDecalSpawner>();
-      destructibleObject.dependentPersistentFX = new List<GameObject>();
       destructibleObject.destructibleFlimsyGroup = destructibleFlimsyGroup;
       destructibleObject.destructList = destructibleObject.GetComponentsInChildren<DestructibleObject>().ToList();
 
@@ -109,7 +108,10 @@ namespace MissionControl.EncounterFactories {
         return null;
       }
       CalculateBounds(mf, boxCollider);
-      CreatePropLights(flimsyGO, propModelDef);
+      GameObject lightsParentGO = CreatePropLights(flimsyGO, propModelDef);
+      if (lightsParentGO != null) {
+        destructibleObject.dependentPersistentFX.Add(lightsParentGO);
+      }
 
       flimsyGO.transform.localPosition = propFlimsyDef.Position;
       flimsyGO.transform.localEulerAngles = propFlimsyDef.Rotation;

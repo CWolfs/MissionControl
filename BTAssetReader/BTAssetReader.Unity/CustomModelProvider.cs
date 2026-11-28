@@ -238,7 +238,7 @@ namespace BTAssetReader.Unity {
     }
 
     private static Material BuildBattleTechPbrMaterial(CustomUnityModelAsset asset, CustomPbrMaterialData pbr, Action<string> logWarning) {
-      Shader shader = Shader.Find("BattleTech Standard") ?? Shader.Find("Standard");
+      Shader shader = UnityMaterialBuilder.ResolveShader("BattleTech Standard", Application.dataPath, logWarning) ?? Shader.Find("Standard");
       var mat = new Material(shader) {
         name = pbr?.Name ?? "CustomPropMaterial"
       };
@@ -250,39 +250,52 @@ namespace BTAssetReader.Unity {
       mat.SetFloat("_Metallic", Mathf.Clamp01(pbr.MetallicFactor));
       mat.SetFloat("_Glossiness", Mathf.Clamp01(1f - pbr.RoughnessFactor));
 
-      Texture2D baseTex = DecodeImageTexture(asset, pbr.BaseColorImageBytes, $"{mat.name}_BaseColor", linear: false, logWarning);
+      Texture2D baseTex = DecodeImageTexture(asset, pbr.BaseColorImageBytes, $"{mat.name}_BaseColor", linear: false, markNonReadable: true, track: true, logWarning);
       if (baseTex != null) {
         mat.SetTexture("_MainTex", baseTex);
       }
 
       if (pbr.NormalScale > 0.001f) {
-        Texture2D normRaw = DecodeImageTexture(asset, pbr.NormalImageBytes, $"{mat.name}_NormalRaw", linear: true, logWarning);
+        Texture2D normRaw = DecodeImageTexture(asset, pbr.NormalImageBytes, $"{mat.name}_NormalRaw", linear: true, markNonReadable: false, track: false, logWarning);
         if (normRaw != null) {
           Texture2D packedNorm = ConvertRgbNormalToUnityDxt5nm(asset, normRaw, $"{mat.name}_Normal");
-          mat.SetTexture("_BumpMap", packedNorm ?? normRaw);
+          if (packedNorm != null) {
+            UnityEngine.Object.Destroy(normRaw);
+            mat.SetTexture("_BumpMap", packedNorm);
+          } else {
+            Track(asset, normRaw);
+            mat.SetTexture("_BumpMap", normRaw);
+          }
           mat.SetFloat("_BumpScale", pbr.NormalScale);
           mat.EnableKeyword("_NORMALMAP");
         }
       }
 
       // glTF packs roughness in G and metallic in B; Unity/BT Standard expects metallic in R and smoothness (1-roughness) in A
-      Texture2D mrRaw = DecodeImageTexture(asset, pbr.MetallicRoughnessImageBytes, $"{mat.name}_MRRaw", linear: true, logWarning);
+      Texture2D mrRaw = DecodeImageTexture(asset, pbr.MetallicRoughnessImageBytes, $"{mat.name}_MRRaw", linear: true, markNonReadable: false, track: false, logWarning);
       if (mrRaw != null) {
         Texture2D packed = ConvertGltfMetallicRoughnessToUnity(asset, mrRaw, pbr.MetallicFactor, pbr.RoughnessFactor, $"{mat.name}_MetallicGloss");
+        UnityEngine.Object.Destroy(mrRaw);
         if (packed != null) {
           mat.SetTexture("_MetallicGlossMap", packed);
           mat.EnableKeyword("_METALLICGLOSSMAP");
         }
       }
 
-      Texture2D aoRaw = DecodeImageTexture(asset, pbr.OcclusionImageBytes, $"{mat.name}_AORaw", linear: true, logWarning);
+      Texture2D aoRaw = DecodeImageTexture(asset, pbr.OcclusionImageBytes, $"{mat.name}_AORaw", linear: true, markNonReadable: false, track: false, logWarning);
       if (aoRaw != null) {
         // glTF stores occlusion in R; BattleTech Standard reads occlusion from G
         Texture2D packedAo = ConvertGltfOcclusionToUnity(asset, aoRaw, $"{mat.name}_AO");
-        mat.SetTexture("_OcclusionMap", packedAo ?? aoRaw);
+        if (packedAo != null) {
+          UnityEngine.Object.Destroy(aoRaw);
+          mat.SetTexture("_OcclusionMap", packedAo);
+        } else {
+          Track(asset, aoRaw);
+          mat.SetTexture("_OcclusionMap", aoRaw);
+        }
       }
 
-      Texture2D emTex = DecodeImageTexture(asset, pbr.EmissiveImageBytes, $"{mat.name}_Emissive", linear: false, logWarning);
+      Texture2D emTex = DecodeImageTexture(asset, pbr.EmissiveImageBytes, $"{mat.name}_Emissive", linear: false, markNonReadable: true, track: true, logWarning);
       bool hasEmissive = emTex != null || pbr.EmissiveFactor.X > 1e-4f || pbr.EmissiveFactor.Y > 1e-4f || pbr.EmissiveFactor.Z > 1e-4f;
       if (hasEmissive) {
         if (emTex != null) mat.SetTexture("_EmissionMap", emTex);
@@ -310,16 +323,26 @@ namespace BTAssetReader.Unity {
       return mat;
     }
 
-    private static Texture2D DecodeImageTexture(CustomUnityModelAsset asset, byte[] bytes, string name, bool linear, Action<string> logWarning) {
+    private static bool IsWebpImage(byte[] bytes) {
+      return bytes != null && bytes.Length >= 12
+        && bytes[0] == (byte)'R' && bytes[1] == (byte)'I' && bytes[2] == (byte)'F' && bytes[3] == (byte)'F'
+        && bytes[8] == (byte)'W' && bytes[9] == (byte)'E' && bytes[10] == (byte)'B' && bytes[11] == (byte)'P';
+    }
+
+    private static Texture2D DecodeImageTexture(CustomUnityModelAsset asset, byte[] bytes, string name, bool linear, bool markNonReadable, bool track, Action<string> logWarning) {
       if (bytes == null || bytes.Length == 0) return null;
+      if (IsWebpImage(bytes)) {
+        logWarning?.Invoke($"[BTAssetReader.CustomModelProvider] Texture '{name}' is WebP, which Unity 2018.4 cannot decode at runtime. Open and re-save this prop in Designer-Prop-Studio to convert WebP textures to PNG.");
+        return null;
+      }
       try {
         var tex = new Texture2D(2, 2, TextureFormat.RGBA32, mipChain: true, linear: linear) {
           name = name,
           wrapMode = TextureWrapMode.Repeat,
           filterMode = FilterMode.Trilinear
         };
-        if (ImageConversion.LoadImage(tex, bytes, markNonReadable: false)) {
-          return Track(asset, tex);
+        if (ImageConversion.LoadImage(tex, bytes, markNonReadable: markNonReadable)) {
+          return track ? Track(asset, tex) : tex;
         }
         UnityEngine.Object.Destroy(tex);
       } catch (Exception ex) {

@@ -121,7 +121,7 @@ namespace MissionControl.EncounterFactories {
       buildingGO.SetActive(false);
 
       CreateColAndLODs(buildingGO, propModelDef);
-      CreatePropLights(buildingGO, propModelDef);
+      GameObject lightsParentGO = CreatePropLights(buildingGO, propModelDef);
       GameObject flimsyParentGO = CreateFlimsies(buildingGroupGO);
       GameObject glassParentGO = CreateGlass(buildingGroupGO);
       GameObject decalParentGO = CreateDecals(buildingGroupGO);
@@ -140,6 +140,9 @@ namespace MissionControl.EncounterFactories {
       destructibleObject.structMaterial = propModelDef.DestructibleMaterial;
       destructibleObject.flimsyDestructType = propModelDef.FlimsyDestructibleType;
       destructibleObject.dependentPersistentFX = new List<GameObject>();
+      if (lightsParentGO != null) {
+        destructibleObject.dependentPersistentFX.Add(lightsParentGO);
+      }
       destructibleObject.damagedInstance = destructSplit.GetComponent<PhysicsExplodeChildren>();
       destructibleObject.embeddedFlimsyChildren = new List<DestructibleObject>();
       destructibleObject.shellInstance = destructShell;
@@ -148,7 +151,6 @@ namespace MissionControl.EncounterFactories {
       destructibleObject.decalSpawners = new List<BTDecalSpawner>();
       destructibleObject.flimsyChild = flimsyParentGO;
       destructibleObject.glassChild = glassParentGO;
-      destructibleObject.dependentPersistentFX = new List<GameObject>();
 
       // Setup LOD Group
       LODGroup lodGroup = SetupLODGroup(buildingGO);
@@ -326,6 +328,10 @@ namespace MissionControl.EncounterFactories {
         return;
       }
       CalculateBounds(mf, boxCollider);
+      GameObject flimsyLightsGO = CreatePropLights(flimsyGO, propModelDef);
+      if (flimsyLightsGO != null) {
+        destructibleObject.dependentPersistentFX.Add(flimsyLightsGO);
+      }
 
       flimsyGO.transform.localPosition = propFlimsyDef.Position;
       flimsyGO.transform.localEulerAngles = propFlimsyDef.Rotation;
