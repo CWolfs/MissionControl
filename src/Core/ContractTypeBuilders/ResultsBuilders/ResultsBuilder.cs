@@ -75,6 +75,7 @@ namespace MissionControl.ContractTypeBuilders {
         case "DebugTagLogger": BuildDebugTagLoggerResult(result); break;
         case "SetStat": BuildSetStatResult(result); break;
         case "SetTag": BuildSetTagResult(result); break;
+        case "PilotTags": BuildPilotTagsResult(result); break;
         case "SetAIPatrolRoute": BuildSetAIPatrolRouteResult(result); break;
         case "SetAIBehaviourTree": BuildSetAIBehaviourTreeResult(result); break;
         case "SwapTeams": BuildSwapTeamsResult(result); break;
@@ -187,22 +188,39 @@ namespace MissionControl.ContractTypeBuilders {
 
     private void BuildTagUnitsInRegionResult(JObject resultObject) {
       Main.LogDebug("[BuildTagUnitsInRegion] Building 'TagXUnitsInRegion' result");
-      string regionGuid = resultObject["RegionGuid"].ToString();
-      string unitType = resultObject["UnitType"].ToString();
-      int numberOfUnits = resultObject.ContainsKey("NumberOfUnits") ? (int)resultObject["NumberOfUnits"] : 0;
-      string[] tags = ((JArray)resultObject["Tags"]).ToObject<string[]>();
+      string regionGuid = resultObject.ContainsKey("RegionGuid") ? resultObject["RegionGuid"]?.ToString() : null;
+      string unitType = resultObject.ContainsKey("UnitType") ? resultObject["UnitType"]?.ToString() : null;
 
-      if (regionGuid != null) {
-        TagUnitsInRegionResult result = ScriptableObject.CreateInstance<TagUnitsInRegionResult>();
-        result.RegionGuid = regionGuid;
-        result.Type = unitType;
-        result.NumberOfUnits = numberOfUnits;
-        result.Tags = tags;
-
-        results.Add(result);
-      } else {
-        Main.Logger.LogError("[BuildTagUnitsInRegion] You have not provided an 'RegionGuid' to BuildTagUnitsInRegion on");
+      int numberOfUnits = 0;
+      if (resultObject.ContainsKey("NumberOfUnits")) {
+        JToken countToken = resultObject["NumberOfUnits"];
+        if (countToken.Type == JTokenType.Integer) {
+          numberOfUnits = (int)countToken;
+        } else if (!int.TryParse(countToken?.ToString(), out numberOfUnits)) {
+          Main.Logger.LogError($"[BuildTagUnitsInRegion] Invalid 'NumberOfUnits' value '{countToken}'. Skipping result.");
+          return;
+        }
       }
+
+      string[] tags = ReadStringArray(resultObject, "Tags", "BuildTagUnitsInRegion");
+
+      if (string.IsNullOrEmpty(regionGuid)) {
+        Main.Logger.LogError("[BuildTagUnitsInRegion] You have not provided a 'RegionGuid' to BuildTagUnitsInRegion on");
+        return;
+      }
+
+      if (string.IsNullOrEmpty(unitType)) {
+        Main.Logger.LogError("[BuildTagUnitsInRegion] You have not provided a 'UnitType' to BuildTagUnitsInRegion on");
+        return;
+      }
+
+      TagUnitsInRegionResult result = ScriptableObject.CreateInstance<TagUnitsInRegionResult>();
+      result.RegionGuid = regionGuid;
+      result.Type = unitType;
+      result.NumberOfUnits = numberOfUnits;
+      result.Tags = tags;
+
+      results.Add(result);
     }
 
     private void BuildSetTeamByTagResult(JObject resultObject) {
@@ -566,6 +584,98 @@ namespace MissionControl.ContractTypeBuilders {
       result.Tag = tag;
 
       results.Add(result);
+    }
+
+    private void BuildPilotTagsResult(JObject resultObject) {
+      Main.LogDebug("[BuildPilotTagsResult] Building 'PilotTags' result");
+      string[] targetTags = ReadStringArray(resultObject, "TargetTags", "BuildPilotTagsResult");
+
+      string pilotId = resultObject.ContainsKey("PilotId") ? resultObject["PilotId"].ToString() : "";
+      string regionGuid = resultObject.ContainsKey("RegionGuid") ? resultObject["RegionGuid"].ToString() : "";
+
+      string team = "Player1";
+      if (resultObject.ContainsKey("Team")) {
+        string teamRaw = resultObject["Team"]?.ToString()?.Trim() ?? "";
+        team = string.IsNullOrEmpty(teamRaw) ? "Any" : teamRaw;
+      }
+
+      bool aliveOnly = false;
+      if (resultObject.ContainsKey("AliveOnly")) {
+        if (resultObject["AliveOnly"].Type == JTokenType.Boolean) {
+          aliveOnly = (bool)resultObject["AliveOnly"];
+        } else if (!bool.TryParse(resultObject["AliveOnly"].ToString(), out aliveOnly)) {
+          Main.Logger.LogWarning($"[BuildPilotTagsResult] Invalid 'AliveOnly' value '{resultObject["AliveOnly"]}'. Defaulting to false.");
+          aliveOnly = false;
+        }
+      }
+
+      PilotTargetType targetType = PilotTargetType.EncounterTags;
+      if (resultObject.ContainsKey("TargetType")) {
+        string targetTypeRaw = resultObject["TargetType"].ToString();
+        if (!Enum.TryParse(targetTypeRaw, true, out targetType) || !Enum.IsDefined(typeof(PilotTargetType), targetType)) {
+          Main.Logger.LogError($"[BuildPilotTagsResult] Invalid 'TargetType' value '{targetTypeRaw}'. Skipping result.");
+          return;
+        }
+      } else if (!string.IsNullOrEmpty(pilotId) && targetTags.Length == 0) {
+        targetType = PilotTargetType.PilotId;
+      } else if (!string.IsNullOrEmpty(regionGuid) && targetTags.Length == 0) {
+        targetType = PilotTargetType.Region;
+      }
+
+      EventUnitRole eventUnitRole = EventUnitRole.AffectedUnit;
+      if (resultObject.ContainsKey("EventUnitRole")) {
+        string eventUnitRoleRaw = resultObject["EventUnitRole"].ToString();
+        if (!string.IsNullOrWhiteSpace(eventUnitRoleRaw)) {
+          if (!Enum.TryParse(eventUnitRoleRaw, true, out eventUnitRole) || !Enum.IsDefined(typeof(EventUnitRole), eventUnitRole)) {
+            Main.Logger.LogWarning($"[BuildPilotTagsResult] Invalid 'EventUnitRole' value '{eventUnitRoleRaw}'. Defaulting to AffectedUnit.");
+            eventUnitRole = EventUnitRole.AffectedUnit;
+          }
+        }
+      }
+
+      TagOperation operation = TagOperation.Add;
+      if (resultObject.ContainsKey("Operation")) {
+        string operationRaw = resultObject["Operation"].ToString();
+        if (!Enum.TryParse(operationRaw, true, out operation) || !Enum.IsDefined(typeof(TagOperation), operation)) {
+          Main.Logger.LogError($"[BuildPilotTagsResult] Invalid 'Operation' value '{operationRaw}'. Skipping result.");
+          return;
+        }
+      }
+
+      string tag = resultObject.ContainsKey("Tag") ? resultObject["Tag"].ToString() : "";
+
+      PilotTagsResult result = ScriptableObject.CreateInstance<PilotTagsResult>();
+      result.TargetType = targetType;
+      result.EventUnitRole = eventUnitRole;
+      result.RegionGuid = regionGuid;
+      result.Team = team;
+      result.TargetTags = targetTags;
+      result.PilotId = pilotId;
+      result.AliveOnly = aliveOnly;
+      result.Operation = operation;
+      result.Tag = tag;
+
+      results.Add(result);
+    }
+
+    private static string[] ReadStringArray(JObject resultObject, string fieldName, string caller) {
+      if (!resultObject.ContainsKey(fieldName)) return Array.Empty<string>();
+
+      if (resultObject[fieldName] is not JArray array) {
+        Main.Logger.LogWarning($"[{caller}] '{fieldName}' must be an array of strings. Using empty list.");
+        return Array.Empty<string>();
+      }
+
+      List<string> values = new List<string>();
+      foreach (JToken element in array) {
+        if (element.Type == JTokenType.String) {
+          values.Add(element.ToString());
+        } else {
+          Main.Logger.LogWarning($"[{caller}] Ignoring non-string element '{element}' in '{fieldName}'.");
+        }
+      }
+
+      return values.ToArray();
     }
 
     private void BuildSetAIPatrolRouteResult(JObject resultObject) {
