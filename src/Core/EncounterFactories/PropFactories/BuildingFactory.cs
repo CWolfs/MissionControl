@@ -496,7 +496,7 @@ namespace MissionControl.EncounterFactories {
           Main.Logger.Log("[BuildingFactory.CreateGenericStaticDestruct] Shell Mesh is " + shellMesh.name);
         }
 
-        AttachShellMesh(shellMesh, shellCOLMesh, propModelDef, outerMaterials, interiorRubbleMaterial);
+        AttachShellMesh(shellMesh, shellCOLMesh, propModelDef, outerMaterials, interiorRubbleMaterial, isAutoStump: false);
         usedCustomOrAutoStumpShell = true;
       } else if (wantAutoStump) {
         BTAssetReader.Core.Models.RawMeshData rawSource = fileAsset?.RawLod0Mesh ?? CustomModelProvider.ExtractRawMeshFromUnityMesh(buildingLOD0Mesh);
@@ -505,7 +505,7 @@ namespace MissionControl.EncounterFactories {
           : null;
 
         if (stumpMesh != null) {
-          AttachShellMesh(stumpMesh, stumpMesh, propModelDef, outerMaterials, interiorRubbleMaterial);
+          AttachShellMesh(stumpMesh, stumpMesh, propModelDef, outerMaterials, interiorRubbleMaterial, isAutoStump: true);
           usedCustomOrAutoStumpShell = true;
         }
       }
@@ -591,7 +591,7 @@ namespace MissionControl.EncounterFactories {
       }
     }
 
-    private void AttachShellMesh(Mesh shellMesh, Mesh shellCOLMesh, PropModelDef propModelDef, Material[] outerMaterials, Material interiorRubbleMaterial) {
+    private void AttachShellMesh(Mesh shellMesh, Mesh shellCOLMesh, PropModelDef propModelDef, Material[] outerMaterials, Material interiorRubbleMaterial, bool isAutoStump = false) {
       GameObject shellGO = new GameObject(shellMesh.name);
       shellGO.transform.SetParent(destructShell.transform, false);
       shellGO.transform.localPosition = Vector3.zero;
@@ -606,9 +606,25 @@ namespace MissionControl.EncounterFactories {
         shellCollider.sharedMesh = shellCOLMesh;
       }
 
-      if (propModelDef.CustomShellMaterials.Count > 0) {
-        Main.Logger.Log("[BuildingFactory.CreateGenericStaticDestruct] Shell Materials are specified");
-        mr.materials = BuildMaterialsForRenderer(shellMesh, propModelDef, propModelDef.CustomShellMaterials, placeholderMaterial);
+      if (propModelDef.CustomShellMaterials != null && propModelDef.CustomShellMaterials.Count > 0) {
+        if (isAutoStump && propModelDef.CustomShellMaterials.Count == 1 && outerMaterials != null && outerMaterials.Length > 0 && shellMesh.subMeshCount > outerMaterials.Length) {
+          // Single CustomShellMaterial on an AutoStump overrides the jagged interior cap while keeping intact outer walls
+          Material customCap = BuildMaterialForRenderer(null, propModelDef, propModelDef.CustomShellMaterials[0]) ?? interiorRubbleMaterial;
+          Material[] shellMats = new Material[shellMesh.subMeshCount];
+          for (int s = 0; s < shellMesh.subMeshCount; s++) {
+            shellMats[s] = s < outerMaterials.Length ? outerMaterials[s] : (customCap ?? outerMaterials[0]);
+          }
+          mr.materials = shellMats;
+        } else if (!isAutoStump && propModelDef.CustomShellMaterials.Count == 1 && shellMesh.subMeshCount > 1) {
+          // Single CustomShellMaterial on a custom shell applies consistently across every surface of the shell
+          Material singleShellMat = BuildMaterialForRenderer(null, propModelDef, propModelDef.CustomShellMaterials[0]) ?? placeholderMaterial;
+          Material[] shellMats = new Material[shellMesh.subMeshCount];
+          for (int s = 0; s < shellMesh.subMeshCount; s++) shellMats[s] = singleShellMat;
+          mr.materials = shellMats;
+        } else {
+          Main.Logger.Log("[BuildingFactory.CreateGenericStaticDestruct] Shell Materials are specified");
+          mr.materials = BuildMaterialsForRenderer(shellMesh, propModelDef, propModelDef.CustomShellMaterials, placeholderMaterial);
+        }
       } else if (outerMaterials != null && outerMaterials.Length > 0 && shellMesh.subMeshCount > 0) {
         Material[] shellMats = new Material[shellMesh.subMeshCount];
         for (int s = 0; s < shellMesh.subMeshCount; s++) {
@@ -622,6 +638,11 @@ namespace MissionControl.EncounterFactories {
     }
 
     private Material ResolveInteriorRubbleMaterial(PropModelDef propModelDef, Material[] outerMaterials) {
+      if (propModelDef.CustomSplitMaterials != null && propModelDef.CustomSplitMaterials.Count > 0) {
+        Material customInterior = BuildMaterialForRenderer(null, propModelDef, propModelDef.CustomSplitMaterials[0]);
+        if (customInterior != null) return customInterior;
+      }
+
       string preferredName = propModelDef.DestructibleMaterial == DestructibleObject.DestructibleMaterial.metal
         ? "envMatStct_darkMetal_generic"
         : "envMatStct_concrete_generic";
@@ -654,21 +675,26 @@ namespace MissionControl.EncounterFactories {
     private void SetShellMaterials(GameObject shell) {
       PropModelDef propModelDef = PropBuildingDef.GetPropModelDef();
 
-      // Setup materials (skip $embedded custom UVs on generic rubble prefabs so they get proper concrete/metal rubble instead)
+      // Setup materials (prefer explicit CustomShellMaterials, otherwise skip $embedded custom UVs on generic rubble prefabs)
       Mesh mesh = shell.GetComponent<MeshFilter>().mesh;
       MeshRenderer mr = shell.GetComponent<MeshRenderer>();
 
-      List<PropMaterialDef> usableVanillaMats = propModelDef.Materials
-        .Where(mat => !string.IsNullOrEmpty(mat.Name)
-          && !mat.Name.Equals("$embedded", StringComparison.OrdinalIgnoreCase)
-          && !mat.Name.Contains("glass")
-          && !mat.Name.Contains("lights")
-          && !mat.Name.Contains("decals"))
-        .ToList();
+      Material[] shellMaterials;
+      if (propModelDef.CustomShellMaterials != null && propModelDef.CustomShellMaterials.Count > 0) {
+        shellMaterials = BuildMaterialsForRenderer(mesh, propModelDef, propModelDef.CustomShellMaterials, placeholderMaterial);
+      } else {
+        List<PropMaterialDef> usableVanillaMats = propModelDef.Materials
+          .Where(mat => !string.IsNullOrEmpty(mat.Name)
+            && !mat.Name.Equals("$embedded", StringComparison.OrdinalIgnoreCase)
+            && !mat.Name.Contains("glass")
+            && !mat.Name.Contains("lights")
+            && !mat.Name.Contains("decals"))
+          .ToList();
 
-      Material[] shellMaterials = usableVanillaMats.Count > 0
-        ? BuildMaterialsForRenderer(mesh, propModelDef, usableVanillaMats, placeholderMaterial)
-        : new[] { ResolveInteriorRubbleMaterial(propModelDef, null) };
+        shellMaterials = usableVanillaMats.Count > 0
+          ? BuildMaterialsForRenderer(mesh, propModelDef, usableVanillaMats, placeholderMaterial)
+          : new[] { ResolveInteriorRubbleMaterial(propModelDef, null) };
+      }
 
       Material[] shellMaterialToUse = new Material[mesh.subMeshCount];
       for (int i = 0; i < mesh.subMeshCount; i++) {

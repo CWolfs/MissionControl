@@ -539,14 +539,38 @@ namespace MissionControl.EncounterFactories {
         string[] propertyNameAndTypeSplit = kvPair.Key.Split('.');
 
         string propertyName = propertyNameAndTypeSplit[0];
-        string propertyType = propertyName == "shaderwords" ? null : propertyNameAndTypeSplit[1].ToLower();
+        string propertyType = propertyName.Equals("shaderwords", StringComparison.OrdinalIgnoreCase)
+          ? null
+          : (propertyNameAndTypeSplit.Length > 1 ? propertyNameAndTypeSplit[1].ToLower() : null);
         JToken propertyValue = kvPair.Value;
 
+        if (propertyName.Equals("tag", StringComparison.OrdinalIgnoreCase) && propertyNameAndTypeSplit.Length > 1) {
+          string tagName = propertyNameAndType.Substring(propertyName.Length + 1);
+          material.SetOverrideTag(tagName, propertyValue?.ToString() ?? "");
+          continue;
+        }
+
+        if (propertyType == "bool") {
+          bool boolVal = propertyValue != null && propertyValue.Type == JTokenType.Boolean
+            ? (bool)propertyValue
+            : bool.TryParse(propertyValue?.ToString(), out bool parsedBool) && parsedBool;
+          if (propertyName.Equals("enableinstancing", StringComparison.OrdinalIgnoreCase)) {
+            material.enableInstancing = boolVal;
+          } else if (propertyName.Equals("doublesidedgi", StringComparison.OrdinalIgnoreCase)) {
+            material.doubleSidedGI = boolVal;
+          }
+          continue;
+        }
+
         if (propertyType == "texture") {
-          // Grab, load and set texture
+          string textureName = propertyValue?.ToString();
+          if (string.IsNullOrWhiteSpace(textureName)) {
+            material.SetTexture(propertyName, null);
+            continue;
+          }
+
           // First look for Texture in bundle
-          string textureName = propertyValue.ToString();
-          Texture texture = bundleItem.BundlePath != null ? AssetBundleLoader.GetAsset<Texture>(bundleItem.BundlePath, textureName) : null;
+          Texture texture = bundleItem?.BundlePath != null ? AssetBundleLoader.GetAsset<Texture>(bundleItem.BundlePath, textureName) : null;
 
           // Otherwise look for texture in game memory, then BattleTech_Data
           if (texture == null) texture = UnityGameInstance.Instance.Game.DataManager.TextureManager.GetLoadedTexture(textureName);
@@ -557,21 +581,53 @@ namespace MissionControl.EncounterFactories {
           JArray propertyValueArray = propertyValue.ToObject<JArray>();
           Vector2 offset = new Vector2((float)propertyValueArray[0], (float)propertyValueArray[1]);
           material.SetTextureOffset(propertyName, offset);
+        } else if (propertyType == "texturescale") {
+          JArray propertyValueArray = propertyValue.ToObject<JArray>();
+          Vector2 scale = new Vector2((float)propertyValueArray[0], (float)propertyValueArray[1]);
+          material.SetTextureScale(propertyName, scale);
         } else if (propertyType == "float") {
           material.SetFloat(propertyName, (float)propertyValue);
         } else if (propertyType == "int") {
-          material.SetInt(propertyName, (int)propertyValue);
+          int intVal = (int)propertyValue;
+          if (propertyName.Equals("renderqueue", StringComparison.OrdinalIgnoreCase)) {
+            material.renderQueue = intVal;
+          } else {
+            material.SetInt(propertyName, intVal);
+          }
         } else if (propertyType == "vector") {
           JArray propertyValueArray = propertyValue.ToObject<JArray>();
           Vector4 vector = new Vector4((float)propertyValueArray[0], (float)propertyValueArray[1], (float)propertyValueArray[2], (float)propertyValueArray[3]);
           material.SetVector(propertyName, vector);
-        } else if (propertyName == "shaderwords") {
-          string[] shaderwords = propertyValue.ToString().Split(',');
-          foreach (string shaderword in shaderwords) {
-            material.EnableKeyword(shaderword);
+        } else if (propertyType == "color") {
+          Color color = ParseMaterialColor(propertyValue);
+          material.SetColor(propertyName, color);
+        } else if (propertyName.Equals("shaderwords", StringComparison.OrdinalIgnoreCase)) {
+          string[] shaderwords = propertyValue.ToString().Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+          foreach (string rawWord in shaderwords) {
+            string word = rawWord.Trim();
+            if (string.IsNullOrEmpty(word)) continue;
+            if (word.StartsWith("-") && word.Length > 1) {
+              material.DisableKeyword(word.Substring(1).Trim());
+            } else {
+              material.EnableKeyword(word);
+            }
           }
         }
       }
+    }
+
+    private static Color ParseMaterialColor(JToken token) {
+      if (token is JArray arr && arr.Count >= 3) {
+        float r = (float)arr[0];
+        float g = (float)arr[1];
+        float b = (float)arr[2];
+        float a = arr.Count >= 4 ? (float)arr[3] : 1f;
+        return new Color(r, g, b, a);
+      }
+      if (token != null && ColorUtility.TryParseHtmlString(token.ToString().Trim(), out Color parsed)) {
+        return parsed;
+      }
+      return Color.white;
     }
 
     protected Material BuildMaterialForRenderer(Mesh mesh, IBundleItem bundleItem, PropMaterialDef materialDef) {
@@ -629,19 +685,39 @@ namespace MissionControl.EncounterFactories {
         }
 
         if (string.Equals(propMaterialDef.Name, "$embedded", StringComparison.OrdinalIgnoreCase)) {
-          if (fileAsset != null && fileAsset.EmbeddedMaterials != null && fileAsset.EmbeddedMaterials.Length > 0) {
-            materials[i] = fileAsset.EmbeddedMaterials[Math.Min(i, fileAsset.EmbeddedMaterials.Length - 1)] ?? fallbackMaterial;
-          } else {
+          Material baseEmbedded = (fileAsset != null && fileAsset.EmbeddedMaterials != null && fileAsset.EmbeddedMaterials.Length > 0)
+            ? fileAsset.EmbeddedMaterials[Math.Min(i, fileAsset.EmbeddedMaterials.Length - 1)]
+            : null;
+          if (baseEmbedded == null) {
             materials[i] = fallbackMaterial;
+          } else if (string.IsNullOrEmpty(propMaterialDef.Shader) && (propMaterialDef.MaterialProperties == null || !propMaterialDef.MaterialProperties.HasValues)) {
+            materials[i] = baseEmbedded;
+          } else {
+            string propSig = propMaterialDef.MaterialProperties != null
+              ? propMaterialDef.MaterialProperties.ToString(Newtonsoft.Json.Formatting.None)
+              : "";
+            string cacheKey = $"$embedded:{(bundleItem is PropModelDef embModel ? embModel.Key : "prop")}:{i}:{propMaterialDef.Shader ?? ""}:{propSig}";
+            if (!MissionControl.Instance.GeneratedMaterials.TryGetValue(cacheKey, out Material overridden) || overridden == null) {
+              overridden = new Material(baseEmbedded) { name = $"{baseEmbedded.name}_Override" };
+              if (!string.IsNullOrEmpty(propMaterialDef.Shader)) {
+                Shader shader = bundleItem?.BundlePath != null ? AssetBundleLoader.GetAsset<Shader>(bundleItem.BundlePath, propMaterialDef.Shader) : null;
+                if (shader == null) shader = UnityMaterialBuilder.ResolveShader(propMaterialDef.Shader, Application.dataPath, Main.Logger.LogWarning);
+                if (shader != null) {
+                  overridden.shader = shader;
+                } else {
+                  Main.Logger.LogWarning($"[PropFactory.BuildMaterialsForRenderer] Couldn't find override Shader '{propMaterialDef.Shader}' for embedded slot {i}; keeping '{overridden.shader?.name}'.");
+                }
+              }
+              SetMaterialProperties(bundleItem, overridden, propMaterialDef.MaterialProperties);
+              MissionControl.Instance.GeneratedMaterials[cacheKey] = overridden;
+            }
+            materials[i] = overridden;
           }
           continue;
         }
 
-        if (propMaterialDef.Shader != null) {
+        if (!string.IsNullOrEmpty(propMaterialDef.Shader)) {
           Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Shader provided for PropMaterialDef '{propMaterialDef.Name}' so building Material with specific shader '{propMaterialDef.Shader}' and MaterialProperties '{propMaterialDef.MaterialProperties}'");
-          // Build whole material with specific shader and texture
-          if (bundleItem.BundlePath == null) Main.Logger.LogWarning("[PropFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef Shader name but you have not included a bundle for this IBundledItem. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
-
           Material material = null;
 
           // Check for cached generated Material first
@@ -652,7 +728,7 @@ namespace MissionControl.EncounterFactories {
             Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Generating cached runtime generated material '{propMaterialDef.Name}'");
 
             // First look for Shader in bundle
-            Shader shader = bundleItem.BundlePath != null ? AssetBundleLoader.GetAsset<Shader>(bundleItem.BundlePath, propMaterialDef.Shader) : null;
+            Shader shader = bundleItem?.BundlePath != null ? AssetBundleLoader.GetAsset<Shader>(bundleItem.BundlePath, propMaterialDef.Shader) : null;
 
             // Otherwise look for Shader in game (and fallback shaders AssetBundle)
             if (shader == null) shader = UnityMaterialBuilder.ResolveShader(propMaterialDef.Shader, Application.dataPath, Main.Logger.LogWarning);
@@ -671,9 +747,7 @@ namespace MissionControl.EncounterFactories {
 
           materials[i] = material;
         } else if (propMaterialDef.MaterialProperties != null) {
-          Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Texture but no Shader provided for PropMaterialDef '{propMaterialDef.Name}' so building Material with default shader 'BattleTech Standard' and MaterialProperties '{propMaterialDef.MaterialProperties.ToString()}'");
-          if (bundleItem.BundlePath == null) Main.Logger.LogWarning("[PropFactory.BuildMaterialsForRenderer] You have specified a PropMaterialDef MaterialProperties but you have no included a bundle for this PropModelDef. This could be correct if you intend to reference a preloaded Shader but if you intend to load a custom shader from your bundle - there is no bundle loaded");
-
+          Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Texture/properties provided for PropMaterialDef '{propMaterialDef.Name}' so building Material with default shader 'BattleTech Standard'");
           Material material = null;
 
           // Check for cached generated Material first
@@ -683,7 +757,7 @@ namespace MissionControl.EncounterFactories {
           } else {
             Main.Logger.Log($"[PropFactory.BuildMaterialsForRenderer] Generating cached runtime generated material '{propMaterialDef.Name}'");
 
-            // Build whole material with specifix texture but use 'BattleTech Standard' shader
+            // Build whole material with specific properties using 'BattleTech Standard' shader
             Shader shader = Shader.Find("BattleTech Standard");
 
             material = new Material(shader);

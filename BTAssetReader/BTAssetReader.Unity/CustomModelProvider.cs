@@ -99,7 +99,7 @@ namespace BTAssetReader.Unity {
               LocalRotation = Quaternion.identity,
               LocalScale = Vector3.one,
               Mesh = pm,
-              Materials = asset.EmbeddedMaterials,
+              Materials = null, // Let BuildingFactory apply the prop's configured outerMaterials (including overrides/vanilla replacements)
               BoxCollider = new RawBoxColliderData {
                 Enabled = true,
                 Center = piece.LocalBounds.Center,
